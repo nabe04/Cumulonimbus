@@ -1,0 +1,6 @@
+	 Transform(TransformComponent) class
+
+・ WorldRotation_(X,Y,Z)はワールド空間での回転(オイラー)
+・ LocalRotation_(X,Y,Z)はモデル空間での回転(クォータニオン)
+・ ActivateQuaterniton関数で回転方法をクォータニオンに設定したら、WorldRotation_(X,Y,Z)の
+   の関数は触らないようにする ⇒ 触れてしまうため注意 !!
