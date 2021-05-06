@@ -1,0 +1,9 @@
+{
+    "entity_name": "Sky_Box",
+    "component_names": [
+        "Transform",
+        "SkyBox"
+    ],
+    "update_order": 0,
+    "entity_tag": 1
+}

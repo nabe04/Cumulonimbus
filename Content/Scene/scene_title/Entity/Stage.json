@@ -1,0 +1,10 @@
+{
+    "entity_name": "Stage",
+    "component_names": [
+        "Transform",
+        "Origin",
+        "Origin"
+    ],
+    "update_order": 0,
+    "entity_tag": 0
+}

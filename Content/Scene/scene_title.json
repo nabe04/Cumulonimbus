@@ -1,0 +1,114 @@
+{
+    "scene_name": "Scene_Title",
+    "entities": [
+        {
+            "ptr_wrapper": {
+                "valid": 1,
+                "data": {
+                    "entity_name": "Sky_Box",
+                    "component_names": [
+                        "Transform",
+                        "SkyBox"
+                    ],
+                    "update_order": 0,
+                    "entity_tag": 1
+                }
+            }
+        },
+        {
+            "ptr_wrapper": {
+                "valid": 1,
+                "data": {
+                    "entity_name": "Stage",
+                    "component_names": [
+                        "Transform",
+                        "Origin",
+                        "Origin"
+                    ],
+                    "update_order": 0,
+                    "entity_tag": 0
+                }
+            }
+        },
+        {
+            "ptr_wrapper": {
+                "valid": 1,
+                "data": {
+                    "entity_name": "Sample01",
+                    "component_names": [
+                        "Transform",
+                        "Origin",
+                        "Origin",
+                        "Origin"
+                    ],
+                    "update_order": 0,
+                    "entity_tag": 0
+                }
+            }
+        },
+        {
+            "ptr_wrapper": {
+                "valid": 1,
+                "data": {
+                    "entity_name": "Sample02",
+                    "component_names": [
+                        "Transform",
+                        "Origin",
+                        "Origin",
+                        "Origin"
+                    ],
+                    "update_order": 0,
+                    "entity_tag": 0
+                }
+            }
+        },
+        {
+            "ptr_wrapper": {
+                "valid": 1,
+                "data": {
+                    "entity_name": "Sample03",
+                    "component_names": [
+                        "Transform",
+                        "Origin",
+                        "Origin",
+                        "Origin"
+                    ],
+                    "update_order": 0,
+                    "entity_tag": 0
+                }
+            }
+        },
+        {
+            "ptr_wrapper": {
+                "valid": 1,
+                "data": {
+                    "entity_name": "Sample04",
+                    "component_names": [
+                        "Transform",
+                        "Origin",
+                        "Origin",
+                        "Origin"
+                    ],
+                    "update_order": 0,
+                    "entity_tag": 0
+                }
+            }
+        },
+        {
+            "ptr_wrapper": {
+                "valid": 1,
+                "data": {
+                    "entity_name": "Sample05",
+                    "component_names": [
+                        "Transform",
+                        "Origin",
+                        "Origin",
+                        "Origin"
+                    ],
+                    "update_order": 0,
+                    "entity_tag": 0
+                }
+            }
+        }
+    ]
+}

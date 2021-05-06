@@ -1,0 +1,900 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{7dda3e62-1949-48c2-b58d-c3870a0a0d6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight">
+      <UniqueIdentifier>{de6b7ee2-036f-4f3a-a1a7-3c110149e2bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Game">
+      <UniqueIdentifier>{a102fe71-1c93-4512-bcac-a567d2359dae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Game\1.Source">
+      <UniqueIdentifier>{5d840182-2b34-4351-9b53-139096fa28f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Game\2.Header">
+      <UniqueIdentifier>{4cb6a810-d50c-43df-93ea-a21c500cf3b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Game\3.Shader">
+      <UniqueIdentifier>{d65aff15-3664-431d-9860-02a86ea4f821}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Game\4.HLSL">
+      <UniqueIdentifier>{e9cbbd35-01ea-4882-93d3-2a001788a182}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Game\2.Header\Component">
+      <UniqueIdentifier>{0b95ca4a-39f5-41af-bfd6-73bcedf96c8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Game\1.Source\Component">
+      <UniqueIdentifier>{1b9202dc-9dca-4c13-a348-4bb4a012acb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Game\1.Source\Component\Actors">
+      <UniqueIdentifier>{e1e8ab26-10b3-4f2f-b61b-ccb00e3e53d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Game\1.Source\Component\Collisions">
+      <UniqueIdentifier>{f70b421a-db4e-45b6-8f6b-6aaef6b95f6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Game\2.Header\Component\Actors">
+      <UniqueIdentifier>{8b0a0307-e477-4bf4-9b77-99cb6d216883}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Game\2.Header\Component\Effects">
+      <UniqueIdentifier>{3fd8727f-23be-4bce-a705-0fce8cac2f91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Game\2.Header\Component\UI">
+      <UniqueIdentifier>{739f16fb-e86b-4147-9936-ad2a1cb8e662}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Game\1.Source\Component\UI">
+      <UniqueIdentifier>{6d1ea514-e43a-49b5-9198-bc1de42d5481}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine">
+      <UniqueIdentifier>{bc757157-ea31-4a7f-9d9b-661339f05922}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\2.Header">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="SunLight\Engine\2.Header\Component">
+      <UniqueIdentifier>{9eb624b7-814b-48d2-bed2-6d68dbeebfef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\2.Header\Component\Actors">
+      <UniqueIdentifier>{b96e9999-c0e8-4df1-934b-3c1fc4aea76f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\2.Header\Component\Collisions">
+      <UniqueIdentifier>{2ffa9037-911b-415b-aa14-de2b5f85430f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\2.Header\DirectX11">
+      <UniqueIdentifier>{907b5b22-5d3d-4226-a30f-76c61b5d4796}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\2.Header\DirectX11\State">
+      <UniqueIdentifier>{9d68d004-1000-406a-bcaf-47ef9a0f07e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\2.Header\Shader">
+      <UniqueIdentifier>{e542e045-abdb-45b7-b278-a980b09dffb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\2.Header\Shader\Manager">
+      <UniqueIdentifier>{54b2138b-78a9-471e-99a6-4f4fa96285e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\2.Header\Shader\Type">
+      <UniqueIdentifier>{a2b047ba-a659-478e-b5ad-908f1128e46f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\2.Header\Scene">
+      <UniqueIdentifier>{10f7a823-a76c-4a64-adc3-96899fb17a54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\2.Header\Resource">
+      <UniqueIdentifier>{77b85d1f-3395-426a-a312-847cf450c307}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\2.Header\Manager">
+      <UniqueIdentifier>{c02e0fa7-f274-454b-9cbc-24fa1f5ae45f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\1.Source">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="SunLight\Engine\1.Source\Component">
+      <UniqueIdentifier>{675d63ae-fe12-41b0-b68b-5559cb6ed584}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\1.Source\Component\Actors">
+      <UniqueIdentifier>{7f21a282-c7c7-426e-957b-ff7d8efe134b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\1.Source\Component\Renderer">
+      <UniqueIdentifier>{e7944306-fb00-4861-96a1-6a0061de37be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\1.Source\Component\Collision">
+      <UniqueIdentifier>{c4fa49bb-7241-489b-a23d-1fdaa2f5e58a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\1.Source\DirectX11">
+      <UniqueIdentifier>{28fa3db3-4ce2-419f-bc9a-5320ec7db644}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\1.Source\DirectX11\State">
+      <UniqueIdentifier>{4876f2aa-1094-4a40-9639-70cc9142cf11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\1.Source\Shader">
+      <UniqueIdentifier>{fb8b9a5e-e9b9-4189-be55-592c4f8edc53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\1.Source\Shader\Manager">
+      <UniqueIdentifier>{2f9208f1-d7be-42d5-87b5-3f4230701a78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\1.Source\Shader\Type">
+      <UniqueIdentifier>{17818c4c-e910-44ae-8193-10285ec30504}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\1.Source\Scene">
+      <UniqueIdentifier>{ff0e0aa0-d1f4-415f-91e5-50012de15862}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\1.Source\Manager">
+      <UniqueIdentifier>{cb4b1edd-abc3-493e-aef2-c51b2bd383c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\1.Source\Resource">
+      <UniqueIdentifier>{522ecdea-21cf-4c37-9b24-ca409b0cb378}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\3.HLSL">
+      <UniqueIdentifier>{c49434de-4190-4f0c-b784-b8d0c8c84e2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\3.HLSL\hlsli">
+      <UniqueIdentifier>{d662a63d-9f36-4637-909e-9537e74988b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\3.HLSL\3D">
+      <UniqueIdentifier>{998ea37c-db43-4604-bb7c-e85992349ba0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\3.HLSL\3D\Pixel Shader">
+      <UniqueIdentifier>{b0671db3-f68a-4ad9-8a25-fcbc84b62cfc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\3.HLSL\3D\Vertex Shader">
+      <UniqueIdentifier>{82bc0007-63d1-4d4e-93df-d489e16b2a18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\3.HLSL\2D">
+      <UniqueIdentifier>{f2704f99-2b96-4812-8027-93c914fc9535}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\3.HLSL\2D\Pixel Shader">
+      <UniqueIdentifier>{0dab01c7-09de-4c59-a118-2f790963ab2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\3.HLSL\2D\Vertex Shader">
+      <UniqueIdentifier>{1fbd6412-756e-4882-b5f4-4dd8d2f83437}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Game\2.Header\Component\Collisions">
+      <UniqueIdentifier>{95651792-f1d3-42e4-a06e-53b0cd7374f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\2.Header\Input">
+      <UniqueIdentifier>{cf4d7730-c14a-4bf0-9a4e-70475f432670}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\2.Header\Editor">
+      <UniqueIdentifier>{8c4f2e62-fe6a-410b-a142-00b2677a6a31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\1.Source\Editor">
+      <UniqueIdentifier>{6171c863-fc8c-4bf9-ae75-ac137238b242}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\2.Header\Helper">
+      <UniqueIdentifier>{a5762641-207f-4555-bf45-ecfc61f6c9c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SunLight\Engine\2.Header\Component\Model">
+      <UniqueIdentifier>{33e15cc8-0040-43d4-a179-a26ba4497687}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Engine\arithmetic.h">
+      <Filter>SunLight\Engine\2.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\easing.h">
+      <Filter>SunLight\Engine\2.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\ecs.h">
+      <Filter>SunLight\Engine\2.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\framework.h">
+      <Filter>SunLight\Engine\2.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\generic.h">
+      <Filter>SunLight\Engine\2.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\high_resolution_timer.h">
+      <Filter>SunLight\Engine\2.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\input_device.h">
+      <Filter>SunLight\Engine\2.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\light.h">
+      <Filter>SunLight\Engine\2.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\model_render.h">
+      <Filter>SunLight\Engine\2.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\texture.h">
+      <Filter>SunLight\Engine\2.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\transform.h">
+      <Filter>SunLight\Engine\2.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\view.h">
+      <Filter>SunLight\Engine\2.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\transform_component.h">
+      <Filter>SunLight\Engine\2.Header\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\state_machine.h">
+      <Filter>SunLight\Engine\2.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\dx_manager.h">
+      <Filter>SunLight\Engine\2.Header\DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\blend.h">
+      <Filter>SunLight\Engine\2.Header\DirectX11\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\depth_stencil.h">
+      <Filter>SunLight\Engine\2.Header\DirectX11\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\sampler.h">
+      <Filter>SunLight\Engine\2.Header\DirectX11\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\rasterizer.h">
+      <Filter>SunLight\Engine\2.Header\DirectX11\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\frame_buffer.h">
+      <Filter>SunLight\Engine\2.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\model_data.h">
+      <Filter>SunLight\Engine\2.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\shader.h">
+      <Filter>SunLight\Engine\2.Header\Shader\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\shader_manager.h">
+      <Filter>SunLight\Engine\2.Header\Shader\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\3d_standard.h">
+      <Filter>SunLight\Engine\2.Header\Shader\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\diffuse.h">
+      <Filter>SunLight\Engine\2.Header\Shader\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\metal.h">
+      <Filter>SunLight\Engine\2.Header\Shader\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\phong.h">
+      <Filter>SunLight\Engine\2.Header\Shader\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\spot_light.h">
+      <Filter>SunLight\Engine\2.Header\Shader\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\texture2d_shader.h">
+      <Filter>SunLight\Engine\2.Header\Shader\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\bloom.h">
+      <Filter>SunLight\Engine\2.Header\Shader\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\fullscreen_quad.h">
+      <Filter>SunLight\Engine\2.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\test_animation_character.h">
+      <Filter>SunLight</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\constant_buffer.h">
+      <Filter>SunLight\Engine\2.Header\DirectX11</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\camera_operation.h">
+      <Filter>SunLight\Engine\2.Header\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\rendering_buffer.h">
+      <Filter>SunLight\Engine\2.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\toon.h">
+      <Filter>SunLight\Engine\2.Header\Shader\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\single_color.h">
+      <Filter>SunLight\Engine\2.Header\Shader\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\sobel_filter.h">
+      <Filter>SunLight\Engine\2.Header\Shader\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\scene_title.h">
+      <Filter>SunLight\Engine\2.Header\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\scene_load.h">
+      <Filter>SunLight\Engine\2.Header\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\scene_game.h">
+      <Filter>SunLight\Engine\2.Header\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\scene.h">
+      <Filter>SunLight\Engine\2.Header\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\fbx_model_component.h">
+      <Filter>SunLight\Engine\2.Header\Component\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\geometric_primitive_component.h">
+      <Filter>SunLight\Engine\2.Header\Component\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\actor_component.h">
+      <Filter>SunLight\Engine\2.Header\Component\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\billboard_component.h">
+      <Filter>SunLight\Engine\2.Header\Component\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\child_actor.h">
+      <Filter>SunLight\Engine\2.Header\Component\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\sphere_collision_component.h">
+      <Filter>SunLight\Engine\2.Header\Component\Collisions</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\collision_component.h">
+      <Filter>SunLight\Engine\2.Header\Component\Collisions</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\inner_sphere_collision.h">
+      <Filter>SunLight\Engine\2.Header\Component\Collisions</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\my_effekseer.h">
+      <Filter>SunLight\Engine\2.Header\Component\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\scene_tutorial.h">
+      <Filter>SunLight\Engine\2.Header\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\Sound.h">
+      <Filter>SunLight\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\Misc.h">
+      <Filter>SunLight\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\Logger.h">
+      <Filter>SunLight\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\collision.h">
+      <Filter>SunLight\Engine\2.Header\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\input_manager.h">
+      <Filter>SunLight\Engine\2.Header\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\InputManager.h">
+      <Filter>SunLight\Engine\2.Header\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\imgui_manager.h">
+      <Filter>SunLight\Engine\2.Header\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\geometric_primitive_resource.h">
+      <Filter>SunLight\Engine\2.Header\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\fbx_model_resource.h">
+      <Filter>SunLight\Engine\2.Header\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\sound_resource.h">
+      <Filter>SunLight\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\shadow_map.h">
+      <Filter>SunLight\Engine\2.Header\Shader\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\sprite_renderer.h">
+      <Filter>SunLight\Engine\2.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\sprite_object.h">
+      <Filter>SunLight\Engine\2.Header\Component\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\standard_sprite.h">
+      <Filter>SunLight\Engine\2.Header\Shader\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\sprite.h">
+      <Filter>SunLight\Engine\2.Header\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\anim_sprite.h">
+      <Filter>SunLight\Engine\2.Header\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\sky_box.h">
+      <Filter>SunLight\Engine\2.Header\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\mesh_object.h">
+      <Filter>SunLight\Engine\2.Header\Component\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\obj_model_component.h">
+      <Filter>SunLight\Engine\2.Header\Component\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\reflection_mapping.h">
+      <Filter>SunLight\Engine\2.Header\Shader\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\refraction_mapping.h">
+      <Filter>SunLight\Engine\2.Header\Shader\Type</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\input_system.h">
+      <Filter>SunLight\Engine\2.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\locator.h">
+      <Filter>SunLight\Engine\2.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\resource_manager.h">
+      <Filter>SunLight\Engine\2.Header\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\imgui\imconfig.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\imgui\imgui.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\imgui\imgui_impl_dx11.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\imgui\imgui_impl_win32.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\imgui\imgui_internal.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\imgui\imstb_rectpack.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\imgui\imstb_textedit.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\imgui\imstb_truetype.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\content_browser.h">
+      <Filter>SunLight\Engine\2.Header\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\editor_manager.h">
+      <Filter>SunLight\Engine\2.Header\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\window.h">
+      <Filter>SunLight\Engine\2.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\string_helper.h">
+      <Filter>SunLight\Engine\2.Header\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\cereal_helper.h">
+      <Filter>SunLight\Engine\2.Header\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\imgui_helper.h">
+      <Filter>SunLight\Engine\2.Header\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\component_list.h">
+      <Filter>SunLight\Engine\2.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\camera_work.h">
+      <Filter>SunLight\Engine\2.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\mesh_particle.h">
+      <Filter>SunLight\Engine\2.Header\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\test_mesh_particle.h">
+      <Filter>SunLight\Game\2.Header\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\rotation_sample.h">
+      <Filter>SunLight\Game\2.Header\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\vertex_buffer.h">
+      <Filter>SunLight\Engine\2.Header\DirectX11</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Engine\arithmetic.cpp">
+      <Filter>SunLight\Engine\1.Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\easing.cpp">
+      <Filter>SunLight\Engine\1.Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\ecs.cpp">
+      <Filter>SunLight\Engine\1.Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\framework.cpp">
+      <Filter>SunLight\Engine\1.Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\input_device.cpp">
+      <Filter>SunLight\Engine\1.Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\InputManager.cpp">
+      <Filter>SunLight\Engine\1.Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\light.cpp">
+      <Filter>SunLight\Engine\1.Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\main.cpp">
+      <Filter>SunLight\Engine\1.Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\model_render.cpp">
+      <Filter>SunLight\Engine\1.Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\string_helper.cpp">
+      <Filter>SunLight\Engine\1.Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\texture.cpp">
+      <Filter>SunLight\Engine\1.Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\transform.cpp">
+      <Filter>SunLight\Engine\1.Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\view.cpp">
+      <Filter>SunLight\Engine\1.Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\shader_manager.cpp">
+      <Filter>SunLight\Engine\1.Source\Shader\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\shader.cpp">
+      <Filter>SunLight\Engine\1.Source\Shader\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\3d_standard.cpp">
+      <Filter>SunLight\Engine\1.Source\Shader\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\diffuse.cpp">
+      <Filter>SunLight\Engine\1.Source\Shader\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\metal.cpp">
+      <Filter>SunLight\Engine\1.Source\Shader\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\phong.cpp">
+      <Filter>SunLight\Engine\1.Source\Shader\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\spot_light.cpp">
+      <Filter>SunLight\Engine\1.Source\Shader\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\texture2d_shader.cpp">
+      <Filter>SunLight\Engine\1.Source\Shader\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\scene01.cpp">
+      <Filter>SunLight</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\scene02.cpp">
+      <Filter>SunLight</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\scene03.cpp">
+      <Filter>SunLight</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\blend.cpp">
+      <Filter>SunLight\Engine\1.Source\DirectX11\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\rasterize.cpp">
+      <Filter>SunLight\Engine\1.Source\DirectX11\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\dx_manager.cpp">
+      <Filter>SunLight\Engine\1.Source\DirectX11</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\depth_stencil.cpp">
+      <Filter>SunLight\Engine\1.Source\DirectX11\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\sampler.cpp">
+      <Filter>SunLight\Engine\1.Source\DirectX11\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\frame_buffer.cpp">
+      <Filter>SunLight\Engine\1.Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\model_data.cpp">
+      <Filter>SunLight\Engine\1.Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\bloom.cpp">
+      <Filter>SunLight\Engine\1.Source\Shader\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\fullscreen_quad.cpp">
+      <Filter>SunLight\Engine\1.Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\test_animation_character.cpp">
+      <Filter>SunLight</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\constant_buffer.cpp">
+      <Filter>SunLight\Engine\1.Source\DirectX11</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\rendering_buffer.cpp">
+      <Filter>SunLight\Engine\1.Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\toon.cpp">
+      <Filter>SunLight\Engine\1.Source\Shader\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\single_color.cpp">
+      <Filter>SunLight\Engine\1.Source\Shader\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\sobel_filter.cpp">
+      <Filter>SunLight\Engine\1.Source\Shader\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\scene_game.cpp">
+      <Filter>SunLight\Engine\1.Source\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\scene_load.cpp">
+      <Filter>SunLight\Engine\1.Source\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\scene_title.cpp">
+      <Filter>SunLight\Engine\1.Source\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\scene.cpp">
+      <Filter>SunLight\Engine\1.Source\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\actor_component.cpp">
+      <Filter>SunLight\Engine\1.Source\Component\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\billboard_component.cpp">
+      <Filter>SunLight\Engine\1.Source\Component\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\child_actor.cpp">
+      <Filter>SunLight\Engine\1.Source\Component\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\geometric_primitive_component.cpp">
+      <Filter>SunLight\Engine\1.Source\Component\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\fbx_model_component.cpp">
+      <Filter>SunLight\Engine\1.Source\Component\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\collision_component.cpp">
+      <Filter>SunLight\Engine\1.Source\Component\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\sphere_collision_component.cpp">
+      <Filter>SunLight\Engine\1.Source\Component\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\inner_sphere_collision.cpp">
+      <Filter>SunLight\Engine\1.Source\Component\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\imgui_manager.cpp">
+      <Filter>SunLight\Engine\1.Source\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\input_manager.cpp">
+      <Filter>SunLight\Engine\1.Source\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\collision.cpp">
+      <Filter>SunLight\Engine\1.Source\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\my_effekseer.cpp">
+      <Filter>SunLight\Engine\1.Source\Component\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\scene_tutorial.cpp">
+      <Filter>SunLight\Engine\1.Source\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\camera_operation.cpp">
+      <Filter>SunLight\Engine\1.Source\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\transform_component.cpp">
+      <Filter>SunLight\Engine\1.Source\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\Sound.cpp">
+      <Filter>SunLight\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\geometric_primitive_resource.cpp">
+      <Filter>SunLight\Engine\1.Source\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\fbx_model_resource.cpp">
+      <Filter>SunLight\Engine\1.Source\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\sound_resource.cpp">
+      <Filter>SunLight\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\shadow_map.cpp">
+      <Filter>SunLight\Engine\1.Source\Shader\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\sprite_renderer.cpp">
+      <Filter>SunLight\Engine\1.Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\sprite_object.cpp">
+      <Filter>SunLight\Engine\1.Source\Component\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\standard_sprite.cpp">
+      <Filter>SunLight\Engine\1.Source\Shader\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\sky_box.cpp">
+      <Filter>SunLight\Engine\1.Source\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\anim_sprite.cpp">
+      <Filter>SunLight\Engine\1.Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\mesh_object.cpp">
+      <Filter>SunLight\Engine\1.Source\Component\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\obj_model_component.cpp">
+      <Filter>SunLight\Engine\1.Source\Component\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\reflection_mapping.cpp">
+      <Filter>SunLight\Engine\1.Source\Shader\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\refraction_mapping.cpp">
+      <Filter>SunLight\Engine\1.Source\Shader\Type</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\input_system.cpp">
+      <Filter>SunLight\Engine\1.Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\resource_manager.cpp">
+      <Filter>SunLight\Engine\1.Source\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\imgui\imgui.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\imgui\imgui_demo.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\imgui\imgui_draw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\imgui\imgui_impl_dx11.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\imgui\imgui_impl_win32.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\imgui\imgui_tables.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\imgui\imgui_widgets.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\content_brawser.cpp">
+      <Filter>SunLight\Engine\1.Source\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\editor_manager.cpp">
+      <Filter>SunLight\Engine\1.Source\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\window.cpp">
+      <Filter>SunLight\Engine\1.Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\component_list.cpp">
+      <Filter>SunLight\Engine\1.Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\sprite.cpp">
+      <Filter>SunLight\Engine\1.Source\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\Logger.cpp">
+      <Filter>SunLight\Engine\1.Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\camera_work.cpp">
+      <Filter>SunLight\Engine\1.Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\mesh_particle.cpp">
+      <Filter>SunLight\Engine\1.Source\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\test_mesh_particle.cpp">
+      <Filter>SunLight\Game\1.Source\Component</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shader\3d_standard.hlsli">
+      <Filter>SunLight\Engine\3.HLSL\hlsli</Filter>
+    </None>
+    <None Include="Shader\cook_torrance.hlsli">
+      <Filter>SunLight\Engine\3.HLSL\hlsli</Filter>
+    </None>
+    <None Include="Shader\diffuse.hlsli">
+      <Filter>SunLight\Engine\3.HLSL\hlsli</Filter>
+    </None>
+    <None Include="Shader\functions.hlsli">
+      <Filter>SunLight\Engine\3.HLSL\hlsli</Filter>
+    </None>
+    <None Include="Shader\phong.hlsli">
+      <Filter>SunLight\Engine\3.HLSL\hlsli</Filter>
+    </None>
+    <None Include="Shader\general.hlsli">
+      <Filter>SunLight\Engine\3.HLSL\hlsli</Filter>
+    </None>
+    <None Include="Shader\sprite2d.hlsli">
+      <Filter>SunLight\Engine\3.HLSL\hlsli</Filter>
+    </None>
+    <None Include="Shader\spot_light.hlsli">
+      <Filter>SunLight\Engine\3.HLSL\hlsli</Filter>
+    </None>
+    <None Include="Shader\toon.hlsli">
+      <Filter>SunLight\Engine\3.HLSL\hlsli</Filter>
+    </None>
+    <None Include="Shader\single_color.hlsli">
+      <Filter>SunLight\Engine\3.HLSL\hlsli</Filter>
+    </None>
+    <None Include="Shader\bloom.hlsli">
+      <Filter>SunLight\Engine\3.HLSL\hlsli</Filter>
+    </None>
+    <None Include="Shader\monochrome.hlsli">
+      <Filter>SunLight\Engine\3.HLSL\hlsli</Filter>
+    </None>
+    <None Include="Shader\sorbel_filter.hlsli">
+      <Filter>SunLight\Engine\3.HLSL\hlsli</Filter>
+    </None>
+    <None Include="Shader\shadow_map.hlsli">
+      <Filter>SunLight\Engine\3.HLSL\hlsli</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shader\3d_standard_vs.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Vertex Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\cook_torrance_vs.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Vertex Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\diffuse_vs.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Vertex Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\phong_vs.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Vertex Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\3d_standard_ps.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Pixel Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\cook_torrance_ps.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Pixel Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\diffuse_ps.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Pixel Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\phong_ps.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Pixel Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\sprite2d_ps.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\2D\Pixel Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\sprite2d_vs.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\2D\Vertex Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\spot_light_ps.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Pixel Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\spot_light_vs.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Vertex Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\gaussian_blur_convolution_ps.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Pixel Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\gaussian_blur_downsampling_ps.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Pixel Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\gaussian_blur_horizontal_ps.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Pixel Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\gaussian_blur_vertical_ps.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Pixel Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\glow_extraction_ps.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Pixel Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\convolution_ps.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Pixel Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\toon_ps.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Pixel Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\toon_vs.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Vertex Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\single_color_vs.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Vertex Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\single_color_ps.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Pixel Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\monochrome_ps.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Pixel Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\outline_extraction_ps.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Pixel Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\sorbel_filter_convolution_ps.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Pixel Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\depth_extraction_vs.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Vertex Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\depth_extraction_ps.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Pixel Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\shadow_map_vs.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Vertex Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\shadow_map_ps.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Pixel Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\standard_sprite_vs.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\2D\Vertex Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\standard_sprite_ps.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\2D\Pixel Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\sky_box_vs.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Vertex Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\sky_box_ps.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Pixel Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\reflection_mapping_vs.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Vertex Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\reflection_mapping_ps.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Pixel Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\refraction_mapping_vs.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Vertex Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\refraction_mapping_ps.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Pixel Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\cpu_particle_vs.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Vertex Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\cpu_particle_ps.hlsl">
+      <Filter>SunLight\Engine\3.HLSL\3D\Pixel Shader</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SunLight.rc" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,10 @@
+{
+    "entity_name": "UV_Chacker",
+    "component_names": [
+        "Transform",
+        "SpriteObject",
+        "AnimSprite"
+    ],
+    "update_order": 0,
+    "entity_tag": 0
+}

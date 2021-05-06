@@ -1,0 +1,10 @@
+{
+    "entity_name": "Coffee",
+    "component_names": [
+        "Transform",
+        "SpriteObject",
+        "Sprite"
+    ],
+    "update_order": 0,
+    "entity_tag": 0
+}
