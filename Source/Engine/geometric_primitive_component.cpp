@@ -1,0 +1,61 @@
+#include "geometric_primitive_component.h"
+
+#include <GeometricPrimitive.h>
+
+#include "scene.h"
+#include "shader.h"
+#include "texture.h"
+#include "transform.h"
+#include "dx_manager.h"
+#include "light.h"
+#include "view.h"
+
+//*************************************************
+//
+//	GeomPrimComponent Class
+//
+//**************************************************
+GeomPrimComponent::GeomPrimComponent(Entity* entity, GeomPrimType prim_type, const XMFLOAT3& pos)
+	: Component{ entity }
+{
+	// Set position
+	GetEntity()->GetComponent<TransformComponent>()->GetTransform()->SetPosition(pos);
+
+	// Create Geometric Primitive
+	mesh = GetEntity()->GetScene()->GetGeomPrimRes()->GetMeshData(prim_type);
+
+}
+
+void GeomPrimComponent::NewFrame(const float delta_time)
+{
+
+}
+
+void GeomPrimComponent::Update(const float delta_time)
+{
+	auto* view = GetEntity()->GetScene()->GetView();
+}
+
+void GeomPrimComponent::RenderImGui()
+{
+	if (ImGui::TreeNode("GeomPrim Types"))
+	{
+		static int old_type = item_current;
+
+		item_current = static_cast<int>(geom_prim_type); // To correspond to the Shader that the current Component has
+		ImGui::Combo("Shader Type", &item_current, items, IM_ARRAYSIZE(items));
+
+		geom_prim_type = static_cast<GeomPrimType>(item_current);
+		mesh = GetEntity()->GetScene()->GetGeomPrimRes()->GetMeshData(static_cast<GeomPrimType>(geom_prim_type));
+
+		material.EditParam();
+
+		ImGui::TreePop();
+	}
+}
+
+void GeomPrimComponent::SwitchMesh(const GeomPrimType& type)
+{
+	mesh = GetEntity()->GetScene()->GetGeomPrimRes()->GetMeshData(static_cast<GeomPrimType>(type));
+}
+
