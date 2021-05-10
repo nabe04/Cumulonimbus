@@ -68,7 +68,6 @@ Bloom::Bloom(ID3D11Device* device, unsigned int width, unsigned int height)
 	blend = std::make_unique<Blend>(device);
 }
 
-// �`��̑O�̋���
 void Bloom::ActivateGlowExtraction(ID3D11DeviceContext* immediate_context)
 {
 	samplers[BloomSamplerStates::Point_Wrap]->Activate(immediate_context, 0, false);
@@ -176,7 +175,6 @@ void Bloom::ActivateGlowExtraction(ID3D11DeviceContext* immediate_context)
 	samplers[BloomSamplerStates::Linear_Border]->Deactivate(immediate_context);
 }
 
-// �`��̌㏈���ɋ���
 void Bloom::DeactivateGlowExtraction(ID3D11DeviceContext* immediate_context)
 {
 	immediate_context->PSSetShaderResources(0, 1, glow_extraction->render_target_shader_resource_view.GetAddressOf());

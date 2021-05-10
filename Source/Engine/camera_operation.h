@@ -31,30 +31,30 @@ private:
 	std::bitset<static_cast<int>(CameraState::End)> lisence;
 	StateMachine<CameraState,void ,const float> camera_state;
 
-	EntityTag my_target_tag; 	// �����_�ɐݒ肷��^�O(����)
-	EntityTag ohter_target_tag;	// �����_�ɐݒ肷��^�O(�ϓ�)
+	EntityTag my_target_tag;	// エンティティ判別用タグ
+	EntityTag ohter_target_tag;
 
-	DirectX::SimpleMath::Vector3 ajust_target_position;	// �J�����̒����_�������ʒu�̒����l
-	float default_camera_length;	// �f�t�H���g�̒����_����J�����܂ł̈ʒu�̑傫��
-	float default_camera_height;	// �f�t�H���g�̃J�����̍���
-	float ajust_camera_length;		// �J�����̋��������p(�Ǎۂ̒����Ȃǂ̎g�p)
-	float lockon_cancel_lenght = 1;	// ���b�N�I�����Ɏ����Ƒ���ŃJ�����̒����_���}�ɕς��̂�h�����߂̋���
-	float camera_radius = 5;		// �ړ������Ɏg���Ƃ��̃J�������g�̋��̑傫��
-	float moving_restriction_length = 400; // �J�����̈ړ������p�ϐ�
+	DirectX::SimpleMath::Vector3 adjust_target_position;	// カメラ位置(調整値)
+	float default_camera_length;	// カメラ距離(デフォルト)
+	float default_camera_height;	//カメラ高さ(デフォルト)
+	float adjust_camera_length;
+	float lock_on_cancel_length = 1;
+	float camera_radius = 5;
+	float moving_restriction_length = 400;
 	bool  is_restriction = false;
 
-	float correction_timer = 1;	// �J�����̕⊮�����������̎���
+	float correction_timer = 1;
 	float current_timer = 0;
 
 	DirectX::SimpleMath::Vector2 camera_angle;
-	DirectX::SimpleMath::Vector2 ajust_camera_angle;	 // �J���������̒����l
-	DirectX::SimpleMath::Vector2 camera_angle_min;		 // �J�����p�x(�ŏ��l)
-	DirectX::SimpleMath::Vector2 camera_angle_max;		 // �J�����p�x(�ő�l)
+	DirectX::SimpleMath::Vector2 ajust_camera_angle;
+	DirectX::SimpleMath::Vector2 camera_angle_min;
+	DirectX::SimpleMath::Vector2 camera_angle_max;
 
-	DirectX::SimpleMath::Vector3 ajust_camera_position;	 // �J�����ʒu�̒����l
+	DirectX::SimpleMath::Vector3 ajust_camera_position;
 
 	DirectX::SimpleMath::Vector3 correction_vec;
-	bool is_operation = true;	// �J���������K�p���邩
+	bool is_operation = true;
 
 	DirectX::SimpleMath::Vector3 camera_position;
 	DirectX::SimpleMath::Vector3 prev_camera_position;
@@ -63,7 +63,7 @@ private:
 
 	DirectX::SimpleMath::Vector3 delta_position{};
 
-	// For Imgui
+	// For ImGui
 	std::vector<std::string> state_name;
 	float lockon_length = 0;
 
@@ -88,8 +88,8 @@ public:
 	void SetLisence(CameraState bit)   { lisence.set(static_cast<int>(bit)); }
 	void ResetLisence(CameraState bit) { lisence.reset(static_cast<int>(bit)); }
 
-	void AjustCameraTargetPosition(const DirectX::SimpleMath::Vector3& pos) { ajust_target_position = pos; }
-	DirectX::SimpleMath::Vector3 const AjustCameraTargetPosition() { return ajust_target_position; }
+	void AjustCameraTargetPosition(const DirectX::SimpleMath::Vector3& pos) { adjust_target_position = pos; }
+	DirectX::SimpleMath::Vector3 const AjustCameraTargetPosition() { return adjust_target_position; }
 	void DefaultCameraLength(float length) { default_camera_length = length; }
 	float const DefaultCameraLength() { return default_camera_length; }
 
@@ -109,8 +109,8 @@ public:
 	void CameraSpeed_Mouse(const DirectX::SimpleMath::Vector2& speed) { camera_speed_mouse = speed; }
 	DirectX::SimpleMath::Vector2 const CameraSpeed_Mouse() { return camera_speed_mouse; }
 
-	void  LockOnCancelLength(const float length) { lockon_cancel_lenght = length; }
-	float LockOnCancelLength() const { return lockon_cancel_lenght; }
+	void  LockOnCancelLength(const float length) { lock_on_cancel_length = length; }
+	float LockOnCancelLength() const { return lock_on_cancel_length; }
 
 	void CorrectionTimer(float timer) { correction_timer = timer; }
 	float CorrectionTimer() const { return correction_timer; }

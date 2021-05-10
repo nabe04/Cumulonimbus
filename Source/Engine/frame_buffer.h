@@ -16,11 +16,9 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> default_depth_stencil_view;
 
 public:
-	// ��������
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> render_target_view;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depth_stencil_view;
 
-	// �ǂݍ���
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> render_target_shader_resource_view;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> depth_stencil_shader_resource_view;
 

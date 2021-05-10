@@ -1,6 +1,6 @@
 #include "build_fbx.h"
 
-#include <assert.h>
+#include <cassert>
 #include <fstream>
 
 // シリアライズ

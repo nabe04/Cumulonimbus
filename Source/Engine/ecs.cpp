@@ -62,10 +62,10 @@ bool Entity::ApplyPaused()
 void Entity::Save(std::string file_path)
 {
 	const std::string file_path_and_name = file_path + "/" + this->entity_name;
-	// �t�H���_�̍쐬
+
 	std::filesystem::create_directories(file_path_and_name);
 
-	{// Entity�̕ۑ�
+	{// Entity
 		const std::string file_path_and_name_and_exe = file_path_and_name + ".json";
 		std::ofstream ofs(file_path_and_name_and_exe);
 		cereal::JSONOutputArchive o_archive(ofs);
@@ -77,7 +77,7 @@ void Entity::Save(std::string file_path)
 		);
 	}
 
-	{// Component�̕ۑ�
+	{// Component
 		if (components.empty())
 			return;
 
@@ -92,12 +92,12 @@ void Entity::Save(std::string file_path)
 }
 
 void Entity::Load(std::string file_path)
-{//  �E�E�E/Entity�܂ł̃p�X������
+{
 	for(const std::string comp_name : component_names)
 	{
 		Component* comp = component_list::Create(comp_name);
 		if (!comp)
-			continue;	// Component�����݂��Ȃ��ꍇ�͉���ǉ����Ȃ�
+			continue;	// Component
 
 		const std::string input_filename = file_path + "/" + entity_name + "/Component/" + comp_name + ".json";
 		comp->Load(this, input_filename);

@@ -1,19 +1,14 @@
 #pragma once
 
-#include <bitset>
-#include <wrl.h>
 #include <memory>
 
-#include <d3d11.h>
 #include <DirectXMath.h>
 using namespace DirectX;
 
 #include "ecs.h"
 #include "blend.h"
 #include "rasterizer.h"
-#include "sampler.h"
 #include "depth_stencil.h"
-#include "dx_manager.h"
 #include "shader_manager.h"
 #include "model_render.h"
 #include "rendering_buffer.h"

@@ -1,6 +1,6 @@
 #include "camera_operation.h"
 
-#include <assert.h>
+#include <cassert>
 #include <cmath>
 
 #include "arithmetic.h"
@@ -233,7 +233,7 @@ void CameraOperationComponent::TargetTagCamera(const float delta_time)
 //
 //	// カメラの注視点設定
 //	auto* default_target_transform = GetEntity()->GetScene()->GetOtherEntity(my_target_tag)->GetComponent<TransformComponent>()->GetTransform();
-//	SimpleMath::Vector3 camera_target{ default_target_transform->GetPosition() + ajust_target_position };
+//	SimpleMath::Vector3 camera_target{ default_target_transform->GetPosition() + adjust_target_position };
 //	view->SetCameraTarget(camera_target);
 }
 //
@@ -294,7 +294,7 @@ void CameraOperationComponent::LockOnCamera(const float delta_time)
 //		assert(!"Camera forward vector is nan or infinity");
 //	}
 //
-//	if (lockon_length < lockon_cancel_lenght)
+//	if (lockon_length < lock_on_cancel_length)
 //	{
 //		camera_state.SetState(CameraState::DefaultTargetCamera);
 //	}
@@ -463,7 +463,7 @@ void CameraOperationComponent::Correction_LockOn_Free(const float delta_time)
 	CalcCameraAngle();
 
 	// カメラの注視点設定
-	SimpleMath::Vector3 camera_target{ default_target_transform->GetPosition() + ajust_target_position };
+	SimpleMath::Vector3 camera_target{ default_target_transform->GetPosition() + adjust_target_position };
 	view->SetCameraTarget(camera_target);
 }
 

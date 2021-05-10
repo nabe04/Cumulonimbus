@@ -1,9 +1,5 @@
 #include "scene.h"
 
-#include <iostream>
-
-// Test
-#include <GamePad.h>
 #include <memory>
 
 #include "collision_component.h"
@@ -14,11 +10,9 @@
 #include "input_device.h"
 #include "obj_model_component.h"
 #include "sphere_collision_component.h"
-#include "string_helper.h"
 #include "scene_title.h"
 #include "scene_load.h"
 #include "transform_component.h"
-#include "camera_operation.h"
 
 #include "locator.h"
 

@@ -85,12 +85,12 @@ void GeometricPrimitiveResource::CreatePrimitive(ID3D11Device* device, GeomPrimT
 
 
 	//-- Create Vertex buffer --//
-	meshes.at(static_cast<int>(type)).num_vertices = vertices.size();
+	meshes.at(static_cast<int>(type)).num_vertices = static_cast<u_int>(vertices.size());
 	{
 		HRESULT hr = E_FAIL;
 		CD3D11_BUFFER_DESC bd		= {};
 		bd.Usage					= D3D11_USAGE_DEFAULT;
-		bd.ByteWidth				= sizeof(shader::Vertex) * vertices.size();
+		bd.ByteWidth				= static_cast<u_int>(sizeof(shader::Vertex)) * static_cast<u_int>(vertices.size());
 		bd.BindFlags				= D3D11_BIND_VERTEX_BUFFER;
 		bd.CPUAccessFlags			= 0;
 		bd.MiscFlags				= 0;
@@ -106,7 +106,7 @@ void GeometricPrimitiveResource::CreatePrimitive(ID3D11Device* device, GeomPrimT
 	}
 
 	//-- Create Index buffer --//
-	meshes.at(static_cast<int>(type)).num_indices = indices.size();
+	meshes.at(static_cast<int>(type)).num_indices = static_cast<u_int>(indices.size());
 	{
 		HRESULT hr = E_FAIL;
 		D3D11_BUFFER_DESC bd = {};
