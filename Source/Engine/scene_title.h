@@ -24,7 +24,7 @@ public:
 	void InitializeScene() override;
 	void UnInitializeScene() override;
 	void UpdateScene(const float delta_time) override;
-	void RenderImgui() override;
+	void RenderImGui() override;
 
 	const auto& GetGameMode() { return select_game_mode; }
 };

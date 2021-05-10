@@ -113,7 +113,7 @@ void SceneTitle::UpdateScene(const float delta_time)
 
 }
 
-void SceneTitle::RenderImgui()
+void SceneTitle::RenderImGui()
 {
 	if (select_game_mode.test(static_cast<int>(SelectGameMode::TraininigMode)))
 	{

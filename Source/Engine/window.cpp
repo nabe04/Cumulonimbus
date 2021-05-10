@@ -24,13 +24,13 @@ void Window::Create(u_int width, u_int height, u_int pos_x, u_int pos_y)
 	wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
 	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW + 1);
 	wcex.lpszMenuName	= NULL;
-	wcex.lpszClassName	= _T("SunLight");
+	wcex.lpszClassName	= _T("Cumlonimbus");
 	wcex.hIconSm		= 0;
 	RegisterClassEx(&wcex);
 
 	RECT rc = { 0, 0, static_cast<long>(width), static_cast<long>(height) };
 	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
-	hwnd = CreateWindow(_T("SunLight"), _T("SunLight"), WS_OVERLAPPEDWINDOW ^ WS_MAXIMIZEBOX ^ WS_THICKFRAME | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, instance, NULL);
+	hwnd = CreateWindow(_T("Cumlonimbus"), _T("Cumlonimbus"), WS_OVERLAPPEDWINDOW ^ WS_MAXIMIZEBOX ^ WS_THICKFRAME | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, instance, NULL);
 	ShowWindow(hwnd, cmd_show);
 	SetWindowPos(hwnd, HWND_TOP, pos_x, pos_y, rc.right, rc.bottom, SWP_SHOWWINDOW);
 

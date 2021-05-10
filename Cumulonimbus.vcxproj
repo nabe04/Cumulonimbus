@@ -702,7 +702,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>.\Libraries\imgui;.\Source\Engine;.\Libraries\DirectXTK-master\Inc;.\Libraries\FBX\FBX SDK\2019.0\include;.\Libraries\cereal-master\include;.\Libraries\Effekseer152\include\Effekseer;.\Libraries\Effekseer152\include\EffekseerRendererDX11;.\Source\Game;.\Libraries\DirectXTex-master\DDSTextureLoader;.\Libraries\DirectXTex-master\DirectXTex;.\Libraries\nameof</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Libraries\imgui;.\Source\Engine;.\Libraries\FBX\FBX SDK\2019.0\include;.\Libraries\cereal-master\include;.\Source\Game;.\Libraries\DirectXTex-master\DDSTextureLoader;.\Libraries\DirectXTex-master\DirectXTex;.\Libraries\nameof;.\Libraries\DirectXTK-master\Inc</AdditionalIncludeDirectories>
       <AdditionalOptions>-DNOMINMAX %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -714,8 +714,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libfbxsdk-md.lib;dxguid.lib;d3dcompiler.lib;d3d11.lib;dxgi.lib;dinput8.lib;DirectXTK.lib;Effekseer.lib;EffekseerRendererDX11.lib;DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>.\Libraries\Effekseer152\lib;.\Libraries\FBX\FBX SDK\2019.0\lib\vs2015\x64\release;.\Libraries\DirectXTex-master\DirectXTex\Bin\Desktop_2019\x64\Release;.\Libraries\DirectXTK-master\Bin\Desktop_2019\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libfbxsdk-md.lib;dxguid.lib;d3dcompiler.lib;d3d11.lib;dxgi.lib;dinput8.lib;DirectXTK.lib;DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>.\Libraries\FBX\FBX SDK\2019.0\lib\vs2015\x64\release;.\Libraries\DirectXTex-master\DirectXTex\Bin\Desktop_2019\x64\Release;.\Libraries\DirectXTK-master\Bin\Desktop_2019\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>

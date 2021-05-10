@@ -1,18 +1,14 @@
 #include "scene.h"
 
 #include "window.h"
-#include "collision_component.h"
 #include "input_manager.h"
 #include "fbx_model_component.h"
 #include "geometric_primitive_component.h"
 #include "geometric_primitive_resource.h"
 #include "input_manager.h"
-#include "obj_model_component.h"
-#include "transform_component.h"
 #include "locator.h"
 #include "resource_manager.h"
 
-#include "scene_load.h"
 #include "scene_title.h"
 
 //*************************************
@@ -104,11 +100,12 @@ void Scene::Initialize()
 	{// Sound
 		sound_resource = std::make_unique<SoundResource>(GetFramework()->GetWindow()->GetHWND());
 	}
-
+#ifdef _DEBUG
 	if (!this->editor_manager)
 	{
 		editor_manager = std::make_unique<EditorManager>();
 	}
+#endif
 
 	if(!this->resource_manager)
 	{
@@ -220,7 +217,7 @@ void Scene::Render()
 	{
 		ImGui::Begin("Scene");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		this->RenderImgui();
+		this->RenderImGui();
 		view->WriteImGui();
 		light->WriteImGui();
 		if (ImGui::CollapsingHeader("Objects"))

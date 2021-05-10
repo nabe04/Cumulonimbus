@@ -91,7 +91,7 @@ HRESULT DxManager::CreateDevice(HWND hwnd,ID3D11Device** device, ID3D11DeviceCon
 	scd.BufferUsage							= DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	scd.BufferCount							= 1;
 	scd.OutputWindow						= hwnd;
-	scd.Windowed							= is_window;
+	scd.Windowed							= true; // Release‚Å“®‚­‚æ‚¤‚É‚È‚ê‚Î"is_window"‚ðŽw’è‚·‚é
 	scd.SwapEffect							= DXGI_SWAP_EFFECT_DISCARD;
 	scd.Flags								= 0;
 	Microsoft::WRL::ComPtr<IDXGIFactory>  dxgi_factory;
