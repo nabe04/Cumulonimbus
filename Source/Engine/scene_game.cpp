@@ -1,30 +1,12 @@
 #include "scene_game.h"
 
-#include <iostream>
-
-// Test
-#include <GamePad.h>
 #include <memory>
 
-#include "collision_component.h"
-#include "ecs.h"
 #include "fbx_model_component.h"
-#include "geometric_primitive_component.h"
 #include "input_manager.h"
 #include "input_device.h"
-#include "obj_model_component.h"
-#include "my_effekseer.h"
-#include "sphere_collision_component.h"
-#include "string_helper.h"
 #include "scene_title.h"
-#include "scene_load.h"
-#include "transform_component.h"
-#include "camera_operation.h"
 
-#include "imgui.h"
-
-// è¡Ç∑
-#include "test_effekseer.h"
 
 using namespace shader;
 

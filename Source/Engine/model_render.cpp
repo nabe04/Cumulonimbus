@@ -13,7 +13,6 @@
 #include "light.h"
 #include "obj_model_component.h"
 #include "model_data.h"
-#include "my_effekseer.h"
 #include "rasterizer.h"
 #include "sampler.h"
 #include "scene.h"

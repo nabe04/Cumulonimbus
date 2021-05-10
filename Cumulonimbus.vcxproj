@@ -75,7 +75,6 @@
     <ClInclude Include="Source\Engine\Misc.h" />
     <ClInclude Include="Source\Engine\model_data.h" />
     <ClInclude Include="Source\Engine\model_render.h" />
-    <ClInclude Include="Source\Engine\my_effekseer.h" />
     <ClInclude Include="Source\Engine\phong.h" />
     <ClInclude Include="Source\Engine\rasterizer.h" />
     <ClInclude Include="Source\Engine\reflection_mapping.h" />
@@ -167,7 +166,6 @@
     <ClCompile Include="Source\Engine\metal.cpp" />
     <ClCompile Include="Source\Engine\model_data.cpp" />
     <ClCompile Include="Source\Engine\model_render.cpp" />
-    <ClCompile Include="Source\Engine\my_effekseer.cpp" />
     <ClCompile Include="Source\Engine\phong.cpp" />
     <ClCompile Include="Source\Engine\rasterize.cpp" />
     <ClCompile Include="Source\Engine\reflection_mapping.cpp" />
@@ -642,7 +640,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>.\Libraries\imgui;.\Libraries\FBX\FBX SDK\2019.0\include;.\Libraries\DirectXTK-master\Inc;.\Libraries\Effekseer152\include\EffekseerRendererDX11;.\Libraries\Effekseer152\include\Effekseer;.\Libraries\cereal-master\include;.\Source\Engine;%(AdditionalIncludeDirectories);.\Source\Game;.\Libraries\DirectXTex-master\DDSTextureLoader;.\Libraries\DirectXTex-master\DirectXTex;.\Libraries\nameof</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Libraries\imgui;.\Libraries\FBX\FBX SDK\2019.0\include;.\Libraries\DirectXTK-master\Inc;.\Libraries\cereal-master\include;.\Source\Engine;%(AdditionalIncludeDirectories);.\Source\Game;.\Libraries\DirectXTex-master\DDSTextureLoader;.\Libraries\DirectXTex-master\DirectXTex;.\Libraries\nameof</AdditionalIncludeDirectories>
       <AdditionalOptions>-DNOMINMAX %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -650,8 +648,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>.\Libraries\FBX\FBX SDK\2019.0\lib\vs2015\x64\debug;.\Libraries\DirectXTK-master\Bin\Desktop_2019\x64\Debug;.\Libraries\Effekseer152\lib;.\Libraries\DirectXTex-master\DirectXTex\Bin\Desktop_2019\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libfbxsdk-md.lib;dxguid.lib;d3dcompiler.lib;d3d11.lib;dxgi.lib;dinput8.lib;DirectXTK.lib;Effekseerd.lib;EffekseerRendererDX11d.lib;DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>.\Libraries\FBX\FBX SDK\2019.0\lib\vs2015\x64\debug;.\Libraries\DirectXTK-master\Bin\Desktop_2019\x64\Debug;.\Libraries\DirectXTex-master\DirectXTex\Bin\Desktop_2019\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libfbxsdk-md.lib;dxguid.lib;d3dcompiler.lib;d3d11.lib;dxgi.lib;dinput8.lib;DirectXTK.lib;DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>

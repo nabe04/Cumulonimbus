@@ -16,9 +16,6 @@
 
 class FbxModelResource;
 
-#include <Effekseer.h>
-#include <EffekseerRendererDX11.h>
-
 namespace shader
 {
 	class MeshShaderState;
