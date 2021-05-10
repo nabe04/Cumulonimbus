@@ -46,7 +46,7 @@ void Scene03::InitializeScene()
 
 void Scene03::UpdateScene(const float delta_time)
 {
-	if (Locator::GetInput().Keyboard().GetState(Keycode::Enter) == ButtonState::Press)
+	if (Locator::GetInput()->Keyboard().GetState(Keycode::Enter) == ButtonState::Press)
 	{
 		next_scene = std::make_shared<SceneLoad>(new SceneTitle);
 	}

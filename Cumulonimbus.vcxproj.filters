@@ -66,7 +66,6 @@
     <ClCompile Include="Source\Engine\content_brawser.cpp" />
     <ClCompile Include="Source\Engine\depth_stencil.cpp" />
     <ClCompile Include="Source\Engine\diffuse.cpp" />
-    <ClCompile Include="Source\Engine\dx_manager.cpp" />
     <ClCompile Include="Source\Engine\easing.cpp" />
     <ClCompile Include="Source\Engine\ecs.cpp" />
     <ClCompile Include="Source\Engine\editor_manager.cpp" />
@@ -147,6 +146,7 @@
     <ClCompile Include="Source\scene03.cpp">
       <Filter>Source\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\dx11_configurator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libraries\imgui\imconfig.h" />
@@ -175,7 +175,6 @@
     <ClInclude Include="Source\Engine\content_browser.h" />
     <ClInclude Include="Source\Engine\depth_stencil.h" />
     <ClInclude Include="Source\Engine\diffuse.h" />
-    <ClInclude Include="Source\Engine\dx_manager.h" />
     <ClInclude Include="Source\Engine\easing.h" />
     <ClInclude Include="Source\Engine\ecs.h" />
     <ClInclude Include="Source\Engine\editor_manager.h" />
@@ -254,6 +253,7 @@
     <ClInclude Include="Source\Engine\scene_tutorial.h">
       <Filter>Header\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\dx11_configurator.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Cumulonimbus.rc" />

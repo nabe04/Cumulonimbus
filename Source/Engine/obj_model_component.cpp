@@ -5,7 +5,6 @@
 #include "scene.h"
 #include "view.h"
 #include "string_helper.h"
-#include "dx_manager.h"
 #include "transform.h"
 #include "transform_component.h"
 #include "texture.h"

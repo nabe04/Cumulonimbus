@@ -77,7 +77,7 @@ void SceneTitle::InitializeScene()
 	auto* sample01 = AddEntity(UpdateOrder::Default, EntityTag::Bunny);
 	sample01->AddComponent<MeshObject>();
 	sample01->GetComponent<MeshObject>()->SetShaderState(shader::MeshShaderTypes::Metal);
-	sample01->AddComponent<FbxModelComponent>(Locator::GetResourceManager().FbxModelResouece("stanford_bunny"));
+	sample01->AddComponent<FbxModelComponent>(Locator::GetResourceManager()->FbxModelResouece("stanford_bunny"));
 	sample01->GetComponent<TransformComponent>()->GetTransform()->SetScale(0.01f);
 	sample01->GetComponent<TransformComponent>()->GetTransform()->SetPosition({ 0,4,30 });
 	sample01->GetComponent<TransformComponent>()->GetTransform()->SetScale(0.01f);
@@ -106,7 +106,7 @@ void SceneTitle::UnInitializeScene()
 
 void SceneTitle::UpdateScene(const float delta_time)
 {
-	if (Locator::GetInput().Keyboard().GetState(Keycode::Enter) == ButtonState::Press)
+	if (Locator::GetInput()->Keyboard().GetState(Keycode::Enter) == ButtonState::Press)
 	{
 		//next_scene = std::make_shared<SceneLoad>(new SceneTutorial);
 	}

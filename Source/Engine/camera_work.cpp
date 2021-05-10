@@ -18,8 +18,8 @@ void CameraWork::Update(bool is_debug)
 	CalcCameraDirectionalVector();
 	//CalcCameraAngle(); //オイラー角で(現在)計算しているので今は使わない
 
-	const auto& mouse = Locator::GetInput().Mouse();
-	const auto& key = Locator::GetInput().Keyboard();
+	const auto& mouse = Locator::GetInput()->Mouse();
+	const auto& key = Locator::GetInput()->Keyboard();
 
 	if(mouse.GetState(MouseButton::Left) == ButtonState::Held)
 	{
@@ -167,7 +167,7 @@ void CameraWork::Track(const DirectX::SimpleMath::Vector3& direction, const floa
 
 void CameraWork::PanAndTilt(const float velocity, const DirectX::SimpleMath::Vector3& add_angle)
 {
-	const auto& key = Locator::GetInput().Keyboard();
+	const auto& key = Locator::GetInput()->Keyboard();
 
 	DirectX::SimpleMath::Vector3 front_vec{ 0,0,1 };
 	static DirectX::SimpleMath::Vector3 angle{};

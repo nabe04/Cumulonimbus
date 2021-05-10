@@ -43,7 +43,7 @@ void SceneTutorial::InitializeScene()
 	//std::shared_ptr<FbxModelResource> bunny_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), bunny_filename, " ");
 	auto* bunny = AddEntity();
 	bunny->AddComponent<MeshObject>();
-	bunny->AddComponent<FbxModelComponent>(Locator::GetResourceManager().FbxModelResouece("stanford_bunny"));
+	bunny->AddComponent<FbxModelComponent>(Locator::GetResourceManager()->FbxModelResouece("stanford_bunny"));
 	bunny->GetComponent<TransformComponent>()->GetTransform()->SetScale(0.01f);
 	bunny->GetComponent<TransformComponent>()->GetTransform()->SetPositionY(5);
 	bunny->GetComponent<MeshObject>()->SetRasterizeState(RasterizeState::Cull_Back);
@@ -53,7 +53,7 @@ void SceneTutorial::InitializeScene()
 	//std::shared_ptr<FbxModelResource> ganfaul_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), ganfaul_filename, "./Data/Assets/FBX/ganfaul/character.fbm/");
 	auto* player = AddEntity(UpdateOrder::Default, EntityTag::Player);
 	player->AddComponent<MeshObject>();
-	player->AddComponent<FbxModelComponent>(Locator::GetResourceManager().FbxModelResouece("ganfaul"));
+	player->AddComponent<FbxModelComponent>(Locator::GetResourceManager()->FbxModelResouece("ganfaul"));
 	player->GetComponent<TransformComponent>()->GetTransform()->SetScale(0.05f);
 	player->GetComponent<TransformComponent>()->GetTransform()->SetPosition({-10,3,0});
 	player->GetComponent<MeshObject>()->SetRasterizeState(RasterizeState::Cull_Back_CCW_True);

@@ -7,6 +7,7 @@
 
 #include "window.h"
 #include "scene.h"
+#include "dx11_configurator.h"
 #include "imgui_manager.h"
 #include "input_manager.h"
 #include "light.h"
@@ -18,12 +19,16 @@
 
 bool Framework::Initialize()
 {
-	Locator::Provide<Window>(window.get());
+	Locator::Provide<Window>(window);
 	input_system = std::make_shared<InputSystem>(window->GetHWND());
-	Locator::Provide<InputSystem>(input_system.get());
+	Locator::Provide<InputSystem>(input_system);
+
+	dx11_configurator = std::make_shared<Dx11Configurator>(window->GetHWND());
+	dx11_configurator->Initialize(window->GetHWND(), device.GetAddressOf(), immediate_context.GetAddressOf(), window->Width(), window->Height());
+	Locator::Provide<Dx11Configurator>(dx11_configurator);
 
 	// DirectX11 Intialization
-	DxManager::GetInstance(window->GetHWND()).Initialize(window->GetHWND(), device.GetAddressOf(), immediate_context.GetAddressOf(), window->Width(), window->Height());
+	//Dx11Configurator::GetInstance(window->GetHWND()).Initialize(window->GetHWND(), device.GetAddressOf(), immediate_context.GetAddressOf(), window->Width(), window->Height());
 
 	// TextureManager Initialization
 	TextureManager::GetInstance()->Initialize(device.Get());
@@ -73,7 +78,7 @@ int Framework::Run()
 
 void Framework::DrawBegin()
 {
-	DxManager::GetInstance().Clear();
+	Locator::GetDx11Configurator()->Clear();
 }
 
 void Framework::DrawEnd()
@@ -83,7 +88,7 @@ void Framework::DrawEnd()
 #endif
 
 	// Screen flip
-	DxManager::GetInstance().Flip(1);
+	Locator::GetDx11Configurator()->Flip(1);
 }
 
 LRESULT Framework::HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
@@ -163,13 +168,13 @@ bool Framework::ProcessLoop()
 	imgui::Update();
 #endif
 	//InputSystem::Instance()->UpdateStates();
-	Locator::GetInput().UpdateStates();
+	Locator::GetInput()->UpdateStates();
 
 	//key_input::KeyUpdate();
 	//mouse_input::MouseUpdate();
 	//pad_input::Update();
 
-	if (Locator::GetInput().Keyboard().GetState(Keycode::Esc) == ButtonState::Press)
+	if (Locator::GetInput()->Keyboard().GetState(Keycode::Esc) == ButtonState::Press)
 	{
 		return false;
 	}

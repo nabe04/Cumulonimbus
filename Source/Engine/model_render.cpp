@@ -5,7 +5,7 @@
 #include "mesh_object.h"
 #include "blend.h"
 #include "collision_component.h"
-#include "dx_manager.h"
+#include "dx11_configurator.h"
 #include "fbx_model_component.h"
 #include "fbx_model_resource.h"
 #include "framework.h"
@@ -51,9 +51,9 @@ MeshRenderer::MeshRenderer(ID3D11Device* device)
 	dummy_texture = std::make_unique<DummyTexture>(device, DirectX::XMFLOAT4{ 1.f,1.f,1.f,1.f });
 
 	//-- Effects --//
-	bloom			= std::make_unique<Bloom>(device, Locator::GetWindow().Width(), Locator::GetWindow().Height());
-	sorbel_filter	= std::make_unique<SorbelFilter>(device, Locator::GetWindow().Width(), Locator::GetWindow().Height());
-	shadow_map		= std::make_unique<ShadowMap>(device, Locator::GetWindow().Width(), Locator::GetWindow().Height());
+	bloom			= std::make_unique<Bloom>(device, Locator::GetWindow()->Width(), Locator::GetWindow()->Height());
+	sorbel_filter	= std::make_unique<SorbelFilter>(device, Locator::GetWindow()->Width(), Locator::GetWindow()->Height());
+	shadow_map		= std::make_unique<ShadowMap>(device, Locator::GetWindow()->Width(), Locator::GetWindow()->Height());
 }
 
 void MeshRenderer::Begin(ID3D11DeviceContext* immediate_context)
@@ -329,7 +329,7 @@ void MeshRenderer::RenderGeomPrim(ID3D11DeviceContext* immediate_context,
 	}
 	else
 	{// Set of dummy texture
-		auto& dx_instance = DxManager::GetInstance();
+		auto* dx_instance = Locator::GetDx11Configurator();
 		immediate_context->PSSetShaderResources(0, 1, dummy_texture->dummy_texture.GetAddressOf());
 		samplers.at(actor->GetSamplerState())->Activate(immediate_context, 0);
 	}
@@ -382,9 +382,9 @@ void MeshRenderer::RenderParticle(ID3D11DeviceContext* immediate_context,
 	immediate_context->IASetVertexBuffers(0, 1, mesh_particle->GetVertexBuffer_S0()->GetVertexBufferAddress(), &stride, &offset);
 
 	static float up = 0;
-	if(Locator::GetInput().Keyboard().GetState(Keycode::Up) == ButtonState::Held)
+	if(Locator::GetInput()->Keyboard().GetState(Keycode::Up) == ButtonState::Held)
 		up += 0.1f;
-	if (Locator::GetInput().Keyboard().GetState(Keycode::Down) == ButtonState::Held)
+	if (Locator::GetInput()->Keyboard().GetState(Keycode::Down) == ButtonState::Held)
 		up -= 0.1f;
 	DirectX::SimpleMath::Matrix mat = DirectX::SimpleMath::Matrix::Identity;
 	mat = DirectX::SimpleMath::Matrix::CreateTranslation({ 0,up,0 });
@@ -454,7 +454,7 @@ void MeshRenderer::RenderSphereCollision(ID3D11DeviceContext* immediate_context,
 		// Set of DepthStencilState
 		depth_stencil->Activate(immediate_context, actor->GetDepthStencilState());
 
-		auto& dx_instance = DxManager::GetInstance();
+		auto* dx_instance = Locator::GetDx11Configurator();
 		immediate_context->PSSetShaderResources(0, 1, dummy_texture->dummy_texture.GetAddressOf());
 		samplers.at(actor->GetSamplerState())->Activate(immediate_context, 0);
 
@@ -511,7 +511,7 @@ void MeshRenderer::RenderInnerSphereCollision(ID3D11DeviceContext* immediate_con
 		// Set of DepthStencilState
 		depth_stencil->Activate(immediate_context, actor->GetDepthStencilState());
 
-		auto& dx_instance = DxManager::GetInstance();
+		auto* dx_instance = Locator::GetDx11Configurator();
 		immediate_context->PSSetShaderResources(0, 1, dummy_texture->dummy_texture.GetAddressOf());
 		samplers.at(actor->GetSamplerState())->Activate(immediate_context, 0);
 
@@ -602,7 +602,7 @@ void MeshRenderer::RenderFBX(ID3D11DeviceContext* immediate_context,
 	const std::vector<FbxModelComponent::Node>& nodes = model->GetNodes();
 
 	// Set of DepthStencilState
-	//immediate_context->OMSetDepthStencilState(DxManager::GetInstance().GetDepthStencilState(actor_comp->GetDepthStencilState()), 1);
+	//immediate_context->OMSetDepthStencilState(Dx11Configurator::GetInstance().GetDepthStencilState(actor_comp->GetDepthStencilState()), 1);
 
 	{// Light
 		shader::CB_Light cb;

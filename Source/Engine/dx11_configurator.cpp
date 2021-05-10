@@ -1,5 +1,5 @@
 #include <vector>
-#include "dx_manager.h"
+#include "dx11_configurator.h"
 #include "imgui_manager.h"
 
 //***********************************
@@ -7,7 +7,7 @@
 //	General Initialization
 //
 //***********************************
-bool DxManager::Initialize(HWND hwnd,ID3D11Device** device,ID3D11DeviceContext** immediate_context, int width, int height)
+bool Dx11Configurator::Initialize(HWND hwnd,ID3D11Device** device,ID3D11DeviceContext** immediate_context, int width, int height)
 {
 	CreateDevice(hwnd,device,immediate_context);
 	InitializeRenderTarget();
@@ -20,7 +20,7 @@ bool DxManager::Initialize(HWND hwnd,ID3D11Device** device,ID3D11DeviceContext**
 //	Create Device
 //
 //************************************
-HRESULT DxManager::CreateDevice(HWND hwnd,ID3D11Device** device, ID3D11DeviceContext** immediate_context)
+HRESULT Dx11Configurator::CreateDevice(HWND hwnd,ID3D11Device** device, ID3D11DeviceContext** immediate_context)
 {
 	HRESULT hr = S_OK;
 	RECT rc;
@@ -129,7 +129,7 @@ HRESULT DxManager::CreateDevice(HWND hwnd,ID3D11Device** device, ID3D11DeviceCon
 //------------------------------
 //	Initialize
 //------------------------------
-bool DxManager::InitializeRenderTarget()
+bool Dx11Configurator::InitializeRenderTarget()
 {
 	// Get BackBuffer
 	ID3D11Texture2D* back_buffer = nullptr;
@@ -159,7 +159,7 @@ bool DxManager::InitializeRenderTarget()
 //------------------------------
 // Set up Viewport
 //------------------------------
-void DxManager::SetViewPort(int width, int height)
+void Dx11Configurator::SetViewPort(int width, int height)
 {
 	D3D11_VIEWPORT vp;
 	vp.Width	= (FLOAT)width;
@@ -174,7 +174,7 @@ void DxManager::SetViewPort(int width, int height)
 //--------------------------------
 // Create DepthStencil Buffer
 //--------------------------------
-bool DxManager::CreateDepthStencil()
+bool Dx11Configurator::CreateDepthStencil()
 {
 	// Set up DepthStencil (Required to create a DepthStencilView)
 	D3D11_TEXTURE2D_DESC td = {};
@@ -220,7 +220,7 @@ bool DxManager::CreateDepthStencil()
 //------------------------------------
 //	Clear
 //------------------------------------
-void DxManager::Clear(DWORD color)
+void Dx11Configurator::Clear(DWORD color)
 {
 	float clear_color[] = { 0.0f, 1.0f, 1.0f, 1.0f };
 	immediate_context->ClearRenderTargetView(render_target_view.Get(), clear_color);
@@ -230,7 +230,7 @@ void DxManager::Clear(DWORD color)
 //-------------------------------------
 //	Flip
 //-------------------------------------
-void DxManager::Flip(int n)
+void Dx11Configurator::Flip(int n)
 {
 	//imgui::Render();
 

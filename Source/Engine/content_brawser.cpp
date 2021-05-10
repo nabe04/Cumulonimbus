@@ -9,7 +9,7 @@
 
 void ContentBrawser::Render(Scene* scene)
 {
-	auto& model_resource = Locator::GetResourceManager();
+	auto* model_resource = Locator::GetResourceManager();
 
 	{
 		ImGuiWindowFlags window_flags{};
@@ -79,20 +79,20 @@ void ContentBrawser::SelectedContent(Scene* scene)
 {
 	if (is_selected.test(Contents::FBX))
 	{
-		for (int n = 0; n < Locator::GetResourceManager().FbxModelNames().size(); ++n)
+		for (int n = 0; n < Locator::GetResourceManager()->FbxModelNames().size(); ++n)
 		{
 			ImGui::PushID(n);
-			if (ImGui::ImageButton((void*)Locator::GetResourceManager().GetTextureResouece("no_image_256")->GetTextureData()->texture_view.Get(), { 150,150 }))
+			if (ImGui::ImageButton((void*)Locator::GetResourceManager()->GetTextureResouece("no_image_256")->GetTextureData()->texture_view.Get(), { 150,150 }))
 			{
 
 			}
 
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
 			{// 選択されているモデルの追加
-				std::string model_name = Locator::GetResourceManager().FbxModelNames().at(n);
+				std::string model_name = Locator::GetResourceManager()->FbxModelNames().at(n);
 				auto* entity = scene->AddEntity();
 				entity->AddComponent<MeshObject>();
-				entity->AddComponent<FbxModelComponent>(Locator::GetResourceManager().FbxModelResouece(model_name));
+				entity->AddComponent<FbxModelComponent>(Locator::GetResourceManager()->FbxModelResouece(model_name));
 			}
 
 			//ImGui::Text(Locator::GetResourceManager().FbxModelNames().at(n).c_str());
@@ -110,15 +110,15 @@ void ContentBrawser::SelectedContent(Scene* scene)
 				// ここに保存したテクスチャを指定すると出てくると思う
 
 				{// ドラック時に出てくるテクスチャ
-					ImGui::Image((void*)Locator::GetResourceManager().GetTextureResouece("no_image_256")->GetTextureData()->texture_view.Get(), { 150,150 });
-					ImGui::Text(Locator::GetResourceManager().FbxModelNames().at(n).c_str());
+					ImGui::Image((void*)Locator::GetResourceManager()->GetTextureResouece("no_image_256")->GetTextureData()->texture_view.Get(), { 150,150 });
+					ImGui::Text(Locator::GetResourceManager()->FbxModelNames().at(n).c_str());
 				}
 
 				POINT po{};
 				GetCursorPos(&po);
 
 				// 最終目標
-				if (Locator::GetWindow().IsWithinWindow({ po.x,po.y }))
+				if (Locator::GetWindow()->IsWithinWindow({ po.x,po.y }))
 				{// モデルの追加
 
 				}

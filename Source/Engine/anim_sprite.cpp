@@ -137,7 +137,7 @@ void AnimSpriteComponent::Load(Entity* entity, std::string file_path_and_name)
 		);
 
 		this->entity = entity;
-		texture = Locator::GetResourceManager().GetTextureResouece(texture->GetTextureData()->filename);
+		texture = Locator::GetResourceManager()->GetTextureResouece(texture->GetTextureData()->filename);
 
 		variable_texcoords.at(0) = { .0f,.0f };
 		variable_texcoords.at(1) = { 1.f,.0f };

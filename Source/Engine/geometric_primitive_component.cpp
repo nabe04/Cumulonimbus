@@ -6,7 +6,7 @@
 #include "shader.h"
 #include "texture.h"
 #include "transform.h"
-#include "dx_manager.h"
+#include "dx11_configurator.h"
 #include "light.h"
 #include "view.h"
 

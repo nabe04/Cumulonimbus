@@ -2,11 +2,12 @@
 
 #include <cassert>
 #include <type_traits>
-#include <functional>
+#include <memory>
 
 #include "input_system.h"
 #include "resource_manager.h"
 #include "window.h"
+#include "dx11_configurator.h"
 
 class Locator final
 {
@@ -18,12 +19,14 @@ public:
 		window = nullptr;
 	}
 
-	static InputSystem& GetInput() { return *input; }
-	static ResourceManager& GetResourceManager() { return *resource_manager; }
-	static Window& GetWindow() { return *window; }
+
+	static InputSystem* GetInput() { return input.get(); }
+	static ResourceManager* GetResourceManager() { return resource_manager.get(); }
+	static Window* GetWindow() { return window.get(); }
+	static Dx11Configurator* GetDx11Configurator() { return dx11_configurator.get(); }
 
 	template<class T>
-	static void Provide(T* s)
+	static void Provide(const std::shared_ptr<T>& s)
 	{
 		if constexpr (std::is_same<T,InputSystem>::value)
 		{
@@ -40,6 +43,11 @@ public:
 			window = s;
 			return;
 		}
+		else if constexpr (std::is_same<T,Dx11Configurator>::value)
+		{
+			dx11_configurator = s;
+			return;
+		}
 		else
 		{
 			static_assert(false, "Don't have type (class::Locator)");
@@ -49,7 +57,8 @@ public:
 	}
 
 private:
-	inline static InputSystem* input;
-	inline static ResourceManager* resource_manager;
-	inline static Window* window;
+	inline static std::shared_ptr<InputSystem> input{};
+	inline static std::shared_ptr<ResourceManager> resource_manager{};
+	inline static std::shared_ptr<Window> window{};
+	inline static std::shared_ptr<Dx11Configurator> dx11_configurator{};
 };

@@ -11,7 +11,7 @@
 using namespace DirectX;
 
 #include "ecs.h"
-#include "dx_manager.h"
+#include "dx11_configurator.h"
 #include "shader.h"
 #include "shader_manager.h"
 #include "geometric_primitive_resource.h"

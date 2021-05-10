@@ -111,7 +111,7 @@ void Scene::Initialize()
 	{
 		resource_manager = std::make_shared<ResourceManager>();
 		resource_manager->Initialize(GetFramework()->GetDevice());
-		Locator::Provide<ResourceManager>(resource_manager.get());
+		Locator::Provide<ResourceManager>(resource_manager);
 	}
 
 	//pad_combine = std::make_unique<pad_link::PadLink>();
@@ -159,7 +159,7 @@ void Scene::Update(const float elapsed_time)
 		ent->Update(elapsed_time);
 	}
 
-	view->SetProjection(XM_PI / 8.0f, static_cast<float>(DxManager::GetInstance().GetScreenWidth()) / static_cast<float>(DxManager::GetInstance().GetScreenHeight()), 0.1f, 2000.0f);
+	view->SetProjection(XM_PI / 8.0f, static_cast<float>(Locator::GetDx11Configurator()->GetScreenWidth()) / static_cast<float>(Locator::GetDx11Configurator()->GetScreenHeight()), 0.1f, 2000.0f);
 
 	// View update
 	view->Activate();
@@ -169,12 +169,12 @@ void Scene::Update(const float elapsed_time)
 
 	UpdateScene(elapsed_time);
 
-	if (Locator::GetInput().Keyboard().GetState(Keycode::A) == ButtonState::Press)
+	if (Locator::GetInput()->Keyboard().GetState(Keycode::A) == ButtonState::Press)
 	{
 		this->SaveScene(this->scene_name);
 	}
 
-	if (Locator::GetInput().Keyboard().GetState(Keycode::L) == ButtonState::Press)
+	if (Locator::GetInput()->Keyboard().GetState(Keycode::L) == ButtonState::Press)
 	{
 		this->LoadScene("./Content/Scene/Scene_Title");
 	}
@@ -228,8 +228,8 @@ void Scene::Render()
 				ent->RenderImgui();
 			}
 		}
-		ImGui::Text("window x : %d", Locator::GetWindow().WindowRect().left);
-		ImGui::Text("window y : %d", Locator::GetWindow().WindowRect().top);
+		ImGui::Text("window x : %d", Locator::GetWindow()->WindowRect().left);
+		ImGui::Text("window y : %d", Locator::GetWindow()->WindowRect().top);
 		POINT po{};
 		GetCursorPos(&po);
 		ImGui::Text("mouse x : %d",po.x);

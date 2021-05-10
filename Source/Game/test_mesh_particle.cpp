@@ -13,7 +13,7 @@ void TestMeshParticle::NewFrame(const float delta_time)
 
 void TestMeshParticle::Update(const float delta_time)
 {
-	const auto& key = Locator::GetInput().Keyboard();
+	const auto& key = Locator::GetInput()->Keyboard();
 
 	if(key.GetState(Keycode::V) == ButtonState::Press)
 	{

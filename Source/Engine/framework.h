@@ -1,20 +1,17 @@
 #pragma once
 #include <Windows.h>
 #include <wrl.h>
-#include <map>
 #include <memory>
 #include <d3d11.h>
-#include <wrl.h>
+
 
 #include "imgui.h"
-#include "imgui_internal.h"
-#include "imgui_impl_win32.h"
-#include "imgui_impl_dx11.h"
 
 #include "high_resolution_timer.h"
 #include "input_system.h"
 
 class Window;
+class Dx11Configurator;
 
 //const UINT g_screen_width  = 960;
 //const UINT g_screen_height = 540;
@@ -29,13 +26,14 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Device>		device;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> immediate_context;
 
-	std::shared_ptr<Window>		 window;
-	std::shared_ptr<InputSystem> input_system;
-
+	std::shared_ptr<Window>		 window{};
+	std::shared_ptr<InputSystem> input_system{};
+	std::shared_ptr<Dx11Configurator> dx11_configurator{};
+	
 	const double frameRate = 60;
 	HighResolutionTimer hr_timer;
 
-	bool debugMode = false;
+	bool debug_mode = false;
 
 private:
 	bool Initialize();
@@ -58,6 +56,6 @@ public:
 	[[nodiscard]] auto* GetDeviceContext() const{ return immediate_context.Get(); }
 	[[nodiscard]] auto GetHighResolutionTimer() const{ return hr_timer; }
 	[[nodiscard]] const auto& GetWindow() const { return window; }
-	[[nodiscard]] bool getDebugMode() const { return debugMode; }
+	[[nodiscard]] bool getDebugMode() const { return debug_mode; }
 };
 

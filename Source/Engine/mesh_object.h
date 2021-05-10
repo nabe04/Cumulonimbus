@@ -13,7 +13,7 @@ using namespace DirectX;
 #include "rasterizer.h"
 #include "sampler.h"
 #include "depth_stencil.h"
-#include "dx_manager.h"
+#include "dx11_configurator.h"
 #include "shader_manager.h"
 #include "model_render.h"
 #include "rendering_buffer.h"

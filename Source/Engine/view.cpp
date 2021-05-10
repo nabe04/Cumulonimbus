@@ -17,8 +17,8 @@ View::View()
 	view_f4x4 = { 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
 	projection_f4x4 = { 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
 
-	width  = static_cast<float>(Locator::GetWindow().Width());
-	height = static_cast<float>(Locator::GetWindow().Height());
+	width  = static_cast<float>(Locator::GetWindow()->Width());
+	height = static_cast<float>(Locator::GetWindow()->Height());
 }
 
 View::~View()
@@ -81,9 +81,9 @@ void View::Activate()
 	CalcCameraOrthogonalVector();
 
 #ifdef _DEBUG
-	if (Locator::GetInput().Keyboard().GetState(Keycode::LeftShift) == ButtonState::Held)
+	if (Locator::GetInput()->Keyboard().GetState(Keycode::LeftShift) == ButtonState::Held)
 	{
-		if (Locator::GetInput().Keyboard().GetState(Keycode::F1) == ButtonState::Press)
+		if (Locator::GetInput()->Keyboard().GetState(Keycode::F1) == ButtonState::Press)
 		{
 			is_debug_camera = !is_debug_camera;
 		}
@@ -125,8 +125,8 @@ void View::CameraControl()
 {
 	prev_mouse_pos = cur_mouse_pos;
 
-	cur_mouse_pos.x = static_cast<float>(Locator::GetInput().Mouse().PosX());
-	cur_mouse_pos.y = static_cast<float>(Locator::GetInput().Mouse().PosY());
+	cur_mouse_pos.x = static_cast<float>(Locator::GetInput()->Mouse().PosX());
+	cur_mouse_pos.y = static_cast<float>(Locator::GetInput()->Mouse().PosY());
 
 	// The amount of mouse movement between the "cur_mouse_pos" and "prev_mouse_pos";
 	const float camera_speed_gamepad = 0.04f;
@@ -134,9 +134,9 @@ void View::CameraControl()
 	movement_val.x = (cur_mouse_pos.x - prev_mouse_pos.x) * camera_speed_gamepad;
 	movement_val.y = (cur_mouse_pos.y - prev_mouse_pos.y) * camera_speed_gamepad;
 
-	if (Locator::GetInput().Keyboard().GetState(Keycode::LeftAlt) == ButtonState::Held)
+	if (Locator::GetInput()->Keyboard().GetState(Keycode::LeftAlt) == ButtonState::Held)
 	{
-		if (Locator::GetInput().Mouse().GetState(MouseButton::Left) == ButtonState::Held)
+		if (Locator::GetInput()->Mouse().GetState(MouseButton::Left) == ButtonState::Held)
 		{//-- Wraparound --//
 			const float ajustmant_val = 3.5f;
 			const XMVECTOR vector  = XMVectorSet(position.x - target.x, position.y - target.y, position.z - target.z, 0); // Vector from camera target to camera position
@@ -157,7 +157,7 @@ void View::CameraControl()
 			XMVECTOR vCameraUp2 = XMVector3TransformNormal(vCameraUp, rotation_matrix_x);
 			XMStoreFloat3(&camera_up, vCameraUp2);
 		}
-		else if (Locator::GetInput().Mouse().GetState(MouseButton::Right) == ButtonState::Held)
+		else if (Locator::GetInput()->Mouse().GetState(MouseButton::Right) == ButtonState::Held)
 		{//-- Zoom in and Zoom out --//
 
 			const float ajustmant_val = 0.5f;
@@ -177,7 +177,7 @@ void View::CameraControl()
 			movement_val = {};
 		}
 	}
-	else if (Locator::GetInput().Mouse().GetState(MouseButton::Right) == ButtonState::Held && Locator::GetInput().Mouse().GetState(MouseButton::Left) == ButtonState::Held)
+	else if (Locator::GetInput()->Mouse().GetState(MouseButton::Right) == ButtonState::Held && Locator::GetInput()->Mouse().GetState(MouseButton::Left) == ButtonState::Held)
 	{//-- Truck --//
 		const XMVECTOR vNormalUp	   = XMVector3Normalize(XMVectorSet(camera_up.x,camera_up.y,camera_up.z,0.0f));
 		const XMVECTOR vNormalTarget   = XMVector3Normalize(XMVectorSet(target.x - position.x, target.y - position.y, target.z - position.z, 0.0f));
@@ -215,7 +215,7 @@ void View::CameraControl()
 		target.y += f3_Right.y;
 		target.z += f3_Right.z;
 	}
-	else if (Locator::GetInput().Mouse().GetState(MouseButton::Right) == ButtonState::Held)
+	else if (Locator::GetInput()->Mouse().GetState(MouseButton::Right) == ButtonState::Held)
 	{//-- Pan & Tilt --//
 
 		const XMVECTOR vector  = XMVectorSet(target.x - position.x, target.y - position.y, target.z - position.z, 0); // Vector from camera position to camera target

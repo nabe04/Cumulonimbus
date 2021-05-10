@@ -45,7 +45,7 @@
     <ClInclude Include="Source\Engine\content_browser.h" />
     <ClInclude Include="Source\Engine\depth_stencil.h" />
     <ClInclude Include="Source\Engine\diffuse.h" />
-    <ClInclude Include="Source\Engine\dx_manager.h" />
+    <ClInclude Include="Source\Engine\dx11_configurator.h" />
     <ClInclude Include="Source\Engine\easing.h" />
     <ClInclude Include="Source\Engine\ecs.h" />
     <ClInclude Include="Source\Engine\editor_manager.h" />
@@ -140,7 +140,7 @@
     <ClCompile Include="Source\Engine\content_brawser.cpp" />
     <ClCompile Include="Source\Engine\depth_stencil.cpp" />
     <ClCompile Include="Source\Engine\diffuse.cpp" />
-    <ClCompile Include="Source\Engine\dx_manager.cpp" />
+    <ClCompile Include="Source\Engine\dx11_configurator.cpp" />
     <ClCompile Include="Source\Engine\easing.cpp" />
     <ClCompile Include="Source\Engine\ecs.cpp" />
     <ClCompile Include="Source\Engine\editor_manager.cpp" />

@@ -14,7 +14,7 @@
 #include <cereal/types/memory.hpp>
 
 #include "framework.h"
-#include "dx_manager.h"
+#include "dx11_configurator.h"
 #include "ecs.h"
 #include "light.h"
 #include "view.h"
