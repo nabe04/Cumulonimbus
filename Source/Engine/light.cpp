@@ -10,8 +10,8 @@ using namespace DirectX;
 void Light::Update(const View* view)
 {
 	// Calculate right,up,front vector
-	DirectX::SimpleMath::Vector3 direction_v3 = { direction.x,direction.y,direction.z };
-	view_front = direction_v3;
+	const DirectX::SimpleMath::Vector3 l_direction = { direction.x,direction.y,direction.z };
+	view_front = l_direction;
 	view_front.Normalize();
 	view_right = arithmetic::CalcRightVec(view_up, view_front);
 	view_right.Normalize();
@@ -20,13 +20,23 @@ void Light::Update(const View* view)
 
 	DirectX::XMFLOAT3 target_pos = view->GetTarget();
 
-	XMMATRIX view_mat = XMMatrixLookAtLH(XMLoadFloat3(&position), {0,0,0}, XMLoadFloat3(&view_up));
+	XMMATRIX view_mat = XMMatrixLookAtLH(XMLoadFloat3(&position), { 0,0,0 }, XMLoadFloat3(&view_up));
 	XMStoreFloat4x4(&light_view_matrix, view_mat);
+
+#pragma region  perspective ‚Æ orthographic‚Ì’l‚ðCBuffer‚É‘—‚é‚±‚Æ‚ª‚Å‚«‚ê‚ÎÁ‚· (Begin)
 	XMMATRIX proj_mat = XMMatrixOrthographicLH(200,200, view->GetNearZ(),100);
 	//XMMATRIX proj_mat = XMMatrixPerspectiveFovLH(view->Fov(), view->Aspect(), view->NearZ(), view->FarZ());
 	XMStoreFloat4x4(&light_projection_matrix, proj_mat);
 
 	XMStoreFloat4x4(&light_view_projection_matrix, XMMatrixMultiply(view_mat, proj_mat));
+#pragma endregion
+
+	const XMMATRIX perspective_projection_mat = XMMatrixPerspectiveFovLH(view->GetFov(), view->GetAspect(), view->GetNearZ(), view->GetFarZ());
+	XMStoreFloat4x4(&perspective_projection, perspective_projection_mat);
+	XMStoreFloat4x4(&perspective_view_projection, XMMatrixMultiply(view_mat, perspective_projection_mat));
+	const XMMATRIX orthographic_projection_mat = XMMatrixOrthographicLH(orthographic_view_width, orthographic_view_height, orthographic_near_z, orthographic_far_z);
+	XMStoreFloat4x4(&orthographic_projection, orthographic_projection_mat);
+	XMStoreFloat4x4(&orthographic_view_projection, XMMatrixMultiply(view_mat, orthographic_projection_mat));
 }
 
 void Light::WriteImGui()

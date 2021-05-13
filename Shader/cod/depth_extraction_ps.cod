@@ -8,7 +8,7 @@
 // Name                 Index   Mask Register SysValue  Format   Used
 // -------------------- ----- ------ -------- -------- ------- ------
 // SV_POSITION              0   xyzw        0      POS   float       
-// NDC_POSITION             0   xyzw        1     NONE   float     zw
+// NDC_POSITION             0   xyzw        1     NONE   float     z 
 //
 //
 // Output signature:
@@ -19,7 +19,7 @@
 //
 ps_5_0
 dcl_globalFlags refactoringAllowed | skipOptimization
-dcl_input_ps linear v1.zw
+dcl_input_ps linear v1.z
 dcl_output o0.xyzw
 dcl_temps 1
 //
@@ -29,7 +29,7 @@ dcl_temps 1
 //   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
 //
 #line 12 "D:\チEクトップ\Cumulonimbus\Shader\depth_extraction_ps.hlsl"
-div r0.x, v1.z, v1.w  // r0.x <- color.x
+mov r0.x, v1.z  // r0.x <- color.x
 
 #line 14
 mov r0.y, l(1.000000)

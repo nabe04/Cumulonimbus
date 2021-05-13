@@ -69,7 +69,7 @@ int Framework::Run()
 	return 0;
 }
 
-void Framework::DrawBegin() 
+void Framework::DrawBegin()
 {
 	Locator::GetDx11Configurator()->Clear();
 }
