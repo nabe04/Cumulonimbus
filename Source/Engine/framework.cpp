@@ -19,16 +19,14 @@
 
 bool Framework::Initialize()
 {
-	Locator::Provide<Window>(window);
-	input_system = std::make_shared<InputSystem>(window->GetHWND());
-	Locator::Provide<InputSystem>(input_system);
-
 	dx11_configurator = std::make_shared<Dx11Configurator>(window->GetHWND());
 	dx11_configurator->Initialize(window->GetHWND(), device.GetAddressOf(), immediate_context.GetAddressOf(), window->Width(), window->Height());
 	Locator::Provide<Dx11Configurator>(dx11_configurator);
 
-	// DirectX11 Intialization
-	//Dx11Configurator::GetInstance(window->GetHWND()).Initialize(window->GetHWND(), device.GetAddressOf(), immediate_context.GetAddressOf(), window->Width(), window->Height());
+	Locator::Provide<Window>(window);
+	input_system = std::make_shared<InputSystem>(window->GetHWND());
+	input_system->Initialize(window->GetHWND());
+	Locator::Provide<InputSystem>(input_system);
 
 	// TextureManager Initialization
 	TextureManager::GetInstance()->Initialize(device.Get());
@@ -39,11 +37,6 @@ bool Framework::Initialize()
 	// Initialization of ImGui
 	imgui::Initialize(window->GetHWND(), device.Get(), immediate_context.Get());
 #endif
-
-	// Initialize game pad
-	//pad_input::Initialize();
-
-	//InputSystem::Instance()->Initialize(hwnd);
 
 	//-- Setting of frame rate --//
 	hr_timer.setFrameRate(frameRate);
@@ -76,7 +69,7 @@ int Framework::Run()
 	return 0;
 }
 
-void Framework::DrawBegin()
+void Framework::DrawBegin() 
 {
 	Locator::GetDx11Configurator()->Clear();
 }

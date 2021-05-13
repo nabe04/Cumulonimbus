@@ -29,15 +29,15 @@ public:
 		,cmd_show{ cmd_show } {}
 	~Window() = default;
 
-	void Create(u_int width, u_int height, u_int pos_x, u_int pos_y);
+	[[noreturn]] void Create(u_int width, u_int height, u_int pos_x, u_int pos_y);
 
-	HWND  GetHWND() { return hwnd; }
-	HINSTANCE HInstance() { return instance; }
+	[[nodiscard]] HWND  GetHWND() const { return hwnd; }
+	[[nodiscard]] HINSTANCE HInstance() const { return instance; }
 	[[noreturn]] void SetHWND(HWND hwnd) { this->hwnd = hwnd; }
-	u_int Width() { return window_width; }
-	u_int Height() { return window_height; }
-	RECT WindowRect();
-	RECT ClientRect();
+	[[nodiscard]] u_int Width() const { return window_width; }
+	[[nodiscard]] u_int Height() const { return window_height; }
+	[[nodiscard]] RECT WindowRect();
+	[[nodiscard]] RECT ClientRect();
 	[[nodiscard]] bool IsWithinWindow(DirectX::XMINT2 pos);
-	const wchar_t* WindowClassName() { return window_class_name; }
+	[[nodiscard]] const wchar_t* WindowClassName() const { return window_class_name; }
 };

@@ -42,7 +42,7 @@ private:
 public:
 	TextureResource(ID3D11Device* device, const char* tex_filename);
 	TextureResource() = default; // for cereal
-	const TextureData* const GetTextureData() { return texture_data.get(); }
+	[[nodiscard]] const TextureData* GetTextureData() const { return texture_data.get(); }
 
 	template<class Archive>
 	void serialize(Archive&& archive)
@@ -52,7 +52,7 @@ public:
 		);
 	}
 private:
-	void CreateTexture(ID3D11Device* device, const char* tex_filename);
+	[[noreturn]] void CreateTexture(ID3D11Device* device, const char* tex_filename);
 };
 
 class DummyTexture
