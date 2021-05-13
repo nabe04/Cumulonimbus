@@ -260,10 +260,9 @@ void Scene::RemoveEntity(Entity* entity)
 void Scene::AddRemoveEntity(Entity* entity)
 {
 	dead_entities.emplace_back(entity);
-	return;
 }
 
-void Scene::WriteImGui()
+void Scene::WriteImGui() const
 {
 	if (ImGui::CollapsingHeader("Light Info"))
 	{

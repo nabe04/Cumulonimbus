@@ -207,6 +207,3 @@ void Framework::CalculateFrameStates()
 		hr_timer.start();
 	}
 }
-
-
-

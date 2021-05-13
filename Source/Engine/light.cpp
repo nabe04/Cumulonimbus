@@ -22,7 +22,7 @@ void Light::Update(const View* view)
 
 	XMMATRIX view_mat = XMMatrixLookAtLH(XMLoadFloat3(&position), {0,0,0}, XMLoadFloat3(&view_up));
 	XMStoreFloat4x4(&light_view_matrix, view_mat);
-	XMMATRIX proj_mat = XMMatrixOrthographicLH(200,200, view->GetNearZ(),1000);
+	XMMATRIX proj_mat = XMMatrixOrthographicLH(200,200, view->GetNearZ(),100);
 	//XMMATRIX proj_mat = XMMatrixPerspectiveFovLH(view->Fov(), view->Aspect(), view->NearZ(), view->FarZ());
 	XMStoreFloat4x4(&light_projection_matrix, proj_mat);
 

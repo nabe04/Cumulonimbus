@@ -208,7 +208,6 @@ void MeshRenderer::RenderShadow(ID3D11DeviceContext* immediate_context,
 	blend->Activate(immediate_context, actor_comp->GetBlendState());
 	depth_stencil->Activate(immediate_context, actor_comp->GetDepthStencilState());
 
-
 	for (int i = 0; i < static_cast<int>(ShadowMap::RenderProcess::End); ++i)
 	{
 		shadow_map->GetBiginRenderingState()->SetState(static_cast<ShadowMap::RenderProcess>(i));

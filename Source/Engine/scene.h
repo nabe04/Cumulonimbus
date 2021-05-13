@@ -78,29 +78,29 @@ public:
 	explicit Scene() = default;
 	virtual ~Scene() = default;
 
-	const std::shared_ptr<Scene>& Execute(Framework* framework);
-	void SetNextScene(const std::shared_ptr<Scene>& scene) { next_scene = scene; }
+	[[nodiscard]] const std::shared_ptr<Scene>& Execute(Framework* framework);
+	[[noreturn]] void SetNextScene(const std::shared_ptr<Scene>& scene) { next_scene = scene; }
 
-	auto* GetFramework()		{ return framework; }
-	auto* GetView()				{ return view.get(); }
-	auto* GetLight()			{ return light.get(); }
-	auto* GetGeomPrimRes()		{ return geom_prim_res.get(); }
+	[[nodiscard]] auto* GetFramework() const { return framework; }
+	[[nodiscard]] auto* GetView() const{ return view.get(); }
+	[[nodiscard]] auto* GetLight() const { return light.get(); }
+	[[nodiscard]] auto* GetGeomPrimRes() const { return geom_prim_res.get(); }
 	//auto* GetPadLink()			{ return pad_combine.get(); }
-	auto* GetSoundResourceManager() { return sound_resource.get(); }
+	[[nodiscard]] auto* GetSoundResourceManager() const { return sound_resource.get(); }
 
-	void IsPaused(bool flg) { is_paused = flg; }
-	bool IsPaused() { return is_paused; }
+	[[noreturn]] void IsPaused(bool flg) { is_paused = flg; }
+	[[nodiscard]] bool IsPaused() const { return is_paused; }
 
 	//-- Entity --//
-	Entity* AddEntity(const UpdateOrder update_order = UpdateOrder::Default,const EntityTag entity_tag = EntityTag::Default)
+	[[nodiscard]] Entity* AddEntity(const UpdateOrder update_order = UpdateOrder::Default,const EntityTag entity_tag = EntityTag::Default)
 	{
 		return AddEntityToArray(std::make_unique<Entity>(this, update_order, entity_tag));
 	}
-	void AddRemoveEntity(Entity* entity);
+	[[noreturn]] void AddRemoveEntity(Entity* entity);
 
-	auto* GetEntities()const { return &entities; }
+	[[nodiscard]] auto* GetEntities()const { return &entities; }
 	template<class T,class... Args>
-	std::vector<Entity*> GetEntities() const
+	[[nodiscard]] std::vector<Entity*> GetEntities() const
 	{
 		std::vector<Entity*> entities_;
 		for (auto& ent : entities)
@@ -113,7 +113,7 @@ public:
 		return entities_;
 	}
 
-	Entity* GetOtherEntity(EntityTag tag)
+	[[nodiscard]] Entity* GetOtherEntity(EntityTag tag)
 	{
 		for (auto& ent : entities)
 		{
@@ -126,10 +126,10 @@ public:
 		return nullptr;
 	}
 
-	const SceneType& GetCurrentScene() { return current_scene; }
+	[[nodiscard]] const SceneType& GetCurrentScene() const { return current_scene; }
 
 	//-- ImGui --//
-	void WriteImGui();
+	[[noreturn]] void WriteImGui() const;
 
 	//-- Serialize --//
 	/*
@@ -171,7 +171,7 @@ public:
 	 * brief : シーンのロード
 	 * file_path_and_name : 拡張子を除く、ファイルの相対パス
 	 */
-	void LoadScene(std::string file_path_and_name)
+	[[noreturn]] void LoadScene(std::string file_path_and_name)
 	{
 		const std::string exe = ".json";
 
@@ -205,8 +205,8 @@ public:
 	}
 
 private:
-	Entity* AddEntityToArray(const UpdateOrder update_order) { return AddEntityToArray(std::make_unique<Entity>(this, update_order)); }
-	Entity* AddEntityToArray(std::unique_ptr<Entity> entity)
+	[[nodiscard]] Entity* AddEntityToArray(const UpdateOrder update_order) { return AddEntityToArray(std::make_unique<Entity>(this, update_order)); }
+	[[nodiscard]] Entity* AddEntityToArray(std::unique_ptr<Entity> entity)
 	{
 		if (entities.empty())
 		{
