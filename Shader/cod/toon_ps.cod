@@ -67,7 +67,7 @@
 // SV_TARGET                0   xyzw        0   TARGET   float   xyzw
 //
 ps_5_0
-dcl_globalFlags refactoringAllowed
+dcl_globalFlags refactoringAllowed | skipOptimization
 dcl_constantbuffer CB1[2], immediateIndexed
 dcl_constantbuffer CB2[2], immediateIndexed
 dcl_constantbuffer CB6[1], immediateIndexed
@@ -78,56 +78,177 @@ dcl_input_ps linear v2.xy
 dcl_input_ps linear v3.xyz
 dcl_input_ps linear v4.xyz
 dcl_output o0.xyzw
-dcl_temps 5
-mul r0.xyz, cb2[1].xyzx, cb6[0].yyyy
-dp3 r0.w, v1.xyzx, v1.xyzx
-rsq r0.w, r0.w
-mul r1.xyz, r0.wwww, v1.xyzx
-dp3 r0.w, cb2[0].xyzx, cb2[0].xyzx
-rsq r0.w, r0.w
-mul r2.xyz, r0.wwww, cb2[0].xyzx
-dp3 r1.w, r1.xyzx, -r2.xyzx
-max r1.w, r1.w, l(0.000000)
-mul_sat r0.xyz, r0.xyzx, r1.wwww
-mad r3.xyz, r0.xyzx, l(-2.000000, -2.000000, -2.000000, 0.000000), l(3.000000, 3.000000, 3.000000, 0.000000)
-mul r0.xyz, r0.xyzx, r0.xyzx
-mul r0.xyz, r0.xyzx, r3.xyzx
-itof r1.w, cb6[0].x
-mul r0.xyz, r0.xyzx, r1.wwww
-round_pi r0.xyz, r0.xyzx
-div r0.xyz, r0.xyzx, r1.wwww
+dcl_temps 10
+//
+// Initial variable locations:
+//   v0.x <- pin.position.x; v0.y <- pin.position.y; v0.z <- pin.position.z; v0.w <- pin.position.w; 
+//   v1.x <- pin.normal.x; v1.y <- pin.normal.y; v1.z <- pin.normal.z; 
+//   v2.x <- pin.texcoord.x; v2.y <- pin.texcoord.y; 
+//   v3.x <- pin.color.x; v3.y <- pin.color.y; v3.z <- pin.color.z; v3.w <- pin.color.w; 
+//   v4.x <- pin.eye_vector.x; v4.y <- pin.eye_vector.y; v4.z <- pin.eye_vector.z; 
+//   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
+//
+#line 10 "D:\チEクトップ\Cumulonimbus\Shader\toon_ps.hlsl"
+sample_indexable(texture2d)(float,float,float,float) r0.xyzw, v2.xyxx, t0.xyzw, s0  // r0.x <- diffuse_color.x; r0.y <- diffuse_color.y; r0.z <- diffuse_color.z; r0.w <- diffuse_color.w
+
+#line 11
+mov r0.w, r0.w  // r0.w <- alpha
+
+#line 13
+mov r1.xyz, cb1[1].xyzx  // r1.x <- A.x; r1.y <- A.y; r1.z <- A.z
+
+#line 14
+dp3 r1.w, v1.xyzx, v1.xyzx
+rsq r1.w, r1.w
+mul r2.xyz, r1.wwww, v1.xyzx  // r2.x <- N.x; r2.y <- N.y; r2.z <- N.z
+
+#line 15
+dp3 r1.w, cb2[0].xyzx, cb2[0].xyzx
+rsq r1.w, r1.w
+mul r3.xyz, r1.wwww, cb2[0].xyzx  // r3.x <- L.x; r3.y <- L.y; r3.z <- L.z
+
+#line 16
+mov r4.xyz, cb2[1].xyzx  // r4.x <- C.x; r4.y <- C.y; r4.z <- C.z
+
+#line 17
 dp3 r1.w, v4.xyzx, v4.xyzx
 rsq r1.w, r1.w
-mul r3.xyz, r1.wwww, v4.xyzx
-mad r4.xyz, -cb2[0].xyzx, r0.wwww, -r3.xyzx
-dp3 r0.w, r4.xyzx, r4.xyzx
-rsq r0.w, r0.w
-mul r4.xyz, r0.wwww, r4.xyzx
-dp3 r0.w, r4.xyzx, r1.xyzx
-dp3_sat r1.x, r1.xyzx, -r3.xyzx
-dp3 r1.y, r3.xyzx, r2.xyzx
-max r1.y, r1.y, l(0.000000)
-log r1.y, r1.y
-mul r1.y, r1.y, l(30.000000)
-exp r1.y, r1.y
-add r1.x, -r1.x, l(1.000000)
-max r0.w, r0.w, l(0.000000)
-log r0.w, r0.w
-mul r0.w, r0.w, cb6[0].z
-exp r0.w, r0.w
-mul r0.w, r0.w, cb6[0].y
-mul_sat r2.xyz, r0.wwww, cb2[1].xyzx
-mad r3.xyz, r2.xyzx, l(-2.000000, -2.000000, -2.000000, 0.000000), l(3.000000, 3.000000, 3.000000, 0.000000)
-mul r2.xyz, r2.xyzx, r2.xyzx
-mad r0.xyz, r3.xyzx, r2.xyzx, r0.xyzx
-add r0.xyz, r0.xyzx, cb1[1].xyzx
-mul r0.w, r1.x, r1.x
-mul r0.w, r0.w, r0.w
-mul r0.w, r0.w, r1.x
-mad r0.xyz, r0.wwww, r1.yyyy, r0.xyzx
-sample_indexable(texture2d)(float,float,float,float) r1.xyzw, v2.xyxx, t0.xyzw, s0
-mul r1.xyz, r1.xyzx, v3.xyzx
-mov o0.w, r1.w
-mul o0.xyz, r0.xyzx, r1.xyzx
+mul r5.xyz, r1.wwww, v4.xyzx  // r5.x <- E.x; r5.y <- E.y; r5.z <- E.z
+
+#line 18
+mov r6.xyz, cb6[0].yyyy  // r6.x <- K.x; r6.y <- K.y; r6.z <- K.z
+
+#line 20
+nop 
+mov r2.xyz, r2.xyzx
+mov r3.xyz, r3.xyzx
+mov r4.xyz, r4.xyzx
+mov r7.xyz, -r5.xyzx
+mov r6.xyz, r6.xyzx
+mov r1.w, cb6[0].z
+
+#line 30 "D:\デスクトップ\Cumulonimbus\Shader\functions.hlsli"
+mov r8.xyz, -r3.xyzx
+add r7.xyz, r7.xyzx, r8.xyzx
+dp3 r2.w, r7.xyzx, r7.xyzx
+rsq r2.w, r2.w
+mul r7.xyz, r2.wwww, r7.xyzx  // r7.x <- H.x; r7.y <- H.y; r7.z <- H.z
+
+#line 32
+dp3 r7.z, r7.xyzx, r2.xyzx
+mov r7.xyz, r7.zzzz  // r7.x <- S.x; r7.y <- S.y; r7.z <- S.z
+
+#line 33
+itof r8.xyz, l(0, 0, 0, 0)
+max r7.xyz, r7.xyzx, r8.xyzx
+
+#line 34
+log r7.xyz, r7.xyzx
+mul r7.xyz, r1.wwww, r7.xyzx
+exp r7.xyz, r7.xyzx  // r7.x <- S.x; r7.y <- S.y; r7.z <- S.z
+
+#line 35
+mul r7.xyz, r6.xyzx, r7.xyzx
+mul r7.xyz, r4.xyzx, r7.xyzx  // r7.x <- S.x; r7.y <- S.y; r7.z <- S.z
+
+#line 36
+mov r7.xyz, r7.xyzx  // r7.x <- <BlinnPhongSpecular return value>.x; r7.y <- <BlinnPhongSpecular return value>.y; r7.z <- <BlinnPhongSpecular return value>.z
+
+#line 20 "D:\チEクトップ\Cumulonimbus\Shader\toon_ps.hlsl"
+mov r7.xyz, r7.xyzx  // r7.x <- specular.x; r7.y <- specular.y; r7.z <- specular.z
+
+#line 22
+itof r8.xyz, l(0, 0, 0, 0)
+itof r9.xyz, l(1, 1, 1, 0)
+mov r8.xyz, -r8.xyzx
+add r9.xyz, r8.xyzx, r9.xyzx
+add r7.xyz, r7.xyzx, r8.xyzx
+div r8.xyz, l(1.000000, 1.000000, 1.000000, 1.000000), r9.xyzx
+mul r7.xyz, r7.xyzx, r8.xyzx
+max r7.xyz, r7.xyzx, l(0.000000, 0.000000, 0.000000, 0.000000)
+min r7.xyz, r7.xyzx, l(1.000000, 1.000000, 1.000000, 0.000000)
+mul r8.xyz, r7.xyzx, l(-2.000000, -2.000000, -2.000000, 0.000000)
+add r8.xyz, r8.xyzx, l(3.000000, 3.000000, 3.000000, 0.000000)
+mul r7.xyz, r7.xyzx, r7.xyzx
+mul r7.xyz, r7.xyzx, r8.xyzx  // r7.x <- specular.x; r7.y <- specular.y; r7.z <- specular.z
+
+#line 24
+nop 
+mov r2.xyz, r2.xyzx
+mov r3.xyz, r3.xyzx
+mov r4.xyz, r4.xyzx
+mov r6.xyz, r6.xyzx
+
+#line 11 "D:\デスクトップ\Cumulonimbus\Shader\functions.hlsli"
+mov r8.xyz, -r3.xyzx
+dp3 r1.w, r2.xyzx, r8.xyzx  // r1.w <- D
+
+#line 12
+itof r2.w, l(0)
+max r1.w, r1.w, r2.w
+
+#line 13
+mul r4.xyz, r4.xyzx, r6.xyzx
+mul r4.xyz, r1.wwww, r4.xyzx  // r4.x <- <Diffuse return value>.x; r4.y <- <Diffuse return value>.y; r4.z <- <Diffuse return value>.z
+
+#line 24 "D:\チEクトップ\Cumulonimbus\Shader\toon_ps.hlsl"
+mov r4.xyz, r4.xyzx  // r4.x <- diffuse.x; r4.y <- diffuse.y; r4.z <- diffuse.z
+
+#line 26
+itof r6.xyz, l(0, 0, 0, 0)
+itof r8.xyz, l(1, 1, 1, 0)
+mov r6.xyz, -r6.xyzx
+add r8.xyz, r6.xyzx, r8.xyzx
+add r4.xyz, r4.xyzx, r6.xyzx
+div r6.xyz, l(1.000000, 1.000000, 1.000000, 1.000000), r8.xyzx
+mul r4.xyz, r4.xyzx, r6.xyzx
+max r4.xyz, r4.xyzx, l(0.000000, 0.000000, 0.000000, 0.000000)
+min r4.xyz, r4.xyzx, l(1.000000, 1.000000, 1.000000, 0.000000)
+mul r6.xyz, r4.xyzx, l(-2.000000, -2.000000, -2.000000, 0.000000)
+add r6.xyz, r6.xyzx, l(3.000000, 3.000000, 3.000000, 0.000000)
+mul r4.xyz, r4.xyzx, r4.xyzx
+mul r4.xyz, r4.xyzx, r6.xyzx  // r4.x <- diffuse.x; r4.y <- diffuse.y; r4.z <- diffuse.z
+
+#line 28
+itof r6.xyz, cb6[0].xxxx
+mul r4.xyz, r4.xyzx, r6.xyzx
+round_pi r4.xyz, r4.xyzx
+itof r6.xyz, cb6[0].xxxx
+div r4.xyz, r4.xyzx, r6.xyzx  // r4.x <- irradiance.x; r4.y <- irradiance.y; r4.z <- irradiance.z
+
+#line 31
+mov r6.xyz, -r5.xyzx
+dp3 r1.w, r2.xyzx, r6.xyzx
+max r1.w, r1.w, l(0.000000)
+min r1.w, r1.w, l(1.000000)
+mov r1.w, -r1.w
+add r1.w, r1.w, l(1.000000)
+mov r2.x, l(1.000000)
+mul r2.x, r1.w, r2.x
+mul r1.w, r1.w, r1.w
+mul r1.w, r1.w, r1.w
+mul r1.w, r1.w, r2.x  // r1.w <- rim
+
+#line 32
+dp3 r2.x, r5.xyzx, r3.xyzx
+itof r2.y, l(0)
+max r2.x, r2.y, r2.x
+log r2.x, r2.x
+mul r2.x, r2.x, l(30.000000)
+exp r2.x, r2.x  // r2.x <- rim_dotLE
+
+#line 33
+mul r1.w, r1.w, r2.x  // r1.w <- rim_color
+
+#line 35
+mul r0.xyz, r0.xyzx, v3.xyzx
+add r2.xyz, r7.xyzx, r4.xyzx
+add r1.xyz, r1.xyzx, r2.xyzx
+add r1.xyz, r1.wwww, r1.xyzx
+mul r0.xyz, r0.xyzx, r1.xyzx  // r0.x <- radiance.x; r0.y <- radiance.y; r0.z <- radiance.z
+
+#line 37
+mov o0.xyz, r0.xyzx
+mov o0.w, r0.w
 ret 
-// Approximately 51 instruction slots used
+// Approximately 106 instruction slots used

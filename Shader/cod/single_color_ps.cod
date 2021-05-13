@@ -37,10 +37,19 @@
 // SV_TARGET                0   xyzw        0   TARGET   float   xyzw
 //
 ps_5_0
-dcl_globalFlags refactoringAllowed
+dcl_globalFlags refactoringAllowed | skipOptimization
 dcl_constantbuffer CB6[1], immediateIndexed
 dcl_output o0.xyzw
+//
+// Initial variable locations:
+//   v0.x <- pin.position.x; v0.y <- pin.position.y; v0.z <- pin.position.z; v0.w <- pin.position.w; 
+//   v1.x <- pin.normal.x; v1.y <- pin.normal.y; v1.z <- pin.normal.z; 
+//   v2.x <- pin.texcoord.x; v2.y <- pin.texcoord.y; 
+//   v3.x <- pin.color.x; v3.y <- pin.color.y; v3.z <- pin.color.z; v3.w <- pin.color.w; 
+//   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
+//
+#line 5 "D:\チEクトップ\Cumulonimbus\Shader\single_color_ps.hlsl"
+itof o0.w, l(1)
 mov o0.xyz, cb6[0].xyzx
-mov o0.w, l(1.000000)
 ret 
 // Approximately 3 instruction slots used

@@ -22,7 +22,7 @@ VS_OutPut main(VS_Input vin)
         worldPos += (vin.boneWeights[i] * mul(vin.position, boneTransforms[vin.boneIndices[i]])).xyz;
         normal += (vin.boneWeights[i] * mul(float4(vin.normal, 0), boneTransforms[vin.boneIndices[i]])).xyz;
     }
-    float4 wvpPos = mul(float4(worldPos, 1.0f), light_view_projection); // World coordinate transformation
+    const float4 wvpPos = mul(float4(worldPos, 1.0f), light_view_projection); // World coordinate transformation
 
     vout.position     = wvpPos;
     vout.ndc_position = wvpPos;
