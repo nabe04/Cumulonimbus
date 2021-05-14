@@ -5,7 +5,6 @@
 #include "mesh_object.h"
 #include "blend.h"
 #include "collision_component.h"
-#include "dx11_configurator.h"
 #include "fbx_model_component.h"
 #include "fbx_model_resource.h"
 #include "framework.h"
@@ -70,7 +69,7 @@ void MeshRenderer::End(ID3D11DeviceContext* immediate_context)
 
 	sorbel_filter->Blit(immediate_context, frame_buffer_manager->UsingBuffer(static_cast<int>(RenderingBuffer::SorbelFilter))->render_target_shader_resource_view.Get());
 
-	ID3D11ShaderResourceView* const pSRV[1] = { NULL };
+	ID3D11ShaderResourceView* const pSRV[1] = { nullptr };
 	immediate_context->PSSetShaderResources(0, 1, pSRV);
 
 	immediate_context->VSSetShader(nullptr, 0, 0);
@@ -81,7 +80,7 @@ void MeshRenderer::Blit(ID3D11DeviceContext* immediate_context, MeshObject* acto
 {
 	immediate_context->PSSetShaderResources(0, 1, frame_buffer_manager->UsingBuffer(static_cast<int>(RenderingBuffer::BackBuffer))->render_target_shader_resource_view.GetAddressOf());
 	full_screen_quad->Blit(immediate_context, true, true, true);
-	ID3D11ShaderResourceView* const pSRV[1] = { NULL };
+	ID3D11ShaderResourceView* const pSRV[1] = { nullptr };
 	immediate_context->PSSetShaderResources(0, 1, pSRV);
 	immediate_context->PSSetShaderResources(1, 1, pSRV);
 	immediate_context->PSSetShaderResources(2, 1, pSRV);

@@ -19,7 +19,6 @@ public:
 		window = nullptr;
 	}
 
-
 	static InputSystem* GetInput() { return input.get(); }
 	static ResourceManager* GetResourceManager() { return resource_manager.get(); }
 	static Window* GetWindow() { return window.get(); }

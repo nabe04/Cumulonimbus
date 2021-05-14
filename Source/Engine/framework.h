@@ -4,7 +4,6 @@
 #include <memory>
 #include <d3d11.h>
 
-
 #include "imgui.h"
 
 #include "high_resolution_timer.h"
@@ -12,9 +11,6 @@
 
 class Window;
 class Dx11Configurator;
-
-//const UINT g_screen_width  = 960;
-//const UINT g_screen_height = 540;
 
 // Forward declare message handler from imgui_impl_win32.cpp
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -29,28 +25,28 @@ private:
 	std::shared_ptr<Window>		 window{};
 	std::shared_ptr<InputSystem> input_system{};
 	std::shared_ptr<Dx11Configurator> dx11_configurator{};
-	
+
 	const double frameRate = 60;
 	HighResolutionTimer hr_timer;
 
 	bool debug_mode = false;
 
 private:
-	bool Initialize();
-	bool UnInitialize();
-	void CalculateFrameStates();
+	[[nodiscard]] bool Initialize();
+	[[nodiscard]] bool UnInitialize();
+	[[noreturn]]  void CalculateFrameStates();
 
 public:
 	explicit Framework(const std::shared_ptr<Window>& w)
 		:window{ w } {}
 	~Framework() = default;
 
-	int Run();
-	bool ProcessLoop();
-	void DrawBegin();
-	void DrawEnd();
+	[[nodiscard]] int Run();
+	[[nodiscard]] bool ProcessLoop();
+	[[noreturn]] void DrawBegin();
+	[[noreturn]] void DrawEnd();
 
-	LRESULT CALLBACK HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+	[[nodiscard]] LRESULT CALLBACK HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
 	[[nodiscard]] auto* GetDevice()const{ return device.Get(); }
 	[[nodiscard]] auto* GetDeviceContext() const{ return immediate_context.Get(); }

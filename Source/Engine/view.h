@@ -54,32 +54,36 @@ public:
 
 	void SetPosition(const DirectX::SimpleMath::Vector3& pos) { this->position = pos; }
 
-	const DirectX::SimpleMath::Matrix& GetView() const { return view_f4x4; }
-	const DirectX::SimpleMath::Matrix& GetProjection() const { return projection_f4x4; }
+	[[nodiscard]] const DirectX::SimpleMath::Matrix& GetView() const { return view_f4x4; }
+	[[nodiscard]] const DirectX::SimpleMath::Matrix& GetProjection() const { return projection_f4x4; }
 
-	DirectX::SimpleMath::Vector3 GetPos() { return position; }
-	DirectX::SimpleMath::Vector3 GetTarget() const { return target; }
+	[[nodiscard]] DirectX::SimpleMath::Vector3 GetPos() const { return position; }
+	[[nodiscard]] DirectX::SimpleMath::Vector3 GetTarget() const { return target; }
 
 	// Camera rotation ajustment (Camera position rotation from the point of gaze)
-	void RotationAjustWrapPitchYawRoll(float pitch, float yaw, float roll);
-	void RotationAjustWrapX(float x);
-	void RotationAjustWrapY(float y);
-	void RotationAjustWrapZ(float z);
+	void RotationAdjustWrapPitchYawRoll(float pitch, float yaw, float roll);
+	void RotationAdjustWrapX(float x);
+	void RotationAdjustWrapY(float y);
+	void RotationAdjustWrapZ(float z);
 
 	// ƒJƒƒ‰‚ÌŒü‚«Žæ“¾
-	DirectX::SimpleMath::Vector3 GetCameraRight() const { return camera_right; }
-	DirectX::SimpleMath::Vector3 GetCameraUp() const { return camera_up; }
-	DirectX::SimpleMath::Vector3 GetCameraFront() const { return camera_forcus; }
+	[[nodiscard]]DirectX::SimpleMath::Vector3 GetCameraRight() const { return camera_right; }
+	[[nodiscard]]DirectX::SimpleMath::Vector3 GetCameraUp() const { return camera_up; }
+	[[nodiscard]]DirectX::SimpleMath::Vector3 GetCameraFront() const { return camera_forcus; }
 
-	void SetCameraRight(DirectX::SimpleMath::Vector3 right) { camera_right = right; }
-	void SetCameraUp(DirectX::SimpleMath::Vector3 up) { camera_up = up; }
-	void SetCameraFront(DirectX::SimpleMath::Vector3 front) { camera_forcus = front; }
+	[[noreturn]] void SetCameraRight(const DirectX::SimpleMath::Vector3& right) { camera_right = right; }
+	[[noreturn]] void SetCameraUp(const DirectX::SimpleMath::Vector3& up) { camera_up = up; }
+	[[noreturn]] void SetCameraFront(const DirectX::SimpleMath::Vector3& front) { camera_forcus = front; }
+	[[noreturn]] void SetFov(const float fov) { this->fov = fov; }
 
-	float GetNearZ() const { return nearZ; }
-	float GetFarZ() const { return farZ; }
+	[[nodiscard]] float GetFov() const { return fov; }
+	[[nodiscard]] float GetAspect() const { return aspect; }
+	[[nodiscard]] float GetNearZ() const { return nearZ; }
+	[[nodiscard]] float GetFarZ() const { return farZ; }
 
-	void IsDebugCamera(bool flg) { is_debug_camera = flg; }
-	bool IsDebugCamera()		 { return is_debug_camera; }
+
+	void IsDebugCamera(const bool flg) { is_debug_camera = flg; }
+	bool IsDebugCamera() const { return is_debug_camera; }
 };
 
 

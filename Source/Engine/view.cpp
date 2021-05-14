@@ -242,7 +242,7 @@ void View::CameraControl()
 	}
 }
 
-void View::RotationAjustWrapPitchYawRoll(float pitch, float yaw, float roll)
+void View::RotationAdjustWrapPitchYawRoll(float pitch, float yaw, float roll)
 {
 	XMMATRIX rotation_matrix = XMMatrixRotationRollPitchYaw(XMConvertToRadians(pitch), XMConvertToRadians(yaw), XMConvertToRadians(roll));
 
@@ -260,7 +260,7 @@ void View::RotationAjustWrapPitchYawRoll(float pitch, float yaw, float roll)
 	XMStoreFloat3(&position, vecCameraPos);
 }
 
-void View::RotationAjustWrapX(float angleX)
+void View::RotationAdjustWrapX(float angleX)
 {
 	//XMMATRIX rotation_matrix = XMMatrixRotationRollPitchYaw(XMConvertToRadians(angleX), 0, 0);
 
@@ -296,7 +296,7 @@ void View::RotationAjustWrapX(float angleX)
 	XMStoreFloat3(&position, vecTarget + vec_from_target_pos_to_camera_pos);
 }
 
-void View::RotationAjustWrapY(float angleY)
+void View::RotationAdjustWrapY(float angleY)
 {
 	//XMMATRIX rotation_matrix = XMMatrixRotationY(XMConvertToRadians(angleY));
 
@@ -330,7 +330,7 @@ void View::RotationAjustWrapY(float angleY)
 	XMStoreFloat3(&position, vecTarget + vec_from_target_pos_to_camera_pos);
 }
 
-void View::RotationAjustWrapZ(float angleZ)
+void View::RotationAdjustWrapZ(float angleZ)
 {
 	XMMATRIX rotation_matrix = XMMatrixRotationZ(XMConvertToRadians(angleZ));
 
