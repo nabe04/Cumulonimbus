@@ -1,6 +1,7 @@
 #include <Windows.h>
 #include <memory>
 #include <assert.h>
+#include "locator.h"
 #include <tchar.h>
 
 #include "window.h"
@@ -21,7 +22,17 @@ INT WINAPI wWinMain(HINSTANCE instance, HINSTANCE prev_instance, LPWSTR cmd_line
 	std::shared_ptr<Window> window = std::make_shared<Window>(instance, prev_instance, cmd_line, cmd_show);
 	window->Create(960, 540, 270, 50);
 
-	Framework f(window);
-	SetWindowLongPtr(window->GetHWND(), GWLP_USERDATA, reinterpret_cast<LONG_PTR>(&f));
-	return f.Run();
+	ComPtr<ID3D11Debug> debugInterface;
+	INT ret;
+	{
+		Framework f(window);
+		SetWindowLongPtr(window->GetHWND(), GWLP_USERDATA, reinterpret_cast<LONG_PTR>(&f));
+		ret = f.Run();
+		Locator::GetDx11Configurator()->device.As(&debugInterface);
+		assert(debugInterface);
+	}
+
+	debugInterface->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL | D3D11_RLDO_IGNORE_INTERNAL);
+
+	return ret;
 }
