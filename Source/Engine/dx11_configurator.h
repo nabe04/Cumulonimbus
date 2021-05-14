@@ -38,9 +38,12 @@ public:
 	Dx11Configurator(Dx11Configurator&&) = delete;
 	Dx11Configurator(const Dx11Configurator&) = delete;
 	Dx11Configurator(const Dx11Configurator&&) = delete;
-	Dx11Configurator& operator=(const Dx11Configurator&) = delete;
 	Dx11Configurator& operator=(Dx11Configurator&) = delete;
+	Dx11Configurator& operator=(Dx11Configurator&&) = delete;
+	Dx11Configurator& operator=(const Dx11Configurator&) = delete;
+	Dx11Configurator& operator=(const Dx11Configurator&&) = delete;
 
+	
 	//-- Call it once in the ÅuFrameworkÅv --//
 	bool Initialize(HWND hwnd, ID3D11Device** device, ID3D11DeviceContext** immediate_context, int width, int height);
 

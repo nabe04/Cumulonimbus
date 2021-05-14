@@ -1,6 +1,6 @@
 #pragma once
 
-#include <assert.h>
+#include <cassert>
 
 #include <d3d11.h>
 #include <wrl.h>
@@ -10,14 +10,10 @@ namespace buffer
 	template <class T>
 	class ConstantBuffer
 	{
-	private:
-		unsigned int using_slot;
-		Microsoft::WRL::ComPtr<ID3D11Buffer> buffer_object;
-
 	public:
 		T data;
 
-		ConstantBuffer(ID3D11Device* device)
+		explicit ConstantBuffer(ID3D11Device* device)
 		{
 			int size = sizeof(T);
 			if (sizeof(T) % 16 != 0)
@@ -37,7 +33,13 @@ namespace buffer
 
 		virtual ~ConstantBuffer() = default;
 		ConstantBuffer(ConstantBuffer&) = delete;
-		ConstantBuffer& operator =(ConstantBuffer&) = delete;
+		ConstantBuffer(ConstantBuffer&&) = delete;
+		ConstantBuffer(const ConstantBuffer&) = delete;
+		ConstantBuffer(const ConstantBuffer&&) = delete;
+		ConstantBuffer& operator= (ConstantBuffer&&) = delete;
+		ConstantBuffer& operator= (ConstantBuffer&) = delete;
+		ConstantBuffer& operator= (const ConstantBuffer&) = delete;
+		ConstantBuffer& operator= (const ConstantBuffer&&) = delete;
 
 		void Activate(ID3D11DeviceContext* immediate_context, int slot, bool set_in_vs = true, bool set_in_ps = true)
 		{
@@ -45,28 +47,24 @@ namespace buffer
 
 			using_slot = slot;
 
-			ID3D11Buffer* null_buffer = 0;
+			ID3D11Buffer* null_buffer = nullptr;
 			set_in_vs ? immediate_context->VSSetConstantBuffers(using_slot, 1, buffer_object.GetAddressOf()) : immediate_context->VSSetConstantBuffers(slot, 1, &null_buffer);
 			set_in_ps ? immediate_context->PSSetConstantBuffers(using_slot, 1, buffer_object.GetAddressOf()) : immediate_context->PSSetConstantBuffers(slot, 1, &null_buffer);
 		}
 
-		void Deactivate(ID3D11DeviceContext* immediate_context)
+		void Deactivate(ID3D11DeviceContext* immediate_context) const
 		{
-			ID3D11Buffer* null_buffer = 0;
+			ID3D11Buffer* const null_buffer = nullptr;
 			immediate_context->VSSetConstantBuffers(using_slot, 1, &null_buffer);
 			immediate_context->PSSetConstantBuffers(using_slot, 1, &null_buffer);
 		}
 
 		void SetData(const T& data) { this->data = data; }
 
-		void Edit()
-		{
+	private:
+		unsigned int using_slot{};
+		Microsoft::WRL::ComPtr<ID3D11Buffer> buffer_object{};
 
-		}
 	};
 
 }
-struct ConstantBuffer_Origine
-{
-	virtual void Edit() {};	// For Imgui
-};

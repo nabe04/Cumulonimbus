@@ -3,9 +3,16 @@
 #include "imgui.h"
 
 #include "arithmetic.h"
+#include "constant_buffer.h"
 #include "view.h"
 
 using namespace DirectX;
+
+Light::Light(ID3D11Device* device, const LightData& light_data)
+{
+	data = light_data;
+	//cb_light = std::make_unique<buffer::ConstantBuffer<LightData>>(device);
+}
 
 void Light::Update(const View* view)
 {
