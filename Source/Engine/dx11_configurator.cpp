@@ -1,4 +1,5 @@
 #include <vector>
+#include <dxgi1_6.h>
 #include "dx11_configurator.h"
 #include "imgui_manager.h"
 
@@ -89,10 +90,10 @@ HRESULT Dx11Configurator::CreateDevice(HWND hwnd,ID3D11Device** device, ID3D11De
 	scd.SampleDesc.Count					= 1;
 	scd.SampleDesc.Quality					= 0;
 	scd.BufferUsage							= DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	scd.BufferCount							= 1;
+	scd.BufferCount							= 1; // Todo : 変更(2)
 	scd.OutputWindow						= hwnd;
 	scd.Windowed							= true; // Releaseで動くようになれば"is_window"を指定する
-	scd.SwapEffect							= DXGI_SWAP_EFFECT_DISCARD;
+	scd.SwapEffect							= DXGI_SWAP_EFFECT_DISCARD; // Todo : DXGI_SWAP_EFFECT_FLIP_DISCARD
 	scd.Flags								= 0;
 	Microsoft::WRL::ComPtr<IDXGIFactory>  dxgi_factory;
 	Microsoft::WRL::ComPtr < IDXGIAdapter> dxgi_adapter;
@@ -108,6 +109,9 @@ HRESULT Dx11Configurator::CreateDevice(HWND hwnd,ID3D11Device** device, ID3D11De
 	hr = dxgi_factory->CreateSwapChain(this->device.Get(), &scd, swap_chain.GetAddressOf());
 	if (FAILED(hr))
 		assert(!"CreateSwapChain error");
+
+	//ComPtr<IDXGISwapChain3> sc3;
+	//swap_chain.As(&sc3);
 
 	*device = this->device.Get();
 	//(*device)->AddRef();
@@ -133,6 +137,8 @@ bool Dx11Configurator::InitializeRenderTarget()
 {
 	// Get BackBuffer
 	ID3D11Texture2D* back_buffer = nullptr;
+	//IDXGISwapChain3* sc3;
+	//int index = sc3->GetCurrentBackBufferIndex(); // Todo : indexの値をRTVにセットする
 	HRESULT hr = swap_chain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&back_buffer);
 	if (FAILED(hr))
 		assert(!"GetBuffer(ID3D11Texture2D) error");
