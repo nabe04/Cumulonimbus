@@ -191,7 +191,7 @@ void Scene::Render()
 	model_render->ShadowBegin(immediate_context);
 	for (const auto& ent : *GetEntities())
 	{
-		model_render->RenderShadow(immediate_context, &(*ent), view, light);
+		model_render->RenderShadow(immediate_context, &(*ent), view.get(), light.get());
 	}
 	model_render->ShadowEnd(immediate_context);
 
@@ -199,12 +199,12 @@ void Scene::Render()
 
 	for (const auto& ent : *GetEntities())
 	{
-		model_render->RenderSkyBox(immediate_context, &(*ent), view, light);
+		model_render->RenderSkyBox(immediate_context, &(*ent), view.get(), light.get());
 	}
 
 	for (const auto& ent : *GetEntities())
 	{
-		model_render->Render(immediate_context, &(*ent), view, light);
+		model_render->Render(immediate_context, &(*ent), view.get(), light.get());
 	}
 	model_render->End(immediate_context);
 

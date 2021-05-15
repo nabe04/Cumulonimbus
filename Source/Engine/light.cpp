@@ -17,7 +17,7 @@ Light::Light(ID3D11Device* device, const LightData& light_data)
 void Light::Update(const View* view)
 {
 	// Calculate right,up,front vector
-	const DirectX::SimpleMath::Vector3 l_direction = { direction.x,direction.y,direction.z };
+	const DirectX::SimpleMath::Vector3 l_direction = { cb_light->data.direction.x,cb_light->data.direction.y,cb_light->data.direction.z };
 	view_front = l_direction;
 	view_front.Normalize();
 	view_right = arithmetic::CalcRightVec(view_up, view_front);
@@ -27,21 +27,13 @@ void Light::Update(const View* view)
 
 	DirectX::XMFLOAT3 target_pos = view->GetTarget();
 	DirectX::XMFLOAT3 position = { cb_light->data.position.x, cb_light->data.position.y, cb_light->data.position.z };
-	XMMATRIX view_mat = XMMatrixLookAtLH(XMLoadFloat3(&position), { 0,0,0 }, XMLoadFloat3(&view_up));
+	const XMMATRIX view_mat = XMMatrixLookAtLH(XMLoadFloat3(&position), { 0,0,0 }, XMLoadFloat3(&view_up));
 	XMStoreFloat4x4(&cb_light->data.view_matrix, view_mat);
-
-#pragma region  perspective ‚Æ orthographic‚Ì’l‚ðCBuffer‚É‘—‚é‚±‚Æ‚ª‚Å‚«‚ê‚ÎÁ‚· (Begin)
-	XMMATRIX proj_mat = XMMatrixOrthographicLH(200,200, view->GetNearZ(),100);
-	//XMMATRIX proj_mat = XMMatrixPerspectiveFovLH(view->Fov(), view->Aspect(), view->NearZ(), view->FarZ());
-	XMStoreFloat4x4(&light_projection_matrix, proj_mat);
-
-	XMStoreFloat4x4(&light_view_projection_matrix, XMMatrixMultiply(view_mat, proj_mat));
-#pragma endregion
 
 	const XMMATRIX perspective_projection_mat = XMMatrixPerspectiveFovLH(view->GetFov(), view->GetAspect(), view->GetNearZ(), view->GetFarZ());
 	XMStoreFloat4x4(&cb_light->data.perspective_projection_matrix, perspective_projection_mat);
 	XMStoreFloat4x4(&cb_light->data.perspective_view_projection_matrix, XMMatrixMultiply(view_mat, perspective_projection_mat));
-	const XMMATRIX orthographic_projection_mat = XMMatrixOrthographicLH(orthographic_view_width, orthographic_view_height, orthographic_near_z, orthographic_far_z);
+	const XMMATRIX orthographic_projection_mat = XMMatrixOrthographicLH(cb_light->data.orthographic_view_width, cb_light->data.orthographic_view_height, cb_light->data.orthographic_near_z, cb_light->data.orthographic_far_z);
 	XMStoreFloat4x4(&cb_light->data.orthographic_projection_matrix, orthographic_projection_mat);
 	XMStoreFloat4x4(&cb_light->data.orthographic_view_projection_matrix, XMMatrixMultiply(view_mat, orthographic_projection_mat));
 }
@@ -57,7 +49,7 @@ void Light::DeactivateCBuffer(ID3D11DeviceContext* const immediate_context) cons
 }
 
 
-void Light::WriteImGui()
+void Light::WriteImGui() const
 {
 	if (ImGui::CollapsingHeader("Light Info"))
 	{

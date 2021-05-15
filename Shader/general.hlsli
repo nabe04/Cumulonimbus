@@ -17,16 +17,6 @@ cbuffer CBMesh : register(b1)
     float4 m_Ks;
 };
 
-//cbuffer CBLight : register(b2)
-//{
-//    float4 lightDirection;
-//    float4 lightColor;
-//    float4 ambient;
-//    float4 eyePosition;
-//    float4 light_position;
-//    row_major float4x4 light_view_projection;
-//}
-
 cbuffer CBLight : register(b2)
 {
     float4 light_position;

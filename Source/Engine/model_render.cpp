@@ -88,8 +88,8 @@ void MeshRenderer::Blit(ID3D11DeviceContext* immediate_context, MeshObject* acto
 
 void MeshRenderer::Render(ID3D11DeviceContext* immediate_context,
 	const Entity* ent,
-	std::unique_ptr<View>const& view,
-	std::unique_ptr<Light>const& light)
+	const View* const view,
+	const Light* const light)
 {
 	if (!ent->GetComponent<MeshObject>())
 		return;
@@ -195,8 +195,8 @@ void MeshRenderer::ShadowEnd(ID3D11DeviceContext* immediate_context)
 
 void MeshRenderer::RenderShadow(ID3D11DeviceContext* immediate_context,
 	const Entity* ent,
-	std::unique_ptr<View>const& view,
-	std::unique_ptr<Light>const& light)
+	const View* const  view,
+	const Light* const light)
 {
 	if (!ent->GetComponent<MeshObject>())
 		return;
@@ -233,8 +233,8 @@ void MeshRenderer::RenderShadow(ID3D11DeviceContext* immediate_context,
 
 void MeshRenderer::RenderSkyBox(ID3D11DeviceContext* immediate_context,
 	const Entity* ent,
-	std::unique_ptr<View>const& view,
-	std::unique_ptr<Light>const& light)
+	const View* const view,
+	const Light* const light)
 {
 	auto* sky_box = ent->GetComponent<SkyBox>();
 
@@ -294,23 +294,12 @@ void MeshRenderer::RenderGeomPrimMesh(ID3D11DeviceContext* immediate_context, co
 
 void MeshRenderer::RenderGeomPrim(ID3D11DeviceContext* immediate_context,
 	MeshObject* actor ,GeomPrimComponent* geomComponent,
-	std::unique_ptr<View>const& view,std::unique_ptr<Light>const& light,
+	const View* const  view, const Light* const light,
 	XMFLOAT4 color)
 {
 	auto ent = geomComponent->GetEntity();
 	//-- Set of Constant Buffer --//
 	{// Light
-		//shader::CB_Light cb;
-		//cb.light_dir			 = light->GetLightDir();
-		//cb.color				 = light->GetColor();
-		//cb.ambient				 = light->GetAmbient();
-		//cb.eye_pos				 = XMFLOAT4{ view->GetPos().x,view->GetPos().y,view->GetPos().z,1.0f };
-		//cb.light_view_projection = light->LightViewProjectionMatrix();
-		//cb.position = XMFLOAT4{ light->Position().x,light->Position().y,light->Position().z,1.0f };
-
-		//cbuffer_light->data = cb;
-		//cbuffer_light->Activate(immediate_context, 2);
-
 		light->ActivateCBuffer(immediate_context, true, true);
 	}
 
@@ -359,7 +348,7 @@ void MeshRenderer::RenderGeomPrim(ID3D11DeviceContext* immediate_context,
 
 void MeshRenderer::RenderParticle(ID3D11DeviceContext* immediate_context,
 	MeshObject* actor, MeshParticle* mesh_particle,
-	std::unique_ptr<View>const& view)
+	const View* const view)
 {
 	if (mesh_particle->GetParticleDatas()->empty())
 		return;
@@ -408,7 +397,7 @@ void MeshRenderer::RenderParticle(ID3D11DeviceContext* immediate_context,
 
 void MeshRenderer::RenderSphereCollision(ID3D11DeviceContext* immediate_context,
 	MeshObject* actor, Spherecollision_component* collision_comp,
-	std::unique_ptr<View>const& view)
+	const View* const view)
 {
 	auto ent = collision_comp->GetEntity();
 
@@ -465,7 +454,7 @@ void MeshRenderer::RenderSphereCollision(ID3D11DeviceContext* immediate_context,
 
 void MeshRenderer::RenderInnerSphereCollision(ID3D11DeviceContext* immediate_context,
 	MeshObject* actor, InnerSpherecollision_component* collision_comp,
-	std::unique_ptr<View>const& view)
+	const View* const view)
 {
 	auto ent = collision_comp->GetEntity();
 
@@ -522,7 +511,7 @@ void MeshRenderer::RenderInnerSphereCollision(ID3D11DeviceContext* immediate_con
 
 void MeshRenderer::RenderOBJ(ID3D11DeviceContext* immediate_context,
 	MeshObject* actor, ObjModelComponent* objComponent,
-	std::unique_ptr<View>const& view, std::unique_ptr<Light>const& light)
+	const View* const view, const Light* const light)
 {
 	auto ent = objComponent->GetEntity();
 
@@ -539,17 +528,6 @@ void MeshRenderer::RenderOBJ(ID3D11DeviceContext* immediate_context,
 	}
 
 	{// Light
-		//shader::CB_Light cb;
-		//cb.light_dir = light->GetLightDir();
-		//cb.color = light->GetColor();
-		//cb.ambient = light->GetAmbient();
-		//cb.eye_pos = XMFLOAT4{ view->GetPos().x,view->GetPos().y,view->GetPos().z,1.0f };
-		//cb.light_view_projection = light->LightViewProjectionMatrix();
-		//cb.position = XMFLOAT4{ light->Position().x,light->Position().y,light->Position().z,1.0f };
-
-		//cbuffer_light->data = cb;
-		//cbuffer_light->Activate(immediate_context, 2);
-
 		light->ActivateCBuffer(immediate_context, true, true);
 	}
 
@@ -600,8 +578,8 @@ void MeshRenderer::RenderOBJ(ID3D11DeviceContext* immediate_context,
 
 void MeshRenderer::RenderFBX(ID3D11DeviceContext* immediate_context,
 	MeshObject* actor, const FbxModelComponent* model,
-	std::unique_ptr<View>const& view,
-	std::unique_ptr<Light>const& light)
+	const View* const view,
+	const Light* const light)
 {
 	const FbxModelResource* resource = model->GetResource();
 	const std::vector<FbxModelComponent::Node>& nodes = model->GetNodes();
@@ -610,17 +588,6 @@ void MeshRenderer::RenderFBX(ID3D11DeviceContext* immediate_context,
 	//immediate_context->OMSetDepthStencilState(Dx11Configurator::GetInstance().GetDepthStencilState(actor_comp->GetDepthStencilState()), 1);
 
 	{// Light
-		//shader::CB_Light cb;
-		//cb.light_dir	= light->GetLightDir();
-		//cb.color		= light->GetColor();
-		//cb.ambient		= light->GetAmbient();
-		//cb.eye_pos		= XMFLOAT4{ view->GetPos().x,view->GetPos().y,view->GetPos().z,1.0f };
-		//cb.light_view_projection = light->LightViewProjectionMatrix();
-		//cb.position = XMFLOAT4{ light->Position().x,light->Position().y,light->Position().z,1.0f };
-
-		//cbuffer_light->data = cb;
-		//cbuffer_light->Activate(immediate_context, 2);
-
 		light->ActivateCBuffer(immediate_context, true, true);
 	}
 
@@ -683,7 +650,7 @@ void MeshRenderer::RenderFBX(ID3D11DeviceContext* immediate_context,
 	light->DeactivateCBuffer(immediate_context);
 }
 
-void MeshRenderer::RenderImgui()
+void MeshRenderer::RenderImGui()
 {
 
 }
