@@ -21,24 +21,27 @@ public:
 		DirectX::XMFLOAT4  ambient{ 1.f,1.f,1.f,1.f };	// アンビエント
 		DirectX::XMFLOAT4  color{ 1.f,1.f,1.f,1.f };	// 色
 
+		DirectX::XMFLOAT4X4 view_matrix{};
+
 		// 透視投影用
-		DirectX::XMFLOAT4X4 perspective_projection{}; // ビュー行列
-		DirectX::XMFLOAT4X4 perspective_view_projection{}; // ビュー・プロジェクション行列
+		DirectX::XMFLOAT4X4 perspective_projection_matrix{}; //プロジェクション行列
+		DirectX::XMFLOAT4X4 perspective_view_projection_matrix{}; // ビュー・プロジェクション行列
 
 		// 平行投影用
 		float orthographic_view_width{ 200 }; // 幅
 		float orthographic_view_height{ 200 };	// 高さ
 		float orthographic_near_z{ 0 };	// 最近値
 		float orthographic_far_z{ 100 };	// 最遠地
-		DirectX::XMFLOAT4X4 orthographic_projection{};	// ビュー行列
-		DirectX::XMFLOAT4X4 orthographic_view_projection{}; // ビュー・プロジェクション行列
-
+		DirectX::XMFLOAT4X4 orthographic_projection_matrix{};	// プロジェクション行列
+		DirectX::XMFLOAT4X4 orthographic_view_projection_matrix{}; // ビュー・プロジェクション行列
 	};
 
-	explicit Light() {}
+	explicit Light() = default;
 	explicit Light(ID3D11Device* device, const LightData& light_data);
 
 	void Update(const View* view);
+	void ActivateCBuffer(ID3D11DeviceContext* const immediate_context, const bool set_in_vs, const bool set_in_ps) const;
+	void DeactivateCBuffer(ID3D11DeviceContext* const immediate_context) const;
 
 	[[nodiscard]] const DirectX::XMFLOAT4& GetLightDir() const { return direction; }
 	void SetLightDir(const DirectX::XMFLOAT4& dir) { direction = dir; }
@@ -61,6 +64,9 @@ public:
 	[[noreturn]] void SetOrthographicViewHeight(const float height) { data.orthographic_view_height = height; }
 	[[noreturn]] void SetOrthographicNearZ(const float near_z) { data.orthographic_near_z = near_z; }
 	[[noreturn]] void SetOrthographicFarZ(const float far_z) { data.orthographic_far_z = far_z; }
+
+	[[nodiscard]] const LightData& GetData() const { return data; }
+	[[noreturn]] void SetData(const LightData& light_data) { data = light_data; }
 
 	void WriteImGui();
 
@@ -91,5 +97,6 @@ private:
 	std::unique_ptr<buffer::ConstantBuffer<LightData>> cb_light{};
 	LightData data{};
 
+	const u_int cb_slot = 2;
 };
 

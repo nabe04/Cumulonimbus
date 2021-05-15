@@ -11,7 +11,7 @@ using namespace DirectX;
 Light::Light(ID3D11Device* device, const LightData& light_data)
 {
 	data = light_data;
-	//cb_light = std::make_unique<buffer::ConstantBuffer<LightData>>(device);
+	cb_light = std::make_unique<buffer::ConstantBuffer<LightData>>(device);
 }
 
 void Light::Update(const View* view)
@@ -45,6 +45,17 @@ void Light::Update(const View* view)
 	XMStoreFloat4x4(&orthographic_projection, orthographic_projection_mat);
 	XMStoreFloat4x4(&orthographic_view_projection, XMMatrixMultiply(view_mat, orthographic_projection_mat));
 }
+
+void Light::ActivateCBuffer(ID3D11DeviceContext* const immediate_context, const bool set_in_vs, const bool set_in_ps) const
+{
+	cb_light->Activate(immediate_context, cb_slot, set_in_vs, set_in_ps);
+}
+
+void Light::DeactivateCBuffer(ID3D11DeviceContext* const immediate_context) const
+{
+	cb_light->Deactivate(immediate_context);
+}
+
 
 void Light::WriteImGui()
 {

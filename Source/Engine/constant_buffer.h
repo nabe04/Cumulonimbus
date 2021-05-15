@@ -13,7 +13,7 @@ namespace buffer
 	public:
 		T data;
 
-		explicit ConstantBuffer(ID3D11Device* device)
+		explicit ConstantBuffer(ID3D11Device* const device)
 		{
 			int size = sizeof(T);
 			if (sizeof(T) % 16 != 0)
@@ -41,7 +41,7 @@ namespace buffer
 		ConstantBuffer& operator= (const ConstantBuffer&) = delete;
 		ConstantBuffer& operator= (const ConstantBuffer&&) = delete;
 
-		void Activate(ID3D11DeviceContext* immediate_context, int slot, bool set_in_vs = true, bool set_in_ps = true)
+		void Activate(ID3D11DeviceContext* const immediate_context, int slot, bool set_in_vs = true, bool set_in_ps = true)
 		{
 			immediate_context->UpdateSubresource(buffer_object.Get(), 0, NULL, &data, 0, 0);
 
@@ -52,7 +52,7 @@ namespace buffer
 			set_in_ps ? immediate_context->PSSetConstantBuffers(using_slot, 1, buffer_object.GetAddressOf()) : immediate_context->PSSetConstantBuffers(slot, 1, &null_buffer);
 		}
 
-		void Deactivate(ID3D11DeviceContext* immediate_context) const
+		void Deactivate(ID3D11DeviceContext* const immediate_context) const
 		{
 			ID3D11Buffer* const null_buffer = nullptr;
 			immediate_context->VSSetConstantBuffers(using_slot, 1, &null_buffer);
