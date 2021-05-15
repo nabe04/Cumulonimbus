@@ -62,7 +62,8 @@ void Scene::Initialize()
 	// Create Light
 	if (!this->light)
 	{
-		light = std::make_unique<Light>();
+		Light::LightData data{};
+		light = std::make_unique<Light>(Locator::GetDx11Configurator()->device.Get(), data);
 		light->SetLightDir(XMFLOAT4{ .0f,.0f,1.f,1.f });
 	}
 

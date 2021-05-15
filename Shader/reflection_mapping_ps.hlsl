@@ -12,7 +12,7 @@ SamplerState default_sampler : register(s0);
 
 float4 main(PS_Input pin) : SV_TARGET
 {
-    float3 ref = pin.world_position.xyz - eyePosition.xyz;
+    float3 ref = pin.world_position.xyz - light_position.xyz;
     ref = reflect(ref, pin.normal);
     ref = normalize(ref);
 

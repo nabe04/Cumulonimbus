@@ -19,7 +19,7 @@ PS_IN main(VS_IN vin)
 
     vout.position           = wvpPos;
     vout.ndc_wvp_position   = wvpPos;
-    vout.texture_position = GetShadowTexture(light_view_projection, worldPos);
+    vout.texture_position = GetShadowTexture(light_orthographic_projection_matrix, worldPos);
 
     vout.normal = normalize(normal);
 

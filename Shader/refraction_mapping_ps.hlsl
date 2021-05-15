@@ -17,7 +17,7 @@ cbuffer RefractionMapping : register(b6)
 
 float4 main(PS_Input pin) : SV_TARGET
 {
-    float3 ref = pin.world_position.xyz - eyePosition.xyz;
+    float3 ref = pin.world_position.xyz - light_position.xyz;
     ref = refract(ref, normalize(pin.normal), refractive_index.x);
     ref = normalize(ref);
 

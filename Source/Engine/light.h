@@ -3,13 +3,14 @@
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <SimpleMath.h>
+#include "constant_buffer.h"
 
 class View;
-namespace buffer
-{
-	template <class T>
-	class ConstantBuffer;
-}
+//namespace buffer
+//{
+//	template <class T>
+//	class ConstantBuffer;
+//}
 
 class Light
 {
@@ -17,7 +18,7 @@ public:
 	struct LightData
 	{
 		DirectX::XMFLOAT4  position{ 10.0f,20.0f,-10.0f ,0 };	// 位置
-		DirectX::XMFLOAT4  direction{ .0f,.0f,1.f,1.f };	// 方向
+		DirectX::XMFLOAT4  direction{ .0f,-1.0f,1.f,1.f };	// 方向
 		DirectX::XMFLOAT4  ambient{ 1.f,1.f,1.f,1.f };	// アンビエント
 		DirectX::XMFLOAT4  color{ 1.f,1.f,1.f,1.f };	// 色
 
@@ -36,7 +37,6 @@ public:
 		DirectX::XMFLOAT4X4 orthographic_view_projection_matrix{}; // ビュー・プロジェクション行列
 	};
 
-	explicit Light() = default;
 	explicit Light(ID3D11Device* device, const LightData& light_data);
 
 	void Update(const View* view);
@@ -55,18 +55,18 @@ public:
 
 	[[nodiscard]] const DirectX::XMFLOAT4X4& LightViewProjectionMatrix() const { return light_view_projection_matrix; }
 
-	[[nodiscard]] float GetOrthographicViewWidth() const { return data.orthographic_view_width; }
-	[[nodiscard]] float GetOrthographicViewHeight() const { return data.orthographic_view_height; }
-	[[nodiscard]] float GetOrthographicNearZ() const { return data.orthographic_near_z; }
-	[[nodiscard]] float GetOrthographicFarZ() const { return data.orthographic_far_z; }
+	[[nodiscard]] float GetOrthographicViewWidth() const { return cb_light->data.orthographic_view_width; }
+	[[nodiscard]] float GetOrthographicViewHeight() const { return cb_light->data.orthographic_view_height; }
+	[[nodiscard]] float GetOrthographicNearZ() const { return cb_light->data.orthographic_near_z; }
+	[[nodiscard]] float GetOrthographicFarZ() const { return cb_light->data.orthographic_far_z; }
 
-	[[noreturn]] void SetOrthographicViewWidth(const float width) { data.orthographic_view_width = width; }
-	[[noreturn]] void SetOrthographicViewHeight(const float height) { data.orthographic_view_height = height; }
-	[[noreturn]] void SetOrthographicNearZ(const float near_z) { data.orthographic_near_z = near_z; }
-	[[noreturn]] void SetOrthographicFarZ(const float far_z) { data.orthographic_far_z = far_z; }
+	[[noreturn]] void SetOrthographicViewWidth(const float width) { cb_light->data.orthographic_view_width = width; }
+	[[noreturn]] void SetOrthographicViewHeight(const float height) { cb_light->data.orthographic_view_height = height; }
+	[[noreturn]] void SetOrthographicNearZ(const float near_z) { cb_light->data.orthographic_near_z = near_z; }
+	[[noreturn]] void SetOrthographicFarZ(const float far_z) { cb_light->data.orthographic_far_z = far_z; }
 
-	[[nodiscard]] const LightData& GetData() const { return data; }
-	[[noreturn]] void SetData(const LightData& light_data) { data = light_data; }
+	[[nodiscard]] const LightData& GetData() const { return cb_light->data; }
+	[[noreturn]] void SetData(const LightData& light_data) { cb_light->data = light_data; }
 
 	void WriteImGui();
 
@@ -95,7 +95,6 @@ private:
 	DirectX::XMFLOAT4X4 orthographic_view_projection{};
 
 	std::unique_ptr<buffer::ConstantBuffer<LightData>> cb_light{};
-	LightData data{};
 
 	const u_int cb_slot = 2;
 };

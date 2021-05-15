@@ -21,7 +21,7 @@ VS_OUT main(VS_IN vin)
     vout.normal         = vin.normal;
     vout.texcoord       = vin.texcoord;
     vout.color          = m_Color;
-    vout.eyeVector = eyePosition.xyz - vout.wvpPos.xyz;
+    vout.eyeVector = light_position.xyz - vout.wvpPos.xyz;
 
     return vout;
 }

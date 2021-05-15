@@ -13,7 +13,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     float4 color        = diffuseTexture.Sample(defaultSampler, pin.texcoord);
     float3 N            = normalize(pin.normal);    // Normal
     float3 E            = normalize(pin.eyeVector); // Eye vector
-    float3 L            = normalize(lightDirection.xyz);  // Light direction
+    float3 L            = normalize(light_direction.xyz);  // Light direction
     float3 reflectance  = { 1.0f, 1.0f, 1.0f };
 
     float3 A = m_Ka.xyz;

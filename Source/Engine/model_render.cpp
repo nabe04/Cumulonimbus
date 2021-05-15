@@ -300,16 +300,18 @@ void MeshRenderer::RenderGeomPrim(ID3D11DeviceContext* immediate_context,
 	auto ent = geomComponent->GetEntity();
 	//-- Set of Constant Buffer --//
 	{// Light
-		shader::CB_Light cb;
-		cb.light_dir			 = light->GetLightDir();
-		cb.color				 = light->GetColor();
-		cb.ambient				 = light->GetAmbient();
-		cb.eye_pos				 = XMFLOAT4{ view->GetPos().x,view->GetPos().y,view->GetPos().z,1.0f };
-		cb.light_view_projection = light->LightViewProjectionMatrix();
-		cb.position = XMFLOAT4{ light->Position().x,light->Position().y,light->Position().z,1.0f };
+		//shader::CB_Light cb;
+		//cb.light_dir			 = light->GetLightDir();
+		//cb.color				 = light->GetColor();
+		//cb.ambient				 = light->GetAmbient();
+		//cb.eye_pos				 = XMFLOAT4{ view->GetPos().x,view->GetPos().y,view->GetPos().z,1.0f };
+		//cb.light_view_projection = light->LightViewProjectionMatrix();
+		//cb.position = XMFLOAT4{ light->Position().x,light->Position().y,light->Position().z,1.0f };
 
-		cbuffer_light->data = cb;
-		cbuffer_light->Activate(immediate_context, 2);
+		//cbuffer_light->data = cb;
+		//cbuffer_light->Activate(immediate_context, 2);
+
+		light->ActivateCBuffer(immediate_context, true, true);
 	}
 
 	// Set of primitives topology
@@ -352,6 +354,7 @@ void MeshRenderer::RenderGeomPrim(ID3D11DeviceContext* immediate_context,
 	}
 
 	RenderGeomPrimMesh(immediate_context, geomComponent->GetMesh());
+	light->DeactivateCBuffer(immediate_context);
 }
 
 void MeshRenderer::RenderParticle(ID3D11DeviceContext* immediate_context,
@@ -536,16 +539,18 @@ void MeshRenderer::RenderOBJ(ID3D11DeviceContext* immediate_context,
 	}
 
 	{// Light
-		shader::CB_Light cb;
-		cb.light_dir = light->GetLightDir();
-		cb.color = light->GetColor();
-		cb.ambient = light->GetAmbient();
-		cb.eye_pos = XMFLOAT4{ view->GetPos().x,view->GetPos().y,view->GetPos().z,1.0f };
-		cb.light_view_projection = light->LightViewProjectionMatrix();
-		cb.position = XMFLOAT4{ light->Position().x,light->Position().y,light->Position().z,1.0f };
+		//shader::CB_Light cb;
+		//cb.light_dir = light->GetLightDir();
+		//cb.color = light->GetColor();
+		//cb.ambient = light->GetAmbient();
+		//cb.eye_pos = XMFLOAT4{ view->GetPos().x,view->GetPos().y,view->GetPos().z,1.0f };
+		//cb.light_view_projection = light->LightViewProjectionMatrix();
+		//cb.position = XMFLOAT4{ light->Position().x,light->Position().y,light->Position().z,1.0f };
 
-		cbuffer_light->data = cb;
-		cbuffer_light->Activate(immediate_context, 2);
+		//cbuffer_light->data = cb;
+		//cbuffer_light->Activate(immediate_context, 2);
+
+		light->ActivateCBuffer(immediate_context, true, true);
 	}
 
 
@@ -589,6 +594,8 @@ void MeshRenderer::RenderOBJ(ID3D11DeviceContext* immediate_context,
 			}
 		}
 	}
+
+	light->DeactivateCBuffer(immediate_context);
 }
 
 void MeshRenderer::RenderFBX(ID3D11DeviceContext* immediate_context,
@@ -603,16 +610,18 @@ void MeshRenderer::RenderFBX(ID3D11DeviceContext* immediate_context,
 	//immediate_context->OMSetDepthStencilState(Dx11Configurator::GetInstance().GetDepthStencilState(actor_comp->GetDepthStencilState()), 1);
 
 	{// Light
-		shader::CB_Light cb;
-		cb.light_dir	= light->GetLightDir();
-		cb.color		= light->GetColor();
-		cb.ambient		= light->GetAmbient();
-		cb.eye_pos		= XMFLOAT4{ view->GetPos().x,view->GetPos().y,view->GetPos().z,1.0f };
-		cb.light_view_projection = light->LightViewProjectionMatrix();
-		cb.position = XMFLOAT4{ light->Position().x,light->Position().y,light->Position().z,1.0f };
+		//shader::CB_Light cb;
+		//cb.light_dir	= light->GetLightDir();
+		//cb.color		= light->GetColor();
+		//cb.ambient		= light->GetAmbient();
+		//cb.eye_pos		= XMFLOAT4{ view->GetPos().x,view->GetPos().y,view->GetPos().z,1.0f };
+		//cb.light_view_projection = light->LightViewProjectionMatrix();
+		//cb.position = XMFLOAT4{ light->Position().x,light->Position().y,light->Position().z,1.0f };
 
-		cbuffer_light->data = cb;
-		cbuffer_light->Activate(immediate_context, 2);
+		//cbuffer_light->data = cb;
+		//cbuffer_light->Activate(immediate_context, 2);
+
+		light->ActivateCBuffer(immediate_context, true, true);
 	}
 
 	for (const ModelData::Mesh& mesh : resource->GetModelData().meshes)
@@ -670,6 +679,8 @@ void MeshRenderer::RenderFBX(ID3D11DeviceContext* immediate_context,
 			immediate_context->DrawIndexed(subset.index_count, subset.start_index, 0);
 		}
 	}
+
+	light->DeactivateCBuffer(immediate_context);
 }
 
 void MeshRenderer::RenderImgui()

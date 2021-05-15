@@ -17,12 +17,19 @@
 // cbuffer CBLight
 // {
 //
-//   float4 lightDirection;             // Offset:    0 Size:    16 [unused]
-//   float4 lightColor;                 // Offset:   16 Size:    16
-//   float4 ambient;                    // Offset:   32 Size:    16 [unused]
-//   float4 eyePosition;                // Offset:   48 Size:    16
-//   float4 light_position;             // Offset:   64 Size:    16 [unused]
-//   row_major float4x4 light_view_projection;// Offset:   80 Size:    64 [unused]
+//   float4 light_position;             // Offset:    0 Size:    16
+//   float4 light_direction;            // Offset:   16 Size:    16 [unused]
+//   float4 light_ambient;              // Offset:   32 Size:    16 [unused]
+//   float4 light_color;                // Offset:   48 Size:    16
+//   row_major float4x4 view_matrix;    // Offset:   64 Size:    64 [unused]
+//   row_major float4x4 light_perspective_projection_matrix;// Offset:  128 Size:    64 [unused]
+//   row_major float4x4 light_perspective_view_projection_matrix;// Offset:  192 Size:    64 [unused]
+//   float light_orthographic_view_width;// Offset:  256 Size:     4 [unused]
+//   float light_orthographic_view_height;// Offset:  260 Size:     4 [unused]
+//   float light_orthographic_near_z;   // Offset:  264 Size:     4 [unused]
+//   float light_orthographic_far_z;    // Offset:  268 Size:     4 [unused]
+//   row_major float4x4 light_orthographic_projection_matrix;// Offset:  272 Size:    64 [unused]
+//   row_major float4x4 light_orthographic_view_projection_matrix;// Offset:  336 Size:    64 [unused]
 //
 // }
 //
@@ -103,13 +110,13 @@ dcl_temps 17
 //   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
 //
 #line 13 "D:\チEクトップ\Cumulonimbus\Shader\spot_light_ps.hlsl"
-dp3 r0.x, cb2[1].xyzx, cb2[1].xyzx
+dp3 r0.x, cb2[3].xyzx, cb2[3].xyzx
 rsq r0.x, r0.x
-mul r0.xyz, r0.xxxx, cb2[1].xyzx  // r0.x <- L.x; r0.y <- L.y; r0.z <- L.z
+mul r0.xyz, r0.xxxx, cb2[3].xyzx  // r0.x <- L.x; r0.y <- L.y; r0.z <- L.z
 
 #line 14
 mov r1.xyz, -v1.xyzx
-add r1.xyz, r1.xyzx, cb2[3].xyzx
+add r1.xyz, r1.xyzx, cb2[0].xyzx
 dp3 r0.w, r1.xyzx, r1.xyzx
 rsq r0.w, r0.w
 mul r1.xyz, r0.wwww, r1.xyzx  // r1.x <- E.x; r1.y <- E.y; r1.z <- E.z
@@ -118,7 +125,7 @@ mul r1.xyz, r0.wwww, r1.xyzx  // r1.x <- E.x; r1.y <- E.y; r1.z <- E.z
 sample_indexable(texture2d)(float,float,float,float) r2.xyzw, v3.xyxx, t0.xyzw, s0  // r2.x <- color.x; r2.y <- color.y; r2.z <- color.z; r2.w <- color.w
 
 #line 18
-mov r3.xyz, cb2[1].xyzx  // r3.x <- C.x; r3.y <- C.y; r3.z <- C.z
+mov r3.xyz, cb2[3].xyzx  // r3.x <- C.x; r3.y <- C.y; r3.z <- C.z
 
 #line 21
 dp3 r0.w, v2.xyzx, v2.xyzx

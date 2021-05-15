@@ -10,12 +10,12 @@ SamplerState defaultSampler : register(s0);
 
 float4 main(VS_OUT pin) : SV_TARGET
 {
-    float3 L = normalize(lightColor.xyz);
-    float3 E = normalize(eyePosition.xyz - pin.worldPos.xyz);
+    float3 L = normalize(light_color.xyz);
+    float3 E = normalize(light_position.xyz - pin.worldPos.xyz);
 
     // Ambient
     float4 color    = diffuseTexture.Sample(defaultSampler, pin.texcoord);
-    float3 C        = lightColor.rgb;  //“üËŒõ(F‚Æ‹­‚³)
+    float3 C        = light_color.rgb;  //“üËŒõ(F‚Æ‹­‚³)
 
     // Normal
     float3 N = normalize(pin.normal); // Normal

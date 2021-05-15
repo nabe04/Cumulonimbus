@@ -10,8 +10,8 @@ using namespace DirectX;
 
 Light::Light(ID3D11Device* device, const LightData& light_data)
 {
-	data = light_data;
 	cb_light = std::make_unique<buffer::ConstantBuffer<LightData>>(device);
+	cb_light->data = light_data;
 }
 
 void Light::Update(const View* view)
@@ -26,9 +26,9 @@ void Light::Update(const View* view)
 	view_up.Normalize();
 
 	DirectX::XMFLOAT3 target_pos = view->GetTarget();
-
+	DirectX::XMFLOAT3 position = { cb_light->data.position.x, cb_light->data.position.y, cb_light->data.position.z };
 	XMMATRIX view_mat = XMMatrixLookAtLH(XMLoadFloat3(&position), { 0,0,0 }, XMLoadFloat3(&view_up));
-	XMStoreFloat4x4(&light_view_matrix, view_mat);
+	XMStoreFloat4x4(&cb_light->data.view_matrix, view_mat);
 
 #pragma region  perspective ‚Æ orthographic‚Ì’l‚ðCBuffer‚É‘—‚é‚±‚Æ‚ª‚Å‚«‚ê‚ÎÁ‚· (Begin)
 	XMMATRIX proj_mat = XMMatrixOrthographicLH(200,200, view->GetNearZ(),100);
@@ -39,11 +39,11 @@ void Light::Update(const View* view)
 #pragma endregion
 
 	const XMMATRIX perspective_projection_mat = XMMatrixPerspectiveFovLH(view->GetFov(), view->GetAspect(), view->GetNearZ(), view->GetFarZ());
-	XMStoreFloat4x4(&perspective_projection, perspective_projection_mat);
-	XMStoreFloat4x4(&perspective_view_projection, XMMatrixMultiply(view_mat, perspective_projection_mat));
+	XMStoreFloat4x4(&cb_light->data.perspective_projection_matrix, perspective_projection_mat);
+	XMStoreFloat4x4(&cb_light->data.perspective_view_projection_matrix, XMMatrixMultiply(view_mat, perspective_projection_mat));
 	const XMMATRIX orthographic_projection_mat = XMMatrixOrthographicLH(orthographic_view_width, orthographic_view_height, orthographic_near_z, orthographic_far_z);
-	XMStoreFloat4x4(&orthographic_projection, orthographic_projection_mat);
-	XMStoreFloat4x4(&orthographic_view_projection, XMMatrixMultiply(view_mat, orthographic_projection_mat));
+	XMStoreFloat4x4(&cb_light->data.orthographic_projection_matrix, orthographic_projection_mat);
+	XMStoreFloat4x4(&cb_light->data.orthographic_view_projection_matrix, XMMatrixMultiply(view_mat, orthographic_projection_mat));
 }
 
 void Light::ActivateCBuffer(ID3D11DeviceContext* const immediate_context, const bool set_in_vs, const bool set_in_ps) const
@@ -61,13 +61,13 @@ void Light::WriteImGui()
 {
 	if (ImGui::CollapsingHeader("Light Info"))
 	{
-		ImGui::DragFloat("Position X", &position.x, 0.01f, -100.0f, 100.0f);
-		ImGui::DragFloat("Position Y", &position.y, 0.01f, -100.0f, 100.0f);
-		ImGui::DragFloat("Position Z", &position.z, 0.01f, -100.0f, 100.0f);
-		ImGui::DragFloat("Direction X", &direction.x, 0.01f, -1.0f, 1.0f);
-		ImGui::DragFloat("Direction Y", &direction.y, 0.01f, -1.0f, 1.0f);
-		ImGui::DragFloat("Direction Z", &direction.z, 0.01f, -1.0f, 1.0f);
-		ImGui::ColorEdit3("Ambient", (float*)&ambient);
-		ImGui::ColorEdit4("Light Color", (float*)&color);
+		ImGui::DragFloat("Position X", &cb_light->data.position.x, 0.01f, -100.0f, 100.0f);
+		ImGui::DragFloat("Position Y", &cb_light->data.position.y, 0.01f, -100.0f, 100.0f);
+		ImGui::DragFloat("Position Z", &cb_light->data.position.z, 0.01f, -100.0f, 100.0f);
+		ImGui::DragFloat("Direction X", &cb_light->data.direction.x, 0.01f, -1.0f, 1.0f);
+		ImGui::DragFloat("Direction Y", &cb_light->data.direction.y, 0.01f, -1.0f, 1.0f);
+		ImGui::DragFloat("Direction Z", &cb_light->data.direction.z, 0.01f, -1.0f, 1.0f);
+		ImGui::ColorEdit3("Ambient", (float*)&cb_light->data.ambient);
+		ImGui::ColorEdit4("Light Color", (float*)&cb_light->data.color);
 	}
 }

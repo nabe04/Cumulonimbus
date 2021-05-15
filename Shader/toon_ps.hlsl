@@ -12,8 +12,8 @@ float4 main(VS_OUT pin) : SV_TARGET
 
     float3 A = m_Ka.xyz;
     float3 N = normalize(pin.normal);
-    float3 L = normalize(lightDirection.xyz);
-    float3 C = lightColor.xyz;
+    float3 L = normalize(light_direction.xyz);
+    float3 C = light_color.xyz;
     float3 E = normalize(pin.eye_vector.xyz);
     float3 K = reflectance;
 

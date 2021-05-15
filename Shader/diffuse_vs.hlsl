@@ -33,7 +33,7 @@ PS_Input main(VS_Input vin)
 
     vout.position   = wvpPos;
     vout.ndc_position = wvpPos;
-    vout.texture_coodinate = GetShadowTexture(light_view_projection, worldPos);
+    vout.texture_coodinate = GetShadowTexture(light_orthographic_view_projection_matrix, worldPos);
     vout.normal     = normalize(normal);
     vout.texcoord0  = vin.texcoord0;
     vout.color      = m_Color;

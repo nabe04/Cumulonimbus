@@ -20,7 +20,7 @@ VS_OUT main( VS_IN vin )
     vout.normal     = normalize(normal);
     vout.texcoord   = vin.texcoord;
     vout.color      = m_Color;
-    vout.eye_vector = vout.position.xyz - eyePosition.xyz; // eye pos Å® model pos
+    vout.eye_vector = vout.position.xyz - light_position.xyz; // eye pos Å® model pos
 
     return vout;
 }

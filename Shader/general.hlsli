@@ -17,35 +17,35 @@ cbuffer CBMesh : register(b1)
     float4 m_Ks;
 };
 
-cbuffer CBLight : register(b2)
-{
-    float4 lightDirection;
-    float4 lightColor;
-    float4 ambient;
-    float4 eyePosition;
-    float4 light_position;
-    row_major float4x4 light_view_projection;
-}
-
 //cbuffer CBLight : register(b2)
 //{
+//    float4 lightDirection;
+//    float4 lightColor;
+//    float4 ambient;
+//    float4 eyePosition;
 //    float4 light_position;
-//    float4 light_direction;
-//    float4 light_ambient;
-//    float4 light_color;
-
-//    row_major float4x4 view_matrix;
-
-//    row_major float4x4 light_perspective_projection_matrix;
-//    row_major float4x4 light_perspective_view_projection_matrix;
-
-//    float light_orthographic_view_width;
-//    float light_orthographic_view_height;
-//    float light_orthographic_near_z;
-//    float light_orthographic_far_z;
-//    row_major float4x4 light_orthographic_projection_matrix;
-//    row_major float4x4 light_orthographic_view_projection_matrix;
+//    row_major float4x4 light_view_projection;
 //}
+
+cbuffer CBLight : register(b2)
+{
+    float4 light_position;
+    float4 light_direction;
+    float4 light_ambient;
+    float4 light_color;
+
+    row_major float4x4 view_matrix;
+
+    row_major float4x4 light_perspective_projection_matrix;
+    row_major float4x4 light_perspective_view_projection_matrix;
+
+    float light_orthographic_view_width;
+    float light_orthographic_view_height;
+    float light_orthographic_near_z;
+    float light_orthographic_far_z;
+    row_major float4x4 light_orthographic_projection_matrix;
+    row_major float4x4 light_orthographic_view_projection_matrix;
+}
 
 struct VS_Input
 {
