@@ -2,7 +2,6 @@
 
 #include <vector>
 
-#include "mesh_object.h"
 #include "blend.h"
 #include "collision_component.h"
 #include "fbx_model_component.h"
@@ -10,21 +9,22 @@
 #include "framework.h"
 #include "inner_sphere_collision.h"
 #include "light.h"
-#include "obj_model_component.h"
+#include "locator.h"
+#include "mesh_object.h"
+#include "mesh_particle.h"
 #include "model_data.h"
+#include "obj_model_component.h"
 #include "rasterizer.h"
 #include "sampler.h"
 #include "scene.h"
+#include "shader_manager.h"
+#include "sky_box.h"
 #include "sphere_collision_component.h"
 #include "sprite.h"
-#include "sky_box.h"
 #include "texture.h"
 #include "transform.h"
 #include "transform_component.h"
 #include "view.h"
-#include "locator.h"
-#include "mesh_particle.h"
-#include "shader_manager.h"
 
 using namespace shader;
 
@@ -56,6 +56,7 @@ MeshRenderer::MeshRenderer(ID3D11Device* device)
 	bloom			= std::make_unique<Bloom>(device, Locator::GetWindow()->Width(), Locator::GetWindow()->Height());
 	sorbel_filter	= std::make_unique<SorbelFilter>(device, Locator::GetWindow()->Width(), Locator::GetWindow()->Height());
 	shadow_map		= std::make_unique<ShadowMap>(device, Locator::GetWindow()->Width(), Locator::GetWindow()->Height());
+	gaussian_blur   = std::make_unique<GaussianBlur>(device, Locator::GetWindow()->Width(), Locator::GetWindow()->Height());
 }
 
 void MeshRenderer::Begin(ID3D11DeviceContext* immediate_context)
@@ -232,6 +233,8 @@ void MeshRenderer::RenderShadow(ID3D11DeviceContext* immediate_context,
 		shadow_map->GetEndRenderingState()->SetState(static_cast<ShadowMap::RenderProcess>(i));
 		shadow_map->GetEndRenderingState()->Update(immediate_context);
 	}
+
+	gaussian_blur->GenerateGaussianBlur(immediate_context, shadow_map->GetDepthExtractionFB()->render_target_shader_resource_view.Get());
 }
 
 void MeshRenderer::RenderSkyBox(ID3D11DeviceContext* immediate_context,

@@ -1,14 +1,11 @@
 #pragma once
 
-#include <string>
 #include <memory>
-#include <map>
 
 #include <d3d11.h>
 #include <wrl.h>
 #include <DirectXMath.h>
 
-#include "state_machine.h"
 #include "constant_buffer.h"
 
 #include "imgui.h"

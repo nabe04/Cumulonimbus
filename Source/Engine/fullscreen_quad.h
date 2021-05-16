@@ -18,14 +18,6 @@ public:
 
 	std::unique_ptr<FrameBuffer> blend_buffer;
 
-private:
-	Microsoft::WRL::ComPtr<ID3D11VertexShader> embedded_vertex_shader;
-	Microsoft::WRL::ComPtr<ID3D11PixelShader> embedded_pixel_shaders[2];
-
-	Microsoft::WRL::ComPtr<ID3D11RasterizerState> embedded_rasterizer_state;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> embedded_depth_stencil_state;
-
-public:
 	[[noreturn]] void Blit(ID3D11DeviceContext* immediate_context,
 		bool use_embedded_rasterizer_state = true, bool use_embedded_depth_stencil_state = true,
 		bool use_embedded_pixel_shader = false, bool enable_msaa = false);
@@ -33,4 +25,11 @@ public:
 	[[noreturn]] void Convolution(ID3D11DeviceContext* immediate_context,
 		bool use_embedded_rasterizer_state = true, bool use_embedded_depth_stencil_state = true,
 		bool use_embedded_pixel_shader = false, bool enable_msaa = false);
+
+private:
+	Microsoft::WRL::ComPtr<ID3D11VertexShader> embedded_vertex_shader;
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> embedded_pixel_shaders[2];
+
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState> embedded_rasterizer_state;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> embedded_depth_stencil_state;
 };

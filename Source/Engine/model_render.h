@@ -6,7 +6,6 @@
 #include <wrl.h>
 #include <d3d11.h>
 #include <DirectXMath.h>
-using namespace DirectX;
 
 #include "bloom.h"
 #include "constant_buffer.h"
@@ -19,6 +18,7 @@ using namespace DirectX;
 #include "rendering_buffer.h"
 #include "fullscreen_quad.h"
 #include "shadow_map.h"
+#include "gaussian_blur.h"
 
 class MeshObject;
 class View;
@@ -109,7 +109,7 @@ public:
 
 private:
 	std::unique_ptr<shader::ShaderManager> shader_manager{};
-	
+
 	//-- Constant buffer --//
 	std::unique_ptr<buffer::ConstantBuffer<shader::CB_CoordinateTransformation>> cbuffer_transformation;
 	std::unique_ptr<buffer::ConstantBuffer<shader::CB_Material>>				 cbuffer_material;
@@ -129,8 +129,8 @@ private:
 	std::unique_ptr<Bloom>			bloom;
 	std::unique_ptr<SorbelFilter>	sorbel_filter;
 	std::unique_ptr<ShadowMap>		shadow_map;
+	std::unique_ptr<GaussianBlur>   gaussian_blur;
 
 	// ShaderResourceView
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv_sky_map;
-
 };

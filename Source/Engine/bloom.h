@@ -14,7 +14,7 @@ namespace shader
 	class PixelShader;
 }
 
-class Bloom :public FullscreenQuad
+class Bloom final :public FullscreenQuad
 {
 public:
 	enum BloomSamplerStates
@@ -31,7 +31,7 @@ public:
 	{
 		float glow_extraction_threshold  = 0.010f;
 		float blur_convolution_intensity = 0.500f;
-		float options[2];
+		float options[2]{};
 	};
 
 	std::unique_ptr<buffer::ConstantBuffer<M_Bloom>> constant_buffer;
@@ -50,7 +50,7 @@ private:
 
 public:
 	Bloom(ID3D11Device* device, unsigned int width, unsigned int height);
-	~Bloom()					= default;
+	~Bloom() override			= default;
 	Bloom(Bloom&)				= delete;
 	Bloom& operator =(Bloom)	= delete;
 

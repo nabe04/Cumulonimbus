@@ -6,6 +6,7 @@
 #endif
 
 #include <cassert>
+#include <string>
 
 #include "shader.h"
 

@@ -4,7 +4,6 @@
 #define USE_TEXTURE_POSITION
 #define USE_VOUT_COLOR
 
-
 #include "general.hlsli"
 #include "functions.hlsli"
 #include "diffuse.hlsli"
@@ -13,9 +12,9 @@
 //*******************************************
 //  Texture
 //*******************************************
-Texture2D diffuseTexture : register(t0);
+Texture2D diffuse_texture : register(t0);
 Texture2D depth_texture : register(t1);
-SamplerState defaultSampler : register(s0);
+SamplerState default_sampler : register(s0);
 
 float4 main(PS_Input pin) : SV_TARGET
 {
@@ -23,7 +22,7 @@ float4 main(PS_Input pin) : SV_TARGET
 
     float3 f3_diffuse = Diffuse(pin.normal.xyz, light_direction.xyz, pin.color.xyz, reflectance);
 
-    float3 shadow_color = GetShadow(depth_texture, defaultSampler, pin.texture_coodinate, 0.6f,0.001f);
+    float3 shadow_color = GetShadow(depth_texture, default_sampler, pin.texture_coodinate, 0.6f, 0.001f);
 
-    return diffuseTexture.Sample(defaultSampler, pin.texcoord0) * float4(f3_diffuse, 1) * float4(shadow_color, 1);
+    return diffuse_texture.Sample(default_sampler, pin.texcoord0) * float4(f3_diffuse, 1) * float4(shadow_color, 1);
 }

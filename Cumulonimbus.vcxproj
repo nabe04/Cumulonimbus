@@ -54,6 +54,7 @@
     <ClInclude Include="Source\Engine\framework.h" />
     <ClInclude Include="Source\Engine\frame_buffer.h" />
     <ClInclude Include="Source\Engine\fullscreen_quad.h" />
+    <ClInclude Include="Source\Engine\gaussian_blur.h" />
     <ClInclude Include="Source\Engine\generic.h" />
     <ClInclude Include="Source\Engine\geometric_primitive_component.h" />
     <ClInclude Include="Source\Engine\geometric_primitive_resource.h" />
@@ -149,6 +150,7 @@
     <ClCompile Include="Source\Engine\framework.cpp" />
     <ClCompile Include="Source\Engine\frame_buffer.cpp" />
     <ClCompile Include="Source\Engine\fullscreen_quad.cpp" />
+    <ClCompile Include="Source\Engine\gaussian_blur.cpp" />
     <ClCompile Include="Source\Engine\geometric_primitive_component.cpp" />
     <ClCompile Include="Source\Engine\geometric_primitive_resource.cpp" />
     <ClCompile Include="Source\Engine\imgui_manager.cpp" />
