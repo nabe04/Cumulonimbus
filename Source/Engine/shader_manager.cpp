@@ -11,14 +11,14 @@ namespace shader
 	// ShaderManager Class
 	//
 	//***************************************
-	void ShaderManager::Initialize(ID3D11Device* device)
+	ShaderManager::ShaderManager(ID3D11Device* device)
 	{
 		//-- Shader 3D --//
-		standard_3d  = std::make_unique<Standard3D>(device);
-		diffuse		 = std::make_unique<Diffuse>(device);
-		phong		 = std::make_unique<Phong>(device);
-		metal		 = std::make_unique<Metal>(device);
-		toon		 = std::make_unique<Toon>(device);
+		standard_3d = std::make_unique<Standard3D>(device);
+		diffuse = std::make_unique<Diffuse>(device);
+		phong = std::make_unique<Phong>(device);
+		metal = std::make_unique<Metal>(device);
+		toon = std::make_unique<Toon>(device);
 		reflaction_mapping = std::make_unique<ReflectionMapping>(device);
 		refraction_mapping = std::make_unique<RefractionMapping>(device);
 		single_color = std::make_unique<SingleColor>(device);
@@ -73,7 +73,7 @@ namespace shader
 			);
 		}
 
-		{//-- Add shader state 3d(deactive) --//
+		{//-- Add shader state 3d(deactivate) --//
 			deactive_shader_state_3d.AddState
 			(
 				MeshShaderTypes::Standard,
@@ -193,6 +193,7 @@ namespace shader
 		}
 	}
 
+
 	void ShaderManager::Activate(ID3D11DeviceContext* immediate_context, const std::shared_ptr<const MeshShaderState>& state)
 	{
 		current_state_3d = state->GetShaderState();
@@ -214,12 +215,12 @@ namespace shader
 		//Todo : 別のRenderTargetに書き込む処理(非アクティブ化)
 	}
 
-	void ShaderManager::ActiveteSingleColor(ID3D11DeviceContext* immediate_context)
+	void ShaderManager::ActivateSingleColor(ID3D11DeviceContext* immediate_context) const
 	{
 		single_color->Activate(immediate_context);
 	}
 
-	void ShaderManager::DeactivateSingleColor(ID3D11DeviceContext* immediate_context)
+	void ShaderManager::DeactivateSingleColor(ID3D11DeviceContext* immediate_context) const
 	{
 		single_color->Deactivate(immediate_context);
 	}
@@ -255,7 +256,7 @@ namespace shader
 		shader_states.AddState(MeshShaderTypes::SingleColor	, [this]() {m_single_color.EditParam(); });
 	}
 
-	void MeshShaderState::RenderImgui()
+	void MeshShaderState::RenderImGui()
 	{
 		if (ImGui::TreeNode("Shader Parameter"))
 		{

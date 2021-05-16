@@ -32,6 +32,7 @@ class Texture2DComponent;
 class DummyTexture;
 class FillTexture2DComponent;
 class MeshParticle;
+class shader::ShaderManager;
 
 class Blend;
 class Rasterizer;
@@ -55,7 +56,7 @@ private:
 		XMFLOAT4 color = XMFLOAT4{ .0f,.0f,.0f,1.f });
 
 	void RenderOBJ(ID3D11DeviceContext* immediate_context,
-		MeshObject* actor, ObjModelComponent* modelComp,
+		MeshObject* actor, ObjModelComponent* model_comp,
 		const View* const view, const Light* const light);
 
 	void RenderFBX(ID3D11DeviceContext* immediate_context,
@@ -107,6 +108,8 @@ public:
 	void RenderImGui();
 
 private:
+	std::unique_ptr<shader::ShaderManager> shader_manager{};
+	
 	//-- Constant buffer --//
 	std::unique_ptr<buffer::ConstantBuffer<shader::CB_CoordinateTransformation>> cbuffer_transformation;
 	std::unique_ptr<buffer::ConstantBuffer<shader::CB_Material>>				 cbuffer_material;
@@ -127,7 +130,7 @@ private:
 	std::unique_ptr<SorbelFilter>	sorbel_filter;
 	std::unique_ptr<ShadowMap>		shadow_map;
 
-	// ShaderResoueceView
+	// ShaderResourceView
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv_sky_map;
 
 };

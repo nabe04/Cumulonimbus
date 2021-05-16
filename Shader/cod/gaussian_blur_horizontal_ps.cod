@@ -7,7 +7,7 @@
 // Name                                 Type  Format         Dim      HLSL Bind  Count
 // ------------------------------ ---------- ------- ----------- -------------- ------
 // linear_border_sampler_state       sampler      NA          NA             s0      1 
-// hdr_colour_map                    texture  float4          2d             t0      1 
+// hdr_color_map                     texture  float4          2d             t0      1 
 //
 //
 //
@@ -60,11 +60,11 @@ mov x1[2].x, l(0.070270)
 #line 17
 sample_indexable(texture2d)(float,float,float,float) r1.xyzw, v1.xyxx, t0.xyzw, s0
 mov r0.y, x1[0].x
-mul r1.xyzw, r0.yyyy, r1.xyzw  // r1.x <- fragment_colour.x; r1.y <- fragment_colour.y; r1.z <- fragment_colour.z; r1.w <- fragment_colour.w
+mul r1.xyzw, r0.yyyy, r1.xyzw  // r1.x <- fragment_color.x; r1.y <- fragment_color.y; r1.z <- fragment_color.z; r1.w <- fragment_color.w
 
 #line 18
 mov r0.y, l(1)  // r0.y <- i
-mov r2.xyzw, r1.xyzw  // r2.x <- fragment_colour.x; r2.y <- fragment_colour.y; r2.z <- fragment_colour.z; r2.w <- fragment_colour.w
+mov r2.xyzw, r1.xyzw  // r2.x <- fragment_color.x; r2.y <- fragment_color.y; r2.z <- fragment_color.z; r2.w <- fragment_color.w
 mov r0.z, r0.y  // r0.z <- i
 loop 
   ilt r0.w, r0.z, l(3)
@@ -79,7 +79,7 @@ loop
   sample_indexable(texture2d)(float,float,float,float) r3.xyzw, r3.xyxx, t0.xyzw, s0
   mov r0.w, x1[r0.z + 0].x
   mul r3.xyzw, r0.wwww, r3.xyzw
-  add r3.xyzw, r2.xyzw, r3.xyzw  // r3.x <- fragment_colour.x; r3.y <- fragment_colour.y; r3.z <- fragment_colour.z; r3.w <- fragment_colour.w
+  add r3.xyzw, r2.xyzw, r3.xyzw  // r3.x <- fragment_color.x; r3.y <- fragment_color.y; r3.z <- fragment_color.z; r3.w <- fragment_color.w
 
 #line 21
   mov r0.w, x0[r0.z + 0].x
@@ -91,7 +91,7 @@ loop
   sample_indexable(texture2d)(float,float,float,float) r4.xyzw, r4.xyxx, t0.xyzw, s0
   mov r0.w, x1[r0.z + 0].x
   mul r4.xyzw, r0.wwww, r4.xyzw
-  add r2.xyzw, r3.xyzw, r4.xyzw  // r2.x <- fragment_colour.x; r2.y <- fragment_colour.y; r2.z <- fragment_colour.z; r2.w <- fragment_colour.w
+  add r2.xyzw, r3.xyzw, r4.xyzw  // r2.x <- fragment_color.x; r2.y <- fragment_color.y; r2.z <- fragment_color.z; r2.w <- fragment_color.w
 
 #line 22
   iadd r0.z, r0.z, l(1)

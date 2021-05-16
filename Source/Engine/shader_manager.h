@@ -39,10 +39,28 @@ namespace shader
 	//---------------------------------------
 	class ShaderManager final
 	{
-	private:
-		ShaderManager() = default;
+	public:
+		explicit  ShaderManager(ID3D11Device* device);
 		~ShaderManager() = default;
 
+		/*
+		* brief       : Setting shader (3D)
+		* MeshShaderState : It's got information on each shader
+		*/
+		void Activate(ID3D11DeviceContext* immediate_context, const std::shared_ptr<const MeshShaderState>& state);
+		void Deactivate(ID3D11DeviceContext* immediate_context, const std::shared_ptr<const MeshShaderState>& state);
+
+		void ActivateSingleColor(ID3D11DeviceContext* immediate_context) const;
+		void DeactivateSingleColor(ID3D11DeviceContext* immediate_context) const;
+
+		/*
+		* brief       : Setting shader (2D)
+		* MeshShaderState : It's got information on each shader
+		*/
+		void Activate(ID3D11DeviceContext* immediate_context, const std::shared_ptr<const SpriteShaderState>& state);
+		void Deactivate(ID3D11DeviceContext* immediate_context, const std::shared_ptr<const SpriteShaderState>& state);
+
+	private:
 		//-- 3D --//
 		std::unique_ptr<Standard3D>  standard_3d = nullptr;
 		std::unique_ptr<Diffuse>	 diffuse = nullptr;
@@ -59,38 +77,12 @@ namespace shader
 		inline static MeshShaderTypes   current_state_3d = MeshShaderTypes::End;
 		inline static SpriteShaderTypes current_state_2d = SpriteShaderTypes::End;
 
-		StateMachine<MeshShaderTypes,   void, ID3D11DeviceContext*> active_shader_state_3d{};
-		StateMachine<MeshShaderTypes,   void, ID3D11DeviceContext*> deactive_shader_state_3d{};
+		StateMachine<MeshShaderTypes, void, ID3D11DeviceContext*> active_shader_state_3d{};
+		StateMachine<MeshShaderTypes, void, ID3D11DeviceContext*> deactive_shader_state_3d{};
 		StateMachine<SpriteShaderTypes, void, ID3D11DeviceContext*> active_shader_state_2d{};
 		StateMachine<SpriteShaderTypes, void, ID3D11DeviceContext*> deactive_shader_state_2d{};
 
 		StateMachine<MeshShaderTypes, void, const std::shared_ptr<const MeshShaderState>&> constant_buffer_state_3d{};
-	public:
-		// Singleton used
-		static ShaderManager* GetInstance()
-		{
-			static ShaderManager instance{};
-			return &instance;
-		}
-
-		void Initialize(ID3D11Device* device);
-
-		/*
-		* brief       : Setting shader (3D)
-		* MeshShaderState : It's got information on each shader
-		*/
-		void Activate(ID3D11DeviceContext* immediate_context, const std::shared_ptr<const MeshShaderState>& state);
-		void Deactivate(ID3D11DeviceContext* immediate_context, const std::shared_ptr<const MeshShaderState>& state);
-
-		void ActiveteSingleColor(ID3D11DeviceContext* immediate_context);
-		void DeactivateSingleColor(ID3D11DeviceContext* immediate_context);
-
-		/*
-		* brief       : Setting shader (2D)
-		* MeshShaderState : It's got information on each shader
-		*/
-		void Activate(ID3D11DeviceContext* immediate_context, const std::shared_ptr<const SpriteShaderState>& state);
-		void Deactivate(ID3D11DeviceContext* immediate_context, const std::shared_ptr<const SpriteShaderState>& state);
 	};
 
 	//---------------------------------------
@@ -101,15 +93,6 @@ namespace shader
 	//---------------------------------------
 	class MeshShaderState final
 	{
-	private:
-		MeshShaderTypes shader_type = MeshShaderTypes::Diffuse;
-
-		//-- Imgui --//
-		inline static const char* items[] = { "Standard","Diffuse","Phong","Metal","Toon","ReflactionMapping","RefractionMapping","SingleColor" };
-		int item_current = 0;
-
-		StateMachine<MeshShaderTypes> shader_states{};
-
 	public:
 		//-- Shader Types --//
 		M_Phong				m_phong{};
@@ -119,46 +102,51 @@ namespace shader
 		M_Refraction		m_refraction{};
 		M_SingleColor		m_single_color{};
 
-	public:
 		MeshShaderState();
 		~MeshShaderState() = default;
 
-		void SetShaderState(MeshShaderTypes type) { shader_type = type; }
-		MeshShaderTypes GetShaderState() const { return shader_type; }
+		[[noreturn]] void SetShaderState(const MeshShaderTypes& type) { shader_type = type; }
+		[[nodiscard]] const MeshShaderTypes& GetShaderState() const { return shader_type; }
 
 
 		//-- ImGui --//
-		void RenderImgui();
+		void RenderImGui();
 		void EditShaderParam(MeshShaderTypes type);
+
+	private:
+		MeshShaderTypes shader_type = MeshShaderTypes::Diffuse;
+
+		//-- ImGui --//
+		inline static const char* items[] = { "Standard","Diffuse","Phong","Metal","Toon","ReflactionMapping","RefractionMapping","SingleColor" };
+		int item_current = 0;
+
+		StateMachine<MeshShaderTypes> shader_states{};
 	};
 
 	class SpriteShaderManager final
 	{
-	private:
-		std::unique_ptr<StandardSprite> standard_sprite = nullptr;
-
-		StateMachine<SpriteShaderTypes, void, ID3D11DeviceContext*> activate_shader_state{};
-		StateMachine<SpriteShaderTypes, void, ID3D11DeviceContext*> deactivate_shader_state{};
-
 	public:
 		explicit SpriteShaderManager(ID3D11Device* device);
 		~SpriteShaderManager() = default;
 
 		void Activate(ID3D11DeviceContext* immediate_context, const shader::SpriteShaderTypes& state);
 		void Deactivate(ID3D11DeviceContext* immediate_context, const shader::SpriteShaderTypes& state);
+
+	private:
+		std::unique_ptr<StandardSprite> standard_sprite = nullptr;
+
+		StateMachine<SpriteShaderTypes, void, ID3D11DeviceContext*> activate_shader_state{};
+		StateMachine<SpriteShaderTypes, void, ID3D11DeviceContext*> deactivate_shader_state{};
 	};
 
 	class SpriteShaderState final
 	{
-	private:
-		SpriteShaderTypes shader_type = SpriteShaderTypes::Standard;
-
 	public:
-		SpriteShaderState()  = default;
+		explicit SpriteShaderState()  = default;
 		~SpriteShaderState() = default;
 
-		void SetShaderState(SpriteShaderTypes type) { shader_type = type; }
-		const SpriteShaderTypes& GetShaderState() const { return shader_type; }
+		[[noreturn]] void SetShaderState(const SpriteShaderTypes& type) { shader_type = type; }
+		[[nodiscard]] const SpriteShaderTypes& GetShaderState() const { return shader_type; }
 
 		template<class Archive>
 		void serialize(Archive&& archive)
@@ -167,5 +155,8 @@ namespace shader
 				CEREAL_NVP(shader_type)
 			);
 		}
+
+	private:
+		SpriteShaderTypes shader_type = SpriteShaderTypes::Standard;
 	};
 }

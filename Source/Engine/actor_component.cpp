@@ -20,7 +20,7 @@ void ActorComponent::RenderImGui()
 {
 	if (actor_type == ActorType::Actor3D)
 	{
-		shader_state->RenderImgui();
+		shader_state->RenderImGui();
 	}
 	else if (actor_type == ActorType::Actor2D)
 	{

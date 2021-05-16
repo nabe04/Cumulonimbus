@@ -10,10 +10,7 @@
 #include "dx11_configurator.h"
 #include "imgui_manager.h"
 #include "input_manager.h"
-#include "light.h"
-#include "view.h"
 #include "texture.h"
-#include "shader_manager.h"
 #include "locator.h"
 
 
@@ -31,8 +28,6 @@ bool Framework::Initialize()
 	// TextureManager Initialization
 	TextureManager::GetInstance()->Initialize(device.Get());
 
-	// ShaderManager Initialization
-	shader::ShaderManager::GetInstance()->Initialize(device.Get());
 #ifdef _DEBUG
 	// Initialization of ImGui
 	imgui::Initialize(window->GetHWND(), device.Get(), immediate_context.Get());

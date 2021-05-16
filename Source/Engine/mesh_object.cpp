@@ -16,7 +16,7 @@ void MeshObject::RenderImGui()
 {
 	if (ImGui::TreeNode("Mesh States"))
 	{
-		shader_state->RenderImgui();
+		shader_state->RenderImGui();
 
 #pragma region blend state
 		if (ImGui::TreeNode("Blend state"))

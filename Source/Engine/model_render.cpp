@@ -24,11 +24,14 @@
 #include "view.h"
 #include "locator.h"
 #include "mesh_particle.h"
+#include "shader_manager.h"
 
 using namespace shader;
 
 MeshRenderer::MeshRenderer(ID3D11Device* device)
 {
+	shader_manager = std::make_unique<shader::ShaderManager>(Locator::GetDx11Configurator()->device.Get());
+
 	cbuffer_transformation	= std::make_unique<buffer::ConstantBuffer<shader::CB_CoordinateTransformation>>(device);
 	cbuffer_material		= std::make_unique<buffer::ConstantBuffer<shader::CB_Material>>(device);
 	cbuffer_light			= std::make_unique<buffer::ConstantBuffer<shader::CB_Light>>(device);
@@ -108,11 +111,11 @@ void MeshRenderer::Render(ID3D11DeviceContext* immediate_context,
 
 		if (actor_comp->UsingBuffer()->rendering_buffer_bitset.test(index))
 		{
-			ShaderManager::GetInstance()->Activate(immediate_context, actor_comp->GetShaderState());
+			shader_manager->Activate(immediate_context, actor_comp->GetShaderState());
 		}
 		else
 		{
-			ShaderManager::GetInstance()->ActiveteSingleColor(immediate_context);
+			shader_manager->ActivateSingleColor(immediate_context);
 		}
 
 		if (auto* geom = ent->GetComponent<GeomPrimComponent>())
@@ -146,34 +149,34 @@ void MeshRenderer::Render(ID3D11DeviceContext* immediate_context,
 
 				for (int i = 0; i < collisions.size(); ++i)
 				{
-					ShaderManager::GetInstance()->Activate(immediate_context, collisions.at(i)->GetShaderState());
+					shader_manager->Activate(immediate_context, collisions.at(i)->GetShaderState());
 
 					rasterizer->Activate(immediate_context, RasterizeState::Wireframe);
 					RenderSphereCollision(immediate_context, actor_comp, collisions.at(i), view);
 
-					ShaderManager::GetInstance()->Deactivate(immediate_context, collisions.at(i)->GetShaderState());
+					shader_manager->Deactivate(immediate_context, collisions.at(i)->GetShaderState());
 				}
 			}
 
 			if (auto* collision = ent->GetComponent<InnerSpherecollision_component>())
 			{
-				ShaderManager::GetInstance()->Activate(immediate_context, collision->GetShaderState());
+				shader_manager->Activate(immediate_context, collision->GetShaderState());
 
 				rasterizer->Activate(immediate_context, RasterizeState::Wireframe);
 				RenderInnerSphereCollision(immediate_context, actor_comp, collision, view);
 
-				ShaderManager::GetInstance()->Deactivate(immediate_context, collision->GetShaderState());
+				shader_manager->Deactivate(immediate_context, collision->GetShaderState());
 			}
 		}
 #endif
 
 		if (actor_comp->UsingBuffer()->rendering_buffer_bitset.test(index))
 		{
-			ShaderManager::GetInstance()->Deactivate(immediate_context, actor_comp->GetShaderState());
+			shader_manager->Deactivate(immediate_context, actor_comp->GetShaderState());
 		}
 		else
 		{
-			ShaderManager::GetInstance()->DeactivateSingleColor(immediate_context);
+			shader_manager->DeactivateSingleColor(immediate_context);
 		}
 
 		frame_buffer_manager->UsingBuffer(index)->Deactivate(immediate_context);
@@ -510,21 +513,19 @@ void MeshRenderer::RenderInnerSphereCollision(ID3D11DeviceContext* immediate_con
 }
 
 void MeshRenderer::RenderOBJ(ID3D11DeviceContext* immediate_context,
-	MeshObject* actor, ObjModelComponent* objComponent,
+	MeshObject* actor, ObjModelComponent* model_comp,
 	const View* const view, const Light* const light)
 {
-	auto ent = objComponent->GetEntity();
+	auto ent = model_comp->GetEntity();
 
 	//-- Set of Constant Buffer --//
 	{ // Transform
-
 		shader::CB_CoordinateTransformation cb{};
 		cb.mat_view_projection = view->GetView() * view->GetProjection();
 
 		cb.bone_transforms[0] = ent->GetComponent<TransformComponent>()->GetTransform()->GetWorld4x4();
 		cbuffer_transformation->data = cb;
 		cbuffer_transformation->Activate(immediate_context, 0);
-
 	}
 
 	{// Light
@@ -540,10 +541,10 @@ void MeshRenderer::RenderOBJ(ID3D11DeviceContext* immediate_context,
 
 	u_int stride = sizeof(shader::Vertex);
 	u_int offset = 0;
-	immediate_context->IASetVertexBuffers(0, 1, objComponent->GetVertexBufferAddress(), &stride, &offset);
-	immediate_context->IASetIndexBuffer(objComponent->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+	immediate_context->IASetVertexBuffers(0, 1, model_comp->GetVertexBufferAddress(), &stride, &offset);
+	immediate_context->IASetIndexBuffer(model_comp->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
 
-	for (auto& material : objComponent->GetMaterials())
+	for (auto& material : model_comp->GetMaterials())
 	{
 		shader::CB_Material data;
 		data.color = material.data.color;
@@ -564,7 +565,7 @@ void MeshRenderer::RenderOBJ(ID3D11DeviceContext* immediate_context,
 			samplers.at(actor->GetSamplerState())->Activate(immediate_context, 0);
 		}
 
-		for (auto& subset : objComponent->GetSubsets())
+		for (auto& subset : model_comp->GetSubsets())
 		{
 			if (material.newmtl == subset.usemtl)
 			{
@@ -594,8 +595,9 @@ void MeshRenderer::RenderFBX(ID3D11DeviceContext* immediate_context,
 	for (const ModelData::Mesh& mesh : resource->GetModelData().meshes)
 	{
 		// メッシュ用定数バッファ更新
-		shader::CB_CoordinateTransformation cb_mesh;
+		shader::CB_CoordinateTransformation cb_mesh{};
 		::memset(&cb_mesh, 0, sizeof(cb_mesh));
+
 		if (mesh.node_indices.size() > 0)
 		{
 			for (size_t i = 0; i < mesh.node_indices.size(); ++i)

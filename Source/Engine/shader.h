@@ -220,14 +220,14 @@ namespace shader
 		{
 			material_data = std::make_unique<buffer::ConstantBuffer<T>>(device);
 		}
-		~Shader() = default;
+		virtual ~Shader() = default;
 
-		// Each set of shaders
+		// Each set of shader
 		virtual void Activate(ID3D11DeviceContext* immediate_context)   = 0;
 
 		virtual void Deactivate(ID3D11DeviceContext* immediate_context) = 0;
 
-		buffer::ConstantBuffer<T>* GetMaterial() { return material_data.get(); }
+		[[nodiscard]] buffer::ConstantBuffer<T>* GetMaterial() const { return material_data.get(); }
 	};
 }
 

@@ -14,22 +14,22 @@ float4 main(float4 position : SV_POSITION, float2 texcoord : TEXCOORD) : SV_TARG
 	const float offset[3] = { 0.0, 1.3846153846, 3.2307692308 };
 	const float weight[3] = { 0.2270270270, 0.3162162162, 0.0702702703 };
 
-	float4 fragment_colour = hdr_colour_map.Sample(linear_border_sampler_state, texcoord) * weight[0]; 
+	float4 fragment_color = hdr_colour_map.Sample(linear_border_sampler_state, texcoord) * weight[0];
 	for (int i = 1; i < 3; i++)
 	{
-		fragment_colour += hdr_colour_map.Sample(linear_border_sampler_state, texcoord + float2(0.0, offset[i] / height)) * weight[i];
-		fragment_colour += hdr_colour_map.Sample(linear_border_sampler_state, texcoord - float2(0.0, offset[i] / height)) * weight[i];
-	}
+        fragment_color += hdr_colour_map.Sample(linear_border_sampler_state, texcoord + float2(0.0, offset[i] / height)) * weight[i];
+        fragment_color += hdr_colour_map.Sample(linear_border_sampler_state, texcoord - float2(0.0, offset[i] / height)) * weight[i];
+    }
 #else
 	//https://software.intel.com/en-us/blogs/2014/07/15/an-investigation-of-fast-real-time-gpu-based-image-blur-algorithms
 	const float offset[2] = { 0.53805, 2.06278 };
 	const float weight[2] = { 0.44908, 0.05092 };
-	float4 fragment_colour = 0;
+	float4 fragment_color = 0;
 	for (int i = 0; i < 2; i++)
 	{
-		fragment_colour += hdr_colour_map.Sample(linear_border_sampler_state, texcoord + float2(0.0, offset[i]) / height) * weight[i];
-		fragment_colour += hdr_colour_map.Sample(linear_border_sampler_state, texcoord - float2(0.0, offset[i]) / height) * weight[i];
+		fragment_color += hdr_colour_map.Sample(linear_border_sampler_state, texcoord + float2(0.0, offset[i]) / height) * weight[i];
+		fragment_color += hdr_colour_map.Sample(linear_border_sampler_state, texcoord - float2(0.0, offset[i]) / height) * weight[i];
 	}
 #endif
-	return fragment_colour;
+    return fragment_color;
 }

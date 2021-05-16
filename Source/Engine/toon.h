@@ -29,18 +29,19 @@ namespace shader
 		INT   tones = 3;
 		FLOAT reflectance = 1;
 		FLOAT power = 1;
-		FLOAT padding;
+		FLOAT padding{};
 
 		void Edit();
 	};
 
-	class Toon :public Shader<M_Toon>
+	class Toon final :public Shader<M_Toon>
 	{
 	private:
 		const char* vs_name = "./Shader/cso/toon_vs.cso";
 		const char* ps_name = "./Shader/cso/toon_ps.cso";
 	public:
-		Toon(ID3D11Device* device);
+		explicit Toon(ID3D11Device* device);
+		~Toon() override = default;
 
 		void Activate(ID3D11DeviceContext* immediate_context) override;
 		void Deactivate(ID3D11DeviceContext* immediate_context) override;
