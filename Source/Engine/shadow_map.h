@@ -38,7 +38,7 @@ public:
 	{
 		NormalShadowDepthExtraction,
 		VarianceShadowDepthExtraction,
-		ShadowRendering,
+		//ShadowRendering,
 
 		End
 	};

@@ -29,12 +29,12 @@ ShadowMap::ShadowMap(ID3D11Device* device, int width, int height)
 	// Begin rendering
 	begin_rendering_states.AddState(RenderProcess::NormalShadowDepthExtraction, [this](ID3D11DeviceContext* immediate_context, const M_ShadowMap& m_shadow) {ActivateNormalShadowDepthExtraction(immediate_context, m_shadow); });
 	begin_rendering_states.AddState(RenderProcess::VarianceShadowDepthExtraction, [this](ID3D11DeviceContext* immediate_context, const M_ShadowMap& m_shadow) {ActivateVarianceShadowDepthExtraction(immediate_context, m_shadow); });
-	begin_rendering_states.AddState(RenderProcess::ShadowRendering, [this](ID3D11DeviceContext* immediate_context, const M_ShadowMap& m_shadow) {ActivateShadowMap(immediate_context, m_shadow); });
+	//begin_rendering_states.AddState(RenderProcess::ShadowRendering, [this](ID3D11DeviceContext* immediate_context, const M_ShadowMap& m_shadow) {ActivateShadowMap(immediate_context, m_shadow); });
 
 	// End rendering
 	end_rendering_states.AddState(RenderProcess::NormalShadowDepthExtraction, [this](ID3D11DeviceContext* immediate_context) {DeactivateNormalShadowDepthExtraction(immediate_context); });
 	end_rendering_states.AddState(RenderProcess::VarianceShadowDepthExtraction, [this](ID3D11DeviceContext* immediate_context) {DeactivateVarianceShadowDepthExtraction(immediate_context); });
-	end_rendering_states.AddState(RenderProcess::ShadowRendering, [this](ID3D11DeviceContext* immediate_context) {DeactivateShadowMap(immediate_context); });
+	//end_rendering_states.AddState(RenderProcess::ShadowRendering, [this](ID3D11DeviceContext* immediate_context) {DeactivateShadowMap(immediate_context); });
 }
 
 void ShadowMap::ActivateNormalShadowDepthExtraction(ID3D11DeviceContext* immediate_context, const M_ShadowMap& m_data = {}) const
