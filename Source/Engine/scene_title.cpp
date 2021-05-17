@@ -82,7 +82,14 @@ void SceneTitle::InitializeScene()
 	sample01->GetComponent<TransformComponent>()->GetTransform()->SetPosition({ 0,4,30 });
 	sample01->GetComponent<TransformComponent>()->GetTransform()->SetScale(0.01f);
 	sample01->AddComponent<SampleRotation>();
-	sample01->SetEntityName("Sample03");
+	sample01->SetEntityName("Bunny");
+
+	const char* building_filename = "./Data/Assets/Bin/rpgpp_lt_building_01.bin";
+	std::shared_ptr<FbxModelResource> bunny_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), building_filename, " ");
+	auto* building_1 = AddEntity();
+	building_1->AddComponent<MeshObject>();
+	building_1->AddComponent<FbxModelComponent>(bunny_resource);
+	building_1->SetEntityName("Building_1");
 
 	//const char* bunny_filename = "./Data/Assets/Bin/stanford_bunny.bin";
 	//std::shared_ptr<FbxModelResource> bunny_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), bunny_filename, " ");

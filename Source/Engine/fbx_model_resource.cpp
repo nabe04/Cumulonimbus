@@ -156,7 +156,7 @@ FbxModelResource::FbxModelResource(ID3D11Device* device, const char* import_file
 
 		if (!strcmp(ext, ".tga"))
 		{
-			return;
+			break;
 		}
 
 		_makepath_s(path_buffer, _MAX_PATH, NULL, dir_path,
