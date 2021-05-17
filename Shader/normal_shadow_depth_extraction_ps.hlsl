@@ -9,8 +9,7 @@ float4 main(PS_Input pin) : SV_TARGET
     // Z値を算出
     // semantic : POSITION
     float4 color;
-    color.r = pin.ndc_position.z;  // pin.ndc_position.w; // 深度値
-    //color.r = 0.5;
+    color.r = pin.ndc_position.z / pin.ndc_position.w; // wvp空間での深度値(0.0 ~ 1.0)
     color.g = pow(color.r, 2.f);
    // color.g = 0.5f;
     color.b = 0;

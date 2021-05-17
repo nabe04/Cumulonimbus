@@ -22,12 +22,6 @@
     <FxCompile Include="Shader\cpu_particle_vs.hlsl">
       <Filter>Shader%28HLSL%29</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\depth_extraction_ps.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\depth_extraction_vs.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
     <FxCompile Include="Shader\diffuse_ps.hlsl">
       <Filter>Shader%28HLSL%29</Filter>
     </FxCompile>
@@ -116,6 +110,18 @@
       <Filter>Shader%28HLSL%29</Filter>
     </FxCompile>
     <FxCompile Include="Shader\toon_vs.hlsl">
+      <Filter>Shader%28HLSL%29</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\normal_shadow_depth_extraction_ps.hlsl">
+      <Filter>Shader%28HLSL%29</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\normal_shadow_depth_extraction_vs.hlsl">
+      <Filter>Shader%28HLSL%29</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\variance_shadow_depth_extraction_vs.hlsl">
+      <Filter>Shader%28HLSL%29</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\variance_shadow_depth_extraction_ps.hlsl">
       <Filter>Shader%28HLSL%29</Filter>
     </FxCompile>
   </ItemGroup>

@@ -24,7 +24,7 @@ cbuffer CBLight : register(b2)
     float4 light_ambient;
     float4 light_color;
 
-    row_major float4x4 view_matrix;
+    row_major float4x4 light_view_matrix;
 
     row_major float4x4 light_perspective_projection_matrix;
     row_major float4x4 light_perspective_view_projection_matrix;
@@ -68,6 +68,9 @@ struct PS_Input
 #if defined(USE_WORLD_POSITION)
     float4 world_position : WORLD_POSITION;
 #endif
+#if defined(USE_WORLD_VIEW_POSITION)
+	float4 world_view_position : WORLD_VIEW_POSITION;
+#endif
 #if defined(USE_NDC_POSITION)
     float4 ndc_position : NDC_POSITION;
 #endif
@@ -86,37 +89,3 @@ struct PS_Input
 };
 
 typedef PS_Input VS_OutPut;
-
-//#define USE_LOCAL_POSITION
-//#define USE_WORLD_POSITION
-//#define USE_NDC_POSITION
-//#define USE_TEXTURE_POSITION
-//#define USE_NORMAL
-//#define USE_VIN_COLOR
-//#define USE_VOUT_COLOR
-//#define USE_TEXCOORD0
-//#define USE_BONE_WEIGHTS
-//
-//#define USE_BONE_INDICES
-
-//******************************************
-//  Data Format
-//******************************************
-//struct VS_IN
-//{
-//    float4 position : POSITION;
-//    float3 normal : NORMAL;
-//    float2 texcoord : TEXCOORD;
-//    float4 boneWeights : WEIGHTS;
-//    uint4 boneIndices : BONES;
-//};
-
-//struct VS_OUT
-//{
-//    float4 position : SV_POSITION;
-//    float3 normal : NORMAL;
-//    float2 texcoord : TEXCOORD;
-//    float4 color : COLOR;
-//};
-
-

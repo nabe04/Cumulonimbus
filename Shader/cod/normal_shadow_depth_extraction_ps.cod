@@ -8,8 +8,7 @@
 // Name                 Index   Mask Register SysValue  Format   Used
 // -------------------- ----- ------ -------- -------- ------- ------
 // SV_POSITION              0   xyzw        0      POS   float       
-// WORLD_VIEW_POSITION      0   xyzw        1     NONE   float       
-// NDC_POSITION             0   xyzw        2     NONE   float     zw
+// NDC_POSITION             0   xyzw        1     NONE   float     zw
 //
 //
 // Output signature:
@@ -20,31 +19,30 @@
 //
 ps_5_0
 dcl_globalFlags refactoringAllowed | skipOptimization
-dcl_input_ps linear v2.zw
+dcl_input_ps linear v1.zw
 dcl_output o0.xyzw
 dcl_temps 1
 //
 // Initial variable locations:
 //   v0.x <- pin.position.x; v0.y <- pin.position.y; v0.z <- pin.position.z; v0.w <- pin.position.w; 
-//   v1.x <- pin.world_view_position.x; v1.y <- pin.world_view_position.y; v1.z <- pin.world_view_position.z; v1.w <- pin.world_view_position.w; 
-//   v2.x <- pin.ndc_position.x; v2.y <- pin.ndc_position.y; v2.z <- pin.ndc_position.z; v2.w <- pin.ndc_position.w; 
+//   v1.x <- pin.ndc_position.x; v1.y <- pin.ndc_position.y; v1.z <- pin.ndc_position.z; v1.w <- pin.ndc_position.w; 
 //   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
 //
-#line 13 "D:\チEクトップ\Cumulonimbus\Shader\depth_extraction_ps.hlsl"
-div r0.x, v2.z, v2.w  // r0.x <- color.x
+#line 12 "D:\チEクトップ\Cumulonimbus\Shader\normal_shadow_depth_extraction_ps.hlsl"
+div r0.x, v1.z, v1.w  // r0.x <- color.x
 
-#line 15
+#line 13
 mov r0.y, l(1.000000)
 mul r0.z, r0.x, r0.x
 mul r0.y, r0.z, r0.y  // r0.y <- color.y
 
-#line 17
+#line 15
 itof r0.z, l(0)  // r0.z <- color.z
 
-#line 18
+#line 16
 itof r0.w, l(1)  // r0.w <- color.w
 
-#line 20
+#line 18
 mov o0.x, r0.x
 mov o0.y, r0.y
 mov o0.z, r0.z

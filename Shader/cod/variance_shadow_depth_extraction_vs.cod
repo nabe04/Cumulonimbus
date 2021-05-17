@@ -58,7 +58,6 @@
 // -------------------- ----- ------ -------- -------- ------- ------
 // SV_POSITION              0   xyzw        0      POS   float   xyzw
 // WORLD_VIEW_POSITION      0   xyzw        1     NONE   float   xyzw
-// NDC_POSITION             0   xyzw        2     NONE   float   xyzw
 //
 vs_5_0
 dcl_globalFlags refactoringAllowed | skipOptimization
@@ -77,7 +76,6 @@ dcl_input v2.xyzw
 dcl_input v3.xyzw
 dcl_output_siv o0.xyzw, position
 dcl_output o1.xyzw
-dcl_output o2.xyzw
 dcl_temps 5
 //
 // Initial variable locations:
@@ -85,14 +83,13 @@ dcl_temps 5
 //   v1.x <- vin.normal.x; v1.y <- vin.normal.y; v1.z <- vin.normal.z; 
 //   v2.x <- vin.boneWeights.x; v2.y <- vin.boneWeights.y; v2.z <- vin.boneWeights.z; v2.w <- vin.boneWeights.w; 
 //   v3.x <- vin.boneIndices.x; v3.y <- vin.boneIndices.y; v3.z <- vin.boneIndices.z; v3.w <- vin.boneIndices.w; 
-//   o2.x <- <main return value>.ndc_position.x; o2.y <- <main return value>.ndc_position.y; o2.z <- <main return value>.ndc_position.z; o2.w <- <main return value>.ndc_position.w; 
 //   o1.x <- <main return value>.world_view_position.x; o1.y <- <main return value>.world_view_position.y; o1.z <- <main return value>.world_view_position.z; o1.w <- <main return value>.world_view_position.w; 
 //   o0.x <- <main return value>.position.x; o0.y <- <main return value>.position.y; o0.z <- <main return value>.position.z; o0.w <- <main return value>.position.w
 //
-#line 18 "D:\チEクトップ\Cumulonimbus\Shader\depth_extraction_vs.hlsl"
+#line 17 "D:\チEクトップ\Cumulonimbus\Shader\variance_shadow_depth_extraction_vs.hlsl"
 itof r0.xyz, l(0, 0, 0, 0)  // r0.x <- world_pos.x; r0.y <- world_pos.y; r0.z <- world_pos.z
 
-#line 20
+#line 19
 mov r0.w, l(0)  // r0.w <- i
 mov r1.xyz, r0.xyzx  // r1.x <- world_pos.x; r1.y <- world_pos.y; r1.z <- world_pos.z
 mov r1.w, r0.w  // r1.w <- i
@@ -100,7 +97,7 @@ loop
   ilt r2.x, r1.w, l(4)
   breakc_z r2.x
 
-#line 25
+#line 24
   dp4 r2.x, v2.xyzw, icb[r1.w + 0].xyzw
   and r3.xyzw, v3.xyzw, icb[r1.w + 4].xyzw
   or r2.yz, r3.yywy, r3.xxzx
@@ -116,11 +113,11 @@ loop
   mul r2.xyz, r2.yzwy, r2.xxxx
   add r1.xyz, r1.xyzx, r2.xyzx
 
-#line 27
+#line 26
   iadd r1.w, r1.w, l(1)
 endloop 
 
-#line 28
+#line 27
 mul r0.xyzw, r1.xxxx, cb2[21].xyzw
 mul r2.xyzw, r1.yyyy, cb2[22].xyzw
 add r0.xyzw, r0.xyzw, r2.xyzw
@@ -129,7 +126,7 @@ add r0.xyzw, r0.xyzw, r2.xyzw
 mul r2.xyzw, cb2[24].xyzw, l(1.000000, 1.000000, 1.000000, 1.000000)
 add r0.xyzw, r0.xyzw, r2.xyzw  // r0.x <- wvp_pos.x; r0.y <- wvp_pos.y; r0.z <- wvp_pos.z; r0.w <- wvp_pos.w
 
-#line 29
+#line 28
 mul r2.xyzw, r1.xxxx, cb2[4].xyzw
 mul r3.xyzw, r1.yyyy, cb2[5].xyzw
 add r2.xyzw, r2.xyzw, r3.xyzw
@@ -138,18 +135,14 @@ add r1.xyzw, r1.xyzw, r2.xyzw
 mul r2.xyzw, cb2[7].xyzw, l(1.000000, 1.000000, 1.000000, 1.000000)
 add r1.xyzw, r1.xyzw, r2.xyzw  // r1.x <- wv_pos.x; r1.y <- wv_pos.y; r1.z <- wv_pos.z; r1.w <- wv_pos.w
 
-#line 31
+#line 30
 mov r0.xyzw, r0.xyzw  // r0.x <- vs_out.position.x; r0.y <- vs_out.position.y; r0.z <- vs_out.position.z; r0.w <- vs_out.position.w
 
-#line 32
-mov r0.xyzw, r0.xyzw  // r0.x <- vs_out.ndc_position.x; r0.y <- vs_out.ndc_position.y; r0.z <- vs_out.ndc_position.z; r0.w <- vs_out.ndc_position.w
-
-#line 33
+#line 31
 mov r1.xyzw, r1.xyzw  // r1.x <- vs_out.world_view_position.x; r1.y <- vs_out.world_view_position.y; r1.z <- vs_out.world_view_position.z; r1.w <- vs_out.world_view_position.w
 
-#line 35
+#line 33
 mov o0.xyzw, r0.xyzw
 mov o1.xyzw, r1.xyzw
-mov o2.xyzw, r0.xyzw
 ret 
-// Approximately 44 instruction slots used
+// Approximately 42 instruction slots used

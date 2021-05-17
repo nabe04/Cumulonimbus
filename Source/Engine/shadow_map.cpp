@@ -3,6 +3,7 @@
 #include "blend.h"
 #include "framework.h"
 #include "shader.h"
+#include "frame_buffer.h"
 
 ShadowMap::ShadowMap(ID3D11Device* device, int width, int height)
 	:FullscreenQuad{ device }
@@ -12,54 +13,76 @@ ShadowMap::ShadowMap(ID3D11Device* device, int width, int height)
 	blend = std::make_unique<Blend>(device);
 
 	// FrameBuffer
-	depth_extraction_fb = std::make_unique<FrameBuffer>(device, width, height,false,1, DXGI_FORMAT_R32G32_FLOAT);
+	normal_shadow_depth_extraction_fb   = std::make_unique<FrameBuffer>(device, width, height, false, 1, DXGI_FORMAT_R32G32_FLOAT);
+	variance_shadow_depth_extraction_fb = std::make_unique<FrameBuffer>(device, width, height, false, 1, DXGI_FORMAT_R32G32_FLOAT);
 
 	// Shader & Constant buffer
 	constant_buffer = std::make_unique<buffer::ConstantBuffer<M_ShadowMap>>(device);
-	depth_extraction_vs = std::make_unique<shader::VertexShader>(device, "./Shader/cso/depth_extraction_vs.cso");
-	depth_extraction_ps = std::make_unique<shader::PixelShader>(device, "./Shader/cso/depth_extraction_ps.cso");
+	normal_shadow_depth_extraction_vs = std::make_unique<shader::VertexShader>(device, "./Shader/cso/normal_shadow_depth_extraction_vs.cso");
+	normal_shadow_depth_extraction_ps = std::make_unique<shader::PixelShader>(device, "./Shader/cso/normal_shadow_depth_extraction_ps.cso");
+	variance_shadow_depth_extraction_vs = std::make_unique<shader::VertexShader>(device, "./Shader/cso/variance_shadow_depth_extraction_vs.cso");
+	variance_shadow_depth_extraction_ps = std::make_unique<shader::PixelShader>(device, "./Shader/cso/variance_shadow_depth_extraction_ps.cso");
 	shadow_map_vs = std::make_unique<shader::VertexShader>(device, "./Shader/cso/shadow_map_vs.cso");
 	shadow_map_ps = std::make_unique<shader::PixelShader>(device, "./Shader/cso/shadow_map_ps.cso");
 
-
 	//-- Add States --//
 	// Begin rendering
-	begin_rendering_states.AddState(RenderProcess::DepthExtraction, [this](ID3D11DeviceContext* immediate_context, const M_ShadowMap& cbuffer) {ActivateDepthExtraction(immediate_context, cbuffer); });
-	begin_rendering_states.AddState(RenderProcess::ShadowRendering, [this](ID3D11DeviceContext* immediate_context, const M_ShadowMap& cbuffer) {ActivateShadowMap(immediate_context, cbuffer); });
+	begin_rendering_states.AddState(RenderProcess::NormalShadowDepthExtraction, [this](ID3D11DeviceContext* immediate_context, const M_ShadowMap& m_shadow) {ActivateNormalShadowDepthExtraction(immediate_context, m_shadow); });
+	begin_rendering_states.AddState(RenderProcess::VarianceShadowDepthExtraction, [this](ID3D11DeviceContext* immediate_context, const M_ShadowMap& m_shadow) {ActivateVarianceShadowDepthExtraction(immediate_context, m_shadow); });
+	begin_rendering_states.AddState(RenderProcess::ShadowRendering, [this](ID3D11DeviceContext* immediate_context, const M_ShadowMap& m_shadow) {ActivateShadowMap(immediate_context, m_shadow); });
 
 	// End rendering
-	end_rendering_states.AddState(RenderProcess::DepthExtraction, [this](ID3D11DeviceContext* immediate_context) {DeactivateDepthExtraction(immediate_context); });
+	end_rendering_states.AddState(RenderProcess::NormalShadowDepthExtraction, [this](ID3D11DeviceContext* immediate_context) {DeactivateNormalShadowDepthExtraction(immediate_context); });
+	end_rendering_states.AddState(RenderProcess::VarianceShadowDepthExtraction, [this](ID3D11DeviceContext* immediate_context) {DeactivateVarianceShadowDepthExtraction(immediate_context); });
 	end_rendering_states.AddState(RenderProcess::ShadowRendering, [this](ID3D11DeviceContext* immediate_context) {DeactivateShadowMap(immediate_context); });
 }
 
-void ShadowMap::ActivateDepthExtraction(ID3D11DeviceContext* immediate_context, const M_ShadowMap& cbuff_data = {})
+void ShadowMap::ActivateNormalShadowDepthExtraction(ID3D11DeviceContext* immediate_context, const M_ShadowMap& m_data = {}) const
 {
 	//constant_buffer->data = cbuff_data;
 	//constant_buffer->Activate(immediate_context, 6, true, false);
 
 	// Extraction depth value
-	depth_extraction_fb->Activate(immediate_context);
-	depth_extraction_vs->Activate(immediate_context);
-	depth_extraction_ps->Activate(immediate_context);
+	normal_shadow_depth_extraction_fb->Activate(immediate_context);
+	normal_shadow_depth_extraction_vs->Activate(immediate_context);
+	normal_shadow_depth_extraction_ps->Activate(immediate_context);
 }
 
-void ShadowMap::DeactivateDepthExtraction(ID3D11DeviceContext* immediate_context)
+void ShadowMap::DeactivateNormalShadowDepthExtraction(ID3D11DeviceContext* immediate_context) const
 {
-	depth_extraction_ps->Deactivate(immediate_context);
-	depth_extraction_vs->Deactivate(immediate_context);
-	depth_extraction_fb->Deactivate(immediate_context);
+	normal_shadow_depth_extraction_ps->Deactivate(immediate_context);
+	normal_shadow_depth_extraction_vs->Deactivate(immediate_context);
+	normal_shadow_depth_extraction_fb->Deactivate(immediate_context);
 }
 
-void ShadowMap::ActivateShadowMap(ID3D11DeviceContext* immediate_context, const M_ShadowMap& cbuff_data = {})
+void ShadowMap::ActivateVarianceShadowDepthExtraction(ID3D11DeviceContext* immediate_context, const M_ShadowMap m_data = {}) const
+{
+	variance_shadow_depth_extraction_fb->Activate(immediate_context);
+	variance_shadow_depth_extraction_vs->Activate(immediate_context);
+	variance_shadow_depth_extraction_ps->Activate(immediate_context);
+}
+
+void ShadowMap::DeactivateVarianceShadowDepthExtraction(ID3D11DeviceContext* immediate_context) const
+{
+	variance_shadow_depth_extraction_ps->Deactivate(immediate_context);
+	variance_shadow_depth_extraction_vs->Deactivate(immediate_context);
+	variance_shadow_depth_extraction_fb->Deactivate(immediate_context);
+}
+
+
+void ShadowMap::ActivateShadowMap(ID3D11DeviceContext* immediate_context, const M_ShadowMap& m_data = {}) const
 {
 	shadow_map_vs->Activate(immediate_context);
 	shadow_map_ps->Activate(immediate_context);
 
-	immediate_context->PSSetShaderResources(0, 1, depth_extraction_fb->render_target_shader_resource_view.GetAddressOf());
+	immediate_context->PSSetShaderResources(0, 1, normal_shadow_depth_extraction_fb->render_target_shader_resource_view.GetAddressOf());
 }
 
-void ShadowMap::DeactivateShadowMap(ID3D11DeviceContext* immediate_context)
+void ShadowMap::DeactivateShadowMap(ID3D11DeviceContext* immediate_context) const
 {
+	ID3D11ShaderResourceView* null_srv = nullptr;
+	immediate_context->PSSetShaderResources(0, 1, &null_srv);
+
 	shadow_map_ps->Deactivate(immediate_context);
 	shadow_map_vs->Deactivate(immediate_context);
 }

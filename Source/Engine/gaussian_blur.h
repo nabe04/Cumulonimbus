@@ -17,6 +17,7 @@ public:
 	~GaussianBlur() override = default;
 	void GenerateGaussianBlur(ID3D11DeviceContext* immediate_context, ID3D11ShaderResourceView* const blur_texture);
 	[[nodiscard]] FrameBuffer* GetFrameBuffer() const { return fb_gaussian_blur.get(); }
+	[[nodiscard]] ID3D11ShaderResourceView* GetSRV() const { return fb_gaussian_blur->render_target_shader_resource_view.Get(); }
 
 private:
 	const char* gaussian_blur_vertical_ps_name	 = "./Shader/cso/gaussian_blur_vertical_ps.cso";

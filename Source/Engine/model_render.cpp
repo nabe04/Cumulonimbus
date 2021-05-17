@@ -107,7 +107,7 @@ void MeshRenderer::Render(ID3D11DeviceContext* immediate_context,
 		blend->Activate(immediate_context, actor_comp->GetBlendState());
 		depth_stencil->Activate(immediate_context, actor_comp->GetDepthStencilState());
 		samplers.at(actor_comp->GetSamplerState())->Activate(immediate_context, 0);
-		immediate_context->PSSetShaderResources(1, 1, shadow_map->GetDepthExtractionFB()->render_target_shader_resource_view.GetAddressOf());
+		immediate_context->PSSetShaderResources(1, 1, shadow_map->GetNormalShadowDepthExtractionFB()->render_target_shader_resource_view.GetAddressOf());
 		immediate_context->PSSetShaderResources(2, 1, srv_sky_map.GetAddressOf());
 
 		if (actor_comp->UsingBuffer()->rendering_buffer_bitset.test(index))
@@ -195,6 +195,8 @@ void MeshRenderer::ShadowEnd(ID3D11DeviceContext* immediate_context)
 {
 	//ImGui::Image((void*)shadow_map->GetDepthExtractionFB()->render_target_shader_resource_view.Get(), { 300,300 });
 	shadow_map->End(immediate_context);
+
+	gaussian_blur->GenerateGaussianBlur(immediate_context, shadow_map->GetNormalShadowDepthExtractionFB()->render_target_shader_resource_view.Get());
 }
 
 void MeshRenderer::RenderShadow(ID3D11DeviceContext* immediate_context,
@@ -213,8 +215,8 @@ void MeshRenderer::RenderShadow(ID3D11DeviceContext* immediate_context,
 
 	for (int i = 0; i < static_cast<int>(ShadowMap::RenderProcess::End); ++i)
 	{
-		shadow_map->GetBiginRenderingState()->SetState(static_cast<ShadowMap::RenderProcess>(i));
-		shadow_map->GetBiginRenderingState()->Update(immediate_context, ShadowMap::M_ShadowMap{});
+		shadow_map->GetBeginRenderingState()->SetState(static_cast<ShadowMap::RenderProcess>(i));
+		shadow_map->GetBeginRenderingState()->Update(immediate_context, ShadowMap::M_ShadowMap{});
 
 		if (auto* geom = ent->GetComponent<GeomPrimComponent>())
 		{
@@ -233,8 +235,6 @@ void MeshRenderer::RenderShadow(ID3D11DeviceContext* immediate_context,
 		shadow_map->GetEndRenderingState()->SetState(static_cast<ShadowMap::RenderProcess>(i));
 		shadow_map->GetEndRenderingState()->Update(immediate_context);
 	}
-
-	gaussian_blur->GenerateGaussianBlur(immediate_context, shadow_map->GetDepthExtractionFB()->render_target_shader_resource_view.Get());
 }
 
 void MeshRenderer::RenderSkyBox(ID3D11DeviceContext* immediate_context,
