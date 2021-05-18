@@ -129,7 +129,7 @@ public:
 class TextureManager final
 {
 private:
-	std::map<std::string, std::pair<std::unique_ptr<OldTextureResource>, int>> textures = {};
+	std::map<std::string, std::pair<std::unique_ptr<TextureResource>, int>> textures = {};
 	std::unique_ptr<OldTextureResource> dummy_texture = {};
 	//Microsoft::WRL::ComPtr<ID3D11Device> device = {};
 
@@ -153,7 +153,7 @@ public:
 
 	void Initialize(ID3D11Device* device);
 
-	OldTextureResource* CreateTexture(ID3D11Device* device,const std::string_view tex_filename);
+	TextureResource* CreateTexture(ID3D11Device* device,const std::string_view tex_filename);
 	OldTextureResource* CreateDummyTexture(ID3D11Device* device, const DirectX::XMFLOAT4& color);
 
 	// Reference count

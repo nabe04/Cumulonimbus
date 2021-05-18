@@ -17,10 +17,10 @@ void ResourceManager::Initialize(ID3D11Device* device)
 		//const char* dragon = "./Data/Assets/Bin/stanford_dragon.bin";
 		//std::shared_ptr<FbxModelResource> dragon_resource = std::make_shared<FbxModelResource>(device, dragon, " ");
 		//AddFBXData(dragon_resource);
-		//// Ganfaul
-		//const char* ganfaul = "./Data/Assets/Bin/ganfaul.bin";
-		//std::shared_ptr<FbxModelResource> ganfaul_resource = std::make_shared<FbxModelResource>(device, ganfaul, "./Data/Assets/FBX/ganfaul/character.fbm/");
-		//AddFBXData(ganfaul_resource);
+		// Ganfaul
+		const char* ganfaul = "./Data/Assets/Bin/ganfaul.bin";
+		std::shared_ptr<FbxModelResource> ganfaul_resource = std::make_shared<FbxModelResource>(device, ganfaul, "./Data/Assets/FBX/ganfaul/character.fbm/");
+		AddFBXData(ganfaul_resource);
 	}
 
 	{// Textureì«çûÇ›

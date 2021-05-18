@@ -559,7 +559,7 @@ void MeshRenderer::RenderOBJ(ID3D11DeviceContext* immediate_context,
 
 		if (material.texture)
 		{// Set of Texture
-			immediate_context->PSSetShaderResources(0, 1, material.texture->GetShaderResourceViewAddress());
+			immediate_context->PSSetShaderResources(0, 1, material.texture->GetTextureData()->texture_view.GetAddressOf());
 			samplers.at(actor->GetSamplerState())->Activate(immediate_context, 0);
 		}
 		else

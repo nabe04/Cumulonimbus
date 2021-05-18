@@ -223,7 +223,7 @@ ObjModelComponent::~ObjModelComponent()
 	{
 		if (material.texture)
 		{
-			TextureManager::GetInstance()->DecrementRefCount(material.texture->GetTextureFilename());
+			TextureManager::GetInstance()->DecrementRefCount(material.texture->GetTextureData()->filename);
 		}
 	}
 }

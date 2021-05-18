@@ -68,11 +68,11 @@ void SceneTitle::InitializeScene()
 	sky_box->GetComponent<TransformComponent>()->GetTransform()->SetScale(3);
 	sky_box->SetEntityName("Sky_Box");
 
-	auto* stage = AddEntity(UpdateOrder::Default);
-	stage->AddComponent<MeshObject>();
-	stage->AddComponent<GeomPrimComponent>(GeomPrimType::Cube);
-	stage->GetComponent<TransformComponent>()->GetTransform()->SetScale({ 100.0f,0.1f,100.0f });
-	stage->SetEntityName("Stage");
+	//auto* stage = AddEntity(UpdateOrder::Default);
+	//stage->AddComponent<MeshObject>();
+	//stage->AddComponent<GeomPrimComponent>(GeomPrimType::Cube);
+	//stage->GetComponent<TransformComponent>()->GetTransform()->SetScale({ 100.0f,0.1f,100.0f });
+	//stage->SetEntityName("Stage");
 
 	auto* sample01 = AddEntity(UpdateOrder::Default, EntityTag::Bunny);
 	sample01->AddComponent<MeshObject>();
@@ -84,12 +84,24 @@ void SceneTitle::InitializeScene()
 	sample01->AddComponent<SampleRotation>();
 	sample01->SetEntityName("Bunny");
 
-	const char* building_filename = "./Data/Assets/Bin/rpgpp_lt_building_01.bin";
-	std::shared_ptr<FbxModelResource> bunny_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), building_filename, " ");
+	//const char* ganfaul_filename = "./Data/Assets/Bin/ganfaul.bin";
+	//std::shared_ptr<FbxModelResource> ganfaul_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), ganfaul_filename, "./Data/Assets/FBX/ganfaul/character.fbm/");
+	auto* player = AddEntity(UpdateOrder::Default, EntityTag::Player);
+	player->AddComponent<MeshObject>();
+	player->AddComponent<FbxModelComponent>(Locator::GetResourceManager()->FbxModelResouece("ganfaul"));
+	player->GetComponent<TransformComponent>()->GetTransform()->SetScale(0.05f);
+	player->GetComponent<TransformComponent>()->GetTransform()->SetPosition({ -10,3,0 });
+	player->GetComponent<MeshObject>()->SetRasterizeState(RasterizeState::Cull_Back_CCW_True);
+	player->GetComponent<FbxModelComponent>()->SwitchAnimation(2, true); // 0,1 T_Pose 2 Walk 3 Run 4 Attack
+	player->SetEntityName("Player");
+
+	const char* building_filename = "./Data/Assets/Bin/stage.bin";
+	std::shared_ptr<FbxModelResource> bunny_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), building_filename, "./Data/Assets/FBX/stage/stage.fbm/");
 	auto* building_1 = AddEntity();
 	building_1->AddComponent<MeshObject>();
 	building_1->AddComponent<FbxModelComponent>(bunny_resource);
-	building_1->SetEntityName("Building_1");
+	//building_1->GetComponent<TransformComponent>()->GetTransform()->SetScale(0.001f);
+	building_1->SetEntityName("mansion");
 
 	//const char* bunny_filename = "./Data/Assets/Bin/stanford_bunny.bin";
 	//std::shared_ptr<FbxModelResource> bunny_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), bunny_filename, " ");
@@ -101,9 +113,9 @@ void SceneTitle::InitializeScene()
 	//bunny->GetComponent<MeshObject>()->SetRasterizeState(RasterizeState::Cull_Back);
 	//bunny->SetEntityName("Bunny");
 
-	auto* mesh_particle = AddEntity();
-	mesh_particle->AddComponent<MeshObject>();
-	mesh_particle->AddComponent<TestMeshParticle>();
+	//auto* mesh_particle = AddEntity();
+	//mesh_particle->AddComponent<MeshObject>();
+	//mesh_particle->AddComponent<TestMeshParticle>();
 }
 
 void SceneTitle::UnInitializeScene()

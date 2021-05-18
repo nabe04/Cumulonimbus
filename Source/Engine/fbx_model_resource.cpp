@@ -154,15 +154,17 @@ FbxModelResource::FbxModelResource(ID3D11Device* device, const char* import_file
 		_splitpath_s(material.texture_filename.c_str(), NULL, NULL, dir, _MAX_DIR, fname,
 			_MAX_FNAME, ext, _MAX_FNAME);
 
-		if (!strcmp(ext, ".tga"))
-		{
-			break;
-		}
+		//if (!strcmp(ext, ".tga"))
+		//{
+		//	int a;
+		//	a = 10;
+		//	//break;
+		//}
 
 		_makepath_s(path_buffer, _MAX_PATH, NULL, dir_path,
 			fname, ext);
 
-		material.shader_resource_view = TextureManager::GetInstance()->CreateTexture(device ,path_buffer)->GetShaderResourceView();
+		material.shader_resource_view = TextureManager::GetInstance()->CreateTexture(device ,path_buffer)->GetTextureData()->texture_view;
 	}
 
 	for (auto& mesh : model_data.meshes)

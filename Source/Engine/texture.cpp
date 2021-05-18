@@ -1,8 +1,7 @@
 #include "texture.h"
 
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cassert>
+#include <filesystem>
 
 #include <WICTextureLoader.h>
 
@@ -39,6 +38,18 @@ void TextureResource::CreateTexture(ID3D11Device* device, const char* tex_filena
 	}
 	else if (strcmp(exe, ".tga") == 0)
 	{// Loading TGA file
+		std::filesystem::path dds_filename(tex_filename);
+		dds_filename.replace_extension("dds");
+		hr = DirectX::LoadFromDDSFile(string_helper::stringToWString(tex_filename).c_str(), DirectX::DDS_FLAGS::DDS_FLAGS_NONE, &texture_data->metadata, texture_data->scratch);
+		//if (std::filesystem::exists(dds_filename.c_str()))
+		//{
+		//	hr = DirectX::LoadFromDDSFile(dds_filename.c_str(), DirectX::DDS_FLAGS::DDS_FLAGS_NONE, &texture_data->metadata, texture_data->scratch);
+		//}
+		//else
+		//{
+		//	hr = DirectX::LoadFromWICFile(string_helper::stringToWString(tex_filename).c_str(), DirectX::WIC_FLAGS::WIC_FLAGS_NONE, &texture_data->metadata, texture_data->scratch);
+		//}
+
 		hr = DirectX::LoadFromTGAFile(string_helper::stringToWString(tex_filename).c_str(), &texture_data->metadata, texture_data->scratch);
 	}
 	else
@@ -46,7 +57,6 @@ void TextureResource::CreateTexture(ID3D11Device* device, const char* tex_filena
 		hr = DirectX::LoadFromWICFile(string_helper::stringToWString(tex_filename).c_str(), DirectX::WIC_FLAGS::WIC_FLAGS_NONE, &texture_data->metadata, texture_data->scratch);
 	}
 
-	//const HRESULT hr = DirectX::CreateWICTextureFromFile(device, string_helper::stringToWString(tex_filename).c_str(), nullptr, shader_resource_view.GetAddressOf());
 	if (FAILED(hr))
 		assert(!"Load texture error");
 
@@ -77,7 +87,7 @@ void TextureManager::Initialize(ID3D11Device* device)
 }
 
 //-- Creating a texture from a file name --//
-OldTextureResource* TextureManager::CreateTexture(ID3D11Device* device, const std::string_view tex_filename)
+TextureResource* TextureManager::CreateTexture(ID3D11Device* device, const std::string_view tex_filename)
 {
 	const auto find = textures.find(tex_filename.data());
 	if (find != textures.end())
@@ -87,13 +97,13 @@ OldTextureResource* TextureManager::CreateTexture(ID3D11Device* device, const st
 	}
 
 	//-- Newly loaded --//
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv{};
-	const HRESULT hr = DirectX::CreateWICTextureFromFile(device, string_helper::stringToWString(tex_filename).c_str(), nullptr, srv.GetAddressOf());
-	if (FAILED(hr))
-		assert(!"CreateWICTextureFromFile error");
+	//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv{};
+	//const HRESULT hr = DirectX::CreateWICTextureFromFile(device, string_helper::stringToWString(tex_filename).c_str(), nullptr, srv.GetAddressOf());
+	//if (FAILED(hr))
+	//	assert(!"CreateWICTextureFromFile error");
 
 	const std::string strFilename = string_helper::toString(tex_filename);
-	const auto tex = textures.insert(std::make_pair(strFilename, std::make_pair(std::make_unique<OldTextureResource>(strFilename, srv), 1)));
+	const auto tex = textures.insert(std::make_pair(strFilename, std::make_pair(std::make_unique<TextureResource>(device, strFilename.c_str()), 1)));
 	return tex.first->second.first.get();
 }
 

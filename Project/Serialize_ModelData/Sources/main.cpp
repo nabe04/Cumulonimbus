@@ -15,8 +15,11 @@ int main()
 	//build_fbx.AddAnimation("../../Data/Assets/FBX/ganfaul/attack.fbx");
 	//build_fbx.Export("../../Data/Assets/Bin/ganfaul.bin");
 
-	BulidFBX build_fbx("../../Data/Assets/FBX/Building/rpgpp_lt_building_01.fbx");
-	build_fbx.Export("../../Data/Assets/Bin/rpgpp_lt_building_01.bin");
+	//BulidFBX build_fbx("../../Data/Assets/FBX/Building/rpgpp_lt_building_01.fbx");
+	//build_fbx.Export("../../Data/Assets/Bin/rpgpp_lt_building_01.bin");
+
+	BulidFBX build_fbx("../../Data/Assets/FBX/stage/stage.fbx");
+	build_fbx.Export("../../Data/Assets/Bin/stage.bin");
 
 	//-- RPG Character --//
 	//BulidFBX build_fbx("../../Data/TestData/RPG-Character/RPG-Character.FBX");

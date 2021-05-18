@@ -22,7 +22,7 @@ namespace shader
 	enum class MeshShaderTypes;
 	struct Vertex;
 }
-class OldTextureResource;
+class TextureResource;
 
 //*************************************************
 //
@@ -48,7 +48,7 @@ private:
 		shader::CB_Material data;
 		u_int				illum = 1;
 		std::string			map_Kd;
-		OldTextureResource*    texture = nullptr;
+		TextureResource*    texture = nullptr;
 	};
 	std::vector<Material> materials;
 
