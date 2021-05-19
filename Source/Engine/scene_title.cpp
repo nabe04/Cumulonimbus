@@ -68,11 +68,11 @@ void SceneTitle::InitializeScene()
 	sky_box->GetComponent<TransformComponent>()->GetTransform()->SetScale(3);
 	sky_box->SetEntityName("Sky_Box");
 
-	//auto* stage = AddEntity(UpdateOrder::Default);
-	//stage->AddComponent<MeshObject>();
-	//stage->AddComponent<GeomPrimComponent>(GeomPrimType::Cube);
-	//stage->GetComponent<TransformComponent>()->GetTransform()->SetScale({ 100.0f,0.1f,100.0f });
-	//stage->SetEntityName("Stage");
+	auto* stage = AddEntity(UpdateOrder::Default);
+	stage->AddComponent<MeshObject>();
+	stage->AddComponent<GeomPrimComponent>(GeomPrimType::Cube);
+	stage->GetComponent<TransformComponent>()->GetTransform()->SetScale({ 100.0f,0.1f,100.0f });
+	stage->SetEntityName("Stage");
 
 	auto* sample01 = AddEntity(UpdateOrder::Default, EntityTag::Bunny);
 	sample01->AddComponent<MeshObject>();
@@ -95,13 +95,13 @@ void SceneTitle::InitializeScene()
 	player->GetComponent<FbxModelComponent>()->SwitchAnimation(2, true); // 0,1 T_Pose 2 Walk 3 Run 4 Attack
 	player->SetEntityName("Player");
 
-	const char* building_filename = "./Data/Assets/Bin/stage.bin";
-	std::shared_ptr<FbxModelResource> bunny_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), building_filename, "./Data/Assets/FBX/stage/stage.fbm/");
-	auto* building_1 = AddEntity();
-	building_1->AddComponent<MeshObject>();
-	building_1->AddComponent<FbxModelComponent>(bunny_resource);
-	//building_1->GetComponent<TransformComponent>()->GetTransform()->SetScale(0.001f);
-	building_1->SetEntityName("mansion");
+	//const char* building_filename = "./Data/Assets/Bin/house.bin";  // "./Data/Assets/FBX/stage/stage.fbm/"
+	//std::shared_ptr<FbxModelResource> bunny_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), building_filename, "./Data/Assets/FBX/house/");
+	//auto* building_1 = AddEntity();
+	//building_1->AddComponent<MeshObject>();
+	//building_1->AddComponent<FbxModelComponent>(bunny_resource);
+	////building_1->GetComponent<TransformComponent>()->GetTransform()->SetScale(0.001f);
+	//building_1->SetEntityName("mansion");
 
 	//const char* bunny_filename = "./Data/Assets/Bin/stanford_bunny.bin";
 	//std::shared_ptr<FbxModelResource> bunny_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), bunny_filename, " ");

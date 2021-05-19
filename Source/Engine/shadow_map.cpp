@@ -13,7 +13,7 @@ ShadowMap::ShadowMap(ID3D11Device* device, int width, int height)
 	blend = std::make_unique<Blend>(device);
 
 	// FrameBuffer
-	normal_shadow_depth_extraction_fb   = std::make_unique<FrameBuffer>(device, width, height, false, 1, DXGI_FORMAT_R32G32_FLOAT);
+	normal_shadow_depth_extraction_fb   = std::make_unique<FrameBuffer>(device, 2048, 2048, false, 1, DXGI_FORMAT_R32G32_FLOAT);
 	variance_shadow_depth_extraction_fb = std::make_unique<FrameBuffer>(device, width, height, false, 1, DXGI_FORMAT_R32G32_FLOAT);
 
 	// Shader & Constant buffer

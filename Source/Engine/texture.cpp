@@ -36,20 +36,8 @@ void TextureResource::CreateTexture(ID3D11Device* device, const char* tex_filena
 	{// Loading DDS file
 		hr = DirectX::LoadFromDDSFile(string_helper::stringToWString(tex_filename).c_str(), DirectX::DDS_FLAGS::DDS_FLAGS_NONE, &texture_data->metadata, texture_data->scratch);
 	}
-	else if (strcmp(exe, ".tga") == 0)
+	else if (strcmp(exe, ".tga") == 0 || strcmp(exe, ".TGA") == 0)
 	{// Loading TGA file
-		std::filesystem::path dds_filename(tex_filename);
-		dds_filename.replace_extension("dds");
-		hr = DirectX::LoadFromDDSFile(string_helper::stringToWString(tex_filename).c_str(), DirectX::DDS_FLAGS::DDS_FLAGS_NONE, &texture_data->metadata, texture_data->scratch);
-		//if (std::filesystem::exists(dds_filename.c_str()))
-		//{
-		//	hr = DirectX::LoadFromDDSFile(dds_filename.c_str(), DirectX::DDS_FLAGS::DDS_FLAGS_NONE, &texture_data->metadata, texture_data->scratch);
-		//}
-		//else
-		//{
-		//	hr = DirectX::LoadFromWICFile(string_helper::stringToWString(tex_filename).c_str(), DirectX::WIC_FLAGS::WIC_FLAGS_NONE, &texture_data->metadata, texture_data->scratch);
-		//}
-
 		hr = DirectX::LoadFromTGAFile(string_helper::stringToWString(tex_filename).c_str(), &texture_data->metadata, texture_data->scratch);
 	}
 	else
