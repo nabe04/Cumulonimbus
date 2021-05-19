@@ -18,8 +18,8 @@ int main()
 	//BulidFBX build_fbx("../../Data/Assets/FBX/Building/rpgpp_lt_building_01.fbx");
 	//build_fbx.Export("../../Data/Assets/Bin/rpgpp_lt_building_01.bin");
 
-	BulidFBX build_fbx("../../Data/Assets/FBX/ground/ground.fbx");
-	build_fbx.Export("../../Data/Assets/Bin/ground.bin");
+	BulidFBX build_fbx("../../Data/Assets/FBX/stones/stone_3/stone_3.fbx");
+	build_fbx.Export("../../Data/Assets/Bin/stones/stone_3.bin");
 
 	//-- RPG Character --//
 	//BulidFBX build_fbx("../../Data/TestData/RPG-Character/RPG-Character.FBX");

@@ -24,10 +24,10 @@ public:
 		DirectX::XMFLOAT4X4 perspective_view_projection_matrix{}; // ビュー・プロジェクション行列
 
 		// 平行投影用
-		float orthographic_view_width{ 200 }; // 幅
-		float orthographic_view_height{ 200 };	// 高さ
+		float orthographic_view_width{ 1000 }; // 幅
+		float orthographic_view_height{ 1000 };	// 高さ
 		float orthographic_near_z{ 0 };	// 最近値
-		float orthographic_far_z{ 100 };	// 最遠地
+		float orthographic_far_z{ 1000 };	// 最遠地
 		DirectX::XMFLOAT4X4 orthographic_projection_matrix{};	// プロジェクション行列
 		DirectX::XMFLOAT4X4 orthographic_view_projection_matrix{}; // ビュー・プロジェクション行列
 	};
