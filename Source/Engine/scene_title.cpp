@@ -38,11 +38,11 @@ void SceneTitle::InitializeScene()
 	select_game_mode.set(static_cast<int>(SelectGameMode::TraininigMode));	// 常にどれかのビットをセットしておく(初期はトレーニングモード)
 
 //-- Light --//
-	light->SetLightDir({ .0f,-.6f,1.f ,1.f });
+	light->SetLightDir({ -1.0f,-.6f,1.f ,1.f });
 
 	//-- View --//
 	view->SetCameraPos(XMFLOAT3(.0f, 50.0, -100.0f), XMFLOAT3(.0f, .0f, .0f), XMFLOAT3(.0f, 1.0f, .0f));
-	camera_work->SetPositon({ 0,10,-45 });
+	camera_work->SetPositon({ 0,20,-50 });
 
 	//const char* coffee_filename = "coffee_256";
 	//auto* coffee_tex = AddEntity();
@@ -68,21 +68,21 @@ void SceneTitle::InitializeScene()
 	sky_box->GetComponent<TransformComponent>()->GetTransform()->SetScale(3);
 	sky_box->SetEntityName("Sky_Box");
 
-	auto* stage = AddEntity(UpdateOrder::Default);
-	stage->AddComponent<MeshObject>();
-	stage->AddComponent<GeomPrimComponent>(GeomPrimType::Cube);
-	stage->GetComponent<TransformComponent>()->GetTransform()->SetScale({ 100.0f,0.1f,100.0f });
-	stage->SetEntityName("Stage");
+	//auto* stage = AddEntity(UpdateOrder::Default);
+	//stage->AddComponent<MeshObject>();
+	//stage->AddComponent<GeomPrimComponent>(GeomPrimType::Cube);
+	//stage->GetComponent<TransformComponent>()->GetTransform()->SetScale({ 100.0f,0.1f,100.0f });
+	//stage->SetEntityName("Stage");
 
-	auto* sample01 = AddEntity(UpdateOrder::Default, EntityTag::Bunny);
-	sample01->AddComponent<MeshObject>();
-	sample01->GetComponent<MeshObject>()->SetShaderState(shader::MeshShaderTypes::Metal);
-	sample01->AddComponent<FbxModelComponent>(Locator::GetResourceManager()->FbxModelResouece("stanford_bunny"));
-	sample01->GetComponent<TransformComponent>()->GetTransform()->SetScale(0.01f);
-	sample01->GetComponent<TransformComponent>()->GetTransform()->SetPosition({ 0,4,30 });
-	sample01->GetComponent<TransformComponent>()->GetTransform()->SetScale(0.01f);
-	sample01->AddComponent<SampleRotation>();
-	sample01->SetEntityName("Bunny");
+	//auto* sample01 = AddEntity(UpdateOrder::Default, EntityTag::Bunny);
+	//sample01->AddComponent<MeshObject>();
+	//sample01->GetComponent<MeshObject>()->SetShaderState(shader::MeshShaderTypes::Metal);
+	//sample01->AddComponent<FbxModelComponent>(Locator::GetResourceManager()->FbxModelResouece("stanford_bunny"));
+	//sample01->GetComponent<TransformComponent>()->GetTransform()->SetScale(0.01f);
+	//sample01->GetComponent<TransformComponent>()->GetTransform()->SetPosition({ 0,4,30 });
+	//sample01->GetComponent<TransformComponent>()->GetTransform()->SetScale(0.01f);
+	//sample01->AddComponent<SampleRotation>();
+	//sample01->SetEntityName("Bunny");
 
 	//const char* ganfaul_filename = "./Data/Assets/Bin/ganfaul.bin";
 	//std::shared_ptr<FbxModelResource> ganfaul_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), ganfaul_filename, "./Data/Assets/FBX/ganfaul/character.fbm/");
@@ -90,7 +90,8 @@ void SceneTitle::InitializeScene()
 	player->AddComponent<MeshObject>();
 	player->AddComponent<FbxModelComponent>(Locator::GetResourceManager()->FbxModelResouece("ganfaul"));
 	player->GetComponent<TransformComponent>()->GetTransform()->SetScale(0.05f);
-	player->GetComponent<TransformComponent>()->GetTransform()->SetPosition({ -10,3,0 });
+	player->GetComponent<TransformComponent>()->GetTransform()->SetPosition({ -10,10,0 });
+	player->GetComponent<TransformComponent>()->GetTransform()->SetWorldRotation_Y(180);
 	player->GetComponent<MeshObject>()->SetRasterizeState(RasterizeState::Cull_Back_CCW_True);
 	player->GetComponent<FbxModelComponent>()->SwitchAnimation(2, true); // 0,1 T_Pose 2 Walk 3 Run 4 Attack
 	player->SetEntityName("Player");
@@ -102,6 +103,16 @@ void SceneTitle::InitializeScene()
 	//building_1->AddComponent<FbxModelComponent>(bunny_resource);
 	////building_1->GetComponent<TransformComponent>()->GetTransform()->SetScale(0.001f);
 	//building_1->SetEntityName("mansion");
+
+	const char* ground_filename = "./Data/Assets/Bin/ground.bin";  // "./Data/Assets/FBX/stage/stage.fbm/"
+	std::shared_ptr<FbxModelResource> ground_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), ground_filename, "./Data/Assets/FBX/ground/");
+	auto* ground = AddEntity();
+	ground->AddComponent<MeshObject>();
+	ground->AddComponent<FbxModelComponent>(ground_resource);
+	ground->GetComponent<TransformComponent>()->GetTransform()->SetScale(DirectX::XMFLOAT3{ 5,5,0.1f });
+	ground->GetComponent<TransformComponent>()->GetTransform()->SetWorldRotation_X(90);
+	ground->GetComponent<MeshObject>()->SetSamplerState(RenderingSampleState::Linear_Wrap);
+	ground->SetEntityName("Ground");
 
 	//const char* bunny_filename = "./Data/Assets/Bin/stanford_bunny.bin";
 	//std::shared_ptr<FbxModelResource> bunny_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), bunny_filename, " ");
