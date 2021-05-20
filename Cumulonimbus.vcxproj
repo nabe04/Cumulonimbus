@@ -217,6 +217,7 @@
     <None Include="Shader\general.hlsli" />
     <None Include="Shader\monochrome.hlsli" />
     <None Include="Shader\phong.hlsli" />
+    <None Include="Shader\shadow_functions.hlsli" />
     <None Include="Shader\shadow_map.hlsli" />
     <None Include="Shader\single_color.hlsli" />
     <None Include="Shader\sorbel_filter.hlsli" />

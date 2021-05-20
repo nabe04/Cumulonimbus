@@ -38,7 +38,6 @@ public:
 	{
 		NormalShadowDepthExtraction,
 		VarianceShadowDepthExtraction,
-		//ShadowRendering,
 
 		End
 	};
@@ -52,8 +51,8 @@ public:
 	void Begin(ID3D11DeviceContext* immediate_context)
 	{
 		samplers.at(static_cast<int>(ShadowMapSamplerStates::Linear_Border))->Activate(immediate_context, 0, false);
-		normal_shadow_depth_extraction_fb->Clear(immediate_context, 1.f, 0.f, 1.f, 1.f);
-		variance_shadow_depth_extraction_fb->Clear(immediate_context, 1.f, 0.f, 1.f, 1.f);
+		normal_shadow_depth_extraction_fb->Clear(immediate_context, 1.f, 1.0f, 1.f, 1.f);
+		variance_shadow_depth_extraction_fb->Clear(immediate_context, 1.f, 1.f, 1.f, 1.f);
 	}
 	void End(ID3D11DeviceContext* immediate_context)
 	{
@@ -78,12 +77,10 @@ private:
 	// Vertex shader
 	std::unique_ptr<shader::VertexShader> normal_shadow_depth_extraction_vs{};
 	std::unique_ptr<shader::VertexShader> variance_shadow_depth_extraction_vs{};
-	std::unique_ptr<shader::VertexShader> shadow_map_vs{};
 
 	// Pixel shader
 	std::unique_ptr<shader::PixelShader>  normal_shadow_depth_extraction_ps{};
 	std::unique_ptr<shader::PixelShader> variance_shadow_depth_extraction_ps{};
-	std::unique_ptr<shader::PixelShader>  shadow_map_ps{};
 
 	StateMachine<RenderProcess, void, ID3D11DeviceContext*, const M_ShadowMap&> begin_rendering_states{};
 	StateMachine<RenderProcess, void, ID3D11DeviceContext*>	end_rendering_states{};
@@ -93,8 +90,4 @@ private:
 
 	void ActivateVarianceShadowDepthExtraction(ID3D11DeviceContext* immediate_context, const M_ShadowMap m_data) const;
 	void DeactivateVarianceShadowDepthExtraction(ID3D11DeviceContext* immediate_context) const;
-
-	void ActivateShadowMap(ID3D11DeviceContext* immediate_context, const M_ShadowMap& m_data) const;
-	void DeactivateShadowMap(ID3D11DeviceContext* immediate_context) const;
-
 };

@@ -5,6 +5,7 @@
 #define USE_BONE_INDICES
 // For VS output
 #define USE_WORLD_VIEW_POSITION
+#define USE_NDC_POSITION
 
 #include "general.hlsli"
 #include "shadow_map.hlsli"
@@ -28,6 +29,7 @@ VS_OutPut main(VS_Input vin)
     const float4 wv_pos = mul(float4(world_pos, 1.0f), light_view_matrix); // ビュー空間までの変換(分散シャドウマップの比較などに使用)
 
     vs_out.position = wvp_pos;
+    vs_out.ndc_position = wvp_pos;
     vs_out.world_view_position = wv_pos;
 
     return vs_out;
