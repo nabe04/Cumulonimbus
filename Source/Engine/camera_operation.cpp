@@ -21,7 +21,7 @@ CameraOperationComponent::CameraOperationComponent(Entity* entity, EntityTag tag
 	if (!view)
 		assert(!"Not found View");
 
-	//XMFLOAT3 target = GetEntity()->GetComponent<TransformComponent>()->GetTransform()->GetPosition();
+	//XMFLOAT3 focus_position = GetEntity()->GetComponent<TransformComponent>()->GetTransform()->GetPosition();
 	XMFLOAT3 target = GetEntity()->GetScene()->GetOtherEntity(EntityTag::Enemy)->GetComponent<TransformComponent>()->GetTransform()->GetPosition();
 
 	if (!std::isfinite(target.x) || !std::isfinite(target.y) || !std::isfinite(target.z))
@@ -64,7 +64,7 @@ void CameraOperationComponent::Update(const float delta_time)
 
 	if (!std::isfinite(view->GetTarget().x) || !std::isfinite(view->GetTarget().y) || !std::isfinite(view->GetTarget().z))
 	{
-		assert(!"Camera target value is nan or infinity");
+		assert(!"Camera focus_position value is nan or infinity");
 	}
 
 	if (view->IsDebugCamera())
@@ -234,7 +234,7 @@ void CameraOperationComponent::TargetTagCamera(const float delta_time)
 //	// カメラの注視点設定
 //	auto* default_target_transform = GetEntity()->GetScene()->GetOtherEntity(my_target_tag)->GetComponent<TransformComponent>()->GetTransform();
 //	SimpleMath::Vector3 camera_target{ default_target_transform->GetPosition() + adjust_target_position };
-//	view->SetCameraTarget(camera_target);
+//	view->SetFocusPosition(camera_target);
 }
 //
 void CameraOperationComponent::LockOnCamera(const float delta_time)
@@ -252,7 +252,7 @@ void CameraOperationComponent::LockOnCamera(const float delta_time)
 //		assert(!"target_transform positon is nan or infinity");
 //	}
 //
-//	// Target tag → Default target tag
+//	// Target tag → Default focus_position tag
 //	SimpleMath::Vector3 vec_from_target_to_default
 //	{ default_target_transform->GetPosition().x - target_transform->GetPosition().x,default_target_transform->GetPosition().y - target_transform->GetPosition().y,default_target_transform->GetPosition().z - target_transform->GetPosition().z };
 //
@@ -271,7 +271,7 @@ void CameraOperationComponent::LockOnCamera(const float delta_time)
 //
 //	// カメラの注視点設定
 //	SimpleMath::Vector3 camera_target{ target_transform->GetPosition() };
-//	view->SetCameraTarget(camera_target);
+//	view->SetFocusPosition(camera_target);
 //
 //	// 前のフレームのカメラ位置との角度を算出
 //	float dot_val = camera_position.Dot(prev_camera_position);
@@ -387,7 +387,7 @@ void CameraOperationComponent::Correction_Free_LockOn(const float delta_time)
 
 	//// カメラの注視点設定
 	//SimpleMath::Vector3 camera_target{ target_transform->GetPosition() };
-	//view->SetCameraTarget(target_transform->GetPosition());
+	//view->SetFocusPosition(target_transform->GetPosition());
 }
 
 // ロックオンカメラ → フリーカメラの補完
@@ -464,7 +464,7 @@ void CameraOperationComponent::Correction_LockOn_Free(const float delta_time)
 
 	// カメラの注視点設定
 	SimpleMath::Vector3 camera_target{ default_target_transform->GetPosition() + adjust_target_position };
-	view->SetCameraTarget(camera_target);
+	view->SetFocusPosition(camera_target);
 }
 
 bool CameraOperationComponent::MovingRestriction(DirectX::SimpleMath::Vector3 position)

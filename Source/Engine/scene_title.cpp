@@ -4,21 +4,16 @@
 
 #include "input_manager.h"
 #include "scene_load.h"
-#include "scene_game.h"
-#include "scene_tutorial.h"
+
 
 #include "transform.h"
 #include "transform_component.h"
 #include "mesh_object.h"
-#include "geometric_primitive_component.h"
 #include "fbx_model_component.h"
 
 #include "sprite_object.h"
 #include "anim_sprite.h"
 #include "sky_box.h"
-
-#include "test_mesh_particle.h"
-#include "rotation_sample.h"
 
 #include "locator.h"
 

@@ -48,16 +48,16 @@ protected:
 
 	SceneType current_scene = SceneType::End;
 
-	std::unique_ptr<View>						    view				= nullptr;
-	std::unique_ptr<CameraWork>					camera_work			= nullptr;
-	std::unique_ptr<Light>						light				= nullptr;
-	std::unique_ptr<GeometricPrimitiveResource>   geom_prim_res		= nullptr;
-	std::unique_ptr<CollisionManager>				collision_manager	= nullptr;
-	std::unique_ptr<SpriteRenderer>				sprite_renderer     = nullptr;
-	std::unique_ptr<MeshRenderer>					model_render		= nullptr;
-	std::unique_ptr<SoundResource>				sound_resource		= nullptr;
-	std::unique_ptr<EditorManager>				editor_manager		= nullptr;
 	std::shared_ptr<ResourceManager>				resource_manager	= nullptr;
+	std::unique_ptr<CameraWork>						camera_work			= nullptr;
+	std::unique_ptr<CollisionManager>				collision_manager	= nullptr;
+	std::unique_ptr<EditorManager>					editor_manager		= nullptr;
+	std::unique_ptr<GeometricPrimitiveResource>		geom_prim_res		= nullptr;
+	std::unique_ptr<Light>							light				= nullptr;
+	std::unique_ptr<MeshRenderer>					model_render		= nullptr;
+	std::unique_ptr<SoundResource>					sound_resource		= nullptr;
+	std::unique_ptr<SpriteRenderer>					sprite_renderer     = nullptr;
+	std::unique_ptr<View>						    view				= nullptr;
 
 	//std::unique_ptr <pad_link::PadLink>			pad_combine			= nullptr;
 

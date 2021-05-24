@@ -7,7 +7,7 @@
 class CameraWork final
 {
 public:
-	CameraWork();
+	CameraWork()  = default;
 	~CameraWork() = default;
 
 	void Update(bool is_debug);
@@ -16,46 +16,43 @@ public:
 #pragma region
 	/*
 	 * brief    : カメラの位置、注視点、アップベクトルのセット
-	 * position : 位置
-	 * target   : 注視点
-	 * up_vec   : アップベクトル
 	 */
 	void SetCameraInfo(
-		const DirectX::SimpleMath::Vector3& position,
-		const DirectX::SimpleMath::Vector3& target,
-		const DirectX::SimpleMath::Vector3& up_vec)
+		const DirectX::SimpleMath::Vector3& eye_position /* 位置 */,
+		const DirectX::SimpleMath::Vector3& target   /* 注視点 */,
+		const DirectX::SimpleMath::Vector3& up_vec   /* アップベクトル*/)
 	{
-		this->position	 = position;
-		this->target_vec = target;
-		this->camera_up  = up_vec;
+		this->eye_position	 = eye_position;
+		this->focus_position = target;
+		this->up_vec  = up_vec;
 	}
 
-	void SetPosition(const DirectX::SimpleMath::Vector3& position);
+	void SetPosition(const DirectX::SimpleMath::Vector3& eye_position);
 	void SetTargetVec(const DirectX::SimpleMath::Vector3& target);
 	void SetCameraUp(const DirectX::SimpleMath::Vector3& up);
 
 	void SetCameraSpeed(const DirectX::SimpleMath::Vector2& speed) { this->camera_speed = speed; }
 
-	[[nodiscard]] const DirectX::SimpleMath::Vector3& GetPositon() const { return position; }
-	[[nodiscard]] const DirectX::SimpleMath::Vector3& GetTargetVec() const { return target_vec; }
-	[[nodiscard]] const DirectX::SimpleMath::Vector3& GetCameraFront() const { return camera_front; }
+	[[nodiscard]] const DirectX::SimpleMath::Vector3& GetPosition() const { return eye_position; }
+	[[nodiscard]] const DirectX::SimpleMath::Vector3& GetFocusPosition() const { return focus_position; }
+	[[nodiscard]] const DirectX::SimpleMath::Vector3& GetCameraFront() const { return front_vec; }
 #pragma endregion Setter & Getter
 
 private:
-	DirectX::SimpleMath::Vector3 position{ 0.0f,0.0f,0.0f };
-	DirectX::SimpleMath::Vector3 target_vec{ 0.0f,0.0f,1.0f };
-	DirectX::SimpleMath::Vector3 camera_front{ target_vec.x - position.x, target_vec.y - position.y , target_vec.z - position.z };
-	DirectX::SimpleMath::Vector3 camera_up{ 0.0f,1.0f,0.0f };			// カメラのUpベクトルを実際にセットするときに使用するベクトル
-	DirectX::SimpleMath::Vector3 current_camerea_up{ .0f,1.f,.0f };		// カメラのそれぞれのベクトルが直行になるように補正したベクトル(計算などに使用)
+	DirectX::SimpleMath::Vector3 eye_position{ 0.0f,0.0f,0.0f };
+	DirectX::SimpleMath::Vector3 focus_position{ 0.0f,0.0f,1.0f };
+
+	DirectX::SimpleMath::Vector3 up_vec{ 0.0f,1.0f,0.0f };		// カメラのUpベクトルを実際にセットするときに使用するベクトル
+	DirectX::SimpleMath::Vector3 right_vec{ 1.0f,0.0f,0.0f };
+	DirectX::SimpleMath::Vector3 front_vec{ focus_position.x - eye_position.x,
+											focus_position.y - eye_position.y,
+											focus_position.z - eye_position.z };
+
+	DirectX::SimpleMath::Vector3 current_camera_up{ .0f,1.f,.0f };		// カメラのそれぞれのベクトルが直行になるように補正したベクトル(計算などに使用)
 	DirectX::SimpleMath::Vector3 camera_right{ 1.0f,0.0f,0.0f };
 
-	// I might use it in the future
-	DirectX::SimpleMath::Vector3 right{ 1.0f,0.0f,0.0f };
-	DirectX::SimpleMath::Vector3 up{ 0.0f,1.0f,0.0f };
-	DirectX::SimpleMath::Vector3 front{ 0.0f,0.0f,1.0f };
-
-	DirectX::SimpleMath::Matrix view_f4x4;
-	DirectX::SimpleMath::Matrix projection_f4x4;
+	DirectX::SimpleMath::Matrix view_f4x4{ DirectX::SimpleMath::Matrix::Identity };
+	DirectX::SimpleMath::Matrix projection_f4x4{ DirectX::SimpleMath::Matrix::Identity };
 
 	DirectX::SimpleMath::Vector3 camera_angle{}; // カメラの角度(Degree),左手系の座標軸からの角度
 

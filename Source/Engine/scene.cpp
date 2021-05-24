@@ -143,8 +143,8 @@ void Scene::Update(const float elapsed_time)
 {
 	// ƒeƒXƒg
 	camera_work->Update(true);
-	view->SetCameraTarget(camera_work->GetCameraFront() * 500);
-	view->SetPosition(camera_work->GetPositon());
+	view->SetFocusPosition(camera_work->GetFocusPosition());
+	view->SetPosition(camera_work->GetPosition());
 	view->SetCameraUp({ 0,1,0 });
 
 	if(!is_paused)
