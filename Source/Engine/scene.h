@@ -79,7 +79,7 @@ public:
 	virtual ~Scene() = default;
 
 	[[nodiscard]] const std::shared_ptr<Scene>& Execute(Framework* framework);
-	[[noreturn]] void SetNextScene(const std::shared_ptr<Scene>& scene) { next_scene = scene; }
+	void SetNextScene(const std::shared_ptr<Scene>& scene) { next_scene = scene; }
 
 	[[nodiscard]] auto* GetFramework() const { return framework; }
 	[[nodiscard]] auto* GetView() const{ return view.get(); }
@@ -88,7 +88,7 @@ public:
 	//auto* GetPadLink()			{ return pad_combine.get(); }
 	[[nodiscard]] auto* GetSoundResourceManager() const { return sound_resource.get(); }
 
-	[[noreturn]] void IsPaused(bool flg) { is_paused = flg; }
+	void IsPaused(bool flg) { is_paused = flg; }
 	[[nodiscard]] bool IsPaused() const { return is_paused; }
 
 	//-- Entity --//
@@ -96,7 +96,7 @@ public:
 	{
 		return AddEntityToArray(std::make_unique<Entity>(this, update_order, entity_tag));
 	}
-	[[noreturn]] void AddRemoveEntity(Entity* entity);
+	void AddRemoveEntity(Entity* entity);
 
 	[[nodiscard]] auto* GetEntities()const { return &entities; }
 	template<class T,class... Args>
@@ -129,7 +129,7 @@ public:
 	[[nodiscard]] const SceneType& GetCurrentScene() const { return current_scene; }
 
 	//-- ImGui --//
-	[[noreturn]] void WriteImGui() const;
+	void WriteImGui() const;
 
 	//-- Serialize --//
 	/*
@@ -171,7 +171,7 @@ public:
 	 * brief : シーンのロード
 	 * file_path_and_name : 拡張子を除く、ファイルの相対パス
 	 */
-	[[noreturn]] void LoadScene(std::string file_path_and_name)
+	void LoadScene(std::string file_path_and_name)
 	{
 		const std::string exe = ".json";
 

@@ -28,7 +28,7 @@ namespace buffer
 		[[nodiscard]] ID3D11Buffer** GetVertexBufferAddress() { return vertex_buffer.GetAddressOf(); }
 		[[nodiscard]] const std::vector<T>& GetVertexDatas()  { return vertex_datas; }
 
-		[[noreturn]]  void SetVertexDatas(const std::vector<T>& datas) { vertex_datas = datas; }
+		 void SetVertexDatas(const std::vector<T>& datas) { vertex_datas = datas; }
 	private:
 		void CreateVertexBuffer(ID3D11Device* device)
 		{

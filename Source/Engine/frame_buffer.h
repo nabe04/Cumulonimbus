@@ -34,7 +34,7 @@ public:
 	FrameBuffer(FrameBuffer&)				= delete;
 	FrameBuffer& operator=(FrameBuffer&)	= delete;
 
-	[[noreturn]] void Clear(
+	void Clear(
 		ID3D11DeviceContext* immediate_context,
 		float r = 0, float g = 0, float b = 0, float a = 1,
 		unsigned int clear_flags = D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
@@ -52,7 +52,7 @@ public:
 	}
 
 	// clear only "render_target_view"
-	[[noreturn]] void ClearRenderTargetView(
+	void ClearRenderTargetView(
 		ID3D11DeviceContext* immediate_context,
 		float r = 0.0f, float g = 0.0f, float b = 0.0f, float a = 1.0f) const
 	{
@@ -61,7 +61,7 @@ public:
 	}
 
 	// clear only "depth_stencil_view"
-	[[noreturn]] void ClearDepthStencilView(
+	void ClearDepthStencilView(
 		ID3D11DeviceContext* immediate_context,
 		unsigned int clear_flags = D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
 		float depth = 1, unsigned char stencil = 0) const
@@ -69,7 +69,7 @@ public:
 		immediate_context->ClearDepthStencilView(depth_stencil_view.Get(), clear_flags, depth, stencil);
 	}
 
-	[[noreturn]] void Activate(ID3D11DeviceContext* immediate_context)
+	void Activate(ID3D11DeviceContext* immediate_context)
 	{
 		number_of_stored_viewports = D3D11_VIEWPORT_AND_SCISSORRECT_OBJECT_COUNT_PER_PIPELINE;
 		immediate_context->RSGetViewports(&number_of_stored_viewports, default_viewports);
@@ -80,7 +80,7 @@ public:
 	}
 
 	// activate only "render_target_view"
-	[[noreturn]] void ActivateRenderTargetView(ID3D11DeviceContext* immediate_context)
+	void ActivateRenderTargetView(ID3D11DeviceContext* immediate_context)
 	{
 		number_of_stored_viewports = D3D11_VIEWPORT_AND_SCISSORRECT_OBJECT_COUNT_PER_PIPELINE;
 		immediate_context->RSGetViewports(&number_of_stored_viewports, default_viewports);
@@ -91,7 +91,7 @@ public:
 	}
 
 	// activate only "depth_stencil_view"
-	[[noreturn]] void ActivateDepthStencilView(ID3D11DeviceContext* immediate_context)
+	void ActivateDepthStencilView(ID3D11DeviceContext* immediate_context)
 	{
 		number_of_stored_viewports = D3D11_VIEWPORT_AND_SCISSORRECT_OBJECT_COUNT_PER_PIPELINE;
 		immediate_context->RSGetViewports(&number_of_stored_viewports, default_viewports);
@@ -102,7 +102,7 @@ public:
 		immediate_context->OMSetRenderTargets(1, &null_render_target_view, depth_stencil_view.Get());
 	}
 
-	[[noreturn]] void Deactivate(ID3D11DeviceContext* immediate_context)
+	void Deactivate(ID3D11DeviceContext* immediate_context)
 	{
 		immediate_context->RSSetViewports(number_of_stored_viewports, default_viewports);
 		immediate_context->OMSetRenderTargets(1, default_render_target_view.GetAddressOf(), default_depth_stencil_view.Get());

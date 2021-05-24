@@ -52,7 +52,7 @@ public:
 		);
 	}
 private:
-	[[noreturn]] void CreateTexture(ID3D11Device* device, const char* tex_filename);
+	void CreateTexture(ID3D11Device* device, const char* tex_filename);
 };
 
 class DummyTexture

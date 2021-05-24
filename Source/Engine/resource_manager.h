@@ -23,7 +23,7 @@ public:
 	explicit ResourceManager() = default;
 	~ResourceManager() = default;
 
-	[[noreturn]] void Initialize(ID3D11Device* device);
+	void Initialize(ID3D11Device* device);
 
 	template<class T>
 	void Register(const std::shared_ptr<T>& resource)

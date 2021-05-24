@@ -29,11 +29,11 @@ public:
 		,cmd_show{ cmd_show } {}
 	~Window() = default;
 
-	[[noreturn]] void Create(u_int width, u_int height, u_int pos_x, u_int pos_y);
+	void Create(u_int width, u_int height, u_int pos_x, u_int pos_y);
 
 	[[nodiscard]] HWND  GetHWND() const { return hwnd; }
 	[[nodiscard]] HINSTANCE HInstance() const { return instance; }
-	[[noreturn]] void SetHWND(HWND hwnd) { this->hwnd = hwnd; }
+	void SetHWND(HWND hwnd) { this->hwnd = hwnd; }
 	[[nodiscard]] u_int Width() const { return window_width; }
 	[[nodiscard]] u_int Height() const { return window_height; }
 	[[nodiscard]] RECT WindowRect();

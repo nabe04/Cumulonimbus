@@ -34,9 +34,9 @@ public:
 
 	explicit Light(ID3D11Device* device, const LightData& light_data);
 
-	[[noreturn]] void Update(const View* view);
-	[[noreturn]] void ActivateCBuffer(ID3D11DeviceContext* const immediate_context, const bool set_in_vs, const bool set_in_ps) const;
-	[[noreturn]] void DeactivateCBuffer(ID3D11DeviceContext* const immediate_context) const;
+	void Update(const View* view);
+	void ActivateCBuffer(ID3D11DeviceContext* const immediate_context, const bool set_in_vs, const bool set_in_ps) const;
+	void DeactivateCBuffer(ID3D11DeviceContext* const immediate_context) const;
 
 	[[nodiscard]] const DirectX::XMFLOAT4& GetPosition() const { return  cb_light->data.position; }
 	[[nodiscard]] const DirectX::XMFLOAT4& GetLightDir() const { return cb_light->data.direction; }
@@ -48,17 +48,17 @@ public:
 	[[nodiscard]] float GetOrthographicFarZ() const { return cb_light->data.orthographic_far_z; }
 
 
-	[[noreturn]] void SetPosition(const DirectX::XMFLOAT4& pos) const { cb_light->data.position = pos; }
-	[[noreturn]] void SetLightDir(const DirectX::XMFLOAT4& dir) const { cb_light->data.direction = dir; }
-	[[noreturn]] void SetColor(const DirectX::XMFLOAT4& color) const { cb_light->data.color = color; }
-	[[noreturn]] void SetAmbient(const DirectX::XMFLOAT4& ambient) const { cb_light->data.ambient = ambient; }
-	[[noreturn]] void SetOrthographicViewWidth(const float width) const { cb_light->data.orthographic_view_width = width; }
-	[[noreturn]] void SetOrthographicViewHeight(const float height) const { cb_light->data.orthographic_view_height = height; }
-	[[noreturn]] void SetOrthographicNearZ(const float near_z) const { cb_light->data.orthographic_near_z = near_z; }
-	[[noreturn]] void SetOrthographicFarZ(const float far_z) const { cb_light->data.orthographic_far_z = far_z; }
+	void SetPosition(const DirectX::XMFLOAT4& pos) const { cb_light->data.position = pos; }
+	void SetLightDir(const DirectX::XMFLOAT4& dir) const { cb_light->data.direction = dir; }
+	void SetColor(const DirectX::XMFLOAT4& color) const { cb_light->data.color = color; }
+	void SetAmbient(const DirectX::XMFLOAT4& ambient) const { cb_light->data.ambient = ambient; }
+	void SetOrthographicViewWidth(const float width) const { cb_light->data.orthographic_view_width = width; }
+	void SetOrthographicViewHeight(const float height) const { cb_light->data.orthographic_view_height = height; }
+	void SetOrthographicNearZ(const float near_z) const { cb_light->data.orthographic_near_z = near_z; }
+	void SetOrthographicFarZ(const float far_z) const { cb_light->data.orthographic_far_z = far_z; }
 
 	[[nodiscard]] const LightData& GetData() const { return cb_light->data; }
-	[[noreturn]] void SetData(const LightData& light_data) const { cb_light->data = light_data; }
+	void SetData(const LightData& light_data) const { cb_light->data = light_data; }
 
 	void WriteImGui() const;
 

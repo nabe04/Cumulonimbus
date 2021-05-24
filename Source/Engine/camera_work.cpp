@@ -66,14 +66,14 @@ void CameraWork::RenderImGui()
 
 void CameraWork::SetPosition(const DirectX::SimpleMath::Vector3& position)
 {
-	this->position = position; 
+	this->position = position;
 }
 
 void CameraWork::SetTargetVec(const DirectX::SimpleMath::Vector3& target)
 {
 	if (this->target_vec.x == this->target_vec.y == this->target_vec.z == 0.0f)
 		assert(!"Vector is zero");
-	
+
 	this->target_vec = target;
 }
 
@@ -81,7 +81,7 @@ void CameraWork::SetCameraUp(const DirectX::SimpleMath::Vector3& up)
 {
 	if (this->camera_up.x == this->camera_up.y == this->camera_up.z == 0.0f)
 		assert(!"Vector is zero");
-	
+
 	this->camera_up = up;
 }
 

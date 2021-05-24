@@ -44,11 +44,11 @@ public:
 	[[nodiscard]] auto GetSamplerState()		const { return sampler_state; }
 	[[nodiscard]] auto GetShaderState()		    const { return shader_state; }
 
-	[[noreturn]] void SetBlendState(const BlendState& state) { blend_state = state; }
-	[[noreturn]] void SetRasterizeState(const RasterizeState& state) { rasterizer_state = state; }
-	[[noreturn]] void SetDepthStencilState(const DepthStencilState& state) { depth_stencil_state = state; }
-	[[noreturn]] void SetSamplerState(const RenderingSampleState& state) { sampler_state = state; }
-	[[noreturn]] void SetShaderState(shader::MeshShaderTypes type) {  shader_state->SetShaderState(type); }
+	void SetBlendState(const BlendState& state) { blend_state = state; }
+	void SetRasterizeState(const RasterizeState& state) { rasterizer_state = state; }
+	void SetDepthStencilState(const DepthStencilState& state) { depth_stencil_state = state; }
+	void SetSamplerState(const RenderingSampleState& state) { sampler_state = state; }
+	void SetShaderState(shader::MeshShaderTypes type) {  shader_state->SetShaderState(type); }
 
 	RenderingBufferBitset* UsingBuffer() { return rendering_buffer.get(); }
 };

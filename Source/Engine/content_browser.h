@@ -26,7 +26,7 @@ public:
 	explicit ContentBrawser() = default;
 	~ContentBrawser() = default;
 
-	[[noreturn]] void Render(Scene* scene);
+	void Render(Scene* scene);
 
 private:
 	void SelectedContent(Scene* scene);

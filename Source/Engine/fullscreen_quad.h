@@ -18,11 +18,11 @@ public:
 
 	std::unique_ptr<FrameBuffer> blend_buffer;
 
-	[[noreturn]] void Blit(ID3D11DeviceContext* immediate_context,
+	void Blit(ID3D11DeviceContext* immediate_context,
 		bool use_embedded_rasterizer_state = true, bool use_embedded_depth_stencil_state = true,
 		bool use_embedded_pixel_shader = false, bool enable_msaa = false);
 
-	[[noreturn]] void Convolution(ID3D11DeviceContext* immediate_context,
+	void Convolution(ID3D11DeviceContext* immediate_context,
 		bool use_embedded_rasterizer_state = true, bool use_embedded_depth_stencil_state = true,
 		bool use_embedded_pixel_shader = false, bool enable_msaa = false);
 
