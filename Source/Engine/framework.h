@@ -34,7 +34,7 @@ private:
 private:
 	[[nodiscard]] bool Initialize();
 	[[nodiscard]] bool UnInitialize();
-	[[noreturn]]  void CalculateFrameStates();
+	 void CalculateFrameStates();
 
 public:
 	explicit Framework(const std::shared_ptr<Window>& w)
@@ -43,8 +43,8 @@ public:
 
 	[[nodiscard]] int Run();
 	[[nodiscard]] bool ProcessLoop();
-	[[noreturn]] void DrawBegin();
-	[[noreturn]] void DrawEnd();
+	void DrawBegin();
+	void DrawEnd();
 
 	[[nodiscard]] LRESULT CALLBACK HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 

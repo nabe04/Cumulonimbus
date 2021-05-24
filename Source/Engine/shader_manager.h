@@ -105,7 +105,7 @@ namespace shader
 		MeshShaderState();
 		~MeshShaderState() = default;
 
-		[[noreturn]] void SetShaderState(const MeshShaderTypes& type) { shader_type = type; }
+		void SetShaderState(const MeshShaderTypes& type) { shader_type = type; }
 		[[nodiscard]] const MeshShaderTypes& GetShaderState() const { return shader_type; }
 
 
@@ -145,7 +145,7 @@ namespace shader
 		explicit SpriteShaderState()  = default;
 		~SpriteShaderState() = default;
 
-		[[noreturn]] void SetShaderState(const SpriteShaderTypes& type) { shader_type = type; }
+		void SetShaderState(const SpriteShaderTypes& type) { shader_type = type; }
 		[[nodiscard]] const SpriteShaderTypes& GetShaderState() const { return shader_type; }
 
 		template<class Archive>

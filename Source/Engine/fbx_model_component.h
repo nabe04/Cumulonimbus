@@ -87,7 +87,7 @@ public:
 	[[nodiscard]] int CurrentKeyframe() { return current_keyframe; };
 
 private:
-	[[noreturn]] void Initialize(const std::shared_ptr<FbxModelResource>& resource);
+	void Initialize(const std::shared_ptr<FbxModelResource>& resource);
 
 	// 前のアニメーションのキーフレームを算出
 	// brief : アニメーションが切り替わる時に使用

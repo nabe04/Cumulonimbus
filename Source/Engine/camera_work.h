@@ -11,7 +11,7 @@ public:
 	~CameraWork() = default;
 
 	void Update(bool is_debug);
-	[[noreturn]] void RenderImGui();
+	void RenderImGui();
 
 #pragma region
 	/*
@@ -20,7 +20,7 @@ public:
 	 * target   : 注視点
 	 * up_vec   : アップベクトル
 	 */
-	[[noreturn]] void SetCameraInfo(
+	void SetCameraInfo(
 		const DirectX::SimpleMath::Vector3& position,
 		const DirectX::SimpleMath::Vector3& target,
 		const DirectX::SimpleMath::Vector3& up_vec)
@@ -30,11 +30,11 @@ public:
 		this->camera_up  = up_vec;
 	}
 
-	[[noreturn]] void SetPosition(const DirectX::SimpleMath::Vector3& position);
-	[[noreturn]] void SetTargetVec(const DirectX::SimpleMath::Vector3& target);
-	[[noreturn]] void SetCameraUp(const DirectX::SimpleMath::Vector3& up);
+	void SetPosition(const DirectX::SimpleMath::Vector3& position);
+	void SetTargetVec(const DirectX::SimpleMath::Vector3& target);
+	void SetCameraUp(const DirectX::SimpleMath::Vector3& up);
 
-	[[noreturn]] void SetCameraSpeed(const DirectX::SimpleMath::Vector2& speed) { this->camera_speed = speed; }
+	void SetCameraSpeed(const DirectX::SimpleMath::Vector2& speed) { this->camera_speed = speed; }
 
 	[[nodiscard]] const DirectX::SimpleMath::Vector3& GetPositon() const { return position; }
 	[[nodiscard]] const DirectX::SimpleMath::Vector3& GetTargetVec() const { return target_vec; }
@@ -63,13 +63,13 @@ private:
 
 	// for debug
 	DirectX::SimpleMath::Vector2 camera_speed{ 1.f,1.f };
-	[[noreturn]] void Pan(const float velocity);
-	[[noreturn]] void Tilt(const float velocity);
-	[[noreturn]] void DollyInOut(const float velocity);
-	[[noreturn]] void Track(const DirectX::SimpleMath::Vector3& direction, const float velocity);
+	void Pan(float velocity);
+	void Tilt(float velocity);
+	void DollyInOut(float velocity);
+	void Track(const DirectX::SimpleMath::Vector3& direction, float velocity);
 
-	[[noreturn]] void PanAndTilt(const float velocity, const DirectX::SimpleMath::Vector3& add_angle);
+	void PanAndTilt(float velocity, const DirectX::SimpleMath::Vector3& add_angle);
 
-	[[noreturn]] void CalcCameraDirectionalVector();
-	[[noreturn]] void CalcCameraAngle();
+	void CalcCameraDirectionalVector();
+	void CalcCameraAngle();
 };

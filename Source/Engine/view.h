@@ -71,10 +71,10 @@ public:
 	[[nodiscard]]DirectX::SimpleMath::Vector3 GetCameraUp() const { return camera_up; }
 	[[nodiscard]]DirectX::SimpleMath::Vector3 GetCameraFront() const { return camera_forcus; }
 
-	[[noreturn]] void SetCameraRight(const DirectX::SimpleMath::Vector3& right) { camera_right = right; }
-	[[noreturn]] void SetCameraUp(const DirectX::SimpleMath::Vector3& up) { camera_up = up; }
-	[[noreturn]] void SetCameraFront(const DirectX::SimpleMath::Vector3& front) { camera_forcus = front; }
-	[[noreturn]] void SetFov(const float fov) { this->fov = fov; }
+	void SetCameraRight(const DirectX::SimpleMath::Vector3& right) { camera_right = right; }
+	void SetCameraUp(const DirectX::SimpleMath::Vector3& up) { camera_up = up; }
+	void SetCameraFront(const DirectX::SimpleMath::Vector3& front) { camera_forcus = front; }
+	void SetFov(const float fov) { this->fov = fov; }
 
 	[[nodiscard]] float GetFov() const { return fov; }
 	[[nodiscard]] float GetAspect() const { return aspect; }
