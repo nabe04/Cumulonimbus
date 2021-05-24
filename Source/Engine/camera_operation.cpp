@@ -62,7 +62,7 @@ void CameraOperationComponent::Update(const float delta_time)
 	if (!view)
 		assert(!"Not found View");
 
-	if (!std::isfinite(view->GetTarget().x) || !std::isfinite(view->GetTarget().y) || !std::isfinite(view->GetTarget().z))
+	if (!std::isfinite(view->GetFocusPosition().x) || !std::isfinite(view->GetFocusPosition().y) || !std::isfinite(view->GetFocusPosition().z))
 	{
 		assert(!"Camera focus_position value is nan or infinity");
 	}
@@ -224,7 +224,7 @@ void CameraOperationComponent::TargetTagCamera(const float delta_time)
 //	auto& target_pos = target_transform->GetPosition();
 //	camera_position = target_pos + front * default_camera_length;
 //
-//	view->SetPosition(camera_position);
+//	view->SetEyePosition(camera_position);
 //
 //	if (!std::isfinite(camera_position.x) || !std::isfinite(camera_position.y) || !std::isfinite(camera_position.z))
 //	{
@@ -277,11 +277,11 @@ void CameraOperationComponent::LockOnCamera(const float delta_time)
 //	float dot_val = camera_position.Dot(prev_camera_position);
 //	if (dot_val < 0)
 //	{
-//		view->SetPosition(prev_camera_position);
+//		view->SetEyePosition(prev_camera_position);
 //	}
 //	else
 //	{
-//		view->SetPosition(camera_position);
+//		view->SetEyePosition(camera_position);
 //	}
 //
 //	if (!std::isfinite(prev_camera_position.x) || !std::isfinite(prev_camera_position.y) || !std::isfinite(prev_camera_position.z))
@@ -358,7 +358,7 @@ void CameraOperationComponent::Correction_Free_LockOn(const float delta_time)
 	//after_correction_vec.Normalize();
 	//SimpleMath::Vector3 current_vec = before_correction_vec.SmoothStep(before_correction_vec, after_correction_vec, current_timer);
 	//camera_position = default_target_transform->GetPosition() + current_vec * default_camera_length;
-	//view->SetPosition(camera_position);
+	//view->SetEyePosition(camera_position);
 
 	//current_timer += delta_time / correction_timer;
 
@@ -445,7 +445,7 @@ void CameraOperationComponent::Correction_LockOn_Free(const float delta_time)
 	current_vec.Normalize();
 	camera_position = default_target_transform->GetPosition() + current_vec * default_camera_length;
 
-	view->SetPosition(camera_position);
+	view->SetEyePosition(camera_position);
 
 	current_timer += delta_time / correction_timer;
 
@@ -473,9 +473,9 @@ bool CameraOperationComponent::MovingRestriction(DirectX::SimpleMath::Vector3 po
 	if (!view)
 		assert(!"Not found View");
 
-	const float dis_x = view->GetPos().x - 0;
-	const float dis_y = view->GetPos().y - 0;
-	const float dis_z = view->GetPos().z - 0;
+	const float dis_x = view->GetEyePosition().x - 0;
+	const float dis_y = view->GetEyePosition().y - 0;
+	const float dis_z = view->GetEyePosition().z - 0;
 
 	const float dis = sqrtf(dis_x * dis_x + dis_y * dis_y + dis_z * dis_z) + camera_radius;
 

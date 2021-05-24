@@ -72,11 +72,6 @@ void Scene::Initialize()
 		view = std::make_unique<View>();
 	}
 
-	if(!this->camera_work)
-	{
-		camera_work = std::make_unique<CameraWork>();
-	}
-
 	if (!this->geom_prim_res)
 	{// Create Geometric Primitive Data
 		geom_prim_res = std::make_unique<GeometricPrimitiveResource>(GetFramework()->GetDevice());
@@ -141,12 +136,6 @@ void Scene::UnInitialize()
 
 void Scene::Update(const float elapsed_time)
 {
-	// ƒeƒXƒg
-	camera_work->Update(true);
-	view->SetFocusPosition(camera_work->GetFocusPosition());
-	view->SetPosition(camera_work->GetPosition());
-	view->SetCameraUp({ 0,1,0 });
-
 	if(!is_paused)
 		collision_manager->Update(this);
 
@@ -235,8 +224,6 @@ void Scene::Render()
 		GetCursorPos(&po);
 		ImGui::Text("mouse x : %d",po.x);
 		ImGui::Text("mouse y : %d", po.y);
-
-		camera_work->RenderImGui();
 
 		ImGui::End();
 

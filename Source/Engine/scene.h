@@ -49,7 +49,6 @@ protected:
 	SceneType current_scene = SceneType::End;
 
 	std::shared_ptr<ResourceManager>				resource_manager	= nullptr;
-	std::unique_ptr<CameraWork>						camera_work			= nullptr;
 	std::unique_ptr<CollisionManager>				collision_manager	= nullptr;
 	std::unique_ptr<EditorManager>					editor_manager		= nullptr;
 	std::unique_ptr<GeometricPrimitiveResource>		geom_prim_res		= nullptr;

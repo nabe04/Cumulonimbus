@@ -25,7 +25,7 @@ void Light::Update(const View* view)
 	view_up    = arithmetic::CalcUpVec(view_front, view_right);
 	view_up.Normalize();
 
-	DirectX::XMFLOAT3 target_pos = view->GetTarget();
+	DirectX::XMFLOAT3 target_pos = view->GetFocusPosition();
 	DirectX::XMFLOAT3 position = { cb_light->data.position.x, cb_light->data.position.y, cb_light->data.position.z };
 	const XMMATRIX view_mat = XMMatrixLookAtLH(XMLoadFloat3(&position), { 0,0,0 }, XMLoadFloat3(&view_up));
 	XMStoreFloat4x4(&cb_light->data.view_matrix, view_mat);

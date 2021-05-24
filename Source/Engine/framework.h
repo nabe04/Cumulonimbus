@@ -4,8 +4,6 @@
 #include <memory>
 #include <d3d11.h>
 
-#include "imgui.h"
-
 #include "high_resolution_timer.h"
 #include "input_system.h"
 

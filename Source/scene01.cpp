@@ -24,7 +24,7 @@ void Scene01::InitializeScene()
 	//objBunny->AddComponent<ActorComponent>();
 	//objBunny->AddComponent<ObjModelComponent>(GetFramework()->GetDevice(), "./Data/Assets/OBJ/Stanford_bunny/stanford-bunny.obj");
 	//objBunny->GetComponent<ActorComponent>()->SetShaderState(shader::MeshShaderTypes::Metal);
-	//objBunny->GetComponent<TransformComponent>()->GetTransform()->SetPosition(XMFLOAT3(-1, 0, 0));
+	//objBunny->GetComponent<TransformComponent>()->GetTransform()->SetEyePosition(XMFLOAT3(-1, 0, 0));
 	//objBunny->GetComponent<TransformComponent>()->GetTransform()->SetScale(XMFLOAT3{10,10,10});
 
 	//auto* objInc = AddEntity();
@@ -32,7 +32,7 @@ void Scene01::InitializeScene()
 	//objInc->AddComponent<ActorComponent>();
 	//objInc->AddComponent<ObjModelComponent>(GetFramework()->GetDevice(), "./Data/Assets/OBJ/Mr.Inc/Mr.Incredible.obj");
 	//objInc->GetComponent<ActorComponent>()->SetShaderState(shader::MeshShaderTypes::Phong);
-	//objInc->GetComponent<TransformComponent>()->GetTransform()->SetPosition(XMFLOAT3(-1, 1, 0));
+	//objInc->GetComponent<TransformComponent>()->GetTransform()->SetEyePosition(XMFLOAT3(-1, 1, 0));
 	//objInc->GetComponent<TransformComponent>()->GetTransform()->SetScale(XMFLOAT3{ 0.3f,0.3f,0.3f });
 
 	//auto* test2D = AddEntity();
@@ -60,7 +60,7 @@ void Scene01::InitializeScene()
 	//fbxCharacter->SetEntityName("Character FBX");
 	//fbxCharacter->GetComponent<ActorComponent>()->SetShaderState(shader::MeshShaderTypes::Diffuse);
 	//fbxCharacter->GetComponent<TransformComponent>()->GetTransform()->SetScale(XMFLOAT3(0.01f, 0.01f, 0.01f));
-	//fbxCharacter->GetComponent<TransformComponent>()->GetTransform()->SetPosition(XMFLOAT3(2, 2, 0));
+	//fbxCharacter->GetComponent<TransformComponent>()->GetTransform()->SetEyePosition(XMFLOAT3(2, 2, 0));
 	//fbxCharacter->GetComponent<FbxModelComponent>()->SwitchAnimation(3, true);
 
 	//-- View --//

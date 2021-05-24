@@ -27,9 +27,9 @@ namespace shader
 		auto it = checkShader.find(cso_name);
 		if (it != checkShader.end())
 		{
-			// ‘¶Ý‚µ‚Ä‚¢‚é‚Æ‚«
+			// ï¿½ï¿½ï¿½Ý‚ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½Æ‚ï¿½
 			*vertex_shader = it->second.vertex_shader.Get();
-			(*vertex_shader)->AddRef();	// ŽQÆƒJƒEƒ“ƒ^‚ðƒvƒ‰ƒX1
+			(*vertex_shader)->AddRef();	// ï¿½Qï¿½ÆƒJï¿½Eï¿½ï¿½ï¿½^ï¿½ï¿½vï¿½ï¿½ï¿½X1
 			*input_layout = it->second.input_layout.Get();
 			(*input_layout)->AddRef();
 
@@ -68,7 +68,7 @@ namespace shader
 		auto it = checkShader.find(cso_name);
 		if (it != checkShader.end())
 		{
-			// ‘¶Ý‚µ‚Ä‚¢‚ê‚Î
+			// ï¿½ï¿½ï¿½Ý‚ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½
 			*pixel_shader = it->second.Get();
 			(*pixel_shader)->AddRef();
 			return S_OK;
@@ -104,7 +104,7 @@ namespace shader
 	void CB_Light::Update(Scene* scene)
 	{
 		light_dir = scene->GetLight()->GetLightDir();
-		eye_pos   = XMFLOAT4{ scene->GetView()->GetPos().x, scene->GetView()->GetPos().y, scene->GetView()->GetPos().z, 1.0f };
+		eye_pos   = XMFLOAT4{ scene->GetView()->GetEyePosition().x, scene->GetView()->GetEyePosition().y, scene->GetView()->GetEyePosition().z, 1.0f };
 
 		auto* light = scene->GetLight();
 		//DirectX::XMMATRIX view_mat = DirectX::XMMatrixLookAtLH(light->)

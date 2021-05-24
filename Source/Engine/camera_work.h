@@ -4,10 +4,12 @@
 #include <DirectXMath.h>
 #include <SimpleMath.h>
 
+#include "view.h"
+
 class CameraWork final
 {
 public:
-	CameraWork()  = default;
+	CameraWork(const View& v);
 	~CameraWork() = default;
 
 	void Update(bool is_debug);
@@ -19,18 +21,17 @@ public:
 	 */
 	void SetCameraInfo(
 		const DirectX::SimpleMath::Vector3& eye_position /* 位置 */,
-		const DirectX::SimpleMath::Vector3& target   /* 注視点 */,
-		const DirectX::SimpleMath::Vector3& up_vec   /* アップベクトル*/)
-	{
-		this->eye_position	 = eye_position;
-		this->focus_position = target;
-		this->up_vec  = up_vec;
-	}
+		const DirectX::SimpleMath::Vector3& target       /* 注視点 */,
+		const DirectX::SimpleMath::Vector3& up_vec       /* アップベクトル*/);
+	void SetCameraInfo(const View& v);
 
 	void SetPosition(const DirectX::SimpleMath::Vector3& eye_position);
 	void SetTargetVec(const DirectX::SimpleMath::Vector3& target);
 	void SetCameraUp(const DirectX::SimpleMath::Vector3& up);
-
+	void SetCameraUpRightFrontVector(const DirectX::SimpleMath::Vector3& up,
+									 const DirectX::SimpleMath::Vector3& right,
+									 const DirectX::SimpleMath::Vector3& front);
+	
 	void SetCameraSpeed(const DirectX::SimpleMath::Vector2& speed) { this->camera_speed = speed; }
 
 	[[nodiscard]] const DirectX::SimpleMath::Vector3& GetPosition() const { return eye_position; }
@@ -39,6 +40,8 @@ public:
 #pragma endregion Setter & Getter
 
 private:
+	const View& view{};
+
 	DirectX::SimpleMath::Vector3 eye_position{ 0.0f,0.0f,0.0f };
 	DirectX::SimpleMath::Vector3 focus_position{ 0.0f,0.0f,1.0f };
 

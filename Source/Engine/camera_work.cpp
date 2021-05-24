@@ -5,7 +5,11 @@
 #include "arithmetic.h"
 #include "locator.h"
 
-using namespace DirectX;
+CameraWork::CameraWork(const View& v)
+	:view{v}
+{
+
+}
 
 
 void CameraWork::Update(bool is_debug)
@@ -32,7 +36,7 @@ void CameraWork::Update(bool is_debug)
 	}
 	else if(mouse.GetState(MouseButton::Right) == ButtonState::Held)
 	{
-		Pan(static_cast<float>(mouse.DeltaX()));
+		//Pan(static_cast<float>(mouse.DeltaX()));
 		Tilt(static_cast<float>(mouse.DeltaY()));
 
 		//PanAndTilt(0, { static_cast<float>(mouse.DeltaX()) ,static_cast<float>(mouse.DeltaY()) ,.0f });
@@ -47,6 +51,35 @@ void CameraWork::Update(bool is_debug)
 			Track(front_vec, -camera_speed.y);
 	}
 }
+
+void CameraWork::SetCameraUpRightFrontVector(const DirectX::SimpleMath::Vector3& up, 
+											 const DirectX::SimpleMath::Vector3& right, 
+											 const DirectX::SimpleMath::Vector3& front)
+{
+	up_vec    = up;
+	right_vec = right;
+	front_vec = front;
+}
+
+
+void CameraWork::SetCameraInfo( const DirectX::SimpleMath::Vector3& eye_position, 
+								const DirectX::SimpleMath::Vector3& target, 
+								const DirectX::SimpleMath::Vector3& up_vec)
+{
+	this->eye_position   = eye_position;
+	this->focus_position = target;
+	this->up_vec		 = up_vec;
+}
+
+void CameraWork::SetCameraInfo(const View& v)
+{
+	eye_position   = v.GetEyePosition();
+	focus_position = v.GetFocusPosition();
+
+	SetCameraUpRightFrontVector(v.GetCameraUp(), v.GetCameraRight(), v.GetCameraFront());
+}
+
+
 
 void CameraWork::RenderImGui()
 {
@@ -120,6 +153,8 @@ void CameraWork::Tilt(const float velocity)
 	q.Normalize();
 	q = q.CreateFromAxisAngle(right_vec, DirectX::XMConvertToRadians(velocity * camera_speed.y * 0.1f));
 	front_vec = DirectX::SimpleMath::Vector3::Transform(front_vec, q);
+	front_vec.Normalize();
+	focus_position = eye_position + front_vec;
 	CalcCameraDirectionalVector();
 
 	{//　カメラの角度保持(上下に+-90度まで)

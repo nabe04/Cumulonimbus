@@ -4,11 +4,13 @@
 #include <DirectXMath.h>
 #include <SimpleMath.h>
 
-#include "input_manager.h"
+class CameraWork;
 
 class View final
 {
 private:
+	std::unique_ptr<CameraWork> camera_work{};
+
 	DirectX::SimpleMath::Vector3 eye_position{ 0.0f,0.0f,0.0f };	// ˆÊ’u
 	DirectX::SimpleMath::Vector3 focus_position { 0.0f,0.0f,0.0f };	// ’Ž‹“_
 	DirectX::SimpleMath::Vector3 up_vec{ 0.0f,1.0f,0.0f };
@@ -30,19 +32,18 @@ private:
 	float far_z		= 1.0f;
 	float width		= 0;
 	float height	= 0;
-	bool  is_perspective;
+	bool  is_perspective = true;
 	bool  is_debug_camera = false;
 
 	//-- Camera controlled activate mouse eye_position --//
 	DirectX::SimpleMath::Vector2 cur_mouse_pos{ 0.0f,0.0f };		// Current mouse eye_position
 	DirectX::SimpleMath::Vector2 prev_mouse_pos{ 0.0f,0.0f };		// Mouse eye_position one frame ago
 
-private:
 	void CalcCameraOrthogonalVector();
 
 public:
 	View();
-	virtual ~View();
+	~View();
 
 	void Activate();
 	void CameraControl();	// Camera control for debug
@@ -54,13 +55,13 @@ public:
 	void SetOrtho(float width, float height, float min, float max);
 	void SetFocusPosition(const DirectX::SimpleMath::Vector3& target) { this->focus_position = target; }
 
-	void SetPosition(const DirectX::SimpleMath::Vector3& pos) { this->eye_position = pos; }
+	void SetEyePosition(const DirectX::SimpleMath::Vector3& pos) { this->eye_position = pos; }
 
 	[[nodiscard]] const DirectX::SimpleMath::Matrix& GetView() const { return view_f4x4; }
 	[[nodiscard]] const DirectX::SimpleMath::Matrix& GetProjection() const { return projection_f4x4; }
 
-	[[nodiscard]] DirectX::SimpleMath::Vector3 GetPos()    const { return eye_position; }
-	[[nodiscard]] DirectX::SimpleMath::Vector3 GetTarget() const { return focus_position; }
+	[[nodiscard]] DirectX::SimpleMath::Vector3 GetEyePosition()   const { return eye_position; }
+	[[nodiscard]] DirectX::SimpleMath::Vector3 GetFocusPosition() const { return focus_position; }
 
 	// Camera rotation adjustment (Camera eye_position rotation from the point of gaze)
 	void RotationAdjustWrapPitchYawRoll(float pitch, float yaw, float roll);

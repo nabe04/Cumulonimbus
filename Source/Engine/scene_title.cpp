@@ -37,12 +37,7 @@ void SceneTitle::InitializeScene()
 	light->SetPosition({ -200,150,-100,1 });
 
 	//-- View --//
-	view->SetCameraPos(XMFLOAT3(.0f, 50.0, -100.0f), XMFLOAT3(365.0f, -20.0f, 340.0f), XMFLOAT3(.0f, 1.0f, .0f));
-	//camera_work->SetPosition({ -165,100,-920 });
-	//camera_work->SetTarget({ 365.0f, -20.0f, 340.0f });
-
-	camera_work->SetPosition({ 0,30,-20 });
-	camera_work->SetTargetVec({ .0f, .0f, .0f });
+	view->SetCameraPos({ 0,30,-20 }, { .0f, .0f, .0f }, XMFLOAT3(.0f, 1.0f, .0f));
 
 	//const char* uv_chekcer_filename = "uv_checker";
 	//auto* uv_chekcer = AddEntity();
@@ -51,7 +46,7 @@ void SceneTitle::InitializeScene()
 	//	0, 0,
 	//	256, 256,
 	//	8, 8);
-	//uv_chekcer->GetComponent<TransformComponent>()->GetTransform()->SetPosition({ 500,500,0 });
+	//uv_chekcer->GetComponent<TransformComponent>()->GetTransform()->SetEyePosition({ 500,500,0 });
 	//uv_chekcer->SetEntityName("UV_Chacker");
 
 	const char* sky_filename = "./Data/Assets/cubemap/skybox";
@@ -65,7 +60,7 @@ void SceneTitle::InitializeScene()
 	//sample01->GetComponent<MeshObject>()->SetShaderState(shader::MeshShaderTypes::Metal);
 	//sample01->AddComponent<FbxModelComponent>(Locator::GetResourceManager()->FbxModelResouece("stanford_bunny"));
 	//sample01->GetComponent<TransformComponent>()->GetTransform()->SetScale(0.01f);
-	//sample01->GetComponent<TransformComponent>()->GetTransform()->SetPosition({ 0,4,30 });
+	//sample01->GetComponent<TransformComponent>()->GetTransform()->SetEyePosition({ 0,4,30 });
 	//sample01->GetComponent<TransformComponent>()->GetTransform()->SetScale(0.01f);
 	//sample01->AddComponent<SampleRotation>();
 	//sample01->SetEntityName("Bunny");
@@ -97,7 +92,7 @@ void SceneTitle::InitializeScene()
 	//auto* house_1 = AddEntity();
 	//house_1->AddComponent<MeshObject>();
 	//house_1->AddComponent<FbxModelComponent>(house_1_resource);
-	//house_1->GetComponent<TransformComponent>()->GetTransform()->SetPosition({ 300,0,-500 });
+	//house_1->GetComponent<TransformComponent>()->GetTransform()->SetEyePosition({ 300,0,-500 });
 	//house_1->GetComponent<TransformComponent>()->GetTransform()->SetScale(0.3f);
 	//house_1->GetComponent<TransformComponent>()->GetTransform()->SetWorldRotation_X(-90);
 	////house_1->GetComponent<MeshObject>()->SetSamplerState(RenderingSampleState::Linear_Wrap);
@@ -108,7 +103,7 @@ void SceneTitle::InitializeScene()
 	//auto* house_2 = AddEntity();
 	//house_2->AddComponent<MeshObject>();
 	//house_2->AddComponent<FbxModelComponent>(house_2_resource);
-	//house_2->GetComponent<TransformComponent>()->GetTransform()->SetPosition({ 0,0,0 });
+	//house_2->GetComponent<TransformComponent>()->GetTransform()->SetEyePosition({ 0,0,0 });
 	//house_2->GetComponent<TransformComponent>()->GetTransform()->SetScale(0.25f);
 	//house_2->GetComponent<TransformComponent>()->GetTransform()->SetWorldRotation_X(-90);
 	////house_1->GetComponent<MeshObject>()->SetSamplerState(RenderingSampleState::Linear_Wrap);
@@ -117,7 +112,7 @@ void SceneTitle::InitializeScene()
 	//auto* house_3 = AddEntity();
 	//house_3->AddComponent<MeshObject>();
 	//house_3->AddComponent<FbxModelComponent>(house_2_resource);
-	//house_3->GetComponent<TransformComponent>()->GetTransform()->SetPosition({ -400,0,-500 });
+	//house_3->GetComponent<TransformComponent>()->GetTransform()->SetEyePosition({ -400,0,-500 });
 	//house_3->GetComponent<TransformComponent>()->GetTransform()->SetScale(0.25f);
 	//house_3->GetComponent<TransformComponent>()->GetTransform()->SetWorldRotation_X(-90);
 	////house_1->GetComponent<MeshObject>()->SetSamplerState(RenderingSampleState::Linear_Wrap);
@@ -128,7 +123,7 @@ void SceneTitle::InitializeScene()
 	//auto* stone_1 = AddEntity();
 	//stone_1->AddComponent<MeshObject>();
 	//stone_1->AddComponent<FbxModelComponent>(stone_1_resource);
-	//stone_1->GetComponent<TransformComponent>()->GetTransform()->SetPosition({ -300,0,500 });
+	//stone_1->GetComponent<TransformComponent>()->GetTransform()->SetEyePosition({ -300,0,500 });
 	//stone_1->GetComponent<TransformComponent>()->GetTransform()->SetScale({1,3.7,1});
 	//stone_1->GetComponent<TransformComponent>()->GetTransform()->SetWorldRotation({ -90,-127,0 });
 	////house_1->GetComponent<MeshObject>()->SetSamplerState(RenderingSampleState::Linear_Wrap);
@@ -139,7 +134,7 @@ void SceneTitle::InitializeScene()
 	//auto* stone_2 = AddEntity();
 	//stone_2->AddComponent<MeshObject>();
 	//stone_2->AddComponent<FbxModelComponent>(stone_1_resource);
-	//stone_2->GetComponent<TransformComponent>()->GetTransform()->SetPosition({ 700,0,500 });
+	//stone_2->GetComponent<TransformComponent>()->GetTransform()->SetEyePosition({ 700,0,500 });
 	//stone_2->GetComponent<TransformComponent>()->GetTransform()->SetScale({ 1,3.45f,0.8f });
 	//stone_2->GetComponent<TransformComponent>()->GetTransform()->SetWorldRotation({ -90,-60,0 });
 	////house_1->GetComponent<MeshObject>()->SetSamplerState(RenderingSampleState::Linear_Wrap);

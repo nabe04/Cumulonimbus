@@ -1,18 +1,20 @@
 #include "view.h"
 
-#include <assert.h>
+#include <cassert>
 #include <cmath>
 
 #include <wrl.h>
-using namespace DirectX;
 
-#include "imgui.h"
+#include <imgui.h>
 #include "framework.h"
 #include "locator.h"
+#include "camera_work.h"
 
 
 View::View()
 {
+	camera_work = std::make_unique<CameraWork>(*this);
+
 	ZeroMemory(this, 0);
 	view_f4x4 = { 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
 	projection_f4x4 = { 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
@@ -33,22 +35,13 @@ void View::CalcCameraOrthogonalVector()
 		assert(!"Camera focus_position val is nan or infinity");
 	}
 
-	front_vec = DirectX::SimpleMath::Vector3{ focus_position.x - eye_position.x,focus_position.y - eye_position.y,focus_position.z - eye_position.z };
+	front_vec = DirectX::SimpleMath::Vector3{ focus_position.x - eye_position.x,
+											  focus_position.y - eye_position.y,
+											  focus_position.z - eye_position.z };
 
-	XMVECTOR up, right, front;
-	up = XMLoadFloat3(&up_vec);
-	front = XMLoadFloat3(&front_vec);
-	front = XMVector3Normalize(front);
-
-	right = XMVector3Cross(up, front);
-	up	= XMVector3Cross(front, right);
-
-	right = XMVector3Normalize(right);
-	up = XMVector3Normalize(up);
-
-	XMStoreFloat3(&front_vec, front);
-	XMStoreFloat3(&up_vec, up);
-	XMStoreFloat3(&right_vec, right);
+	XMStoreFloat3(&front_vec, XMVector3Normalize(XMLoadFloat3(&front_vec)));
+	XMStoreFloat3(&up_vec	, XMVector3Normalize(XMLoadFloat3(&up_vec)));
+	XMStoreFloat3(&right_vec, XMVector3Normalize(XMLoadFloat3(&right_vec)));
 }
 
 void View::SetCameraPos(DirectX::SimpleMath::Vector3 pos, DirectX::SimpleMath::Vector3 target, DirectX::SimpleMath::Vector3 up)
@@ -78,6 +71,10 @@ void View::SetOrtho(float width, float height, float min, float max)
 
 void View::Activate()
 {
+	camera_work->SetCameraInfo(*this);
+	camera_work->Update(true);
+	SetFocusPosition(camera_work->GetFocusPosition());
+	SetEyePosition(camera_work->GetPosition());
 	CalcCameraOrthogonalVector();
 
 #ifdef _DEBUG
@@ -369,5 +366,7 @@ void View::WriteImGui()
 		ImGui::Text("Right X %f", right_vec.x);
 		ImGui::Text("Right Y %f", right_vec.y);
 		ImGui::Text("Right Z %f", right_vec.z);
+
+		camera_work->RenderImGui();
 	}
 }
