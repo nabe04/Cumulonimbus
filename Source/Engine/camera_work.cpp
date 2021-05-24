@@ -16,7 +16,7 @@ CameraWork::CameraWork()
 void CameraWork::Update(bool is_debug)
 {
 	CalcCameraDirectionalVector();
-	//CalcCameraAngle(); //オイラー角で(現在)計算しているので今は使わない
+	CalcCameraAngle(); //オイラー角で(現在)計算しているので今は使わない
 
 	const auto& mouse = Locator::GetInput()->Mouse();
 	const auto& key = Locator::GetInput()->Keyboard();
@@ -55,13 +55,34 @@ void CameraWork::Update(bool is_debug)
 
 void CameraWork::RenderImGui()
 {
-	ImGui::Text("target x : %f\ntarget y : %f\ntarget z : %f", target_pos.x, target_pos.y, target_pos.z);
+	ImGui::Text("target x : %f\ntarget y : %f\ntarget z : %f", target_vec.x, target_vec.y, target_vec.z);
 	ImGui::Text("angle x  : %f\nangle y  : %f\nangle z  : %f", camera_angle.x, camera_angle.y, camera_angle.z);
 	ImGui::Text("Pos x  : %f\n Pos y  : %f\n Pos z  : %f", position.x, position.y, position.z);
 
 	ImGui::Text("Up x  : %f\n Up y  : %f\n Up z  : %f", current_camerea_up.x, current_camerea_up.y, current_camerea_up.z);
 
 	ImGui::DragFloat2("CameraSpeed",(float*)&camera_speed, 0.5f, 1, 10);
+}
+
+void CameraWork::SetPosition(const DirectX::SimpleMath::Vector3& position)
+{
+	this->position = position; 
+}
+
+void CameraWork::SetTargetVec(const DirectX::SimpleMath::Vector3& target)
+{
+	if (this->target_vec.x == this->target_vec.y == this->target_vec.z == 0.0f)
+		assert(!"Vector is zero");
+	
+	this->target_vec = target;
+}
+
+void CameraWork::SetCameraUp(const DirectX::SimpleMath::Vector3& up)
+{
+	if (this->camera_up.x == this->camera_up.y == this->camera_up.z == 0.0f)
+		assert(!"Vector is zero");
+	
+	this->camera_up = up;
 }
 
 
@@ -72,20 +93,22 @@ void CameraWork::RenderImGui()
 void CameraWork::Pan(const float velocity)
 {
 	// クォータニオン Ver
-	//DirectX::SimpleMath::Quaternion q{};
-	//q = SimpleMath::Quaternion::Identity;
-	//q.Normalize();
-	//q = q.CreateFromAxisAngle(camera_up, DirectX::XMConvertToRadians(velocity * camera_speed.x * 0.1f));
-	//camera_front = DirectX::SimpleMath::Vector3::Transform(camera_front, q);
-	//camera_front.Normalize();
+	DirectX::SimpleMath::Quaternion q{};
+	q = SimpleMath::Quaternion::Identity;
+	q.Normalize();
+	q = q.CreateFromAxisAngle(camera_up, DirectX::XMConvertToRadians(velocity * camera_speed.x * 0.1f));
+	camera_front = DirectX::SimpleMath::Vector3::Transform(camera_front, q);
+	target_vec = position + camera_front;
+
+	camera_front.Normalize();
 
 
-	// オイラー角 Ver
-	camera_angle.y += velocity * camera_speed.x * 0.1f;
-	DirectX::SimpleMath::Matrix m = DirectX::SimpleMath::Matrix::Identity;
-	const DirectX::SimpleMath::Vector3 radian = { DirectX::XMConvertToRadians(camera_angle.x),DirectX::XMConvertToRadians(camera_angle.y) ,DirectX::XMConvertToRadians(camera_angle.z) };
-	m = DirectX::XMMatrixRotationRollPitchYaw(radian.x, radian.y, radian.z);
-	camera_front = DirectX::SimpleMath::Vector3::TransformNormal({ 0,0,1 }, m);
+	//// オイラー角 Ver
+	//camera_angle.y += velocity * camera_speed.x * 0.1f;
+	//DirectX::SimpleMath::Matrix m = DirectX::SimpleMath::Matrix::Identity;
+	//const DirectX::SimpleMath::Vector3 radian = { DirectX::XMConvertToRadians(camera_angle.x),DirectX::XMConvertToRadians(camera_angle.y) ,DirectX::XMConvertToRadians(camera_angle.z) };
+	//m = DirectX::XMMatrixRotationRollPitchYaw(radian.x, radian.y, radian.z);
+	//camera_front = DirectX::SimpleMath::Vector3::TransformNormal({ 0,0,1 }, m);
 
 	CalcCameraDirectionalVector();
 }

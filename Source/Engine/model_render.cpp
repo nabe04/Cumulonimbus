@@ -107,7 +107,7 @@ void MeshRenderer::Render(ID3D11DeviceContext* immediate_context,
 		blend->Activate(immediate_context, actor_comp->GetBlendState());
 		depth_stencil->Activate(immediate_context, actor_comp->GetDepthStencilState());
 		samplers.at(actor_comp->GetSamplerState())->Activate(immediate_context, 0);
-		immediate_context->PSSetShaderResources(1, 1, shadow_map->GetNormalShadowDepthExtractionFB()->render_target_shader_resource_view.GetAddressOf());
+		immediate_context->PSSetShaderResources(1, 1, shadow_map->GetVarianceShadowDepthExtractionFB()->render_target_shader_resource_view.GetAddressOf());
 		immediate_context->PSSetShaderResources(2, 1, srv_sky_map.GetAddressOf());
 
 		if (actor_comp->UsingBuffer()->rendering_buffer_bitset.test(index))
