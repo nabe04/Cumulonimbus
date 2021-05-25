@@ -60,7 +60,7 @@ private:
 	DirectX::SimpleMath::Vector3 test_angle{};
 
 	// for debug
-	DirectX::SimpleMath::Vector2 camera_velocity{ 5.f,5.f };
+	DirectX::SimpleMath::Vector2 camera_velocity{ 3.f,3.f };
 
 	/*
 	 * brief    : ƒJƒƒ‰ƒ[ƒN‚Ì“®ì

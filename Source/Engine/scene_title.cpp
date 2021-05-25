@@ -34,10 +34,10 @@ void SceneTitle::InitializeScene()
 
 //-- Light --//
 	light->SetLightDir({ 1.0f,-.6f,1.f ,1.f });
-	light->SetPosition({ -200,150,-100,1 });
+	light->SetPosition({ -200,100,-100,1 });
 
 	//-- View --//
-	view->SetCameraPos({ 0,30,-20 }, { .0f, .0f, .0f }, XMFLOAT3(.0f, 1.0f, .0f));
+	view->SetCameraPos({ 0,60,-800 }, { .0f, .0f, .0f }, XMFLOAT3(.0f, 1.0f, .0f));
 
 	//const char* uv_chekcer_filename = "uv_checker";
 	//auto* uv_chekcer = AddEntity();
@@ -159,6 +159,8 @@ void SceneTitle::UpdateScene(const float delta_time)
 
 }
 
+#include "arithmetic.h"
+
 void SceneTitle::RenderImGui()
 {
 	if (select_game_mode.test(static_cast<int>(SelectGameMode::TraininigMode)))
@@ -170,4 +172,14 @@ void SceneTitle::RenderImGui()
 	{
 		ImGui::Text("Select GameMode : Main Game");
 	}
+
+	static DirectX::XMFLOAT3 v1{ -1,1,0 };
+	static DirectX::XMFLOAT3 v2{ 1,0,0 };
+	DirectX::XMFLOAT3 val = arithmetic::CalcProjectVector(v1, v2);
+
+	ImGui::DragFloat3("v1", (float*)&v1, 0.01, -1, 1);
+	ImGui::DragFloat3("v2", (float*)&v2, 0.01, -1, 1);
+	ImGui::Text("Project Vec.x : %f", val.x);
+	ImGui::Text("Project Vec.y : %f", val.y);
+	ImGui::Text("Project Vec.z : %f", val.z);
 }

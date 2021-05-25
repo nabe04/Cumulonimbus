@@ -166,6 +166,38 @@ namespace arithmetic
 		return angle;
 	}
 
+	/*
+	 * brief : 正射影ベクトルの算出
+	 *		   project_vec から onto_vecへの正射影ベクトルを算出する
+	 * project_vec : 射影元ベクトル
+	 * onto_vec    : 射影先ベクトル
+	 */
+	DirectX::XMFLOAT3 CalcProjectVector(
+		const DirectX::XMFLOAT3& project_vec,
+		const DirectX::XMFLOAT3& onto_vec)
+	{
+		DirectX::XMVECTOR project	= DirectX::XMLoadFloat3(&project_vec);
+		DirectX::XMVECTOR onto		= DirectX::XMLoadFloat3(&onto_vec);
+		project = DirectX::XMVector3Normalize(project);
+		onto	= DirectX::XMVector3Normalize(onto);
+
+		const DirectX::XMVECTOR v_d = DirectX::XMVector3Dot(project, onto);
+
+		const float d = DirectX::XMVectorGetX(v_d);
+
+		if(d > 0)
+		{
+			DirectX::XMFLOAT3 ret_val{};
+			DirectX::XMStoreFloat3(
+				&ret_val,
+				DirectX::XMVectorMultiply(v_d, onto));
+			return ret_val;
+		}
+
+		return onto_vec;
+	}
+
+
 	//-----------------< 乱数生成 >-----------------
 	int RandomIntInRange(const int min, const int max)
 	{

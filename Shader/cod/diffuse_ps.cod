@@ -105,7 +105,7 @@ nop
 nop 
 nop 
 mov r1.x, v2.z
-mov r1.y, l(0.001000)
+mov r1.y, l(0.000010)
 
 #line 6 "D:\デスクトップ\Cumulonimbus\Shader\shadow_functions.hlsli"
 sample_indexable(texture2d)(float,float,float,float) r1.z, v2.xyxx, t1.yzxw, s0

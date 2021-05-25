@@ -125,7 +125,6 @@ void CameraWork::Pan(const float velocity)
 	front_vec = DirectX::SimpleMath::Vector3::Transform(front_vec, q);
 	front_vec.Normalize();
 
-	// Žg‚í‚È‚¢‚©‚à
 	focus_position = eye_position + front_vec;
 
 	CalcCameraDirectionalVector();
