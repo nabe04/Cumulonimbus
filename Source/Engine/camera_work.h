@@ -31,8 +31,8 @@ public:
 	void SetCameraUpRightFrontVector(const DirectX::SimpleMath::Vector3& up,
 									 const DirectX::SimpleMath::Vector3& right,
 									 const DirectX::SimpleMath::Vector3& front);
-	
-	void SetCameraSpeed(const DirectX::SimpleMath::Vector2& speed) { this->camera_speed = speed; }
+
+	void SetCameraSpeed(const DirectX::SimpleMath::Vector2& speed) { this->camera_velocity = speed; }
 
 	[[nodiscard]] const DirectX::SimpleMath::Vector3& GetPosition() const { return eye_position; }
 	[[nodiscard]] const DirectX::SimpleMath::Vector3& GetFocusPosition() const { return focus_position; }
@@ -40,8 +40,6 @@ public:
 #pragma endregion Setter & Getter
 
 private:
-	const View& view{};
-
 	DirectX::SimpleMath::Vector3 eye_position{ 0.0f,0.0f,0.0f };
 	DirectX::SimpleMath::Vector3 focus_position{ 0.0f,0.0f,1.0f };
 
@@ -62,13 +60,17 @@ private:
 	DirectX::SimpleMath::Vector3 test_angle{};
 
 	// for debug
-	DirectX::SimpleMath::Vector2 camera_speed{ 1.f,1.f };
-	void Pan(float velocity);
-	void Tilt(float velocity);
-	void DollyInOut(float velocity);
-	void Track(const DirectX::SimpleMath::Vector3& direction, float velocity);
+	DirectX::SimpleMath::Vector2 camera_velocity{ 5.f,5.f };
 
-	void PanAndTilt(float velocity, const DirectX::SimpleMath::Vector3& add_angle);
+	/*
+	 * brief    : カメラワーク時の動作
+	 * velocity : カメラスピード(デバックの設定で変更可能)
+	 */
+	void Pan(float velocity);			// カメラの左右の傾き(位置は固定)
+	void Tilt(float velocity);			// カメラの上下の傾き(位置は固定)
+	void DollyInOut(float velocity);	// カメラの前後の動き(向きは固定)
+	void Track(float velocity);			// カメラの左右移動(向きは固定)
+	void Crane(float velocity);			// カメラの上下移動(向きは固定)
 
 	void CalcCameraDirectionalVector();
 	void CalcCameraAngle();

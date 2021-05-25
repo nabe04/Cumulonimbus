@@ -6,7 +6,6 @@
 #include "locator.h"
 
 CameraWork::CameraWork(const View& v)
-	:view{v}
 {
 
 }
@@ -26,13 +25,13 @@ void CameraWork::Update(bool is_debug)
 		Pan(static_cast<float>(mouse.DeltaX()));
 
 		if (key.GetState(Keycode::D) == ButtonState::Held)
-			Track(camera_right, camera_speed.x);
+			Track(camera_velocity.x);
 		if (key.GetState(Keycode::A) == ButtonState::Held)
-			Track(camera_right, -camera_speed.x);
+			Track(-camera_velocity.x);
 		if (key.GetState(Keycode::W) == ButtonState::Held)
-			Track(front_vec, camera_speed.y);
+			Crane(camera_velocity.y);
 		if (key.GetState(Keycode::S) == ButtonState::Held)
-			Track(front_vec, -camera_speed.y);
+			Crane(-camera_velocity.y);
 	}
 	else if(mouse.GetState(MouseButton::Right) == ButtonState::Held)
 	{
@@ -42,13 +41,13 @@ void CameraWork::Update(bool is_debug)
 		//PanAndTilt(0, { static_cast<float>(mouse.DeltaX()) ,static_cast<float>(mouse.DeltaY()) ,.0f });
 
 		if (key.GetState(Keycode::D) == ButtonState::Held)
-			Track(camera_right, camera_speed.x);
+			Track(camera_velocity.x);
 		if (key.GetState(Keycode::A) == ButtonState::Held)
-			Track(camera_right, -camera_speed.x);
+			Track(-camera_velocity.x);
 		if (key.GetState(Keycode::W) == ButtonState::Held)
-			Track(front_vec, camera_speed.y);
+			Crane(camera_velocity.y);
 		if (key.GetState(Keycode::S) == ButtonState::Held)
-			Track(front_vec, -camera_speed.y);
+			Crane(-camera_velocity.y);
 	}
 }
 
@@ -87,7 +86,7 @@ void CameraWork::RenderImGui()
 	ImGui::Text("angle x  : %f\nangle y  : %f\nangle z  : %f", camera_angle.x, camera_angle.y, camera_angle.z);
 	ImGui::Text("Pos x  : %f\n Pos y  : %f\n Pos z  : %f", eye_position.x, eye_position.y, eye_position.z);
 
-	ImGui::DragFloat2("CameraSpeed",(float*)&camera_speed, 0.5f, 1, 10);
+	ImGui::DragFloat2("CameraSpeed",(float*)&camera_velocity, 0.5f, 1, 10);
 }
 
 void CameraWork::SetPosition(const DirectX::SimpleMath::Vector3& eye_position)
@@ -122,7 +121,7 @@ void CameraWork::Pan(const float velocity)
 	DirectX::SimpleMath::Quaternion q{};
 	q = SimpleMath::Quaternion::Identity;
 	q.Normalize();
-	q = q.CreateFromAxisAngle(up_vec, DirectX::XMConvertToRadians(velocity * camera_speed.x * 0.1f));
+	q = q.CreateFromAxisAngle(up_vec, DirectX::XMConvertToRadians(velocity * camera_velocity.x * 0.1f));
 	front_vec = DirectX::SimpleMath::Vector3::Transform(front_vec, q);
 	front_vec.Normalize();
 
@@ -142,7 +141,7 @@ void CameraWork::Tilt(const float velocity)
 	DirectX::SimpleMath::Quaternion q{};
 	q = SimpleMath::Quaternion::Identity;
 	q.Normalize();
-	q = q.CreateFromAxisAngle(right_vec, DirectX::XMConvertToRadians(velocity * camera_speed.y * 0.1f));
+	q = q.CreateFromAxisAngle(right_vec, DirectX::XMConvertToRadians(velocity * camera_velocity.y * 0.1f));
 	front_vec = DirectX::SimpleMath::Vector3::Transform(front_vec, q);
 	front_vec.Normalize();
 	focus_position = eye_position + front_vec;
@@ -185,57 +184,35 @@ void CameraWork::Tilt(const float velocity)
  */
 void CameraWork::DollyInOut(const float velocity)
 {
-	const float v = -velocity * camera_speed.y;
+	const float v = -velocity * camera_velocity.y;
 
+	focus_position += right_vec * velocity;
 	eye_position += front_vec * v;
 }
 
-void CameraWork::Track(const DirectX::SimpleMath::Vector3& direction, const float velocity)
+/*
+ * brief :  カメラの左右移動(向きは固定)
+ */
+void CameraWork::Track( float velocity)
 {
-	DirectX::SimpleMath::Vector3 normal = direction;
-	normal.Normalize();
-	eye_position += normal * velocity;
+	// カメラの注視点と位置を同じだけ移動
+	focus_position += right_vec * velocity;
+	eye_position   += right_vec * velocity;
 }
 
-void CameraWork::PanAndTilt(const float velocity, const DirectX::SimpleMath::Vector3& add_angle)
+/*
+ *  brief : カメラの上下移動(向きは固定)
+ */
+void CameraWork::Crane( float velocity)
 {
-	const auto& key = Locator::GetInput()->Keyboard();
-
-	DirectX::SimpleMath::Vector3 front_vec{ 0,0,1 };
-	static DirectX::SimpleMath::Vector3 angle{};
-	//angle += add_angle;
-
-	if (key.GetState(Keycode::Right) == ButtonState::Held)
-		angle.y += 0.5f;
-
-	if (key.GetState(Keycode::Left) == ButtonState::Held)
-		angle.y -= 0.5f;
-
-
-	if (key.GetState(Keycode::Up) == ButtonState::Held)
-		angle.x += 0.5f;
-
-
-	if (key.GetState(Keycode::Down) == ButtonState::Held)
-		angle.x -= 0.5f;
-
-	//ImGui::Text("Angle : X %f", angle.x);
-	//ImGui::Text("Angle : Y %f", angle.y);
-	//ImGui::Text("Angle : Z %f", angle.z);
-
-	DirectX::XMMATRIX m;
-	m = DirectX::XMMatrixIdentity();
-	static float a;
-	a += 0.0001f;
-	m = DirectX::XMMatrixRotationRollPitchYaw(DirectX::XMConvertToRadians(angle.x), DirectX::XMConvertToRadians(angle.y), 0);
-
-	front_vec = DirectX::SimpleMath::Vector3::TransformNormal(front_vec, m);
+	// カメラの注視点と位置を同じだけ移動
+	focus_position += up_vec * velocity;
+	eye_position   += up_vec * velocity;
 }
 
 
 /*
- * brief   : カメラのRight,Upベクトルを算出
- * caution : カメラのFrontベクトルを基準に算出するのでFrontベクトルの計算はしていない
+ * brief   : 現在のカメラの正規直行ベクトルを算出
  */
 void CameraWork::CalcCameraDirectionalVector()
 {
