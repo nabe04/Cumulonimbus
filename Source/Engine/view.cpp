@@ -6,6 +6,8 @@
 #include <wrl.h>
 
 #include <imgui.h>
+
+#include "arithmetic.h"
 #include "framework.h"
 #include "locator.h"
 #include "camera_work.h"
@@ -38,6 +40,9 @@ void View::CalcCameraOrthogonalVector()
 	front_vec = DirectX::SimpleMath::Vector3{ focus_position.x - eye_position.x,
 											  focus_position.y - eye_position.y,
 											  focus_position.z - eye_position.z };
+	right_vec = arithmetic::CalcRightVec(up_vec, front_vec);
+	up_vec    = arithmetic::CalcUpVec(front_vec, right_vec);
+	//up_vec	  = DirectX::SimpleMath::Vector3{ 0,1,0 };
 
 	XMStoreFloat3(&front_vec, XMVector3Normalize(XMLoadFloat3(&front_vec)));
 	XMStoreFloat3(&up_vec	, XMVector3Normalize(XMLoadFloat3(&up_vec)));
@@ -100,7 +105,7 @@ void View::Activate()
 
 	const XMMATRIX view_mat = XMMatrixLookAtLH( XMVectorSet(eye_position.x, eye_position.y, eye_position.z, 0),
 												XMVectorSet(focus_position.x, focus_position.y, focus_position.z, 0),
-												XMVectorSet(up_vec.x, up_vec.y, up_vec.z, 0));
+												XMVectorSet(view_up_vec.x, view_up_vec.y, view_up_vec.z, 0));
 	XMStoreFloat4x4(&view_f4x4, view_mat);
 
 	XMMATRIX pm = XMMatrixIdentity();

@@ -36,7 +36,7 @@ void CameraWork::Update(bool is_debug)
 	}
 	else if(mouse.GetState(MouseButton::Right) == ButtonState::Held)
 	{
-		//Pan(static_cast<float>(mouse.DeltaX()));
+		Pan(static_cast<float>(mouse.DeltaX()));
 		Tilt(static_cast<float>(mouse.DeltaY()));
 
 		//PanAndTilt(0, { static_cast<float>(mouse.DeltaX()) ,static_cast<float>(mouse.DeltaY()) ,.0f });
@@ -52,8 +52,8 @@ void CameraWork::Update(bool is_debug)
 	}
 }
 
-void CameraWork::SetCameraUpRightFrontVector(const DirectX::SimpleMath::Vector3& up, 
-											 const DirectX::SimpleMath::Vector3& right, 
+void CameraWork::SetCameraUpRightFrontVector(const DirectX::SimpleMath::Vector3& up,
+											 const DirectX::SimpleMath::Vector3& right,
 											 const DirectX::SimpleMath::Vector3& front)
 {
 	up_vec    = up;
@@ -62,8 +62,8 @@ void CameraWork::SetCameraUpRightFrontVector(const DirectX::SimpleMath::Vector3&
 }
 
 
-void CameraWork::SetCameraInfo( const DirectX::SimpleMath::Vector3& eye_position, 
-								const DirectX::SimpleMath::Vector3& target, 
+void CameraWork::SetCameraInfo( const DirectX::SimpleMath::Vector3& eye_position,
+								const DirectX::SimpleMath::Vector3& target,
 								const DirectX::SimpleMath::Vector3& up_vec)
 {
 	this->eye_position   = eye_position;
@@ -86,8 +86,6 @@ void CameraWork::RenderImGui()
 	ImGui::Text("focus_position x : %f\nfocus_position y : %f\nfocus_position z : %f", focus_position.x, focus_position.y, focus_position.z);
 	ImGui::Text("angle x  : %f\nangle y  : %f\nangle z  : %f", camera_angle.x, camera_angle.y, camera_angle.z);
 	ImGui::Text("Pos x  : %f\n Pos y  : %f\n Pos z  : %f", eye_position.x, eye_position.y, eye_position.z);
-
-	ImGui::Text("Up x  : %f\n Up y  : %f\n Up z  : %f", current_camera_up.x, current_camera_up.y, current_camera_up.z);
 
 	ImGui::DragFloat2("CameraSpeed",(float*)&camera_speed, 0.5f, 1, 10);
 }
@@ -130,13 +128,6 @@ void CameraWork::Pan(const float velocity)
 
 	// 使わないかも
 	focus_position = eye_position + front_vec;
-
-	//// オイラー角 Ver
-	//camera_angle.y += velocity * camera_speed.x * 0.1f;
-	//DirectX::SimpleMath::Matrix m = DirectX::SimpleMath::Matrix::Identity;
-	//const DirectX::SimpleMath::Vector3 radian = { DirectX::XMConvertToRadians(camera_angle.x),DirectX::XMConvertToRadians(camera_angle.y) ,DirectX::XMConvertToRadians(camera_angle.z) };
-	//m = DirectX::XMMatrixRotationRollPitchYaw(radian.x, radian.y, radian.z);
-	//front_vec = DirectX::SimpleMath::Vector3::TransformNormal({ 0,0,1 }, m);
 
 	CalcCameraDirectionalVector();
 }
@@ -186,18 +177,6 @@ void CameraWork::Tilt(const float velocity)
 		}
 		ImGui::Text("Angle %f", angle);
 	}
-
-	//// オイラー角 Ver
-	//DirectX::SimpleMath::Matrix m = DirectX::SimpleMath::Matrix::Identity;
-	//camera_angle.x += velocity * camera_speed.y * 0.1f;
-	//if (camera_angle.x > 85)
-	//	camera_angle.x = 85;
-	//else if (camera_angle.x < -85)
-	//	camera_angle.x = -85;
-
-	//const DirectX::SimpleMath::Vector3 radian = { DirectX::XMConvertToRadians(camera_angle.x),DirectX::XMConvertToRadians(camera_angle.y) ,DirectX::XMConvertToRadians(camera_angle.z) };
-	//m = DirectX::XMMatrixRotationRollPitchYaw(radian.x, radian.y, radian.z);
-	//front_vec = DirectX::SimpleMath::Vector3::TransformNormal({ 0,0,1 }, m);
 	CalcCameraDirectionalVector();
 }
 
@@ -251,8 +230,6 @@ void CameraWork::PanAndTilt(const float velocity, const DirectX::SimpleMath::Vec
 	m = DirectX::XMMatrixRotationRollPitchYaw(DirectX::XMConvertToRadians(angle.x), DirectX::XMConvertToRadians(angle.y), 0);
 
 	front_vec = DirectX::SimpleMath::Vector3::TransformNormal(front_vec, m);
-
-
 }
 
 
@@ -262,9 +239,9 @@ void CameraWork::PanAndTilt(const float velocity, const DirectX::SimpleMath::Vec
  */
 void CameraWork::CalcCameraDirectionalVector()
 {
-	camera_right = arithmetic::CalcRightVec(current_camera_up, front_vec);
-	current_camera_up = arithmetic::CalcUpVec(front_vec, camera_right);
-	//up_vec	 = SimpleMath::Vector3{ 0,1,0 };
+	front_vec			= DirectX::SimpleMath::Vector3{ focus_position - eye_position };
+	camera_right		= arithmetic::CalcRightVec(up_vec, front_vec);
+	up_vec				= arithmetic::CalcUpVec(front_vec, camera_right);
 
 	front_vec.Normalize();
 	camera_right.Normalize();

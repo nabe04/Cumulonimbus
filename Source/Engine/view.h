@@ -19,11 +19,8 @@ private:
 											focus_position.y - eye_position.y,
 											focus_position.z - eye_position.z };
 
-	// I might use it in the future
-	DirectX::SimpleMath::Vector3 right{ 1.0f,0.0f,0.0f };
-	DirectX::SimpleMath::Vector3 up{ 0.0f,1.0f,0.0f };
-	DirectX::SimpleMath::Vector3 front{ 0.0f,0.0f,1.0f };
 
+	DirectX::SimpleMath::Vector3 view_up_vec{ 0.0f,1.0f,0.0f };
 	DirectX::SimpleMath::Matrix view_f4x4;
 	DirectX::SimpleMath::Matrix projection_f4x4;
 	float fov		= 0.0f;
