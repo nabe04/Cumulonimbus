@@ -157,11 +157,10 @@ void CameraWork::Tilt(const float velocity)
 			project_vec.Normalize();
 
 			const float d = front_vec.Dot(project_vec);
-			float cos = acosf(d);
-			float angle = DirectX::XMConvertToDegrees(cos);
-			if (angle > 85.0f)
+			const float rad = acosf(d);
+			if (rad > DirectX::XMConvertToRadians(max_camera_angle.x))
 			{// +90ìxà»è„âÒì]ÇµÇƒÇ¢ÇÈÇÃÇ≈ñﬂÇ∑
-				const float diff = angle - 85.0f;
+				const float diff = rad - DirectX::XMConvertToRadians(max_camera_angle.x);
 				q = q.CreateFromAxisAngle(right_vec, diff);
 				front_vec = DirectX::SimpleMath::Vector3::Transform(front_vec, q);
 				front_vec.Normalize();
@@ -176,44 +175,16 @@ void CameraWork::Tilt(const float velocity)
 			const DirectX::SimpleMath::Vector3 project_vec = front_vec - v;
 
 			const float d = front_vec.Dot(project_vec);
-			if (d < 0)
-			{// +90ìxà»è„âÒì]ÇµÇƒÇ¢ÇÈÇÃÇ≈ñﬂÇ∑
-				const float diff = DirectX::XMConvertToDegrees(d) - 90.0f;
+			const float rad = acosf(d);
+			if (rad > DirectX::XMConvertToRadians(max_camera_angle.x))
+			{// -90ìxà»è„âÒì]ÇµÇƒÇ¢ÇÈÇÃÇ≈ñﬂÇ∑
+				const float diff = rad - DirectX::XMConvertToRadians(max_camera_angle.x);
 				q = q.CreateFromAxisAngle(right_vec, -diff);
 				front_vec = DirectX::SimpleMath::Vector3::Transform(front_vec, q);
 				front_vec.Normalize();
 				focus_position = eye_position + front_vec;
 			}
 		}
-
-
-		//DirectX::SimpleMath::Vector3 v1 = { 0,up_vec.y,0 };
-		//v1.Normalize();
-		//DirectX::SimpleMath::Vector3 v2 = { 0,current_camera_up.y,current_camera_up.z };
-		//v2.Normalize();
-
-		//const float angle = arithmetic::CalcAngleFromTwoVec(v1, v2);
-		////if (v1.Cross(v2).x < 0)
-		////	angle *= -1;
-
-		////if (up_vec.y > 0 && front_vec.z < 0)
-		////	angle *= -1;
-
-		//if (angle > 85)
-		//{
-		//	q = SimpleMath::Quaternion::Identity;
-		//	q.Normalize();
-		//	q = q.CreateFromAxisAngle(right_vec, DirectX::XMConvertToRadians(-2));
-		//	front_vec = DirectX::SimpleMath::Vector3::Transform(front_vec, q);
-		//}
-		//else if (angle < -85)
-		//{
-		//	q = SimpleMath::Quaternion::Identity;
-		//	q.Normalize();
-		//	q = q.CreateFromAxisAngle(right_vec, DirectX::XMConvertToRadians(2));
-		//	front_vec = DirectX::SimpleMath::Vector3::Transform(front_vec, q);
-		//}
-		//ImGui::Text("Angle %f", angle);
 	}
 	CalcCameraDirectionalVector();
 }

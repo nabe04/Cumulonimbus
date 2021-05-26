@@ -40,6 +40,9 @@ public:
 #pragma endregion Setter & Getter
 
 private:
+	// カメラの最大角度(軸基準) (y,zは未定義)
+	const DirectX::SimpleMath::Vector3 max_camera_angle{ 85.0f,0,0 };
+
 	DirectX::SimpleMath::Vector3 eye_position{ 0.0f,0.0f,0.0f };
 	DirectX::SimpleMath::Vector3 focus_position{ 0.0f,0.0f,1.0f };
 
@@ -56,8 +59,6 @@ private:
 	DirectX::SimpleMath::Matrix projection_f4x4{ DirectX::SimpleMath::Matrix::Identity };
 
 	DirectX::SimpleMath::Vector3 camera_angle{}; // カメラの角度(Degree),左手系の座標軸からの角度
-
-	DirectX::SimpleMath::Vector3 test_angle{};
 
 	// for debug
 	DirectX::SimpleMath::Vector2 camera_velocity{ 3.f,3.f };
