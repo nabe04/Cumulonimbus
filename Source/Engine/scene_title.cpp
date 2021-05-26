@@ -172,14 +172,4 @@ void SceneTitle::RenderImGui()
 	{
 		ImGui::Text("Select GameMode : Main Game");
 	}
-
-	static DirectX::XMFLOAT3 v1{ -1,1,0 };
-	static DirectX::XMFLOAT3 v2{ 1,0,0 };
-	DirectX::XMFLOAT3 val = arithmetic::CalcProjectVector(v1, v2);
-
-	ImGui::DragFloat3("v1", (float*)&v1, 0.01, -1, 1);
-	ImGui::DragFloat3("v2", (float*)&v2, 0.01, -1, 1);
-	ImGui::Text("Project Vec.x : %f", val.x);
-	ImGui::Text("Project Vec.y : %f", val.y);
-	ImGui::Text("Project Vec.z : %f", val.z);
 }

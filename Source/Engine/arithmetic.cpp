@@ -167,10 +167,10 @@ namespace arithmetic
 	}
 
 	/*
-	 * brief : 正射影ベクトルの算出
-	 *		   project_vec から onto_vecへの正射影ベクトルを算出する
-	 * project_vec : 射影元ベクトル
-	 * onto_vec    : 射影先ベクトル
+	 * brief		: 正射影ベクトルの算出
+	 *				  project_vec から onto_vecへの正射影ベクトルを算出する
+	 * project_vec	: 射影元ベクトル
+	 * onto_vec		: 射影先ベクトル
 	 */
 	DirectX::XMFLOAT3 CalcProjectVector(
 		const DirectX::XMFLOAT3& project_vec,
@@ -178,7 +178,6 @@ namespace arithmetic
 	{
 		DirectX::XMVECTOR project	= DirectX::XMLoadFloat3(&project_vec);
 		DirectX::XMVECTOR onto		= DirectX::XMLoadFloat3(&onto_vec);
-		project = DirectX::XMVector3Normalize(project);
 		onto	= DirectX::XMVector3Normalize(onto);
 
 		const DirectX::XMVECTOR v_d = DirectX::XMVector3Dot(project, onto);
