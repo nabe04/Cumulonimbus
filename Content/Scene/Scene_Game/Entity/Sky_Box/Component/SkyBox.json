@@ -1,0 +1,103 @@
+{
+    "component_name": "SkyBox",
+    "cube_texture": {
+        "value0": {
+            "ptr_wrapper": {
+                "valid": 1,
+                "data": {
+                    "texture_data": {
+                        "ptr_wrapper": {
+                            "id": 2147483649,
+                            "data": {
+                                "file_path": "./Data/Assets/cubemap/skybox0.png",
+                                "filename": "skybox0"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "value1": {
+            "ptr_wrapper": {
+                "valid": 1,
+                "data": {
+                    "texture_data": {
+                        "ptr_wrapper": {
+                            "id": 2147483650,
+                            "data": {
+                                "file_path": "./Data/Assets/cubemap/skybox1.png",
+                                "filename": "skybox1"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "value2": {
+            "ptr_wrapper": {
+                "valid": 1,
+                "data": {
+                    "texture_data": {
+                        "ptr_wrapper": {
+                            "id": 2147483651,
+                            "data": {
+                                "file_path": "./Data/Assets/cubemap/skybox2.png",
+                                "filename": "skybox2"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "value3": {
+            "ptr_wrapper": {
+                "valid": 1,
+                "data": {
+                    "texture_data": {
+                        "ptr_wrapper": {
+                            "id": 2147483652,
+                            "data": {
+                                "file_path": "./Data/Assets/cubemap/skybox3.png",
+                                "filename": "skybox3"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "value4": {
+            "ptr_wrapper": {
+                "valid": 1,
+                "data": {
+                    "texture_data": {
+                        "ptr_wrapper": {
+                            "id": 2147483653,
+                            "data": {
+                                "file_path": "./Data/Assets/cubemap/skybox4.png",
+                                "filename": "skybox4"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "value5": {
+            "ptr_wrapper": {
+                "valid": 1,
+                "data": {
+                    "texture_data": {
+                        "ptr_wrapper": {
+                            "id": 2147483654,
+                            "data": {
+                                "file_path": "./Data/Assets/cubemap/skybox5.png",
+                                "filename": "skybox5"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "vs_name": "./Shader/cso/sky_box_vs.cso",
+    "ps_name": "./Shader/cso/sky_box_ps.cso"
+}

@@ -91,17 +91,6 @@ void View::Activate()
 		}
 	}
 #endif
-	if (is_debug_camera)
-	{
-		// HACK: カメラワーククラスができたらカメラワーククラスに任せて消す
-		CameraControl();
-
-		//MouseInput::GetInstance().IsDebug(true);
-	}
-	else
-	{
-		//MouseInput::GetInstance().IsDebug(false);
-	}
 
 	const XMMATRIX view_mat = XMMatrixLookAtLH( XMVectorSet(eye_position.x, eye_position.y, eye_position.z, 0),
 												XMVectorSet(focus_position.x, focus_position.y, focus_position.z, 0),
@@ -121,235 +110,6 @@ void View::Activate()
 	}
 }
 
-//-- Camera control for debug --//
-void View::CameraControl()
-{
-	prev_mouse_pos = cur_mouse_pos;
-
-	cur_mouse_pos.x = static_cast<float>(Locator::GetInput()->Mouse().PosX());
-	cur_mouse_pos.y = static_cast<float>(Locator::GetInput()->Mouse().PosY());
-
-	// The amount of mouse movement between the "cur_mouse_pos" and "prev_mouse_pos";
-	const float camera_speed_gamepad = 0.04f;
-	static XMFLOAT2 movement_val = {};
-	movement_val.x = (cur_mouse_pos.x - prev_mouse_pos.x) * camera_speed_gamepad;
-	movement_val.y = (cur_mouse_pos.y - prev_mouse_pos.y) * camera_speed_gamepad;
-
-	if (Locator::GetInput()->Keyboard().GetState(Keycode::LeftAlt) == ButtonState::Held)
-	{
-		if (Locator::GetInput()->Mouse().GetState(MouseButton::Left) == ButtonState::Held)
-		{//-- Wraparound --//
-			const float ajustmant_val = 3.5f;
-			const XMVECTOR vector  = XMVectorSet(eye_position.x - focus_position.x, eye_position.y - focus_position.y, eye_position.z - focus_position.z, 0); // Vector from camera focus_position to camera eye_position
-			const XMVECTOR target_vec = XMLoadFloat3(&focus_position);	// Vector of camera focus_position
-			const XMVECTOR y_Up    = XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f);
-			const XMVECTOR x_Up    = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-
-			//-- Rotation Matrix --//
-			XMMATRIX rotation_matrix_y = XMMatrixRotationAxis(y_Up, XMConvertToRadians(movement_val.x * ajustmant_val));
-			XMMATRIX rotation_matrix_x = XMMatrixRotationAxis(x_Up, XMConvertToRadians(movement_val.y * ajustmant_val));
-
-			// Gazing point vector after rotation
-			XMVECTOR pos_vec = XMVector3Transform(vector, rotation_matrix_y * rotation_matrix_x);
-			pos_vec += target_vec;
-			XMStoreFloat3(&eye_position, pos_vec);
-
-			XMVECTOR vCameraUp = XMLoadFloat3(&up_vec);
-			XMVECTOR vCameraUp2 = XMVector3TransformNormal(vCameraUp, rotation_matrix_x);
-			XMStoreFloat3(&up_vec, vCameraUp2);
-		}
-		else if (Locator::GetInput()->Mouse().GetState(MouseButton::Right) == ButtonState::Held)
-		{//-- Zoom in and Zoom out --//
-
-			const float ajustmant_val = 0.5f;
-
-			const XMVECTOR vector		= XMVectorSet(focus_position.x - eye_position.x, focus_position.y - eye_position.y, focus_position.z - eye_position.z, 0);  // Vector from camera eye_position to camera focus_position
-			const XMVECTOR vPos			= XMVectorSet(eye_position.x, eye_position.y, eye_position.z, 0);
-			const XMVECTOR vTarget		= XMVectorSet(focus_position.x, focus_position.y, focus_position.z, 0);
-			const XMVECTOR normalizeVec = XMVector3Normalize(vector); // Normalisation
-			const XMVECTOR zoomVal		= XMVectorSet(normalizeVec.m128_f32[0] * movement_val.x, normalizeVec.m128_f32[1] * movement_val.x,
-													normalizeVec.m128_f32[2] * movement_val.x, normalizeVec.m128_f32[3] * movement_val.x);
-
-			XMStoreFloat3(&eye_position, XMVectorAdd(zoomVal, vPos));
-			XMStoreFloat3(&focus_position, XMVectorAdd(zoomVal, vTarget));
-		}
-		else
-		{
-			movement_val = {};
-		}
-	}
-	else if (Locator::GetInput()->Mouse().GetState(MouseButton::Right) == ButtonState::Held && Locator::GetInput()->Mouse().GetState(MouseButton::Left) == ButtonState::Held)
-	{//-- Truck --//
-		const XMVECTOR vNormalUp	   = XMVector3Normalize(XMVectorSet(up_vec.x,up_vec.y,up_vec.z,0.0f));
-		const XMVECTOR vNormalTarget   = XMVector3Normalize(XMVectorSet(focus_position.x - eye_position.x, focus_position.y - eye_position.y, focus_position.z - eye_position.z, 0.0f));
-
-		const XMVECTOR vRight = XMVector3Cross(vNormalUp, vNormalTarget);
-
-		DirectX::SimpleMath::Vector3 f3_Up;
-		DirectX::SimpleMath::Vector3 f3_Right;
-
-		XMStoreFloat3(&f3_Up, vNormalUp);
-		XMStoreFloat3(&f3_Right, vRight);
-
-		const float ajustmant_val = 0.5f;
-		f3_Up.x    *= -movement_val.y * ajustmant_val;
-		f3_Up.y    *= -movement_val.y * ajustmant_val;
-		f3_Up.z    *= -movement_val.y * ajustmant_val;
-
-		f3_Right.x *= movement_val.x * ajustmant_val;
-		f3_Right.y *= movement_val.x * ajustmant_val;
-		f3_Right.z *= movement_val.x * ajustmant_val;
-
-		eye_position.x += f3_Up.x;
-		eye_position.y += f3_Up.y;
-		eye_position.z += f3_Up.z;
-
-		focus_position.x += f3_Up.x;
-		focus_position.y += f3_Up.y;
-		focus_position.z += f3_Up.z;
-
-		eye_position.x += f3_Right.x;
-		eye_position.y += f3_Right.y;
-		eye_position.z += f3_Right.z;
-
-		focus_position.x += f3_Right.x;
-		focus_position.y += f3_Right.y;
-		focus_position.z += f3_Right.z;
-	}
-	else if (Locator::GetInput()->Mouse().GetState(MouseButton::Right) == ButtonState::Held)
-	{//-- Pan & Tilt --//
-
-		const XMVECTOR vector  = XMVectorSet(focus_position.x - eye_position.x, focus_position.y - eye_position.y, focus_position.z - eye_position.z, 0); // Vector from camera eye_position to camera focus_position
-		const XMVECTOR vCamera = XMLoadFloat3(&eye_position);	// Vector of camera eye_position
-		const XMVECTOR y_Up    = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-		const XMVECTOR x_Up    = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-
-		//-- Rotation Matrix --//
-		XMMATRIX rotation_matrix_y = XMMatrixRotationAxis(y_Up, XMConvertToRadians(movement_val.x));
-		XMMATRIX rotation_matrix_x = XMMatrixRotationAxis(x_Up, XMConvertToRadians(movement_val.y));
-
-		// Gazing point vector after rotation`
-		XMVECTOR vTarget = XMVector3Transform(vector, rotation_matrix_y * rotation_matrix_x);
-		vTarget += vCamera;
-		XMStoreFloat3(&focus_position, vTarget);
-
-		XMVECTOR vCameraUp  = XMLoadFloat3(&up_vec);
-		vCameraUp			= XMVector3TransformNormal(vCameraUp, rotation_matrix_x);
-		XMStoreFloat3(&up_vec, vCameraUp);
-	}
-	else
-	{
-		movement_val = {};
-	}
-}
-
-void View::RotationAdjustWrapPitchYawRoll(float pitch, float yaw, float roll)
-{
-	XMMATRIX rotation_matrix = XMMatrixRotationRollPitchYaw(XMConvertToRadians(pitch), XMConvertToRadians(yaw), XMConvertToRadians(roll));
-
-	XMVECTOR vec_from_target_pos_to_camera_pos = XMVectorSet(eye_position.x - focus_position.x, eye_position.y - focus_position.y, eye_position.z - focus_position.z, 1.0f);
-
-	XMVECTOR length = XMVector3Length(vec_from_target_pos_to_camera_pos);
-
-	// Activate rataion
-	vec_from_target_pos_to_camera_pos = XMVector3Transform(vec_from_target_pos_to_camera_pos, rotation_matrix);
-
-	XMVECTOR normal = XMVector3Normalize(vec_from_target_pos_to_camera_pos);
-
-	XMVECTOR vecCameraPos = XMVectorMultiply(normal, length);
-
-	XMStoreFloat3(&eye_position, vecCameraPos);
-}
-
-void View::RotationAdjustWrapX(float angleX)
-{
-	//XMMATRIX rotation_matrix = XMMatrixRotationRollPitchYaw(XMConvertToRadians(angleX), 0, 0);
-
-	//XMVECTOR vec_from_target_pos_to_camera_pos = XMVectorSet(eye_position.x - focus_position.x, eye_position.y - focus_position.y, eye_position.z - focus_position.z, 0.0f);
-
-	//XMVECTOR length = XMVector3Length(vec_from_target_pos_to_camera_pos);
-
-	//// Activate rataion
-	//vec_from_target_pos_to_camera_pos = XMVector3TransformCoord(vec_from_target_pos_to_camera_pos, rotation_matrix);
-
-	//XMVECTOR normal = XMVector3Normalize(vec_from_target_pos_to_camera_pos);
-
-	//XMVECTOR vecCameraPos = XMVectorMultiply(normal, length);
-
-	//XMVECTOR vecTarget    = XMVectorSet(focus_position.x, focus_position.y, focus_position.z, 1.0f);
-
-	//XMStoreFloat3(&eye_position, vecTarget + vecCameraPos);
-
-	XMVECTOR vec_from_target_pos_to_camera_pos = XMVectorSet(eye_position.x - focus_position.x, eye_position.y - focus_position.y, eye_position.z - focus_position.z, 1.0f);
-
-	XMVECTOR length = XMVector3Length(vec_from_target_pos_to_camera_pos);
-
-	XMVECTOR vecX = XMVectorSet(1, 0, 0, 0);
-	XMVECTOR vec_quaternion = XMQuaternionRotationNormal(vecX, XMConvertToRadians(angleX));
-	vec_from_target_pos_to_camera_pos = XMVector3Rotate(vec_from_target_pos_to_camera_pos, vec_quaternion);
-
-	XMVECTOR normal = XMVector3Normalize(vec_from_target_pos_to_camera_pos);
-
-	XMVECTOR vec_camera_pos = XMVectorMultiply(normal, length);
-
-	XMVECTOR vecTarget    = XMVectorSet(focus_position.x, focus_position.y, focus_position.z, 1.0f);
-
-	XMStoreFloat3(&eye_position, vecTarget + vec_from_target_pos_to_camera_pos);
-}
-
-void View::RotationAdjustWrapY(float angleY)
-{
-	//XMMATRIX rotation_matrix = XMMatrixRotationY(XMConvertToRadians(angleY));
-
-	//XMVECTOR vec_from_target_pos_to_camera_pos = XMVectorSet(eye_position.x - focus_position.x, eye_position.y - focus_position.y, eye_position.z - focus_position.z, 1.0f);
-
-	//XMVECTOR length = XMVector3Length(vec_from_target_pos_to_camera_pos);
-
-	//// Activate rataion
-	//vec_from_target_pos_to_camera_pos = XMVector3Transform(vec_from_target_pos_to_camera_pos, rotation_matrix);
-
-	//XMVECTOR normal = XMVector3Normalize(vec_from_target_pos_to_camera_pos);
-
-	//XMVECTOR vec_camera_pos = XMVectorMultiply(normal, length);
-
-	//XMStoreFloat3(&eye_position, vec_camera_pos);
-
-	XMVECTOR vec_from_target_pos_to_camera_pos = XMVectorSet(eye_position.x - focus_position.x, eye_position.y - focus_position.y, eye_position.z - focus_position.z, 1.0f);
-
-	XMVECTOR length = XMVector3Length(vec_from_target_pos_to_camera_pos);
-
-	XMVECTOR vecY = XMVectorSet(0, 1, 0, 0);
-	XMVECTOR vec_quaternion = XMQuaternionRotationNormal(vecY, XMConvertToRadians(angleY));
-	vec_from_target_pos_to_camera_pos = XMVector3Rotate(vec_from_target_pos_to_camera_pos, vec_quaternion);
-
-	XMVECTOR normal = XMVector3Normalize(vec_from_target_pos_to_camera_pos);
-
-	XMVECTOR vec_camera_pos = XMVectorMultiply(normal, length);
-
-	XMVECTOR vecTarget = XMVectorSet(focus_position.x, focus_position.y, focus_position.z, 1.0f);
-
-	XMStoreFloat3(&eye_position, vecTarget + vec_from_target_pos_to_camera_pos);
-}
-
-void View::RotationAdjustWrapZ(float angleZ)
-{
-	XMMATRIX rotation_matrix = XMMatrixRotationZ(XMConvertToRadians(angleZ));
-
-	XMVECTOR vec_from_target_pos_to_camera_pos = XMVectorSet(eye_position.x - focus_position.x, eye_position.y - focus_position.y, eye_position.z - focus_position.z, 1.0f);
-
-	XMVECTOR length = XMVector3Length(vec_from_target_pos_to_camera_pos);
-
-	// Activate rataion
-	vec_from_target_pos_to_camera_pos = XMVector3Transform(vec_from_target_pos_to_camera_pos, rotation_matrix);
-
-	XMVECTOR normal = XMVector3Normalize(vec_from_target_pos_to_camera_pos);
-
-	XMVECTOR vecCameraPos = XMVectorMultiply(normal, length);
-
-	XMStoreFloat3(&eye_position, vecCameraPos);
-}
-
-
 void View::WriteImGui()
 {
 	if (ImGui::CollapsingHeader("Camera"))
@@ -359,18 +119,18 @@ void View::WriteImGui()
 		ImGui::Text("Camera Pos X %f", eye_position.x);
 		ImGui::Text("Camera Pos Y %f", eye_position.y);
 		ImGui::Text("Camera Pos Z %f", eye_position.z);
-		ImGui::Text("Target X %f", focus_position.x);
-		ImGui::Text("Target Y %f", focus_position.y);
-		ImGui::Text("Target Z %f", focus_position.z);
-		ImGui::Text("Forcus X %f", front_vec.x);
-		ImGui::Text("Forcus Y %f", front_vec.y);
-		ImGui::Text("Forcus Z %f", front_vec.z);
+		ImGui::Text("Focus X %f", focus_position.x);
+		ImGui::Text("Focus Y %f", focus_position.y);
+		ImGui::Text("Focus Z %f", focus_position.z);
+		ImGui::Text("Camera Front X %f", front_vec.x);
+		ImGui::Text("Camera Front Y %f", front_vec.y);
+		ImGui::Text("Camera Front Z %f", front_vec.z);
 		ImGui::Text("Camera Up X %f", up_vec.x);
 		ImGui::Text("Camera Up Y %f", up_vec.y);
 		ImGui::Text("Camera Up Z %f", up_vec.z);
-		ImGui::Text("Right X %f", right_vec.x);
-		ImGui::Text("Right Y %f", right_vec.y);
-		ImGui::Text("Right Z %f", right_vec.z);
+		ImGui::Text("Camera Right X %f", right_vec.x);
+		ImGui::Text("Camera Right Y %f", right_vec.y);
+		ImGui::Text("Camera Right Z %f", right_vec.z);
 
 		camera_work->RenderImGui();
 	}

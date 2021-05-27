@@ -19,19 +19,25 @@ void CameraWork::Update(bool is_debug)
 	const auto& mouse = Locator::GetInput()->Mouse();
 	const auto& key   = Locator::GetInput()->Keyboard();
 
-	if(mouse.GetState(MouseButton::Left) == ButtonState::Held)
+	if (mouse.GetState(MouseButton::Left) == ButtonState::Held &&
+		mouse.GetState(MouseButton::Right) == ButtonState::Held)
+	{
+		Track(static_cast<float>(mouse.DeltaX()), right_vec);
+		Crane(static_cast<float>(-mouse.DeltaY()), { 0,1,0 });
+	}
+	else if(mouse.GetState(MouseButton::Left) == ButtonState::Held)
 	{
 		DollyInOut(static_cast<float>(mouse.DeltaY()));
 		Pan(static_cast<float>(mouse.DeltaX()));
 
 		if (key.GetState(Keycode::D) == ButtonState::Held)
-			Track(camera_velocity.x);
+			Track(camera_velocity.x ,right_vec);
 		if (key.GetState(Keycode::A) == ButtonState::Held)
-			Track(-camera_velocity.x);
+			Track(-camera_velocity.x, right_vec);
 		if (key.GetState(Keycode::W) == ButtonState::Held)
-			Crane(camera_velocity.y);
+			Crane(camera_velocity.y, up_vec);
 		if (key.GetState(Keycode::S) == ButtonState::Held)
-			Crane(-camera_velocity.y);
+			Crane(-camera_velocity.y, up_vec);
 	}
 	else if(mouse.GetState(MouseButton::Right) == ButtonState::Held)
 	{
@@ -41,13 +47,13 @@ void CameraWork::Update(bool is_debug)
 		//PanAndTilt(0, { static_cast<float>(mouse.DeltaX()) ,static_cast<float>(mouse.DeltaY()) ,.0f });
 
 		if (key.GetState(Keycode::D) == ButtonState::Held)
-			Track(camera_velocity.x);
+			Track(camera_velocity.x, right_vec);
 		if (key.GetState(Keycode::A) == ButtonState::Held)
-			Track(-camera_velocity.x);
+			Track(-camera_velocity.x, right_vec);
 		if (key.GetState(Keycode::W) == ButtonState::Held)
-			Crane(camera_velocity.y);
+			Crane(camera_velocity.y, up_vec);
 		if (key.GetState(Keycode::S) == ButtonState::Held)
-			Crane(-camera_velocity.y);
+			Crane(-camera_velocity.y, up_vec);
 	}
 }
 
@@ -132,7 +138,7 @@ void CameraWork::Pan(const float velocity)
 
 /*
  * brief : カメラの上下の傾き(位置は固定)
- *       : 上下に+-90度まで傾くようにする
+ *       : 上下に+-max_camera_angle.x度(85度)まで傾くようにする
  */
 void CameraWork::Tilt(const float velocity)
 {
@@ -203,21 +209,21 @@ void CameraWork::DollyInOut(const float velocity)
 /*
  * brief :  カメラの左右移動(向きは固定)
  */
-void CameraWork::Track( float velocity)
+void CameraWork::Track( float velocity, const DirectX::SimpleMath::Vector3& axis /*基準軸*/)
 {
 	// カメラの注視点と位置を同じだけ移動
-	focus_position += right_vec * velocity;
-	eye_position   += right_vec * velocity;
+	focus_position += axis * velocity;
+	eye_position   += axis * velocity;
 }
 
 /*
  *  brief : カメラの上下移動(向きは固定)
  */
-void CameraWork::Crane( float velocity)
+void CameraWork::Crane( float velocity, const DirectX::SimpleMath::Vector3& axis)
 {
 	// カメラの注視点と位置を同じだけ移動
-	focus_position += up_vec * velocity;
-	eye_position   += up_vec * velocity;
+	focus_position += axis * velocity;
+	eye_position   += axis * velocity;
 }
 
 

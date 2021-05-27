@@ -10,6 +10,7 @@
 #include "resource_manager.h"
 
 #include "scene_title.h"
+#include "scene_game.h"
 
 //*************************************
 //
@@ -270,7 +271,7 @@ void Scene::WriteImGui() const
 void SceneManager::Execute(Framework* framework)
 {
 	//Scene* scene = new SceneTitle();
-	std::shared_ptr<Scene> scene = std::make_shared<SceneTitle>();
+	std::shared_ptr<Scene> scene = std::make_shared<SceneGame>();
 
 	while (scene)
 	{

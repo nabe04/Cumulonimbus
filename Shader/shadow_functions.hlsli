@@ -3,7 +3,7 @@
 float3 GetVarianceShadow(Texture2D st, SamplerState ss, float3 Tex, float3 Scolor, float Bias)
 {
 	// シャドウマップから深度を取り出す
-    float d = st.Sample(ss, Tex.xy).r;
+    float d  = st.Sample(ss, Tex.xy).r;
     float d2 = st.Sample(ss, Tex.xy).g;
 
     // 分散の計算

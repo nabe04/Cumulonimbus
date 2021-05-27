@@ -67,12 +67,15 @@ private:
 	 * brief    : カメラワーク時の動作
 	 * velocity : カメラスピード(デバックの設定で変更可能)
 	 */
-	void Pan(float velocity);			// カメラの左右の傾き(位置は固定)
-	void Tilt(float velocity);			// カメラの上下の傾き(位置は固定)
-	void DollyInOut(float velocity);	// カメラの前後の動き(向きは固定)
-	void Track(float velocity);			// カメラの左右移動(向きは固定)
-	void Crane(float velocity);			// カメラの上下移動(向きは固定)
-
+	void Pan(float velocity);								// カメラの左右の傾き(位置は固定)
+	void Tilt(float velocity);								// カメラの上下の傾き(位置は固定)
+	void DollyInOut(float velocity);						// カメラの前後の動き(向きは固定)
+	void Track(float velocity,
+		const DirectX::SimpleMath::Vector3& axis /*基準軸*/);								// カメラの左右移動(向きは固定)
+	void Crane(float velocity,
+			   const DirectX::SimpleMath::Vector3& axis /*基準軸*/);	// カメラの上下移動(向きは固定)
+	void CraneIn_Y_Up_Axis(float velocity);
+	
 	void CalcCameraDirectionalVector();
 	void CalcCameraAngle();
 };

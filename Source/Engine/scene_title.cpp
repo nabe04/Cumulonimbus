@@ -19,12 +19,12 @@
 
 #include "sound_resource.h"
 
+#include "scene_game.h"
+
 void SceneTitle::InitializeScene()
 {
 	current_scene = SceneType::Title;
 	scene_name = "Scene_Title";
-
-	sound_resource->GetBGMSound(BGM::Title)->Play(true);
 
 	for (int i = 0; i < static_cast<int>(SelectGameMode::End); ++i)
 	{
@@ -32,7 +32,7 @@ void SceneTitle::InitializeScene()
 	}
 	select_game_mode.set(static_cast<int>(SelectGameMode::TraininigMode));	// 常にどれかのビットをセットしておく(初期はトレーニングモード)
 
-//-- Light --//
+	//-- Light --//
 	light->SetLightDir({ 1.0f,-.6f,1.f ,1.f });
 	light->SetPosition({ -200,100,-100,1 });
 
@@ -152,14 +152,12 @@ void SceneTitle::UnInitializeScene()
 
 void SceneTitle::UpdateScene(const float delta_time)
 {
-	if (Locator::GetInput()->Keyboard().GetState(Keycode::Enter) == ButtonState::Press)
+	if (Locator::GetInput()->Keyboard().GetState(Keycode::D1) == ButtonState::Press)
 	{
-		//next_scene = std::make_shared<SceneLoad>(new SceneTutorial);
+		next_scene = std::make_shared<SceneGame>();
 	}
 
 }
-
-#include "arithmetic.h"
 
 void SceneTitle::RenderImGui()
 {

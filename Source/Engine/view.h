@@ -60,12 +60,6 @@ public:
 	[[nodiscard]] DirectX::SimpleMath::Vector3 GetEyePosition()   const { return eye_position; }
 	[[nodiscard]] DirectX::SimpleMath::Vector3 GetFocusPosition() const { return focus_position; }
 
-	// Camera rotation adjustment (Camera eye_position rotation from the point of gaze)
-	void RotationAdjustWrapPitchYawRoll(float pitch, float yaw, float roll);
-	void RotationAdjustWrapX(float x);
-	void RotationAdjustWrapY(float y);
-	void RotationAdjustWrapZ(float z);
-
 	// ƒJƒƒ‰‚ÌŒü‚«æ“¾
 	[[nodiscard]]DirectX::SimpleMath::Vector3 GetCameraRight() const { return right_vec; }
 	[[nodiscard]]DirectX::SimpleMath::Vector3 GetCameraUp()    const { return up_vec; }

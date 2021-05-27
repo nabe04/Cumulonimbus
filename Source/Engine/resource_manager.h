@@ -9,16 +9,6 @@
 
 class ResourceManager final
 {
-private:
-	// FBX
-	std::map<std::string, std::shared_ptr<FbxModelResource>> fbx_model_resources;
-	// Texture
-	std::map<std::string, std::shared_ptr<TextureResource>> texture_resources;
-
-	// For ImGui
-	std::vector<std::string> fbx_model_names;
-	std::vector<std::string> texture_filenames;
-
 public:
 	explicit ResourceManager() = default;
 	~ResourceManager() = default;
@@ -78,6 +68,15 @@ public:
 	[[nodiscard]] std::vector<std::string> FbxModelNames() { return fbx_model_names; }
 
 private:
+	// FBX
+	std::map<std::string, std::shared_ptr<FbxModelResource>> fbx_model_resources;
+	// Texture
+	std::map<std::string, std::shared_ptr<TextureResource>> texture_resources;
+
+	// For ImGui
+	std::vector<std::string> fbx_model_names;
+	std::vector<std::string> texture_filenames;
+
 	void AddFBXData(const std::shared_ptr<FbxModelResource>& resource)
 	{
 		// ƒtƒ@ƒCƒ‹–¼‚ªŠù‚É‘¶İ‚µ‚Ä‚¢‚ê‚Î’Ç‰Á‚µ‚È‚¢

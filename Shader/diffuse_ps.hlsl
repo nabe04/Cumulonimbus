@@ -22,7 +22,7 @@ float4 main(PS_Input pin) : SV_TARGET
 
     float3 f3_diffuse = Diffuse(pin.normal.xyz, light_direction.xyz, pin.color.xyz, reflectance);
 
-    float3 shadow_color = GetVarianceShadow(depth_texture, default_sampler, pin.texture_coodinate, 0.6f, 0.00001f);
+    float3 shadow_color = GetVarianceShadow(depth_texture, default_sampler, pin.texture_coodinate, 0.6f, 0.000001f);
 
     return diffuse_texture.Sample(default_sampler, pin.texcoord0) * float4(f3_diffuse, 1) * float4(shadow_color, 1);
 }
