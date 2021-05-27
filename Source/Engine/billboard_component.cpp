@@ -18,5 +18,5 @@ void BillbordComponent::Update(const float delta_time)
 {
 	auto* transform = GetEntity()->GetComponent<TransformComponent>()->GetTransform();
 
-	GetEntity()->GetComponent<TransformComponent>()->GetTransform()->GetBillboardRatation(transform->GetPosition(), GetEntity()->GetScene()->GetView()->GetEyePosition());
+	GetEntity()->GetComponent<TransformComponent>()->GetTransform()->GetBillboardRotation(transform->GetPosition(), GetEntity()->GetScene()->GetView()->GetEyePosition());
 }

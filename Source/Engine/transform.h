@@ -6,7 +6,9 @@
 #include <DirectXMath.h>
 #include <SimpleMath.h>
 
+
 #include <cereal/cereal.hpp>
+#include <cereal/archives/json.hpp>
 #include <cereal/types/bitset.hpp>
 #include "cereal_helper.h"
 
@@ -81,14 +83,14 @@ public:
 	void SetPositionY(const float y) { position.y = y; }
 	void SetPositionZ(const float z) { position.z = z; }
 	void SetPosition(const DirectX::XMFLOAT3 & pos) { position = pos; }
-	void AjustPositionX(const float x) { position.x += x; }
-	void AjustPositionY(const float y) { position.y += y; }
-	void AjustPositionZ(const float z) { position.z += z; }
-	void AjustPosition(const DirectX::XMFLOAT3 & ajustVal)
+	void AdjustPositionX(const float x) { position.x += x; }
+	void AdjustPositionY(const float y) { position.y += y; }
+	void AdjustPositionZ(const float z) { position.z += z; }
+	void AdjustPosition(const DirectX::XMFLOAT3 & adjust_val)
 	{
-		position.x += ajustVal.x;
-		position.y += ajustVal.y;
-		position.z += ajustVal.z;
+		position.x += adjust_val.x;
+		position.y += adjust_val.y;
+		position.z += adjust_val.z;
 	}
 	auto& GetPosition()const { return position; }
 	void SetOldPosition(DirectX::XMFLOAT3 pos) { prev_pos = pos; }
@@ -107,12 +109,12 @@ public:
 	void SetScaleX(const float x) { scale.x = x; }
 	void SetScaleY(const float y) { scale.y = y; }
 	void SetScaleZ(const float z) { scale.z = z; }
-	void AjustScale(const DirectX::XMFLOAT3 & scale) { this->scale.x += scale.x; this->scale.y += scale.y; this->scale.z += scale.z; }
-	void AjustScale(const float scale) { this->scale.x += scale; this->scale.y += scale; this->scale.z += scale; }
-	void AjustScaleX(const float x) { scale.x += x; }
-	void AjustScaleY(const float y) { scale.y += y; }
-	void AjustScaleZ(const float z) { scale.z += z; }
-	const auto& GetScale() const { return scale; }
+	void AdjustScale(const DirectX::XMFLOAT3 & scale) { this->scale.x += scale.x; this->scale.y += scale.y; this->scale.z += scale.z; }
+	void AdjustScale(const float scale) { this->scale.x += scale; this->scale.y += scale; this->scale.z += scale; }
+	void AdjustScaleX(const float x) { scale.x += x; }
+	void AdjustScaleY(const float y) { scale.y += y; }
+	void AdjustScaleZ(const float z) { scale.z += z; }
+	[[nodiscard]] const auto& GetScale() const { return scale; }
 
 	//-- Angle --//
 	void SetWorldRotation(const DirectX::XMFLOAT3 & angle) { this->angle = angle; }
@@ -120,11 +122,11 @@ public:
 	void SetWorldRotation_X(const float x) { angle.x = x; set_angle_bit_flg.set(Bit::X); }
 	void SetWorldRotation_Y(const float y) { angle.y = y; set_angle_bit_flg.set(Bit::Y); }
 	void SetWorldRotation_Z(const float z) { angle.z = z; set_angle_bit_flg.set(Bit::Z); }
-	void AjustWorldRotation(const DirectX::XMFLOAT3 & angle) { this->angle.x += angle.x; this->angle.y += angle.y; this->angle.z += angle.z; }
-	void AjustWorldRotation(const float angle) { this->angle.x += angle; this->angle.y += angle; this->angle.z += angle; }
-	void AjustWorldRotation_X(const float x) { angle.x += x; }
-	void AjustWorldRotation_Y(const float y) { angle.y += y; }
-	void AjustWorldRotation_Z(const float z) { angle.z += z; }
+	void AdjustWorldRotation(const DirectX::XMFLOAT3 & angle) { this->angle.x += angle.x; this->angle.y += angle.y; this->angle.z += angle.z; }
+	void AdjustWorldRotation(const float angle) { this->angle.x += angle; this->angle.y += angle; this->angle.z += angle; }
+	void AdjustWorldRotation_X(const float x) { angle.x += x; }
+	void AdjustWorldRotation_Y(const float y) { angle.y += y; }
+	void AdjustWorldRotation_Z(const float z) { angle.z += z; }
 	auto& GetWorldRotation() { return angle; }
 	DirectX::XMFLOAT3 const GetDeltaAngle()
 	{
@@ -144,11 +146,11 @@ public:
 
 	// Quaternion
 	void ActiveQuaternion()   { is_quaternion = true; }
-	void PassiveQuaternionn() { is_quaternion = false; }
+	void PassiveQuaternion() { is_quaternion = false; }
 	void SetQuaternionAxis(const DirectX::XMFLOAT3& axis) { this->axis = axis; }
-	void AjustLocalRotation_X(float angle_x);
-	void AjustLocalRotation_Y(float angle_y);
-	void AjustLocalRotation_Z(float angle_z);
+	void AdjustLocalRotation_X(float angle_x);
+	void AdjustLocalRotation_Y(float angle_y);
+	void AdjustLocalRotation_Z(float angle_z);
 	void CalcLocalRotation_X();
 	void CalcLocalRotation_Y();
 	void CalcLocalRotation_Z();
@@ -160,11 +162,11 @@ public:
 	* billPos   : Location of Billboard Control BillboardTriangleComponent
 	* targetPos : Point of view for in a billboard
 	*/
-	void GetBillboardRatation(const DirectX::XMFLOAT3 billPos, const DirectX::XMFLOAT3 targetPos);
+	void GetBillboardRotation(const DirectX::XMFLOAT3 billPos, const DirectX::XMFLOAT3 targetPos);
 
-	DirectX::SimpleMath::Vector3 GetModelRight()const  { return model_right; }
-	DirectX::SimpleMath::Vector3 GetModelUp()const	   { return model_up; }
-	DirectX::SimpleMath::Vector3 GetModelFront()const  { return model_front; }
+	[[nodiscard]] const DirectX::SimpleMath::Vector3& GetModelRight()const  { return model_right; }
+	[[nodiscard]] const DirectX::SimpleMath::Vector3& GetModelUp() const	{ return model_up; }
+	[[nodiscard]] const DirectX::SimpleMath::Vector3& GetModelFront()const  { return model_front; }
 
 	// cereal
 	template<class Archive>
@@ -198,6 +200,7 @@ public:
 
 		);
 	}
+
 
 private:
 	void CreateScaling4x4();

@@ -1,8 +1,9 @@
 #include "transform.h"
 
+#include <imgui.h>
+
 #include "arithmetic.h"
 
-#include "imgui.h"
 
 using namespace DirectX;
 
@@ -186,7 +187,7 @@ void Transform::CreateIdentity4x4(XMFLOAT4X4* convert)
 	XMStoreFloat4x4(convert, convert_matrix);
 }
 
-void Transform::GetBillboardRatation(const XMFLOAT3 billPos,const XMFLOAT3 targetPos)
+void Transform::GetBillboardRotation(const XMFLOAT3 billPos,const XMFLOAT3 targetPos)
 {
 	if (!is_billboard)
 		assert(!"Billboard passive !!");
@@ -201,17 +202,17 @@ void Transform::GetBillboardRatation(const XMFLOAT3 billPos,const XMFLOAT3 targe
 	//rotation_f4x4._41 = rotation_f4x4._42 = rotation_f4x4._43 = rotation_f4x4._44 = 0;
 }
 
-void Transform::AjustLocalRotation_X(float angle_x)
+void Transform::AdjustLocalRotation_X(float angle_x)
 {
 	angle.x += angle_x;
 }
 
-void Transform::AjustLocalRotation_Y(float angle_y)
+void Transform::AdjustLocalRotation_Y(float angle_y)
 {
 	angle.y += angle_y;
 }
 
-void Transform::AjustLocalRotation_Z(float angle_z)
+void Transform::AdjustLocalRotation_Z(float angle_z)
 {
 	angle.z += angle_z;
 }
@@ -287,3 +288,35 @@ XMVECTOR Transform::GetRotationVec(XMFLOAT3 axis, float angle/* degree */)
 
 	return store_vec;
 }
+
+//template<class Archive>
+//void Transform::serialize(Archive&& archive)
+//{
+//	archive(
+//		CEREAL_NVP(position),
+//		CEREAL_NVP(prev_pos),
+//		CEREAL_NVP(scale),
+//		CEREAL_NVP(angle),
+//		CEREAL_NVP(prev_angle),
+//
+//		CEREAL_NVP(world_f4x4),
+//		CEREAL_NVP(scaling_matrix),
+//		CEREAL_NVP(rotation_matrix),
+//		CEREAL_NVP(translation_matrix),
+//
+//		CEREAL_NVP(model_right),
+//		CEREAL_NVP(model_front),
+//		CEREAL_NVP(model_up),
+//		CEREAL_NVP(orientation),
+//
+//		// Quaternion
+//		CEREAL_NVP(axis),
+//		CEREAL_NVP(local_quaternion),
+//		CEREAL_NVP(world_quaternion),
+//
+//		CEREAL_NVP(set_angle_bit_flg),
+//		CEREAL_NVP(is_billboard),
+//		CEREAL_NVP(is_quaternion)
+//
+//	);
+//}

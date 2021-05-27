@@ -69,7 +69,7 @@ void AnimationCharacterComponent::Update(const float delta_time)
 	//	}
 
 	//	//val_y++;
-	//	GetEntity()->GetComponent<TransformComponent>()->GetTransform()->AjustLocalRotation_Y(val_y);
+	//	GetEntity()->GetComponent<TransformComponent>()->GetTransform()->AdjustLocalRotation_Y(val_y);
 	//}
 	//if (key_input::State(InputType::Key::KEY_LEFT))
 	//{
@@ -79,7 +79,7 @@ void AnimationCharacterComponent::Update(const float delta_time)
 	//	}
 
 	//	//val_y--;
-	//	GetEntity()->GetComponent<TransformComponent>()->GetTransform()->AjustLocalRotation_Y(-val_y);
+	//	GetEntity()->GetComponent<TransformComponent>()->GetTransform()->AdjustLocalRotation_Y(-val_y);
 	//}
 
 	//auto pad = GetEntity()->GetScene()->GetPadLink();
@@ -91,7 +91,7 @@ void AnimationCharacterComponent::Update(const float delta_time)
 	//	}
 
 	//	//val_x++;
-	//	GetEntity()->GetComponent<TransformComponent>()->GetTransform()->AjustLocalRotation_X(val_x);
+	//	GetEntity()->GetComponent<TransformComponent>()->GetTransform()->AdjustLocalRotation_X(val_x);
 	//}
 	//if (key_input::State(InputType::Key::KEY_DOWN))
 	//{
@@ -101,7 +101,7 @@ void AnimationCharacterComponent::Update(const float delta_time)
 	//	}
 
 	//	//val_x--;
-	//	GetEntity()->GetComponent<TransformComponent>()->GetTransform()->AjustLocalRotation_X(-val_x);
+	//	GetEntity()->GetComponent<TransformComponent>()->GetTransform()->AdjustLocalRotation_X(-val_x);
 	//}
 	//if (key_input::State(InputType::Key::KEY_L))
 	//{
@@ -111,7 +111,7 @@ void AnimationCharacterComponent::Update(const float delta_time)
 	//	}
 
 	//	//val_x--;
-	//	GetEntity()->GetComponent<TransformComponent>()->GetTransform()->AjustLocalRotation_Z(val_x);
+	//	GetEntity()->GetComponent<TransformComponent>()->GetTransform()->AdjustLocalRotation_Z(val_x);
 	//}
 	//if (key_input::State(InputType::Key::KEY_K))
 	//{
@@ -121,7 +121,7 @@ void AnimationCharacterComponent::Update(const float delta_time)
 	//	}
 
 	//	//val_x--;
-	//	GetEntity()->GetComponent<TransformComponent>()->GetTransform()->AjustLocalRotation_Z(-val_x);
+	//	GetEntity()->GetComponent<TransformComponent>()->GetTransform()->AdjustLocalRotation_Z(-val_x);
 	//}
 
 	//if (key_input::Trg(InputType::Key::KEY_O))

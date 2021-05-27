@@ -3,7 +3,12 @@
 #include <fstream>
 #include <string>
 #include <imgui.h>
+
+#include <cereal/cereal.hpp>
 #include <cereal/archives/json.hpp>
+#include <cereal/types/bitset.hpp>
+#include "cereal_helper.h"
+
 
 #include "transform.h"
 #include "cereal_helper.h"
