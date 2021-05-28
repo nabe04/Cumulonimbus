@@ -134,17 +134,11 @@
     <ClCompile Include="Libraries\imgui\imgui_tables.cpp" />
     <ClCompile Include="Libraries\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Source\Engine\3d_standard.cpp" />
-    <ClCompile Include="Source\Engine\actor_component.cpp" />
-    <ClCompile Include="Source\Engine\anim_sprite.cpp" />
     <ClCompile Include="Source\Engine\arithmetic.cpp" />
-    <ClCompile Include="Source\Engine\billboard_component.cpp" />
     <ClCompile Include="Source\Engine\blend.cpp" />
     <ClCompile Include="Source\Engine\bloom.cpp" />
-    <ClCompile Include="Source\Engine\camera_operation.cpp" />
     <ClCompile Include="Source\Engine\camera_work.cpp" />
-    <ClCompile Include="Source\Engine\child_actor.cpp" />
     <ClCompile Include="Source\Engine\collision.cpp" />
-    <ClCompile Include="Source\Engine\collision_component.cpp" />
     <ClCompile Include="Source\Engine\component_list.cpp" />
     <ClCompile Include="Source\Engine\constant_buffer.cpp" />
     <ClCompile Include="Source\Engine\content_brawser.cpp" />
@@ -153,15 +147,12 @@
     <ClCompile Include="Source\Engine\easing.cpp" />
     <ClCompile Include="Source\Engine\ecs.cpp" />
     <ClCompile Include="Source\Engine\editor_manager.cpp" />
-    <ClCompile Include="Source\Engine\fbx_model_component.cpp" />
     <ClCompile Include="Source\Engine\fbx_model_resource.cpp" />
     <ClCompile Include="Source\Engine\framework.cpp" />
     <ClCompile Include="Source\Engine\frame_buffer.cpp" />
     <ClCompile Include="Source\Engine\fullscreen_quad.cpp" />
-    <ClCompile Include="Source\Engine\geometric_primitive_component.cpp" />
     <ClCompile Include="Source\Engine\geometric_primitive_resource.cpp" />
     <ClCompile Include="Source\Engine\imgui_manager.cpp" />
-    <ClCompile Include="Source\Engine\inner_sphere_collision.cpp" />
     <ClCompile Include="Source\Engine\InputManager.cpp" />
     <ClCompile Include="Source\Engine\input_device.cpp" />
     <ClCompile Include="Source\Engine\input_manager.cpp" />
@@ -171,7 +162,6 @@
     <ClCompile Include="Source\Engine\main.cpp" />
     <ClCompile Include="Source\Engine\mesh_object.cpp" />
     <ClCompile Include="Source\Engine\mesh_particle.cpp" />
-    <ClCompile Include="Source\Engine\obj_model_component.cpp" />
     <ClCompile Include="Source\Engine\metal.cpp" />
     <ClCompile Include="Source\Engine\model_data.cpp" />
     <ClCompile Include="Source\Engine\model_render.cpp" />
@@ -186,12 +176,9 @@
     <ClCompile Include="Source\Engine\shader_manager.cpp" />
     <ClCompile Include="Source\Engine\shadow_map.cpp" />
     <ClCompile Include="Source\Engine\single_color.cpp" />
-    <ClCompile Include="Source\Engine\sky_box.cpp" />
     <ClCompile Include="Source\Engine\sobel_filter.cpp" />
     <ClCompile Include="Source\Engine\Sound.cpp" />
-    <ClCompile Include="Source\Engine\sphere_collision_component.cpp" />
     <ClCompile Include="Source\Engine\spot_light.cpp" />
-    <ClCompile Include="Source\Engine\sprite.cpp" />
     <ClCompile Include="Source\Engine\sprite_object.cpp" />
     <ClCompile Include="Source\Engine\sprite_renderer.cpp" />
     <ClCompile Include="Source\Engine\standard_sprite.cpp" />
@@ -199,7 +186,6 @@
     <ClCompile Include="Source\Engine\texture.cpp" />
     <ClCompile Include="Source\Engine\texture2d_shader.cpp" />
     <ClCompile Include="Source\Engine\transform.cpp" />
-    <ClCompile Include="Source\Engine\transform_component.cpp" />
     <ClCompile Include="Source\Engine\view.cpp" />
     <ClCompile Include="Source\Engine\toon.cpp" />
     <ClCompile Include="Source\Engine\window.cpp" />
@@ -234,6 +220,48 @@
     <ClCompile Include="Source\Engine\gaussian_blur.cpp">
       <Filter>Source\Shader%28.cpp%29</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\actor_component.cpp">
+      <Filter>Source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\billboard_component.cpp">
+      <Filter>Source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\collision_component.cpp">
+      <Filter>Source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\geometric_primitive_component.cpp">
+      <Filter>Source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\fbx_model_component.cpp">
+      <Filter>Source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\obj_model_component.cpp">
+      <Filter>Source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\sky_box.cpp">
+      <Filter>Source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\sphere_collision_component.cpp">
+      <Filter>Source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\transform_component.cpp">
+      <Filter>Source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\anim_sprite.cpp">
+      <Filter>Source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\camera_operation.cpp">
+      <Filter>Source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\child_actor.cpp">
+      <Filter>Source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\inner_sphere_collision.cpp">
+      <Filter>Source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\sprite.cpp">
+      <Filter>Source\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libraries\imgui\imconfig.h" />
@@ -245,38 +273,28 @@
     <ClInclude Include="Libraries\imgui\imstb_textedit.h" />
     <ClInclude Include="Libraries\imgui\imstb_truetype.h" />
     <ClInclude Include="Source\Engine\3d_standard.h" />
-    <ClInclude Include="Source\Engine\actor_component.h" />
-    <ClInclude Include="Source\Engine\anim_sprite.h" />
     <ClInclude Include="Source\Engine\arithmetic.h" />
-    <ClInclude Include="Source\Engine\billboard_component.h" />
     <ClInclude Include="Source\Engine\blend.h" />
     <ClInclude Include="Source\Engine\bloom.h" />
-    <ClInclude Include="Source\Engine\camera_operation.h" />
     <ClInclude Include="Source\Engine\camera_work.h" />
     <ClInclude Include="Source\Engine\cereal_helper.h" />
-    <ClInclude Include="Source\Engine\child_actor.h" />
     <ClInclude Include="Source\Engine\collision.h" />
-    <ClInclude Include="Source\Engine\collision_component.h" />
     <ClInclude Include="Source\Engine\component_list.h" />
     <ClInclude Include="Source\Engine\constant_buffer.h" />
     <ClInclude Include="Source\Engine\content_browser.h" />
     <ClInclude Include="Source\Engine\depth_stencil.h" />
     <ClInclude Include="Source\Engine\diffuse.h" />
     <ClInclude Include="Source\Engine\easing.h" />
-    <ClInclude Include="Source\Engine\ecs.h" />
     <ClInclude Include="Source\Engine\editor_manager.h" />
-    <ClInclude Include="Source\Engine\fbx_model_component.h" />
     <ClInclude Include="Source\Engine\fbx_model_resource.h" />
     <ClInclude Include="Source\Engine\framework.h" />
     <ClInclude Include="Source\Engine\frame_buffer.h" />
     <ClInclude Include="Source\Engine\fullscreen_quad.h" />
     <ClInclude Include="Source\Engine\generic.h" />
-    <ClInclude Include="Source\Engine\geometric_primitive_component.h" />
     <ClInclude Include="Source\Engine\geometric_primitive_resource.h" />
     <ClInclude Include="Source\Engine\high_resolution_timer.h" />
     <ClInclude Include="Source\Engine\imgui_helper.h" />
     <ClInclude Include="Source\Engine\imgui_manager.h" />
-    <ClInclude Include="Source\Engine\inner_sphere_collision.h" />
     <ClInclude Include="Source\Engine\InputManager.h" />
     <ClInclude Include="Source\Engine\input_device.h" />
     <ClInclude Include="Source\Engine\input_manager.h" />
@@ -286,7 +304,6 @@
     <ClInclude Include="Source\Engine\Logger.h" />
     <ClInclude Include="Source\Engine\mesh_object.h" />
     <ClInclude Include="Source\Engine\mesh_particle.h" />
-    <ClInclude Include="Source\Engine\obj_model_component.h" />
     <ClInclude Include="Source\Engine\metal.h" />
     <ClInclude Include="Source\Engine\Misc.h" />
     <ClInclude Include="Source\Engine\model_data.h" />
@@ -305,9 +322,7 @@
     <ClInclude Include="Source\Engine\sky_box.h" />
     <ClInclude Include="Source\Engine\sobel_filter.h" />
     <ClInclude Include="Source\Engine\Sound.h" />
-    <ClInclude Include="Source\Engine\sphere_collision_component.h" />
     <ClInclude Include="Source\Engine\spot_light.h" />
-    <ClInclude Include="Source\Engine\sprite.h" />
     <ClInclude Include="Source\Engine\sprite_object.h" />
     <ClInclude Include="Source\Engine\sprite_renderer.h" />
     <ClInclude Include="Source\Engine\standard_sprite.h" />
@@ -317,7 +332,6 @@
     <ClInclude Include="Source\Engine\texture2d_shader.h" />
     <ClInclude Include="Source\Engine\toon.h" />
     <ClInclude Include="Source\Engine\transform.h" />
-    <ClInclude Include="Source\Engine\transform_component.h" />
     <ClInclude Include="Source\Engine\vertex_buffer.h" />
     <ClInclude Include="Source\Engine\view.h" />
     <ClInclude Include="Source\Engine\window.h" />
@@ -343,6 +357,48 @@
     <ClInclude Include="Source\Engine\dx11_configurator.h" />
     <ClInclude Include="Source\Engine\gaussian_blur.h">
       <Filter>Header\Shader%28.h%29</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\actor_component.h">
+      <Filter>Header\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\anim_sprite.h">
+      <Filter>Header\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\billboard_component.h">
+      <Filter>Header\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\camera_operation.h">
+      <Filter>Header\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\child_actor.h">
+      <Filter>Header\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\collision_component.h">
+      <Filter>Header\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\ecs.h">
+      <Filter>Header\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\fbx_model_component.h">
+      <Filter>Header\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\geometric_primitive_component.h">
+      <Filter>Header\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\inner_sphere_collision.h">
+      <Filter>Header\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\obj_model_component.h">
+      <Filter>Header\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\sphere_collision_component.h">
+      <Filter>Header\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\sprite.h">
+      <Filter>Header\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\transform_component.h">
+      <Filter>Header\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -416,6 +472,12 @@
     </Filter>
     <Filter Include="Header\Shader%28.h%29">
       <UniqueIdentifier>{9055ecd8-3f54-4989-8ba7-9c486755e70d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Components">
+      <UniqueIdentifier>{8984d312-d21d-46d4-912c-aabc6c96287a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Components">
+      <UniqueIdentifier>{28841f96-02a3-4ac3-93de-143b3b64df4a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

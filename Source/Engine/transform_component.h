@@ -1,15 +1,10 @@
 #pragma once
 
-#include <memory>
 #include <bitset>
 
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <SimpleMath.h>
-
-#include <cereal/cereal.hpp>
-#include <cereal/types/bitset.hpp>
-#include "cereal_helper.h"
 
 #include "ecs.h"
 
@@ -107,7 +102,7 @@ public:
 	void CalcLocalRotation_Y();
 	void CalcLocalRotation_Z();
 
-	auto& GetRotation4x4() const { return rotation_matrix; }
+	[[nodiscard]] auto& GetRotation4x4() const { return rotation_matrix; }
 
 	/*
 	* brief : Front Billboard
@@ -124,47 +119,8 @@ public:
 	 * brief : cereal
 	 *         é¿ëïÇ"transform_component.cpp"Ç≈èëÇ¢ÇƒÇ¢ÇÈ
 	 */
-	template<class Archive>
-	void serialize(Archive&& archive)
-	{
-		archive(
-			cereal::make_nvp("Component Name", component_name),
-			CEREAL_NVP(position),
-			CEREAL_NVP(prev_pos),
-			CEREAL_NVP(scale),
-			CEREAL_NVP(angle),
-			CEREAL_NVP(prev_angle),
-
-			CEREAL_NVP(world_f4x4),
-			CEREAL_NVP(scaling_matrix),
-			CEREAL_NVP(rotation_matrix),
-			CEREAL_NVP(translation_matrix),
-
-			CEREAL_NVP(model_right),
-			CEREAL_NVP(model_front),
-			CEREAL_NVP(model_up),
-			CEREAL_NVP(orientation),
-
-			// Quaternion
-			CEREAL_NVP(axis),
-			CEREAL_NVP(local_quaternion),
-			CEREAL_NVP(world_quaternion),
-
-			CEREAL_NVP(set_angle_bit_flg),
-			CEREAL_NVP(is_billboard),
-			CEREAL_NVP(is_quaternion)
-
-		);
-	}
-
-	//template <class Archive>
-	//void serialize(Archive&& archive)
-	//{
-	//	archive(
-	//		cereal::make_nvp("Component Name", component_name),
-	//		cereal::make_nvp("Transform", transform)
-	//	);
-	//}
+	template<typename  Archive>
+	void serialize(Archive&& archive);
 
 private:
 	DirectX::SimpleMath::Vector3  position{ 0.0f,0.0f,0.0f };

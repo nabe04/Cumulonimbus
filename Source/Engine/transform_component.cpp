@@ -9,10 +9,8 @@
 #include <cereal/types/bitset.hpp>
 #include "cereal_helper.h"
 
-
 #include "transform.h"
 #include "arithmetic.h"
-#include "cereal_helper.h"
 
 using namespace DirectX;
 
@@ -136,6 +134,40 @@ void TransformComponent::Load(Entity* entity,std::string file_path_and_name)
 		this->entity = entity;
 	}
 }
+
+template <class Archive>
+void TransformComponent::serialize(Archive&& archive)
+{
+	archive(
+		cereal::make_nvp("Component Name", component_name),
+		CEREAL_NVP(position),
+		CEREAL_NVP(prev_pos),
+		CEREAL_NVP(scale),
+		CEREAL_NVP(angle),
+		CEREAL_NVP(prev_angle),
+
+		CEREAL_NVP(world_f4x4),
+		CEREAL_NVP(scaling_matrix),
+		CEREAL_NVP(rotation_matrix),
+		CEREAL_NVP(translation_matrix),
+
+		CEREAL_NVP(model_right),
+		CEREAL_NVP(model_front),
+		CEREAL_NVP(model_up),
+		CEREAL_NVP(orientation),
+
+		// Quaternion
+		CEREAL_NVP(axis),
+		CEREAL_NVP(local_quaternion),
+		CEREAL_NVP(world_quaternion),
+
+		CEREAL_NVP(set_angle_bit_flg),
+		CEREAL_NVP(is_billboard),
+		CEREAL_NVP(is_quaternion)
+
+	);
+}
+
 
 void TransformComponent::CreateScaling4x4()
 {
@@ -380,37 +412,3 @@ XMVECTOR TransformComponent::GetRotationVec(XMFLOAT3 axis, float angle/* degree 
 
 	return store_vec;
 }
-
-// cereal
-//template <class Archive>
-//void TransformComponent::serialize(Archive&& archive)
-//{
-//	archive(
-//		CEREAL_NVP(position),
-//		CEREAL_NVP(prev_pos),
-//		CEREAL_NVP(scale),
-//		CEREAL_NVP(angle),
-//		CEREAL_NVP(prev_angle),
-//
-//		CEREAL_NVP(world_f4x4),
-//		CEREAL_NVP(scaling_matrix),
-//		CEREAL_NVP(rotation_matrix),
-//		CEREAL_NVP(translation_matrix),
-//
-//		CEREAL_NVP(model_right),
-//		CEREAL_NVP(model_front),
-//		CEREAL_NVP(model_up),
-//		CEREAL_NVP(orientation),
-//
-//		// Quaternion
-//		CEREAL_NVP(axis),
-//		CEREAL_NVP(local_quaternion),
-//		CEREAL_NVP(world_quaternion),
-//
-//		CEREAL_NVP(set_angle_bit_flg),
-//		CEREAL_NVP(is_billboard),
-//		CEREAL_NVP(is_quaternion)
-//
-//	);
-//}
-
