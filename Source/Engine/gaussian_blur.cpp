@@ -6,7 +6,7 @@
 GaussianBlur::GaussianBlur(ID3D11Device* device, const u_int width, const u_int height)
 	:FullscreenQuad{device}
 {
-	fb_gaussian_blur   = std::make_unique<FrameBuffer>(device, width, height);
+	fb_gaussian_blur   = std::make_unique<FrameBuffer>(device, width, height, false, 1, DXGI_FORMAT_R32G32_FLOAT);
 	ps_blur_vertical   = std::make_unique<shader::PixelShader>(device, gaussian_blur_vertical_ps_name);
 	ps_blur_horizontal = std::make_unique<shader::PixelShader>(device, gaussian_blur_horizontal_ps_name);
 }

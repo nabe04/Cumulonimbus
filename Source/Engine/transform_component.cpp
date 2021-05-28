@@ -63,3 +63,36 @@ void TransformComponent::Load(Entity* entity,std::string file_path_and_name)
 	}
 }
 
+// cereal
+//template <class Archive>
+//void Transform::serialize(Archive&& archive)
+//{
+//	archive(
+//		CEREAL_NVP(position),
+//		CEREAL_NVP(prev_pos),
+//		CEREAL_NVP(scale),
+//		CEREAL_NVP(angle),
+//		CEREAL_NVP(prev_angle),
+//
+//		CEREAL_NVP(world_f4x4),
+//		CEREAL_NVP(scaling_matrix),
+//		CEREAL_NVP(rotation_matrix),
+//		CEREAL_NVP(translation_matrix),
+//
+//		CEREAL_NVP(model_right),
+//		CEREAL_NVP(model_front),
+//		CEREAL_NVP(model_up),
+//		CEREAL_NVP(orientation),
+//
+//		// Quaternion
+//		CEREAL_NVP(axis),
+//		CEREAL_NVP(local_quaternion),
+//		CEREAL_NVP(world_quaternion),
+//
+//		CEREAL_NVP(set_angle_bit_flg),
+//		CEREAL_NVP(is_billboard),
+//		CEREAL_NVP(is_quaternion)
+//
+//	);
+//}
+

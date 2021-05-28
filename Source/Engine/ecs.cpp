@@ -70,10 +70,10 @@ void Entity::Save(std::string file_path)
 		std::ofstream ofs(file_path_and_name_and_exe);
 		cereal::JSONOutputArchive o_archive(ofs);
 		o_archive(
-			CEREAL_NVP(entity_name),
-			CEREAL_NVP(component_names),
-			CEREAL_NVP(update_order),
-			CEREAL_NVP(entity_tag)
+			cereal::make_nvp("Entity Name"	  ,entity_name),
+			cereal::make_nvp("Components Name",component_names),
+			cereal::make_nvp("Update Order"	  ,update_order),
+			cereal::make_nvp("Entity Tag"	  ,entity_tag)
 		);
 	}
 
@@ -102,7 +102,7 @@ void Entity::Load(std::string file_path)
 		const std::string input_filename = file_path + "/" + entity_name + "/Component/" + comp_name + ".json";
 		comp->Load(this, input_filename);
 
-		components.emplace_back(std::move(comp));
+		components.emplace_back(comp);
 	}
 }
 #pragma endregion Entity

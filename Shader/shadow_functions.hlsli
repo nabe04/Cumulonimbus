@@ -15,7 +15,7 @@ float3 GetVarianceShadow(Texture2D st, SamplerState ss, float3 Tex, float3 Scolo
 	// 影の色
     Scolor = lerp(Scolor, 1.0f, p_max);
 
-    return max((Tex.z - d) < Bias, p_max);
+    return p_max;// max(Tex.z < d, p_max);
 }
 
 // ワールド座標をライト座標空間に変換

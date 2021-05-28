@@ -6,7 +6,6 @@
 
 #include <d3d11.h>
 #include <DirectXMath.h>
-using namespace DirectX;
 
 #include "ecs.h"
 #include "blend.h"
@@ -32,7 +31,8 @@ protected:
 
 public:
 	explicit MeshObject(Entity* entity);
-	~MeshObject() = default;
+	explicit MeshObject()  = default; // For cereal
+	~MeshObject() override = default;
 
 	virtual void NewFrame(const float delta_time)override {};
 	virtual void Update(const float delta_time)override {};
@@ -50,5 +50,17 @@ public:
 	void SetSamplerState(const RenderingSampleState& state) { sampler_state = state; }
 	void SetShaderState(shader::MeshShaderTypes type) {  shader_state->SetShaderState(type); }
 
-	RenderingBufferBitset* UsingBuffer() { return rendering_buffer.get(); }
+	[[nodiscard]] RenderingBufferBitset* UsingBuffer() const { return rendering_buffer.get(); }
+
+	template<class Archive>
+	void serialize(Archive&& archive)
+	{
+		archive(
+			cereal::make_nvp("Component Name", component_name),
+			cereal::make_nvp("Blend State"	 , blend_state)
+		);
+	}
 };
+
+CEREAL_REGISTER_TYPE(MeshObject);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Component, MeshObject)

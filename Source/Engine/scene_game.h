@@ -5,8 +5,8 @@
 class SceneGame :public Scene
 {
 public:
-	explicit SceneGame() = default;
-	~SceneGame() = default;
+	explicit SceneGame()  = default;
+	~SceneGame() override = default;
 
 public:
 	void InitializeScene() override;

@@ -19,10 +19,15 @@ void SceneGame::InitializeScene()
 
 	//-- Light --//
 	light->SetLightDir({ 0.0f,-.6f,1.f ,1.f });
-	light->SetPosition({ -25,15,-15 ,1 });
+	light->SetPosition({ -400, 500, 0 ,1 });
 
 	//-- View --//
 	view->SetCameraPos({ 25,100,-300 }, { .0f, .0f, .0f }, XMFLOAT3(.0f, 1.0f, .0f));
+
+	//auto* test_entity = AddEntity();
+	//test_entity->AddComponent<MeshObject>();
+	//test_entity->GetComponent<TransformComponent>()->GetTransform()->SetPosition({ 10,10,10 });
+	//SaveScene("Test5_28");
 
 	const char* sky_filename = "./Data/Assets/cubemap/skybox";
 	auto* sky_box = AddEntity(UpdateOrder::Default, EntityTag::Sky_Map);

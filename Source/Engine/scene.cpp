@@ -162,12 +162,12 @@ void Scene::Update(const float elapsed_time)
 
 	if (Locator::GetInput()->Keyboard().GetState(Keycode::A) == ButtonState::Press)
 	{
-		this->SaveScene(this->scene_name);
+		//this->SaveScene(this->scene_name);
 	}
 
 	if (Locator::GetInput()->Keyboard().GetState(Keycode::L) == ButtonState::Press)
 	{
-		this->LoadScene("./Content/Scene/Scene_Title");
+		//this->LoadScene("./Content/Scene/Scene_Title");
 	}
 
 	if (is_paused)

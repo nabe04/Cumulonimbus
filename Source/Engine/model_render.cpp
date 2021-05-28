@@ -11,7 +11,6 @@
 #include "light.h"
 #include "locator.h"
 #include "mesh_object.h"
-#include "mesh_particle.h"
 #include "model_data.h"
 #include "obj_model_component.h"
 #include "rasterizer.h"
@@ -133,11 +132,6 @@ void MeshRenderer::Render(ID3D11DeviceContext* immediate_context,
 			RenderFBX(immediate_context, actor_comp, model_fbx, view, light);
 		}
 
-		if (auto* mesh_particle = ent->GetComponent<MeshParticle>())
-		{
-			RenderParticle(immediate_context, actor_comp, mesh_particle, view);
-		}
-
 #ifdef _DEBUG
 		//--Render collision range --//
 		if (index == static_cast<int>(RenderingBuffer::BackBuffer))
@@ -196,7 +190,8 @@ void MeshRenderer::ShadowEnd(ID3D11DeviceContext* immediate_context)
 	//ImGui::Image((void*)shadow_map->GetDepthExtractionFB()->render_target_shader_resource_view.Get(), { 300,300 });
 	shadow_map->End(immediate_context);
 
-	gaussian_blur->GenerateGaussianBlur(immediate_context, shadow_map->GetNormalShadowDepthExtractionFB()->render_target_shader_resource_view.Get());
+	samplers.at(RenderingSampleState::Linear_Border)->Activate(immediate_context, 0);
+	gaussian_blur->GenerateGaussianBlur(immediate_context, shadow_map->GetVarianceShadowDepthExtractionFB()->render_target_shader_resource_view.Get());
 }
 
 void MeshRenderer::RenderShadow(ID3D11DeviceContext* immediate_context,
@@ -212,6 +207,7 @@ void MeshRenderer::RenderShadow(ID3D11DeviceContext* immediate_context,
 	rasterizer->Activate(immediate_context, actor_comp->GetRasterizeState());
 	blend->Activate(immediate_context, actor_comp->GetBlendState());
 	depth_stencil->Activate(immediate_context, actor_comp->GetDepthStencilState());
+	samplers.at(RenderingSampleState::Linear_Border)->Activate(immediate_context, 0);
 
 	for (int i = 0; i < static_cast<int>(ShadowMap::RenderProcess::End); ++i)
 	{
@@ -350,55 +346,6 @@ void MeshRenderer::RenderGeomPrim(ID3D11DeviceContext* immediate_context,
 
 	RenderGeomPrimMesh(immediate_context, geomComponent->GetMesh());
 	light->DeactivateCBuffer(immediate_context);
-}
-
-void MeshRenderer::RenderParticle(ID3D11DeviceContext* immediate_context,
-	MeshObject* actor, MeshParticle* mesh_particle,
-	const View* const view)
-{
-	if (mesh_particle->GetParticleDatas()->empty())
-		return;
-	const auto* ent = actor->GetEntity();
-
-	{// Transform
-		shader::CB_CoordinateTransformation cb{};
-		cb.mat_view_projection = view->GetView() * view->GetProjection();
-
-		cb.bone_transforms[0] = ent->GetComponent<TransformComponent>()->GetTransform()->GetWorld4x4();
-		cbuffer_transformation->data = cb;
-		cbuffer_transformation->Activate(immediate_context, 0);
-	}
-
-	immediate_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-	mesh_particle->GetVertexShader()->Activate(immediate_context);
-	mesh_particle->GetPixelShader()->Activate(immediate_context);
-
-	UINT stride = sizeof(MeshParticle::Vb_Fixed_S0);
-	UINT offset = 0;
-	immediate_context->IASetVertexBuffers(0, 1, mesh_particle->GetVertexBuffer_S0()->GetVertexBufferAddress(), &stride, &offset);
-
-	static float up = 0;
-	if(Locator::GetInput()->Keyboard().GetState(Keycode::Up) == ButtonState::Held)
-		up += 0.1f;
-	if (Locator::GetInput()->Keyboard().GetState(Keycode::Down) == ButtonState::Held)
-		up -= 0.1f;
-	DirectX::SimpleMath::Matrix mat = DirectX::SimpleMath::Matrix::Identity;
-	mat = DirectX::SimpleMath::Matrix::CreateTranslation({ 0,up,0 });
-
-	MeshParticle::Cb_Particle cb{};
-	cb.color			= mesh_particle->GetParticleDatas()->at(0).color;
-	cb.position			= DirectX::SimpleMath::Vector4{ mesh_particle->GetParticleDatas()->at(0).position.x,mesh_particle->GetParticleDatas()->at(0).position.y,mesh_particle->GetParticleDatas()->at(0).position.z,1.f };
-	//cb.transform_matrix = mesh_particle->GetParticleDatas()->at(0).transform.GetWorld4x4() * mat;
-	cb.transform_matrix = actor->GetEntity()->GetComponent<TransformComponent>()->GetTransform()->GetWorld4x4();
-	mesh_particle->GetConstantBuffer()->data = cb;
-	mesh_particle->GetConstantBuffer()->Activate(immediate_context, 6);
-
-	UINT vertex_count = static_cast<UINT>(mesh_particle->GetParticleDatas()->size());
-	immediate_context->Draw(vertex_count, 0);
-
-	mesh_particle->GetConstantBuffer()->Deactivate(immediate_context);
-	mesh_particle->GetVertexShader()->Deactivate(immediate_context);
-	mesh_particle->GetPixelShader()->Deactivate(immediate_context);
 }
 
 void MeshRenderer::RenderSphereCollision(ID3D11DeviceContext* immediate_context,

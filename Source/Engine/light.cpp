@@ -53,9 +53,9 @@ void Light::WriteImGui() const
 {
 	if (ImGui::CollapsingHeader("Light Info"))
 	{
-		ImGui::DragFloat("Position X", &cb_light->data.position.x, 0.01f, -100.0f, 100.0f);
-		ImGui::DragFloat("Position Y", &cb_light->data.position.y, 0.01f, -100.0f, 100.0f);
-		ImGui::DragFloat("Position Z", &cb_light->data.position.z, 0.01f, -100.0f, 100.0f);
+		ImGui::DragFloat("Position X", &cb_light->data.position.x, 0.01f, -1000.0f, 1000.0f);
+		ImGui::DragFloat("Position Y", &cb_light->data.position.y, 0.01f, -1000.0f, 1000.0f);
+		ImGui::DragFloat("Position Z", &cb_light->data.position.z, 0.01f, -1000.0f, 1000.0f);
 		ImGui::DragFloat("Direction X", &cb_light->data.direction.x, 0.01f, -1.0f, 1.0f);
 		ImGui::DragFloat("Direction Y", &cb_light->data.direction.y, 0.01f, -1.0f, 1.0f);
 		ImGui::DragFloat("Direction Z", &cb_light->data.direction.z, 0.01f, -1.0f, 1.0f);

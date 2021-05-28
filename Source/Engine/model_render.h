@@ -31,7 +31,6 @@ class InnerSpherecollision_component;
 class Texture2DComponent;
 class DummyTexture;
 class FillTexture2DComponent;
-class MeshParticle;
 class shader::ShaderManager;
 
 class Blend;
@@ -74,9 +73,6 @@ private:
 
 	void RenderGeomPrimMesh(ID3D11DeviceContext* immediate_context, const geometric_primitive_resource::Mesh& mesh);
 
-	void RenderParticle(ID3D11DeviceContext* immediate_context,
-		MeshObject* actor, MeshParticle* mesh_particle,
-		const View* const view);
 
 	void Blit(ID3D11DeviceContext* immediate_context, MeshObject* actor);
 

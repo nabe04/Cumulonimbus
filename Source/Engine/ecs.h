@@ -183,14 +183,14 @@ public:
 
 	// ImGui
 	void SetEntityName(std::string_view name) { entity_name = name.data(); }
-	std::string GetEntityName() { return entity_name; }
+	const std::string& GetEntityName() const { return entity_name; }
 
 	// Serialize
 	template <class Archive>
 	void serialize(Archive& ar)
 	{
 		ar(
-			//CEREAL_NVP(components),	// ˆ——‚¿‚·‚é‚Ì‚ÅÀ‘•‚µ‚Ä‚¢‚È‚¢
+			CEREAL_NVP(components),	// ˆ——‚¿‚·‚é‚Ì‚ÅÀ‘•‚µ‚Ä‚¢‚È‚¢
 			CEREAL_NVP(entity_name),
 			CEREAL_NVP(component_names),
 			CEREAL_NVP(update_order),

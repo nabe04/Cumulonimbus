@@ -168,7 +168,10 @@ public:
 	[[nodiscard]] const DirectX::SimpleMath::Vector3& GetModelUp() const	{ return model_up; }
 	[[nodiscard]] const DirectX::SimpleMath::Vector3& GetModelFront()const  { return model_front; }
 
-	// cereal
+	/*
+	 * brief : cereal
+	 *         À‘•‚ğ"transform_component.cpp"‚Å‘‚¢‚Ä‚¢‚é
+	 */
 	template<class Archive>
 	void serialize(Archive&& archive)
 	{
@@ -200,7 +203,6 @@ public:
 
 		);
 	}
-
 
 private:
 	void CreateScaling4x4();

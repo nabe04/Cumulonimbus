@@ -51,8 +51,8 @@ public:
 	void Begin(ID3D11DeviceContext* immediate_context)
 	{
 		samplers.at(static_cast<int>(ShadowMapSamplerStates::Linear_Border))->Activate(immediate_context, 0, false);
-		normal_shadow_depth_extraction_fb->Clear(immediate_context, 1.f, 1.0f, 1.f, 1.f);
-		variance_shadow_depth_extraction_fb->Clear(immediate_context, 1.f, 1.f, 1.f, 1.f);
+		normal_shadow_depth_extraction_fb->Clear(	immediate_context, FLT_MAX,	FLT_MAX, FLT_MAX, FLT_MAX);
+		variance_shadow_depth_extraction_fb->Clear(	immediate_context, FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX);
 	}
 	void End(ID3D11DeviceContext* immediate_context)
 	{

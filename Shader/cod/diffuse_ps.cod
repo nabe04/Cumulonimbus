@@ -121,25 +121,21 @@ mul r2.y, r1.z, r1.z
 mul r2.x, r2.y, r2.x
 mov r2.x, -r2.x
 add r1.w, r1.w, r2.x
-max r1.w, r1.w, r1.y  // r1.w <- variance
+max r1.y, r1.w, r1.y  // r1.y <- variance
 
 #line 13
-mov r2.x, -r1.z
-add r2.x, r1.x, r2.x
-mov r2.y, l(1.000000)
-mul r2.x, r2.x, r2.x
-mul r2.x, r2.x, r2.y
-add r2.x, r1.w, r2.x
-div r1.w, r1.w, r2.x
-max r1.w, r1.w, l(0.000000)
-min r1.w, r1.w, l(1.000000)  // r1.w <- p_max
-
-#line 18
 mov r1.z, -r1.z
 add r1.x, r1.z, r1.x
-lt r1.x, r1.x, r1.y
-and r1.x, r1.x, l(0x3f800000)
-max r1.xyz, r1.wwww, r1.xxxx  // r1.x <- <GetVarianceShadow return value>.x; r1.y <- <GetVarianceShadow return value>.y; r1.z <- <GetVarianceShadow return value>.z
+mov r1.z, l(1.000000)
+mul r1.x, r1.x, r1.x
+mul r1.x, r1.x, r1.z
+add r1.x, r1.x, r1.y
+div r1.x, r1.y, r1.x
+max r1.x, r1.x, l(0.000000)
+min r1.xyz, r1.xxxx, l(1.000000, 1.000000, 1.000000, 0.000000)  // r1.z <- p_max
+
+#line 18
+mov r1.xyz, r1.xyzx  // r1.x <- <GetVarianceShadow return value>.x; r1.y <- <GetVarianceShadow return value>.y; r1.z <- <GetVarianceShadow return value>.z
 
 #line 25 "D:\チEクトップ\Cumulonimbus\Shader\diffuse_ps.hlsl"
 mov r1.xyz, r1.xyzx  // r1.x <- shadow_color.x; r1.y <- shadow_color.y; r1.z <- shadow_color.z
@@ -151,4 +147,4 @@ mul r0.xyzw, r0.xyzw, r2.xyzw
 itof r1.w, l(1)
 mul o0.xyzw, r0.xyzw, r1.xyzw
 ret 
-// Approximately 49 instruction slots used
+// Approximately 45 instruction slots used
