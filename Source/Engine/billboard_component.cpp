@@ -11,12 +11,12 @@ BillbordComponent::BillbordComponent(Entity* entity)
 	GetEntity()->AddComponent<GeomPrimComponent>(GeomPrimType::Cube);
 
 	// Active billboard
-	GetEntity()->GetComponent<TransformComponent>()->GetTransform()->ActiveBillboard();
+	GetEntity()->GetComponent<TransformComponent>()->ActiveBillboard();
 }
 
 void BillbordComponent::Update(const float delta_time)
 {
-	auto* transform = GetEntity()->GetComponent<TransformComponent>()->GetTransform();
+	auto* transform = GetEntity()->GetComponent<TransformComponent>();
 
-	GetEntity()->GetComponent<TransformComponent>()->GetTransform()->GetBillboardRotation(transform->GetPosition(), GetEntity()->GetScene()->GetView()->GetEyePosition());
+	GetEntity()->GetComponent<TransformComponent>()->GetBillboardRotation(transform->GetPosition(), GetEntity()->GetScene()->GetView()->GetEyePosition());
 }

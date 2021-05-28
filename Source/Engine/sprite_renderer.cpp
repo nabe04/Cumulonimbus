@@ -59,7 +59,7 @@ void SpriteRenderer::RenderSprite(ID3D11DeviceContext* immediate_context, const 
 	if (entity->HasComponent<AnimSpriteComponent>())
 		return;
 
-	auto* transform = entity->GetComponent<TransformComponent>()->GetTransform();
+	auto* transform = entity->GetComponent<TransformComponent>();
 
 	if (!transform)
 		assert(!"Not found component(TransformComponenet)");
@@ -173,7 +173,7 @@ void SpriteRenderer::RenderAnim(ID3D11DeviceContext* immediate_context, const En
 	if (!sprite)
 		return;
 
-	auto* transform = entity->GetComponent<TransformComponent>()->GetTransform();
+	auto* transform = entity->GetComponent<TransformComponent>();
 
 	if (!transform)
 		assert(!"Not found component(TransformComponenet)");

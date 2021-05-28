@@ -44,7 +44,7 @@ SpriteComponent::SpriteComponent(Entity* entity, ID3D11Device* device,
 
 void SpriteComponent::Update(const float delta_time)
 {
-	auto* transform = GetEntity()->GetComponent<TransformComponent>()->GetTransform();
+	auto* transform = GetEntity()->GetComponent<TransformComponent>();
 
 	if (!transform)
 		assert(!"Not found component(TransformComponenet)");

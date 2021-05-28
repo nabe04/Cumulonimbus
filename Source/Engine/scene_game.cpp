@@ -24,38 +24,38 @@ void SceneGame::InitializeScene()
 	//-- View --//
 	view->SetCameraPos({ 25,100,-300 }, { .0f, .0f, .0f }, XMFLOAT3(.0f, 1.0f, .0f));
 
-	//auto* test_entity = AddEntity();
-	//test_entity->AddComponent<MeshObject>();
-	//test_entity->GetComponent<TransformComponent>()->GetTransform()->SetPosition({ 10,10,10 });
-	//SaveScene("Test5_28");
+	auto* test_entity = AddEntity();
+	test_entity->AddComponent<MeshObject>();
+	test_entity->GetComponent<TransformComponent>()->SetPosition({ 10,10,10 });
+	SaveScene("Test5_28_Night");
 
-	const char* sky_filename = "./Data/Assets/cubemap/skybox";
-	auto* sky_box = AddEntity(UpdateOrder::Default, EntityTag::Sky_Map);
-	sky_box->AddComponent<SkyBox>(GetFramework()->GetDevice(), sky_filename);
-	sky_box->GetComponent<TransformComponent>()->GetTransform()->SetScale(3);
-	sky_box->SetEntityName("Sky_Box");
+	//const char* sky_filename = "./Data/Assets/cubemap/skybox";
+	//auto* sky_box = AddEntity(UpdateOrder::Default, EntityTag::Sky_Map);
+	//sky_box->AddComponent<SkyBox>(GetFramework()->GetDevice(), sky_filename);
+	//sky_box->GetComponent<TransformComponent>()->SetScale(3);
+	//sky_box->SetEntityName("Sky_Box");
 
-	const char* ganfaul_filename = "./Data/Assets/Bin/ganfaul.bin";
-	std::shared_ptr<FbxModelResource> ganfaul_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), ganfaul_filename, "./Data/Assets/FBX/ganfaul/character.fbm/");
-	auto* player = AddEntity(UpdateOrder::Default, EntityTag::Player);
-	player->AddComponent<MeshObject>();
-	player->AddComponent<FbxModelComponent>(Locator::GetResourceManager()->FbxModelResouece("ganfaul"));
-	player->GetComponent<TransformComponent>()->GetTransform()->SetScale(0.3f);
-	player->GetComponent<TransformComponent>()->GetTransform()->SetPosition({ 0,10, 0 });
-	player->GetComponent<TransformComponent>()->GetTransform()->SetWorldRotation_Y(180);
-	player->GetComponent<MeshObject>()->SetRasterizeState(RasterizeState::Cull_Back_CCW_True);
-	player->GetComponent<FbxModelComponent>()->SwitchAnimation(2, true); // 0,1 T_Pose 2 Walk 3 Run 4 Attack
-	player->SetEntityName("Player");
+	//const char* ganfaul_filename = "./Data/Assets/Bin/ganfaul.bin";
+	//std::shared_ptr<FbxModelResource> ganfaul_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), ganfaul_filename, "./Data/Assets/FBX/ganfaul/character.fbm/");
+	//auto* player = AddEntity(UpdateOrder::Default, EntityTag::Player);
+	//player->AddComponent<MeshObject>();
+	//player->AddComponent<FbxModelComponent>(Locator::GetResourceManager()->FbxModelResouece("ganfaul"));
+	//player->GetComponent<TransformComponent>()->SetScale(0.3f);
+	//player->GetComponent<TransformComponent>()->SetPosition({ 0,10, 0 });
+	//player->GetComponent<TransformComponent>()->SetWorldRotation_Y(180);
+	//player->GetComponent<MeshObject>()->SetRasterizeState(RasterizeState::Cull_Back_CCW_True);
+	//player->GetComponent<FbxModelComponent>()->SwitchAnimation(2, true); // 0,1 T_Pose 2 Walk 3 Run 4 Attack
+	//player->SetEntityName("Player");
 
-	const char* ground_filename = "./Data/Assets/Bin/ground.bin";  // "./Data/Assets/FBX/stage/stage.fbm/"
-	std::shared_ptr<FbxModelResource> ground_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), ground_filename, "./Data/Assets/FBX/ground/");
-	auto* ground = AddEntity();
-	ground->AddComponent<MeshObject>();
-	ground->AddComponent<FbxModelComponent>(ground_resource);
-	ground->GetComponent<TransformComponent>()->GetTransform()->SetScale(DirectX::XMFLOAT3{ 1,1,0.1f });
-	ground->GetComponent<TransformComponent>()->GetTransform()->SetWorldRotation_X(90);
-	ground->GetComponent<MeshObject>()->SetSamplerState(RenderingSampleState::Linear_Wrap);
-	ground->SetEntityName("Ground");
+	//const char* ground_filename = "./Data/Assets/Bin/ground.bin";  // "./Data/Assets/FBX/stage/stage.fbm/"
+	//std::shared_ptr<FbxModelResource> ground_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), ground_filename, "./Data/Assets/FBX/ground/");
+	//auto* ground = AddEntity();
+	//ground->AddComponent<MeshObject>();
+	//ground->AddComponent<FbxModelComponent>(ground_resource);
+	//ground->GetComponent<TransformComponent>()->SetScale(DirectX::XMFLOAT3{ 1,1,0.1f });
+	//ground->GetComponent<TransformComponent>()->SetWorldRotation_X(90);
+	//ground->GetComponent<MeshObject>()->SetSamplerState(RenderingSampleState::Linear_Wrap);
+	//ground->SetEntityName("Ground");
 }
 
 void SceneGame::UpdateScene(const float delta_time)

@@ -22,7 +22,7 @@ CameraOperationComponent::CameraOperationComponent(Entity* entity, EntityTag tag
 		assert(!"Not found View");
 
 	//XMFLOAT3 focus_position = GetEntity()->GetComponent<TransformComponent>()->GetTransform()->GetPosition();
-	XMFLOAT3 target = GetEntity()->GetScene()->GetOtherEntity(EntityTag::Enemy)->GetComponent<TransformComponent>()->GetTransform()->GetPosition();
+	XMFLOAT3 target = GetEntity()->GetScene()->GetOtherEntity(EntityTag::Enemy)->GetComponent<TransformComponent>()->GetPosition();
 
 	if (!std::isfinite(target.x) || !std::isfinite(target.y) || !std::isfinite(target.z))
 	{
@@ -135,7 +135,7 @@ void CameraOperationComponent::FreeCamera(const float delta_time)
 	if (!view)
 		assert(!"Not found View");
 
-	auto* default_target_transform = GetEntity()->GetScene()->GetOtherEntity(my_target_tag)->GetComponent<TransformComponent>()->GetTransform();
+	auto* default_target_transform = GetEntity()->GetScene()->GetOtherEntity(my_target_tag)->GetComponent<TransformComponent>();
 }
 
 // brief : 登録したEntityを中心に回るカメラ
@@ -426,7 +426,7 @@ void CameraOperationComponent::Correction_LockOn_Free(const float delta_time)
 	view->SetCameraRight(right);
 	view->SetCameraUp(up);
 
-	auto* default_target_transform = GetEntity()->GetScene()->GetOtherEntity(my_target_tag)->GetComponent<TransformComponent>()->GetTransform();
+	auto* default_target_transform = GetEntity()->GetScene()->GetOtherEntity(my_target_tag)->GetComponent<TransformComponent>();
 	SimpleMath::Vector3 before_correction_vec	// 補完前のベクトル
 		= { camera_position - default_target_transform->GetPosition() };
 	before_correction_vec.Normalize();

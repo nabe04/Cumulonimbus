@@ -31,8 +31,8 @@ void Scene03::InitializeScene()
 	auto* rpg_character = AddEntity();
 	rpg_character->SetEntityName("RPG-Character");
 	rpg_character->AddComponent<FbxModelComponent>(rpg_character_resource);
-	rpg_character->GetComponent<TransformComponent>()->GetTransform()->SetWorldRotation_Y(180);
-	rpg_character->GetComponent<TransformComponent>()->GetTransform()->SetScale(0.1f);
+	rpg_character->GetComponent<TransformComponent>()->SetWorldRotation_Y(180);
+	rpg_character->GetComponent<TransformComponent>()->SetScale(0.1f);
 	rpg_character->AddComponent<AnimationCharacterComponent>();
 	rpg_character->GetComponent<AnimationCharacterComponent>()->UsingBuffer()->Set(RenderingBuffer::Bloom);
 

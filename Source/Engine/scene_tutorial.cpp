@@ -30,13 +30,13 @@ void SceneTutorial::InitializeScene()
 	const char* sky_filename = "./Data/Assets/cubemap/skybox";
 	auto* sky_box = AddEntity(UpdateOrder::Default, EntityTag::Sky_Map);
 	sky_box->AddComponent<SkyBox>(GetFramework()->GetDevice(), sky_filename);
-	sky_box->GetComponent<TransformComponent>()->GetTransform()->SetScale(3);
+	sky_box->GetComponent<TransformComponent>()->SetScale(3);
 	sky_box->SetEntityName("Sky_Box");
 
 	auto* stage = AddEntity(UpdateOrder::Default);
 	stage->AddComponent<MeshObject>();
 	stage->AddComponent<GeomPrimComponent>(GeomPrimType::Cube);
-	stage->GetComponent<TransformComponent>()->GetTransform()->SetScale({ 100.0f,0.1f,100.0f });
+	stage->GetComponent<TransformComponent>()->SetScale({ 100.0f,0.1f,100.0f });
 	stage->SetEntityName("Stage");
 
 	//const char* bunny_filename = "./Data/Assets/Bin/stanford_bunny.bin";
@@ -44,8 +44,8 @@ void SceneTutorial::InitializeScene()
 	auto* bunny = AddEntity();
 	bunny->AddComponent<MeshObject>();
 	bunny->AddComponent<FbxModelComponent>(Locator::GetResourceManager()->FbxModelResouece("stanford_bunny"));
-	bunny->GetComponent<TransformComponent>()->GetTransform()->SetScale(0.01f);
-	bunny->GetComponent<TransformComponent>()->GetTransform()->SetPositionY(5);
+	bunny->GetComponent<TransformComponent>()->SetScale(0.01f);
+	bunny->GetComponent<TransformComponent>()->SetPositionY(5);
 	bunny->GetComponent<MeshObject>()->SetRasterizeState(RasterizeState::Cull_Back);
 	bunny->SetEntityName("Bunny");
 
@@ -54,8 +54,8 @@ void SceneTutorial::InitializeScene()
 	auto* player = AddEntity(UpdateOrder::Default, EntityTag::Player);
 	player->AddComponent<MeshObject>();
 	player->AddComponent<FbxModelComponent>(Locator::GetResourceManager()->FbxModelResouece("ganfaul"));
-	player->GetComponent<TransformComponent>()->GetTransform()->SetScale(0.05f);
-	player->GetComponent<TransformComponent>()->GetTransform()->SetPosition({-10,3,0});
+	player->GetComponent<TransformComponent>()->SetScale(0.05f);
+	player->GetComponent<TransformComponent>()->SetPosition({-10,3,0});
 	player->GetComponent<MeshObject>()->SetRasterizeState(RasterizeState::Cull_Back_CCW_True);
 	player->GetComponent<FbxModelComponent>()->SwitchAnimation(2,true); // 0,1 T_Pose 2 Walk 3 Run 4 Attack
 	player->SetEntityName("Player");
@@ -63,8 +63,8 @@ void SceneTutorial::InitializeScene()
 	auto* sphere = AddEntity(UpdateOrder::Default);
 	sphere->AddComponent<MeshObject>();
 	sphere->AddComponent<GeomPrimComponent>(GeomPrimType::Sphere);
-	sphere->GetComponent<TransformComponent>()->GetTransform()->SetPosition({ -5.0f,4.0f,0.0f });
-	sphere->GetComponent<TransformComponent>()->GetTransform()->SetScale(3);
+	sphere->GetComponent<TransformComponent>()->SetPosition({ -5.0f,4.0f,0.0f });
+	sphere->GetComponent<TransformComponent>()->SetScale(3);
 	sphere->SetEntityName("Sphere");
 
 	//-- Light --//

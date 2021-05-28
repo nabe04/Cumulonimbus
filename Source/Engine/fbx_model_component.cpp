@@ -20,7 +20,7 @@ void FbxModelComponent::NewFrame(const float delta_time)
 
 void FbxModelComponent::Update(const float delta_time)
 {
-	const auto& world_transform = GetEntity()->GetComponent<TransformComponent>()->GetTransform()->GetWorld4x4();
+	const auto& world_transform = GetEntity()->GetComponent<TransformComponent>()->GetWorld4x4();
 
 	CalculateLocalTransform();
 	CalculateWorldTransform(world_transform);

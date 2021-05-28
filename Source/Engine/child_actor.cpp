@@ -24,9 +24,9 @@ void ChildActorComponent::Update(const float delta_time)
 {
 	Link(tag_node_name);
 
-	SimpleMath::Matrix ent_matrix = GetEntity()->GetComponent<TransformComponent>()->GetTransform()->GetWorld4x4();
+	SimpleMath::Matrix ent_matrix = GetEntity()->GetComponent<TransformComponent>()->GetWorld4x4();
 	ent_matrix *= parent_matrix;
-	GetEntity()->GetComponent<TransformComponent>()->GetTransform()->SetWorld4x4(ent_matrix);
+	GetEntity()->GetComponent<TransformComponent>()->SetWorld4x4(ent_matrix);
 }
 
 void ChildActorComponent::RenderImGui()

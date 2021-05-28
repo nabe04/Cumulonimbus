@@ -19,7 +19,7 @@ GeomPrimComponent::GeomPrimComponent(Entity* entity, GeomPrimType prim_type, con
 	: Component{ entity }
 {
 	// Set position
-	GetEntity()->GetComponent<TransformComponent>()->GetTransform()->SetPosition(pos);
+	GetEntity()->GetComponent<TransformComponent>()->SetPosition(pos);
 
 	// Create Geometric Primitive
 	mesh = GetEntity()->GetScene()->GetGeomPrimRes()->GetMeshData(prim_type);

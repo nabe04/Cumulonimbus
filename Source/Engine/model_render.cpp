@@ -250,7 +250,7 @@ void MeshRenderer::RenderSkyBox(ID3D11DeviceContext* immediate_context,
 		shader::CB_CoordinateTransformation cb{};
 		cb.mat_view_projection = view->GetView() * view->GetProjection();
 
-		cb.bone_transforms[0] = ent->GetComponent<TransformComponent>()->GetTransform()->GetWorld4x4();
+		cb.bone_transforms[0] = ent->GetComponent<TransformComponent>()->GetWorld4x4();
 		cbuffer_transformation->data = cb;
 		cbuffer_transformation->Activate(immediate_context, 0);
 	}
@@ -329,7 +329,7 @@ void MeshRenderer::RenderGeomPrim(ID3D11DeviceContext* immediate_context,
 		shader::CB_CoordinateTransformation cb{};
 		cb.mat_view_projection = view->GetView() * view->GetProjection();
 
-		cb.bone_transforms[0] = ent->GetComponent<TransformComponent>()->GetTransform()->GetWorld4x4();
+		cb.bone_transforms[0] = ent->GetComponent<TransformComponent>()->GetWorld4x4();
 		cbuffer_transformation->data = cb;
 		cbuffer_transformation->Activate(immediate_context, 0);
 	}
@@ -473,7 +473,7 @@ void MeshRenderer::RenderOBJ(ID3D11DeviceContext* immediate_context,
 		shader::CB_CoordinateTransformation cb{};
 		cb.mat_view_projection = view->GetView() * view->GetProjection();
 
-		cb.bone_transforms[0] = ent->GetComponent<TransformComponent>()->GetTransform()->GetWorld4x4();
+		cb.bone_transforms[0] = ent->GetComponent<TransformComponent>()->GetWorld4x4();
 		cbuffer_transformation->data = cb;
 		cbuffer_transformation->Activate(immediate_context, 0);
 	}
@@ -565,7 +565,7 @@ void MeshRenderer::RenderFBX(ID3D11DeviceContext* immediate_context,
 		}
 		else
 		{
-			cb_mesh.bone_transforms[0] = model->GetEntity()->GetComponent<TransformComponent>()->GetTransform()->GetWorld4x4();
+			cb_mesh.bone_transforms[0] = model->GetEntity()->GetComponent<TransformComponent>()->GetWorld4x4();
 			cb_mesh.mat_view_projection = view->GetView() * view->GetProjection();
 			//XMStoreFloat4x4(&cb_mesh.mat_view_projection, XMLoadFloat4x4(&view->GetView()) * XMLoadFloat4x4(&view->GetProjection()));
 		}

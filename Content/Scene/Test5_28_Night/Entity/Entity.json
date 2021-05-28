@@ -1,0 +1,9 @@
+{
+    "Entity Name": "Entity",
+    "Components Name": [
+        "TransformComponent",
+        "Origin"
+    ],
+    "Update Order": 0,
+    "Entity Tag": 0
+}

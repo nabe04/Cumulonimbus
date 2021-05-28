@@ -16,6 +16,6 @@ public:
 		if (angle > 360)
 			angle = 0;
 
-		GetEntity()->GetComponent<TransformComponent>()->GetTransform()->SetWorldRotation_Y(angle);
+		GetEntity()->GetComponent<TransformComponent>()->SetWorldRotation_Y(angle);
 	}
 };

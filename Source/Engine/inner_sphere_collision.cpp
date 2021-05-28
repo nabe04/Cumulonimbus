@@ -59,11 +59,11 @@ bool InnerSpherecollision_component::IntersectInnerSphere(Spherecollision_compon
 
 void InnerSpherecollision_component::Update(const float delta_time)
 {
-	auto ent_world_pos = GetEntity()->GetComponent<TransformComponent>()->GetTransform()->GetPosition();
-	const auto& ent_transform_matrix = GetEntity()->GetComponent<TransformComponent>()->GetTransform()->TransformMat();
+	auto ent_world_pos = GetEntity()->GetComponent<TransformComponent>()->GetPosition();
+	const auto& ent_transform_matrix = GetEntity()->GetComponent<TransformComponent>()->TransformMat();
 	XMMATRIX ent_world_translate_matrix = XMMatrixTranslation(ent_world_pos.x, ent_world_pos.y, ent_world_pos.z);
 
-	XMMATRIX ent_world_matrix = XMLoadFloat4x4(&GetEntity()->GetComponent<TransformComponent>()->GetTransform()->GetWorld4x4());
+	XMMATRIX ent_world_matrix = XMLoadFloat4x4(&GetEntity()->GetComponent<TransformComponent>()->GetWorld4x4());
 
 	for (auto& data : inner_sphere_datas)
 	{

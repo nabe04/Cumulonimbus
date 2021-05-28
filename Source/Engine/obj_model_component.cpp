@@ -310,7 +310,7 @@ void ObjModelComponent::SetCenerLocalPos()
 
 void ObjModelComponent::SetCenterWorldPos()
 {
-	center_pos.x += GetEntity()->GetComponent<TransformComponent>()->GetTransform()->DeltaPosition().x;
-	center_pos.y += GetEntity()->GetComponent<TransformComponent>()->GetTransform()->DeltaPosition().y;
-	center_pos.z += GetEntity()->GetComponent<TransformComponent>()->GetTransform()->DeltaPosition().z;
+	center_pos.x += GetEntity()->GetComponent<TransformComponent>()->DeltaPosition().x;
+	center_pos.y += GetEntity()->GetComponent<TransformComponent>()->DeltaPosition().y;
+	center_pos.z += GetEntity()->GetComponent<TransformComponent>()->DeltaPosition().z;
 }
