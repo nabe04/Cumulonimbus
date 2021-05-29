@@ -1,10 +1,11 @@
 #pragma once
+#include <cereal/cereal.hpp>
 
 #include "shader.h"
 
 namespace shader
 {
-		struct M_Metal
+	struct M_Metal
 	{// Supplemental Settings (b6)
 		FLOAT	 roughness = 0.5f;
 		FLOAT	 padding[3] = {};
@@ -13,6 +14,14 @@ namespace shader
 		{
 			//ImGui::ColorEdit4("Ambient", (float*)&ambient);
 			ImGui::DragFloat("Roughness", (float*)&roughness, 0.01f, 0.0f, 1.0f);
+		}
+
+		template<typename Archive>
+		void serialize(Archive&& archive)
+		{
+			archive(
+				cereal::make_nvp("roughness", roughness)
+			);
 		}
 	};
 

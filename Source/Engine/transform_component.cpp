@@ -14,6 +14,9 @@
 
 using namespace DirectX;
 
+CEREAL_REGISTER_TYPE(TransformComponent);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Component, TransformComponent)
+
 TransformComponent::TransformComponent(Entity* entity, const XMFLOAT3& pos)
 	: Component{ entity }
 {

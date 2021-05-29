@@ -1,8 +1,9 @@
 #include "shader_manager.h"
 
+#include <imgui.h>
+
 #include "scene.h"
 
-#include "imgui.h"
 
 namespace shader
 {
@@ -127,49 +128,49 @@ namespace shader
 			constant_buffer_state_3d.AddState
 			(
 				MeshShaderTypes::Standard,
-				[](const std::shared_ptr<const MeshShaderState>& state) {}
+				[](const MeshShaderState& state) {}
 			);
 
 			constant_buffer_state_3d.AddState
 			(
 				MeshShaderTypes::Diffuse,
-				[](const std::shared_ptr<const MeshShaderState>& state) {}
+				[](const MeshShaderState& state) {}
 			);
 
 			constant_buffer_state_3d.AddState
 			(
 				MeshShaderTypes::Phong,
-				[this](const std::shared_ptr<const MeshShaderState>& state) {this->phong->GetMaterial()->SetData(state->m_phong); }
+				[this](const MeshShaderState& state) {this->phong->GetMaterial()->SetData(state.m_phong); }
 			);
 
 			constant_buffer_state_3d.AddState
 			(
 				MeshShaderTypes::Metal,
-				[this](const std::shared_ptr<const MeshShaderState>& state) {this->metal->GetMaterial()->SetData(state->m_metal); }
+				[this](const MeshShaderState& state) {this->metal->GetMaterial()->SetData(state.m_metal); }
 			);
 
 			constant_buffer_state_3d.AddState
 			(
 				MeshShaderTypes::Toon,
-				[this](const std::shared_ptr<const MeshShaderState>& state) {this->toon->GetMaterial()->SetData(state->m_toon); }
+				[this](const MeshShaderState& state) {this->toon->GetMaterial()->SetData(state.m_toon); }
 			);
 
 			constant_buffer_state_3d.AddState
 			(
 				MeshShaderTypes::ReflectionMapping,
-				[](const std::shared_ptr<const MeshShaderState>& state) {}
+				[](const MeshShaderState& state) {}
 			);
 
 			constant_buffer_state_3d.AddState
 			(
 				MeshShaderTypes::RefractionMapping,
-				[this](const std::shared_ptr<const MeshShaderState>& state) {this->refraction_mapping->GetMaterial()->SetData(state->m_refraction); }
+				[this](const MeshShaderState& state) {this->refraction_mapping->GetMaterial()->SetData(state.m_refraction); }
 			);
 
 			constant_buffer_state_3d.AddState
 			(
 				MeshShaderTypes::SingleColor,
-				[this](const std::shared_ptr<const MeshShaderState>& state) {this->single_color->GetMaterial()->SetData(state->m_single_color); }
+				[this](const MeshShaderState& state) {this->single_color->GetMaterial()->SetData(state.m_single_color); }
 			);
 		}
 
@@ -194,22 +195,22 @@ namespace shader
 	}
 
 
-	void ShaderManager::Activate(ID3D11DeviceContext* immediate_context, const std::shared_ptr<const MeshShaderState>& state)
+	void ShaderManager::Activate(ID3D11DeviceContext* immediate_context,const MeshShaderState& state)
 	{
-		current_state_3d = state->GetShaderState();
+		current_state_3d = state.GetShaderState();
 
-		constant_buffer_state_3d.SetState(state->GetShaderState());
+		constant_buffer_state_3d.SetState(state.GetShaderState());
 		constant_buffer_state_3d.Update(state);
 
-		active_shader_state_3d.SetState(state->GetShaderState());
+		active_shader_state_3d.SetState(state.GetShaderState());
 		active_shader_state_3d.Update(immediate_context);
 
 		//Todo : 別のRenderTargetに書き込む処理(実行)
 	}
 
-	void ShaderManager::Deactivate(ID3D11DeviceContext* immediate_context, const std::shared_ptr<const MeshShaderState>& state)
+	void ShaderManager::Deactivate(ID3D11DeviceContext* immediate_context, const MeshShaderState& state)
 	{
-		deactive_shader_state_3d.SetState(state->GetShaderState());
+		deactive_shader_state_3d.SetState(state.GetShaderState());
 		deactive_shader_state_3d.Update(immediate_context);
 
 		//Todo : 別のRenderTargetに書き込む処理(非アクティブ化)
@@ -225,17 +226,17 @@ namespace shader
 		single_color->Deactivate(immediate_context);
 	}
 
-	void ShaderManager::Activate(ID3D11DeviceContext* immediate_context, const std::shared_ptr<const SpriteShaderState>& state)
+	void ShaderManager::Activate(ID3D11DeviceContext* immediate_context,const SpriteShaderState& state)
 	{
-		current_state_2d = state->GetShaderState();
+		current_state_2d = state.GetShaderState();
 
-		active_shader_state_2d.SetState(state->GetShaderState());
+		active_shader_state_2d.SetState(state.GetShaderState());
 		active_shader_state_2d.Update(immediate_context);
 	}
 
-	void ShaderManager::Deactivate(ID3D11DeviceContext* immediate_context, const std::shared_ptr<const SpriteShaderState>& state)
+	void ShaderManager::Deactivate(ID3D11DeviceContext* immediate_context, const SpriteShaderState& state)
 	{
-		deactive_shader_state_2d.SetState(state->GetShaderState());
+		deactive_shader_state_2d.SetState(state.GetShaderState());
 		deactive_shader_state_2d.Update(immediate_context);
 	}
 
@@ -246,6 +247,8 @@ namespace shader
 	//********************************************
 	MeshShaderState::MeshShaderState()
 	{
+		shader_type.SetState(MeshShaderTypes::Diffuse);
+
 		shader_states.AddState(MeshShaderTypes::Standard	, [] {});
 		shader_states.AddState(MeshShaderTypes::Diffuse		, [] {});
 		shader_states.AddState(MeshShaderTypes::Phong		, [this]() {m_phong.EditParam();});
@@ -260,11 +263,11 @@ namespace shader
 	{
 		if (ImGui::TreeNode("Shader Parameter"))
 		{
-			item_current = static_cast<int>(shader_type); // To correspond to the Shader that the current Component has
+			item_current = static_cast<int>(shader_type.GetCurrentState()); // To correspond to the Shader that the current Component has
 			ImGui::Combo("Shader Type", &item_current, items, IM_ARRAYSIZE(items));
 			SetShaderState(static_cast<MeshShaderTypes>(item_current));
 
-			EditShaderParam(shader_type);
+			EditShaderParam(shader_type.GetCurrentState());
 
 			ImGui::TreePop();
 		}
@@ -276,6 +279,23 @@ namespace shader
 		shader_states.Update();
 	}
 
+	//template <typename Archive>
+	//void MeshShaderState::serialize(Archive&& archive)
+	//{
+	//	archive(
+	//		cereal::make_nvp("M_Phong"		, m_phong),
+	//		cereal::make_nvp("M_Metal"		, m_metal),
+	//		cereal::make_nvp("M_Toon"		, m_toon),
+	//		cereal::make_nvp("M_Refraction"	, m_refraction),
+	//		cereal::make_nvp("M_SingleColor", m_single_color),
+	//		cereal::make_nvp("shader type"	,shader_type),
+	//		cereal::make_nvp("item current"	,item_current)
+	//		//cereal::make_nvp("shader state"	,shader_states)
+	//	);
+	//}
+
+
+	//-- SpriteShaderManager class--//
 	SpriteShaderManager::SpriteShaderManager(ID3D11Device* device)
 	{
 		standard_sprite = std::make_unique<StandardSprite>(device);

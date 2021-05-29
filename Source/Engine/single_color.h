@@ -4,10 +4,12 @@
 
 #include <DirectXMath.h>
 
-#include "imgui.h"
+#include <cereal/cereal.hpp>
+#include <imgui.h>
 
 #include "shader.h"
 #include "constant_buffer.h"
+#include "cereal_helper.h"
 
 namespace shader
 {
@@ -18,6 +20,14 @@ namespace shader
 		void EditParam()
 		{
 			ImGui::ColorEdit4("Color", (float*)&single_color);
+		}
+
+		template<typename Archive>
+		void serialize(Archive&& archive)
+		{
+			archive(
+				cereal::make_nvp("single_color", single_color)
+			);
 		}
 	};
 

@@ -102,7 +102,7 @@ void MeshRenderer::Render(ID3D11DeviceContext* immediate_context,
 	for (int index = 0; index < actor_comp->UsingBuffer()->rendering_buffer_bitset.size(); ++index)
 	{
 		frame_buffer_manager->UsingBuffer(index)->Activate(immediate_context);
-		rasterizer->Activate(immediate_context, actor_comp->GetRasterizeState());
+		rasterizer->Activate(immediate_context, actor_comp->GetRasterizerState());
 		blend->Activate(immediate_context, actor_comp->GetBlendState());
 		depth_stencil->Activate(immediate_context, actor_comp->GetDepthStencilState());
 		samplers.at(actor_comp->GetSamplerState())->Activate(immediate_context, 0);
@@ -204,7 +204,7 @@ void MeshRenderer::RenderShadow(ID3D11DeviceContext* immediate_context,
 
 	auto* actor_comp = ent->GetComponent<MeshObject>();
 
-	rasterizer->Activate(immediate_context, actor_comp->GetRasterizeState());
+	rasterizer->Activate(immediate_context, actor_comp->GetRasterizerState());
 	blend->Activate(immediate_context, actor_comp->GetBlendState());
 	depth_stencil->Activate(immediate_context, actor_comp->GetDepthStencilState());
 	samplers.at(RenderingSampleState::Linear_Border)->Activate(immediate_context, 0);

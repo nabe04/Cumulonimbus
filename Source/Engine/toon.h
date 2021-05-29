@@ -1,11 +1,10 @@
 #pragma once
 
 #include <memory>
-
 #include <wrl.h>
+#include <cereal/cereal.hpp>
 
 #include "shader.h"
-#include "constant_buffer.h"
 
 namespace shader
 {
@@ -21,6 +20,16 @@ namespace shader
 			ImGui::SliderInt("Tone", &tones, 1, 32);
 			ImGui::DragFloat("Reflection coefficient", &reflectance, 0.005f, 0.0f, 1.0f);
 			ImGui::DragFloat("Power", &power, 0.5f, 1.0f, 100.0f);
+		}
+
+		template<typename Archive>
+		void serialize(Archive&& archive)
+		{
+			archive(
+				cereal::make_nvp("tones", tones),
+				cereal::make_nvp("reflectance", reflectance),
+				cereal::make_nvp("power", power)
+			);
 		}
 	};
 

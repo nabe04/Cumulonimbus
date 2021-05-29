@@ -11,9 +11,7 @@ collision_component::collision_component(Entity* entity,CollisionTag tag)
 	: Component{ entity }
 	, tag{ tag }
 {
-	shader_state = std::make_shared<shader::MeshShaderState>();
-
-	shader_state->SetShaderState(shader::MeshShaderTypes::Standard);
+	shader_state.SetShaderState(shader::MeshShaderTypes::Standard);
 }
 
 void collision_component::Update(const float delta_time)

@@ -1,6 +1,8 @@
 #pragma once
 
-#include "imgui.h"
+#include <cereal/cereal.hpp>
+#include "cereal_helper.h"
+#include <imgui.h>
 
 #include "shader.h"
 
@@ -13,6 +15,14 @@ namespace shader
 		void EditParam()
 		{
 			ImGui::DragFloat("RefractieIndex", &refractive_index.x, 0.005f, 0.0f, 1.0f);
+		}
+
+		template<typename Archive>
+		void serialize(Archive&& archive)
+		{
+			archive(
+				cereal::make_nvp("refractive_index", refractive_index)
+			);
 		}
 	};
 

@@ -75,7 +75,7 @@ protected:
 
 	//-- State of Shader --//
 	//shader::MeshShaderState shader_state{};
-	std::shared_ptr<shader::MeshShaderState> shader_state = nullptr;
+	shader::MeshShaderState shader_state;
 
 	bool is_judge = true;
 
@@ -92,7 +92,7 @@ public:
 	virtual void OnCollision(const collision_component* other) {}
 
 	//-- Get debug primitive info --//
-	const std::shared_ptr<shader::MeshShaderState> GetShaderState() { return shader_state; }
+	const shader::MeshShaderState& GetShaderState() const { return shader_state; }
 
 	CollisionType GetType()const { return type; }
 	CollisionTag GetTag()const { return tag; }

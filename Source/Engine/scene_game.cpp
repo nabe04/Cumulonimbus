@@ -43,7 +43,7 @@ void SceneGame::InitializeScene()
 	//player->GetComponent<TransformComponent>()->SetScale(0.3f);
 	//player->GetComponent<TransformComponent>()->SetPosition({ 0,10, 0 });
 	//player->GetComponent<TransformComponent>()->SetWorldRotation_Y(180);
-	//player->GetComponent<MeshObject>()->SetRasterizeState(RasterizeState::Cull_Back_CCW_True);
+	//player->GetComponent<MeshObject>()->SetRasterizerState(RasterizeState::Cull_Back_CCW_True);
 	//player->GetComponent<FbxModelComponent>()->SwitchAnimation(2, true); // 0,1 T_Pose 2 Walk 3 Run 4 Attack
 	//player->SetEntityName("Player");
 

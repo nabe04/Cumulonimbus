@@ -182,6 +182,3 @@ private:
 	DirectX::XMMATRIX GetRotationMatrix(DirectX::XMFLOAT3 axis, float angle/* degree */);
 	DirectX::XMVECTOR GetRotationVec(DirectX::XMFLOAT3 axis, float angle/* degree */);
 };
-
-CEREAL_REGISTER_TYPE(TransformComponent);
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Component, TransformComponent)

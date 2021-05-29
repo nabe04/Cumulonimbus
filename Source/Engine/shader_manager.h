@@ -8,6 +8,7 @@
 
 #include "shader.h"
 #include "state_machine.h"
+#include "enum_state_map.h"
 
 //-- Shader 3D --//
 #include "3d_standard.h"
@@ -47,8 +48,8 @@ namespace shader
 		* brief       : Setting shader (3D)
 		* MeshShaderState : It's got information on each shader
 		*/
-		void Activate(ID3D11DeviceContext* immediate_context, const std::shared_ptr<const MeshShaderState>& state);
-		void Deactivate(ID3D11DeviceContext* immediate_context, const std::shared_ptr<const MeshShaderState>& state);
+		void Activate(ID3D11DeviceContext* immediate_context, const MeshShaderState& state);
+		void Deactivate(ID3D11DeviceContext* immediate_context, const MeshShaderState& state);
 
 		void ActivateSingleColor(ID3D11DeviceContext* immediate_context) const;
 		void DeactivateSingleColor(ID3D11DeviceContext* immediate_context) const;
@@ -57,8 +58,8 @@ namespace shader
 		* brief       : Setting shader (2D)
 		* MeshShaderState : It's got information on each shader
 		*/
-		void Activate(ID3D11DeviceContext* immediate_context, const std::shared_ptr<const SpriteShaderState>& state);
-		void Deactivate(ID3D11DeviceContext* immediate_context, const std::shared_ptr<const SpriteShaderState>& state);
+		void Activate(ID3D11DeviceContext* immediate_context, const SpriteShaderState& state);
+		void Deactivate(ID3D11DeviceContext* immediate_context, const SpriteShaderState& state);
 
 	private:
 		//-- 3D --//
@@ -82,7 +83,7 @@ namespace shader
 		StateMachine<SpriteShaderTypes, void, ID3D11DeviceContext*> active_shader_state_2d{};
 		StateMachine<SpriteShaderTypes, void, ID3D11DeviceContext*> deactive_shader_state_2d{};
 
-		StateMachine<MeshShaderTypes, void, const std::shared_ptr<const MeshShaderState>&> constant_buffer_state_3d{};
+		StateMachine<MeshShaderTypes, void, const MeshShaderState&> constant_buffer_state_3d{};
 	};
 
 	//---------------------------------------
@@ -98,23 +99,39 @@ namespace shader
 		M_Phong				m_phong{};
 		M_Metal				m_metal{};
 		M_Toon				m_toon{};
-		M_SpotLight			m_spot_light{};
 		M_Refraction		m_refraction{};
 		M_SingleColor		m_single_color{};
 
 		MeshShaderState();
 		~MeshShaderState() = default;
 
-		void SetShaderState(const MeshShaderTypes& type) { shader_type = type; }
-		[[nodiscard]] const MeshShaderTypes& GetShaderState() const { return shader_type; }
+		void SetShaderState(const MeshShaderTypes& type) { shader_type.SetState(type); }
+		[[nodiscard]] const MeshShaderTypes& GetShaderState() const { return shader_type.GetCurrentState(); }
 
 
 		//-- ImGui --//
 		void RenderImGui();
 		void EditShaderParam(MeshShaderTypes type);
 
+		// cereal
+		template<typename Archive>
+		void serialize(Archive&& archive)
+		{
+			archive(
+				cereal::make_nvp("M_Phong"		, m_phong),
+				cereal::make_nvp("M_Metal"		, m_metal),
+				cereal::make_nvp("M_Toon"		, m_toon),
+				cereal::make_nvp("M_Refraction"	, m_refraction),
+				cereal::make_nvp("M_SingleColor", m_single_color),
+				cereal::make_nvp("shader type"	,shader_type),
+				cereal::make_nvp("item current"	,item_current),
+				cereal::make_nvp("shader state"	,shader_states)
+			);
+		}
+
 	private:
-		MeshShaderTypes shader_type = MeshShaderTypes::Diffuse;
+		EnumStateMap<MeshShaderTypes> shader_type;
+		//MeshShaderTypes shader_type = MeshShaderTypes::Diffuse;
 
 		//-- ImGui --//
 		inline static const char* items[] = { "Standard","Diffuse","Phong","Metal","Toon","ReflactionMapping","RefractionMapping","SingleColor" };

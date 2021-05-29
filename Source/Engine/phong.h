@@ -1,6 +1,7 @@
 #pragma once
 
-#include "imgui.h"
+#include <cereal/cereal.hpp>
+#include <imgui.h>
 
 #include "shader.h"
 
@@ -18,6 +19,15 @@ namespace shader
 			ImGui::DragFloat("Specular", &specular, 0.005f, 0.0f, 1.0f);
 			ImGui::DragFloat("Reflection coefficient", &ref_coefficient, 0.005f, 0.0f, 1.0f);
 			ImGui::DragFloat("Power", &pow_value, 0.5f, 1.0f, 100.0f);
+		}
+
+		template<typename Archive>
+		void serialize(Archive&& archive)
+		{
+			archive(
+				cereal::make_nvp("specular", specular),
+				cereal::make_nvp("reflection coefficient", ref_coefficient),
+				cereal::make_nvp("power value", pow_value));
 		}
 	};
 

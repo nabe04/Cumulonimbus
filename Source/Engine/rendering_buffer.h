@@ -6,6 +6,8 @@
 
 #include <d3d11.h>
 
+#include <cereal/types/bitset.hpp>
+
 #include "frame_buffer.h"
 
 enum class RenderingBuffer
@@ -33,6 +35,14 @@ struct RenderingBufferBitset
 
 	void Set(const RenderingBuffer& index) { rendering_buffer_bitset.set(static_cast<int>(index)); }
 	void Reset(const RenderingBuffer& index) { rendering_buffer_bitset.reset(static_cast<int>(index)); }
+
+	template<typename Archive>
+	void serialize(Archive&& archive)
+	{
+		archive(
+			cereal::make_nvp("rendering_buffer_bitset", rendering_buffer_bitset)
+		);
+	}
 };
 
 class FrameBufferManager

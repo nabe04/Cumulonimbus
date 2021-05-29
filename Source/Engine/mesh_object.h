@@ -7,6 +7,7 @@
 #include <DirectXMath.h>
 
 #include "ecs.h"
+#include "enum_state_map.h"
 #include "blend.h"
 #include "rasterizer.h"
 #include "depth_stencil.h"
@@ -18,13 +19,17 @@ class MeshObject :public Component
 {
 protected:
 	//-- States of DirectX --//
-	BlendState			 blend_state			= BlendState::Alpha;
-	RasterizeState		 rasterizer_state		= RasterizeState::Cull_Back;
-	RenderingSampleState sampler_state			= RenderingSampleState::Linear_Border;
-	DepthStencilState	 depth_stencil_state	= DepthStencilState::DepthTest_True_Write_True;
+	EnumStateMap<BlendState>			blend_state{};
+	EnumStateMap<RasterizeState>		rasterizer_state{};
+	EnumStateMap<RenderingSampleState>	sampler_state{};
+	EnumStateMap<DepthStencilState>		depth_stencil_state{};
+	//BlendState			 blend_state			= BlendState::Alpha;
+	//RasterizeState		 rasterizer_state		= RasterizeState::Cull_Back;
+	//RenderingSampleState sampler_state			= RenderingSampleState::Linear_Border;
+	//DepthStencilState	 depth_stencil_state	= DepthStencilState::DepthTest_True_Write_True;
 
-	std::shared_ptr<shader::MeshShaderState>	shader_state = nullptr;
-	std::unique_ptr<RenderingBufferBitset>		rendering_buffer;
+	shader::MeshShaderState	shader_state;
+	RenderingBufferBitset	rendering_buffer;
 
 public:
 	explicit MeshObject(Entity* entity);
@@ -35,26 +40,32 @@ public:
 	virtual void Update(const float delta_time)override {};
 	virtual void RenderImGui() override;
 
-	[[nodiscard]] auto GetBlendState()		    const { return blend_state; }
-	[[nodiscard]] auto GetRasterizeState()	    const { return rasterizer_state; }
-	[[nodiscard]] auto GetDepthStencilState()   const { return depth_stencil_state; }
-	[[nodiscard]] auto GetSamplerState()		const { return sampler_state; }
+	[[nodiscard]] auto GetBlendState()		    const { return blend_state.GetCurrentState(); }
+	[[nodiscard]] auto GetRasterizerState()	    const { return rasterizer_state.GetCurrentState(); }
+	[[nodiscard]] auto GetDepthStencilState()   const { return depth_stencil_state.GetCurrentState(); }
+	[[nodiscard]] auto GetSamplerState()		const { return sampler_state.GetCurrentState(); }
 	[[nodiscard]] auto GetShaderState()		    const { return shader_state; }
 
-	void SetBlendState(const BlendState& state) { blend_state = state; }
-	void SetRasterizeState(const RasterizeState& state) { rasterizer_state = state; }
-	void SetDepthStencilState(const DepthStencilState& state) { depth_stencil_state = state; }
-	void SetSamplerState(const RenderingSampleState& state) { sampler_state = state; }
-	void SetShaderState(shader::MeshShaderTypes type) {  shader_state->SetShaderState(type); }
+	void SetBlendState(const BlendState& state) { blend_state.SetState(state); }
+	void SetRasterizerState(const RasterizeState& state) { rasterizer_state.SetState(state); }
+	void SetDepthStencilState(const DepthStencilState& state) { depth_stencil_state.SetState(state); }
+	void SetSamplerState(const RenderingSampleState& state) { sampler_state.SetState(state); }
+	void SetShaderState(shader::MeshShaderTypes type) {  shader_state.SetShaderState(type); }
 
-	[[nodiscard]] RenderingBufferBitset* UsingBuffer() const { return rendering_buffer.get(); }
+	[[nodiscard]] RenderingBufferBitset* UsingBuffer() { return &rendering_buffer; }
 
 	template<class Archive>
 	void serialize(Archive&& archive)
 	{
 		archive(
-			cereal::make_nvp("Component Name", component_name),
-			cereal::make_nvp("Blend State"	 , blend_state)
+			cereal::make_nvp("component name"		, component_name),
+			cereal::make_nvp("blend state"			, blend_state),
+			cereal::make_nvp("rasterizer state"		,rasterizer_state),
+			cereal::make_nvp("sampler state"		,sampler_state),
+			cereal::make_nvp("depth stencil_state"	,depth_stencil_state),
+
+			cereal::make_nvp("shader state"			,shader_state),
+			cereal::make_nvp("rendering_buffer"		,rendering_buffer)
 		);
 	}
 };

@@ -46,7 +46,7 @@ void SceneTutorial::InitializeScene()
 	bunny->AddComponent<FbxModelComponent>(Locator::GetResourceManager()->FbxModelResouece("stanford_bunny"));
 	bunny->GetComponent<TransformComponent>()->SetScale(0.01f);
 	bunny->GetComponent<TransformComponent>()->SetPositionY(5);
-	bunny->GetComponent<MeshObject>()->SetRasterizeState(RasterizeState::Cull_Back);
+	bunny->GetComponent<MeshObject>()->SetRasterizerState(RasterizeState::Cull_Back);
 	bunny->SetEntityName("Bunny");
 
 	//const char* ganfaul_filename = "./Data/Assets/Bin/ganfaul.bin";
@@ -56,7 +56,7 @@ void SceneTutorial::InitializeScene()
 	player->AddComponent<FbxModelComponent>(Locator::GetResourceManager()->FbxModelResouece("ganfaul"));
 	player->GetComponent<TransformComponent>()->SetScale(0.05f);
 	player->GetComponent<TransformComponent>()->SetPosition({-10,3,0});
-	player->GetComponent<MeshObject>()->SetRasterizeState(RasterizeState::Cull_Back_CCW_True);
+	player->GetComponent<MeshObject>()->SetRasterizerState(RasterizeState::Cull_Back_CCW_True);
 	player->GetComponent<FbxModelComponent>()->SwitchAnimation(2,true); // 0,1 T_Pose 2 Walk 3 Run 4 Attack
 	player->SetEntityName("Player");
 
