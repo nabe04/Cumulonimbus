@@ -4,18 +4,12 @@
 #include <string>
 #include <imgui.h>
 
-#include <cereal/cereal.hpp>
 #include <cereal/archives/json.hpp>
-#include <cereal/types/bitset.hpp>
-#include "cereal_helper.h"
 
 #include "transform.h"
 #include "arithmetic.h"
 
 using namespace DirectX;
-
-CEREAL_REGISTER_TYPE(TransformComponent);
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Component, TransformComponent)
 
 TransformComponent::TransformComponent(Entity* entity, const XMFLOAT3& pos)
 	: Component{ entity }
@@ -67,109 +61,38 @@ void TransformComponent::RenderImGui()
 	}
 }
 
-void TransformComponent::Save(std::string file_path)
-{
-	const std::string file_path_and_name = file_path + component_name + ".json";
-	std::ofstream ofs(file_path_and_name);
-	cereal::JSONOutputArchive o_archive(ofs);
-	o_archive(
-		CEREAL_NVP(component_name),
-		CEREAL_NVP(position),
-		CEREAL_NVP(prev_pos),
-		CEREAL_NVP(scale),
-		CEREAL_NVP(angle),
-		CEREAL_NVP(prev_angle),
-
-		CEREAL_NVP(world_f4x4),
-		CEREAL_NVP(scaling_matrix),
-		CEREAL_NVP(rotation_matrix),
-		CEREAL_NVP(translation_matrix),
-
-		CEREAL_NVP(model_right),
-		CEREAL_NVP(model_front),
-		CEREAL_NVP(model_up),
-		CEREAL_NVP(orientation),
-
-		// Quaternion
-		CEREAL_NVP(axis),
-		CEREAL_NVP(local_quaternion),
-		CEREAL_NVP(world_quaternion),
-
-		CEREAL_NVP(set_angle_bit_flg),
-		CEREAL_NVP(is_billboard),
-		CEREAL_NVP(is_quaternion)
-	);
-}
-
-void TransformComponent::Load(Entity* entity,std::string file_path_and_name)
-{
-	{
-		std::ifstream ifs(file_path_and_name);
-		cereal::JSONInputArchive i_archive(ifs);
-		i_archive(
-			CEREAL_NVP(component_name),
-			CEREAL_NVP(position),
-			CEREAL_NVP(prev_pos),
-			CEREAL_NVP(scale),
-			CEREAL_NVP(angle),
-			CEREAL_NVP(prev_angle),
-
-			CEREAL_NVP(world_f4x4),
-			CEREAL_NVP(scaling_matrix),
-			CEREAL_NVP(rotation_matrix),
-			CEREAL_NVP(translation_matrix),
-
-			CEREAL_NVP(model_right),
-			CEREAL_NVP(model_front),
-			CEREAL_NVP(model_up),
-			CEREAL_NVP(orientation),
-
-			// Quaternion
-			CEREAL_NVP(axis),
-			CEREAL_NVP(local_quaternion),
-			CEREAL_NVP(world_quaternion),
-
-			CEREAL_NVP(set_angle_bit_flg),
-			CEREAL_NVP(is_billboard),
-			CEREAL_NVP(is_quaternion)
-		);
-
-		this->entity = entity;
-	}
-}
-
-template <class Archive>
-void TransformComponent::serialize(Archive&& archive)
-{
-	archive(
-		cereal::make_nvp("Component Name", component_name),
-		CEREAL_NVP(position),
-		CEREAL_NVP(prev_pos),
-		CEREAL_NVP(scale),
-		CEREAL_NVP(angle),
-		CEREAL_NVP(prev_angle),
-
-		CEREAL_NVP(world_f4x4),
-		CEREAL_NVP(scaling_matrix),
-		CEREAL_NVP(rotation_matrix),
-		CEREAL_NVP(translation_matrix),
-
-		CEREAL_NVP(model_right),
-		CEREAL_NVP(model_front),
-		CEREAL_NVP(model_up),
-		CEREAL_NVP(orientation),
-
-		// Quaternion
-		CEREAL_NVP(axis),
-		CEREAL_NVP(local_quaternion),
-		CEREAL_NVP(world_quaternion),
-
-		CEREAL_NVP(set_angle_bit_flg),
-		CEREAL_NVP(is_billboard),
-		CEREAL_NVP(is_quaternion)
-
-	);
-}
+//template <class Archive>
+//void TransformComponent::serialize(Archive&& archive)
+//{
+//	archive(
+//		cereal::make_nvp("Component Name", component_name),
+//		CEREAL_NVP(position),
+//		CEREAL_NVP(prev_pos),
+//		CEREAL_NVP(scale),
+//		CEREAL_NVP(angle),
+//		CEREAL_NVP(prev_angle),
+//
+//		CEREAL_NVP(world_f4x4),
+//		CEREAL_NVP(scaling_matrix),
+//		CEREAL_NVP(rotation_matrix),
+//		CEREAL_NVP(translation_matrix),
+//
+//		CEREAL_NVP(model_right),
+//		CEREAL_NVP(model_front),
+//		CEREAL_NVP(model_up),
+//		CEREAL_NVP(orientation),
+//
+//		// Quaternion
+//		CEREAL_NVP(axis),
+//		CEREAL_NVP(local_quaternion),
+//		CEREAL_NVP(world_quaternion),
+//
+//		CEREAL_NVP(set_angle_bit_flg),
+//		CEREAL_NVP(is_billboard),
+//		CEREAL_NVP(is_quaternion)
+//
+//	);
+//}
 
 
 void TransformComponent::CreateScaling4x4()
@@ -415,3 +338,79 @@ XMVECTOR TransformComponent::GetRotationVec(XMFLOAT3 axis, float angle/* degree 
 
 	return store_vec;
 }
+
+//template <class Archive>
+//void TransformComponent::serialize(Archive&& archive)
+
+
+void TransformComponent::Save(std::string file_path)
+{
+	const std::string file_path_and_name = file_path + component_name + ".json";
+	std::ofstream ofs(file_path_and_name);
+	cereal::JSONOutputArchive o_archive(ofs);
+	o_archive(
+		CEREAL_NVP(component_name),
+		CEREAL_NVP(position),
+		CEREAL_NVP(prev_pos),
+		CEREAL_NVP(scale),
+		CEREAL_NVP(angle),
+		CEREAL_NVP(prev_angle),
+
+		CEREAL_NVP(world_f4x4),
+		CEREAL_NVP(scaling_matrix),
+		CEREAL_NVP(rotation_matrix),
+		CEREAL_NVP(translation_matrix),
+
+		CEREAL_NVP(model_right),
+		CEREAL_NVP(model_front),
+		CEREAL_NVP(model_up),
+		CEREAL_NVP(orientation),
+
+		// Quaternion
+		CEREAL_NVP(axis),
+		CEREAL_NVP(local_quaternion),
+		CEREAL_NVP(world_quaternion),
+
+		CEREAL_NVP(set_angle_bit_flg),
+		CEREAL_NVP(is_billboard),
+		CEREAL_NVP(is_quaternion)
+	);
+}
+
+void TransformComponent::Load(Entity* entity, std::string file_path_and_name)
+{
+	{
+		std::ifstream ifs(file_path_and_name);
+		cereal::JSONInputArchive i_archive(ifs);
+		i_archive(
+			CEREAL_NVP(component_name),
+			CEREAL_NVP(position),
+			CEREAL_NVP(prev_pos),
+			CEREAL_NVP(scale),
+			CEREAL_NVP(angle),
+			CEREAL_NVP(prev_angle),
+
+			CEREAL_NVP(world_f4x4),
+			CEREAL_NVP(scaling_matrix),
+			CEREAL_NVP(rotation_matrix),
+			CEREAL_NVP(translation_matrix),
+
+			CEREAL_NVP(model_right),
+			CEREAL_NVP(model_front),
+			CEREAL_NVP(model_up),
+			CEREAL_NVP(orientation),
+
+			// Quaternion
+			CEREAL_NVP(axis),
+			CEREAL_NVP(local_quaternion),
+			CEREAL_NVP(world_quaternion),
+
+			CEREAL_NVP(set_angle_bit_flg),
+			CEREAL_NVP(is_billboard),
+			CEREAL_NVP(is_quaternion)
+		);
+
+		this->entity = entity;
+	}
+}
+

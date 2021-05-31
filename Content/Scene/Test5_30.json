@@ -1,0 +1,342 @@
+{
+    "scene_name": "Scene_Game",
+    "entities": [
+        {
+            "ptr_wrapper": {
+                "valid": 1,
+                "data": {
+                    "components": [
+                        {
+                            "polymorphic_id": 2147483649,
+                            "polymorphic_name": "TransformComponent",
+                            "ptr_wrapper": {
+                                "valid": 1,
+                                "data": {
+                                    "component_name": "TransformComponent",
+                                    "position": {
+                                        "x": 10.0,
+                                        "y": 10.0,
+                                        "z": 10.0
+                                    },
+                                    "prev_pos": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "scale": {
+                                        "x": 1.0,
+                                        "y": 1.0,
+                                        "z": 1.0
+                                    },
+                                    "angle": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "prev_angle": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "world_f4x4": {
+                                        "_11": 1.0,
+                                        "_12": 0.0,
+                                        "_13": 0.0,
+                                        "_14": 0.0,
+                                        "_21": 0.0,
+                                        "_22": 1.0,
+                                        "_23": 0.0,
+                                        "_24": 0.0,
+                                        "_31": 0.0,
+                                        "_32": 0.0,
+                                        "_33": 1.0,
+                                        "_34": 0.0,
+                                        "_41": 0.0,
+                                        "_42": 0.0,
+                                        "_43": 0.0,
+                                        "_44": 1.0
+                                    },
+                                    "scaling_matrix": {
+                                        "_11": 1.0,
+                                        "_12": 0.0,
+                                        "_13": 0.0,
+                                        "_14": 0.0,
+                                        "_21": 0.0,
+                                        "_22": 1.0,
+                                        "_23": 0.0,
+                                        "_24": 0.0,
+                                        "_31": 0.0,
+                                        "_32": 0.0,
+                                        "_33": 1.0,
+                                        "_34": 0.0,
+                                        "_41": 0.0,
+                                        "_42": 0.0,
+                                        "_43": 0.0,
+                                        "_44": 1.0
+                                    },
+                                    "rotation_matrix": {
+                                        "_11": 1.0,
+                                        "_12": 0.0,
+                                        "_13": 0.0,
+                                        "_14": 0.0,
+                                        "_21": 0.0,
+                                        "_22": 1.0,
+                                        "_23": 0.0,
+                                        "_24": 0.0,
+                                        "_31": 0.0,
+                                        "_32": 0.0,
+                                        "_33": 1.0,
+                                        "_34": 0.0,
+                                        "_41": 0.0,
+                                        "_42": 0.0,
+                                        "_43": 0.0,
+                                        "_44": 1.0
+                                    },
+                                    "translation_matrix": {
+                                        "_11": 1.0,
+                                        "_12": 0.0,
+                                        "_13": 0.0,
+                                        "_14": 0.0,
+                                        "_21": 0.0,
+                                        "_22": 1.0,
+                                        "_23": 0.0,
+                                        "_24": 0.0,
+                                        "_31": 0.0,
+                                        "_32": 0.0,
+                                        "_33": 1.0,
+                                        "_34": 0.0,
+                                        "_41": 0.0,
+                                        "_42": 0.0,
+                                        "_43": 0.0,
+                                        "_44": 1.0
+                                    },
+                                    "model_right": {
+                                        "x": 1.0,
+                                        "y": 0.0,
+                                        "z": 0.0
+                                    },
+                                    "model_front": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 1.0
+                                    },
+                                    "model_up": {
+                                        "x": 0.0,
+                                        "y": 1.0,
+                                        "z": 0.0
+                                    },
+                                    "orientation": {
+                                        "_11": 1.0,
+                                        "_12": 0.0,
+                                        "_13": 0.0,
+                                        "_14": 0.0,
+                                        "_21": 0.0,
+                                        "_22": 1.0,
+                                        "_23": 0.0,
+                                        "_24": 0.0,
+                                        "_31": 0.0,
+                                        "_32": 0.0,
+                                        "_33": 1.0,
+                                        "_34": 0.0,
+                                        "_41": 0.0,
+                                        "_42": 0.0,
+                                        "_43": 0.0,
+                                        "_44": 1.0
+                                    },
+                                    "axis": {
+                                        "x": 0.0,
+                                        "y": 1.0,
+                                        "z": 0.0
+                                    },
+                                    "local_quaternion": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0,
+                                        "w": 1.0
+                                    },
+                                    "world_quaternion": {
+                                        "x": 0.0,
+                                        "y": 0.0,
+                                        "z": 0.0,
+                                        "w": 1.0
+                                    },
+                                    "set_angle_bit_flg": {
+                                        "type": 0,
+                                        "data": 0
+                                    },
+                                    "is_billboard": false,
+                                    "is_quaternion": false
+                                }
+                            }
+                        },
+                        {
+                            "polymorphic_id": 2147483650,
+                            "polymorphic_name": "MeshObject",
+                            "ptr_wrapper": {
+                                "valid": 1,
+                                "data": {
+                                    "component name": "Origin",
+                                    "blend state": {
+                                        "State Map": [
+                                            {
+                                                "key": "Add",
+                                                "value": 2
+                                            },
+                                            {
+                                                "key": "Alpha",
+                                                "value": 1
+                                            },
+                                            {
+                                                "key": "None",
+                                                "value": 0
+                                            },
+                                            {
+                                                "key": "Subtract",
+                                                "value": 3
+                                            }
+                                        ],
+                                        "Current State": 1
+                                    },
+                                    "rasterizer state": {
+                                        "State Map": [
+                                            {
+                                                "key": "Cull_Back",
+                                                "value": 0
+                                            },
+                                            {
+                                                "key": "Cull_Back_CCW_True",
+                                                "value": 3
+                                            },
+                                            {
+                                                "key": "Cull_Front",
+                                                "value": 1
+                                            },
+                                            {
+                                                "key": "Cull_None",
+                                                "value": 2
+                                            }
+                                        ],
+                                        "Current State": 0
+                                    },
+                                    "sampler state": {
+                                        "State Map": [
+                                            {
+                                                "key": "Anistropic",
+                                                "value": 3
+                                            },
+                                            {
+                                                "key": "Linear_Border",
+                                                "value": 0
+                                            },
+                                            {
+                                                "key": "Linear_Wrap",
+                                                "value": 2
+                                            },
+                                            {
+                                                "key": "Point_Wrap",
+                                                "value": 1
+                                            }
+                                        ],
+                                        "Current State": 0
+                                    },
+                                    "depth stencil_state": {
+                                        "State Map": [
+                                            {
+                                                "key": "DepthTest_False",
+                                                "value": 0
+                                            },
+                                            {
+                                                "key": "DepthTest_True_Write_False",
+                                                "value": 2
+                                            },
+                                            {
+                                                "key": "DepthTest_True_Write_True",
+                                                "value": 1
+                                            },
+                                            {
+                                                "key": "Depth_First",
+                                                "value": 3
+                                            }
+                                        ],
+                                        "Current State": 1
+                                    },
+                                    "shader state": {
+                                        "M_Phong": {
+                                            "specular": 1.0,
+                                            "reflection coefficient": 1.0,
+                                            "power value": 1.0
+                                        },
+                                        "M_Metal": {
+                                            "roughness": 0.5
+                                        },
+                                        "M_Toon": {
+                                            "tones": 3,
+                                            "reflectance": 1.0,
+                                            "power": 1.0
+                                        },
+                                        "M_Refraction": {
+                                            "refractive_index": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0,
+                                                "w": 0.0
+                                            }
+                                        },
+                                        "M_SingleColor": {
+                                            "single_color": {
+                                                "x": 0.0,
+                                                "y": 0.0,
+                                                "z": 0.0,
+                                                "w": 0.0
+                                            }
+                                        },
+                                        "shader type": {
+                                            "State Map": [
+                                                {
+                                                    "key": "Diffuse",
+                                                    "value": 1
+                                                },
+                                                {
+                                                    "key": "Metal",
+                                                    "value": 3
+                                                },
+                                                {
+                                                    "key": "Phong",
+                                                    "value": 2
+                                                },
+                                                {
+                                                    "key": "Standard",
+                                                    "value": 0
+                                                }
+                                            ],
+                                            "Current State": 1
+                                        },
+                                        "item current": 0,
+                                        "shader state": {
+                                            "current state": -1,
+                                            "old state": -1,
+                                            "is switched": false
+                                        }
+                                    },
+                                    "rendering_buffer": {
+                                        "rendering_buffer_bitset": {
+                                            "type": 0,
+                                            "data": 1
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "entity_name": "Test_Entity",
+                    "component_names": [
+                        "TransformComponent",
+                        "Origin"
+                    ],
+                    "update_order": 0,
+                    "entity_tag": 0
+                }
+            }
+        }
+    ]
+}

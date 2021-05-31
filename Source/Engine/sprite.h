@@ -12,7 +12,6 @@
 #include "cereal/types/memory.hpp"
 #include "cereal_helper.h"
 
-
 #include "ecs.h"
 
 class TextureResource;

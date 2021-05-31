@@ -25,9 +25,10 @@ void SceneGame::InitializeScene()
 	view->SetCameraPos({ 25,100,-300 }, { .0f, .0f, .0f }, XMFLOAT3(.0f, 1.0f, .0f));
 
 	auto* test_entity = AddEntity();
+	test_entity->SetEntityName("Test_Entity");
 	test_entity->AddComponent<MeshObject>();
 	test_entity->GetComponent<TransformComponent>()->SetPosition({ 10,10,10 });
-	SaveScene("Test5_28_Night");
+	SaveScene("Test5_30");
 
 	//const char* sky_filename = "./Data/Assets/cubemap/skybox";
 	//auto* sky_box = AddEntity(UpdateOrder::Default, EntityTag::Sky_Map);
