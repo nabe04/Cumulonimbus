@@ -2,27 +2,22 @@
 
 ActorComponent::ActorComponent(Entity* entity, ActorType actor_type)
 	: Component{ entity }
-	, actor_type{ actor_type }
 {
-	if (actor_type == ActorType::Actor3D)
-	{
-		shader_state = std::make_shared<shader::MeshShaderState>();
-	}
-	else if (actor_type == ActorType::Actor2D)
-	{
-		shader_state_2D = std::make_shared<shader::SpriteShaderState>();
-	}
+	this->actor_type.SetState(actor_type);
 
-	rendering_buffer = std::make_unique<RenderingBufferBitset>();
+	blend_state.SetState(BlendState::Alpha);
+	rasterizer_state.SetState(RasterizeState::Cull_Back);
+	sampler_state.SetState(RenderingSampleState::Linear_Border);
+	depth_stencil_state.SetState(DepthStencilState::DepthTest_True_Write_True);
 }
 
 void ActorComponent::RenderImGui()
 {
-	if (actor_type == ActorType::Actor3D)
+	if (actor_type.GetCurrentState() == ActorType::Actor3D)
 	{
-		shader_state->RenderImGui();
+		shader_state.RenderImGui();
 	}
-	else if (actor_type == ActorType::Actor2D)
+	else if (actor_type.GetCurrentState() == ActorType::Actor2D)
 	{
 		//shader_state_2D-
 	}

@@ -23,10 +23,6 @@ protected:
 	EnumStateMap<RasterizeState>		rasterizer_state{};
 	EnumStateMap<RenderingSampleState>	sampler_state{};
 	EnumStateMap<DepthStencilState>		depth_stencil_state{};
-	//BlendState			 blend_state			= BlendState::Alpha;
-	//RasterizeState		 rasterizer_state		= RasterizeState::Cull_Back;
-	//RenderingSampleState sampler_state			= RenderingSampleState::Linear_Border;
-	//DepthStencilState	 depth_stencil_state	= DepthStencilState::DepthTest_True_Write_True;
 
 	shader::MeshShaderState	shader_state;
 	RenderingBufferBitset	rendering_buffer;
@@ -58,8 +54,8 @@ public:
 	void serialize(Archive&& archive)
 	{
 		archive(
-			cereal::make_nvp("component name"		, component_name),
-			cereal::make_nvp("blend state"			, blend_state),
+			cereal::make_nvp("component name"		,component_name),
+			cereal::make_nvp("blend state"			,blend_state),
 			cereal::make_nvp("rasterizer state"		,rasterizer_state),
 			cereal::make_nvp("sampler state"		,sampler_state),
 			cereal::make_nvp("depth stencil_state"	,depth_stencil_state),

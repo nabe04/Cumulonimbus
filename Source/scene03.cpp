@@ -34,7 +34,7 @@ void Scene03::InitializeScene()
 	rpg_character->GetComponent<TransformComponent>()->SetWorldRotation_Y(180);
 	rpg_character->GetComponent<TransformComponent>()->SetScale(0.1f);
 	rpg_character->AddComponent<AnimationCharacterComponent>();
-	rpg_character->GetComponent<AnimationCharacterComponent>()->UsingBuffer()->Set(RenderingBuffer::Bloom);
+	rpg_character->GetComponent<AnimationCharacterComponent>()->SetUsingBuffer(RenderingBuffer::Bloom);
 
 	//-- View --//
 	view->SetCameraPos(XMFLOAT3(.0f, 100.0f, -100.0f), XMFLOAT3(.0f, .0f, .0f), XMFLOAT3(.0f, 1.0f, .0f));

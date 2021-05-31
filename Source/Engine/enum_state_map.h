@@ -51,6 +51,16 @@ public:
 		);
 	}
 
+	//void operator{} (const T& state)
+	//{
+	//	if (!state_map.contains(nameof::nameof_enum(state).data()))
+	//	{
+	//		assert(!"Don't have state");
+	//	}
+
+	//	current_state = state;
+	//}
+
 private:
 	std::map<std::string, T> state_map{};
 
