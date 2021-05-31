@@ -2,7 +2,8 @@
     "Entity Name": "Test_Entity",
     "Components Name": [
         "TransformComponent",
-        "Origin"
+        "MeshObject",
+        "ActorComponent"
     ],
     "Update Order": 0,
     "Entity Tag": 0

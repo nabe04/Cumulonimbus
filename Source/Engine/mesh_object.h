@@ -32,9 +32,12 @@ public:
 	explicit MeshObject()  = default; // For cereal
 	~MeshObject() override = default;
 
-	virtual void NewFrame(const float delta_time)override {};
-	virtual void Update(const float delta_time)override {};
-	virtual void RenderImGui() override;
+	void NewFrame(const float delta_time)override {};
+	void Update(const float delta_time)override {};
+	void RenderImGui() override;
+
+	void Save(std::string file_path) override;
+	void Load(Entity* entity, std::string file_path_and_name) override;
 
 	[[nodiscard]] auto GetBlendState()		    const { return blend_state.GetCurrentState(); }
 	[[nodiscard]] auto GetRasterizerState()	    const { return rasterizer_state.GetCurrentState(); }
@@ -42,11 +45,11 @@ public:
 	[[nodiscard]] auto GetSamplerState()		const { return sampler_state.GetCurrentState(); }
 	[[nodiscard]] auto GetShaderState()		    const { return shader_state; }
 
-	void SetBlendState(const BlendState& state) { blend_state.SetState(state); }
-	void SetRasterizerState(const RasterizeState& state) { rasterizer_state.SetState(state); }
-	void SetDepthStencilState(const DepthStencilState& state) { depth_stencil_state.SetState(state); }
-	void SetSamplerState(const RenderingSampleState& state) { sampler_state.SetState(state); }
-	void SetShaderState(shader::MeshShaderTypes type) {  shader_state.SetShaderState(type); }
+	void SetBlendState(const BlendState& state)					{ blend_state.SetState(state); }
+	void SetRasterizerState(const RasterizeState& state)		{ rasterizer_state.SetState(state); }
+	void SetDepthStencilState(const DepthStencilState& state)	{ depth_stencil_state.SetState(state); }
+	void SetSamplerState(const RenderingSampleState& state)		{ sampler_state.SetState(state); }
+	void SetShaderState(shader::MeshShaderTypes type)			{  shader_state.SetShaderState(type); }
 
 	[[nodiscard]] RenderingBufferBitset* UsingBuffer() { return &rendering_buffer; }
 

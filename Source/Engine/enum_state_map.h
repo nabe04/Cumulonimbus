@@ -15,7 +15,9 @@ class EnumStateMap
 public:
 	EnumStateMap()
 	{
-		for (int i = 0; i < sizeof(T); ++i)
+		const int size = static_cast<int>(T::End);
+
+		for (int i = 0; i < size; ++i)
 		{
 			auto flag = static_cast<T>(i);
 			state_map.insert(
@@ -26,6 +28,11 @@ public:
 
 		auto flag	  = static_cast<T>(0);
 		current_state = state_map.at(nameof::nameof_enum(flag).data());
+	}
+	EnumStateMap(const T& state)
+		:EnumStateMap()
+	{
+		current_state = state;
 	}
 
 	[[nodiscard]] unsigned int NumState() const { return state_map.size(); }

@@ -9,6 +9,7 @@
 #include "sky_box.h"
 #include "mesh_object.h"
 
+#include "actor_component.h"
 
 using namespace shader;
 
@@ -28,6 +29,7 @@ void SceneGame::InitializeScene()
 	test_entity->SetEntityName("Test_Entity");
 	test_entity->AddComponent<MeshObject>();
 	test_entity->GetComponent<TransformComponent>()->SetPosition({ 10,10,10 });
+	test_entity->AddComponent<ActorComponent>(ActorType::Actor3D);
 	SaveScene("Test5_30");
 
 	//const char* sky_filename = "./Data/Assets/cubemap/skybox";

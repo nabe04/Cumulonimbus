@@ -28,12 +28,15 @@ class ActorComponent : public Component
 {
 public:
 	explicit ActorComponent(Entity* entity, ActorType actor_type = ActorType::Actor3D);
-	explicit ActorComponent()  = default;
+	explicit ActorComponent()  = default; // For cereal
 	~ActorComponent() override = default;
 
 	void NewFrame(const float delta_time)override {};
 	void Update(const float delta_time)override {};
 	void RenderImGui() override;
+
+	void Save(std::string file_path) override;
+	void Load(Entity* entity, std::string file_path_and_name) override;
 
 	[[nodiscard]] const BlendState& GetBlendState()					const  { return blend_state.GetCurrentState(); }
 	[[nodiscard]] const RasterizeState& GetRasterizeState()			const  { return rasterizer_state.GetCurrentState(); }
@@ -72,13 +75,13 @@ public:
 	}
 
 protected:
-	EnumStateMap<ActorType> actor_type;
+	EnumStateMap<ActorType> actor_type{ActorType::Actor3D};
 
 	//-- States of DirectX --//
-	EnumStateMap<BlendState>			blend_state{};
-	EnumStateMap<RasterizeState>		rasterizer_state{};
-	EnumStateMap<RenderingSampleState>	sampler_state{};
-	EnumStateMap<DepthStencilState>		depth_stencil_state{};
+	EnumStateMap<BlendState>			blend_state{ BlendState::Alpha };
+	EnumStateMap<RasterizeState>		rasterizer_state{ RasterizeState::Cull_Back };
+	EnumStateMap<RenderingSampleState>	sampler_state{ RenderingSampleState::Linear_Border };
+	EnumStateMap<DepthStencilState>		depth_stencil_state{ DepthStencilState::DepthTest_True_Write_True };
 
 	//-- State of Shader --//
 	shader::MeshShaderState   shader_state{};

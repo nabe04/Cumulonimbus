@@ -1,0 +1,203 @@
+{
+    "component_name": "MeshObject",
+    "blend_state": {
+        "State Map": [
+            {
+                "key": "Add",
+                "value": 2
+            },
+            {
+                "key": "Alpha",
+                "value": 1
+            },
+            {
+                "key": "AlphaToCoverage",
+                "value": 9
+            },
+            {
+                "key": "Darken",
+                "value": 7
+            },
+            {
+                "key": "Lighten",
+                "value": 6
+            },
+            {
+                "key": "Multiply",
+                "value": 5
+            },
+            {
+                "key": "None",
+                "value": 0
+            },
+            {
+                "key": "Replace",
+                "value": 4
+            },
+            {
+                "key": "Screen",
+                "value": 8
+            },
+            {
+                "key": "Subtract",
+                "value": 3
+            }
+        ],
+        "Current State": 1
+    },
+    "rasterizer_state": {
+        "State Map": [
+            {
+                "key": "Cull_Back",
+                "value": 0
+            },
+            {
+                "key": "Cull_Back_CCW_True",
+                "value": 3
+            },
+            {
+                "key": "Cull_Front",
+                "value": 1
+            },
+            {
+                "key": "Cull_Front_CCW_True",
+                "value": 4
+            },
+            {
+                "key": "Cull_None",
+                "value": 2
+            },
+            {
+                "key": "Cull_None_CCW_True",
+                "value": 5
+            },
+            {
+                "key": "Wireframe",
+                "value": 6
+            }
+        ],
+        "Current State": 0
+    },
+    "sampler_state": {
+        "State Map": [
+            {
+                "key": "Anistropic",
+                "value": 3
+            },
+            {
+                "key": "Linear_Border",
+                "value": 0
+            },
+            {
+                "key": "Linear_Wrap",
+                "value": 2
+            },
+            {
+                "key": "Point_Wrap",
+                "value": 1
+            }
+        ],
+        "Current State": 0
+    },
+    "depth_stencil_state": {
+        "State Map": [
+            {
+                "key": "DepthTest_False",
+                "value": 0
+            },
+            {
+                "key": "DepthTest_True_Write_False",
+                "value": 2
+            },
+            {
+                "key": "DepthTest_True_Write_True",
+                "value": 1
+            },
+            {
+                "key": "Depth_First",
+                "value": 3
+            }
+        ],
+        "Current State": 1
+    },
+    "shader_state": {
+        "M_Phong": {
+            "specular": 1.0,
+            "reflection coefficient": 1.0,
+            "power value": 1.0
+        },
+        "M_Metal": {
+            "roughness": 0.5
+        },
+        "M_Toon": {
+            "tones": 3,
+            "reflectance": 1.0,
+            "power": 1.0
+        },
+        "M_Refraction": {
+            "refractive_index": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 0.0
+            }
+        },
+        "M_SingleColor": {
+            "single_color": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 0.0
+            }
+        },
+        "shader type": {
+            "State Map": [
+                {
+                    "key": "Diffuse",
+                    "value": 1
+                },
+                {
+                    "key": "Metal",
+                    "value": 3
+                },
+                {
+                    "key": "Phong",
+                    "value": 2
+                },
+                {
+                    "key": "ReflectionMapping",
+                    "value": 5
+                },
+                {
+                    "key": "RefractionMapping",
+                    "value": 6
+                },
+                {
+                    "key": "SingleColor",
+                    "value": 7
+                },
+                {
+                    "key": "Standard",
+                    "value": 0
+                },
+                {
+                    "key": "Toon",
+                    "value": 4
+                }
+            ],
+            "Current State": 1
+        },
+        "item current": 0,
+        "shader state": {
+            "current state": -1,
+            "old state": -1,
+            "is switched": false
+        }
+    },
+    "rendering_buffer": {
+        "rendering_buffer_bitset": {
+            "type": 0,
+            "data": 1
+        }
+    }
+}

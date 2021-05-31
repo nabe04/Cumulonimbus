@@ -2,12 +2,15 @@
 
 #include <string>
 #include <vector>
+#include <fstream>
 
 #include <nameof.h>
 
 MeshObject::MeshObject(Entity* entity)
 	:Component{ entity }
 {
+	component_name = "MeshObject";
+
 	blend_state.SetState(BlendState::Alpha);
 	rasterizer_state.SetState(RasterizeState::Cull_Back);
 	sampler_state.SetState(RenderingSampleState::Linear_Border);
@@ -139,3 +142,38 @@ void MeshObject::RenderImGui()
 		ImGui::TreePop();
 	}
 };
+
+void MeshObject::Save(std::string file_path)
+{
+	const std::string file_path_and_name = file_path + component_name + ".json";
+	std::ofstream ofs(file_path_and_name);
+	cereal::JSONOutputArchive o_archive(ofs);
+	o_archive(
+		CEREAL_NVP(component_name),
+		CEREAL_NVP(blend_state),
+		CEREAL_NVP(rasterizer_state),
+		CEREAL_NVP(sampler_state),
+		CEREAL_NVP( depth_stencil_state),
+
+		CEREAL_NVP(shader_state),
+		CEREAL_NVP(rendering_buffer)
+	);
+}
+
+void MeshObject::Load(Entity* entity, std::string file_path_and_name)
+{
+	std::ifstream ifs(file_path_and_name);
+	cereal::JSONInputArchive i_archive(ifs);
+	i_archive(
+		CEREAL_NVP(component_name),
+		CEREAL_NVP(blend_state),
+		CEREAL_NVP(rasterizer_state),
+		CEREAL_NVP(sampler_state),
+		CEREAL_NVP(depth_stencil_state),
+
+		CEREAL_NVP(shader_state),
+		CEREAL_NVP(rendering_buffer)
+	);
+
+	this->entity = entity;
+}
