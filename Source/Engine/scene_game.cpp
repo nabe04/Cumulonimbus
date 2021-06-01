@@ -36,12 +36,12 @@ void SceneGame::InitializeScene()
 	const char* uv_chekcer_filename = "uv_checker";
 	auto* uv_chekcer = AddEntity();
 	uv_chekcer->AddComponent<SpriteObject>();
-	//uv_chekcer->AddComponent<AnimSpriteComponent>(GetFramework()->GetDevice(), uv_chekcer_filename, PivotType::Center,
-	//	0, 0,
-	//	256, 256,
-	//	8, 8);
-	//uv_chekcer->GetComponent<TransformComponent>()->SetPosition({ 500,500,0 });
-	//uv_chekcer->SetEntityName("UV_Chacker");
+	uv_chekcer->AddComponent<AnimSpriteComponent>(GetFramework()->GetDevice(), uv_chekcer_filename, PivotType::Center,
+		0, 0,
+		256, 256,
+		8, 8);
+	uv_chekcer->GetComponent<TransformComponent>()->SetPosition({ 500,500,0 });
+	uv_chekcer->SetEntityName("UV_Chacker");
 
 	SaveScene("Test5_30");
 
