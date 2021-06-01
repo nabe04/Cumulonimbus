@@ -56,6 +56,39 @@ bool collision_component::CompareTag(CollisionTag tag)
 	return this->tag == tag;
 }
 
+void collision_component::Save(std::string file_path)
+{
+	const std::string file_path_and_name = file_path + component_name + ".json";
+	std::ofstream ofs(file_path_and_name);
+	cereal::JSONOutputArchive o_archive(ofs);
+	o_archive(
+		cereal::base_class<Component>(this),
+		CEREAL_NVP(type),
+		CEREAL_NVP(tag),
+
+		CEREAL_NVP(shader_state),
+		CEREAL_NVP(is_judge)
+	);
+}
+
+void collision_component::Load(Entity* entity, std::string file_path_and_name)
+{
+	std::ifstream ifs(file_path_and_name);
+	cereal::JSONInputArchive i_archive(ifs);
+	i_archive(
+		cereal::base_class<Component>(this),
+		CEREAL_NVP(type),
+		CEREAL_NVP(tag),
+
+		CEREAL_NVP(shader_state),
+		CEREAL_NVP(is_judge)
+	);
+
+	this->entity = entity;
+}
+
+
+
 
 //void collision_component::CreateShpere(ID3D11Device* device)
 //{

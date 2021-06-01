@@ -2,6 +2,7 @@
 
 #include "collision_component.h"
 #include "transform.h"
+#include "geometric_primitive_resource.h"
 
 struct SphereCollisionData
 {

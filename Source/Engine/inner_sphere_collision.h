@@ -7,6 +7,7 @@
 #include <SimpleMath.h>
 
 #include "collision_component.h"
+#include "geometric_primitive_resource.h"
 
 struct InnerSphereCollisionData
 {
