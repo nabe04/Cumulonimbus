@@ -42,7 +42,7 @@ void ChildActorComponent::Link(std::string node_name)
 
 	for (const auto& node : parent->GetComponent<FbxModelComponent>()->GetNodes())
 	{
-		if (strcmp(node_name.c_str(), node.name) == 0)
+		if (node_name == node.name)
 		{
 			parent_matrix = node.world_transform;
 		}

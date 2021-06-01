@@ -37,7 +37,7 @@ class FbxModelComponent final : public Component
 public:
 	struct Node
 	{
-		const char*					name{};
+		std::string					name{};
 		Node*						parent{};
 		DirectX::XMFLOAT3			scale{};
 		DirectX::XMFLOAT4			rotate{};
@@ -77,7 +77,8 @@ public:
 	[[nodiscard]] const std::vector<Node>& GetNodes() const { return nodes; }
 	[[nodiscard]] std::vector<Node>& GetNodes() { return nodes; }
 	[[nodiscard]] const FbxModelResource* GetResource() const { return resource.get(); }
-
+	[[nodiscard]] const DirectX::XMFLOAT4& GetColor() const { return color; }
+	
 	void UpdateAnimState(const float delta_time) { anim_states.Update(delta_time); }
 
 	// 現在のキーフレーム

@@ -86,7 +86,7 @@ FbxModelComponent::FbxModelComponent(Entity* entity, const std::shared_ptr<FbxMo
 		auto&& src = res_nodes.at(node_index);
 		auto&& dst = nodes.at(node_index);
 
-		dst.name = src.name.c_str();
+		dst.name  = src.name;
 		dst.parent = src.parent_index >= 0 ? &nodes.at(src.parent_index) : nullptr;
 		dst.scale = src.scale;
 		dst.rotate = src.rotate;
@@ -113,7 +113,7 @@ void FbxModelComponent::Initialize(const std::shared_ptr<FbxModelResource>& reso
 		auto&& src = res_nodes.at(node_index);
 		auto&& dst = nodes.at(node_index);
 
-		dst.name = src.name.c_str();
+		dst.name  = src.name;
 		dst.parent = src.parent_index >= 0 ? &nodes.at(src.parent_index) : nullptr;
 		dst.scale = src.scale;
 		dst.rotate = src.rotate;
@@ -356,7 +356,7 @@ const DirectX::SimpleMath::Matrix& FbxModelComponent::GetNodeMatrix(const char* 
 {
 	for (const auto& node : nodes)
 	{
-		if (strcmp(node_name, node.name) == 0)
+		if (node_name == node.name)
 		{
 			return node.world_transform;
 		}
@@ -371,7 +371,7 @@ const DirectX::SimpleMath::Matrix& FbxModelComponent::GetNodePareantMatrix(const
 {
 	for (const auto& node : nodes)
 	{
-		if (strcmp(node_name, node.name) == 0)
+		if (node_name == node.name)
 		{
 			return node.local_transform;
 		}

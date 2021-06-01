@@ -583,7 +583,7 @@ void MeshRenderer::RenderFBX(ID3D11DeviceContext* immediate_context,
 		{
 			shader::CB_Material cb_subset;
 			cb_subset.color = subset.material != NULL ? subset.material->color : XMFLOAT4{ 0.8f, 0.8f, 0.8f, 1.0f };
-			cb_subset.color.w = model->color.w;
+			cb_subset.color.w = model->GetColor().w;
 			cbuffer_material->data = cb_subset;
 			cbuffer_material->Activate(immediate_context, 1);
 			if (subset.material && subset.material->shader_resource_view)
