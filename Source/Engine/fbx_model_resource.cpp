@@ -1,11 +1,9 @@
 #include "fbx_model_resource.h"
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <assert.h>
+#include <cassert>
 #include <fstream>
 
-#include "shader.h"
+#include <fbxsdk.h>
 
 // シリアライズ
 namespace DirectX	// namespaceをそろえる

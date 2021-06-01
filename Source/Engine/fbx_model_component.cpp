@@ -25,8 +25,6 @@ void FbxModelComponent::Update(const float delta_time)
 	CalculateLocalTransform();
 	CalculateWorldTransform(world_transform);
 
-	anim_states;
-
 	UpdateAnimState(delta_time);
 }
 
@@ -67,8 +65,6 @@ void FbxModelComponent::RenderImGui()
 			ImGui::ColorEdit4(str.c_str(), (float*)&material.color);
 			++no;
 		}
-
-		ImGui::DragFloat("Color Alpha", &color.w, 0.5f,0, 255);
 
 		ImGui::Text("Current Keyframe : %d", current_keyframe);
 
@@ -319,12 +315,11 @@ void FbxModelComponent::CalculateWorldTransform(const DirectX::XMFLOAT4X4& world
 {
 	for (Node& node : nodes)
 	{
-
-		DirectX::XMMATRIX local_transform_matrix = DirectX::XMLoadFloat4x4(&node.local_transform);
-		DirectX::XMMATRIX world_transform_matrix = DirectX::XMLoadFloat4x4(&world_transform);
+		const DirectX::XMMATRIX local_transform_matrix = DirectX::XMLoadFloat4x4(&node.local_transform);
+		const DirectX::XMMATRIX world_transform_matrix = DirectX::XMLoadFloat4x4(&world_transform);
 		if (node.parent != nullptr)
 		{
-			DirectX::XMMATRIX parent_transform = DirectX::XMLoadFloat4x4(&node.parent->world_transform);
+			const DirectX::XMMATRIX parent_transform = DirectX::XMLoadFloat4x4(&node.parent->world_transform);
 			DirectX::XMStoreFloat4x4(&node.world_transform, local_transform_matrix * parent_transform);
 		}
 		else
@@ -385,4 +380,15 @@ const DirectX::SimpleMath::Matrix& FbxModelComponent::GetNodePareantMatrix(const
 	assert(!"Not found node name");
 
 	return DirectX::SimpleMath::Matrix::Identity;
+}
+
+void FbxModelComponent::Save(std::string file_path)
+{
+
+}
+
+
+void FbxModelComponent::Load(Entity* entity, std::string file_path_and_name)
+{
+
 }
