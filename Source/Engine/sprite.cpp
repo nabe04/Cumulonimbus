@@ -7,8 +7,6 @@
 #include "framework.h"
 #include "shader.h"
 #include "scene.h"
-#include "framework.h"
-#include "texture.h"
 #include "transform.h"
 #include "transform_component.h"
 #include "sprite_object.h"

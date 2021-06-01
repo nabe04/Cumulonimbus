@@ -7,14 +7,13 @@
 #include <wrl.h>
 #include <DirectXMath.h>
 
-#include "cereal/cereal.hpp"
-#include "cereal/types/array.hpp"
+#include <cereal/cereal.hpp>
+#include <cereal/types/array.hpp>
 #include "cereal/types/memory.hpp"
 #include "cereal_helper.h"
 
 #include "ecs.h"
-
-class TextureResource;
+#include "texture.h"
 
 enum class PivotType
 {
@@ -60,24 +59,24 @@ public:
 		const char* filename, const PivotType pivot_type,
 		const int src_left, const int src_top,
 		const int src_width, const int src_height);
-	SpriteComponent() = default;
+	explicit SpriteComponent()  = default;
 	~SpriteComponent() override = default;
 
 	void Update(const float delta_time) override;
 
-	int VariableWidth()  const { return variable_width; }
-	int VariableHeight() const { return variable_height; }
-	DirectX::XMFLOAT4 Color() const { return color; }
+	[[nodiscard]] int VariableWidth()  const { return variable_width; }
+	[[nodiscard]] int VariableHeight() const { return variable_height; }
+	[[nodiscard]] const DirectX::XMFLOAT4& Color() const { return color; }
 
 	void  VariableWidth(int width) { variable_width = width; }
 	void  VariableHeight(int height) { variable_height = height; }
 	void  Color(const DirectX::XMFLOAT4& color) { this->color = color; }
 
-	const std::array<DirectX::XMFLOAT2, 4>& GetVariableTexcoords() { return variable_texcoords; }
-	const DirectX::XMFLOAT2& GetSrcPivot() { return src_pivot; }
-	ID3D11Buffer*  GetVertexBuffer() { return vertex_buffer.Get(); }
-	ID3D11Buffer** GetVertexBufferAddress() { return vertex_buffer.GetAddressOf(); }
-	TextureResource* GetTexture() { return texture.get(); }
+	[[nodiscard]] const std::array<DirectX::XMFLOAT2, 4>& GetVariableTexcoords() const { return variable_texcoords; }
+	[[nodiscard]] const DirectX::XMFLOAT2& GetSrcPivot() const { return src_pivot; }
+	[[nodiscard]] ID3D11Buffer*  GetVertexBuffer() const { return vertex_buffer.Get(); }
+	[[nodiscard]] ID3D11Buffer** GetVertexBufferAddress() { return vertex_buffer.GetAddressOf(); }
+	[[nodiscard]] TextureResource* GetTexture() const { return texture.get(); }
 
 	void RenderImGui() override;
 
@@ -102,3 +101,6 @@ public:
 		);
 	}
 };
+
+CEREAL_REGISTER_TYPE(SpriteComponent);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Component, SpriteComponent)

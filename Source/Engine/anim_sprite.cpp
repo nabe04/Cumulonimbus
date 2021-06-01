@@ -17,14 +17,14 @@ AnimSpriteComponent::AnimSpriteComponent(Entity* entity, ID3D11Device* device,
 	num_clip.y = num_clip_h;
 
 	CreateAnim(num_clip_w, num_clip_h);
-	AjustAnimPivot(pivot_type, src_left, src_top, src_width / num_clip.x, src_height / num_clip.y);
+	AdjustAnimPivot(pivot_type, src_left, src_top, src_width / num_clip.x, src_height / num_clip.y);
 	SetAnimation(0, 0);
 }
 
 void AnimSpriteComponent::CreateAnim(const int num_clip_w, const int num_clip_h)
 {
-	float rate_w = 1.0f / static_cast<float>(num_clip_w);
-	float rate_h = 1.0f / static_cast<float>(num_clip_h);
+	const float rate_w = 1.0f / static_cast<float>(num_clip_w);
+	const float rate_h = 1.0f / static_cast<float>(num_clip_h);
 
 	for (auto& it : clip_texcoord)
 	{
@@ -62,7 +62,7 @@ void AnimSpriteComponent::CreateAnim(const int num_clip_w, const int num_clip_h)
 	}
 }
 
-void AnimSpriteComponent::AjustAnimPivot(PivotType pivot, const int left, const int top, const int width, const int height)
+void AnimSpriteComponent::AdjustAnimPivot(PivotType pivot, const int left, const int top, const int width, const int height)
 {
 	switch (pivot)
 	{

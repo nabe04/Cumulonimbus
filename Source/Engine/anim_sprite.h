@@ -37,7 +37,7 @@ private:
 
 private:
 	void CreateAnim(const int num_clip_w, const int num_clip_h);
-	void AjustAnimPivot(PivotType pivot, const int left, const int top, const int width, const int height);
+	void AdjustAnimPivot(PivotType pivot, const int left, const int top, const int width, const int height);
 
 public:
 	explicit AnimSpriteComponent(Entity* entity, ID3D11Device* device,
