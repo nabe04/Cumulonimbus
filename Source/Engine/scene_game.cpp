@@ -8,8 +8,10 @@
 #include "scene_title.h"
 #include "sky_box.h"
 #include "mesh_object.h"
+#include "anim_sprite.h"
 
 #include "actor_component.h"
+#include "sprite_object.h"
 
 using namespace shader;
 
@@ -25,11 +27,22 @@ void SceneGame::InitializeScene()
 	//-- View --//
 	view->SetCameraPos({ 25,100,-300 }, { .0f, .0f, .0f }, XMFLOAT3(.0f, 1.0f, .0f));
 
-	auto* test_entity = AddEntity();
-	test_entity->SetEntityName("Test_Entity");
-	test_entity->AddComponent<MeshObject>();
-	test_entity->GetComponent<TransformComponent>()->SetPosition({ 10,10,10 });
-	test_entity->AddComponent<ActorComponent>(ActorType::Actor3D);
+	//auto* test_entity = AddEntity();
+	//test_entity->SetEntityName("Test_Entity");
+	//test_entity->AddComponent<MeshObject>();
+	//test_entity->GetComponent<TransformComponent>()->SetPosition({ 10,10,10 });
+	//test_entity->AddComponent<ActorComponent>(ActorType::Actor3D);
+
+	const char* uv_chekcer_filename = "uv_checker";
+	auto* uv_chekcer = AddEntity();
+	uv_chekcer->AddComponent<SpriteObject>();
+	//uv_chekcer->AddComponent<AnimSpriteComponent>(GetFramework()->GetDevice(), uv_chekcer_filename, PivotType::Center,
+	//	0, 0,
+	//	256, 256,
+	//	8, 8);
+	//uv_chekcer->GetComponent<TransformComponent>()->SetPosition({ 500,500,0 });
+	//uv_chekcer->SetEntityName("UV_Chacker");
+
 	SaveScene("Test5_30");
 
 	//const char* sky_filename = "./Data/Assets/cubemap/skybox";

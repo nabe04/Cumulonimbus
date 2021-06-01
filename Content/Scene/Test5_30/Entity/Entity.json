@@ -1,7 +1,8 @@
 {
     "Entity Name": "Entity",
     "Components Name": [
-        "TransformComponent"
+        "TransformComponent",
+        "SpriteObject"
     ],
     "Update Order": 0,
     "Entity Tag": 0

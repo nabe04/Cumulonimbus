@@ -27,7 +27,7 @@
 #include "resource_manager.h"
 #include "editor_manager.h"
 #include "camera_work.h"
-#include "transform_component.h"
+//#include "transform_component.h"
 
 class GeometricPrimitiveResource;
 

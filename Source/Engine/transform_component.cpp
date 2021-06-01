@@ -349,6 +349,7 @@ void TransformComponent::Save(std::string file_path)
 	std::ofstream ofs(file_path_and_name);
 	cereal::JSONOutputArchive o_archive(ofs);
 	o_archive(
+		cereal::base_class<Component>(this),
 		CEREAL_NVP(component_name),
 		CEREAL_NVP(position),
 		CEREAL_NVP(prev_pos),
@@ -383,6 +384,7 @@ void TransformComponent::Load(Entity* entity, std::string file_path_and_name)
 		std::ifstream ifs(file_path_and_name);
 		cereal::JSONInputArchive i_archive(ifs);
 		i_archive(
+			cereal::base_class<Component>(this),
 			CEREAL_NVP(component_name),
 			CEREAL_NVP(position),
 			CEREAL_NVP(prev_pos),

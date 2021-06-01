@@ -1,5 +1,8 @@
 {
-    "component_name": "MeshObject",
+    "value0": {
+        "component_name": "SpriteObject"
+    },
+    "component_name": "SpriteObject",
     "blend_state": {
         "State Map": [
             {
@@ -81,20 +84,8 @@
     "sampler_state": {
         "State Map": [
             {
-                "key": "Anistropic",
-                "value": 3
-            },
-            {
                 "key": "Linear_Border",
                 "value": 0
-            },
-            {
-                "key": "Linear_Wrap",
-                "value": 2
-            },
-            {
-                "key": "Point_Wrap",
-                "value": 1
             }
         ],
         "Current State": 0
@@ -118,86 +109,9 @@
                 "value": 3
             }
         ],
-        "Current State": 1
+        "Current State": 0
     },
-    "shader_state": {
-        "M_Phong": {
-            "specular": 1.0,
-            "reflection coefficient": 1.0,
-            "power value": 1.0
-        },
-        "M_Metal": {
-            "roughness": 0.5
-        },
-        "M_Toon": {
-            "tones": 3,
-            "reflectance": 1.0,
-            "power": 1.0
-        },
-        "M_Refraction": {
-            "refractive_index": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0,
-                "w": 0.0
-            }
-        },
-        "M_SingleColor": {
-            "single_color": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0,
-                "w": 0.0
-            }
-        },
-        "shader type": {
-            "State Map": [
-                {
-                    "key": "Diffuse",
-                    "value": 1
-                },
-                {
-                    "key": "Metal",
-                    "value": 3
-                },
-                {
-                    "key": "Phong",
-                    "value": 2
-                },
-                {
-                    "key": "ReflectionMapping",
-                    "value": 5
-                },
-                {
-                    "key": "RefractionMapping",
-                    "value": 6
-                },
-                {
-                    "key": "SingleColor",
-                    "value": 7
-                },
-                {
-                    "key": "Standard",
-                    "value": 0
-                },
-                {
-                    "key": "Toon",
-                    "value": 4
-                }
-            ],
-            "Current State": 1
-        },
-        "item current": 0,
-        "shader state": {
-            "current state": -1,
-            "old state": -1,
-            "is switched": false
-        }
-    },
-    "rendering_buffer": {
-        "rendering_buffer_bitset": {
-            "type": 0,
-            "data": 1
-        }
+    "sprite_shader_state": {
+        "shader_type": 0
     }
 }

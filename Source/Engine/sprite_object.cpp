@@ -8,7 +8,6 @@ SpriteObject::SpriteObject(Entity* entity)
 	:Component{ entity }
 {
 	component_name = "SpriteObject";
-	sprite_shader_state = std::make_unique<shader::SpriteShaderState>();
 }
 
 void SpriteObject::Save(std::string file_path)
@@ -17,6 +16,7 @@ void SpriteObject::Save(std::string file_path)
 	std::ofstream ofs(file_path_and_name);
 	cereal::JSONOutputArchive o_archive(ofs);
 	o_archive(
+		cereal::base_class<Component>(this),
 		CEREAL_NVP(component_name),
 		CEREAL_NVP(blend_state),
 		CEREAL_NVP(rasterizer_state),
@@ -31,6 +31,7 @@ void SpriteObject::Load(Entity* entity, std::string file_path_and_name)
 	std::ifstream ifs(file_path_and_name);
 	cereal::JSONInputArchive i_archive(ifs);
 	i_archive(
+		cereal::base_class<Component>(this),
 		CEREAL_NVP(component_name),
 		CEREAL_NVP(blend_state),
 		CEREAL_NVP(rasterizer_state),
@@ -41,7 +42,3 @@ void SpriteObject::Load(Entity* entity, std::string file_path_and_name)
 
 	this->entity = entity;
 }
-
-
-CEREAL_REGISTER_TYPE(SpriteObject)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Component, SpriteObject)

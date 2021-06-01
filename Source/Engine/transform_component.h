@@ -127,6 +127,7 @@ public:
 	void serialize(Archive&& archive)
 	{
 		archive(
+			cereal::base_class<Component>(this),
 			CEREAL_NVP(component_name),
 			CEREAL_NVP(position),
 			CEREAL_NVP(prev_pos),
