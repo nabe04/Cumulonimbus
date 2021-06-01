@@ -5,9 +5,10 @@
 #include <string>
 
 #include <d3d11.h>
-
 #include <DirectXMath.h>
 #include <SimpleMath.h>
+
+#include <cereal/cereal.hpp>
 
 #include "ecs.h"
 #include "state_machine.h"
@@ -28,11 +29,11 @@ public:
 	};
 
 private:
-	std::bitset<static_cast<int>(CameraState::End)> lisence;
-	StateMachine<CameraState,void ,const float> camera_state;
+	std::bitset<static_cast<int>(CameraState::End)> license;
+	StateMachine<CameraState, void, const float> camera_state;
 
 	EntityTag my_target_tag;	// エンティティ判別用タグ
-	EntityTag ohter_target_tag;
+	EntityTag other_target_tag;
 
 	DirectX::SimpleMath::Vector3 adjust_target_position;	// カメラ位置(調整値)
 	float default_camera_length;	// カメラ距離(デフォルト)
@@ -58,7 +59,7 @@ private:
 
 	DirectX::SimpleMath::Vector3 camera_position;
 	DirectX::SimpleMath::Vector3 prev_camera_position;
-	DirectX::SimpleMath::Vector2 camera_speed_gamepad{1.0f,1.0f};
+	DirectX::SimpleMath::Vector2 camera_speed_gamepad{ 1.0f,1.0f };
 	DirectX::SimpleMath::Vector2 camera_speed_mouse{ 0.1f,0.1f };
 
 	DirectX::SimpleMath::Vector3 delta_position{};
@@ -79,14 +80,14 @@ private:
 	void CalcCameraAngle();
 
 public:
-	CameraOperationComponent(Entity* entity, EntityTag tag ,DirectX::XMFLOAT3 camera_pos, float default_camera_length = 50);
+	CameraOperationComponent(Entity* entity, EntityTag tag, DirectX::XMFLOAT3 camera_pos, float default_camera_length = 50);
 
 	void NewFrame(const float delta_time) override;
 	void Update(const float delta_time) override;
 	void RenderImGui() override;
 
-	void SetLisence(CameraState bit)   { lisence.set(static_cast<int>(bit)); }
-	void ResetLisence(CameraState bit) { lisence.reset(static_cast<int>(bit)); }
+	void SetLisence(CameraState bit) { license.set(static_cast<int>(bit)); }
+	void ResetLisence(CameraState bit) { license.reset(static_cast<int>(bit)); }
 
 	void AjustCameraTargetPosition(const DirectX::SimpleMath::Vector3& pos) { adjust_target_position = pos; }
 	DirectX::SimpleMath::Vector3 const AjustCameraTargetPosition() { return adjust_target_position; }
@@ -97,7 +98,7 @@ public:
 	DirectX::SimpleMath::Vector2 const AjustCameraAngle() { return ajust_camera_angle; }
 
 	void AjustCameraPosition(const DirectX::SimpleMath::Vector3& position) { ajust_camera_position = position; }
-	DirectX::SimpleMath::Vector3 const AjustCameraPositon() {	return ajust_camera_position;}
+	DirectX::SimpleMath::Vector3 const AjustCameraPositon() { return ajust_camera_position; }
 
 	DirectX::SimpleMath::Vector2 CameraAngleMin() { return camera_angle_min; }
 	void CameraAngleMin(DirectX::SimpleMath::Vector2 min) { camera_angle_min = min; }
@@ -115,6 +116,6 @@ public:
 	void CorrectionTimer(float timer) { correction_timer = timer; }
 	float CorrectionTimer() const { return correction_timer; }
 
-	void TargetTag(EntityTag tag) { ohter_target_tag = tag; }
-	EntityTag TargetTag() { return ohter_target_tag; }
+	void TargetTag(EntityTag tag) { other_target_tag = tag; }
+	EntityTag TargetTag() { return other_target_tag; }
 };

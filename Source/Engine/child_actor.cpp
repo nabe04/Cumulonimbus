@@ -1,6 +1,6 @@
 #include "child_actor.h"
 
-#include <assert.h>
+#include <cassert>
 
 #include "fbx_model_component.h"
 #include "scene.h"
@@ -35,14 +35,12 @@ void ChildActorComponent::RenderImGui()
 
 void ChildActorComponent::Link(std::string node_name)
 {
-	auto pareant_tag = GetEntity()->GetScene()->GetOtherEntity(parent_tag);
+	const auto parent = GetEntity()->GetScene()->GetOtherEntity(parent_tag.GetCurrentState());
 
-	if (!pareant_tag)
+	if (!parent)
 		assert(!"Not fount entity");
 
-	auto tag_nodes = pareant_tag->GetComponent<FbxModelComponent>()->GetNodes();
-
-	for (auto node : tag_nodes)
+	for (const auto& node : parent->GetComponent<FbxModelComponent>()->GetNodes())
 	{
 		if (strcmp(node_name.c_str(), node.name) == 0)
 		{
@@ -50,3 +48,31 @@ void ChildActorComponent::Link(std::string node_name)
 		}
 	}
 }
+
+void ChildActorComponent::Save(std::string file_path)
+{
+	const std::string file_path_and_name = file_path + component_name + ".json";
+	std::ofstream ofs(file_path_and_name);
+	cereal::JSONOutputArchive o_archive(ofs);
+	o_archive(
+		cereal::base_class<MeshObject>(this),
+		CEREAL_NVP(parent_tag),
+		CEREAL_NVP(parent_matrix),
+		CEREAL_NVP(tag_node_name)
+	);
+}
+
+void ChildActorComponent::Load(Entity* entity, std::string file_path_and_name)
+{
+	std::ifstream ifs(file_path_and_name);
+	cereal::JSONInputArchive i_archive(ifs);
+	i_archive(
+		cereal::base_class<MeshObject>(this),
+		CEREAL_NVP(parent_tag),
+		CEREAL_NVP(parent_matrix),
+		CEREAL_NVP(tag_node_name)
+	);
+
+	this->entity = entity;
+}
+

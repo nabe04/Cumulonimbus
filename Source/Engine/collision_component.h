@@ -17,7 +17,6 @@ using Microsoft::WRL::ComPtr;
 #include "geometric_primitive_resource.h"
 
 class Spherecollision_component;
-class InnerSpherecollision_component;
 
 struct OriginCollisionData
 {
@@ -92,11 +91,11 @@ public:
 	virtual void OnCollision(const collision_component* other) {}
 
 	//-- Get debug primitive info --//
-	const shader::MeshShaderState& GetShaderState() const { return shader_state; }
+	[[nodiscard]] const shader::MeshShaderState& GetShaderState() const { return shader_state; }
 
-	CollisionType GetType()const { return type; }
-	CollisionTag GetTag()const { return tag; }
+	[[nodiscard]] CollisionType GetType()const { return type; }
+	[[nodiscard]] CollisionTag GetTag()const { return tag; }
 
 	void IsJudge(bool flg) { is_judge = flg; }
-	bool IsJudge() { return is_judge; }
+	[[nodiscard]] bool IsJudge() const { return is_judge; }
 };

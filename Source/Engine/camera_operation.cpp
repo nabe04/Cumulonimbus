@@ -245,7 +245,7 @@ void CameraOperationComponent::LockOnCamera(const float delta_time)
 //
 //	auto* default_target_transform = GetEntity()->GetScene()->GetOtherEntity(my_target_tag)->GetComponent<TransformComponent>()->GetTransform();
 //
-//	auto* target_transform = GetEntity()->GetScene()->GetOtherEntity(ohter_target_tag)->GetComponent<TransformComponent>()->GetTransform();
+//	auto* target_transform = GetEntity()->GetScene()->GetOtherEntity(other_target_tag)->GetComponent<TransformComponent>()->GetTransform();
 //
 //	if (!std::isfinite(default_target_transform->GetPosition().x) || !std::isfinite(default_target_transform->GetPosition().y) || !std::isfinite(default_target_transform->GetPosition().z))
 //	{
@@ -332,7 +332,7 @@ void CameraOperationComponent::Correction_Free_LockOn(const float delta_time)
 	//if (!default_target_transform)
 	//	assert(!"Not found Component");
 
-	//auto* target_transform = GetEntity()->GetScene()->GetOtherEntity(ohter_target_tag)->GetComponent<TransformComponent>()->GetTransform();
+	//auto* target_transform = GetEntity()->GetScene()->GetOtherEntity(other_target_tag)->GetComponent<TransformComponent>()->GetTransform();
 	//if (!target_transform)
 	//	assert(!"Not found Component");
 

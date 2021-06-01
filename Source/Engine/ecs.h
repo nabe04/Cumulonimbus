@@ -18,6 +18,8 @@ enum class UpdateOrder
 	Sword,
 
 	LightMap,
+
+	End
 };
 
 enum class EntityTag
@@ -28,6 +30,8 @@ enum class EntityTag
 	Player,
 	Enemy,
 	Bunny,
+
+	End
 };
 
 //----------------------------------------< Entity Class >-----------------------------------------------------
