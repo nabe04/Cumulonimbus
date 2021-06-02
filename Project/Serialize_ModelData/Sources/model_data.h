@@ -40,7 +40,7 @@ public:
 		DirectX::XMFLOAT4									color = { 0.8f, 0.8f, 0.8f, 1.0f };
 
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	shader_resource_view = nullptr;	// シリアライズの対象外
-		std::string											texture_filename = "";		// モデルを読み込んだ時にテクスチャを作成する
+		std::string											texture_filename = "";			// モデルを読み込んだ時にテクスチャを作成する
 
 		template<class Archive>
 		void serialize(Archive& archive, int version)
@@ -58,7 +58,7 @@ public:
 		unsigned int		start_index		= 0;
 		unsigned int		index_count		= 0;
 		unsigned int		material_index	= 0;
-		Material* material					= nullptr;	// モデルを読み込んだ時にマテリアルを関連ずける
+		Material*			material		= nullptr;	// モデルを読み込んだ時にマテリアルを関連ずける
 
 		template<class Archive>
 		void serialize(Archive& archive, int version)
@@ -173,5 +173,3 @@ public:
 	std::vector<Animation>  animations;
 	int						root_motion_node_index = -1;
 };
-
-extern ModelData test_data;
