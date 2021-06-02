@@ -6,9 +6,6 @@
 #include <wrl.h>
 #include <d3d11.h>
 #include <DirectXMath.h>
-using namespace DirectX;
-
-#include "shader.h"
 
 class ModelData
 {
@@ -74,11 +71,11 @@ public:
 	// それぞれの頂点
 	struct Vertex
 	{
-		XMFLOAT4 position{};	// ローカル座標
-		XMFLOAT3 normal{};		// ローカル座標
-		XMFLOAT2 tex{};		// UV coordinates
-		XMFLOAT4 bone_weight = { 1.0f,0.0f,0.0f,0.0f };
-		XMUINT4  bone_index = { 0,0,0,0 };
+		DirectX::XMFLOAT4 position{};	// ローカル座標
+		DirectX::XMFLOAT3 normal{};		// ローカル座標
+		DirectX::XMFLOAT2 tex{};		// UV coordinates
+		DirectX::XMFLOAT4 bone_weight = { 1.0f,0.0f,0.0f,0.0f };
+		DirectX::XMUINT4  bone_index = { 0,0,0,0 };
 
 		template<class Archive>
 		void serialize(Archive& archive, int version)

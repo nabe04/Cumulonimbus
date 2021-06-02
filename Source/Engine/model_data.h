@@ -14,6 +14,7 @@ using namespace DirectX;
 #include <cereal/types/vector.hpp>
 
 #include "shader.h"
+#include "enum_state_map.h"
 
 class ModelData
 {

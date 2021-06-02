@@ -8,8 +8,14 @@
 #include <cereal/types/map.hpp>
 #include <cereal/types/string.hpp>
 
-
 template <typename T>
+concept StateEnum = requires ()
+{
+	std::is_enum_v<T>;
+	T::End;
+};
+
+template <StateEnum T>
 class EnumStateMap
 {
 public:

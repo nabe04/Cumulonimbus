@@ -33,15 +33,27 @@ void SceneGame::InitializeScene()
 	//test_entity->GetComponent<TransformComponent>()->SetPosition({ 10,10,10 });
 	//test_entity->AddComponent<ActorComponent>(ActorType::Actor3D);
 
-	const char* uv_chekcer_filename = "uv_checker";
-	auto* uv_chekcer = AddEntity();
-	uv_chekcer->AddComponent<SpriteObject>();
-	uv_chekcer->AddComponent<AnimSpriteComponent>(GetFramework()->GetDevice(), uv_chekcer_filename, PivotType::Center,
-		0, 0,
-		256, 256,
-		8, 8);
-	uv_chekcer->GetComponent<TransformComponent>()->SetPosition({ 500,500,0 });
-	uv_chekcer->SetEntityName("UV_Chacker");
+	//const char* uv_chekcer_filename = "uv_checker";
+	//auto* uv_chekcer = AddEntity();
+	//uv_chekcer->AddComponent<SpriteObject>();
+	//uv_chekcer->AddComponent<AnimSpriteComponent>(GetFramework()->GetDevice(), uv_chekcer_filename, PivotType::Center,
+	//	0, 0,
+	//	256, 256,
+	//	8, 8);
+	//uv_chekcer->GetComponent<TransformComponent>()->SetPosition({ 500,500,0 });
+	//uv_chekcer->SetEntityName("UV_Chacker");
+
+	const char* ganfaul_filename = "./Data/Assets/Bin/ganfaul.bin";
+	std::shared_ptr<FbxModelResource> ganfaul_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), ganfaul_filename, "./Data/Assets/FBX/ganfaul/character.fbm/");
+	auto* player = AddEntity(UpdateOrder::Default, EntityTag::Player);
+	player->AddComponent<MeshObject>();
+	player->AddComponent<FbxModelComponent>(Locator::GetResourceManager()->FbxModelResouece("ganfaul"));
+	player->GetComponent<TransformComponent>()->SetScale(0.3f);
+	player->GetComponent<TransformComponent>()->SetPosition({ 0,10, 0 });
+	player->GetComponent<TransformComponent>()->SetWorldRotation_Y(180);
+	player->GetComponent<MeshObject>()->SetRasterizerState(RasterizeState::Cull_Back_CCW_True);
+	player->GetComponent<FbxModelComponent>()->SwitchAnimation(2, true); // 0,1 T_Pose 2 Walk 3 Run 4 Attack
+	player->SetEntityName("Player");
 
 	SaveScene("Test5_30");
 

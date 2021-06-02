@@ -38,7 +38,8 @@ public:
 	struct Node
 	{
 		std::string					name{};
-		Node*						parent{};
+		int							parent_index{ -1 };
+		//Node*						parent{};
 		DirectX::XMFLOAT3			scale{};
 		DirectX::XMFLOAT4			rotate{};
 		DirectX::XMFLOAT3			translate{};
@@ -50,7 +51,8 @@ public:
 		{
 			archive(
 				cereal::make_nvp("node_name"  , name),
-				cereal::make_nvp("parent node", parent),
+				CEREAL_NVP(parent_index),
+				//cereal::make_nvp("parent node", parent),
 				CEREAL_NVP(scale),
 				CEREAL_NVP(rotate),
 				CEREAL_NVP(translate),
@@ -93,8 +95,13 @@ public:
 	{
 		archive(
 			cereal::base_class<Component>(this),
+<<<<<<< HEAD
+			CEREAL_NVP(resource),
+			CEREAL_NVP(nodes),
+=======
 			//CEREAL_NVP(resource),
 			//CEREAL_NVP(nodes),
+>>>>>>> parent of 4df3c85... FbxModelCompoentのNode構造体修正前保存
 
 			CEREAL_NVP(current_animation_index),
 			CEREAL_NVP(prev_animation_index),

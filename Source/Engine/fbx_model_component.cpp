@@ -86,11 +86,20 @@ FbxModelComponent::FbxModelComponent(Entity* entity, const std::shared_ptr<FbxMo
 		auto&& src = res_nodes.at(node_index);
 		auto&& dst = nodes.at(node_index);
 
+<<<<<<< HEAD
+		dst.name		 = src.name;
+		dst.parent_index = src.parent_index >= 0 ? src.parent_index : -1;
+		//dst.parent		 = src.parent_index >= 0 ? &nodes.at(src.parent_index) : nullptr;
+		dst.scale		 = src.scale;
+		dst.rotate		 = src.rotate;
+		dst.translate	 = src.translate;
+=======
 		dst.name  = src.name;
 		dst.parent = src.parent_index >= 0 ? &nodes.at(src.parent_index) : nullptr;
 		dst.scale = src.scale;
 		dst.rotate = src.rotate;
 		dst.translate = src.translate;
+>>>>>>> parent of 4df3c85... FbxModelCompoentã®Nodeæ§‹é€ ä½“ä¿®æ­£å‰ä¿å­˜
 	}
 
 	anim_states.AddState(FbxAnimationState::Switch, [this](const float delta_time) {BlendNextAnimation(delta_time); });
@@ -113,11 +122,12 @@ void FbxModelComponent::Initialize(const std::shared_ptr<FbxModelResource>& reso
 		auto&& src = res_nodes.at(node_index);
 		auto&& dst = nodes.at(node_index);
 
-		dst.name  = src.name;
-		dst.parent = src.parent_index >= 0 ? &nodes.at(src.parent_index) : nullptr;
-		dst.scale = src.scale;
-		dst.rotate = src.rotate;
-		dst.translate = src.translate;
+		dst.name			= src.name;
+		dst.parent_index	= src.parent_index >= 0 ? src.parent_index : -1;
+		//dst.parent = src.parent_index >= 0 ? &nodes.at(src.parent_index) : nullptr;
+		dst.scale			= src.scale;
+		dst.rotate			= src.rotate;
+		dst.translate		= src.translate;
 	}
 
 	{// ƒƒ“ƒo•Ï”‚Ì‰Šú‰»
@@ -317,9 +327,9 @@ void FbxModelComponent::CalculateWorldTransform(const DirectX::XMFLOAT4X4& world
 	{
 		const DirectX::XMMATRIX local_transform_matrix = DirectX::XMLoadFloat4x4(&node.local_transform);
 		const DirectX::XMMATRIX world_transform_matrix = DirectX::XMLoadFloat4x4(&world_transform);
-		if (node.parent != nullptr)
+		if (node.parent_index > 0)
 		{
-			const DirectX::XMMATRIX parent_transform = DirectX::XMLoadFloat4x4(&node.parent->world_transform);
+			const DirectX::XMMATRIX parent_transform = DirectX::XMLoadFloat4x4(&nodes.at(node.parent_index).world_transform);
 			DirectX::XMStoreFloat4x4(&node.world_transform, local_transform_matrix * parent_transform);
 		}
 		else
