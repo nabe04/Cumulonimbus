@@ -80,7 +80,7 @@ public:
 	[[nodiscard]] std::vector<Node>& GetNodes() { return nodes; }
 	[[nodiscard]] const FbxModelResource* GetResource() const { return resource.get(); }
 	[[nodiscard]] const DirectX::XMFLOAT4& GetColor() const { return color; }
-	
+
 	void UpdateAnimState(const float delta_time) { anim_states.Update(delta_time); }
 
 	// Œ»İ‚ÌƒL[ƒtƒŒ[ƒ€
@@ -96,10 +96,14 @@ public:
 		archive(
 			cereal::base_class<Component>(this),
 <<<<<<< HEAD
+<<<<<<< HEAD
 			CEREAL_NVP(resource),
 			CEREAL_NVP(nodes),
 =======
 			//CEREAL_NVP(resource),
+=======
+			CEREAL_NVP(resource),
+>>>>>>> origin/Nabe_Note
 			//CEREAL_NVP(nodes),
 >>>>>>> parent of 4df3c85... FbxModelCompoentã®Nodeæ§‹é€ ä½“ä¿®æ­£å‰ä¿å­˜
 

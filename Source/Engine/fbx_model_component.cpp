@@ -87,6 +87,7 @@ FbxModelComponent::FbxModelComponent(Entity* entity, const std::shared_ptr<FbxMo
 		auto&& dst = nodes.at(node_index);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 		dst.name		 = src.name;
 		dst.parent_index = src.parent_index >= 0 ? src.parent_index : -1;
 		//dst.parent		 = src.parent_index >= 0 ? &nodes.at(src.parent_index) : nullptr;
@@ -100,6 +101,13 @@ FbxModelComponent::FbxModelComponent(Entity* entity, const std::shared_ptr<FbxMo
 		dst.rotate = src.rotate;
 		dst.translate = src.translate;
 >>>>>>> parent of 4df3c85... FbxModelCompoentのNode構造体修正前保存
+=======
+		dst.name		= src.name;
+		dst.parent		= src.parent_index >= 0 ? &nodes.at(src.parent_index) : nullptr;
+		dst.scale		= src.scale;
+		dst.rotate		= src.rotate;
+		dst.translate	= src.translate;
+>>>>>>> origin/Nabe_Note
 	}
 
 	anim_states.AddState(FbxAnimationState::Switch, [this](const float delta_time) {BlendNextAnimation(delta_time); });

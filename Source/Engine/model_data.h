@@ -171,7 +171,18 @@ public:
 		}
 	};
 
-public:
+	template<typename Archive>
+	void serialize(Archive&& archive)
+	{
+		archive(
+			CEREAL_NVP(nodes),
+			CEREAL_NVP(materials),
+			CEREAL_NVP(meshes),
+			CEREAL_NVP(animations),
+			CEREAL_NVP(root_motion_node_index)
+		);
+	}
+
 	std::vector<Node>		nodes;
 	std::vector<Material>	materials;
 	std::vector<Mesh>		meshes;

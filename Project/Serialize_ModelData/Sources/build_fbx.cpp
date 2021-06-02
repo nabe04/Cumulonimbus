@@ -141,7 +141,7 @@ BulidFBX::BulidFBX(const char* fbx_filename, const char* ignore_root_motion_node
 	fbx_importer->Import(fbx_scene);
 	fbx_importer->Destroy();	// シーンを流し込んだらImporterは解放してOK
 
-							// ジオメトリを三角形化しておく
+	// ジオメトリを三角形化しておく
 	FbxGeometryConverter fbx_geometry_converter(fbx_manager);
 	fbx_geometry_converter.Triangulate(fbx_scene, true);
 	fbx_geometry_converter.RemoveBadPolygonsFromMeshes(fbx_scene);
@@ -480,10 +480,10 @@ void BulidFBX::BuildMesh(FbxNode* fbx_node, FbxMesh* fbx_mesh)
 			// Weight
 			{
 				BoneInfluence& bone_influence = bone_influences.at(fbx_control_point_index);
-				vertex.bone_index.x = bone_influence.indices[0];
-				vertex.bone_index.y = bone_influence.indices[1];
-				vertex.bone_index.z = bone_influence.indices[2];
-				vertex.bone_index.w = bone_influence.indices[3];
+				vertex.bone_index.x  = bone_influence.indices[0];
+				vertex.bone_index.y  = bone_influence.indices[1];
+				vertex.bone_index.z  = bone_influence.indices[2];
+				vertex.bone_index.w  = bone_influence.indices[3];
 				vertex.bone_weight.x = bone_influence.weights[0];
 				vertex.bone_weight.y = bone_influence.weights[1];
 				vertex.bone_weight.z = bone_influence.weights[2];
