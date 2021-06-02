@@ -659,7 +659,7 @@
       <ConformanceMode>false</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>.\Libraries\imgui;.\Libraries\FBX\FBX SDK\2019.0\include;.\Libraries\DirectXTK-master\Inc;.\Libraries\cereal-master\include;.\Source\Engine;%(AdditionalIncludeDirectories);.\Source\Game;.\Libraries\DirectXTex-master\DDSTextureLoader;.\Libraries\DirectXTex-master\DirectXTex;.\Libraries\nameof</AdditionalIncludeDirectories>
-      <AdditionalOptions>-DNOMINMAX %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-DNOMINMAX /bigobj %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>

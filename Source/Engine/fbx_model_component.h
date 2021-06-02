@@ -95,17 +95,9 @@ public:
 	{
 		archive(
 			cereal::base_class<Component>(this),
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 			CEREAL_NVP(resource),
 			CEREAL_NVP(nodes),
-=======
-			//CEREAL_NVP(resource),
-=======
-			CEREAL_NVP(resource),
->>>>>>> origin/Nabe_Note
-			//CEREAL_NVP(nodes),
->>>>>>> parent of 4df3c85... FbxModelCompoentのNode構造体修正前保存
 
 			CEREAL_NVP(current_animation_index),
 			CEREAL_NVP(prev_animation_index),

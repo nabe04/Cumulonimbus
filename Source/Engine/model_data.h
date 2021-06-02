@@ -46,7 +46,7 @@ public:
 		DirectX::XMFLOAT4									color = { 0.8f, 0.8f, 0.8f, 1.0f };
 
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	shader_resource_view = nullptr;	// シリアライズの対象外
-		std::string											texture_filename = "";		// モデルを読み込んだ時にテクスチャを作成する
+		std::string											texture_filename{};		// モデルを読み込んだ時にテクスチャを作成する
 
 		template<class Archive>
 		void serialize(Archive& archive, int version)
