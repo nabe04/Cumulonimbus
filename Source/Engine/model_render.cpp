@@ -55,7 +55,7 @@ MeshRenderer::MeshRenderer(ID3D11Device* device)
 	bloom			= std::make_unique<Bloom>(device, Locator::GetWindow()->Width(), Locator::GetWindow()->Height());
 	sorbel_filter	= std::make_unique<SorbelFilter>(device, Locator::GetWindow()->Width(), Locator::GetWindow()->Height());
 	shadow_map		= std::make_unique<ShadowMap>(device, Locator::GetWindow()->Width(), Locator::GetWindow()->Height());
-	gaussian_blur   = std::make_unique<GaussianBlur>(device, Locator::GetWindow()->Width(), Locator::GetWindow()->Height());
+	gaussian_blur   = std::make_unique<GaussianBlur>(device, 2048, 2048);
 }
 
 void MeshRenderer::Begin(ID3D11DeviceContext* immediate_context)
@@ -106,7 +106,7 @@ void MeshRenderer::Render(ID3D11DeviceContext* immediate_context,
 		blend->Activate(immediate_context, actor_comp->GetBlendState());
 		depth_stencil->Activate(immediate_context, actor_comp->GetDepthStencilState());
 		samplers.at(actor_comp->GetSamplerState())->Activate(immediate_context, 0);
-		immediate_context->PSSetShaderResources(1, 1, shadow_map->GetVarianceShadowDepthExtractionFB()->render_target_shader_resource_view.GetAddressOf());
+		immediate_context->PSSetShaderResources(1, 1, gaussian_blur->GetFrameBuffer()->render_target_shader_resource_view.GetAddressOf());
 		immediate_context->PSSetShaderResources(2, 1, srv_sky_map.GetAddressOf());
 
 		if (actor_comp->UsingBuffer()->rendering_buffer_bitset.test(index))
@@ -191,7 +191,7 @@ void MeshRenderer::ShadowEnd(ID3D11DeviceContext* immediate_context)
 	shadow_map->End(immediate_context);
 
 	samplers.at(RenderingSampleState::Linear_Border)->Activate(immediate_context, 0);
-	gaussian_blur->GenerateGaussianBlur(immediate_context, shadow_map->GetVarianceShadowDepthExtractionFB()->render_target_shader_resource_view.Get());
+	gaussian_blur->GenerateGaussianBlur(immediate_context, shadow_map->GetVarianceShadowDepthExtractionFB()->render_target_shader_resource_view.GetAddressOf());
 }
 
 void MeshRenderer::RenderShadow(ID3D11DeviceContext* immediate_context,

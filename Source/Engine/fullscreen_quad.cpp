@@ -153,17 +153,17 @@ void FullscreenQuad::Blit(ID3D11DeviceContext* immediate_context,
 		immediate_context->PSSetShader(enable_msaa ? embedded_pixel_shaders[1].Get() : embedded_pixel_shaders[0].Get(), 0, 0);
 	}
 
-	immediate_context->IASetVertexBuffers(0, 0, 0, 0, 0);
+	immediate_context->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
 	immediate_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-	immediate_context->IASetInputLayout(0);
+	immediate_context->IASetInputLayout(nullptr);
 
 	immediate_context->VSSetShader(embedded_vertex_shader.Get(), 0, 0);
 
 	immediate_context->Draw(4, 0);
 
-	immediate_context->IASetInputLayout(0);
-	immediate_context->VSSetShader(0, 0, 0);
-	immediate_context->PSSetShader(0, 0, 0);
+	immediate_context->IASetInputLayout(nullptr);
+	immediate_context->VSSetShader(nullptr, nullptr, 0);
+	immediate_context->PSSetShader(nullptr, nullptr, 0);
 
 	if (default_rasterizer_state)
 	{

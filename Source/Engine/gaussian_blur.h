@@ -15,15 +15,22 @@ class GaussianBlur final : public FullscreenQuad
 public:
 	explicit GaussianBlur(ID3D11Device* device,const u_int width, const u_int height);
 	~GaussianBlur() override = default;
-	void GenerateGaussianBlur(ID3D11DeviceContext* immediate_context, ID3D11ShaderResourceView* const blur_texture);
-	[[nodiscard]] FrameBuffer* GetFrameBuffer() const { return fb_gaussian_blur.get(); }
-	[[nodiscard]] ID3D11ShaderResourceView* GetSRV() const { return fb_gaussian_blur->render_target_shader_resource_view.Get(); }
+	void GenerateGaussianBlur(ID3D11DeviceContext* immediate_context, ID3D11ShaderResourceView** const blur_texture);
+
+	[[nodiscard]] FrameBuffer* GetFrameBuffer() const
+	{
+		// fb_gaussian_blur_vertical‚ð•Ô‚µ‚Ä‚¢‚é‚Ì‚Í
+		// horizontal‚Åblur‚ð‚©‚¯‚½‚à‚Ì‚Évertical‚ð‚©‚¯‚Ä‚¢‚é‚©‚ç
+		return fb_gaussian_blur_vertical.get();
+	}
+	[[nodiscard]] ID3D11ShaderResourceView* GetSRV() const { return fb_gaussian_blur_vertical->render_target_shader_resource_view.Get(); }
 
 private:
 	const char* gaussian_blur_vertical_ps_name	 = "./Shader/cso/gaussian_blur_vertical_ps.cso";
 	const char* gaussian_blur_horizontal_ps_name = "./Shader/cso/gaussian_blur_horizontal_ps.cso";
 
-	std::unique_ptr<FrameBuffer> fb_gaussian_blur{};
+	std::unique_ptr<FrameBuffer> fb_gaussian_blur_vertical{};
+	std::unique_ptr<FrameBuffer> fb_gaussian_blur_horizontal{};
 	std::unique_ptr<shader::PixelShader> ps_blur_vertical{};
 	std::unique_ptr<shader::PixelShader> ps_blur_horizontal{};
 
