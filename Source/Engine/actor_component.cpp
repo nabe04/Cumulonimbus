@@ -1,6 +1,8 @@
 #include "actor_component.h"
 #include <fstream>
 
+#include "component_base.h"
+
 ActorComponent::ActorComponent(Entity* entity, ActorType actor_type)
 	: Component{ entity }
 {

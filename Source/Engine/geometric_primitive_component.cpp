@@ -9,6 +9,7 @@
 #include "dx11_configurator.h"
 #include "light.h"
 #include "view.h"
+#include "component_list.h"
 
 //*************************************************
 //

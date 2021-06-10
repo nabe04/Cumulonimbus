@@ -3,7 +3,7 @@
 #include <imgui.h>
 
 #include "scene.h"
-
+#include "component_list.h"
 
 namespace shader
 {

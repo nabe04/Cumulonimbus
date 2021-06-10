@@ -3,6 +3,7 @@
 #include "scene.h"
 #include "light.h"
 #include "view.h"
+#include "component_list.h"
 #include "geometric_primitive_resource.h"
 #include "transform.h"
 #include "transform_component.h"

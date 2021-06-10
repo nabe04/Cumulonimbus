@@ -1,5 +1,6 @@
 #include "test_animation_character.h"
 
+#include "component_list.h"
 #include "fbx_model_component.h"
 #include "input_manager.h"
 

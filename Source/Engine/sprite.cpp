@@ -6,6 +6,7 @@
 
 #include "framework.h"
 #include "shader.h"
+#include "component_list.h"
 #include "scene.h"
 #include "transform.h"
 #include "transform_component.h"

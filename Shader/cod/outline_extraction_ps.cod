@@ -55,7 +55,7 @@ dcl_indexableTemp x2[9], 4
 //   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w; 
 //   x0 <- filter_horizontal; x1 <- filter_vertical; x2 <- offset
 //
-#line 9 "C:\Users\ryoki\Desktop\Cumlonimbus\Shader\outline_extraction_ps.hlsl"
+#line 9 "C:\Users\ryoki\Desktop\Cumulonimbus\Shader\outline_extraction_ps.hlsl"
 itof r0.xyzw, l(1, 0, -1, 2)
 itof r1.xyzw, l(0, -1, 1, 0)
 itof r2.x, l(-1)

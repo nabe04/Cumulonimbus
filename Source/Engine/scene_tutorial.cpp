@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include "component_list.h"
 #include "mesh_object.h"
 #include "collision_component.h"
 #include "ecs.h"

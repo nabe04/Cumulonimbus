@@ -8,6 +8,7 @@
 #include "view.h"
 #include "transform.h"
 #include "transform_component.h"
+#include "component_list.h"
 
 using namespace DirectX;
 

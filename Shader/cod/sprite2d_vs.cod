@@ -38,7 +38,7 @@ dcl_temps 3
 //   o1.x <- <main return value>.texcoord.x; o1.y <- <main return value>.texcoord.y; 
 //   o0.x <- <main return value>.position.x; o0.y <- <main return value>.position.y; o0.z <- <main return value>.position.z; o0.w <- <main return value>.position.w
 //
-#line 6 "C:\Users\ryoki\Desktop\Cumlonimbus\Shader\sprite2d_vs.hlsl"
+#line 6 "C:\Users\ryoki\Desktop\Cumulonimbus\Shader\sprite2d_vs.hlsl"
 mov r0.xy, v0.xyxx  // r0.x <- vout.position.x; r0.y <- vout.position.y
 mov r0.zw, l(0,0,0,1.000000)  // r0.z <- vout.position.z; r0.w <- vout.position.w
 

@@ -40,6 +40,7 @@
     <ClInclude Include="Source\Engine\child_actor.h" />
     <ClInclude Include="Source\Engine\collision.h" />
     <ClInclude Include="Source\Engine\collision_component.h" />
+    <ClInclude Include="Source\Engine\component_base.h" />
     <ClInclude Include="Source\Engine\component_list.h" />
     <ClInclude Include="Source\Engine\constant_buffer.h" />
     <ClInclude Include="Source\Engine\content_browser.h" />

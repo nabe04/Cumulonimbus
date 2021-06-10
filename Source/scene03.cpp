@@ -4,6 +4,7 @@
 
 #include "collision_component.h"
 #include "ecs.h"
+#include "component_list.h"
 #include "fbx_model_component.h"
 #include "geometric_primitive_component.h"
 #include "input_manager.h"

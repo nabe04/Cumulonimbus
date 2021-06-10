@@ -1,5 +1,6 @@
 #include "component_list.h"
 
+#include "ecs.h"
 #include "transform.h"
 #include "transform_component.h"
 #include "sprite_object.h"

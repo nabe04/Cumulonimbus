@@ -38,10 +38,10 @@ public:
 	void Save(std::string file_path) override;
 	void Load(Entity* entity, std::string file_path_and_name) override;
 
-	[[nodiscard]] const BlendState& GetBlendState()					const  { return blend_state.GetCurrentState(); }
-	[[nodiscard]] const RasterizeState& GetRasterizeState()			const  { return rasterizer_state.GetCurrentState(); }
+	[[nodiscard]] const BlendState& GetBlendState()						const  { return blend_state.GetCurrentState(); }
+	[[nodiscard]] const RasterizeState& GetRasterizeState()				const  { return rasterizer_state.GetCurrentState(); }
 	[[nodiscard]] const DepthStencilState& GetDepthStencilState()		const  { return depth_stencil_state.GetCurrentState(); }
-	[[nodiscard]] const RenderingSampleState& GetSamplerState()		const  { return sampler_state.GetCurrentState(); }
+	[[nodiscard]] const RenderingSampleState& GetSamplerState()			const  { return sampler_state.GetCurrentState(); }
 	[[nodiscard]] const shader::MeshShaderState& GetShaderState()		const  { return shader_state; }
 	[[nodiscard]] const shader::SpriteShaderState& GetShaderState2D()	const  { return shader_state_2d; }
 

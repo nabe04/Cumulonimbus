@@ -3,6 +3,7 @@
 #include <GeometricPrimitive.h>
 
 #include "shader.h"
+#include "component_list.h"
 
 GeometricPrimitiveResource::GeometricPrimitiveResource(ID3D11Device* device)
 {

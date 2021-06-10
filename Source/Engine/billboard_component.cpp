@@ -4,6 +4,7 @@
 #include "transform.h"
 #include "transform_component.h"
 #include "geometric_primitive_component.h"
+#include "component_list.h"
 
 BillbordComponent::BillbordComponent(Entity* entity)
 	:MeshObject{ entity }

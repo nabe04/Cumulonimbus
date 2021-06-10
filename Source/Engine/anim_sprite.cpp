@@ -3,6 +3,7 @@
 #include "texture.h"
 #include "scene.h"
 #include "locator.h"
+#include "component_list.h"
 
 AnimSpriteComponent::AnimSpriteComponent(Entity* entity, ID3D11Device* device,
 	const char* filename, const PivotType pivot_type,

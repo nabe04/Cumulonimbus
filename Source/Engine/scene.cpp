@@ -8,6 +8,7 @@
 #include "input_manager.h"
 #include "locator.h"
 #include "resource_manager.h"
+#include "component_list.h"
 
 #include "scene_title.h"
 #include "scene_game.h"

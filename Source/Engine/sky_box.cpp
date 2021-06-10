@@ -6,6 +6,7 @@
 #include "imgui.h"
 #include "scene.h"
 
+#include "component_list.h"
 #include "shader.h"
 
 SkyBox::SkyBox(Entity* entity, ID3D11Device* device, const char* filename)

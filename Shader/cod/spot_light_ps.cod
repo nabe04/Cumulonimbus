@@ -109,7 +109,7 @@ dcl_temps 17
 //   v5.x <- pin.eyeVector.x; v5.y <- pin.eyeVector.y; v5.z <- pin.eyeVector.z; 
 //   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
 //
-#line 13 "C:\Users\ryoki\Desktop\Cumlonimbus\Shader\spot_light_ps.hlsl"
+#line 13 "C:\Users\ryoki\Desktop\Cumulonimbus\Shader\spot_light_ps.hlsl"
 dp3 r0.x, cb2[3].xyzx, cb2[3].xyzx
 rsq r0.x, r0.x
 mul r0.xyz, r0.xxxx, cb2[3].xyzx  // r0.x <- L.x; r0.y <- L.y; r0.z <- L.z
@@ -142,7 +142,7 @@ mov r0.xyz, r0.xyzx
 mov r3.xyz, r3.xyzx
 mov r5.xyz, r5.xyzx
 
-#line 11 "C:\Users\ryoki\Desktop\Cumlonimbus\Shader\functions.hlsli"
+#line 11 "C:\Users\ryoki\Desktop\Cumulonimbus\Shader\functions.hlsli"
 mov r6.xyz, -r0.xyzx
 dp3 r0.w, r4.xyzx, r6.xyzx  // r0.w <- D
 
@@ -154,7 +154,7 @@ max r0.w, r0.w, r1.w
 mul r6.xyz, r3.xyzx, r5.xyzx
 mul r6.xyz, r0.wwww, r6.xyzx  // r6.x <- <Diffuse return value>.x; r6.y <- <Diffuse return value>.y; r6.z <- <Diffuse return value>.z
 
-#line 25 "C:\Users\ryoki\Desktop\Cumlonimbus\Shader\spot_light_ps.hlsl"
+#line 25 "C:\Users\ryoki\Desktop\Cumulonimbus\Shader\spot_light_ps.hlsl"
 mov r6.xyz, r6.xyzx  // r6.x <- D.x; r6.y <- D.y; r6.z <- D.z
 
 #line 28
@@ -168,7 +168,7 @@ mov r3.xyz, r3.xyzx
 mov r1.xyz, r1.xyzx
 mov r7.xyz, r7.xyzx
 
-#line 30 "C:\Users\ryoki\Desktop\Cumlonimbus\Shader\functions.hlsli"
+#line 30 "C:\Users\ryoki\Desktop\Cumulonimbus\Shader\functions.hlsli"
 mov r0.xyz, -r0.xyzx
 add r0.xyz, r1.xyzx, r0.xyzx
 dp3 r0.w, r0.xyzx, r0.xyzx
@@ -199,7 +199,7 @@ mul r0.xyz, r3.xyzx, r0.xyzx  // r0.x <- S.x; r0.y <- S.y; r0.z <- S.z
 #line 36
 mov r0.xyz, r0.xyzx  // r0.x <- <BlinnPhongSpecular return value>.x; r0.y <- <BlinnPhongSpecular return value>.y; r0.z <- <BlinnPhongSpecular return value>.z
 
-#line 29 "C:\Users\ryoki\Desktop\Cumlonimbus\Shader\spot_light_ps.hlsl"
+#line 29 "C:\Users\ryoki\Desktop\Cumulonimbus\Shader\spot_light_ps.hlsl"
 mov r0.xyz, r0.xyzx  // r0.x <- S.x; r0.y <- S.y; r0.z <- S.z
 
 #line 35
@@ -296,7 +296,7 @@ loop
   mov r13.xyz, r13.xyzx
   mov r15.xyz, r5.xyzx
 
-#line 11 "C:\Users\ryoki\Desktop\Cumlonimbus\Shader\functions.hlsli"
+#line 11 "C:\Users\ryoki\Desktop\Cumulonimbus\Shader\functions.hlsli"
   mov r16.xyz, -r11.xyzx
   dp3 r4.w, r14.xyzx, r16.xyzx  // r4.w <- D
 
@@ -308,7 +308,7 @@ loop
   mul r14.xyz, r13.xyzx, r15.xyzx
   mul r14.xyz, r4.wwww, r14.xyzx  // r14.x <- <Diffuse return value>.x; r14.y <- <Diffuse return value>.y; r14.z <- <Diffuse return value>.z
 
-#line 57 "C:\Users\ryoki\Desktop\Cumlonimbus\Shader\spot_light_ps.hlsl"
+#line 57 "C:\Users\ryoki\Desktop\Cumulonimbus\Shader\spot_light_ps.hlsl"
   mul r14.xyz, r12.xyzx, r14.xyzx
   mul r14.xyz, r12.xyzx, r14.xyzx
   mul r14.xyz, r3.wwww, r14.xyzx
@@ -322,7 +322,7 @@ loop
   mov r15.xyz, r1.xyzx
   mov r16.xyz, r7.xyzx
 
-#line 30 "C:\Users\ryoki\Desktop\Cumlonimbus\Shader\functions.hlsli"
+#line 30 "C:\Users\ryoki\Desktop\Cumulonimbus\Shader\functions.hlsli"
   mov r11.xyz, -r11.xyzx
   add r11.xyz, r15.xyzx, r11.xyzx
   dp3 r4.w, r11.xyzx, r11.xyzx
@@ -353,7 +353,7 @@ loop
 #line 36
   mov r11.xyz, r11.xyzx  // r11.x <- <BlinnPhongSpecular return value>.x; r11.y <- <BlinnPhongSpecular return value>.y; r11.z <- <BlinnPhongSpecular return value>.z
 
-#line 58 "C:\Users\ryoki\Desktop\Cumlonimbus\Shader\spot_light_ps.hlsl"
+#line 58 "C:\Users\ryoki\Desktop\Cumulonimbus\Shader\spot_light_ps.hlsl"
   mul r11.xyz, r12.xyzx, r11.xyzx
   mul r11.xyz, r12.xyzx, r11.xyzx
   mul r11.xyz, r3.wwww, r11.xyzx

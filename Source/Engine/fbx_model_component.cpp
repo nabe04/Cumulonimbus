@@ -11,6 +11,7 @@
 #include "transform.h"
 #include "transform_component.h"
 #include "locator.h"
+#include "component_list.h"
 
 
 void FbxModelComponent::NewFrame(const float delta_time)

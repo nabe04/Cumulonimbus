@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <cereal/types/polymorphic.hpp>
+#include "component_list.h"
 
 SpriteObject::SpriteObject(Entity* entity)
 	:Component{ entity }

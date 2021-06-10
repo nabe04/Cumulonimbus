@@ -9,6 +9,7 @@ using namespace std;
 #include "inner_sphere_collision.h"
 #include "light.h"
 #include "view.h"
+#include "component_list.h"
 
 namespace intersect
 {

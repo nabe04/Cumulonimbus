@@ -6,6 +6,8 @@
 
 #include <nameof.h>
 
+#include "component_list.h"
+
 MeshObject::MeshObject(Entity* entity)
 	:Component{ entity }
 {

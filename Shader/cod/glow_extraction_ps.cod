@@ -52,7 +52,7 @@ dcl_temps 1
 //   v1.x <- texcoord.x; v1.y <- texcoord.y; 
 //   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
 //
-#line 11 "C:\Users\ryoki\Desktop\Cumlonimbus\Shader\glow_extraction_ps.hlsl"
+#line 11 "C:\Users\ryoki\Desktop\Cumulonimbus\Shader\glow_extraction_ps.hlsl"
 sample_indexable(texture2d)(float,float,float,float) r0.xyz, v1.xyxx, t0.xyzw, s0
 mov r0.xyz, r0.xyzx  // r0.x <- colour_map_colour.x; r0.y <- colour_map_colour.y; r0.z <- colour_map_colour.z
 

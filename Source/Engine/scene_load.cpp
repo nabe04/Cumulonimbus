@@ -2,6 +2,7 @@
 
 #include "scene.h"
 #include "scene_load.h"
+#include "component_list.h"
 #include "framework.h"
 #include "ecs.h"
 #include "sprite.h"

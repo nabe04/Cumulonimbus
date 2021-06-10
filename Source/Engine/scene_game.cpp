@@ -4,6 +4,7 @@
 
 #include "fbx_model_component.h"
 #include "input_manager.h"
+#include "component_list.h"
 #include "input_device.h"
 #include "scene_title.h"
 #include "sky_box.h"

@@ -5,7 +5,7 @@
 #include "sphere_collision_component.h"
 #include "light.h"
 #include "view.h"
-
+#include "component_list.h"
 
 collision_component::collision_component(Entity* entity,CollisionTag tag)
 	: Component{ entity }

@@ -8,6 +8,7 @@
 
 #include "transform.h"
 #include "transform_component.h"
+#include "component_list.h"
 #include "mesh_object.h"
 #include "fbx_model_component.h"
 

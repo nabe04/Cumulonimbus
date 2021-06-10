@@ -2,6 +2,7 @@
 
 #include "window.h"
 #include "scene.h"
+#include "component_list.h"
 #include "sprite.h"
 #include "anim_sprite.h"
 #include "sprite_object.h"

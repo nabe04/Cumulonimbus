@@ -12,6 +12,7 @@
 #include "input_manager.h"
 #include "texture.h"
 #include "locator.h"
+#include "component_list.h"
 
 
 bool Framework::Initialize()

@@ -8,6 +8,7 @@
 
 #include "transform.h"
 #include "arithmetic.h"
+#include "component_list.h"
 
 using namespace DirectX;
 
