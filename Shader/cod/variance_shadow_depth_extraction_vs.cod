@@ -89,7 +89,7 @@ dcl_temps 5
 //   o1.x <- <main return value>.world_view_position.x; o1.y <- <main return value>.world_view_position.y; o1.z <- <main return value>.world_view_position.z; o1.w <- <main return value>.world_view_position.w; 
 //   o0.x <- <main return value>.position.x; o0.y <- <main return value>.position.y; o0.z <- <main return value>.position.z; o0.w <- <main return value>.position.w
 //
-#line 18 "D:\チEクトップ\Cumulonimbus\Shader\variance_shadow_depth_extraction_vs.hlsl"
+#line 18 "C:\Users\ryoki\Desktop\Cumlonimbus\Shader\variance_shadow_depth_extraction_vs.hlsl"
 itof r0.xyz, l(0, 0, 0, 0)  // r0.x <- world_pos.x; r0.y <- world_pos.y; r0.z <- world_pos.z
 
 #line 20

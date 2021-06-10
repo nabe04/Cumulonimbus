@@ -60,7 +60,7 @@ dcl_temps 3
 //   o1.x <- <main return value>.color.x; o1.y <- <main return value>.color.y; o1.z <- <main return value>.color.z; o1.w <- <main return value>.color.w; 
 //   o0.x <- <main return value>.position.x; o0.y <- <main return value>.position.y; o0.z <- <main return value>.position.z; o0.w <- <main return value>.position.w
 //
-#line 22 "D:\チEクトップ\Cumulonimbus\Shader\cpu_particle_vs.hlsl"
+#line 22 "C:\Users\ryoki\Desktop\Cumlonimbus\Shader\cpu_particle_vs.hlsl"
 mul r0.xyz, v0.xxxx, cb6[0].xyzx
 mul r1.xyz, v0.yyyy, cb6[1].xyzx
 add r0.xyz, r0.xyzx, r1.xyzx

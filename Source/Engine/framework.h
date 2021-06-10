@@ -30,8 +30,8 @@ private:
 	bool debug_mode = false;
 
 private:
-	[[nodiscard]] bool Initialize();
-	[[nodiscard]] bool UnInitialize();
+	bool Initialize();
+	bool UnInitialize();
 	 void CalculateFrameStates();
 
 public:

@@ -42,7 +42,7 @@ dcl_temps 1
 //   v3.x <- pin.normal.x; v3.y <- pin.normal.y; v3.z <- pin.normal.z; 
 //   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
 //
-#line 11 "D:\チEクトップ\Cumulonimbus\Shader\shadow_map_ps.hlsl"
+#line 11 "C:\Users\ryoki\Desktop\Cumlonimbus\Shader\shadow_map_ps.hlsl"
 mov r0.x, l(0.001000)  // r0.x <- bias
 
 #line 13
@@ -56,7 +56,7 @@ mov r0.z, v2.z
 mov r0.y, r0.y
 mov r0.x, r0.x
 
-#line 40 "D:\デスクトップ\Cumulonimbus\Shader\shadow_map.hlsli"
+#line 40 "C:\Users\ryoki\Desktop\Cumlonimbus\Shader\shadow_map.hlsli"
 sample_indexable(texture2d)(float,float,float,float) r0.w, v2.xyxx, t0.yzwx, s0
 mov r0.w, r0.w  // r0.w <- d
 
@@ -69,7 +69,7 @@ movc r0.xyz, r0.xxxx, r0.yyyy, l(1.000000,1.000000,1.000000,0)  // r0.z <- shado
 #line 46
 mov r0.xyz, r0.xyzx  // r0.z <- <GetShadow return value>.z
 
-#line 15 "D:\チEクトップ\Cumulonimbus\Shader\shadow_map_ps.hlsl"
+#line 15 "C:\Users\ryoki\Desktop\Cumlonimbus\Shader\shadow_map_ps.hlsl"
 itof o0.w, l(1)
 mov o0.xyz, r0.xyzx
 ret 

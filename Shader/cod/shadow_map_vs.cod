@@ -95,7 +95,7 @@ dcl_temps 8
 //   o1.x <- <main return value>.ndc_wvp_position.x; o1.y <- <main return value>.ndc_wvp_position.y; o1.z <- <main return value>.ndc_wvp_position.z; o1.w <- <main return value>.ndc_wvp_position.w; 
 //   o0.x <- <main return value>.position.x; o0.y <- <main return value>.position.y; o0.z <- <main return value>.position.z; o0.w <- <main return value>.position.w
 //
-#line 8 "D:\チEクトップ\Cumulonimbus\Shader\shadow_map_vs.hlsl"
+#line 8 "C:\Users\ryoki\Desktop\Cumlonimbus\Shader\shadow_map_vs.hlsl"
 itof r0.xyz, l(0, 0, 0, 0)  // r0.x <- worldPos.x; r0.y <- worldPos.y; r0.z <- worldPos.z
 
 #line 9
@@ -183,7 +183,7 @@ mov r3.x, r3.x
 mov r3.y, r3.y
 mov r3.z, r3.z
 
-#line 23 "D:\デスクトップ\Cumulonimbus\Shader\shadow_map.hlsli"
+#line 23 "C:\Users\ryoki\Desktop\Cumlonimbus\Shader\shadow_map.hlsli"
 mov r3.xyz, r3.xyzx  // r3.x <- wvp_pos.x; r3.y <- wvp_pos.y; r3.z <- wvp_pos.z
 
 #line 24
@@ -213,7 +213,7 @@ add r1.xy, r3.xyxx, l(0.500000, 0.500000, 0.000000, 0.000000)  // r1.y <- wvp_po
 mov r1.xy, r1.xyxx  // r1.x <- <GetShadowTexture return value>.x; r1.y <- <GetShadowTexture return value>.y
 mov r1.z, r1.z  // r1.z <- <GetShadowTexture return value>.z
 
-#line 22 "D:\チEクトップ\Cumulonimbus\Shader\shadow_map_vs.hlsl"
+#line 22 "C:\Users\ryoki\Desktop\Cumlonimbus\Shader\shadow_map_vs.hlsl"
 mov r1.xyz, r1.xyzx  // r1.x <- vout.texture_position.x; r1.y <- vout.texture_position.y; r1.z <- vout.texture_position.z
 
 #line 24

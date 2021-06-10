@@ -99,8 +99,8 @@ public:
 	}
 
 protected:
-	CollisionType type;
-	CollisionTag  tag = CollisionTag::Object;
+	CollisionType type = CollisionType::Sphere;
+	CollisionTag  tag  = CollisionTag::Object;
 
 	//-- Debug info --//
 	const XMFLOAT3 color_blue = XMFLOAT3{ 0.0f,0.7f,1.0f };
@@ -108,7 +108,7 @@ protected:
 
 	//-- State of Shader --//
 	//shader::MeshShaderState shader_state{};
-	shader::MeshShaderState shader_state;
+	shader::MeshShaderState shader_state{};
 
 	bool is_judge = true;
 

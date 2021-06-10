@@ -76,7 +76,7 @@ dcl_temps 5
 //   v4.x <- pin.eyeVector.x; v4.y <- pin.eyeVector.y; v4.z <- pin.eyeVector.z; 
 //   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
 //
-#line 7 "D:\チEクトップ\Cumulonimbus\Shader\cook_torrance_ps.hlsl"
+#line 7 "C:\Users\ryoki\Desktop\Cumlonimbus\Shader\cook_torrance_ps.hlsl"
 mov r0.xyz, cb2[1].xyzx  // r0.x <- L.x; r0.y <- L.y; r0.z <- L.z
 
 #line 8
@@ -118,7 +118,7 @@ nop
 mov r2.y, cb6[0].x
 mov r1.w, r1.w
 
-#line 74 "D:\デスクトップ\Cumulonimbus\Shader\functions.hlsli"
+#line 74 "C:\Users\ryoki\Desktop\Cumlonimbus\Shader\functions.hlsli"
 mul r2.z, r1.w, r1.w  // r2.z <- NH2
 
 #line 76
@@ -138,7 +138,7 @@ mul r2.y, r2.z, r2.y
 mul r2.y, r2.z, r2.y
 div r2.y, r3.y, r2.y  // r2.y <- <Beckmann return value>
 
-#line 20 "D:\チEクトップ\Cumulonimbus\Shader\cook_torrance_ps.hlsl"
+#line 20 "C:\Users\ryoki\Desktop\Cumlonimbus\Shader\cook_torrance_ps.hlsl"
 mov r2.y, r2.y  // r2.y <- D
 
 #line 23
@@ -203,7 +203,7 @@ mov r0.xyz, r0.xyzx
 mov r3.xyz, cb2[2].xyzx
 mov r4.xyz, l(1.000000,1.000000,1.000000,0)
 
-#line 11 "D:\デスクトップ\Cumulonimbus\Shader\functions.hlsli"
+#line 11 "C:\Users\ryoki\Desktop\Cumlonimbus\Shader\functions.hlsli"
 mov r0.xyz, -r0.xyzx
 dp3 r0.x, r1.xyzx, r0.xyzx  // r0.x <- D
 
@@ -215,7 +215,7 @@ max r0.x, r0.x, r0.y
 mul r1.xyz, r3.xyzx, r4.xyzx
 mul r0.xyz, r0.xxxx, r1.xyzx  // r0.x <- <Diffuse return value>.x; r0.y <- <Diffuse return value>.y; r0.z <- <Diffuse return value>.z
 
-#line 35 "D:\チEクトップ\Cumulonimbus\Shader\cook_torrance_ps.hlsl"
+#line 35 "C:\Users\ryoki\Desktop\Cumlonimbus\Shader\cook_torrance_ps.hlsl"
 min r0.xyz, r0.xyzx, l(0.000000, 0.000000, 0.000000, 0.000000)
 mul r3.xyz, r0.xyzx, v3.xyzx  // r3.x <- f4_diffuse.x; r3.y <- f4_diffuse.y; r3.z <- f4_diffuse.z
 

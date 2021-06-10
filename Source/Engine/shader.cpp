@@ -1,7 +1,7 @@
 #include <d3dcompiler.h>
 
 #include <memory>
-#include <assert.h>
+#include <cassert>
 #include <wrl.h>
 #include <map>
 #include <array>
@@ -27,9 +27,9 @@ namespace shader
 		auto it = checkShader.find(cso_name);
 		if (it != checkShader.end())
 		{
-			// ���݂��Ă���Ƃ�
+
 			*vertex_shader = it->second.vertex_shader.Get();
-			(*vertex_shader)->AddRef();	// �Q�ƃJ�E���^��v���X1
+			(*vertex_shader)->AddRef();
 			*input_layout = it->second.input_layout.Get();
 			(*input_layout)->AddRef();
 
