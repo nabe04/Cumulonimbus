@@ -3,6 +3,8 @@
 #include <string>
 
 #include "component_base.h"
+#include "actor_component.h"
+#include "sprite.h"
 
 
 class Component;

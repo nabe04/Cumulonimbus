@@ -286,7 +286,8 @@ namespace cumulonimbus
 {
 	namespace component
 	{
-		class TransformComponent2;
+		class ActorComponent;
+
 	}
 }
 
@@ -544,7 +545,16 @@ namespace cumulonimbus::ecs
 
 			// í«â¡èàóù
 			return AddComponent<T>(entity, args...);
+		}
 
+		template <typename T>
+		[[nodiscard]] bool HasComponent(Entity entity)
+		{
+			ComponentArray<T>& array = GetArray<T>();
+			if (!array.Content(entity))
+				return false;
+
+			return true;
 		}
 
 		[[nodiscard]] const std::unordered_map<Entity, Entity>& GetEntities() const
@@ -591,6 +601,9 @@ namespace cumulonimbus::ecs
 			RemapId();
 		}
 
+		void SetScene(Scene* scene) { this->scene = scene; }
+		[[nodiscard]] Scene* GetScene() const { return scene; }
+
 		template<typename Archive>
 		void serialize(Archive&& archive)
 		{
@@ -633,8 +646,16 @@ namespace cumulonimbus::ecs
 	private:
 		std::unordered_map<ComponentId, std::unique_ptr<ComponentArrayBase>> component_arrays;
 		std::unordered_map<Entity, Entity> entities;
+		Scene* scene{};
 	};
 }
 
-CEREAL_REGISTER_TYPE(cumulonimbus::ecs::ComponentArray<cumulonimbus::component::TransformComponent2>)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::ecs::ComponentArrayBase, cumulonimbus::ecs::ComponentArray<cumulonimbus::component::TransformComponent2>)
+
+CEREAL_REGISTER_TYPE(cumulonimbus::ecs::ComponentArray<cumulonimbus::component::ActorComponent>);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::ecs::ComponentArrayBase, cumulonimbus::ecs::ComponentArray<cumulonimbus::component::ActorComponent>)
+
+//CEREAL_REGISTER_TYPE(cumulonimbus::ecs::ComponentArray<cumulonimbus::component::SpriteComponent>);
+//CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::ecs::ComponentArrayBase, cumulonimbus::ecs::ComponentArray<cumulonimbus::component::SpriteComponent>)
+//
+//CEREAL_REGISTER_TYPE(cumulonimbus::ecs::ComponentArray<cumulonimbus::component::SpriteObjectComponent>);
+//CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::ecs::ComponentArrayBase, cumulonimbus::ecs::ComponentArray<cumulonimbus::component::SpriteObjectComponent>)
