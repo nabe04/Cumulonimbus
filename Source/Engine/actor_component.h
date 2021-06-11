@@ -100,12 +100,12 @@ namespace cumulonimbus::component
 	class ActorComponent : public ComponentBase
 	{
 	public:
-		explicit ActorComponent() = default; // For cereal
+		explicit ActorComponent() = default; // for cereal
 		explicit ActorComponent(ecs::Registry* const registry, const ecs::Entity ent, ActorType actor_type = ActorType::Actor3D);
 		~ActorComponent() override = default;
 
-		void NewFrame(const float delta_time)override {};
-		void Update(const float delta_time)override {};
+		void NewFrame(const float delta_time)override {}
+		void Update(const float delta_time)override {}
 		void RenderImGui() override;
 
 		void Save(const std::string& file_path) override;

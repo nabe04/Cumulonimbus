@@ -4,7 +4,9 @@
 
 #include "component_base.h"
 #include "actor_component.h"
+#include "transform_component.h"
 #include "sprite.h"
+#include "mesh_object.h"
 
 
 class Component;

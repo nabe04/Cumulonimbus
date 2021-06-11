@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <vector>
 #include <memory>
 #include <cassert>
@@ -287,7 +288,9 @@ namespace cumulonimbus
 	namespace component
 	{
 		class ActorComponent;
-
+		class SpriteComponent;
+		class MeshObjectComponent;
+		class TransformComponent;
 	}
 }
 
@@ -654,8 +657,15 @@ namespace cumulonimbus::ecs
 CEREAL_REGISTER_TYPE(cumulonimbus::ecs::ComponentArray<cumulonimbus::component::ActorComponent>);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::ecs::ComponentArrayBase, cumulonimbus::ecs::ComponentArray<cumulonimbus::component::ActorComponent>)
 
-//CEREAL_REGISTER_TYPE(cumulonimbus::ecs::ComponentArray<cumulonimbus::component::SpriteComponent>);
-//CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::ecs::ComponentArrayBase, cumulonimbus::ecs::ComponentArray<cumulonimbus::component::SpriteComponent>)
-//
+CEREAL_REGISTER_TYPE(cumulonimbus::ecs::ComponentArray<cumulonimbus::component::SpriteComponent>);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::ecs::ComponentArrayBase, cumulonimbus::ecs::ComponentArray<cumulonimbus::component::SpriteComponent>)
+
+CEREAL_REGISTER_TYPE(cumulonimbus::ecs::ComponentArray<cumulonimbus::component::MeshObjectComponent>);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::ecs::ComponentArrayBase, cumulonimbus::ecs::ComponentArray<cumulonimbus::component::MeshObjectComponent>)
+
+CEREAL_REGISTER_TYPE(cumulonimbus::ecs::ComponentArray<cumulonimbus::component::TransformComponent>);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::ecs::ComponentArrayBase, cumulonimbus::ecs::ComponentArray<cumulonimbus::component::TransformComponent>)
+
+////
 //CEREAL_REGISTER_TYPE(cumulonimbus::ecs::ComponentArray<cumulonimbus::component::SpriteObjectComponent>);
 //CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::ecs::ComponentArrayBase, cumulonimbus::ecs::ComponentArray<cumulonimbus::component::SpriteObjectComponent>)

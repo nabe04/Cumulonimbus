@@ -562,7 +562,7 @@
     <ProjectGuid>{14693518-A8F1-4B7F-B512-18E45DD4B7C2}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>SunLight</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
     <ProjectName>Cumulonimbus</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -663,6 +663,7 @@
       <AdditionalOptions>-DNOMINMAX /bigobj %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
