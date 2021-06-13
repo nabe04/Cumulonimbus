@@ -76,6 +76,14 @@ CEREAL_REGISTER_POLYMORPHIC_RELATION(Component, SpriteObject)
 //	public:
 //		explicit SpriteObjectComponent() = default;	// For cereal
 //		explicit SpriteObjectComponent(ecs::Registry* const registry, const ecs::Entity ent);
+//		~SpriteObjectComponent() override = default;
+//
+//		void NewFrame(float dt) override {};
+//		void Update(float dt)   override {};
+//		void RenderImGui()      override {};
+//
+//		void Save(const std::string& file_path) override;
+//		void Load(const std::string& file_path_and_name) override;
 //
 //		[[nodiscard]] const BlendState&					GetBlendState()			const { return blend_state.GetCurrentState(); }
 //		[[nodiscard]] const RasterizeState&				GetRasterizerState()	const { return rasterizer_state.GetCurrentState(); }
@@ -89,14 +97,11 @@ CEREAL_REGISTER_POLYMORPHIC_RELATION(Component, SpriteObject)
 //		void SetDepthStencilState(const DepthStencilState& state)	{ depth_stencil_state = state; }
 //		void SetShaderState(const shader::SpriteShaderTypes type)	{ sprite_shader_state.SetShaderState(type); }
 //
-//		void Save(const std::string& file_path) override;
-//		void Load(const std::string& file_path_and_name) override;
-//
 //		template <class Archive>
 //		void serialize(Archive&& archive)
 //		{
 //			archive(
-//				cereal::base_class<Component>(this),
+//				cereal::base_class<ComponentBase>(this),
 //				CEREAL_NVP(blend_state),
 //				CEREAL_NVP(rasterizer_state),
 //				CEREAL_NVP(sampler_state),
