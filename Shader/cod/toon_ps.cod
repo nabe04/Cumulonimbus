@@ -95,7 +95,7 @@ dcl_temps 10
 //   v4.x <- pin.eye_vector.x; v4.y <- pin.eye_vector.y; v4.z <- pin.eye_vector.z; 
 //   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
 //
-#line 10 "C:\Users\ryoki\Desktop\Cumulonimbus\Shader\toon_ps.hlsl"
+#line 10 "D:\チEクトップ\Cumulonimbus\Shader\toon_ps.hlsl"
 sample_indexable(texture2d)(float,float,float,float) r0.xyzw, v2.xyxx, t0.xyzw, s0  // r0.x <- diffuse_color.x; r0.y <- diffuse_color.y; r0.z <- diffuse_color.z; r0.w <- diffuse_color.w
 
 #line 11
@@ -134,7 +134,7 @@ mov r7.xyz, -r5.xyzx
 mov r6.xyz, r6.xyzx
 mov r1.w, cb6[0].z
 
-#line 30 "C:\Users\ryoki\Desktop\Cumulonimbus\Shader\functions.hlsli"
+#line 30 "D:\デスクトップ\Cumulonimbus\Shader\functions.hlsli"
 mov r8.xyz, -r3.xyzx
 add r7.xyz, r7.xyzx, r8.xyzx
 dp3 r2.w, r7.xyzx, r7.xyzx
@@ -161,7 +161,7 @@ mul r7.xyz, r4.xyzx, r7.xyzx  // r7.x <- S.x; r7.y <- S.y; r7.z <- S.z
 #line 36
 mov r7.xyz, r7.xyzx  // r7.x <- <BlinnPhongSpecular return value>.x; r7.y <- <BlinnPhongSpecular return value>.y; r7.z <- <BlinnPhongSpecular return value>.z
 
-#line 20 "C:\Users\ryoki\Desktop\Cumulonimbus\Shader\toon_ps.hlsl"
+#line 20 "D:\チEクトップ\Cumulonimbus\Shader\toon_ps.hlsl"
 mov r7.xyz, r7.xyzx  // r7.x <- specular.x; r7.y <- specular.y; r7.z <- specular.z
 
 #line 22
@@ -186,7 +186,7 @@ mov r3.xyz, r3.xyzx
 mov r4.xyz, r4.xyzx
 mov r6.xyz, r6.xyzx
 
-#line 11 "C:\Users\ryoki\Desktop\Cumulonimbus\Shader\functions.hlsli"
+#line 11 "D:\デスクトップ\Cumulonimbus\Shader\functions.hlsli"
 mov r8.xyz, -r3.xyzx
 dp3 r1.w, r2.xyzx, r8.xyzx  // r1.w <- D
 
@@ -198,7 +198,7 @@ max r1.w, r1.w, r2.w
 mul r4.xyz, r4.xyzx, r6.xyzx
 mul r4.xyz, r1.wwww, r4.xyzx  // r4.x <- <Diffuse return value>.x; r4.y <- <Diffuse return value>.y; r4.z <- <Diffuse return value>.z
 
-#line 24 "C:\Users\ryoki\Desktop\Cumulonimbus\Shader\toon_ps.hlsl"
+#line 24 "D:\チEクトップ\Cumulonimbus\Shader\toon_ps.hlsl"
 mov r4.xyz, r4.xyzx  // r4.x <- diffuse.x; r4.y <- diffuse.y; r4.z <- diffuse.z
 
 #line 26

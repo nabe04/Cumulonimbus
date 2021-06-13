@@ -6,6 +6,18 @@
 
 #include "component_list.h"
 #include "transform_component.h"
+#include "actor_component.h"
+#include "child_actor.h"
+#include "sprite.h"
+#include "sprite_object.h"
+#include "anim_sprite.h"
+#include "camera_operation.h"
+#include "mesh_object.h"
+#include "collision_component.h"
+#include "sphere_collision_component.h"
+#include "fbx_model_component.h"
+#include "geometric_primitive_component.h"
+#include "obj_model_component.h"
 #include "scene.h"
 
 //------------------------------------< Entity Class >-----------------------------
@@ -112,6 +124,30 @@ void Entity::Load(std::string file_path)
 
 
 #pragma endregion  Component
+
+namespace cumulonimbus::ecs
+{
+	/*
+	 * brief     : component_arraysのキー値を予め登録
+	 * ※caution : デシリアライズの際の型の判別に使用
+	 */
+	void Registry::RegisterComponentName()
+	{
+		RegistryComponent<component::ActorComponent>();
+		RegistryComponent<component::ChildActorComponent>();
+		RegistryComponent<component::TransformComponent>();
+		RegistryComponent<component::SpriteComponent>();
+		RegistryComponent<component::AnimSpriteComponent>();
+		RegistryComponent<component::CameraOperationComponent>();
+		RegistryComponent<component::SpriteObjectComponent>();
+		RegistryComponent<component::MeshObjectComponent>();
+		RegistryComponent<component::CollisionComponent>();
+		RegistryComponent<component::SphereCollisionComponent>();
+		RegistryComponent<component::FbxModelComponent>();
+		RegistryComponent<component::GeomPrimComponent>();
+		RegistryComponent<component::ObjModelComponent>();
+	}
+}
 
 
 

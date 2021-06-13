@@ -396,6 +396,9 @@
     <ClCompile Include="Source\Engine\sprite_object.cpp">
       <Filter>Source\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\file_path_helper.cpp">
+      <Filter>Source\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -691,6 +694,9 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\component_base.h">
       <Filter>Header\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\file_path_helper.h">
+      <Filter>Header\System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

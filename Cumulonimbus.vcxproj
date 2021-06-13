@@ -53,6 +53,7 @@
     <ClInclude Include="Source\Engine\enum_state_map.h" />
     <ClInclude Include="Source\Engine\fbx_model_component.h" />
     <ClInclude Include="Source\Engine\fbx_model_resource.h" />
+    <ClInclude Include="Source\Engine\file_path_helper.h" />
     <ClInclude Include="Source\Engine\framework.h" />
     <ClInclude Include="Source\Engine\frame_buffer.h" />
     <ClInclude Include="Source\Engine\fullscreen_quad.h" />
@@ -149,6 +150,7 @@
     <ClCompile Include="Source\Engine\editor_manager.cpp" />
     <ClCompile Include="Source\Engine\fbx_model_component.cpp" />
     <ClCompile Include="Source\Engine\fbx_model_resource.cpp" />
+    <ClCompile Include="Source\Engine\file_path_helper.cpp" />
     <ClCompile Include="Source\Engine\framework.cpp" />
     <ClCompile Include="Source\Engine\frame_buffer.cpp" />
     <ClCompile Include="Source\Engine\fullscreen_quad.cpp" />

@@ -1,19 +1,5 @@
 #pragma once
-#include <memory>
-#include <vector>
-#include <d3d11.h>
-#include <DirectXMath.h>
-#include <SimpleMath.h>
 
-#include "ecs.h"
-#include "constant_buffer.h"
-#include "vertex_buffer.h"
-#include "model_data.h"
-#include "transform.h"
-#include "transform_component.h"
-#include "fbx_model_component.h"
-#include "shader.h"
-//
 //class MeshParticle : public Component
 //{
 //public:
