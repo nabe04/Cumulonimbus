@@ -48,7 +48,7 @@ dcl_output o0.xyzw
 //   v3.x <- pin.color.x; v3.y <- pin.color.y; v3.z <- pin.color.z; v3.w <- pin.color.w; 
 //   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
 //
-#line 5 "D:\Desktop\Cumulonimbus\Shader\single_color_ps.hlsl"
+#line 5 "D:\チEクトップ\Cumulonimbus\Shader\single_color_ps.hlsl"
 itof o0.w, l(1)
 mov o0.xyz, cb6[0].xyzx
 ret 

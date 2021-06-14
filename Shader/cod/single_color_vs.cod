@@ -87,7 +87,7 @@ dcl_temps 6
 //   o1.x <- <main return value>.normal.x; o1.y <- <main return value>.normal.y; o1.z <- <main return value>.normal.z; 
 //   o0.x <- <main return value>.position.x; o0.y <- <main return value>.position.y; o0.z <- <main return value>.position.z; o0.w <- <main return value>.position.w
 //
-#line 8 "D:\Desktop\Cumulonimbus\Shader\single_color_vs.hlsl"
+#line 8 "D:\チEクトップ\Cumulonimbus\Shader\single_color_vs.hlsl"
 itof r0.xyz, l(0, 0, 0, 0)  // r0.x <- worldPos.x; r0.y <- worldPos.y; r0.z <- worldPos.z
 
 #line 9

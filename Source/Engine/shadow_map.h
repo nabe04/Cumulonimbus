@@ -91,3 +91,9 @@ private:
 	void ActivateVarianceShadowDepthExtraction(ID3D11DeviceContext* immediate_context, const M_ShadowMap m_data) const;
 	void DeactivateVarianceShadowDepthExtraction(ID3D11DeviceContext* immediate_context) const;
 };
+
+
+namespace cumulonimbus::renderer
+{
+	//class ShadowMap : public
+}

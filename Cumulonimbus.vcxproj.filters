@@ -704,6 +704,9 @@
     <ClInclude Include="Source\Engine\render_path.h">
       <Filter>Header\Render</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\shader_resource_mapping.h">
+      <Filter>Header\System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Cumulonimbus.rc" />
@@ -752,6 +755,9 @@
       <Filter>Shader%28HLSL%29</Filter>
     </None>
     <None Include="Shader\shadow_functions.hlsli">
+      <Filter>Shader%28HLSL%29</Filter>
+    </None>
+    <None Include="Shader\shader_resource_mapping.hlsli">
       <Filter>Shader%28HLSL%29</Filter>
     </None>
   </ItemGroup>

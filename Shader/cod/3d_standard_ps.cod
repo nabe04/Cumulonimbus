@@ -43,7 +43,7 @@ dcl_temps 1
 //   v3.x <- pin.color.x; v3.y <- pin.color.y; v3.z <- pin.color.z; v3.w <- pin.color.w; 
 //   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
 //
-#line 12 "D:\Desktop\Cumulonimbus\Shader\3d_standard_ps.hlsl"
+#line 12 "D:\チEクトップ\Cumulonimbus\Shader\3d_standard_ps.hlsl"
 sample_indexable(texture2d)(float,float,float,float) r0.xyzw, v2.xyxx, t0.xyzw, s0
 mul o0.xyzw, r0.xyzw, v3.xyzw
 ret 

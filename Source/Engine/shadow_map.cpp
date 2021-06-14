@@ -4,6 +4,7 @@
 #include "framework.h"
 #include "shader.h"
 #include "frame_buffer.h"
+#include "gaussian_blur.h"
 
 ShadowMap::ShadowMap(ID3D11Device* device, int width, int height)
 	:FullscreenQuad{ device }
@@ -35,9 +36,6 @@ ShadowMap::ShadowMap(ID3D11Device* device, int width, int height)
 
 void ShadowMap::ActivateNormalShadowDepthExtraction(ID3D11DeviceContext* immediate_context, const M_ShadowMap& m_data = {}) const
 {
-	//constant_buffer->data = cbuff_data;
-	//constant_buffer->Activate(immediate_context, 6, true, false);
-
 	// Extraction depth value
 	normal_shadow_depth_extraction_vs->Activate(immediate_context);
 	normal_shadow_depth_extraction_ps->Activate(immediate_context);

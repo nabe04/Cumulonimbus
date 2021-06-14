@@ -130,8 +130,3 @@ private:
 
 	void Blit(ID3D11DeviceContext* immediate_context, MeshObject* actor);
 };
-
-namespace cumulonimbus::render_path
-{
-	
-}
