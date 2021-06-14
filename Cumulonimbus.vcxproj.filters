@@ -509,9 +509,6 @@
     <ClInclude Include="Source\Engine\sobel_filter.h">
       <Filter>Header\Shader%28.h%29</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\sky_box.h">
-      <Filter>Header\Shader%28.h%29</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Engine\single_color.h">
       <Filter>Header\Shader%28.h%29</Filter>
     </ClInclude>
@@ -697,6 +694,9 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\file_path_helper.h">
       <Filter>Header\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\sky_box.h">
+      <Filter>Header\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
