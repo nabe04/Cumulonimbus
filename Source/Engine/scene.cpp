@@ -170,9 +170,6 @@ void Scene::Update(const float elapsed_time)
 	{
 		//this->LoadScene("./Content/Scene/Scene_Title");
 	}
-
-	if (is_paused)
-		return;
 }
 
 void Scene::Render()

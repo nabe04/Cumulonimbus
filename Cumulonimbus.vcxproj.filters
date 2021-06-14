@@ -399,6 +399,9 @@
     <ClCompile Include="Source\Engine\file_path_helper.cpp">
       <Filter>Source\System</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\render_path.cpp">
+      <Filter>Source\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -697,6 +700,9 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\file_path_helper.h">
       <Filter>Header\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\render_path.h">
+      <Filter>Header\Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

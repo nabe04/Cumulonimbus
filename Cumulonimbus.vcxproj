@@ -84,6 +84,7 @@
     <ClInclude Include="Source\Engine\reflection_mapping.h" />
     <ClInclude Include="Source\Engine\refraction_mapping.h" />
     <ClInclude Include="Source\Engine\rendering_buffer.h" />
+    <ClInclude Include="Source\Engine\render_path.h" />
     <ClInclude Include="Source\Engine\resource_manager.h" />
     <ClInclude Include="Source\Engine\sampler.h" />
     <ClInclude Include="Source\Engine\scene.h" />
@@ -177,6 +178,7 @@
     <ClCompile Include="Source\Engine\reflection_mapping.cpp" />
     <ClCompile Include="Source\Engine\refraction_mapping.cpp" />
     <ClCompile Include="Source\Engine\rendering_buffer.cpp" />
+    <ClCompile Include="Source\Engine\render_path.cpp" />
     <ClCompile Include="Source\Engine\resource_manager.cpp" />
     <ClCompile Include="Source\Engine\sampler.cpp" />
     <ClCompile Include="Source\Engine\scene.cpp" />

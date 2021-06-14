@@ -74,7 +74,7 @@ dcl_temps 7
 //   o1.x <- <main return value>.world_position.x; o1.y <- <main return value>.world_position.y; o1.z <- <main return value>.world_position.z; o1.w <- <main return value>.world_position.w; 
 //   o0.x <- <main return value>.position.x; o0.y <- <main return value>.position.y; o0.z <- <main return value>.position.z; o0.w <- <main return value>.position.w
 //
-#line 13 "D:\チEクトップ\Cumulonimbus\Shader\reflection_mapping_vs.hlsl"
+#line 13 "D:\Desktop\Cumulonimbus\Shader\reflection_mapping_vs.hlsl"
 itof r0.xy, l(0, 0, 0, 0)  // r0.x <- vout.texcoord0.x; r0.y <- vout.texcoord0.y
 
 #line 15

@@ -62,7 +62,7 @@ dcl_temps 2
 //   v1.x <- texcoord.x; v1.y <- texcoord.y; 
 //   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
 //
-#line 11 "D:\チEクトップ\Cumulonimbus\Shader\gaussian_blur_convolution_ps.hlsl"
+#line 11 "D:\Desktop\Cumulonimbus\Shader\gaussian_blur_convolution_ps.hlsl"
 itof r0.xyz, l(0, 0, 0, 0)  // r0.x <- fragment_colour.x; r0.y <- fragment_colour.y; r0.z <- fragment_colour.z
 
 #line 15

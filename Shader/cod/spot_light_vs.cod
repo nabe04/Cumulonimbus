@@ -114,7 +114,7 @@ dcl_temps 6
 //   o1.x <- <main return value>.worldPos.x; o1.y <- <main return value>.worldPos.y; o1.z <- <main return value>.worldPos.z; o1.w <- <main return value>.worldPos.w; 
 //   o0.x <- <main return value>.wvpPos.x; o0.y <- <main return value>.wvpPos.y; o0.z <- <main return value>.wvpPos.z; o0.w <- <main return value>.wvpPos.w
 //
-#line 8 "D:\チEクトップ\Cumulonimbus\Shader\spot_light_vs.hlsl"
+#line 8 "D:\Desktop\Cumulonimbus\Shader\spot_light_vs.hlsl"
 itof r0.xyz, l(0, 0, 0, 0)  // r0.x <- worldPos.x; r0.y <- worldPos.y; r0.z <- worldPos.z
 
 #line 10
