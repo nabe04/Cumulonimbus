@@ -48,34 +48,6 @@ enum  RenderingSampleState
 
 class MeshRenderer final
 {
-private:
-	void RenderGeomPrim(ID3D11DeviceContext* immediate_context,
-		MeshObject* actor, GeomPrimComponent* geomComponent,
-		const View* const view, const Light* const light,
-		XMFLOAT4 color = XMFLOAT4{ .0f,.0f,.0f,1.f });
-
-	void RenderOBJ(ID3D11DeviceContext* immediate_context,
-		MeshObject* actor, ObjModelComponent* model_comp,
-		const View* const view, const Light* const light);
-
-	void RenderFBX(ID3D11DeviceContext* immediate_context,
-		MeshObject* actor, const FbxModelComponent* modelComp,
-		const View* const view,
-		const Light* const light_dir);
-
-	void RenderSphereCollision(ID3D11DeviceContext* immediate_context,
-		MeshObject* actor, Spherecollision_component* collision_comp,
-		const View* const view);
-
-	void RenderInnerSphereCollision(ID3D11DeviceContext* immediate_context,
-		MeshObject* actor, InnerSpherecollision_component* collision_comp,
-		const View* const view);
-
-	void RenderGeomPrimMesh(ID3D11DeviceContext* immediate_context, const geometric_primitive_resource::Mesh& mesh);
-
-
-	void Blit(ID3D11DeviceContext* immediate_context, MeshObject* actor);
-
 public:
 	MeshRenderer(ID3D11Device* device);
 	~MeshRenderer() = default;
@@ -129,4 +101,37 @@ private:
 
 	// ShaderResourceView
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv_sky_map;
+
+
+	void RenderGeomPrim(ID3D11DeviceContext* immediate_context,
+		MeshObject* actor, GeomPrimComponent* geomComponent,
+		const View* const view, const Light* const light,
+		XMFLOAT4 color = XMFLOAT4{ .0f,.0f,.0f,1.f });
+
+	void RenderOBJ(ID3D11DeviceContext* immediate_context,
+		MeshObject* actor, ObjModelComponent* model_comp,
+		const View* const view, const Light* const light);
+
+	void RenderFBX(ID3D11DeviceContext* immediate_context,
+		MeshObject* actor, const FbxModelComponent* modelComp,
+		const View* const view,
+		const Light* const light_dir);
+
+	void RenderSphereCollision(ID3D11DeviceContext* immediate_context,
+		MeshObject* actor, Spherecollision_component* collision_comp,
+		const View* const view);
+
+	void RenderInnerSphereCollision(ID3D11DeviceContext* immediate_context,
+		MeshObject* actor, InnerSpherecollision_component* collision_comp,
+		const View* const view);
+
+	void RenderGeomPrimMesh(ID3D11DeviceContext* immediate_context, const geometric_primitive_resource::Mesh& mesh);
+
+
+	void Blit(ID3D11DeviceContext* immediate_context, MeshObject* actor);
 };
+
+namespace cumulonimbus::render_path
+{
+	
+}

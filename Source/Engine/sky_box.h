@@ -13,6 +13,7 @@
 #include "cereal/types/string.hpp"
 
 #include "ecs.h"
+#include "component_base.h"
 #include "texture.h"
 #include "shader.h"
 
