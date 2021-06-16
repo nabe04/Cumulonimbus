@@ -12,20 +12,13 @@
 class Locator final
 {
 public:
-	explicit Locator()
+	static void Initialize()
 	{
 		input			 = nullptr;
 		resource_manager = nullptr;
 		window			 = nullptr;
 	}
 	~Locator() = default;
-	
-	static void Initialize()
-	{
-		input = nullptr;
-		resource_manager = nullptr;
-		window = nullptr;
-	}
 
 	static InputSystem* GetInput() { return input.get(); }
 	static ResourceManager* GetResourceManager() { return resource_manager.get(); }

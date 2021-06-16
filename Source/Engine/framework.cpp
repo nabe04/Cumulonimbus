@@ -16,8 +16,6 @@
 
 bool Framework::Initialize()
 {
-	locator = std::make_unique<Locator>();
-
 	dx11_configurator = std::make_shared<Dx11Configurator>(window->GetHWND());
 	dx11_configurator->Initialize(window->GetHWND(), device.GetAddressOf(), immediate_context.GetAddressOf(), window->Width(), window->Height());
 	Locator::Provide<Dx11Configurator>(dx11_configurator);

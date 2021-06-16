@@ -264,7 +264,7 @@ void Dx11Configurator::BindPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology) co
 void Dx11Configurator::BindPrimitiveTopology(cumulonimbus::mapping::graphics::PrimitiveTopology topology) const
 {
 	using namespace cumulonimbus::mapping::graphics;
-	
+
 	switch(topology)
 	{
 	case PrimitiveTopology::TriangleList:
@@ -291,7 +291,7 @@ void Dx11Configurator::BindPrimitiveTopology(cumulonimbus::mapping::graphics::Pr
 void Dx11Configurator::BindShaderResource(cumulonimbus::mapping::graphics::ShaderStage state, ID3D11ShaderResourceView** srv, uint32_t slot) const
 {
 	using namespace cumulonimbus::mapping::graphics;
-	
+
 	switch (state)
 	{
 	case ShaderStage::VS:

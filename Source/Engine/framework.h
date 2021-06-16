@@ -25,8 +25,6 @@ private:
 	std::shared_ptr<InputSystem> input_system{};
 	std::shared_ptr<Dx11Configurator> dx11_configurator{};
 
-	std::unique_ptr<Locator> locator{};
-
 	const double frameRate = 60;
 	HighResolutionTimer hr_timer;
 
@@ -54,6 +52,5 @@ public:
 	[[nodiscard]] auto GetHighResolutionTimer() const{ return hr_timer; }
 	[[nodiscard]] const auto& GetWindow() const { return window; }
 	[[nodiscard]] bool getDebugMode() const { return debug_mode; }
-	[[nodiscard]] Locator* GetLocator() const { return locator.get(); };
 };
 

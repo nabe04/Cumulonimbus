@@ -250,6 +250,7 @@ protected:
 public:
 	explicit Component(class Entity* entity)
 		:entity{entity} {}
+
 	Component() = default;
 	virtual ~Component() = default;
 

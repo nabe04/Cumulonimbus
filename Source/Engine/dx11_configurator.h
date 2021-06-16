@@ -53,6 +53,7 @@ public:
 	void BindShaderResource(cumulonimbus::mapping::graphics::ShaderStage state, TextureResource* resource, uint32_t slot) const;
 	void BindPrimitiveTopology(cumulonimbus::mapping::graphics::PrimitiveTopology topology) const;
 
+
 private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain>			 swap_chain{};
 	Microsoft::WRL::ComPtr<IDXGIDevice>				 dxgi_device{};
