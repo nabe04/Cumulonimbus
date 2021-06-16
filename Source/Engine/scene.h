@@ -27,7 +27,6 @@
 #include "resource_manager.h"
 #include "editor_manager.h"
 #include "camera_work.h"
-#include "locator.h"
 
 class GeometricPrimitiveResource;
 
@@ -59,8 +58,6 @@ protected:
 	std::unique_ptr<SpriteRenderer>					sprite_renderer     = nullptr;
 	std::unique_ptr<View>						    view				= nullptr;
 
-	Locator* locator{nullptr};
-	
 	//std::unique_ptr <pad_link::PadLink>			pad_combine			= nullptr;
 
 	bool is_paused = false;
@@ -89,7 +86,6 @@ public:
 	[[nodiscard]] auto* GetGeomPrimRes() const { return geom_prim_res.get(); }
 	//auto* GetPadLink()			{ return pad_combine.get(); }
 	[[nodiscard]] auto* GetSoundResourceManager() const { return sound_resource.get(); }
-	[[nodiscard]] Locator* GetLocator() const { return locator; }
 	void IsPaused(bool flg) { is_paused = flg; }
 	[[nodiscard]] bool IsPaused() const { return is_paused; }
 

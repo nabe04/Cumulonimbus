@@ -18,15 +18,13 @@
 #include "fbx_model_component.h"
 #include "geometric_primitive_component.h"
 #include "obj_model_component.h"
+#include "sky_box.h"
 #include "scene.h"
 
 //------------------------------------< Entity Class >-----------------------------
 #pragma region
 Entity::Entity(Scene* scene,const UpdateOrder update_order, const EntityTag entity_tag)
 	: scene{ scene }
-
-
-	, locator{scene->GetLocator()}
 	, update_order{ update_order }
 	, entity_tag{ entity_tag }
 {
@@ -149,6 +147,7 @@ namespace cumulonimbus::ecs
 		RegistryComponent<component::FbxModelComponent>();
 		RegistryComponent<component::GeomPrimComponent>();
 		RegistryComponent<component::ObjModelComponent>();
+		RegistryComponent<component::SkyBoxComponent>();
 	}
 }
 

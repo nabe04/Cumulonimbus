@@ -61,8 +61,6 @@ void Scene::Initialize()
 {
 	next_scene = nullptr;
 
-	locator = framework->GetLocator();
-
 	// Create Light
 	if (!this->light)
 	{

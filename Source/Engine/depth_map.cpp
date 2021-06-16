@@ -19,13 +19,10 @@ namespace cumulonimbus::renderer
 	void DepthMap::Begin(ID3D11DeviceContext* const immediate_context) const
 	{
 		depth_extraction_fb->Clear(immediate_context);
-		Activate(immediate_context);
 	}
 
 	void DepthMap::End(ID3D11DeviceContext* const immediate_context) const
 	{
-		Deactivate(immediate_context);
-
 		// 深度値テクスチャのガウシアンブラー作成
 		gaussian_blur->GenerateGaussianBlur(immediate_context, depth_extraction_fb->GetRenderTargetSRV());
 	}

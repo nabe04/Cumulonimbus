@@ -463,8 +463,8 @@ void MeshRenderer::RenderInnerSphereCollision(ID3D11DeviceContext* immediate_con
 }
 
 void MeshRenderer::RenderOBJ(ID3D11DeviceContext* immediate_context,
-	MeshObject* actor, ObjModelComponent* model_comp,
-	const View* const view, const Light* const light)
+							 MeshObject* actor, ObjModelComponent* model_comp,
+							 const View* const view, const Light* const light)
 {
 	auto ent = model_comp->GetEntity();
 
@@ -577,7 +577,6 @@ void MeshRenderer::RenderFBX(ID3D11DeviceContext* immediate_context,
 		immediate_context->IASetVertexBuffers(0, 1, mesh.vertex_buffer.GetAddressOf(), &stride, &offset);
 		immediate_context->IASetIndexBuffer(mesh.index_buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 		immediate_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		//immediate_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 		for (const ModelData::Subset& subset : mesh.subsets)
 		{

@@ -24,6 +24,7 @@ namespace cumulonimbus
 	namespace component
 	{
 		class MeshObjectComponent;
+		class SpriteObjectComponent;
 		class GeomPrimComponent;
 	}
 
@@ -32,6 +33,7 @@ namespace cumulonimbus
 namespace shader
 {
 	class  ShaderManager;
+	class  SpriteShaderManager;
 	struct CB_CoordinateTransformation;
 	struct CB_Material;
 	struct CB_Light;
@@ -60,6 +62,7 @@ namespace cumulonimbus::renderer
 	private:
 		// すべてのシェーダーの生成とセット
 		std::unique_ptr<shader::ShaderManager> shader_manager;
+		std::unique_ptr<shader::SpriteShaderManager> shader_manager_2d;
 
 		//-- DirectX States --//
 		std::unique_ptr<Blend>			blend;
@@ -76,17 +79,26 @@ namespace cumulonimbus::renderer
 		std::unique_ptr<FrameBuffer>		back_buffer;
 		std::unique_ptr<DepthMap>			depth_map;
 		std::unique_ptr<FullscreenQuad>		fullscreen_quad;
-
-		Locator* const locator;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> sky_box_srv;
 
 		/*
 		 * brief : "MeshObjectComponent"がもつDirectX stateのセット
 		 *         (states : rasterizer , sampler , depth_stencil , blend)
 		 */
-		void ActivateDirectXStates(ID3D11DeviceContext* immediate_context,
-							       const component::MeshObjectComponent* mesh_object,
-								   bool set_rasterizer = true, bool set_sampler = true,
-								   bool set_depth_stencil = true, bool set_blend = true);
+		void BindDirectXStates(ID3D11DeviceContext* immediate_context,
+							   const component::MeshObjectComponent* mesh_object,
+							   bool set_rasterizer = true, bool set_sampler = true,
+							   bool set_depth_stencil = true, bool set_blend = true);
+		void BindDirectXStates(ID3D11DeviceContext* immediate_context,
+							   const component::SpriteObjectComponent* sprite_object,
+							   bool set_rasterizer = true, bool set_sampler = true,
+							   bool set_depth_stencil = true, bool set_blend = true);
+
+		/*
+		 * brief : "back_buffer"(メンバ変数)に書き込まれているものを
+		 *		   バックバッファに書き込む
+		 */
+		void Blit(ID3D11DeviceContext* immediate_context) const;
 
 		/*
 		 * brief     : 深度テクスチャの作成
@@ -108,18 +120,7 @@ namespace cumulonimbus::renderer
 		void Render3D(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, const View* view, const Light* light);
 		void Render3D_End(ID3D11DeviceContext* immediate_context);
 
-		/*
-		 * brief        : 2Dスプライトの描画
-		 * ※caution(1) : "SpriteObjectComponent", "SpriteComponent", "AnimSpriteComponent"
-		 *                を持つエンティティのみ描画される
-		 * ※caution(2) : "バックバッファに直接書き込むため「Begin」や「End」はない"
-		 */
 		void Render2D(ID3D11DeviceContext* immediate_context, ecs::Registry* registry);
-		// 2Dスプライト描画(Animationなし)
-		void RenderSprite(ID3D11DeviceContext* immediate_context, ecs::Registry* registry);
-		// 2Dスプライト描画(Animationあり)
-		void RenderAnimSprite(ID3D11DeviceContext* immediate_context, ecs::Registry* registry);
-
 
 		//--------< モデルの種類に応じての描画 >--------//
 
@@ -155,5 +156,16 @@ namespace cumulonimbus::renderer
 						  ecs::Registry* registry, ecs::Entity entity,
 						  const component::MeshObjectComponent* mesh_object,
 						  const View* view, const Light* light);
+
+		/*
+		 * brief        : 2Dスプライトの描画
+		 * ※caution(1) : "SpriteObjectComponent", "SpriteComponent", "AnimSpriteComponent"
+		 *                を持つエンティティのみ描画される
+		 * ※caution(2) : "バックバッファに直接書き込むため「Begin」や「End」はない"
+		 */
+		// 2Dスプライト描画(Animationなし)
+		void RenderSprite(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, ecs::Entity entity);
+		// 2Dスプライト描画(Animationあり)
+		void RenderAnimSprite(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, ecs::Entity entity);
 	};
 }

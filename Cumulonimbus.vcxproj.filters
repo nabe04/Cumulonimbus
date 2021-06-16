@@ -778,6 +778,7 @@
     <None Include="Shader\shader_resource_mapping.hlsli">
       <Filter>Shader%28HLSL%29</Filter>
     </None>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header">

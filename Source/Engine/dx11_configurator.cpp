@@ -259,10 +259,78 @@ void Dx11Configurator::BindPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology) co
 }
 
 /*
+ * brief : Primitive Topology のセット
+ */
+void Dx11Configurator::BindPrimitiveTopology(cumulonimbus::mapping::graphics::PrimitiveTopology topology) const
+{
+	using namespace cumulonimbus::mapping::graphics;
+	
+	switch(topology)
+	{
+	case PrimitiveTopology::TriangleList:
+		immediate_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		break;
+	case PrimitiveTopology::TriangleStrip:
+		immediate_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		break;
+	case PrimitiveTopology::PointList:
+		immediate_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+		break;
+	case PrimitiveTopology::LineList:
+		immediate_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+		break;
+	default:
+		assert(0);
+		break;
+	}
+}
+
+/*
+ * brief : 指定のシェーダーのテクスチャをセット
+ */
+void Dx11Configurator::BindShaderResource(cumulonimbus::mapping::graphics::ShaderStage state, ID3D11ShaderResourceView** srv, uint32_t slot) const
+{
+	using namespace cumulonimbus::mapping::graphics;
+	
+	switch (state)
+	{
+	case ShaderStage::VS:
+		immediate_context->VSSetShaderResources(slot, 1, srv);
+		break;
+
+	case ShaderStage::HS:
+		immediate_context->HSSetShaderResources(slot, 1, srv);
+		break;
+
+	case ShaderStage::DS:
+		immediate_context->DSSetShaderResources(slot, 1, srv);
+		break;
+
+	case ShaderStage::GS:
+		immediate_context->GSSetShaderResources(slot, 1, srv);
+		break;
+
+	case ShaderStage::PS:
+		immediate_context->PSSetShaderResources(slot, 1, srv);
+		break;
+
+	case ShaderStage::CS:
+		immediate_context->CSSetShaderResources(slot, 1, srv);
+		break;
+
+	default:
+		assert(0);
+		break;
+	}
+}
+
+
+
+/*
  * brief : 指定のシェーダーのテクスチャをセット
  */
 void Dx11Configurator::BindShaderResource(cumulonimbus::mapping::graphics::ShaderStage state,
-										  TextureResource* resource, uint32_t slot)
+										  TextureResource* resource, uint32_t slot) const
 {
 	using namespace cumulonimbus::mapping::graphics;
 

@@ -40,6 +40,18 @@ namespace cumulonimbus::renderer
 		 */
 		void End(ID3D11DeviceContext* immediate_context) const;
 
+		/*
+		 * brief : FB,VS,PSの実行
+		 *		   現在保持しているFB,VS,PSをdefault_fb,vs,ps
+		 *		   に保持する(Deactivate時に使用)
+		 */
+		void Activate(ID3D11DeviceContext* immediate_context) const;
+
+		/*
+		 * brief : default_fb,vs,psにそれぞれセットしなおす
+		 */
+		void Deactivate(ID3D11DeviceContext* immediate_context) const;
+
 		// ブラー適用後テクスチャのSRV
 		[[nodiscard]] ID3D11ShaderResourceView** GetDepthExtractionSRV() const { return depth_extraction_fb.get()->render_target_shader_resource_view.GetAddressOf(); }
 
@@ -56,17 +68,5 @@ namespace cumulonimbus::renderer
 		// vertex & pixel shader
 		std::unique_ptr<shader::VertexShader> depth_extraction_vs{};
 		std::unique_ptr<shader::PixelShader>  depth_extraction_ps{};
-
-		/*
-		 * brief : FB,VS,PSの実行
-		 *		   現在保持しているFB,VS,PSをdefault_fb,vs,ps
-		 *		   に保持する(Deactivate時に使用)
-		 */
-		void Activate(ID3D11DeviceContext* immediate_context) const;
-
-		/*
-		 * brief : default_fb,vs,psにそれぞれセットしなおす
-		 */
-		void Deactivate(ID3D11DeviceContext* immediate_context) const;
 	};
 }

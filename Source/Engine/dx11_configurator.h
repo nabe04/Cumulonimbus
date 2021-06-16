@@ -49,7 +49,9 @@ public:
 
 	void SetViewPort(int width, int height) const;
 	void BindPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology) const;
-	void BindShaderResource(cumulonimbus::mapping::graphics::ShaderStage state, TextureResource* resource, uint32_t slot);
+	void BindShaderResource(cumulonimbus::mapping::graphics::ShaderStage state, ID3D11ShaderResourceView** srv, uint32_t slot) const;
+	void BindShaderResource(cumulonimbus::mapping::graphics::ShaderStage state, TextureResource* resource, uint32_t slot) const;
+	void BindPrimitiveTopology(cumulonimbus::mapping::graphics::PrimitiveTopology topology) const;
 
 private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain>			 swap_chain{};

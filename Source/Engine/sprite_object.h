@@ -97,6 +97,8 @@ namespace cumulonimbus::component
 		void SetDepthStencilState(const DepthStencilState& state)	{ depth_stencil_state = state; }
 		void SetShaderState(const shader::SpriteShaderTypes type)	{ sprite_shader_state.SetShaderState(type); }
 
+
+		
 		template <class Archive>
 		void serialize(Archive&& archive)
 		{
