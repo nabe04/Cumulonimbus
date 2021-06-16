@@ -12,6 +12,14 @@
 class Locator final
 {
 public:
+	explicit Locator()
+	{
+		input			 = nullptr;
+		resource_manager = nullptr;
+		window			 = nullptr;
+	}
+	~Locator() = default;
+	
 	static void Initialize()
 	{
 		input = nullptr;

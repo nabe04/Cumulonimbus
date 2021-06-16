@@ -44,6 +44,8 @@ enum class EntityTag
 	End
 };
 
+class Locator;
+
 //----------------------------------------< Entity Class >-----------------------------------------------------
 #pragma region Entity
 class Entity final
@@ -51,7 +53,7 @@ class Entity final
 	using ComponentVector = std::vector<std::unique_ptr<class Component>>;
 
 public:
-	explicit Entity(class Scene* scene, const UpdateOrder update_order = UpdateOrder::Default, const EntityTag entity_tag = EntityTag::Default);
+	explicit Entity(class Scene* scene, UpdateOrder update_order = UpdateOrder::Default, const EntityTag entity_tag = EntityTag::Default);
 	Entity() = default;
 	~Entity() = default;
 
@@ -60,6 +62,7 @@ private:
 	UpdateOrder		update_order	= UpdateOrder::Default;
 	EntityTag		entity_tag		= EntityTag::Default;
 	Scene*			scene			= {};
+	Locator*		locator{};
 	bool			is_apply_paused = true;
 
 	// For ImGui
@@ -187,9 +190,10 @@ public:
 	 */
 	void Load(std::string file_path);
 
-	void SetScene(Scene* scene) { this->scene = scene; }
-	auto*   GetScene()		 const { return scene; }
-	auto	GetUpdateOrder() const { return update_order; }
+	void  SetScene(Scene* scene) { this->scene = scene; }
+	auto* GetScene()		 const { return scene; }
+	auto* GetLocator() const { return locator; }
+	auto  GetUpdateOrder() const { return update_order; }
 
 	auto GetEntityTag() { return entity_tag; }
 
@@ -249,7 +253,7 @@ protected:
 
 public:
 	explicit Component(class Entity* entity)
-		:entity{entity}{}
+		:entity{entity} {}
 	Component() = default;
 	virtual ~Component() = default;
 
@@ -272,7 +276,8 @@ public:
 
 
 	//-- Getter --//
-	auto* GetEntity() const { return entity; }
+	auto* GetEntity()  const { return entity; }
+	auto* GetLocator() const { return entity->GetLocator(); }
 	std::string GetName() { return component_name; }
 
 	// Serialize
@@ -296,7 +301,6 @@ namespace cumulonimbus::ecs
 	using ComponentName = std::string;
 
 	static const uint64_t START_ID = 1;	// EntityId,ComponentId‚ÌŽn‚Ü‚è‚ÌŽ¯•ÊŽq(Å‰‚ÌID‚Í‚Ç‚ê‚à"1"‚©‚ç)
-
 
 	class ComponentArrayBase
 	{
@@ -745,8 +749,11 @@ namespace cumulonimbus::ecs
 			}
 		}
 
-		void SetScene(Scene* scene) { this->scene = scene; }
-		Scene* GetScene() const { return scene; }
+		void SetScene(Scene* scene)		  { this->scene = scene; }
+		void SetLocator(Locator* locator) { this->locator = locator; }
+
+		[[nodiscard]] Scene*   GetScene()   const { return scene; }
+		[[nodiscard]] Locator* GetLocator() const { return locator; }
 
 		template<typename Archive>
 		void serialize(Archive&& archive)
@@ -775,5 +782,6 @@ namespace cumulonimbus::ecs
 		std::unordered_map<ComponentName, std::unique_ptr<ComponentArrayBase>> component_arrays;
 		std::unordered_map<Entity, Entity> entities;
 		Scene* scene;
+		Locator* locator;
 	};
 }

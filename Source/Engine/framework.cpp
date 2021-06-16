@@ -11,12 +11,13 @@
 #include "imgui_manager.h"
 #include "input_manager.h"
 #include "texture.h"
-#include "locator.h"
 #include "component_list.h"
 
 
 bool Framework::Initialize()
 {
+	locator = std::make_unique<Locator>();
+
 	dx11_configurator = std::make_shared<Dx11Configurator>(window->GetHWND());
 	dx11_configurator->Initialize(window->GetHWND(), device.GetAddressOf(), immediate_context.GetAddressOf(), window->Width(), window->Height());
 	Locator::Provide<Dx11Configurator>(dx11_configurator);

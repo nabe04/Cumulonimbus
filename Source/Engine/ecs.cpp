@@ -24,6 +24,9 @@
 #pragma region
 Entity::Entity(Scene* scene,const UpdateOrder update_order, const EntityTag entity_tag)
 	: scene{ scene }
+
+
+	, locator{scene->GetLocator()}
 	, update_order{ update_order }
 	, entity_tag{ entity_tag }
 {
