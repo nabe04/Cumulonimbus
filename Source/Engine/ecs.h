@@ -405,7 +405,7 @@ namespace cumulonimbus::ecs
 		/*
 		 *  brief : Entity‚ªComponent‚ğ‚Á‚Ä‚¢‚é‚©
 		*/
-		[[nodiscard]] bool Content(const Entity entity) const
+		[[nodiscard]] bool Content(const Entity entity)
 		{
 			if (entity_id.contains(entity))
 				return true;
@@ -622,7 +622,7 @@ namespace cumulonimbus::ecs
 
 		}
 
-		[[nodiscard]] const std::unordered_map<Entity, Entity>& GetEntities() const
+		[[nodiscard]] const std::unordered_map<Entity, Entity>& GetEntities()
 		{
 			return entities;
 		}

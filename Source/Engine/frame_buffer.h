@@ -15,6 +15,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> default_depth_stencil_view;
 
 public:
+	// TODO : メンバ変数のpublicを消す & ゲッタの用意
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> render_target_view;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depth_stencil_view;
 
@@ -69,7 +70,7 @@ public:
 		immediate_context->ClearDepthStencilView(depth_stencil_view.Get(), clear_flags, depth, stencil);
 	}
 
-	void Activate(ID3D11DeviceContext* immediate_context)
+	void Activate(ID3D11DeviceContext* const immediate_context)
 	{
 		number_of_stored_viewports = D3D11_VIEWPORT_AND_SCISSORRECT_OBJECT_COUNT_PER_PIPELINE;
 		immediate_context->RSGetViewports(&number_of_stored_viewports, default_viewports);
@@ -80,7 +81,7 @@ public:
 	}
 
 	// activate only "render_target_view"
-	void ActivateRenderTargetView(ID3D11DeviceContext* immediate_context)
+	void ActivateRenderTargetView(ID3D11DeviceContext* const immediate_context)
 	{
 		number_of_stored_viewports = D3D11_VIEWPORT_AND_SCISSORRECT_OBJECT_COUNT_PER_PIPELINE;
 		immediate_context->RSGetViewports(&number_of_stored_viewports, default_viewports);
@@ -91,7 +92,7 @@ public:
 	}
 
 	// activate only "depth_stencil_view"
-	void ActivateDepthStencilView(ID3D11DeviceContext* immediate_context)
+	void ActivateDepthStencilView(ID3D11DeviceContext* const immediate_context)
 	{
 		number_of_stored_viewports = D3D11_VIEWPORT_AND_SCISSORRECT_OBJECT_COUNT_PER_PIPELINE;
 		immediate_context->RSGetViewports(&number_of_stored_viewports, default_viewports);
@@ -102,9 +103,17 @@ public:
 		immediate_context->OMSetRenderTargets(1, &null_render_target_view, depth_stencil_view.Get());
 	}
 
-	void Deactivate(ID3D11DeviceContext* immediate_context)
+	void Deactivate(ID3D11DeviceContext* const immediate_context)
 	{
 		immediate_context->RSSetViewports(number_of_stored_viewports, default_viewports);
 		immediate_context->OMSetRenderTargets(1, default_render_target_view.GetAddressOf(), default_depth_stencil_view.Get());
 	}
+
+	[[nodiscard]] ID3D11RenderTargetView*    GetRTV() const		  { return render_target_view.Get(); }
+	[[nodiscard]] ID3D11RenderTargetView**   GetRTV_Address()	  { return render_target_view.GetAddressOf(); }
+	[[nodiscard]] ID3D11DepthStencilView*    GetDSV() const		  { return depth_stencil_view.Get(); }
+	[[nodiscard]] ID3D11DepthStencilView**   GetDSV_Address()	  { return depth_stencil_view.GetAddressOf(); }
+	[[nodiscard]] ID3D11ShaderResourceView** GetRenderTargetSRV() { return render_target_shader_resource_view.GetAddressOf(); }
+	[[nodiscard]] ID3D11ShaderResourceView** GetDepthStencilSRV() { return depth_stencil_shader_resource_view.GetAddressOf(); }
+	
 };

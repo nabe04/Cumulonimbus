@@ -1,7 +1,11 @@
 #include <vector>
+#include <cassert>
+
 #include <dxgi1_6.h>
+
 #include "dx11_configurator.h"
 #include "imgui_manager.h"
+#include "texture.h"
 
 //***********************************
 //
@@ -162,21 +166,6 @@ bool Dx11Configurator::InitializeRenderTarget()
 	return true;
 }
 
-//------------------------------
-// Set up Viewport
-//------------------------------
-void Dx11Configurator::SetViewPort(int width, int height)
-{
-	D3D11_VIEWPORT vp;
-	vp.Width	= (FLOAT)width;
-	vp.Height	= (FLOAT)height;
-	vp.MinDepth = 0.0f;
-	vp.MaxDepth = 1.0f;
-	vp.TopLeftX = 0;
-	vp.TopLeftY = 0;
-	immediate_context->RSSetViewports(1, &vp);
-}
-
 //--------------------------------
 // Create DepthStencil Buffer
 //--------------------------------
@@ -245,3 +234,69 @@ void Dx11Configurator::Flip(int n)
 	//immediate_context->OMSetDepthStencilState(depth_stencil_states[static_cast<u_int>(DS_Type::DS_TRUE)].Get(), 1);
 	swap_chain->Present(n, 0);
 }
+
+//------------------------------
+// Set up Viewport
+//------------------------------
+void Dx11Configurator::SetViewPort(int width, int height) const
+{
+	D3D11_VIEWPORT vp;
+	vp.Width = (FLOAT)width;
+	vp.Height = (FLOAT)height;
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+	immediate_context->RSSetViewports(1, &vp);
+}
+
+/*
+ * brief : Primitive Topology のセット
+ */
+void Dx11Configurator::BindPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology) const
+{
+	immediate_context->IASetPrimitiveTopology(topology);
+}
+
+/*
+ * brief : 指定のシェーダーのテクスチャをセット
+ */
+void Dx11Configurator::BindShaderResource(cumulonimbus::mapping::graphics::ShaderStage state,
+										  TextureResource* resource, uint32_t slot)
+{
+	using namespace cumulonimbus::mapping::graphics;
+
+	ID3D11ShaderResourceView* srv = resource->GetTextureData()->texture_view.Get();
+
+	switch(state)
+	{
+	case ShaderStage::VS:
+		immediate_context->VSSetShaderResources(slot, 1, &srv);
+		break;
+
+	case ShaderStage::HS:
+		immediate_context->HSSetShaderResources(slot, 1, &srv);
+		break;
+
+	case ShaderStage::DS:
+		immediate_context->DSSetShaderResources(slot, 1, &srv);
+		break;
+
+	case ShaderStage::GS:
+		immediate_context->GSSetShaderResources(slot, 1, &srv);
+		break;
+
+	case ShaderStage::PS:
+		immediate_context->PSSetShaderResources(slot, 1, &srv);
+		break;
+
+	case ShaderStage::CS:
+		immediate_context->CSSetShaderResources(slot, 1, &srv);
+		break;
+
+	default:
+		assert(0);
+		break;
+	}
+}
+

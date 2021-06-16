@@ -41,7 +41,7 @@ namespace shader
 	class ShaderManager final
 	{
 	public:
-		explicit  ShaderManager(ID3D11Device* device);
+		explicit ShaderManager(ID3D11Device* device);
 		~ShaderManager() = default;
 
 		/*

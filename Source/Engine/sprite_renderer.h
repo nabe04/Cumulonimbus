@@ -23,6 +23,11 @@ enum class SpriteSamplerState
 
 class SpriteRenderer final
 {
+public:
+	explicit SpriteRenderer(ID3D11Device* device);
+
+	void Render(ID3D11DeviceContext* immediate_context, const Entity* entity);
+
 private:
 	//-- Constant buffer --//
 	std::unique_ptr<buffer::ConstantBuffer<shader::CB_CoordinateTransformation>> cbuffer_transformation;
@@ -37,11 +42,6 @@ private:
 
 	std::unique_ptr<shader::SpriteShaderManager> sprite_shader_manager;
 
-private:
 	void RenderSprite(ID3D11DeviceContext* immediate_context, const Entity* entity);
 	void RenderAnim(ID3D11DeviceContext* immediate_context, const Entity* entity);
-public:
-	explicit SpriteRenderer(ID3D11Device* device);
-
-	void Render(ID3D11DeviceContext* immediate_context, const Entity* entity);
 };

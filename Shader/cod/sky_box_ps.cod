@@ -43,7 +43,7 @@ dcl_temps 2
 //   v3.x <- pin.texcoord0.x; v3.y <- pin.texcoord0.y; 
 //   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
 //
-#line 15 "D:\チEクトップ\Cumulonimbus\Shader\sky_box_ps.hlsl"
+#line 15 "D:\Desktop\Cumulonimbus\Shader\sky_box_ps.hlsl"
 mov r0.xyz, v1.xyzx  // r0.x <- view_vec.x; r0.y <- view_vec.y; r0.z <- view_vec.z
 
 #line 16

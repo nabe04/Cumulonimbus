@@ -1,5 +1,5 @@
 #pragma once
-namespace cumulonimbus::shader_resource_mapping
+namespace cumulonimbus::mapping::texture_resource
 {
 	using u_int = unsigned int;
 

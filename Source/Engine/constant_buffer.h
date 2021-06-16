@@ -7,13 +7,14 @@
 
 namespace buffer
 {
+	// TODO: public ÉÅÉìÉoïœêîÇÃè¡ãé
 	template <class T>
 	class ConstantBuffer
 	{
 	public:
 		T data;
 
-		explicit ConstantBuffer(ID3D11Device* const device)
+		ConstantBuffer(ID3D11Device* const device)
 		{
 			int size = sizeof(T);
 			if (sizeof(T) % 16 != 0)
@@ -32,14 +33,14 @@ namespace buffer
 		}
 
 		virtual ~ConstantBuffer() = default;
-		ConstantBuffer(ConstantBuffer&) = delete;
-		ConstantBuffer(ConstantBuffer&&) = delete;
-		ConstantBuffer(const ConstantBuffer&) = delete;
-		ConstantBuffer(const ConstantBuffer&&) = delete;
-		ConstantBuffer& operator= (ConstantBuffer&&) = delete;
-		ConstantBuffer& operator= (ConstantBuffer&) = delete;
-		ConstantBuffer& operator= (const ConstantBuffer&) = delete;
-		ConstantBuffer& operator= (const ConstantBuffer&&) = delete;
+		//ConstantBuffer(ConstantBuffer&) = delete;
+		//ConstantBuffer(ConstantBuffer&&) = delete;
+		//ConstantBuffer(const ConstantBuffer&) = delete;
+		//ConstantBuffer(const ConstantBuffer&&) = delete;
+		//ConstantBuffer& operator= (ConstantBuffer&&) = delete;
+		//ConstantBuffer& operator= (ConstantBuffer&) = delete;
+		//ConstantBuffer& operator= (const ConstantBuffer&) = delete;
+		//ConstantBuffer& operator= (const ConstantBuffer&&) = delete;
 
 		void Activate(ID3D11DeviceContext* const immediate_context, int slot, bool set_in_vs = true, bool set_in_ps = true)
 		{

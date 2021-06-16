@@ -13,7 +13,7 @@ class FrameBuffer;
 class GaussianBlur final : public FullscreenQuad
 {
 public:
-	explicit GaussianBlur(ID3D11Device* device,const u_int width, const u_int height);
+	explicit GaussianBlur(ID3D11Device* device, u_int width, u_int height , DXGI_FORMAT format = DXGI_FORMAT_R32G32_FLOAT);
 	~GaussianBlur() override = default;
 	void GenerateGaussianBlur(ID3D11DeviceContext* immediate_context, ID3D11ShaderResourceView** const blur_texture);
 

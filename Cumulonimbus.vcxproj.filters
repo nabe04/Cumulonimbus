@@ -402,6 +402,12 @@
     <ClCompile Include="Source\Engine\render_path.cpp">
       <Filter>Source\System</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\shader_filename_mapping.cpp">
+      <Filter>Source\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\depth_map.cpp">
+      <Filter>Source\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -704,7 +710,19 @@
     <ClInclude Include="Source\Engine\render_path.h">
       <Filter>Header\Render</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\shader_resource_mapping.h">
+    <ClInclude Include="Source\Engine\texture_resource_mapping.h">
+      <Filter>Header\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\depth_map.h">
+      <Filter>Header\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\shader_filename_mapping.h">
+      <Filter>Header\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\sampler_mapping.h">
+      <Filter>Header\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\graphics_mapping.h">
       <Filter>Header\System</Filter>
     </ClInclude>
   </ItemGroup>

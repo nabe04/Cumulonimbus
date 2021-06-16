@@ -24,7 +24,7 @@ namespace cumulonimbus::component
 		virtual void RenderImGui() = 0;
 		virtual void Save(const std::string& file_path) = 0;
 		virtual void Load(const std::string& file_path_and_name) = 0;
-		
+
 		template<typename Archive>
 		void serialize(Archive&& archive)
 		{
@@ -33,7 +33,6 @@ namespace cumulonimbus::component
 			);
 		}
 
-	protected:
 		[[nodiscard]] ecs::Registry* GetRegistry() const { return registry; }
 		[[nodiscard]] ecs::Entity    GetEntity()   const { return entity; }
 

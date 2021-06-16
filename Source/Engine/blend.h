@@ -25,13 +25,8 @@ enum class BlendState
 
 class Blend final
 {
-private:
-	BlendState current_state = { BlendState::None };
-
-	std::array<ComPtr<ID3D11BlendState>, static_cast<u_int>(BlendState::End)>	blend_states = { nullptr };
-
 public:
-	Blend(ID3D11Device* device);
+	 explicit Blend(ID3D11Device* device);
 	~Blend() = default;
 
 	void Activate(ID3D11DeviceContext* immediate_context, BlendState state)
@@ -42,4 +37,9 @@ public:
 		current_state = state;
 		immediate_context->OMSetBlendState(blend_states[static_cast<u_int>(current_state)].Get(), nullptr, 0xffffffff);
 	}
+
+private:
+	BlendState current_state = { BlendState::None };
+
+	std::array<ComPtr<ID3D11BlendState>, static_cast<u_int>(BlendState::End)>	blend_states = { nullptr };
 };

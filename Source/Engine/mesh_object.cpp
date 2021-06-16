@@ -323,33 +323,14 @@ namespace cumulonimbus::component
 		const std::string file_path_and_name = file_path + file_path_helper::GetTypeName<MeshObjectComponent>() + file_path_helper::GetJsonExtension();
 		std::ofstream ofs(file_path_and_name);
 		cereal::JSONOutputArchive o_archive(ofs);
-		o_archive(
-
-			cereal::base_class<ComponentBase>(this),
-			cereal::make_nvp("blend state", blend_state),
-			cereal::make_nvp("rasterizer state", rasterizer_state),
-			cereal::make_nvp("sampler state", sampler_state),
-			cereal::make_nvp("depth stencil_state", depth_stencil_state),
-
-			cereal::make_nvp("shader state", shader_state),
-			cereal::make_nvp("rendering_buffer", rendering_buffer)
-		);
+		o_archive(*this);
 	}
 
 	void MeshObjectComponent::Load(const std::string& file_path_and_name)
 	{
 		std::ifstream ifs(file_path_and_name);
 		cereal::JSONInputArchive i_archive(ifs);
-		i_archive(
-			cereal::base_class<ComponentBase>(this),
-			cereal::make_nvp("blend state", blend_state),
-			cereal::make_nvp("rasterizer state", rasterizer_state),
-			cereal::make_nvp("sampler state", sampler_state),
-			cereal::make_nvp("depth stencil_state", depth_stencil_state),
-
-			cereal::make_nvp("shader state", shader_state),
-			cereal::make_nvp("rendering_buffer", rendering_buffer)
-		);
+		i_archive(*this);
 	}
 
 }

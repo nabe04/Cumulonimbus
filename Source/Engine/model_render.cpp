@@ -24,7 +24,6 @@
 #include "transform.h"
 #include "transform_component.h"
 #include "view.h"
-#include "component_list.h"
 
 using namespace shader;
 

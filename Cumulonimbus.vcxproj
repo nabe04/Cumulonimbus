@@ -44,6 +44,7 @@
     <ClInclude Include="Source\Engine\component_list.h" />
     <ClInclude Include="Source\Engine\constant_buffer.h" />
     <ClInclude Include="Source\Engine\content_browser.h" />
+    <ClInclude Include="Source\Engine\depth_map.h" />
     <ClInclude Include="Source\Engine\depth_stencil.h" />
     <ClInclude Include="Source\Engine\diffuse.h" />
     <ClInclude Include="Source\Engine\dx11_configurator.h" />
@@ -61,6 +62,7 @@
     <ClInclude Include="Source\Engine\generic.h" />
     <ClInclude Include="Source\Engine\geometric_primitive_component.h" />
     <ClInclude Include="Source\Engine\geometric_primitive_resource.h" />
+    <ClInclude Include="Source\Engine\graphics_mapping.h" />
     <ClInclude Include="Source\Engine\high_resolution_timer.h" />
     <ClInclude Include="Source\Engine\imgui_helper.h" />
     <ClInclude Include="Source\Engine\imgui_manager.h" />
@@ -86,7 +88,9 @@
     <ClInclude Include="Source\Engine\rendering_buffer.h" />
     <ClInclude Include="Source\Engine\render_path.h" />
     <ClInclude Include="Source\Engine\resource_manager.h" />
-    <ClInclude Include="Source\Engine\shader_resource_mapping.h" />
+    <ClInclude Include="Source\Engine\sampler_mapping.h" />
+    <ClInclude Include="Source\Engine\shader_filename_mapping.h" />
+    <ClInclude Include="Source\Engine\texture_resource_mapping.h" />
     <ClInclude Include="Source\Engine\sampler.h" />
     <ClInclude Include="Source\Engine\scene.h" />
     <ClInclude Include="Source\Engine\scene_game.h" />
@@ -144,6 +148,7 @@
     <ClCompile Include="Source\Engine\component_list.cpp" />
     <ClCompile Include="Source\Engine\constant_buffer.cpp" />
     <ClCompile Include="Source\Engine\content_brawser.cpp" />
+    <ClCompile Include="Source\Engine\depth_map.cpp" />
     <ClCompile Include="Source\Engine\depth_stencil.cpp" />
     <ClCompile Include="Source\Engine\diffuse.cpp" />
     <ClCompile Include="Source\Engine\dx11_configurator.cpp" />
@@ -188,6 +193,7 @@
     <ClCompile Include="Source\Engine\scene_title.cpp" />
     <ClCompile Include="Source\Engine\scene_tutorial.cpp" />
     <ClCompile Include="Source\Engine\shader.cpp" />
+    <ClCompile Include="Source\Engine\shader_filename_mapping.cpp" />
     <ClCompile Include="Source\Engine\shader_manager.cpp" />
     <ClCompile Include="Source\Engine\shadow_map.cpp" />
     <ClCompile Include="Source\Engine\single_color.cpp" />

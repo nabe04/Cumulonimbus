@@ -24,13 +24,8 @@ enum class RasterizeState
 
 class Rasterizer final
 {
-private:
-	static RasterizeState current_state;
-
-	std::array<ComPtr<ID3D11RasterizerState>, static_cast<u_int>(RasterizeState::End)>		rasterizerStates = { nullptr };
-
 public:
-	Rasterizer(ID3D11Device* device);
+	explicit Rasterizer(ID3D11Device* device);
 	~Rasterizer() = default;
 
 	void Activate(ID3D11DeviceContext* immediate_context, RasterizeState state)
@@ -41,4 +36,9 @@ public:
 		current_state = state;
 		immediate_context->RSSetState(rasterizerStates.at(static_cast<size_t>(state)).Get());
 	}
+
+private:
+	static RasterizeState current_state;
+
+	std::array<ComPtr<ID3D11RasterizerState>, static_cast<u_int>(RasterizeState::End)>		rasterizerStates = { nullptr };
 };

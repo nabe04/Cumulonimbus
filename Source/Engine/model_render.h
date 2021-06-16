@@ -31,20 +31,9 @@ class InnerSpherecollision_component;
 class Texture2DComponent;
 class DummyTexture;
 class FillTexture2DComponent;
-class shader::ShaderManager;
 
 class Blend;
 class Rasterizer;
-
-enum  RenderingSampleState
-{
-	Linear_Border,
-	Point_Wrap,
-	Linear_Wrap,
-	Anistropic,
-
-	End,
-};
 
 class MeshRenderer final
 {

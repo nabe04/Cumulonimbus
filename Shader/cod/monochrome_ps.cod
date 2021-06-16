@@ -38,7 +38,7 @@ dcl_temps 2
 //   v1.x <- texcoord.x; v1.y <- texcoord.y; 
 //   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
 //
-#line 10 "D:\チEクトップ\Cumulonimbus\Shader\monochrome_ps.hlsl"
+#line 10 "D:\Desktop\Cumulonimbus\Shader\monochrome_ps.hlsl"
 mov r0.x, l(0.298912)  // r0.x <- monochrome_scale.x
 
 #line 11

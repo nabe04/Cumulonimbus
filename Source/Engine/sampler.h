@@ -7,15 +7,20 @@
 #include <assert.h>
 #include <map>
 
+enum  RenderingSampleState
+{
+	Linear_Border,
+	Point_Wrap,
+	Linear_Wrap,
+	Anistropic,
+
+	End,
+};
+
 class Sampler final
 {
-private:
-	unsigned int using_slot = 0;
-	Microsoft::WRL::ComPtr<ID3D11SamplerState> sampler_state;
-	std::array<Microsoft::WRL::ComPtr<ID3D11SamplerState> ,2> default_sampler_states;
-
 public:
-	Sampler(ID3D11Device* device, D3D11_FILTER filter = D3D11_FILTER_ANISOTROPIC, D3D11_TEXTURE_ADDRESS_MODE address_mode = D3D11_TEXTURE_ADDRESS_WRAP, D3D11_COMPARISON_FUNC comparison_func = D3D11_COMPARISON_NEVER, float r = 1, float g = 1, float b = 1, float a = 1)
+	explicit Sampler(ID3D11Device* device, D3D11_FILTER filter = D3D11_FILTER_ANISOTROPIC, D3D11_TEXTURE_ADDRESS_MODE address_mode = D3D11_TEXTURE_ADDRESS_WRAP, D3D11_COMPARISON_FUNC comparison_func = D3D11_COMPARISON_NEVER, float r = 1, float g = 1, float b = 1, float a = 1)
 	{
 		//4096 unique sampler state objects can be created on a device at a time.
 			//If an application attempts to create a sampler - state interface with the same state as an existing interface,
@@ -56,4 +61,9 @@ public:
 		immediate_context->PSSetSamplers(using_slot, 1, default_sampler_states[0].GetAddressOf());
 		immediate_context->VSSetSamplers(using_slot, 1, default_sampler_states[1].GetAddressOf());
 	}
+
+private:
+	unsigned int using_slot = 0;
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> sampler_state;
+	std::array<Microsoft::WRL::ComPtr<ID3D11SamplerState>, 2> default_sampler_states;
 };

@@ -3,7 +3,9 @@
 #include "frame_buffer.h"
 #include "shader.h"
 
-GaussianBlur::GaussianBlur(ID3D11Device* device, const u_int width, const u_int height)
+GaussianBlur::GaussianBlur( ID3D11Device* device,
+							const u_int width, const u_int height,
+							const DXGI_FORMAT format)
 	:FullscreenQuad{device}
 {
 	fb_gaussian_blur_horizontal = std::make_unique<FrameBuffer>(device, width, height, false, 1, DXGI_FORMAT_R32G32_FLOAT);
