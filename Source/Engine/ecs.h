@@ -324,12 +324,18 @@ namespace cumulonimbus::ecs
 
 		void PreUpdate(float dt) override
 		{
-
+			for(auto& component : components)
+			{
+				component.NewFrame(dt);
+			}
 		}
 
 		void Update(float dt) override
 		{
-
+			for (auto& component : components)
+			{
+				component.Update(dt);
+			}
 		}
 
 		/*

@@ -147,13 +147,16 @@ namespace cumulonimbus::ecs
 	{
 		for(auto& component : component_arrays)
 		{
-			//component.second->
+			component.second->PreUpdate(dt);
 		}
 	}
 
 	void Registry::Update(float dt)
 	{
-		
+		for(auto& component : component_arrays)
+		{
+			component.second->Update(dt);
+		}
 	}
 
 	/*
