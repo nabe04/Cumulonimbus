@@ -93,10 +93,13 @@ void SceneGame::InitializeScene()
 	const char* sky_filename = "./Data/Assets/cubemap/skybox";
 	const cum::ecs::Entity ent_sky_box = registry->CreateEntity();
 	registry->AddComponent<cum::component::SkyBoxComponent>(ent_sky_box, Locator::GetDx11Configurator()->device.Get(), sky_filename);
+	registry->AddComponent<cum::component::ActorComponent>(ent_sky_box);
 	registry->GetComponent<cum::component::TransformComponent>(ent_sky_box).SetScale(3.f);
 
-	auto& com = registry->GetArray<cum::component::SkyBoxComponent>();
-	
+	auto& com	 = registry->GetArray<cum::component::SkyBoxComponent>();
+	auto& com2 = registry->GetArray<cum::component::TransformComponent>();
+	auto& com3    = registry->GetArray<cum::component::ActorComponent>();
+
 	int a;
 	a = 0;
 }

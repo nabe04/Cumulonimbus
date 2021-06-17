@@ -199,8 +199,8 @@ namespace cumulonimbus::component
 		CreateVertexBufferAndIndexBuffer(device);
 		CreateTextures(device, filename);
 
-		vertex_shader = std::make_unique<shader::VertexShader>(device, vs_name.c_str());
-		pixel_shader = std::make_unique<shader::PixelShader>(device, ps_name.c_str());
+		vertex_shader = std::make_shared<shader::VertexShader>(device, vs_name.c_str());
+		pixel_shader  = std::make_shared<shader::PixelShader>(device, ps_name.c_str());
 	}
 
 	void SkyBoxComponent::CreateVertexBufferAndIndexBuffer(ID3D11Device* device)
@@ -278,7 +278,7 @@ namespace cumulonimbus::component
 			std::string filename_s = filename;
 			std::string no = std::to_string(i) + ".png";
 			filename_s += no;
-			cube_texture.at(i) = std::make_unique<TextureResource>(device, filename_s.c_str());
+			cube_texture.at(i) = std::make_shared<TextureResource>(device, filename_s.c_str());
 		}
 
 		// texture descriptor

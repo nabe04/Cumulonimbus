@@ -121,6 +121,9 @@ namespace cumulonimbus::component
 
 		shader::SpriteShaderState sprite_shader_state;
 	};
+
+	static_assert(std::is_move_constructible_v<SpriteObjectComponent>);
+	static_assert(std::is_move_assignable_v<SpriteObjectComponent>);
 }
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::SpriteObjectComponent);
