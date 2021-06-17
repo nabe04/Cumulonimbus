@@ -1,15 +1,10 @@
 #include "collision.h"
 
-#include <iostream>
-using namespace std;
-
 #include "scene.h"
 #include "collision_component.h"
 #include "sphere_collision_component.h"
 #include "inner_sphere_collision.h"
-#include "light.h"
-#include "view.h"
-#include "component_list.h"
+#include "gaussian_blur.h"
 
 namespace intersect
 {

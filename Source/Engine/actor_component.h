@@ -3,6 +3,8 @@
 #include <memory>
 
 #include <DirectXMath.h>
+
+#include "sampler.h"
 using namespace DirectX;
 
 #include <cereal/cereal.hpp>
@@ -14,7 +16,6 @@ using namespace DirectX;
 #include "rasterizer.h"
 #include "depth_stencil.h"
 #include "shader_manager.h"
-#include "model_render.h"
 #include "rendering_buffer.h"
 
 enum class ActorType

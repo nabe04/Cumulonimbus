@@ -1,13 +1,12 @@
 #include "inner_sphere_collision.h"
 
 #include "scene.h"
-#include "view.h"
 #include "geometric_primitive_resource.h"
 #include "transform.h"
 #include "transform_component.h"
 #include "collision.h"
 #include "sphere_collision_component.h"
-#include "component_list.h"
+#include "gaussian_blur.h"
 
 InnerSpherecollision_component::InnerSpherecollision_component(Entity* entity, CollisionTag tag)
 	:collision_component{ entity ,tag }

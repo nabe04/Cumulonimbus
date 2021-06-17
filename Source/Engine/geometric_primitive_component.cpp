@@ -4,12 +4,8 @@
 
 #include "scene.h"
 #include "shader.h"
-#include "texture.h"
 #include "transform.h"
-#include "dx11_configurator.h"
-#include "light.h"
-#include "view.h"
-#include "component_list.h"
+#include "gaussian_blur.h"
 
 //*************************************************
 //

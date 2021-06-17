@@ -6,6 +6,8 @@
 #include <d3d11.h>
 #include <DirectXMath.h>
 
+#include <cereal/cereal.hpp>
+
 #include "ecs.h"
 #include "component_base.h"
 #include "enum_state_map.h"
@@ -13,8 +15,8 @@
 #include "rasterizer.h"
 #include "depth_stencil.h"
 #include "shader_manager.h"
-#include "model_render.h"
 #include "rendering_buffer.h"
+#include "sampler.h"
 
 class MeshObject :public Component
 {

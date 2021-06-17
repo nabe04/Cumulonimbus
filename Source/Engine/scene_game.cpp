@@ -13,6 +13,7 @@
 
 #include "actor_component.h"
 #include "sprite_object.h"
+#include "transform_component.h"
 
 using namespace shader;
 

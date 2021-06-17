@@ -11,7 +11,7 @@
 #include "imgui_manager.h"
 #include "input_manager.h"
 #include "texture.h"
-#include "component_list.h"
+#include "gaussian_blur.h"
 
 
 bool Framework::Initialize()

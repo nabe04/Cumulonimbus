@@ -6,11 +6,11 @@
 #include "cereal/types/array.hpp"
 #include "cereal/types/memory.hpp"
 #include "cereal/types/string.hpp"
+#include <imgui.h>
 
-#include "imgui.h"
 #include "scene.h"
-
 #include "shader.h"
+#include "gaussian_blur.h"
 
 SkyBox::SkyBox(Entity* entity, ID3D11Device* device, const char* filename)
 	:Component{ entity }

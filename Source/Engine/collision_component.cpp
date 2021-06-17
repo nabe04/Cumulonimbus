@@ -4,6 +4,7 @@
 #include "collision.h"
 #include "sphere_collision_component.h"
 #include "file_path_helper.h"
+#include "gaussian_blur.h"
 
 collision_component::collision_component(Entity* entity,CollisionTag tag)
 	: Component{ entity }

@@ -11,6 +11,7 @@
 #include "shader_manager.h"
 #include "light.h"
 #include "component_list.h"
+#include "gaussian_blur.h"
 
 ObjModelComponent::ObjModelComponent(Entity* entity, ID3D11Device* device, const std::string_view filename)
 	:Component{ entity }

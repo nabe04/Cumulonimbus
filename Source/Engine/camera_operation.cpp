@@ -8,7 +8,7 @@
 #include "view.h"
 #include "transform.h"
 #include "transform_component.h"
-#include "file_path_helper.h"
+#include "gaussian_blur.h"
 
 using namespace DirectX;
 

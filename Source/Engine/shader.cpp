@@ -6,11 +6,9 @@
 #include <map>
 #include <array>
 
-
 #include "shader.h"
-
 #include "scene.h"
-#include "component_list.h"
+#include "gaussian_blur.h"
 
 namespace shader
 {

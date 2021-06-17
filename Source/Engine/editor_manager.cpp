@@ -1,7 +1,7 @@
 #include "editor_manager.h"
 
 #include "scene.h"
-#include "component_list.h"
+#include "gaussian_blur.h"
 
 EditorManager::EditorManager()
 {

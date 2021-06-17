@@ -12,6 +12,7 @@
 #include "blend.h"
 #include "depth_stencil.h"
 #include "rasterizer.h"
+#include "gaussian_blur.h"
 
 SpriteRenderer::SpriteRenderer(ID3D11Device* device)
 {
