@@ -68,7 +68,6 @@ private:
 	// For cereal
 	std::vector<std::string> component_names;
 
-
 public:
 #pragma region
 	/*
@@ -292,8 +291,8 @@ public:
 namespace cumulonimbus::ecs
 {
 	enum class Entity : uint64_t {};
-	using EntityId = uint64_t;	// Entityの識別子
-	using ComponentId = uint64_t;	// Componentの識別子
+	using EntityId		= uint64_t;	// Entityの識別子
+	using ComponentId	= uint64_t;	// Componentの識別子
 	using ComponentName = std::string;
 
 	static const uint64_t START_ID = 1;	// EntityId,ComponentIdの始まりの識別子(最初のIDはどれも"1"から)

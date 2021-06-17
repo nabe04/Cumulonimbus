@@ -6,6 +6,11 @@
 
 #include "ecs.h"
 
+namespace cumulonimbus::ecs
+{
+	class Registry;
+}
+
 namespace cumulonimbus::component
 {
 	class ComponentBase

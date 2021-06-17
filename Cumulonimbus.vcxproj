@@ -117,6 +117,7 @@
     <ClInclude Include="Source\Engine\toon.h" />
     <ClInclude Include="Source\Engine\transform.h" />
     <ClInclude Include="Source\Engine\transform_component.h" />
+    <ClInclude Include="Source\Engine\type_rename.h" />
     <ClInclude Include="Source\Engine\vertex_buffer.h" />
     <ClInclude Include="Source\Engine\view.h" />
     <ClInclude Include="Source\Engine\window.h" />

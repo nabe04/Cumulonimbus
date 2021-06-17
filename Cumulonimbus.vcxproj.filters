@@ -725,6 +725,9 @@
     <ClInclude Include="Source\Engine\graphics_mapping.h">
       <Filter>Header\System</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\type_rename.h">
+      <Filter>Header\System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Cumulonimbus.rc" />
