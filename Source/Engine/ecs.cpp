@@ -143,6 +143,18 @@ namespace cumulonimbus::ecs
 		return entities.at(static_cast<Entity>(entity));
 	}
 
+	void Registry::PreUpdate(float dt)
+	{
+		for(auto& component : component_arrays)
+		{
+			//component.second->
+		}
+	}
+
+	void Registry::Update(float dt)
+	{
+		
+	}
 
 	/*
 	 * brief     : component_arraysのキー値を予め登録
@@ -165,6 +177,65 @@ namespace cumulonimbus::ecs
 		RegistryComponent<component::ObjModelComponent>();
 		RegistryComponent<component::SkyBoxComponent>();
 	}
+
+	void Registry::Save(const std::string& filename)
+	{
+		// ファイルを作成
+			// ./Contents/「ファイル名」までの取得(拡張子はなし)
+		const std::string save_file_path = file_path_helper::AttachSceneDirectory(filename);
+		std::filesystem::create_directories(save_file_path);
+		// 保存する先のファイルを指定
+		const std::string save_file_path_and_name{ save_file_path + "/" + filename };
+
+		{
+			std::ofstream ofs(save_file_path_and_name + file_path_helper::GetJsonExtension());
+			cereal::JSONOutputArchive output_archive(ofs);
+			output_archive(*this);
+		}
+
+		{
+			std::ofstream ofs(save_file_path_and_name + file_path_helper::GetBinExtension(), std::ios_base::binary);
+			cereal::BinaryOutputArchive output_archive(ofs);
+			output_archive(*this);
+		}
+
+		for (auto&& [component_name, component_array] : component_arrays)
+		{
+			component_array->Save(filename);
+		}
+	}
+
+	void Registry::Load(const std::string& filename)
+	{
+		// entitiesの削除
+		if (!entities.empty())
+		{
+			DestroyAllEntities();
+		}
+		component_arrays.clear();
+
+
+		{
+			// ロードする先のファイルを指定
+			// ./Contents/Scenes/「ファイル名」/「ファイル名」.bin
+			std::ifstream ifs(file_path_helper::AttachSceneDirectory(filename) + "/" + filename + file_path_helper::GetBinExtension(), std::ios_base::binary);
+			if (!ifs)
+				assert(!"Not open file");
+			cereal::BinaryInputArchive input_archive(ifs);
+			input_archive(
+				CEREAL_NVP(entities)
+			);
+		}
+
+		// component_arraysの型の再設定
+		RegisterComponentName();
+		// component_arrayのロード
+		for (auto& it : component_arrays)
+		{
+			it.second->Load(filename);
+		}
+	}
+
 }
 
 

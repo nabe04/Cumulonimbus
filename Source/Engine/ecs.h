@@ -303,6 +303,8 @@ namespace cumulonimbus::ecs
 	public:
 		virtual ~ComponentArrayBase() = default;
 
+		virtual void PreUpdate(float dt) = 0;
+		virtual void Update(float dt) = 0;
 		virtual void Destroy(Entity entity) = 0;
 		virtual void Save(const std::string& filename) = 0;
 		virtual void Load(const std::string& filename) = 0;
@@ -318,6 +320,16 @@ namespace cumulonimbus::ecs
 		size_t GetHashCode() override
 		{
 			return typeid(T).hash_code();
+		}
+
+		void PreUpdate(float dt) override
+		{
+
+		}
+
+		void Update(float dt) override
+		{
+
 		}
 
 		/*
@@ -511,6 +523,16 @@ namespace cumulonimbus::ecs
 		}
 
 		/*
+		 * brief : Component全体のPreUpdate処理
+		 */
+		void PreUpdate(float dt);
+
+		/*
+		 * brief : Component全体のUpdate処理
+		 */
+		void Update(float dt);
+
+		/*
 		 * brief : 指定のEntityの削除
 		 *         Entityに含まれるコンポーネントも削除
 		 */
@@ -659,36 +681,7 @@ namespace cumulonimbus::ecs
 		 * ※caution(2) : 拡張などの指定は必要ない
 		 * ※caution(3) : 同じファイル名の場合上書きされてしまうため注意
 		 */
-		void Save(const std::string& filename)
-		{
-			// ファイルを作成
-			// ./Contents/「ファイル名」までの取得(拡張子はなし)
-			const std::string save_file_path = file_path_helper::AttachSceneDirectory(filename);
-			std::filesystem::create_directories(save_file_path);
-			// 保存する先のファイルを指定
-			const std::string save_file_path_and_name{ save_file_path + "/" + filename };
-
-			{
-				std::ofstream ofs(save_file_path_and_name + file_path_helper::GetJsonExtension());
-				cereal::JSONOutputArchive output_archive(ofs);
-				output_archive(
-					CEREAL_NVP(entities)
-				);
-			}
-
-			{
-				std::ofstream ofs(save_file_path_and_name + file_path_helper::GetBinExtension(), std::ios_base::binary);
-				cereal::BinaryOutputArchive output_archive(ofs);
-				output_archive(
-					CEREAL_NVP(entities)
-				);
-			}
-
-			for (auto&& [component_name, component_array] : component_arrays)
-			{
-				component_array->Save(filename);
-			}
-		}
+		void Save(const std::string& filename);
 
 		/*
 		 * brief		: entitiesとcomponent_arraysのファイルLoad用関数
@@ -702,36 +695,7 @@ namespace cumulonimbus::ecs
 		 *			      (ResisterComponentName関数は内部で行っているので、
 		 *			      assertionが発生した場合はRegisterComponentName関数を確認すれば良い)
 		 */
-		void Load(const std::string& filename)
-		{
-			// entitiesの削除
-			if (!entities.empty())
-			{
-				DestroyAllEntities();
-			}
-			component_arrays.clear();
-
-
-			{
-				// ロードする先のファイルを指定
-				// ./Contents/Scenes/「ファイル名」/「ファイル名」.bin
-				std::ifstream ifs(file_path_helper::AttachSceneDirectory(filename) + "/" + filename + file_path_helper::GetBinExtension(), std::ios_base::binary);
-				if (!ifs)
-					assert(!"Not open file");
-				cereal::BinaryInputArchive input_archive(ifs);
-				input_archive(
-					CEREAL_NVP(entities)
-				);
-			}
-
-			// component_arraysの型の再設定
-			RegisterComponentName();
-			// component_arrayのロード
-			for (auto& it : component_arrays)
-			{
-				it.second->Load(filename);
-			}
-		}
+		void Load(const std::string& filename);
 
 		void SetScene(Scene* scene)		  { this->scene = scene; }
 		[[nodiscard]] Scene*   GetScene()   const { return scene; }
