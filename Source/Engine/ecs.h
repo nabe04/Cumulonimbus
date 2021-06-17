@@ -630,19 +630,7 @@ namespace cumulonimbus::ecs
 		/*
 		 * brief : Entityの作成
 		 */
-		Entity CreateEntity()
-		{
-			static uint64_t entity = START_ID;
-
-			// 後置インクリメントをしているのはSTART_IDを初めの要素にセットしたいから
-			while (entities.contains(static_cast<Entity>(entity)))
-			{
-				entity++;
-			}
-
-			entities.emplace(static_cast<Entity>(entity), static_cast<Entity>(entity));
-			return entities.at(static_cast<Entity>(entity));
-		}
+		Entity CreateEntity();
 
 		/*
 		 * brief        : T型のComponentArrayを登録

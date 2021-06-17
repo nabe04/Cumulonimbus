@@ -7,7 +7,7 @@
 #include <d3d11.h>
 #include <wrl.h>
 
-#include "cereal/cereal.hpp"
+#include <cereal/cereal.hpp>
 
 #include "ecs.h"
 #include "component_base.h"
@@ -80,7 +80,7 @@ public:
 
 namespace cumulonimbus::component
 {
-	class SkyBoxComponent :public ComponentBase
+	class SkyBoxComponent : public ComponentBase
 	{
 	public:
 		/*
@@ -88,7 +88,7 @@ namespace cumulonimbus::component
 		* filename : キューブマップのファイル名(番号は書かない)
 		*/
 		explicit SkyBoxComponent(ecs::Registry* registry, ecs::Entity ent,
-						ID3D11Device* device, const char* filename);
+								 ID3D11Device* device, const char* filename);
 		SkyBoxComponent() = default; // for cereal
 		SkyBoxComponent(SkyBoxComponent&&) noexcept {}
 		SkyBoxComponent& operator=(SkyBoxComponent&&) noexcept { return *this; }
@@ -152,3 +152,6 @@ namespace cumulonimbus::component
 	//static_assert(std::is_move_constructible_v<SkyBoxComponent>);
 	//static_assert(std::is_move_assignable_v<SkyBoxComponent>);
 }
+
+CEREAL_REGISTER_TYPE(cumulonimbus::component::SkyBoxComponent);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::SkyBoxComponent)

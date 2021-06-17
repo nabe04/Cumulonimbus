@@ -1,34 +1,23 @@
 #include "render_path.h"
 
-#include "ecs.h"
-#include "view.h"
-#include "light.h"
-#include "depth_map.h"
-#include "locator.h"
-#include "fullscreen_quad.h"
-#include "frame_buffer.h"
-#include "shader.h"
-#include "shader_manager.h"
-#include "rasterizer.h"
-#include "depth_stencil.h"
-#include "blend.h"
-#include "texture.h"
 #include "sampler_mapping.h"
 #include "texture_resource_mapping.h"
-
-#include "mesh_object.h"
-#include "anim_sprite.h"
-#include "sprite.h"
-#include "geometric_primitive_component.h"
-#include "obj_model_component.h"
-#include "fbx_model_component.h"
+#include "view.h"
 #include "scene.h"
+
+// Components
+#include "anim_sprite.h"
+#include "fbx_model_component.h"
+#include "geometric_primitive_component.h"
+#include "mesh_object.h"
+#include "obj_model_component.h"
 #include "sky_box.h"
+#include "sprite.h"
 #include "sprite_object.h"
 
 namespace cumulonimbus::renderer
 {
-	RenderPath::RenderPath(ID3D11Device* device, Locator* locator)
+	RenderPath::RenderPath(ID3D11Device* device)
 	{
 		back_buffer		= std::make_unique<FrameBuffer>(device, Locator::GetWindow()->Width(), Locator::GetWindow()->Height());
 		fullscreen_quad = std::make_unique<FullscreenQuad>(device);
@@ -152,11 +141,11 @@ namespace cumulonimbus::renderer
 							  ecs::Registry* registry,
 							  const View* view, const Light* light)
 	{
+		auto& components = registry->GetArray<component::SkyBoxComponent>().GetComponents();
 		for(auto& sky_box : registry->GetArray<component::SkyBoxComponent>().GetComponents())
 		{
-			RenderSkyBox(immediate_context, registry, sky_box.GetEntity(),
-						 &registry->GetComponent<component::MeshObjectComponent>(sky_box.GetEntity()),
-						 view, light);
+			ecs::Entity ent = sky_box.GetEntity();
+			RenderSkyBox(immediate_context, registry, sky_box.GetEntity(), view, light);
 		}
 
 		for (auto& mesh_object : registry->GetArray<component::MeshObjectComponent>().GetComponents())
@@ -440,7 +429,6 @@ namespace cumulonimbus::renderer
 
 	void RenderPath::RenderSkyBox(ID3D11DeviceContext* immediate_context,
 								  ecs::Registry* registry, ecs::Entity entity,
-								  const component::MeshObjectComponent* mesh_object,
 								  const View* view, const Light* light)
 	{
 		auto& sky_box = registry->GetComponent<component::SkyBoxComponent>(entity);

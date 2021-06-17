@@ -6,8 +6,19 @@
 #include <SimpleMath.h>
 
 #include "constant_buffer.h"
-#include "sampler.h"
 #include "ecs.h"
+#include "sampler.h"
+
+#include "blend.h"
+#include "depth_map.h"
+#include "depth_stencil.h"
+#include "frame_buffer.h"
+#include "fullscreen_quad.h"
+#include "light.h"
+#include "rasterizer.h"
+#include "shader.h"
+#include "shader_manager.h"
+#include "texture.h"
 
 namespace cumulonimbus
 {
@@ -30,32 +41,12 @@ namespace cumulonimbus
 
 }
 
-namespace shader
-{
-	class  ShaderManager;
-	class  SpriteShaderManager;
-	struct CB_CoordinateTransformation;
-	struct CB_Material;
-	struct CB_Light;
-}
-
-class Blend;
-class DepthStencil;
-class Sampler;
-class Rasterizer;
-class View;
-class Light;
-class DummyTexture;
-class FrameBuffer;
-class FullscreenQuad;
-class Locator;
-
 namespace cumulonimbus::renderer
 {
 	class RenderPath final
 	{
 	public:
-		explicit RenderPath(ID3D11Device* device, Locator* locator);
+		explicit RenderPath(ID3D11Device* device);
 
 		void Render(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, const View* view, const Light* light);
 
@@ -154,7 +145,6 @@ namespace cumulonimbus::renderer
 		 */
 		void RenderSkyBox(ID3D11DeviceContext* immediate_context,
 						  ecs::Registry* registry, ecs::Entity entity,
-						  const component::MeshObjectComponent* mesh_object,
 						  const View* view, const Light* light);
 
 		/*

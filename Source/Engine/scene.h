@@ -1,35 +1,39 @@
 
 #pragma once
-#include <fstream>
-#include <filesystem>
-#include <memory>
 #include <deque>
-#include <vector>
+#include <filesystem>
+#include <fstream>
+#include <memory>
 #include <string>
+#include <vector>
 
 #include <DirectXMath.h>
-
 #include <cereal/archives/json.hpp>
 #include <cereal/types/deque.hpp>
 #include <cereal/types/memory.hpp>
 
-#include "framework.h"
+#include "camera_work.h"
+#include "collision.h"
 #include "dx11_configurator.h"
 #include "ecs.h"
-#include "light.h"
-#include "view.h"
-#include "model_render.h"
-#include "sprite_renderer.h"
-#include "collision.h"
-#include "fbx_model_resource.h"
-#include "input_manager.h"
-#include "sound_resource.h"
-#include "resource_manager.h"
 #include "editor_manager.h"
-#include "camera_work.h"
-//#include "transform_component.h"
+#include "fbx_model_resource.h"
+#include "framework.h"
+#include "input_manager.h"
+#include "light.h"
+#include "model_render.h"
+#include "render_path.h"
+#include "resource_manager.h"
+#include "sound_resource.h"
+#include "sprite_renderer.h"
+#include "view.h"
 
 class GeometricPrimitiveResource;
+namespace cumulonimbus::renderer
+{
+	class RenderPath;
+}
+
 
 enum class SceneType
 {
@@ -44,24 +48,28 @@ class Scene
 {
 protected:
 	//inline static Scene* next_scene		= nullptr;
-	inline static std::shared_ptr<Scene> next_scene = nullptr;
-	inline static Framework*			 framework	= nullptr;
+	inline static std::shared_ptr<Scene> next_scene { nullptr };
+	inline static Framework*			 framework  { nullptr };
 
 	SceneType current_scene = SceneType::End;
 
-	std::shared_ptr<ResourceManager>				resource_manager	= nullptr;
-	std::unique_ptr<CollisionManager>				collision_manager	= nullptr;
-	std::unique_ptr<EditorManager>					editor_manager		= nullptr;
-	std::unique_ptr<GeometricPrimitiveResource>		geom_prim_res		= nullptr;
-	std::unique_ptr<Light>							light				= nullptr;
-	std::unique_ptr<MeshRenderer>					model_render		= nullptr;
-	std::unique_ptr<SoundResource>					sound_resource		= nullptr;
-	std::unique_ptr<SpriteRenderer>					sprite_renderer     = nullptr;
-	std::unique_ptr<View>						    view				= nullptr;
+	std::shared_ptr<ResourceManager>					resource_manager	{ nullptr };
+	std::unique_ptr<cumulonimbus::ecs::Registry>		registry			{ nullptr };
+	std::unique_ptr<CollisionManager>					collision_manager	{ nullptr };
+	std::unique_ptr<EditorManager>						editor_manager		{ nullptr };
+	std::unique_ptr<GeometricPrimitiveResource>			geom_prim_res		{ nullptr };
+	std::unique_ptr<Light>								light				{ nullptr };
+	std::unique_ptr<SoundResource>						sound_resource		{ nullptr };
+	std::unique_ptr<View>								view				{ nullptr };
+	std::unique_ptr<cumulonimbus::renderer::RenderPath> render_path			{ nullptr };
+
+	//TODO : ECSÇ…ëŒâûÇ∑ÇÍÇŒè¡Ç∑
+	std::unique_ptr<MeshRenderer>					model_render = nullptr;
+	std::unique_ptr<SpriteRenderer>					sprite_renderer = nullptr;
 
 	//std::unique_ptr <pad_link::PadLink>			pad_combine			= nullptr;
 
-	bool is_paused = false;
+	bool is_paused{ false };
 
 	// For cereal
 	std::string scene_name{};

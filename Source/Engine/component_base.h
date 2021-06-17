@@ -17,7 +17,7 @@ namespace cumulonimbus::component
 			, entity{ ent }
 		{
 		}
-		virtual ~ComponentBase() {}
+		virtual ~ComponentBase() = default;
 
 		virtual void NewFrame(float dt) = 0;
 		virtual void Update(float dt) = 0;

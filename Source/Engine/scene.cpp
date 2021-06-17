@@ -1,17 +1,24 @@
 #include "scene.h"
 
-#include "window.h"
-#include "input_manager.h"
-#include "fbx_model_component.h"
-#include "geometric_primitive_component.h"
 #include "geometric_primitive_resource.h"
 #include "input_manager.h"
+#include "input_manager.h"
 #include "locator.h"
+#include "render_path.h"
 #include "resource_manager.h"
-#include "component_list.h"
+#include "window.h"
 
-#include "scene_title.h"
 #include "scene_game.h"
+#include "scene_title.h"
+
+#include "ecs.h"
+#include "light.h"
+#include "view.h"
+
+// Components
+#include "anim_sprite.h"
+#include "mesh_object.h"
+#include "sprite_object.h"
 
 //*************************************
 //
@@ -72,6 +79,16 @@ void Scene::Initialize()
 	if (!this->view)
 	{// Create View
 		view = std::make_unique<View>();
+	}
+
+	if(!this->registry)
+	{
+		registry = std::make_unique<cumulonimbus::ecs::Registry>();
+	}
+
+	if(!this->render_path)
+	{
+		render_path = std::make_unique<cumulonimbus::renderer::RenderPath>(Locator::GetDx11Configurator()->device.Get());
 	}
 
 	if (!this->geom_prim_res)
@@ -176,30 +193,32 @@ void Scene::Render()
 {
 	auto* immediate_context = framework->GetDeviceContext();
 
-	model_render->ShadowBegin(immediate_context);
-	for (const auto& ent : *GetEntities())
-	{
-		model_render->RenderShadow(immediate_context, &(*ent), view.get(), light.get());
-	}
-	model_render->ShadowEnd(immediate_context);
+	render_path->Render(immediate_context, registry.get(), view.get(), light.get());
 
-	model_render->Begin(immediate_context);
+	//model_render->ShadowBegin(immediate_context);
+	//for (const auto& ent : *GetEntities())
+	//{
+	//	model_render->RenderShadow(immediate_context, &(*ent), view.get(), light.get());
+	//}
+	//model_render->ShadowEnd(immediate_context);
 
-	for (const auto& ent : *GetEntities())
-	{
-		model_render->RenderSkyBox(immediate_context, &(*ent), view.get(), light.get());
-	}
+	//model_render->Begin(immediate_context);
 
-	for (const auto& ent : *GetEntities())
-	{
-		model_render->Render(immediate_context, &(*ent), view.get(), light.get());
-	}
-	model_render->End(immediate_context);
+	//for (const auto& ent : *GetEntities())
+	//{
+	//	model_render->RenderSkyBox(immediate_context, &(*ent), view.get(), light.get());
+	//}
 
-	for (const auto& ent : *GetEntities())
-	{
-		sprite_renderer->Render(immediate_context, &(*ent));
-	}
+	//for (const auto& ent : *GetEntities())
+	//{
+	//	model_render->Render(immediate_context, &(*ent), view.get(), light.get());
+	//}
+	//model_render->End(immediate_context);
+
+	//for (const auto& ent : *GetEntities())
+	//{
+	//	sprite_renderer->Render(immediate_context, &(*ent));
+	//}
 
 #ifdef _DEBUG
 	// ImGui

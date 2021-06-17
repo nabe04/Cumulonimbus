@@ -128,6 +128,22 @@ void Entity::Load(std::string file_path)
 
 namespace cumulonimbus::ecs
 {
+	Entity Registry::CreateEntity()
+	{
+		static uint64_t entity = START_ID;
+
+		// 後置インクリメントをしているのはSTART_IDを初めの要素にセットしたいから
+		while (entities.contains(static_cast<Entity>(entity)))
+		{
+			entity++;
+		}
+
+		entities.emplace(static_cast<Entity>(entity), static_cast<Entity>(entity));
+		AddComponent<component::TransformComponent>(static_cast<Entity>(entity));
+		return entities.at(static_cast<Entity>(entity));
+	}
+
+
 	/*
 	 * brief     : component_arraysのキー値を予め登録
 	 * ※caution : デシリアライズの際の型の判別に使用
