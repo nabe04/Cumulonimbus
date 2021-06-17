@@ -19,7 +19,7 @@
 #include "rasterizer.h"
 #include "depth_stencil.h"
 #include "shader_manager.h"
-#include "sprite_renderer.h"
+#include "sampler.h"
 
 class SpriteObject final :public Component
 {
@@ -98,7 +98,7 @@ namespace cumulonimbus::component
 		void SetShaderState(const shader::SpriteShaderTypes type)	{ sprite_shader_state.SetShaderState(type); }
 
 
-		
+
 		template <class Archive>
 		void serialize(Archive&& archive)
 		{

@@ -16,6 +16,15 @@ enum  RenderingSampleState
 
 	End,
 };
+
+enum class SpriteSamplerState
+{
+	Linear_Border,
+
+	End,
+};
+
+
 class Sampler final
 {
 public:

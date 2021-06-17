@@ -26,7 +26,6 @@
 #include "render_path.h"
 #include "resource_manager.h"
 #include "sound_resource.h"
-#include "sprite_renderer.h"
 #include "view.h"
 
 class GeometricPrimitiveResource;
