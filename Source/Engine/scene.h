@@ -63,10 +63,6 @@ protected:
 	std::unique_ptr<View>								view				{ nullptr };
 	std::unique_ptr<cumulonimbus::renderer::RenderPath> render_path			{ nullptr };
 
-	//TODO : ECS‚É‘Î‰‚·‚ê‚ÎÁ‚·
-	std::unique_ptr<MeshRenderer>					model_render = nullptr;
-	std::unique_ptr<SpriteRenderer>					sprite_renderer = nullptr;
-
 	//std::unique_ptr <pad_link::PadLink>			pad_combine			= nullptr;
 
 	bool is_paused{ false };

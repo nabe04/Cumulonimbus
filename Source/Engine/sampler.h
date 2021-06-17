@@ -16,7 +16,6 @@ enum  RenderingSampleState
 
 	End,
 };
-
 class Sampler final
 {
 public:

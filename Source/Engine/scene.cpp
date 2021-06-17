@@ -96,16 +96,6 @@ void Scene::Initialize()
 		geom_prim_res = std::make_unique<GeometricPrimitiveResource>(GetFramework()->GetDevice());
 	}
 
-	if (!this->sprite_renderer)
-	{
-		sprite_renderer = std::make_unique<SpriteRenderer>(GetFramework()->GetDevice());
-	}
-
-	if (!this->model_render)
-	{
-		model_render = std::make_unique<MeshRenderer>(GetFramework()->GetDevice());
-	}
-
 	if (!this->collision_manager)
 	{
 		collision_manager = std::make_unique<CollisionManager>();
@@ -168,6 +158,9 @@ void Scene::Update(const float elapsed_time)
 		ent->Update(elapsed_time);
 	}
 
+	registry->PreUpdate(elapsed_time);
+	registry->Update(elapsed_time);
+
 	view->SetProjection(XM_PI / 8.0f, static_cast<float>(Locator::GetDx11Configurator()->GetScreenWidth()) / static_cast<float>(Locator::GetDx11Configurator()->GetScreenHeight()), 0.1f, 2000.0f);
 
 	// View update
@@ -194,31 +187,6 @@ void Scene::Render()
 	auto* immediate_context = framework->GetDeviceContext();
 
 	render_path->Render(immediate_context, registry.get(), view.get(), light.get());
-
-	//model_render->ShadowBegin(immediate_context);
-	//for (const auto& ent : *GetEntities())
-	//{
-	//	model_render->RenderShadow(immediate_context, &(*ent), view.get(), light.get());
-	//}
-	//model_render->ShadowEnd(immediate_context);
-
-	//model_render->Begin(immediate_context);
-
-	//for (const auto& ent : *GetEntities())
-	//{
-	//	model_render->RenderSkyBox(immediate_context, &(*ent), view.get(), light.get());
-	//}
-
-	//for (const auto& ent : *GetEntities())
-	//{
-	//	model_render->Render(immediate_context, &(*ent), view.get(), light.get());
-	//}
-	//model_render->End(immediate_context);
-
-	//for (const auto& ent : *GetEntities())
-	//{
-	//	sprite_renderer->Render(immediate_context, &(*ent));
-	//}
 
 #ifdef _DEBUG
 	// ImGui

@@ -7,6 +7,7 @@
 #include <nameof.h>
 
 #include "file_path_helper.h"
+#include "sampler.h"
 
 MeshObject::MeshObject(Entity* entity)
 	:Component{ entity }
