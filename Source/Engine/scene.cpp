@@ -42,13 +42,6 @@ const std::shared_ptr<Scene>& Scene::Execute(Framework* framework)
 		// Update process
 		Update(delta_time);
 
-		// Remove dead actors
-		for (auto& it : dead_entities)
-		{
-			RemoveEntity(it);
-		}
-		dead_entities.clear();
-
 		framework->DrawBegin();
 		Render();
 		framework->DrawEnd();
@@ -138,8 +131,6 @@ void Scene::Initialize()
 
 void Scene::UnInitialize()
 {
-	entities.clear();
-	dead_entities.clear();
 	UnInitializeScene();
 }
 
@@ -147,16 +138,6 @@ void Scene::Update(const float elapsed_time)
 {
 	if(!is_paused)
 		collision_manager->Update(this);
-
-	for (auto& ent : entities)
-	{
-		ent->NewFrame(elapsed_time);
-	}
-
-	for (auto& ent : entities)
-	{
-		ent->Update(elapsed_time);
-	}
 
 	registry->PreUpdate(elapsed_time);
 	registry->Update(elapsed_time);
@@ -198,11 +179,11 @@ void Scene::Render()
 		light->WriteImGui();
 		if (ImGui::CollapsingHeader("Objects"))
 		{
-			for (const auto& ent : *GetEntities())
-			{
-				// Render ImGui
-				ent->RenderImgui();
-			}
+			//for (const auto& ent : *GetEntities())
+			//{
+			//	// Render ImGui
+			//	ent->RenderImgui();
+			//}
 		}
 		ImGui::Text("window x : %d", Locator::GetWindow()->WindowRect().left);
 		ImGui::Text("window y : %d", Locator::GetWindow()->WindowRect().top);
@@ -216,24 +197,6 @@ void Scene::Render()
 		editor_manager->RenderEditor(this);
 	}
 #endif
-}
-
-void Scene::RemoveEntity(Entity* entity)
-{
-	for (auto it = entities.begin(), end = entities.end(); it != end; ++it)
-	{
-		if (it->get() == entity) {
-			entities.erase(it);
-			break;
-		}
-	}
-
-	dead_entities.emplace_back(entity);
-}
-
-void Scene::AddRemoveEntity(Entity* entity)
-{
-	dead_entities.emplace_back(entity);
 }
 
 void Scene::WriteImGui() const

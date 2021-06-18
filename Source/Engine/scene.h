@@ -70,12 +70,6 @@ protected:
 	// For cereal
 	std::string scene_name{};
 
-
-private:
-	// Actor
-	std::deque<std::unique_ptr<Entity>> entities = {};
-	std::vector<Entity*>				dead_entities = {};
-
 public:
 	void operator=(Scene&) = delete;
 
@@ -94,40 +88,6 @@ public:
 	void IsPaused(bool flg) { is_paused = flg; }
 	[[nodiscard]] bool IsPaused() const { return is_paused; }
 
-	//-- Entity --//
-	[[nodiscard]] Entity* AddEntity(const UpdateOrder update_order = UpdateOrder::Default,const EntityTag entity_tag = EntityTag::Default)
-	{
-		return AddEntityToArray(std::make_unique<Entity>(this, update_order, entity_tag));
-	}
-	void AddRemoveEntity(Entity* entity);
-
-	[[nodiscard]] auto* GetEntities()const { return &entities; }
-	template<class T,class... Args>
-	[[nodiscard]] std::vector<Entity*> GetEntities() const
-	{
-		std::vector<Entity*> entities_;
-		for (auto& ent : entities)
-		{
-			if (ent->HasComponent<T, Args...>())
-			{
-				entities_.emplace_back(ent.get());
-			}
-		}
-		return entities_;
-	}
-
-	[[nodiscard]] Entity* GetOtherEntity(EntityTag tag)
-	{
-		for (auto& ent : entities)
-		{
-			if (tag == ent->GetEntityTag())
-			{
-				return &(*ent);
-			}
-		}
-
-		return nullptr;
-	}
 
 	[[nodiscard]] const SceneType& GetCurrentScene() const { return current_scene; }
 
@@ -141,33 +101,33 @@ public:
 	*/
 	void SaveScene(std::string filename)
 	{
-		const std::string file_path_and_name = "./Content/Scene/" + filename;
-		std::filesystem::create_directories(file_path_and_name);
+		//const std::string file_path_and_name = "./Content/Scene/" + filename;
+		//std::filesystem::create_directories(file_path_and_name);
 
-		const std::string exe = ".json";
-		const std::string scene_file_path_and_name = file_path_and_name + exe;
+		//const std::string exe = ".json";
+		//const std::string scene_file_path_and_name = file_path_and_name + exe;
 
-		{ // save scene
-			std::ofstream ofs(scene_file_path_and_name);
-			cereal::JSONOutputArchive o_archive(ofs);
-			o_archive(
-				CEREAL_NVP(scene_name),
-				CEREAL_NVP(entities)
-			);
-		}
+		//{ // save scene
+		//	std::ofstream ofs(scene_file_path_and_name);
+		//	cereal::JSONOutputArchive o_archive(ofs);
+		//	o_archive(
+		//		CEREAL_NVP(scene_name),
+		//		CEREAL_NVP(entities)
+		//	);
+		//}
 
-		{// save entity
-			if (this->entities.empty())
-				return;
+		//{// save entity
+		//	if (this->entities.empty())
+		//		return;
 
-			const std::string entity_file_path = file_path_and_name + "/Entity";
-			std::filesystem::create_directories(entity_file_path);
+		//	const std::string entity_file_path = file_path_and_name + "/Entity";
+		//	std::filesystem::create_directories(entity_file_path);
 
-			for(const auto& ent : entities)
-			{
-				ent->Save(entity_file_path);
-			}
-		}
+		//	for(const auto& ent : entities)
+		//	{
+		//		ent->Save(entity_file_path);
+		//	}
+		//}
 	}
 
 	/*
@@ -176,57 +136,37 @@ public:
 	 */
 	void LoadScene(std::string file_path_and_name)
 	{
-		const std::string exe = ".json";
+		//const std::string exe = ".json";
 
-		{// load entities
-			const std::string input_filename = file_path_and_name + exe;
+		//{// load entities
+		//	const std::string input_filename = file_path_and_name + exe;
 
-			std::ifstream ifs(input_filename);
-			cereal::JSONInputArchive i_archive(ifs);
-			i_archive(
-				CEREAL_NVP(scene_name),
-				CEREAL_NVP(entities)
-			);
-		}
+		//	std::ifstream ifs(input_filename);
+		//	cereal::JSONInputArchive i_archive(ifs);
+		//	i_archive(
+		//		CEREAL_NVP(scene_name),
+		//		CEREAL_NVP(entities)
+		//	);
+		//}
 
-		for(auto& ent:entities)
-		{
-			ent->SetScene(this);
+		//for(auto& ent:entities)
+		//{
+		//	ent->SetScene(this);
 
-			const std::string entity_file_path_and_name = file_path_and_name + "/Entity";
-			ent->Load(entity_file_path_and_name);
-		}
+		//	const std::string entity_file_path_and_name = file_path_and_name + "/Entity";
+		//	ent->Load(entity_file_path_and_name);
+		//}
 	}
 
 	template <class Archive>
 	void serialize(Archive&& archive)
 	{
 		archive(
-			CEREAL_NVP(scene_name),
-			CEREAL_NVP(entities)
+			CEREAL_NVP(scene_name)
 		);
 	}
 
 private:
-	[[nodiscard]] Entity* AddEntityToArray(const UpdateOrder update_order) { return AddEntityToArray(std::make_unique<Entity>(this, update_order)); }
-	[[nodiscard]] Entity* AddEntityToArray(std::unique_ptr<Entity> entity)
-	{
-		if (entities.empty())
-		{
-			return entities.emplace_back(std::move(entity)).get();
-		}
-
-		// .end() : 末尾の次の要素のイテレーターを返す
-		for (auto it = entities.begin(); it != entities.end(); ++it)
-		{
-			if (entity->GetUpdateOrder() < it->get()->GetUpdateOrder())
-			{
-				return entities.emplace(it, std::move(entity))->get();
-			}
-		}
-		return entities.emplace_back(std::move(entity)).get();
-	}
-
 	void			Initialize();
 	void			UnInitialize();
 	void			Update(const float elapsed_time);
@@ -235,8 +175,6 @@ private:
 	virtual void	UnInitializeScene() = 0;
 	virtual void	UpdateScene(const float elapsed_time) = 0;
 	virtual void	RenderImGui() {}
-
-	void RemoveEntity(Entity* entity);
 };
 
 class SceneManager final

@@ -37,18 +37,18 @@ namespace cumulonimbus::component
 
 	void ChildActorComponent::Link(std::string node_name)
 	{
-		const auto parent = GetRegistry()->GetScene()->GetOtherEntity(parent_tag.GetCurrentState());
+		//const auto parent = GetRegistry()->GetScene()->GetOtherEntity(parent_tag.GetCurrentState());
 
-		if (!parent)
-			assert(!"Not fount entity");
+		//if (!parent)
+		//	assert(!"Not fount entity");
 
-		for (const auto& node : parent->GetComponent<FbxModelComponent>()->GetNodes())
-		{
-			if (node_name == node.name)
-			{
-				parent_matrix = node.world_transform;
-			}
-		}
+		//for (const auto& node : parent->GetComponent<FbxModelComponent>()->GetNodes())
+		//{
+		//	if (node_name == node.name)
+		//	{
+		//		parent_matrix = node.world_transform;
+		//	}
+		//}
 	}
 
 	void ChildActorComponent::Save(const std::string& file_path)
