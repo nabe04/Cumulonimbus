@@ -69,9 +69,9 @@ namespace cumulonimbus::component
 		explicit FbxModelComponent(ecs::Registry* registry, ecs::Entity ent, const std::shared_ptr<FbxModelResource>& resource);
 		~FbxModelComponent()override = default;
 
-		void NewFrame(const float delta_time) override;
-		void Update(const float delta_time) override;
-		virtual void RenderImGui() override;
+		void NewFrame(float delta_time) override;
+		void Update(float delta_time) override;
+		void RenderImGui() override;
 
 		// アニメーション
 		[[nodiscard]] bool IsPlayAnimation() const { return current_animation_index >= 0; }
@@ -88,6 +88,13 @@ namespace cumulonimbus::component
 
 		// 現在のキーフレーム
 		[[nodiscard]] int CurrentKeyframe() { return current_keyframe; }
+
+		/*
+		 * brief : アニメーションを再生させるか
+		 * true  : アニメーションなし
+		 * false : アニメーションあり
+		 */
+		void SetIsStatic(const bool flg) { is_static = flg; }
 
 		void Save(const std::string& file_path) override;
 		void Load(const std::string& file_path_and_name) override;
@@ -121,21 +128,22 @@ namespace cumulonimbus::component
 		}
 
 	private:
-		std::shared_ptr<FbxModelResource>	resource;
-		std::vector<Node>					nodes;
+		std::shared_ptr<FbxModelResource>	resource{nullptr};
+		std::vector<Node>					nodes{};
 
 		int	current_animation_index = -1;
-		int	prev_animation_index = -1;	// 前のアニメーションのインデックス番号(ブレンドで使用)
-		int	current_keyframe = 0;	// 現在のキーフレーム
-		int	prev_key_index = 0;
+		int	prev_animation_index	= -1;	// 前のアニメーションのインデックス番号(ブレンドで使用)
+		int	current_keyframe		= 0;	// 現在のキーフレーム
+		int	prev_key_index			= 0;
 
-		float current_seconds = 0.0f;
-		float prev_seconds = 0.0f; // アニメーションが切り替わった時点の前のアニメーションのキーフレーム(ブレンドで使用)
+		float current_seconds		= 0.0f;
+		float prev_seconds			= 0.0f; // アニメーションが切り替わった時点の前のアニメーションのキーフレーム(ブレンドで使用)
 		float animation_switch_time = 0;
-		float changer_timer = 0;
+		float changer_timer			= 0;
 
-		bool loop_animation = false;
-		bool end_animation = false;
+		bool is_static				= true;  // アニメーションの再生をさせるか(true : アニメーションなし、 false : アニメーションあり)
+		bool loop_animation			= false; // アニメーションのループ再生
+		bool end_animation			= false;
 
 
 		ModelData::Animation prev_animation;

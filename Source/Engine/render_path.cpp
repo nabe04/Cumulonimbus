@@ -20,7 +20,7 @@ namespace cumulonimbus::renderer
 {
 	RenderPath::RenderPath(ID3D11Device* device)
 	{
-		back_buffer		= std::make_unique<FrameBuffer>(device, Locator::GetWindow()->Width(), Locator::GetWindow()->Height());
+		off_screen		= std::make_unique<FrameBuffer>(device, Locator::GetWindow()->Width(), Locator::GetWindow()->Height());
 		fullscreen_quad = std::make_unique<FullscreenQuad>(device);
 		depth_map		= std::make_unique<DepthMap>(device);
 
@@ -134,8 +134,8 @@ namespace cumulonimbus::renderer
 	}
 	void RenderPath::Render3D_Begin(ID3D11DeviceContext* immediate_context)
 	{
-		back_buffer->Clear(immediate_context);
-		back_buffer->Activate(immediate_context);
+		off_screen->Clear(immediate_context);
+		off_screen->Activate(immediate_context);
 	}
 
 	void RenderPath::Render3D(ID3D11DeviceContext* immediate_context,
@@ -158,8 +158,8 @@ namespace cumulonimbus::renderer
 			BindDirectXStates(immediate_context, &mesh_object);
 
 			// TODO: Shaderのスロットをmapping用に変更したら消す
-			Locator::GetDx11Configurator()->BindShaderResource(mapping::graphics::ShaderStage::PS, depth_map->GetDepthExtractionSRV(), 1);
-			Locator::GetDx11Configurator()->BindShaderResource(mapping::graphics::ShaderStage::PS, sky_box_srv.GetAddressOf(), 2);
+			Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, depth_map->GetDepthExtractionSRV(), 1);
+			Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, sky_box_srv.GetAddressOf(), 2);
 
 			shader_manager->Activate(immediate_context, registry->GetComponent<component::MeshObjectComponent>(ent).GetShaderState());
 
@@ -216,8 +216,20 @@ namespace cumulonimbus::renderer
 
 	void RenderPath::Blit(ID3D11DeviceContext* immediate_context) const
 	{
-		immediate_context->PSSetShaderResources(0, 1, back_buffer->GetRenderTargetSRV());
+		//immediate_context->PSSetShaderResources(0, 1, off_screen->GetRenderTargetSRV());
+		Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
+															off_screen->GetRenderTargetSRV(),
+															0);
+		//TODO : Shaderのスロットをmapping用に変更したら適用(上は削除)
+		//Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
+		//													off_screen->GetRenderTargetSRV(),
+		//													mapping::texture_resource::TexSlot_BaseColorMap);
 		fullscreen_quad->Blit(immediate_context, true, true, true);
+		ID3D11ShaderResourceView* const pSRV[1] = { nullptr };
+		//immediate_context->PSSetShaderResources(0, 1, pSRV);
+		//immediate_context->PSSetShaderResources(1, 1, pSRV);
+		//immediate_context->PSSetShaderResources(2, 1, pSRV);
+
 	}
 
 	void RenderPath::RenderGeomPrim(ID3D11DeviceContext* immediate_context,
@@ -230,27 +242,27 @@ namespace cumulonimbus::renderer
 		light->ActivateCBuffer(immediate_context, true, true);
 
 		BindDirectXStates(immediate_context, &registry->GetComponent<component::MeshObjectComponent>(entity));
-		Locator::GetDx11Configurator()->BindPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		Locator::GetDx11Device()->BindPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 		// テクスチャのセット
 		if(auto* texture = registry->TryGetComponent<component::SpriteComponent>(entity))
 		{// テクスチャを保持している場合、そのテクスチャをセット
 
-			Locator::GetDx11Configurator()->BindShaderResource(mapping::graphics::ShaderStage::PS,
+			Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
 															   texture->GetTexture(),
 															   0);
 			// TODO: Shaderのスロットをmapping用に変更したら適用(上は削除)
-			//Locator::GetDx11Configurator()->BindShaderResource(mapping::graphics::ShaderStage::PS,
+			//Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
 			//												   texture->GetTexture(),
 			//												   mapping::texture_resource::TexSlot_BaseColorMap);
 		}
 		else
 		{
-			Locator::GetDx11Configurator()->BindShaderResource(mapping::graphics::ShaderStage::PS,
+			Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
 															   dummy_texture->dummy_texture.GetAddressOf(),
 															   0);
 			// TODO: Shaderのスロットをmapping用に変更したら適用(上は削除)
-			//Locator::GetDx11Configurator()->BindShaderResource(mapping::graphics::ShaderStage::PS,
+			//Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
 			//												   dummy_texture->dummy_texture.GetAddressOf(),
 			//												   mapping::texture_resource::TexSlot_BaseColorMap);
 		}
@@ -309,7 +321,7 @@ namespace cumulonimbus::renderer
 			light->ActivateCBuffer(immediate_context, true, true);
 		}
 
-		Locator::GetDx11Configurator()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleList);
+		Locator::GetDx11Device()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleList);
 		BindDirectXStates(immediate_context, &registry->GetComponent<component::MeshObjectComponent>(entity));
 
 		component::ObjModelComponent& obj_model = registry->GetComponent<component::ObjModelComponent>(entity);
@@ -331,11 +343,11 @@ namespace cumulonimbus::renderer
 			if (material.texture)
 			{// Set of Texture
 				immediate_context->PSSetShaderResources(0, 1, material.texture->GetTextureData()->texture_view.GetAddressOf());
-				Locator::GetDx11Configurator()->BindShaderResource(mapping::graphics::ShaderStage::PS,
+				Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
 																   material.texture,
 																   0);
 				// TODO: Shaderのスロットをmapping用に変更したら適用(上は削除)
-				//Locator::GetDx11Configurator()->BindShaderResource(mapping::graphics::ShaderStage::PS,
+				//Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
 				//												     material.texture,
 				//												     mapping::texture_resource::TexSlot_BaseColorMap);
 			}
@@ -343,7 +355,7 @@ namespace cumulonimbus::renderer
 			{// Set of Dummy texture
 				immediate_context->PSSetShaderResources(0, 1, dummy_texture->dummy_texture.GetAddressOf());
 				// TODO: Shaderのスロットをmapping用に変更したら適用(上は削除)
-				//Locator::GetDx11Configurator()->BindShaderResource(mapping::graphics::ShaderStage::PS,
+				//Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
 				//												     dummy_texture->dummy_texture.GetAddressOf(),
 				//												     mapping::texture_resource::TexSlot_BaseColorMap);
 			}
@@ -403,7 +415,7 @@ namespace cumulonimbus::renderer
 			UINT offset = 0;
 			immediate_context->IASetVertexBuffers(0, 1, mesh.vertex_buffer.GetAddressOf(), &stride, &offset);
 			immediate_context->IASetIndexBuffer(mesh.index_buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-			Locator::GetDx11Configurator()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleList);
+			Locator::GetDx11Device()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleList);
 
 			for (const ModelData::Subset& subset : mesh.subsets)
 			{
@@ -434,7 +446,7 @@ namespace cumulonimbus::renderer
 	{
 		auto& sky_box = registry->GetComponent<component::SkyBoxComponent>(entity);
 		sky_box.ActivateShader(immediate_context);
-		back_buffer->Activate(immediate_context);
+		off_screen->Activate(immediate_context);
 
 		samplers.at(RenderingSampleState::Linear_Border)->Activate(immediate_context, 0);
 		depth_stencil->Activate(immediate_context, DepthStencilState::Depth_First);
@@ -449,12 +461,12 @@ namespace cumulonimbus::renderer
 			cbuffer_transformation->Activate(immediate_context, 0);
 		}
 
-		Locator::GetDx11Configurator()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleList);
-		Locator::GetDx11Configurator()->BindShaderResource(mapping::graphics::ShaderStage::PS,
+		Locator::GetDx11Device()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleList);
+		Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
 														   sky_box.GetShaderResoueceViewAddress(),
 														   0);
 		//TODO : Shaderのスロットをmapping用に変更したら適用(上は削除)
-		//Locator::GetDx11Configurator()->BindShaderResource(mapping::graphics::ShaderStage::PS,
+		//Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
 		//												   sky_box.GetShaderResoueceViewAddress(),
 		//												   mapping::texture_resource::TexSlot_BaseColorMap);
 
@@ -467,10 +479,12 @@ namespace cumulonimbus::renderer
 		immediate_context->DrawIndexed(36, 0, 0);
 
 		sky_box_srv = sky_box.GetShaderResoueceView();
-		back_buffer->Deactivate(immediate_context);
-		Blit(immediate_context);
-
 		sky_box.DeactivateShader(immediate_context);
+		//TODO : Shaderのスロットをmapping用に変更したらそれ用に変更
+		Locator::GetDx11Device()->BindNullShaderResource(mapping::graphics::ShaderStage::PS, 0);
+		off_screen->Deactivate(immediate_context);
+
+		Blit(immediate_context);
 	}
 
 	void RenderPath::RenderSprite(ID3D11DeviceContext* immediate_context,
@@ -479,9 +493,9 @@ namespace cumulonimbus::renderer
 		component::SpriteComponent&		sprite		= registry->GetComponent<component::SpriteComponent>(entity);
 		component::TransformComponent&	transform	= registry->GetComponent<component::TransformComponent>(entity);
 
-		Locator::GetDx11Configurator()->BindShaderResource(mapping::graphics::ShaderStage::PS, sprite.GetTexture(), 0);
+		Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, sprite.GetTexture(), 0);
 		//TODO : SRVのスロットがmappingに対応すれば変える
-		//Locator::GetDx11Configurator()->BindShaderResource(mapping::graphics::ShaderStage::PS, sprite.GetTexture(), mapping::texture_resource::TexSlot_BaseColorMap);
+		//Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, sprite.GetTexture(), mapping::texture_resource::TexSlot_BaseColorMap);
 
 		// 2Dに必要ない値のリセット
 		transform.SetPositionZ(0.0f);
@@ -590,9 +604,9 @@ namespace cumulonimbus::renderer
 		component::AnimSpriteComponent& anim_sprite = registry->GetComponent<component::AnimSpriteComponent>(entity);
 		component::TransformComponent&  transform	= registry->GetComponent<component::TransformComponent>(entity);
 
-		Locator::GetDx11Configurator()->BindShaderResource(mapping::graphics::ShaderStage::PS, anim_sprite.GetTexture(), 0);
+		Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, anim_sprite.GetTexture(), 0);
 		//TODO : SRVのスロットがmappingに対応すれば変える
-		//Locator::GetDx11Configurator()->BindShaderResource(mapping::graphics::ShaderStage::PS, sprite.GetTexture(), mapping::texture_resource::TexSlot_BaseColorMap);
+		//Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, sprite.GetTexture(), mapping::texture_resource::TexSlot_BaseColorMap);
 
 		// 2Dに必要ない値のリセット
 		transform.SetPositionZ(0.0f);

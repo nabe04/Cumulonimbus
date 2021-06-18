@@ -43,7 +43,7 @@ public:
 	TextureResource(ID3D11Device* device, const char* tex_filename);
 	TextureResource() = default; // for cereal
 	[[nodiscard]] const TextureData* GetTextureData() const { return texture_data.get(); }
-
+	
 	template<class Archive>
 	void serialize(Archive&& archive)
 	{

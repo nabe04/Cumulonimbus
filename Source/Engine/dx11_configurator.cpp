@@ -12,7 +12,7 @@
 //	General Initialization
 //
 //***********************************
-bool Dx11Configurator::Initialize(HWND hwnd,ID3D11Device** device,ID3D11DeviceContext** immediate_context, int width, int height)
+bool Dx11Device::Initialize(HWND hwnd,ID3D11Device** device,ID3D11DeviceContext** immediate_context, int width, int height)
 {
 	CreateDevice(hwnd,device,immediate_context);
 	InitializeRenderTarget();
@@ -25,7 +25,7 @@ bool Dx11Configurator::Initialize(HWND hwnd,ID3D11Device** device,ID3D11DeviceCo
 //	Create Device
 //
 //************************************
-HRESULT Dx11Configurator::CreateDevice(HWND hwnd,ID3D11Device** device, ID3D11DeviceContext** immediate_context)
+HRESULT Dx11Device::CreateDevice(HWND hwnd,ID3D11Device** device, ID3D11DeviceContext** immediate_context)
 {
 	HRESULT hr = S_OK;
 	RECT rc;
@@ -137,7 +137,7 @@ HRESULT Dx11Configurator::CreateDevice(HWND hwnd,ID3D11Device** device, ID3D11De
 //------------------------------
 //	Initialize
 //------------------------------
-bool Dx11Configurator::InitializeRenderTarget()
+bool Dx11Device::InitializeRenderTarget()
 {
 	// Get BackBuffer
 	ID3D11Texture2D* back_buffer = nullptr;
@@ -169,7 +169,7 @@ bool Dx11Configurator::InitializeRenderTarget()
 //--------------------------------
 // Create DepthStencil Buffer
 //--------------------------------
-bool Dx11Configurator::CreateDepthStencil()
+bool Dx11Device::CreateDepthStencil()
 {
 	// Set up DepthStencil (Required to create a DepthStencilView)
 	D3D11_TEXTURE2D_DESC td = {};
@@ -215,7 +215,7 @@ bool Dx11Configurator::CreateDepthStencil()
 //------------------------------------
 //	Clear
 //------------------------------------
-void Dx11Configurator::Clear(DWORD color)
+void Dx11Device::Clear(DWORD color)
 {
 	float clear_color[] = { 0.0f, 1.0f, 1.0f, 1.0f };
 	immediate_context->ClearRenderTargetView(render_target_view.Get(), clear_color);
@@ -225,7 +225,7 @@ void Dx11Configurator::Clear(DWORD color)
 //-------------------------------------
 //	Flip
 //-------------------------------------
-void Dx11Configurator::Flip(int n)
+void Dx11Device::Flip(int n)
 {
 	//imgui::Render();
 
@@ -238,7 +238,7 @@ void Dx11Configurator::Flip(int n)
 //------------------------------
 // Set up Viewport
 //------------------------------
-void Dx11Configurator::SetViewPort(int width, int height) const
+void Dx11Device::SetViewPort(int width, int height) const
 {
 	D3D11_VIEWPORT vp;
 	vp.Width = (FLOAT)width;
@@ -253,7 +253,7 @@ void Dx11Configurator::SetViewPort(int width, int height) const
 /*
  * brief : Primitive Topology のセット
  */
-void Dx11Configurator::BindPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology) const
+void Dx11Device::BindPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology) const
 {
 	immediate_context->IASetPrimitiveTopology(topology);
 }
@@ -261,7 +261,7 @@ void Dx11Configurator::BindPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology) co
 /*
  * brief : Primitive Topology のセット
  */
-void Dx11Configurator::BindPrimitiveTopology(cumulonimbus::mapping::graphics::PrimitiveTopology topology) const
+void Dx11Device::BindPrimitiveTopology(cumulonimbus::mapping::graphics::PrimitiveTopology topology) const
 {
 	using namespace cumulonimbus::mapping::graphics;
 
@@ -288,7 +288,7 @@ void Dx11Configurator::BindPrimitiveTopology(cumulonimbus::mapping::graphics::Pr
 /*
  * brief : 指定のシェーダーのテクスチャをセット
  */
-void Dx11Configurator::BindShaderResource(cumulonimbus::mapping::graphics::ShaderStage state, ID3D11ShaderResourceView** srv, uint32_t slot) const
+void Dx11Device::BindShaderResource(cumulonimbus::mapping::graphics::ShaderStage state, ID3D11ShaderResourceView** srv, uint32_t slot) const
 {
 	using namespace cumulonimbus::mapping::graphics;
 
@@ -329,7 +329,7 @@ void Dx11Configurator::BindShaderResource(cumulonimbus::mapping::graphics::Shade
 /*
  * brief : 指定のシェーダーのテクスチャをセット
  */
-void Dx11Configurator::BindShaderResource(cumulonimbus::mapping::graphics::ShaderStage state,
+void Dx11Device::BindShaderResource(cumulonimbus::mapping::graphics::ShaderStage state,
 										  TextureResource* resource, uint32_t slot) const
 {
 	using namespace cumulonimbus::mapping::graphics;
@@ -367,4 +367,42 @@ void Dx11Configurator::BindShaderResource(cumulonimbus::mapping::graphics::Shade
 		break;
 	}
 }
+
+void Dx11Device::BindNullShaderResource(cumulonimbus::mapping::graphics::ShaderStage state, uint32_t slot) const
+{
+	using namespace cumulonimbus::mapping::graphics;
+	ID3D11ShaderResourceView* const srv = nullptr;
+
+	switch (state)
+	{
+	case ShaderStage::VS:
+		immediate_context->VSSetShaderResources(slot, 1, &srv);
+		break;
+
+	case ShaderStage::HS:
+		immediate_context->HSSetShaderResources(slot, 1, &srv);
+		break;
+
+	case ShaderStage::DS:
+		immediate_context->DSSetShaderResources(slot, 1, &srv);
+		break;
+
+	case ShaderStage::GS:
+		immediate_context->GSSetShaderResources(slot, 1, &srv);
+		break;
+
+	case ShaderStage::PS:
+		immediate_context->PSSetShaderResources(slot, 1, &srv);
+		break;
+
+	case ShaderStage::CS:
+		immediate_context->CSSetShaderResources(slot, 1, &srv);
+		break;
+
+	default:
+		assert(0);
+		break;
+	}
+}
+
 

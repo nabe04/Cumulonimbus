@@ -2,9 +2,9 @@
 
 #include <filesystem>
 #include <fstream>
+
 #include <imgui.h>
 
-#include "component_list.h"
 #include "transform_component.h"
 #include "actor_component.h"
 #include "child_actor.h"

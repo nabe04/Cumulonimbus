@@ -93,7 +93,7 @@ void SceneGame::InitializeScene()
 
 	const char* sky_filename = "./Data/Assets/cubemap/skybox";
 	const cum::ecs::Entity ent_sky_box = registry->CreateEntity();
-	registry->AddComponent<cum::component::SkyBoxComponent>(ent_sky_box, Locator::GetDx11Configurator()->device.Get(), sky_filename);
+	registry->AddComponent<cum::component::SkyBoxComponent>(ent_sky_box, Locator::GetDx11Device()->device.Get(), sky_filename);
 	registry->GetComponent<cum::component::TransformComponent>(ent_sky_box).SetScale(3.f);
 
 	const char* ground_filename = "./Data/Assets/Bin/ground.bin";  // "./Data/Assets/FBX/stage/stage.fbm/"
@@ -101,6 +101,7 @@ void SceneGame::InitializeScene()
 	const cum::ecs::Entity ent_floor = registry->CreateEntity();
 	registry->AddComponent<cum::component::MeshObjectComponent>(ent_floor);
 	registry->AddComponent<cum::component::FbxModelComponent>(ent_floor, ground_resource);
+	registry->GetComponent<cum::component::FbxModelComponent>(ent_floor).SetIsStatic(true);
 	registry->GetComponent<cum::component::TransformComponent>(ent_floor).SetScale(DirectX::XMFLOAT3{ 1,1,0.1f });
 	registry->GetComponent<cum::component::TransformComponent>(ent_floor).SetWorldRotation_X(90);
 	registry->GetComponent<cum::component::MeshObjectComponent>(ent_floor).SetSamplerState(RenderingSampleState::Linear_Wrap);

@@ -6,7 +6,7 @@
 
 class TextureResource;
 
-class Dx11Configurator final
+class Dx11Device final
 {
 public:
 	Microsoft::WRL::ComPtr<ID3D11Device>			device{};
@@ -15,16 +15,16 @@ public:
 	float elapsed_time{};
 
 
-	explicit Dx11Configurator(const HWND& hwnd) { this->hwnd = hwnd; }
-	~Dx11Configurator() = default;
-	Dx11Configurator(Dx11Configurator&) = delete;
-	Dx11Configurator(Dx11Configurator&&) = delete;
-	Dx11Configurator(const Dx11Configurator&) = delete;
-	Dx11Configurator(const Dx11Configurator&&) = delete;
-	Dx11Configurator& operator=(Dx11Configurator&) = delete;
-	Dx11Configurator& operator=(Dx11Configurator&&) = delete;
-	Dx11Configurator& operator=(const Dx11Configurator&) = delete;
-	Dx11Configurator& operator=(const Dx11Configurator&&) = delete;
+	explicit Dx11Device(const HWND& hwnd) { this->hwnd = hwnd; }
+	~Dx11Device() = default;
+	Dx11Device(Dx11Device&) = delete;
+	Dx11Device(Dx11Device&&) = delete;
+	Dx11Device(const Dx11Device&) = delete;
+	Dx11Device(const Dx11Device&&) = delete;
+	Dx11Device& operator=(Dx11Device&) = delete;
+	Dx11Device& operator=(Dx11Device&&) = delete;
+	Dx11Device& operator=(const Dx11Device&) = delete;
+	Dx11Device& operator=(const Dx11Device&&) = delete;
 
 
 	//-- Call it once in the ÅuFrameworkÅv --//
@@ -34,9 +34,9 @@ public:
 	void Clear(DWORD color = 0x00000000);
 	void Flip(int n = 0);
 
-	//static Dx11Configurator& GetInstance(HWND hwnd = nullptr)
+	//static Dx11Device& GetInstance(HWND hwnd = nullptr)
 	//{
-	//	static Dx11Configurator instance(hwnd);
+	//	static Dx11Device instance(hwnd);
 	//	return instance;
 	//}
 
@@ -49,8 +49,9 @@ public:
 
 	void SetViewPort(int width, int height) const;
 	void BindPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology) const;
-	void BindShaderResource(cumulonimbus::mapping::graphics::ShaderStage state, ID3D11ShaderResourceView** srv, uint32_t slot) const;
-	void BindShaderResource(cumulonimbus::mapping::graphics::ShaderStage state, TextureResource* resource, uint32_t slot) const;
+	void BindShaderResource(	cumulonimbus::mapping::graphics::ShaderStage state, ID3D11ShaderResourceView** srv, uint32_t slot) const;
+	void BindShaderResource(	cumulonimbus::mapping::graphics::ShaderStage state, TextureResource* resource, uint32_t slot) const;
+	void BindNullShaderResource(cumulonimbus::mapping::graphics::ShaderStage state, uint32_t slot) const;
 	void BindPrimitiveTopology(cumulonimbus::mapping::graphics::PrimitiveTopology topology) const;
 
 

@@ -23,7 +23,7 @@ public:
 	static InputSystem* GetInput() { return input.get(); }
 	static ResourceManager* GetResourceManager() { return resource_manager.get(); }
 	static Window* GetWindow() { return window.get(); }
-	static Dx11Configurator* GetDx11Configurator() { return dx11_configurator.get(); }
+	static Dx11Device* GetDx11Device() { return dx11_configurator.get(); }
 
 	template<class T>
 	static void Provide(const std::shared_ptr<T>& s)
@@ -43,7 +43,7 @@ public:
 			window = s;
 			return;
 		}
-		else if constexpr (std::is_same<T,Dx11Configurator>::value)
+		else if constexpr (std::is_same<T,Dx11Device>::value)
 		{
 			dx11_configurator = s;
 			return;
@@ -60,5 +60,5 @@ private:
 	inline static std::shared_ptr<InputSystem> input{};
 	inline static std::shared_ptr<ResourceManager> resource_manager{};
 	inline static std::shared_ptr<Window> window{};
-	inline static std::shared_ptr<Dx11Configurator> dx11_configurator{};
+	inline static std::shared_ptr<Dx11Device> dx11_configurator{};
 };

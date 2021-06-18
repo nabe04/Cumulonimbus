@@ -16,9 +16,9 @@
 
 bool Framework::Initialize()
 {
-	dx11_configurator = std::make_shared<Dx11Configurator>(window->GetHWND());
+	dx11_configurator = std::make_shared<Dx11Device>(window->GetHWND());
 	dx11_configurator->Initialize(window->GetHWND(), device.GetAddressOf(), immediate_context.GetAddressOf(), window->Width(), window->Height());
-	Locator::Provide<Dx11Configurator>(dx11_configurator);
+	Locator::Provide<Dx11Device>(dx11_configurator);
 
 	Locator::Provide<Window>(window);
 	input_system = std::make_shared<InputSystem>(window->GetHWND());
@@ -66,7 +66,7 @@ int Framework::Run()
 
 void Framework::DrawBegin()
 {
-	Locator::GetDx11Configurator()->Clear();
+	Locator::GetDx11Device()->Clear();
 }
 
 void Framework::DrawEnd()
@@ -76,7 +76,7 @@ void Framework::DrawEnd()
 #endif
 
 	// Screen flip
-	Locator::GetDx11Configurator()->Flip(1);
+	Locator::GetDx11Device()->Flip(1);
 }
 
 LRESULT Framework::HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)

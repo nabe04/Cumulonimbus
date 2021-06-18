@@ -28,7 +28,7 @@ INT WINAPI wWinMain(HINSTANCE instance, HINSTANCE prev_instance, LPWSTR cmd_line
 		Framework f(window);
 		SetWindowLongPtr(window->GetHWND(), GWLP_USERDATA, reinterpret_cast<LONG_PTR>(&f));
 		ret = f.Run();
-		Locator::GetDx11Configurator()->device.As(&debugInterface);
+		Locator::GetDx11Device()->device.As(&debugInterface);
 		assert(debugInterface);
 	}
 

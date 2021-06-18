@@ -65,7 +65,7 @@ void Scene::Initialize()
 	if (!this->light)
 	{
 		Light::LightData data{};
-		light = std::make_unique<Light>(Locator::GetDx11Configurator()->device.Get(), data);
+		light = std::make_unique<Light>(Locator::GetDx11Device()->device.Get(), data);
 		light->SetLightDir(XMFLOAT4{ .0f,.0f,1.f,1.f });
 	}
 
@@ -81,7 +81,7 @@ void Scene::Initialize()
 
 	if(!this->render_path)
 	{
-		render_path = std::make_unique<cumulonimbus::renderer::RenderPath>(Locator::GetDx11Configurator()->device.Get());
+		render_path = std::make_unique<cumulonimbus::renderer::RenderPath>(Locator::GetDx11Device()->device.Get());
 	}
 
 	if (!this->geom_prim_res)
@@ -142,7 +142,7 @@ void Scene::Update(const float elapsed_time)
 	registry->PreUpdate(elapsed_time);
 	registry->Update(elapsed_time);
 
-	view->SetProjection(XM_PI / 8.0f, static_cast<float>(Locator::GetDx11Configurator()->GetScreenWidth()) / static_cast<float>(Locator::GetDx11Configurator()->GetScreenHeight()), 0.1f, 2000.0f);
+	view->SetProjection(XM_PI / 8.0f, static_cast<float>(Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
 
 	// View update
 	view->Activate();

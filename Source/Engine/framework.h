@@ -9,7 +9,7 @@
 #include "locator.h"
 
 class Window;
-class Dx11Configurator;
+class Dx11Device;
 
 // Forward declare message handler from imgui_impl_win32.cpp
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -23,7 +23,7 @@ private:
 
 	std::shared_ptr<Window>		 window{};
 	std::shared_ptr<InputSystem> input_system{};
-	std::shared_ptr<Dx11Configurator> dx11_configurator{};
+	std::shared_ptr<Dx11Device> dx11_configurator{};
 
 	const double frameRate = 60;
 	HighResolutionTimer hr_timer;

@@ -52,7 +52,7 @@ namespace cumulonimbus::renderer
 
 	private:
 		// すべてのシェーダーの生成とセット
-		std::unique_ptr<shader::ShaderManager> shader_manager;
+		std::unique_ptr<shader::ShaderManager>		 shader_manager;
 		std::unique_ptr<shader::SpriteShaderManager> shader_manager_2d;
 
 		//-- DirectX States --//
@@ -67,7 +67,7 @@ namespace cumulonimbus::renderer
 		std::unique_ptr<buffer::ConstantBuffer<shader::CB_Light>>					cbuffer_light;
 
 		std::unique_ptr<DummyTexture>		dummy_texture;
-		std::unique_ptr<FrameBuffer>		back_buffer;
+		std::unique_ptr<FrameBuffer>		off_screen;
 		std::unique_ptr<DepthMap>			depth_map;
 		std::unique_ptr<FullscreenQuad>		fullscreen_quad;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> sky_box_srv;

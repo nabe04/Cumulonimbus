@@ -26,12 +26,19 @@ namespace cumulonimbus::component
 		explicit SkyBoxComponent() = default; // for cereal
 		~SkyBoxComponent() override = default;
 
+		/*
+		 * brief : SkyBox用 vs,psのセット
+		 *         現在セットされているshaderを保持(Deactivateのタイミングでセットしなおすため)
+		 */
 		void ActivateShader(ID3D11DeviceContext* immediate_context) const
 		{
 			vertex_shader->Activate(immediate_context);
 			pixel_shader->Activate(immediate_context);
 		}
 
+		/*
+		 * brief : vertex,pixel shaderをdefault vs psにセットしなおす
+		 */
 		void DeactivateShader(ID3D11DeviceContext* immediate_context) const
 		{
 			vertex_shader->Deactivate(immediate_context);
