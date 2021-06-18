@@ -45,8 +45,8 @@ namespace cumulonimbus::component
 			pixel_shader->Deactivate(immediate_context);
 		}
 
-		ID3D11Buffer* GetVertexBuffer() { return vertex_buffer.Get(); }
-		ID3D11Buffer* GetIndexBuffer() { return index_buffer.Get(); }
+		[[nodiscard]] ID3D11Buffer* GetVertexBuffer() const { return vertex_buffer.Get(); }
+		[[nodiscard]] ID3D11Buffer* GetIndexBuffer()  const { return index_buffer.Get(); }
 		ID3D11Buffer** GetVertexBufferAddress() { return vertex_buffer.GetAddressOf(); }
 		ID3D11Buffer** GetIndexBufferAddress() { return index_buffer.GetAddressOf(); }
 

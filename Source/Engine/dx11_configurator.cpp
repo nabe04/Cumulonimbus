@@ -140,17 +140,17 @@ HRESULT Dx11Device::CreateDevice(HWND hwnd,ID3D11Device** device, ID3D11DeviceCo
 bool Dx11Device::InitializeRenderTarget()
 {
 	// Get BackBuffer
-	ID3D11Texture2D* back_buffer = nullptr;
+	ID3D11Texture2D* back_buffer_tex = nullptr;
 	//IDXGISwapChain3* sc3;
 	//int index = sc3->GetCurrentBackBufferIndex(); // Todo : indexの値をRTVにセットする
-	HRESULT hr = swap_chain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&back_buffer);
+	HRESULT hr = swap_chain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&back_buffer_tex);
 	if (FAILED(hr))
 		assert(!"GetBuffer(ID3D11Texture2D) error");
 
 	// Create RenderTargetView
-	hr = device->CreateRenderTargetView(back_buffer, NULL, render_target_view.GetAddressOf());
-	back_buffer->Release();
-	back_buffer = nullptr;
+	hr = device->CreateRenderTargetView(back_buffer_tex, NULL, back_buffer.GetAddressOf());
+	back_buffer_tex->Release();
+	back_buffer_tex = nullptr;
 	if (FAILED(hr))
 		assert(!"CreateRenderTargetView error");
 
@@ -158,7 +158,7 @@ bool Dx11Device::InitializeRenderTarget()
 	CreateDepthStencil();
 
 	// Set RenderTargetView
-	immediate_context->OMSetRenderTargets(1, render_target_view.GetAddressOf(), depth_stencil_view.Get());
+	immediate_context->OMSetRenderTargets(1, back_buffer.GetAddressOf(), depth_stencil_view.Get());
 
 	// Set Viewport
 	SetViewPort(screen_width, screen_height);
@@ -218,7 +218,7 @@ bool Dx11Device::CreateDepthStencil()
 void Dx11Device::Clear(DWORD color)
 {
 	float clear_color[] = { 0.0f, 1.0f, 1.0f, 1.0f };
-	immediate_context->ClearRenderTargetView(render_target_view.Get(), clear_color);
+	immediate_context->ClearRenderTargetView(back_buffer.Get(), clear_color);
 	immediate_context->ClearDepthStencilView(depth_stencil_view.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
@@ -230,7 +230,7 @@ void Dx11Device::Flip(int n)
 	//imgui::Render();
 
 	// Set RenderTargetView
-	immediate_context->OMSetRenderTargets(1, render_target_view.GetAddressOf(), depth_stencil_view.Get());
+	immediate_context->OMSetRenderTargets(1, back_buffer.GetAddressOf(), depth_stencil_view.Get());
 	//immediate_context->OMSetDepthStencilState(depth_stencil_states[static_cast<u_int>(DS_Type::DS_TRUE)].Get(), 1);
 	swap_chain->Present(n, 0);
 }
@@ -368,7 +368,7 @@ void Dx11Device::BindShaderResource(cumulonimbus::mapping::graphics::ShaderStage
 	}
 }
 
-void Dx11Device::BindNullShaderResource(cumulonimbus::mapping::graphics::ShaderStage state, uint32_t slot) const
+void Dx11Device::UnbindShaderResource(cumulonimbus::mapping::graphics::ShaderStage state, uint32_t slot) const
 {
 	using namespace cumulonimbus::mapping::graphics;
 	ID3D11ShaderResourceView* const srv = nullptr;

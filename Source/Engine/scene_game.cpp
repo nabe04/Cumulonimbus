@@ -106,7 +106,22 @@ void SceneGame::InitializeScene()
 	registry->GetComponent<cum::component::TransformComponent>(ent_floor).SetWorldRotation_X(90);
 	registry->GetComponent<cum::component::MeshObjectComponent>(ent_floor).SetSamplerState(RenderingSampleState::Linear_Wrap);
 
+	const cum::ecs::Entity ent_bunny = registry->CreateEntity();
+	registry->AddComponent<cum::component::MeshObjectComponent>(ent_bunny);
+	registry->GetComponent<cum::component::MeshObjectComponent>(ent_bunny).SetShaderState(shader::MeshShaderTypes::Metal);
+	registry->AddComponent<cum::component::FbxModelComponent>(ent_bunny, Locator::GetResourceManager()->FbxModelResouece("stanford_bunny"));
+	registry->GetComponent<cum::component::TransformComponent>(ent_bunny).SetScale(0.01f);
 
+
+	//auto* sample01 = AddEntity(UpdateOrder::Default, EntityTag::Bunny);
+	//sample01->AddComponent<MeshObject>();
+	//sample01->GetComponent<MeshObject>()->SetShaderState(shader::MeshShaderTypes::Metal);
+	//sample01->AddComponent<FbxModelComponent>(Locator::GetResourceManager()->FbxModelResouece("stanford_bunny"));
+	//sample01->GetComponent<TransformComponent>()->SetScale(0.01f);
+	//sample01->GetComponent<TransformComponent>()->SetEyePosition({ 0,4,30 });
+	//sample01->GetComponent<TransformComponent>()->SetScale(0.01f);
+	//sample01->AddComponent<SampleRotation>();
+	//sample01->SetEntityName("Bunny");
 
 	//auto& com	 = registry->GetArray<cum::component::SkyBoxComponent>();
 	//auto& com2 = registry->GetArray<cum::component::TransformComponent>();

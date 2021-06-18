@@ -9,7 +9,7 @@ namespace cumulonimbus::renderer
 	DepthMap::DepthMap(ID3D11Device* device, const u_int width, const u_int height)
 	{
 		depth_extraction_fb = std::make_unique<FrameBuffer>(device, width, height, false, DXGI_FORMAT_R32G32_FLOAT);
-		
+
 		gaussian_blur = std::make_unique<GaussianBlur>(device, width, height);
 
 		depth_extraction_vs = std::make_unique<shader::VertexShader>(device, mapping::shader_filename::DepthExtraction_VS().c_str());
@@ -19,6 +19,7 @@ namespace cumulonimbus::renderer
 	void DepthMap::Begin(ID3D11DeviceContext* const immediate_context) const
 	{
 		depth_extraction_fb->Clear(immediate_context);
+		gaussian_blur->ClearRTV(immediate_context);
 	}
 
 	void DepthMap::End(ID3D11DeviceContext* const immediate_context) const

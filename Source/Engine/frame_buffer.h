@@ -52,7 +52,7 @@ public:
 		}
 	}
 
-	// clear only "render_target_view"
+	// clear only "back_buffer"
 	void ClearRenderTargetView(
 		ID3D11DeviceContext* immediate_context,
 		float r = 0.0f, float g = 0.0f, float b = 0.0f, float a = 1.0f) const
@@ -80,7 +80,7 @@ public:
 		immediate_context->OMSetRenderTargets(1, render_target_view.GetAddressOf(), depth_stencil_view.Get());
 	}
 
-	// activate only "render_target_view"
+	// activate only "back_buffer"
 	void ActivateRenderTargetView(ID3D11DeviceContext* const immediate_context)
 	{
 		number_of_stored_viewports = D3D11_VIEWPORT_AND_SCISSORRECT_OBJECT_COUNT_PER_PIPELINE;

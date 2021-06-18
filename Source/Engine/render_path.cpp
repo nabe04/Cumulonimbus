@@ -98,6 +98,8 @@ namespace cumulonimbus::renderer
 								  ecs::Registry* const registry,
 								  const View* view, const Light* light)
 	{
+		depth_map->Activate(immediate_context);
+
 		for(auto& mesh_object : registry->GetArray<component::MeshObjectComponent>().GetComponents())
 		{
 			const ecs::Entity ent = mesh_object.GetEntity();
@@ -108,7 +110,6 @@ namespace cumulonimbus::renderer
 									/*rasterizer*/   true, /*sampler*/false,
 									/*depth stencil*/true, /*blend*/  true);
 			samplers.at(RenderingSampleState::Linear_Border)->Activate(immediate_context, 0);
-			depth_map->Activate(immediate_context);
 
 			if(auto* geom = registry->TryGetComponent<component::GeomPrimComponent>(ent))
 			{
@@ -122,10 +123,9 @@ namespace cumulonimbus::renderer
 			{
 				RenderFBX(immediate_context, registry, ent, &mesh_object, view, light);
 			}
-
-			depth_map->Deactivate(immediate_context);
 		}
 
+		depth_map->Deactivate(immediate_context);
 	}
 
 	void RenderPath::RenderShadow_End(ID3D11DeviceContext* immediate_context) const
@@ -182,8 +182,10 @@ namespace cumulonimbus::renderer
 
 	void RenderPath::Render3D_End(ID3D11DeviceContext* immediate_context)
 	{
-		ID3D11ShaderResourceView* const null_srv[1] = { nullptr };
-		immediate_context->PSSetShaderResources(0, 1, null_srv);
+		using namespace cumulonimbus::mapping;
+		Locator::GetDx11Device()->UnbindShaderResource(graphics::ShaderStage::PS, 0);
+		Locator::GetDx11Device()->UnbindShaderResource(graphics::ShaderStage::PS, 1);
+		Locator::GetDx11Device()->UnbindShaderResource(graphics::ShaderStage::PS, 2);
 
 		immediate_context->VSSetShader(nullptr, nullptr, 0);
 		immediate_context->PSSetShader(nullptr, nullptr, 0);
@@ -216,7 +218,6 @@ namespace cumulonimbus::renderer
 
 	void RenderPath::Blit(ID3D11DeviceContext* immediate_context) const
 	{
-		//immediate_context->PSSetShaderResources(0, 1, off_screen->GetRenderTargetSRV());
 		Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
 															off_screen->GetRenderTargetSRV(),
 															0);
@@ -226,10 +227,6 @@ namespace cumulonimbus::renderer
 		//													mapping::texture_resource::TexSlot_BaseColorMap);
 		fullscreen_quad->Blit(immediate_context, true, true, true);
 		ID3D11ShaderResourceView* const pSRV[1] = { nullptr };
-		//immediate_context->PSSetShaderResources(0, 1, pSRV);
-		//immediate_context->PSSetShaderResources(1, 1, pSRV);
-		//immediate_context->PSSetShaderResources(2, 1, pSRV);
-
 	}
 
 	void RenderPath::RenderGeomPrim(ID3D11DeviceContext* immediate_context,
@@ -446,7 +443,6 @@ namespace cumulonimbus::renderer
 	{
 		auto& sky_box = registry->GetComponent<component::SkyBoxComponent>(entity);
 		sky_box.ActivateShader(immediate_context);
-		off_screen->Activate(immediate_context);
 
 		samplers.at(RenderingSampleState::Linear_Border)->Activate(immediate_context, 0);
 		depth_stencil->Activate(immediate_context, DepthStencilState::Depth_First);
@@ -481,7 +477,7 @@ namespace cumulonimbus::renderer
 		sky_box_srv = sky_box.GetShaderResoueceView();
 		sky_box.DeactivateShader(immediate_context);
 		//TODO : Shaderのスロットをmapping用に変更したらそれ用に変更
-		Locator::GetDx11Device()->BindNullShaderResource(mapping::graphics::ShaderStage::PS, 0);
+		Locator::GetDx11Device()->UnbindShaderResource(mapping::graphics::ShaderStage::PS, 0);
 		off_screen->Deactivate(immediate_context);
 
 		Blit(immediate_context);

@@ -44,14 +44,14 @@ public:
 	[[nodiscard]] int GetScreenHeight() const { return screen_height; }
 
 	[[nodiscard]] ID3D11DepthStencilView*   GetDepthStencilView() const { return depth_stencil_view.Get(); }
-	[[nodiscard]] ID3D11RenderTargetView*   GetRenderTargetView() const { return render_target_view.Get(); }
+	[[nodiscard]] ID3D11RenderTargetView*   GetBackBufferRTV() const { return back_buffer.Get(); }
 	[[nodiscard]] ID3D11ShaderResourceView* GetShaderResourceView() const { return shader_resource_view.Get(); }
 
 	void SetViewPort(int width, int height) const;
 	void BindPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology) const;
 	void BindShaderResource(	cumulonimbus::mapping::graphics::ShaderStage state, ID3D11ShaderResourceView** srv, uint32_t slot) const;
 	void BindShaderResource(	cumulonimbus::mapping::graphics::ShaderStage state, TextureResource* resource, uint32_t slot) const;
-	void BindNullShaderResource(cumulonimbus::mapping::graphics::ShaderStage state, uint32_t slot) const;
+	void UnbindShaderResource(cumulonimbus::mapping::graphics::ShaderStage state, uint32_t slot) const;
 	void BindPrimitiveTopology(cumulonimbus::mapping::graphics::PrimitiveTopology topology) const;
 
 
@@ -59,7 +59,7 @@ private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain>			 swap_chain{};
 	Microsoft::WRL::ComPtr<IDXGIDevice>				 dxgi_device{};
 
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView>	 render_target_view{};
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView>	 back_buffer{};
 	Microsoft::WRL::ComPtr<ID3D11Texture2D>			 depth_stencil_texture{};
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView>   depth_stencil_view{};
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shader_resource_view{};
