@@ -15,43 +15,6 @@ struct SphereCollisionData
 	bool			isHit = false;
 };
 
-class Spherecollision_component : public collision_component
-{
-private:
-	std::vector<SphereCollisionData> sphere_datas;
-
-	//-- Debug primitive info --//
-	geometric_primitive_resource::Mesh mesh;
-
-private:
-	bool IntersectSphere(Spherecollision_component* other) override;
-
-public:
-	Spherecollision_component(Entity* entity, CollisionTag tag);
-
-	void Update(const float delta_time)override;
-
-	void OnCollision(const collision_component* other) override;
-
-	void AddSphere(XMFLOAT3 position, float radius);
-
-	/*
-	* brief : Set all radius
-	*/
-	void SetRadiusAll(const float radius);
-
-	/*
-	* brief : Set the radius by specifying an index number
-	*/
-	void SetRadius(const float radius, const int index);
-
-	const geometric_primitive_resource::Mesh& GetMesh() { return mesh; }
-	std::vector<SphereCollisionData>& GetSphereData() { return sphere_datas; }
-
-	// For ImGui
-	void RenderImGui() override;
-};
-
 namespace cumulonimbus::component
 {
 	class SphereCollisionComponent : public CollisionComponent

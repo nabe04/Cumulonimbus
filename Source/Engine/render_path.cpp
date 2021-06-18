@@ -1,9 +1,9 @@
 #include "render_path.h"
 
 #include "sampler_mapping.h"
+#include "scene.h"
 #include "texture_resource_mapping.h"
 #include "view.h"
-#include "scene.h"
 
 // Components
 #include "anim_sprite.h"
@@ -14,6 +14,7 @@
 #include "sky_box.h"
 #include "sprite.h"
 #include "sprite_object.h"
+#include "transform_component.h"
 
 namespace cumulonimbus::renderer
 {
@@ -677,10 +678,10 @@ namespace cumulonimbus::renderer
 		vertex.at(1).color		= anim_sprite.Color();
 		vertex.at(2).color		= anim_sprite.Color();
 		vertex.at(3).color		= anim_sprite.Color();
-		vertex.at(0).texcoord	= anim_sprite.GetAnimTexcoord().at(AnimSpriteComponent::TexSide::LeftTop);
-		vertex.at(1).texcoord	= anim_sprite.GetAnimTexcoord().at(AnimSpriteComponent::TexSide::RightTop);
-		vertex.at(2).texcoord	= anim_sprite.GetAnimTexcoord().at(AnimSpriteComponent::TexSide::LeftBottom);
-		vertex.at(3).texcoord	= anim_sprite.GetAnimTexcoord().at(AnimSpriteComponent::TexSide::RightBottom);
+		vertex.at(0).texcoord	= anim_sprite.GetAnimTexcoord().at(component::AnimSpriteComponent::TexSide::LeftTop);
+		vertex.at(1).texcoord	= anim_sprite.GetAnimTexcoord().at(component::AnimSpriteComponent::TexSide::RightTop);
+		vertex.at(2).texcoord	= anim_sprite.GetAnimTexcoord().at(component::AnimSpriteComponent::TexSide::LeftBottom);
+		vertex.at(3).texcoord	= anim_sprite.GetAnimTexcoord().at(component::AnimSpriteComponent::TexSide::RightBottom);
 
 		immediate_context->UpdateSubresource(anim_sprite.GetVertexBuffer(), 0, NULL, vertex.data(), 0, 0);
 

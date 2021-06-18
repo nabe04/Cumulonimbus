@@ -26,23 +26,8 @@ using namespace shader;
 
 void Scene03::InitializeScene()
 {
-
-	const char* rpg_character_filename = "./Data/TestData/RPG-Character/RPG-Character.bin";
-	std::shared_ptr<FbxModelResource> rpg_character_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), rpg_character_filename, "./Data/TestData/RPG-Character/");
-	auto* rpg_character = AddEntity();
-	rpg_character->SetEntityName("RPG-Character");
-	rpg_character->AddComponent<FbxModelComponent>(rpg_character_resource);
-	rpg_character->GetComponent<TransformComponent>()->SetWorldRotation_Y(180);
-	rpg_character->GetComponent<TransformComponent>()->SetScale(0.1f);
-	rpg_character->AddComponent<AnimationCharacterComponent>();
-	rpg_character->GetComponent<AnimationCharacterComponent>()->SetUsingBuffer(RenderingBuffer::Bloom);
-
 	//-- View --//
 	view->SetCameraPos(XMFLOAT3(.0f, 100.0f, -100.0f), XMFLOAT3(.0f, .0f, .0f), XMFLOAT3(.0f, 1.0f, .0f));
-
-	auto lightnig_effect = AddEntity();
-	lightnig_effect->AddComponent<ActorComponent>();
-	lightnig_effect->AddComponent<GeomPrimComponent>(GeomPrimType::Cylinder);
 }
 
 void Scene03::UpdateScene(const float delta_time)

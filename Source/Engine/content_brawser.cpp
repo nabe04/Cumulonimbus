@@ -91,9 +91,9 @@ void ContentBrawser::SelectedContent(Scene* scene)
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
 			{// ‘I‘ð‚³‚ê‚Ä‚¢‚éƒ‚ƒfƒ‹‚Ì’Ç‰Á
 				std::string model_name = Locator::GetResourceManager()->FbxModelNames().at(n);
-				auto* entity = scene->AddEntity();
-				entity->AddComponent<MeshObject>();
-				entity->AddComponent<FbxModelComponent>(Locator::GetResourceManager()->FbxModelResouece(model_name));
+				//auto* entity = scene->AddEntity();
+				//entity->AddComponent<MeshObject>();
+				//entity->AddComponent<FbxModelComponent>(Locator::GetResourceManager()->FbxModelResouece(model_name));
 			}
 
 			//ImGui::Text(Locator::GetResourceManager().FbxModelNames().at(n).c_str());

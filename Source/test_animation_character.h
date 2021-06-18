@@ -11,13 +11,13 @@
 *
 ***************************************/
 
-class AnimationCharacterComponent :public ActorComponent
-{
-
-public:
-	AnimationCharacterComponent(Entity* entity);
-
-	void NewFrame(const float delta_time) override;
-	void Update(const float delta_time) override;
-	void RenderImGui() override;
-};
+//class AnimationCharacterComponent :public ActorComponent
+//{
+//
+//public:
+//	AnimationCharacterComponent(Entity* entity);
+//
+//	void NewFrame(const float delta_time) override;
+//	void Update(const float delta_time) override;
+//	void RenderImGui() override;
+//};

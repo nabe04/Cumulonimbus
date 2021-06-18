@@ -18,15 +18,6 @@ SceneLoad::SceneLoad(Scene* scene)
 
 void SceneLoad::InitializeScene()
 {
-
-	const char* coffee_filename = "coffee_256";
-	auto* coffee_tex = AddEntity();
-	coffee_tex->AddComponent<SpriteObject>();
-	coffee_tex->AddComponent<SpriteComponent>(GetFramework()->GetDevice(), coffee_filename, PivotType::LeftTop,
-		0, 0,
-		256, 256);
-	coffee_tex->SetEntityName("Coffee");
-
 	//-- View --//
 	view->SetCameraPos(XMFLOAT3(.0f, 100.0f, -100.0f), XMFLOAT3(.0f, .0f, .0f), XMFLOAT3(.0f, 1.0f, .0f));
 

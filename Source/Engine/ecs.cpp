@@ -28,7 +28,7 @@ Entity::Entity(Scene* scene,const UpdateOrder update_order, const EntityTag enti
 	, update_order{ update_order }
 	, entity_tag{ entity_tag }
 {
-	AddComponent<TransformComponent>();
+
 }
 
 void Entity::NewFrame(const float delta_time)
