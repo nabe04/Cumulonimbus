@@ -25,7 +25,7 @@ namespace cumulonimbus::ecs
 {
 	Entity Registry::CreateEntity()
 	{
-		static uint64_t entity = START_ID;
+		uint64_t entity = START_ID;
 
 		// 後置インクリメントをしているのはSTART_IDを初めの要素にセットしたいから
 		while (entities.contains(static_cast<Entity>(entity)))
@@ -33,9 +33,27 @@ namespace cumulonimbus::ecs
 			entity++;
 		}
 
-		entities.emplace(static_cast<Entity>(entity), static_cast<Entity>(entity));
+		CreateEntity(static_cast<Entity>(entity));
 		AddComponent<component::TransformComponent>(static_cast<Entity>(entity));
-		return entities.at(static_cast<Entity>(entity));
+		return entities.at(static_cast<Entity>(entity)).first;
+	}
+
+	void Registry::CreateEntity(ecs::Entity ent)
+	{
+		std::string ent_name = "Entity";
+
+		if (static_cast<uint64_t>(ent) == 0)
+		{
+			entities.emplace(ent, std::make_pair(ent, ent_name));
+			return;
+		}
+		else
+		{
+			const int no = static_cast<int>(ent);
+			ent_name += "(" + std::to_string(no) + ")";
+			entities.emplace(ent, std::make_pair(ent, ent_name));
+			return;
+		}
 	}
 
 	void Registry::PreUpdate(float dt)
@@ -56,21 +74,15 @@ namespace cumulonimbus::ecs
 
 	void Registry::RenderImGui()
 	{
-		int num = 0;
-
-		for (auto&& [ent_name, ent_id] : entities)
+		for (auto&& [ent_id, ent_name] : entities)
 		{
-			std::string name{ "Entity" + std::to_string(num) };
-
-			if (ImGui::CollapsingHeader(name.c_str()))
+			if (ImGui::CollapsingHeader(ent_name.second.c_str()))
 			{
 				for (auto&& [comp_name, comp_data] : component_arrays)
 				{
 					comp_data->RenderImGui(ent_id);
 				}
 			}
-
-			++num;
 		}
 	}
 

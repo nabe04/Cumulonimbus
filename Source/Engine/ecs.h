@@ -13,6 +13,7 @@
 #include <cereal/cereal.hpp>
 #include <cereal/archives/json.hpp>
 #include <cereal/archives/binary.hpp>
+#include <cereal/types/utility.hpp>
 #include <cereal/types/memory.hpp>
 #include <cereal/types/unordered_map.hpp>
 #include <cereal/types/vector.hpp>
@@ -50,10 +51,11 @@ namespace cumulonimbus::ecs
 {
 	enum class Entity : uint64_t {};
 	using EntityId		= uint64_t;	// Entityの識別子
+	using EntityName	= std::string;
 	using ComponentId	= uint64_t;	// Componentの識別子
 	using ComponentName = std::string;
 
-	static const uint64_t START_ID = 1;	// EntityId,ComponentIdの始まりの識別子(最初のIDはどれも"1"から)
+	static const uint64_t START_ID = 0;	// EntityId,ComponentIdの始まりの識別子(最初のIDはどれも"1"から)
 
 	class ComponentArrayBase
 	{
@@ -100,7 +102,7 @@ namespace cumulonimbus::ecs
 		{
 			if (!Content(entity))
 				return;
-			
+
 			GetComponent(entity).RenderImGui();
 		}
 
@@ -337,7 +339,7 @@ namespace cumulonimbus::ecs
 			{
 				for (auto&& [component_base, array_base] : component_arrays)
 				{
-					array_base->Destroy(entity.second);
+					array_base->Destroy(entity.first);
 				}
 			}
 
@@ -422,7 +424,7 @@ namespace cumulonimbus::ecs
 
 		}
 
-		[[nodiscard]] const std::unordered_map<Entity, Entity>& GetEntities()
+		[[nodiscard]] const std::unordered_map<Entity, std::pair<Entity, EntityName>>& GetEntities()
 		{
 			return entities;
 		}
@@ -500,10 +502,16 @@ namespace cumulonimbus::ecs
 		 * ※caution : デシリアライズの際の型の判別に使用
 		 */
 		void RegisterComponentName();
+
+		/*
+		 * brief : entitiesにEntityId(uint64_t),EntityName(std::string)の登録
+		 */
+		void CreateEntity(ecs::Entity ent);
+
 		//---------- values ----------//
 
 		std::unordered_map<ComponentName, std::unique_ptr<ComponentArrayBase>> component_arrays;
-		std::unordered_map<Entity, Entity> entities;
+		std::unordered_map<Entity, std::pair<Entity, EntityName>> entities;
 		Scene* scene;
 	};
 }

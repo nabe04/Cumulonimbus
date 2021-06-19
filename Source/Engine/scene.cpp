@@ -180,12 +180,6 @@ void Scene::Render()
 		if (ImGui::CollapsingHeader("Objects"))
 		{
 			registry->RenderImGui();
-			
-			//for (const auto& ent : *GetEntities())
-			//{
-			//	// Render ImGui
-			//	ent->RenderImgui();
-			//}
 		}
 		ImGui::Text("window x : %d", Locator::GetWindow()->WindowRect().left);
 		ImGui::Text("window y : %d", Locator::GetWindow()->WindowRect().top);
