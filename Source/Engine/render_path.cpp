@@ -59,8 +59,8 @@ namespace cumulonimbus::renderer
 
 	void RenderPath::BindDirectXStates(ID3D11DeviceContext* immediate_context,
 									   const component::SpriteObjectComponent* sprite_object,
-									   bool set_rasterizer, bool set_sampler,
-									   bool set_depth_stencil, bool set_blend)
+									   const bool set_rasterizer   , const bool set_sampler,
+									   const bool set_depth_stencil, const bool set_blend)
 	{
 		if (set_rasterizer)
 			rasterizer->Activate(immediate_context, sprite_object->GetRasterizerState());
@@ -71,8 +71,6 @@ namespace cumulonimbus::renderer
 		if (set_blend)
 			blend->Activate(immediate_context, sprite_object->GetBlendState());
 	}
-
-
 
 	void RenderPath::Render(ID3D11DeviceContext* const immediate_context,
 							ecs::Registry* registry,
@@ -149,6 +147,7 @@ namespace cumulonimbus::renderer
 			RenderSkyBox(immediate_context, registry, sky_box.GetEntity(), view, light);
 		}
 
+		//off_screen->Activate(immediate_context);
 		for (auto& mesh_object : registry->GetArray<component::MeshObjectComponent>().GetComponents())
 		{
 			const ecs::Entity ent = mesh_object.GetEntity();
@@ -177,6 +176,7 @@ namespace cumulonimbus::renderer
 			}
 		}
 
+		off_screen->Deactivate(immediate_context);
 		Blit(immediate_context);
 	}
 
@@ -478,9 +478,9 @@ namespace cumulonimbus::renderer
 		sky_box.DeactivateShader(immediate_context);
 		//TODO : Shaderのスロットをmapping用に変更したらそれ用に変更
 		Locator::GetDx11Device()->UnbindShaderResource(mapping::graphics::ShaderStage::PS, 0);
-		off_screen->Deactivate(immediate_context);
+		//off_screen->Deactivate(immediate_context);
 
-		Blit(immediate_context);
+		//Blit(immediate_context);
 	}
 
 	void RenderPath::RenderSprite(ID3D11DeviceContext* immediate_context,

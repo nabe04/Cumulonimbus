@@ -179,6 +179,8 @@ void Scene::Render()
 		light->WriteImGui();
 		if (ImGui::CollapsingHeader("Objects"))
 		{
+			registry->RenderImGui();
+			
 			//for (const auto& ent : *GetEntities())
 			//{
 			//	// Render ImGui

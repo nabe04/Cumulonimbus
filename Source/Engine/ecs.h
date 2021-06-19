@@ -63,6 +63,7 @@ namespace cumulonimbus::ecs
 		virtual void PreUpdate(float dt) = 0;
 		virtual void Update(float dt) = 0;
 		virtual void Destroy(Entity entity) = 0;
+		virtual void RenderImGui(Entity entity) = 0;
 		virtual void Save(const std::string& filename) = 0;
 		virtual void Load(const std::string& filename) = 0;
 		virtual size_t GetHashCode() = 0;
@@ -93,6 +94,14 @@ namespace cumulonimbus::ecs
 			{
 				component.Update(dt);
 			}
+		}
+
+		void RenderImGui(Entity entity) override
+		{
+			if (!Content(entity))
+				return;
+			
+			GetComponent(entity).RenderImGui();
 		}
 
 		/*
@@ -294,6 +303,12 @@ namespace cumulonimbus::ecs
 		 * brief : Component‘S‘Ì‚ÌUpdateˆ—
 		 */
 		void Update(float dt);
+
+		/*
+		 * brief : Entity‚ª‚ÂComponent‚Ì
+		 *		   "RenderImGui"ŠÖ”‚ğŒÄ‚Ô
+		 */
+		void RenderImGui();
 
 		/*
 		 * brief : w’è‚ÌEntity‚Ìíœ

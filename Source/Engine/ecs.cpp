@@ -54,6 +54,27 @@ namespace cumulonimbus::ecs
 		}
 	}
 
+	void Registry::RenderImGui()
+	{
+		int num = 0;
+
+		for (auto&& [ent_name, ent_id] : entities)
+		{
+			std::string name{ "Entity" + std::to_string(num) };
+
+			if (ImGui::CollapsingHeader(name.c_str()))
+			{
+				for (auto&& [comp_name, comp_data] : component_arrays)
+				{
+					comp_data->RenderImGui(ent_id);
+				}
+			}
+
+			++num;
+		}
+	}
+
+
 	/*
 	 * brief     : component_arraysのキー値を予め登録
 	 * ※caution : デシリアライズの際の型の判別に使用

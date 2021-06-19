@@ -110,7 +110,7 @@ void SceneGame::InitializeScene()
 	registry->AddComponent<cum::component::MeshObjectComponent>(ent_bunny);
 	registry->GetComponent<cum::component::MeshObjectComponent>(ent_bunny).SetShaderState(shader::MeshShaderTypes::Metal);
 	registry->AddComponent<cum::component::FbxModelComponent>(ent_bunny, Locator::GetResourceManager()->FbxModelResouece("stanford_bunny"));
-	registry->GetComponent<cum::component::TransformComponent>(ent_bunny).SetScale(0.01f);
+	registry->GetComponent<cum::component::TransformComponent>(ent_bunny).SetScale(0.1f);
 
 
 	//auto* sample01 = AddEntity(UpdateOrder::Default, EntityTag::Bunny);
