@@ -1,15 +1,15 @@
 #include "camera_operation.h"
 
-#include <cassert>
-#include <cmath>
-
-#include "arithmetic.h"
-#include "scene.h"
-#include "view.h"
-#include "transform.h"
-#include "transform_component.h"
-
-using namespace DirectX;
+//#include <cassert>
+//#include <cmath>
+//
+//#include "arithmetic.h"
+//#include "scene.h"
+//#include "view.h"
+//#include "transform.h"
+//#include "transform_component.h"
+//
+//using namespace DirectX;
 
 //namespace cumulonimbus::component
 //{

@@ -3,18 +3,48 @@
 #include <algorithm>
 #include <iterator>
 #include <vector>
+#include <cereal/types/vector.hpp>
+#include <cereal/types/bitset.hpp>
 
-#include "ecs.h"
-#include "shader_manager.h"
-#include "fbx_model_resource.h"
+#include "cereal_helper.h"
 #include "collision_component.h"
-#include "transform.h"
-#include "transform_component.h"
+#include "ecs.h"
+#include "fbx_model_resource.h"
 #include "locator.h"
-#include "component_list.h"
+#include "shader_manager.h"
+#include "transform_component.h"
 
 namespace cumulonimbus::component
 {
+	FbxModelComponent::FbxModelComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const std::shared_ptr<FbxModelResource>& resource)
+		:ComponentBase{ registry , ent }
+	{
+		this->resource = resource;
+
+		// ノード
+		const std::vector<ModelData::Node>& res_nodes = resource->GetModelData().nodes;
+
+		nodes.resize(res_nodes.size());
+		for (size_t node_index = 0; node_index < nodes.size(); ++node_index)
+		{// ModelResource::Node と Model::Nodeを結び付ける
+			auto&& src = res_nodes.at(node_index);
+			auto&& dst = nodes.at(node_index);
+
+			dst.name = src.name;
+			dst.parent_index = src.parent_index >= 0 ? src.parent_index : -1;
+			//dst.parent		 = src.parent_index >= 0 ? &nodes.at(src.parent_index) : nullptr;
+			dst.scale = src.scale;
+			dst.rotate = src.rotate;
+			dst.translate = src.translate;
+		}
+
+		anim_states.AddState(FbxAnimationState::Switch, [this](const float elapsedTime) {BlendNextAnimation(elapsedTime); });
+		anim_states.AddState(FbxAnimationState::Update, [this](const float elapsedTime) {UpdateAnimation(elapsedTime); });
+
+		// アニメーションの初期値をセット
+		SwitchAnimation(0, false, 0.0f);
+	}
+	
 	void FbxModelComponent::NewFrame(const float delta_time)
 	{
 
@@ -75,35 +105,6 @@ namespace cumulonimbus::component
 
 			ImGui::TreePop();
 		}
-	}
-
-	FbxModelComponent::FbxModelComponent(ecs::Registry* registry, ecs::Entity ent, const std::shared_ptr<FbxModelResource>& resource)
-		:ComponentBase{ registry , ent }
-	{
-		this->resource = resource;
-
-		// ノード
-		const std::vector<ModelData::Node>& res_nodes = resource->GetModelData().nodes;
-
-		nodes.resize(res_nodes.size());
-		for (size_t node_index = 0; node_index < nodes.size(); ++node_index)
-		{// ModelResource::Node と Model::Nodeを結び付ける
-			auto&& src = res_nodes.at(node_index);
-			auto&& dst = nodes.at(node_index);
-
-			dst.name = src.name;
-			dst.parent_index = src.parent_index >= 0 ? src.parent_index : -1;
-			//dst.parent		 = src.parent_index >= 0 ? &nodes.at(src.parent_index) : nullptr;
-			dst.scale = src.scale;
-			dst.rotate = src.rotate;
-			dst.translate = src.translate;
-		}
-
-		anim_states.AddState(FbxAnimationState::Switch, [this](const float elapsedTime) {BlendNextAnimation(elapsedTime); });
-		anim_states.AddState(FbxAnimationState::Update, [this](const float elapsedTime) {UpdateAnimation(elapsedTime); });
-
-		// アニメーションの初期値をセット
-		SwitchAnimation(0, false, 0.0f);
 	}
 
 	void FbxModelComponent::Initialize(const std::shared_ptr<FbxModelResource>& resource)

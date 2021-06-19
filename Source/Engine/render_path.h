@@ -6,8 +6,8 @@
 #include <SimpleMath.h>
 
 #include "constant_buffer.h"
-#include "ecs.h"
 #include "sampler.h"
+#include "rename_type_mapping.h"
 
 #include "blend.h"
 #include "depth_map.h"
@@ -120,7 +120,7 @@ namespace cumulonimbus::renderer
 		 */
 		// TODO: RenderGeomPrimを今後当たり判定用のモデルの描画も行う
 		void RenderGeomPrim(ID3D11DeviceContext* immediate_context,
-							ecs::Registry* registry ,ecs::Entity entity,
+							ecs::Registry* registry , mapping::rename_type::Entity entity,
 							const component::MeshObjectComponent* mesh_object,
 							const View* view, const Light* light);
 
@@ -128,7 +128,7 @@ namespace cumulonimbus::renderer
 		 * brief : "ObjModelComponent"が持つモデルの描画
 		 */
 		void RenderOBJ(ID3D11DeviceContext* immediate_context,
-					   ecs::Registry* registry, ecs::Entity entity,
+					   ecs::Registry* registry, mapping::rename_type::Entity entity,
 					   const component::MeshObjectComponent* mesh_object,
 					   const View* view, const Light* light);
 
@@ -136,7 +136,7 @@ namespace cumulonimbus::renderer
 		 * brief : "FbxModelComponent"が持つモデルの描画
 		 */
 		void RenderFBX(ID3D11DeviceContext* immediate_context,
-					   ecs::Registry* registry, ecs::Entity entity,
+					   ecs::Registry* registry, mapping::rename_type::Entity entity,
 					   const component::MeshObjectComponent* mesh_object,
 					   const View* view, const Light* light);
 
@@ -144,7 +144,7 @@ namespace cumulonimbus::renderer
 		 * brief : "SkyBoxComponent"が持つモデルの描画
 		 */
 		void RenderSkyBox(ID3D11DeviceContext* immediate_context,
-						  ecs::Registry* registry, ecs::Entity entity,
+						  ecs::Registry* registry, mapping::rename_type::Entity entity,
 						  const View* view, const Light* light);
 
 		/*
@@ -154,8 +154,8 @@ namespace cumulonimbus::renderer
 		 * ※caution(2) : "バックバッファに直接書き込むため「Begin」や「End」はない"
 		 */
 		// 2Dスプライト描画(Animationなし)
-		void RenderSprite(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, ecs::Entity entity);
+		void RenderSprite(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, mapping::rename_type::Entity entity);
 		// 2Dスプライト描画(Animationあり)
-		void RenderAnimSprite(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, ecs::Entity entity);
+		void RenderAnimSprite(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, mapping::rename_type::Entity entity);
 	};
 }

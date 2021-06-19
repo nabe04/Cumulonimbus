@@ -1,5 +1,8 @@
 #include "render_path.h"
 
+#include <cereal/types/array.hpp>
+#include <cereal/types/bitset.hpp>
+
 #include "sampler_mapping.h"
 #include "scene.h"
 #include "texture_resource_mapping.h"
@@ -100,7 +103,7 @@ namespace cumulonimbus::renderer
 
 		for(auto& mesh_object : registry->GetArray<component::MeshObjectComponent>().GetComponents())
 		{
-			const ecs::Entity ent = mesh_object.GetEntity();
+			const mapping::rename_type::Entity ent = mesh_object.GetEntity();
 
 			// MeshObjectComponentが持つstate類の実行
 			// sampler stateはメッシュに関係なくLinearBorderを使用
@@ -143,14 +146,14 @@ namespace cumulonimbus::renderer
 		auto& components = registry->GetArray<component::SkyBoxComponent>().GetComponents();
 		for(auto& sky_box : registry->GetArray<component::SkyBoxComponent>().GetComponents())
 		{
-			ecs::Entity ent = sky_box.GetEntity();
+			mapping::rename_type::Entity ent = sky_box.GetEntity();
 			RenderSkyBox(immediate_context, registry, sky_box.GetEntity(), view, light);
 		}
 
 		//off_screen->Activate(immediate_context);
 		for (auto& mesh_object : registry->GetArray<component::MeshObjectComponent>().GetComponents())
 		{
-			const ecs::Entity ent = mesh_object.GetEntity();
+			const mapping::rename_type::Entity ent = mesh_object.GetEntity();
 
 			// MeshObjectComponentが持つstate類の実行
 			// sampler stateはメッシュに関係なくLinearBorderを使用
@@ -230,7 +233,7 @@ namespace cumulonimbus::renderer
 	}
 
 	void RenderPath::RenderGeomPrim(ID3D11DeviceContext* immediate_context,
-									ecs::Registry* registry, ecs::Entity entity,
+									ecs::Registry* registry, mapping::rename_type::Entity entity,
 									const component::MeshObjectComponent* const mesh_object,
 									const View* view, const Light* light)
 	{
@@ -300,7 +303,7 @@ namespace cumulonimbus::renderer
 	}
 
 	void RenderPath::RenderOBJ(ID3D11DeviceContext* immediate_context,
-							   ecs::Registry* registry, ecs::Entity entity,
+							   ecs::Registry* registry, mapping::rename_type::Entity entity,
 							   const component::MeshObjectComponent* mesh_object,
 							   const View* view, const Light* light)
 	{
@@ -370,7 +373,7 @@ namespace cumulonimbus::renderer
 	}
 
 	void RenderPath::RenderFBX(ID3D11DeviceContext* immediate_context,
-							   ecs::Registry* registry, ecs::Entity entity,
+							   ecs::Registry* registry, mapping::rename_type::Entity entity,
 							   const component::MeshObjectComponent* mesh_object,
 							   const View* view, const Light* light)
 	{
@@ -438,7 +441,7 @@ namespace cumulonimbus::renderer
 	}
 
 	void RenderPath::RenderSkyBox(ID3D11DeviceContext* immediate_context,
-								  ecs::Registry* registry, ecs::Entity entity,
+								  ecs::Registry* registry, mapping::rename_type::Entity entity,
 								  const View* view, const Light* light)
 	{
 		auto& sky_box = registry->GetComponent<component::SkyBoxComponent>(entity);
@@ -484,7 +487,7 @@ namespace cumulonimbus::renderer
 	}
 
 	void RenderPath::RenderSprite(ID3D11DeviceContext* immediate_context,
-								  ecs::Registry* const registry , const ecs::Entity entity)
+								  ecs::Registry* const registry , const mapping::rename_type::Entity entity)
 	{
 		component::SpriteComponent&		sprite		= registry->GetComponent<component::SpriteComponent>(entity);
 		component::TransformComponent&	transform	= registry->GetComponent<component::TransformComponent>(entity);
@@ -595,7 +598,7 @@ namespace cumulonimbus::renderer
 	}
 
 	void RenderPath::RenderAnimSprite(ID3D11DeviceContext* immediate_context,
-									  ecs::Registry* const registry, const ecs::Entity entity)
+									  ecs::Registry* const registry, const mapping::rename_type::Entity entity)
 	{
 		component::AnimSpriteComponent& anim_sprite = registry->GetComponent<component::AnimSpriteComponent>(entity);
 		component::TransformComponent&  transform	= registry->GetComponent<component::TransformComponent>(entity);

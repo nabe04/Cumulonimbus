@@ -1,15 +1,10 @@
 #pragma once
 
-#include <memory>
-
 #include <DirectXMath.h>
 
-#include "sampler.h"
-using namespace DirectX;
-
 #include <cereal/cereal.hpp>
+#include <cereal/types/polymorphic.hpp>
 
-#include "ecs.h"
 #include "component_base.h"
 #include "enum_state_map.h"
 #include "blend.h"
@@ -17,6 +12,8 @@ using namespace DirectX;
 #include "depth_stencil.h"
 #include "shader_manager.h"
 #include "rendering_buffer.h"
+#include "sampler.h"
+using namespace DirectX;
 
 enum class ActorType
 {
@@ -32,7 +29,7 @@ namespace cumulonimbus::component
 	{
 	public:
 		explicit ActorComponent() = default; // for cereal
-		explicit ActorComponent(ecs::Registry* const registry, const ecs::Entity ent, ActorType actor_type = ActorType::Actor3D);
+		explicit ActorComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent, ActorType actor_type = ActorType::Actor3D);
 		~ActorComponent() override = default;
 
 		void NewFrame(const float delta_time)override {}
@@ -96,5 +93,6 @@ namespace cumulonimbus::component
 	};
 }
 
-CEREAL_REGISTER_TYPE(cumulonimbus::component::ActorComponent);
+CEREAL_REGISTER_TYPE(cumulonimbus::component::ActorComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::ActorComponent)
+

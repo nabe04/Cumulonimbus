@@ -1,18 +1,16 @@
 #pragma once
-
-#include <memory>
-#include <vector>
 #include <string>
 
-#include <wrl.h>
 #include <d3d11.h>
 #include <DirectXMath.h>
+#include <wrl.h>
 #include <cereal/cereal.hpp>
+#include <cereal/types/polymorphic.hpp>
 
-#include "ecs.h"
 #include "component_base.h"
-#include "shader.h"
 #include "geometric_primitive_resource.h"
+#include "rename_type_mapping.h"
+#include "shader.h"
 
 /*******************************************************
 *	GeomPrimComponent Class
@@ -29,7 +27,7 @@ namespace cumulonimbus::component
 	{
 	public:
 		GeomPrimComponent() = default;
-		GeomPrimComponent(ecs::Registry* const registry, const ecs::Entity ent,
+		GeomPrimComponent(ecs::Registry* registry, mapping::rename_type::Entity ent,
 			GeomPrimType primType = GeomPrimType::Cube,
 			const XMFLOAT3& pos = XMFLOAT3{ 0.0f,0.0f,0.0f });
 		~GeomPrimComponent() override = default;
@@ -62,5 +60,5 @@ namespace cumulonimbus::component
 	};
 }
 
-CEREAL_REGISTER_TYPE(cumulonimbus::component::GeomPrimComponent);
+CEREAL_REGISTER_TYPE(cumulonimbus::component::GeomPrimComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::GeomPrimComponent)

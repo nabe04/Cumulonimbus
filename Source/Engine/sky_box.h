@@ -7,10 +7,12 @@
 #include <d3d11.h>
 #include <wrl.h>
 #include <cereal/cereal.hpp>
+#include <cereal/types/polymorphic.hpp>
 
 #include "component_base.h"
 #include "texture.h"
 #include "shader.h"
+#include "rename_type_mapping.h"
 
 namespace cumulonimbus::component
 {
@@ -21,7 +23,7 @@ namespace cumulonimbus::component
 		* brief スカイボックスの作成
 		* filename : キューブマップのファイル名(番号は書かない)
 		*/
-		explicit SkyBoxComponent(ecs::Registry* registry, ecs::Entity ent,
+		explicit SkyBoxComponent(ecs::Registry* registry, mapping::rename_type::Entity ent,
 								 ID3D11Device* device, const char* filename);
 		explicit SkyBoxComponent() = default; // for cereal
 		~SkyBoxComponent() override = default;
@@ -89,5 +91,5 @@ namespace cumulonimbus::component
 	};
 }
 
-CEREAL_REGISTER_TYPE(cumulonimbus::component::SkyBoxComponent);
+CEREAL_REGISTER_TYPE(cumulonimbus::component::SkyBoxComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::SkyBoxComponent)

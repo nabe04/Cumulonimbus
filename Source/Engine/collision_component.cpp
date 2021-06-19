@@ -9,7 +9,7 @@
 
 namespace cumulonimbus::component
 {
-	CollisionComponent::CollisionComponent(ecs::Registry* registry, ecs::Entity ent, CollisionTag tag)
+	CollisionComponent::CollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, CollisionTag tag)
 		: ComponentBase{ registry , ent }
 		, tag{ tag }
 	{

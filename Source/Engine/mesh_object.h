@@ -1,22 +1,23 @@
 #pragma once
 
-#include <wrl.h>
 #include <memory>
+#include <wrl.h>
 
 #include <d3d11.h>
 #include <DirectXMath.h>
 
 #include <cereal/cereal.hpp>
+#include <cereal/types/polymorphic.hpp>
 
-#include "ecs.h"
-#include "component_base.h"
-#include "enum_state_map.h"
 #include "blend.h"
-#include "rasterizer.h"
+#include "component_base.h"
 #include "depth_stencil.h"
-#include "shader_manager.h"
+#include "enum_state_map.h"
+#include "rasterizer.h"
+#include "rename_type_mapping.h"
 #include "rendering_buffer.h"
 #include "sampler.h"
+#include "shader_manager.h"
 
 namespace cumulonimbus::component
 {
@@ -34,7 +35,7 @@ namespace cumulonimbus::component
 
 	public:
 		explicit MeshObjectComponent() = default; // for cereal
-		explicit MeshObjectComponent(ecs::Registry* const registry, const ecs::Entity ent);
+		explicit MeshObjectComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
 		~MeshObjectComponent() override = default;
 
 		void NewFrame(const float delta_time)override {};
@@ -75,5 +76,5 @@ namespace cumulonimbus::component
 	};
 }
 
-CEREAL_REGISTER_TYPE(cumulonimbus::component::MeshObjectComponent);
+CEREAL_REGISTER_TYPE(cumulonimbus::component::MeshObjectComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::MeshObjectComponent)

@@ -1,15 +1,17 @@
 #include "transform_component.h"
 
 #include <fstream>
-#include <string>
 #include <imgui.h>
+#include <string>
 
 #include <cereal/archives/json.hpp>
+#include <cereal/types/bitset.hpp>
 
-#include "transform.h"
 #include "arithmetic.h"
+#include "cereal_helper.h"
 #include "component_base.h"
 #include "file_path_helper.h"
+#include "transform.h"
 
 using namespace DirectX;
 
@@ -17,12 +19,8 @@ namespace cumulonimbus::component
 {
 	using namespace DirectX::SimpleMath;
 
-	TransformComponent::TransformComponent(ecs::Registry* const registry, const ecs::Entity ent,
-										   const Vector3& pos, const Vector3& scale, const Vector3& angle)
+	TransformComponent::TransformComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent)
 		: ComponentBase{ registry,ent}
-		,position{ pos }
-		,scale{ scale }
-		,angle{ angle }
 	{
 		// Initialize XMFLOAT4x4
 		CreateIdentity4x4(&scaling_matrix);
@@ -318,33 +316,7 @@ namespace cumulonimbus::component
 		const std::string file_path_and_name = file_path + file_path_helper::GetTypeName<TransformComponent>() + file_path_helper::GetJsonExtension();
 		std::ofstream ofs(file_path_and_name);
 		cereal::JSONOutputArchive o_archive(ofs);
-		o_archive(
-			cereal::base_class<ComponentBase>(this),
-			CEREAL_NVP(position),
-			CEREAL_NVP(prev_pos),
-			CEREAL_NVP(scale),
-			CEREAL_NVP(angle),
-			CEREAL_NVP(prev_angle),
-
-			CEREAL_NVP(world_f4x4),
-			CEREAL_NVP(scaling_matrix),
-			CEREAL_NVP(rotation_matrix),
-			CEREAL_NVP(translation_matrix),
-
-			CEREAL_NVP(model_right),
-			CEREAL_NVP(model_front),
-			CEREAL_NVP(model_up),
-			CEREAL_NVP(orientation),
-
-			// Quaternion
-			CEREAL_NVP(axis),
-			CEREAL_NVP(local_quaternion),
-			CEREAL_NVP(world_quaternion),
-
-			CEREAL_NVP(set_angle_bit_flg),
-			CEREAL_NVP(is_billboard),
-			CEREAL_NVP(is_quaternion)
-		);
+		o_archive(*this);
 	}
 
 	void TransformComponent::Load(const std::string& file_path_and_name)
@@ -352,33 +324,7 @@ namespace cumulonimbus::component
 		{
 			std::ifstream ifs(file_path_and_name);
 			cereal::JSONInputArchive i_archive(ifs);
-			i_archive(
-				cereal::base_class<ComponentBase>(this),
-				CEREAL_NVP(position),
-				CEREAL_NVP(prev_pos),
-				CEREAL_NVP(scale),
-				CEREAL_NVP(angle),
-				CEREAL_NVP(prev_angle),
-
-				CEREAL_NVP(world_f4x4),
-				CEREAL_NVP(scaling_matrix),
-				CEREAL_NVP(rotation_matrix),
-				CEREAL_NVP(translation_matrix),
-
-				CEREAL_NVP(model_right),
-				CEREAL_NVP(model_front),
-				CEREAL_NVP(model_up),
-				CEREAL_NVP(orientation),
-
-				// Quaternion
-				CEREAL_NVP(axis),
-				CEREAL_NVP(local_quaternion),
-				CEREAL_NVP(world_quaternion),
-
-				CEREAL_NVP(set_angle_bit_flg),
-				CEREAL_NVP(is_billboard),
-				CEREAL_NVP(is_quaternion)
-			);
+			i_archive(*this);
 		}
 	}
 }

@@ -9,6 +9,7 @@
 #include <cereal/cereal.hpp>
 
 #include "component_base.h"
+#include "ecs.h"
 #include "mesh_object.h"
 #include "enum_state_map.h"
 
@@ -18,10 +19,10 @@ namespace cumulonimbus::component
 	{
 	public:
 		explicit ChildActorComponent() = default;
-		explicit ChildActorComponent(ecs::Registry* registry, ecs::Entity ent,
+		explicit ChildActorComponent(ecs::Registry* registry, mapping::rename_type::Entity ent,
 									 EntityTag tag, std::string node_name);
-		void NewFrame(const float delta_time) override;
-		void Update(const float delta_time) override;
+		void NewFrame(float delta_time) override;
+		void Update(float delta_time) override;
 		void RenderImGui() override;
 
 		void Link(std::string node_name);

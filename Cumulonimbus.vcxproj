@@ -85,6 +85,7 @@
     <ClInclude Include="Source\Engine\rasterizer.h" />
     <ClInclude Include="Source\Engine\reflection_mapping.h" />
     <ClInclude Include="Source\Engine\refraction_mapping.h" />
+    <ClInclude Include="Source\Engine\rename_type_mapping.h" />
     <ClInclude Include="Source\Engine\rendering_buffer.h" />
     <ClInclude Include="Source\Engine\render_path.h" />
     <ClInclude Include="Source\Engine\resource_manager.h" />
@@ -146,6 +147,7 @@
     <ClCompile Include="Source\Engine\child_actor.cpp" />
     <ClCompile Include="Source\Engine\collision.cpp" />
     <ClCompile Include="Source\Engine\collision_component.cpp" />
+    <ClCompile Include="Source\Engine\component_base.cpp" />
     <ClCompile Include="Source\Engine\component_list.cpp" />
     <ClCompile Include="Source\Engine\constant_buffer.cpp" />
     <ClCompile Include="Source\Engine\content_brawser.cpp" />

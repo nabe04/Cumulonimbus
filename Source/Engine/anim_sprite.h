@@ -7,8 +7,8 @@
 #include <DirectXMath.h>
 #include <cereal/cereal.hpp>
 
-#include "ecs.h"
 #include "sprite.h"
+#include "rename_type_mapping.h"
 
 namespace cumulonimbus::component
 {
@@ -24,7 +24,7 @@ namespace cumulonimbus::component
 		};
 
 	public:
-		explicit AnimSpriteComponent(ecs::Registry* const registry, const ecs::Entity ent,
+		explicit AnimSpriteComponent(ecs::Registry* registry, mapping::rename_type::Entity ent,
 			ID3D11Device* device,
 			const char* filename, PivotType pivot_type,
 			int src_left,   int src_top,

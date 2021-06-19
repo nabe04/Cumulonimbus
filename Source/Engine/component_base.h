@@ -2,9 +2,9 @@
 #include <string>
 
 #include <cereal/cereal.hpp>
-#include <cereal/types/string.hpp>
 
-#include "ecs.h"
+//#include "ecs.h"
+#include "rename_type_mapping.h"
 
 namespace cumulonimbus::ecs
 {
@@ -17,7 +17,7 @@ namespace cumulonimbus::component
 	{
 	public:
 		ComponentBase() = default;
-		ComponentBase(ecs::Registry* registry, ecs::Entity ent)
+		ComponentBase(ecs::Registry* registry, mapping::rename_type::Entity ent)
 			: registry{ registry }
 			, entity{ ent }
 		{
@@ -39,10 +39,10 @@ namespace cumulonimbus::component
 		}
 
 		[[nodiscard]] ecs::Registry* GetRegistry() const { return registry; }
-		[[nodiscard]] ecs::Entity    GetEntity()   const { return entity; }
+		[[nodiscard]] mapping::rename_type::Entity    GetEntity()   const { return entity; }
 
 	private:
 		ecs::Registry* registry{};
-		ecs::Entity entity;
+		mapping::rename_type::Entity entity;
 	};
 }

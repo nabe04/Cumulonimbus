@@ -2,6 +2,9 @@
 
 #include <memory>
 
+#include <cereal/types/array.hpp>
+#include <cereal/types/bitset.hpp>
+
 #include "fbx_model_component.h"
 #include "input_manager.h"
 #include "component_list.h"
@@ -92,13 +95,13 @@ void SceneGame::InitializeScene()
 	//ground->SetEntityName("Ground");
 
 	const char* sky_filename = "./Data/Assets/cubemap/skybox";
-	const cum::ecs::Entity ent_sky_box = registry->CreateEntity();
+	const cum::mapping::rename_type::Entity ent_sky_box = registry->CreateEntity();
 	registry->AddComponent<cum::component::SkyBoxComponent>(ent_sky_box, Locator::GetDx11Device()->device.Get(), sky_filename);
 	registry->GetComponent<cum::component::TransformComponent>(ent_sky_box).SetScale(3.f);
 
 	const char* ground_filename = "./Data/Assets/Bin/ground.bin";  // "./Data/Assets/FBX/stage/stage.fbm/"
 	std::shared_ptr<FbxModelResource> ground_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), ground_filename, "./Data/Assets/FBX/ground/");
-	const cum::ecs::Entity ent_floor = registry->CreateEntity();
+	const cum::mapping::rename_type::Entity ent_floor = registry->CreateEntity();
 	registry->AddComponent<cum::component::MeshObjectComponent>(ent_floor);
 	registry->AddComponent<cum::component::FbxModelComponent>(ent_floor, ground_resource);
 	registry->GetComponent<cum::component::FbxModelComponent>(ent_floor).SetIsStatic(true);
@@ -106,7 +109,7 @@ void SceneGame::InitializeScene()
 	registry->GetComponent<cum::component::TransformComponent>(ent_floor).SetWorldRotation_X(90);
 	registry->GetComponent<cum::component::MeshObjectComponent>(ent_floor).SetSamplerState(RenderingSampleState::Linear_Wrap);
 
-	const cum::ecs::Entity ent_bunny = registry->CreateEntity();
+	const cum::mapping::rename_type::Entity ent_bunny = registry->CreateEntity();
 	registry->AddComponent<cum::component::MeshObjectComponent>(ent_bunny);
 	registry->GetComponent<cum::component::MeshObjectComponent>(ent_bunny).SetShaderState(shader::MeshShaderTypes::Metal);
 	registry->AddComponent<cum::component::FbxModelComponent>(ent_bunny, Locator::GetResourceManager()->FbxModelResouece("stanford_bunny"));

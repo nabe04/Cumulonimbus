@@ -1,6 +1,7 @@
 #include "geometric_primitive_component.h"
 
 #include <GeometricPrimitive.h>
+#include <cereal/types/bitset.hpp>
 
 #include "scene.h"
 #include "shader.h"
@@ -13,12 +14,12 @@
 //**************************************************
 namespace cumulonimbus::component
 {
-	GeomPrimComponent::GeomPrimComponent(ecs::Registry* const registry, const ecs::Entity ent,
+	GeomPrimComponent::GeomPrimComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent,
 										 GeomPrimType prim_type, const XMFLOAT3& pos)
 		: ComponentBase{ registry, ent }
 	{
 		// Set position
-		GetRegistry()->GetComponent<TransformComponent>(GetEntity()).SetPosition(pos);
+		GetRegistry()->GetComponent<component::TransformComponent>(GetEntity()).SetPosition(pos);
 
 		// Create Geometric Primitive
 		mesh = GetRegistry()->GetScene()->GetGeomPrimRes()->GetMeshData(prim_type);

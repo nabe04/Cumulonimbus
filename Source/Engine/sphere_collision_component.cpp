@@ -1,14 +1,15 @@
 #include "sphere_collision_component.h"
 
+#include <cereal/types/bitset.hpp>
+
 #include "scene.h"
 #include "geometric_primitive_resource.h"
-#include "transform.h"
 #include "transform_component.h"
 #include "collision.h"
 
 namespace cumulonimbus::component
 {
-	SphereCollisionComponent::SphereCollisionComponent(ecs::Registry* registry, ecs::Entity ent, CollisionTag tag)
+	SphereCollisionComponent::SphereCollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, CollisionTag tag)
 		:CollisionComponent{ registry , ent ,tag }
 	{
 		type = CollisionType::Sphere;

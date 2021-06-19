@@ -1,12 +1,14 @@
 #include "actor_component.h"
 #include <fstream>
 
+#include <cereal/archives/json.hpp>
+
 #include "component_base.h"
 #include "file_path_helper.h"
 
 namespace cumulonimbus::component
 {
-	ActorComponent::ActorComponent(ecs::Registry* const registry, const ecs::Entity ent, ActorType actor_type)
+	ActorComponent::ActorComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent, ActorType actor_type)
 		: ComponentBase{ registry,ent }
 	{
 		this->actor_type.SetState(actor_type);
@@ -29,20 +31,7 @@ namespace cumulonimbus::component
 		const std::string file_path_and_name = file_path + file_path_helper::GetTypeName<ActorComponent>() + file_path_helper::GetJsonExtension();
 		std::ofstream ofs(file_path_and_name);
 		cereal::JSONOutputArchive o_archive(ofs);
-		o_archive(
-			cereal::base_class<ComponentBase>(this),
-			CEREAL_NVP(actor_type),
-
-			CEREAL_NVP(blend_state),
-			CEREAL_NVP(rasterizer_state),
-			CEREAL_NVP(sampler_state),
-			CEREAL_NVP(depth_stencil_state),
-
-			CEREAL_NVP(shader_state),
-			CEREAL_NVP(shader_state_2d),
-
-			CEREAL_NVP(rendering_buffer)
-		);
+		o_archive(*this);
 	}
 
 	void ActorComponent::Load(const std::string& file_path_and_name)
@@ -50,20 +39,7 @@ namespace cumulonimbus::component
 		{
 			std::ifstream ifs(file_path_and_name);
 			cereal::JSONInputArchive i_archive(ifs);
-			i_archive(
-				cereal::base_class<ComponentBase>(this),
-				CEREAL_NVP(actor_type),
-
-				CEREAL_NVP(blend_state),
-				CEREAL_NVP(rasterizer_state),
-				CEREAL_NVP(sampler_state),
-				CEREAL_NVP(depth_stencil_state),
-
-				CEREAL_NVP(shader_state),
-				CEREAL_NVP(shader_state_2d),
-
-				CEREAL_NVP(rendering_buffer)
-			);
+			i_archive(*this);
 		}
 	}
 }

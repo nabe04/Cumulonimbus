@@ -1,17 +1,17 @@
 #include "anim_sprite.h"
 
-#include <cereal/types/vector.hpp>
 #include <cereal/types/array.hpp>
-#include <cereal_helper.h>
+#include <cereal/types/vector.hpp>
 
-#include "texture.h"
-#include "scene.h"
-#include "locator.h"
+#include "cereal_helper.h"
 #include "file_path_helper.h"
+#include "locator.h"
+#include "scene.h"
+#include "texture.h"
 
 namespace cumulonimbus::component
 {
-	AnimSpriteComponent::AnimSpriteComponent(ecs::Registry* const registry, const ecs::Entity ent,
+	AnimSpriteComponent::AnimSpriteComponent(ecs::Registry* const registry, const  mapping::rename_type::Entity ent,
 		ID3D11Device* device,
 		const char* filename, const PivotType pivot_type,
 		const int src_left,   const int src_top,

@@ -4,14 +4,13 @@
 
 #include "fbx_model_component.h"
 #include "scene.h"
-#include "transform.h"
 #include "transform_component.h"
 
 using namespace DirectX;
 
 namespace cumulonimbus::component
 {
-	ChildActorComponent::ChildActorComponent(ecs::Registry* registry, ecs::Entity ent, EntityTag tag, std::string node_name)
+	ChildActorComponent::ChildActorComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, EntityTag tag, std::string node_name)
 		:MeshObjectComponent{ registry , ent }
 		, parent_tag{ tag }
 		, tag_node_name{ node_name }
@@ -25,7 +24,6 @@ namespace cumulonimbus::component
 	void ChildActorComponent::Update(const float delta_time)
 	{
 		Link(tag_node_name);
-
 		SimpleMath::Matrix ent_matrix = GetRegistry()->GetComponent<component::TransformComponent>(GetEntity()).GetWorld4x4();
 		ent_matrix *= parent_matrix;
 		GetRegistry()->GetComponent<component::TransformComponent>(GetEntity()).SetWorld4x4(ent_matrix);

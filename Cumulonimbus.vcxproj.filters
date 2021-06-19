@@ -408,6 +408,9 @@
     <ClCompile Include="Source\Engine\depth_map.cpp">
       <Filter>Source\System</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\component_base.cpp">
+      <Filter>Source\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -516,9 +519,6 @@
       <Filter>Header\Shader%28.h%29</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\sobel_filter.h">
-      <Filter>Header\Shader%28.h%29</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\sky_box.h">
       <Filter>Header\Shader%28.h%29</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\single_color.h">
@@ -650,9 +650,6 @@
     <ClInclude Include="Source\Engine\rendering_buffer.h">
       <Filter>Header\System</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\resource_manager.h">
-      <Filter>Header\System</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Engine\sampler.h">
       <Filter>Header\System</Filter>
     </ClInclude>
@@ -710,23 +707,32 @@
     <ClInclude Include="Source\Engine\render_path.h">
       <Filter>Header\Render</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\texture_resource_mapping.h">
-      <Filter>Header\System</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Engine\depth_map.h">
-      <Filter>Header\System</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\shader_filename_mapping.h">
-      <Filter>Header\System</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\sampler_mapping.h">
-      <Filter>Header\System</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\graphics_mapping.h">
       <Filter>Header\System</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\type_rename.h">
       <Filter>Header\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\sampler_mapping.h">
+      <Filter>Header\System\Mapping</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\texture_resource_mapping.h">
+      <Filter>Header\System\Mapping</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\shader_filename_mapping.h">
+      <Filter>Header\System\Mapping</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\graphics_mapping.h">
+      <Filter>Header\System\Mapping</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\resource_manager.h">
+      <Filter>Header\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\rename_type_mapping.h">
+      <Filter>Header\System\Mapping</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\sky_box.h">
+      <Filter>Header\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -831,6 +837,9 @@
     </Filter>
     <Filter Include="Header\System">
       <UniqueIdentifier>{d757200f-4014-4ab9-895d-5a0c27104d20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\System\Mapping">
+      <UniqueIdentifier>{bda1b557-cfe0-41a5-b9e9-7d017a13d137}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

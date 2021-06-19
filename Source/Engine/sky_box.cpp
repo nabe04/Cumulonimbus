@@ -3,9 +3,10 @@
 #include <cassert>
 #include <string>
 
-#include "cereal/types/array.hpp"
-#include "cereal/types/memory.hpp"
-#include "cereal/types/string.hpp"
+#include <cereal/archives/json.hpp>
+#include <cereal/types/array.hpp>
+#include <cereal/types/memory.hpp>
+#include <cereal/types/string.hpp>
 #include <imgui.h>
 
 #include "scene.h"
@@ -14,7 +15,7 @@
 
 namespace cumulonimbus::component
 {
-	SkyBoxComponent::SkyBoxComponent(ecs::Registry* registry, ecs::Entity ent,
+	SkyBoxComponent::SkyBoxComponent(ecs::Registry* registry, mapping::rename_type::Entity ent,
 									 ID3D11Device* device	, const char* filename)
 		:ComponentBase{ registry, ent }
 	{

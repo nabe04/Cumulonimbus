@@ -2,13 +2,13 @@
 
 #include <iostream>
 
-#include "ecs.h"
-#include "component_list.h"
-#include "string_helper.h"
-#include "transform_component.h"
-#include "geometric_primitive_component.h"
-#include "obj_model_component.h"
-#include "fbx_model_component.h"
+//#include "ecs.h"
+//#include "component_list.h"
+//#include "string_helper.h"
+//#include "transform_component.h"
+//#include "geometric_primitive_component.h"
+//#include "obj_model_component.h"
+//#include "fbx_model_component.h"
 
 #include "imgui.h"
 

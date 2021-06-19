@@ -8,15 +8,14 @@
 #include <SimpleMath.h>
 
 #include <cereal/cereal.hpp>
-#include <cereal/types/vector.hpp>
-#include <cereal/types/memory.hpp>
+#include <cereal/types/polymorphic.hpp>
 
-#include "ecs.h"
-#include "cereal_helper.h"
-#include "state_machine.h"
-#include "model_data.h"
-#include "locator.h"
+
 #include "component_base.h"
+#include "locator.h"
+#include "model_data.h"
+#include "rename_type_mapping.h"
+#include "state_machine.h"
 
 class FbxModelResource;
 
@@ -66,7 +65,7 @@ namespace cumulonimbus::component
 		};
 
 		explicit FbxModelComponent() = default; // For cereal
-		explicit FbxModelComponent(ecs::Registry* registry, ecs::Entity ent, const std::shared_ptr<FbxModelResource>& resource);
+		explicit FbxModelComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const std::shared_ptr<FbxModelResource>& resource);
 		~FbxModelComponent()override = default;
 
 		void NewFrame(float delta_time) override;
@@ -166,5 +165,5 @@ namespace cumulonimbus::component
 	};
 }
 
-CEREAL_REGISTER_TYPE(cumulonimbus::component::FbxModelComponent);
+CEREAL_REGISTER_TYPE(cumulonimbus::component::FbxModelComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::FbxModelComponent)

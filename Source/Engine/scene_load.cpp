@@ -1,13 +1,10 @@
 #include <thread>
 
+#include <cereal/types/array.hpp>
+
 #include "scene.h"
 #include "scene_load.h"
-#include "component_list.h"
-#include "framework.h"
-#include "ecs.h"
 #include "sprite.h"
-#include "sprite_object.h"
-#include "locator.h"
 
 SceneLoad::SceneLoad(Scene* scene)
 {

@@ -1,5 +1,12 @@
 #include "scene.h"
 
+#include <cereal/types/utility.hpp>
+#include <cereal/types/bitset.hpp>
+#include <cereal/types/memory.hpp>
+#include <cereal/types/unordered_map.hpp>
+#include <cereal/types/vector.hpp>
+#include <cereal/types/array.hpp>
+
 #include "geometric_primitive_resource.h"
 #include "input_manager.h"
 #include "input_manager.h"

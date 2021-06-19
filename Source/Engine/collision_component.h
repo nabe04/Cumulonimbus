@@ -6,12 +6,10 @@
 #include <wrl.h>
 #include <d3d11.h>
 #include <DirectXMath.h>
-using namespace DirectX;
-using Microsoft::WRL::ComPtr;
 
 #include <cereal/cereal.hpp>
+#include <cereal/types/polymorphic.hpp>
 
-#include "ecs.h"
 #include "component_base.h"
 #include "shader_manager.h"
 
@@ -67,7 +65,7 @@ namespace cumulonimbus::component
 	{
 	public:
 		explicit CollisionComponent() = default;
-		explicit CollisionComponent(ecs::Registry* registry, ecs::Entity ent, CollisionTag tag);
+		explicit CollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, CollisionTag tag);
 		~CollisionComponent() = default;
 
 		void NewFrame(float dt) override {};
@@ -111,8 +109,8 @@ namespace cumulonimbus::component
 		CollisionTag  tag = CollisionTag::Object;
 
 		//-- Debug info --//
-		XMFLOAT3 color_blue = XMFLOAT3{ 0.0f,0.7f,1.0f };
-		XMFLOAT3 color_red = XMFLOAT3{ 1.0f,0.0f,1.0f };
+		DirectX::XMFLOAT3 color_blue = DirectX::XMFLOAT3{ 0.0f,0.7f,1.0f };
+		DirectX::XMFLOAT3 color_red  = DirectX::XMFLOAT3{ 1.0f,0.0f,1.0f };
 
 		//-- State of Shader --//
 		//shader::MeshShaderState shader_state{};

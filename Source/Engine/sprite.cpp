@@ -3,19 +3,21 @@
 #include <cassert>
 
 #include <Windows.h>
+#include <cereal/archives/json.hpp>
+#include <cereal/types/bitset.hpp>
+#include <cereal/types/array.hpp>
 
-#include "framework.h"
-#include "shader.h"
 #include "file_path_helper.h"
-#include "scene.h"
-#include "transform.h"
-#include "transform_component.h"
-#include "sprite_object.h"
+#include "framework.h"
 #include "locator.h"
+#include "scene.h"
+#include "shader.h"
+#include "sprite_object.h"
+#include "transform_component.h"
 
 namespace cumulonimbus::component
 {
-	SpriteComponent::SpriteComponent(ecs::Registry* const registry, const ecs::Entity ent,
+	SpriteComponent::SpriteComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent,
 		ID3D11Device* device,
 		const char* texture_filename, const PivotType pivot_type,
 		const int src_left, const int src_top,
@@ -151,22 +153,12 @@ namespace cumulonimbus::component
 
 	void SpriteComponent::Save(const std::string& file_path)
 	{
-		const std::string file_path_and_name = file_path + file_path_helper::GetTypeName<SpriteComponent>() + file_path_helper::GetJsonExtension();
-		std::ofstream ofs(file_path_and_name);
-		cereal::JSONOutputArchive o_archive(ofs);
-		o_archive(
-			cereal::base_class<ComponentBase>(this),
-			CEREAL_NVP(texture),
-			CEREAL_NVP(pivot_type),
-			CEREAL_NVP(src_pivot),
-			CEREAL_NVP(src_width),
-			CEREAL_NVP(src_height),
-			CEREAL_NVP(variable_texcoords),
-			CEREAL_NVP(variable_width),
-			CEREAL_NVP(variable_height),
-			CEREAL_NVP(color),
-			CEREAL_NVP(image_size)
-		);
+		{
+			const std::string file_path_and_name = file_path + file_path_helper::GetTypeName<SpriteComponent>() + file_path_helper::GetJsonExtension();
+			std::ofstream ofs(file_path_and_name);
+			cereal::JSONOutputArchive o_archive(ofs);
+			o_archive(*this);
+		}
 	}
 
 	void SpriteComponent::Load(const std::string& file_path_and_name)
@@ -174,19 +166,7 @@ namespace cumulonimbus::component
 		{
 			std::ifstream ifs(file_path_and_name);
 			cereal::JSONInputArchive i_archive(ifs);
-			i_archive(
-				cereal::base_class<ComponentBase>(this),
-				CEREAL_NVP(texture),
-				CEREAL_NVP(pivot_type),
-				CEREAL_NVP(src_pivot),
-				CEREAL_NVP(src_width),
-				CEREAL_NVP(src_height),
-				CEREAL_NVP(variable_texcoords),
-				CEREAL_NVP(variable_width),
-				CEREAL_NVP(variable_height),
-				CEREAL_NVP(color),
-				CEREAL_NVP(image_size)
-			);
+			i_archive(*this);
 
 		}
 

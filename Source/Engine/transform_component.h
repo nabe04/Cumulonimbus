@@ -1,26 +1,21 @@
 #pragma once
-
 #include <bitset>
 
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <SimpleMath.h>
-
 #include <cereal/cereal.hpp>
-#include <cereal/types/bitset.hpp>
-#include "cereal_helper.h"
+#include <cereal/types/polymorphic.hpp>
 
 #include "component_base.h"
+#include "rename_type_mapping.h"
 
 namespace cumulonimbus::component
 {
 	class TransformComponent :public ComponentBase
 	{
 	public:
-		explicit TransformComponent(ecs::Registry* const registry, const ecs::Entity ent,
-		                            const DirectX::SimpleMath::Vector3& pos   = { 0.0f,0.0f,0.0f },
-		                            const DirectX::SimpleMath::Vector3& scale = { 1.0f,1.0f,1.0f },
-		                            const DirectX::SimpleMath::Vector3& angle = { 0.0f,0.0f,0.0f });
+		explicit TransformComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent);
 		TransformComponent() = default; // for cereal
 		~TransformComponent() override = default;
 
@@ -225,6 +220,6 @@ namespace cumulonimbus::component
 	};
 }
 
-CEREAL_REGISTER_TYPE(cumulonimbus::component::TransformComponent);
+CEREAL_REGISTER_TYPE(cumulonimbus::component::TransformComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::TransformComponent)
 

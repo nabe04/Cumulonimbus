@@ -5,13 +5,14 @@
 #include <fstream>
 
 #include <nameof.h>
+#include <cereal/archives/json.hpp>
 
 #include "file_path_helper.h"
 #include "sampler.h"
 
 namespace cumulonimbus::component
 {
-	MeshObjectComponent::MeshObjectComponent(ecs::Registry* const registry, const ecs::Entity ent)
+	MeshObjectComponent::MeshObjectComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent)
 		:ComponentBase{ registry, ent }
 	{
 		blend_state.SetState(BlendState::Alpha);

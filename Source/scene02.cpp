@@ -1,6 +1,5 @@
 #include "scene.h"
 
-#include "component_list.h"
 
 void Scene02::InitializeScene()
 {

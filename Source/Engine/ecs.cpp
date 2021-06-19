@@ -4,25 +4,33 @@
 #include <fstream>
 
 #include <imgui.h>
+#include <cereal/types/array.hpp>
+#include <cereal/types/bitset.hpp>
+#include <cereal/types/memory.hpp>
+#include <cereal/types/unordered_map.hpp>
+#include <cereal/types/utility.hpp>
+#include <cereal/types/vector.hpp>
 
-#include "transform_component.h"
 #include "actor_component.h"
-#include "child_actor.h"
-#include "sprite.h"
-#include "sprite_object.h"
 #include "anim_sprite.h"
 #include "camera_operation.h"
-#include "mesh_object.h"
+#include "child_actor.h"
 #include "collision_component.h"
-#include "sphere_collision_component.h"
 #include "fbx_model_component.h"
 #include "geometric_primitive_component.h"
+#include "mesh_object.h"
 #include "obj_model_component.h"
-#include "sky_box.h"
 #include "scene.h"
+#include "sky_box.h"
+#include "sphere_collision_component.h"
+#include "sprite.h"
+#include "sprite_object.h"
+#include "transform_component.h"
 
 namespace cumulonimbus::ecs
 {
+	using namespace mapping::rename_type;
+	
 	Entity Registry::CreateEntity()
 	{
 		uint64_t entity = START_ID;
@@ -152,9 +160,7 @@ namespace cumulonimbus::ecs
 			if (!ifs)
 				assert(!"Not open file");
 			cereal::BinaryInputArchive input_archive(ifs);
-			input_archive(
-				CEREAL_NVP(entities)
-			);
+			input_archive(*this);
 		}
 
 		// component_arraysÇÃå^ÇÃçƒê›íË

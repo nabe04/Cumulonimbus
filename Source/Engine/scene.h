@@ -8,9 +8,6 @@
 #include <vector>
 
 #include <DirectXMath.h>
-#include <cereal/archives/json.hpp>
-#include <cereal/types/deque.hpp>
-#include <cereal/types/memory.hpp>
 
 #include "camera_work.h"
 #include "collision.h"

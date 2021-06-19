@@ -4,11 +4,10 @@
 
 #include <d3d11.h>
 #include <DirectXMath.h>
-using namespace DirectX;
 
 #include "component_base.h"
 #include "shader.h"
-#include "ecs.h"
+#include "rename_type_mapping.h"
 
 namespace shader
 {
@@ -20,7 +19,6 @@ namespace cumulonimbus::component
 {
 	class ObjModelComponent final : public ComponentBase
 	{
-	private:
 		//-- Information in the OBJ file --//
 		struct Subset
 		{
@@ -36,33 +34,11 @@ namespace cumulonimbus::component
 			shader::CB_Material data;
 			u_int				illum = 1;
 			std::string			map_Kd;
-			TextureResource*    texture = nullptr;
+			TextureResource* texture = nullptr;
 		};
-		std::vector<Material> materials;
-
-		std::string					dirPath;
-		std::vector<u_int>			indices;
-		std::vector<shader::Vertex> vertices;
-		float top{}, bottom{}, left{}, right{}, front{}, back{};
-		XMFLOAT3 center_pos{};
-
-		//-- Variables for DirectX --//
-		Microsoft::WRL::ComPtr<ID3D11Buffer> vertex_buffer{};
-		Microsoft::WRL::ComPtr<ID3D11Buffer> index_buffer{};
-	private:
-		void CreateBuffers(ID3D11Device* device, shader::Vertex* vertices, int num_vertices, u_int* indices, int num_indices);
-
-		/*
-		* brief : Setting of the most important position
-		*/
-		void PosComparison(const XMFLOAT3 pos);
-
-		void SetCenerLocalPos();
-		void SetCenterWorldPos();
-
 	public:
 		explicit ObjModelComponent() = default;
-		explicit ObjModelComponent(ecs::Registry* registry, ecs::Entity ent, ID3D11Device* device, const std::string_view filename);
+		explicit ObjModelComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, ID3D11Device* device, const std::string_view filename);
 		~ObjModelComponent();
 
 		void NewFrame(const float delta_time)override;
@@ -84,7 +60,31 @@ namespace cumulonimbus::component
 		[[nodiscard]] float GetBottomPos()	const { return bottom; }
 		[[nodiscard]] float GetLeftPos()		const{ return left; }
 		[[nodiscard]] float GetRightPos()		const{ return right; }
-		[[nodiscard]] XMFLOAT3 GetCenterPos() const{ return center_pos; }
+		[[nodiscard]] DirectX::XMFLOAT3 GetCenterPos() const{ return center_pos; }
+
+	private:
+		std::vector<Material> materials;
+
+		std::string					dirPath;
+		std::vector<u_int>			indices;
+		std::vector<shader::Vertex> vertices;
+		float top{}, bottom{}, left{}, right{}, front{}, back{};
+		DirectX::XMFLOAT3 center_pos{};
+
+		//-- Variables for DirectX --//
+		Microsoft::WRL::ComPtr<ID3D11Buffer> vertex_buffer{};
+		Microsoft::WRL::ComPtr<ID3D11Buffer> index_buffer{};
+
+		void CreateBuffers(ID3D11Device* device, shader::Vertex* vertices, int num_vertices, u_int* indices, int num_indices);
+
+		/*
+		* brief : Setting of the most important position
+		*/
+		void PosComparison(const DirectX::XMFLOAT3 pos);
+
+		void SetCenerLocalPos();
+		void SetCenterWorldPos();
+
 	};
 }
 

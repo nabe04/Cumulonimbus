@@ -10,8 +10,8 @@
 #include <DirectXMath.h>
 
 #include <cereal/cereal.hpp>
+#include <cereal/types/polymorphic.hpp>
 
-#include "ecs.h"
 #include "component_base.h"
 #include "enum_state_map.h"
 #include "blend.h"
@@ -19,6 +19,7 @@
 #include "depth_stencil.h"
 #include "shader_manager.h"
 #include "sampler.h"
+#include "rename_type_mapping.h"
 
 namespace cumulonimbus::component
 {
@@ -26,7 +27,7 @@ namespace cumulonimbus::component
 	{
 	public:
 		explicit SpriteObjectComponent() = default;	// For cereal
-		explicit SpriteObjectComponent(ecs::Registry* const registry, const ecs::Entity ent);
+		explicit SpriteObjectComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
 		~SpriteObjectComponent() override = default;
 
 		void NewFrame(float dt) override {};
@@ -77,6 +78,6 @@ namespace cumulonimbus::component
 	static_assert(std::is_move_assignable_v<SpriteObjectComponent>);
 }
 
-CEREAL_REGISTER_TYPE(cumulonimbus::component::SpriteObjectComponent);
+CEREAL_REGISTER_TYPE(cumulonimbus::component::SpriteObjectComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::SpriteObjectComponent)
 

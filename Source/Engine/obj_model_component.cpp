@@ -4,18 +4,18 @@
 #include <string>
 #include <vector>
 
+#include <cereal/types/bitset.hpp>
+
 #include "scene.h"
 #include "string_helper.h"
-#include "transform.h"
 #include "transform_component.h"
 #include "texture.h"
 #include "shader_manager.h"
-#include "ecs.h"
 
 
 namespace cumulonimbus::component
 {
-	ObjModelComponent::ObjModelComponent(ecs::Registry* registry, ecs::Entity ent, ID3D11Device* device, const std::string_view filename)
+	ObjModelComponent::ObjModelComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, ID3D11Device* device, const std::string_view filename)
 		:ComponentBase{ registry, ent }
 	{
 		LoadOBJ(device, filename);

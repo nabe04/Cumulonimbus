@@ -29,7 +29,7 @@ namespace cumulonimbus::component
 		bool IntersectSphere(component::SphereCollisionComponent* other) override;
 
 	public:
-		explicit SphereCollisionComponent(ecs::Registry* registry, ecs::Entity ent, CollisionTag tag);
+		explicit SphereCollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, CollisionTag tag);
 		explicit SphereCollisionComponent() = default;
 		~SphereCollisionComponent() = default;
 

@@ -13,12 +13,9 @@
 #include <cereal/cereal.hpp>
 #include <cereal/archives/json.hpp>
 #include <cereal/archives/binary.hpp>
-#include <cereal/types/utility.hpp>
-#include <cereal/types/memory.hpp>
-#include <cereal/types/unordered_map.hpp>
-#include <cereal/types/vector.hpp>
 
 #include "file_path_helper.h"
+#include "rename_type_mapping.h"
 
 class Scene;
 
@@ -49,11 +46,11 @@ enum class EntityTag
 
 namespace cumulonimbus::ecs
 {
-	enum class Entity : uint64_t {};
-	using EntityId		= uint64_t;	// Entityの識別子
-	using EntityName	= std::string;
-	using ComponentId	= uint64_t;	// Componentの識別子
-	using ComponentName = std::string;
+	//enum class Entity : uint64_t {};
+	//using EntityId		= uint64_t;	// Entityの識別子
+	//using EntityName	= std::string;
+	//using ComponentId	= uint64_t;	// Componentの識別子
+	//using ComponentName = std::string;
 
 	static const uint64_t START_ID = 0;	// EntityId,ComponentIdの始まりの識別子(最初のIDはどれも"1"から)
 
@@ -64,8 +61,8 @@ namespace cumulonimbus::ecs
 
 		virtual void PreUpdate(float dt) = 0;
 		virtual void Update(float dt) = 0;
-		virtual void Destroy(Entity entity) = 0;
-		virtual void RenderImGui(Entity entity) = 0;
+		virtual void Destroy(mapping::rename_type::Entity entity) = 0;
+		virtual void RenderImGui(mapping::rename_type::Entity entity) = 0;
 		virtual void Save(const std::string& filename) = 0;
 		virtual void Load(const std::string& filename) = 0;
 		virtual size_t GetHashCode() = 0;
@@ -98,7 +95,7 @@ namespace cumulonimbus::ecs
 			}
 		}
 
-		void RenderImGui(Entity entity) override
+		void RenderImGui(mapping::rename_type::Entity entity) override
 		{
 			if (!Content(entity))
 				return;
@@ -112,7 +109,7 @@ namespace cumulonimbus::ecs
 		 *		 　新しく作らず持っているComponentを返す
 		 */
 		template <typename... Args>
-		T& AddComponent(class Registry* registry, const Entity entity, Args... args)
+		T& AddComponent(class Registry* registry, const mapping::rename_type::Entity entity, Args... args)
 		{
 			if (entity_id.contains(entity))
 			{
@@ -127,14 +124,14 @@ namespace cumulonimbus::ecs
 			return  components.at(index);
 		}
 
-		void RemoveComponent(Entity entity)
+		void RemoveComponent(mapping::rename_type::Entity entity)
 		{
 			// entityがcomponentを持っていない場合は何もしない
 			if (!Content(entity))
 				return;
 
 			// EntityIdの取得(componentsのインデックス番号になる)
-			const EntityId index = GetEntityID(entity);
+			const mapping::rename_type::EntityId index = GetEntityID(entity);
 			// EntityIdがcomponentsの最後を指していた場合はそのまま削除
 			if (index == (components.size() - 1))
 			{
@@ -146,7 +143,7 @@ namespace cumulonimbus::ecs
 			// コンポーネントとコンポーネント配列の最後の要素を入れ替える
 			std::iter_swap(components.begin() + static_cast<int>(index), components.end() - 1);
 
-			Entity key{ static_cast<Entity>(0) };
+			mapping::rename_type::Entity key{ static_cast<mapping::rename_type::Entity>(0) };
 			// componentsの最後の要素と同じEntityIdを持つEntityを検索
 			for (auto& it : entity_id)
 			{
@@ -164,7 +161,7 @@ namespace cumulonimbus::ecs
 			entity_id.erase(entity);
 		}
 
-		void Destroy(const Entity entity) override
+		void Destroy(const mapping::rename_type::Entity entity) override
 		{
 			if (!entity_id.contains(entity))
 				return;
@@ -179,7 +176,7 @@ namespace cumulonimbus::ecs
 		 *			　 新しくComponentを作るが、引数なしの
 		 *			   コンストラクタがあるクラス限定
 		 */
-		T& GetComponent(const Entity entity)
+		T& GetComponent(const mapping::rename_type::Entity entity)
 		{
 			if (!entity_id.contains(entity))
 				assert(!"Don't have component");
@@ -191,7 +188,7 @@ namespace cumulonimbus::ecs
 		/*
 		 *  brief : EntityがComponentを持っているか
 		*/
-		[[nodiscard]] bool Content(const Entity entity)
+		[[nodiscard]] bool Content(const mapping::rename_type::Entity entity)
 		{
 			if (entity_id.contains(entity))
 				return true;
@@ -208,7 +205,7 @@ namespace cumulonimbus::ecs
 		 * brief : EntityのEntityID(componentsのインデックス番号)を返す
 		 *		 : EntityがComponentを持ってない場合は"-1"を返す
 		 */
-		EntityId GetEntityID(Entity entity)
+		mapping::rename_type::EntityId GetEntityID(mapping::rename_type::Entity entity)
 		{
 			if (!Content(entity))
 				return -1;
@@ -284,7 +281,7 @@ namespace cumulonimbus::ecs
 
 	private:
 		std::vector<T> components;
-		std::unordered_map<Entity, EntityId> entity_id;
+		std::unordered_map<mapping::rename_type::Entity, mapping::rename_type::EntityId> entity_id;
 	};
 
 	class Registry final
@@ -316,7 +313,7 @@ namespace cumulonimbus::ecs
 		 * brief : 指定のEntityの削除
 		 *         Entityに含まれるコンポーネントも削除
 		 */
-		void Destroy(Entity entity)
+		void Destroy(mapping::rename_type::Entity entity)
 		{
 			if (!entities.contains(entity))
 				return;
@@ -347,7 +344,7 @@ namespace cumulonimbus::ecs
 		}
 
 		template <typename T>
-		[[nodiscard]] T& GetComponent(const Entity entity)
+		[[nodiscard]] T& GetComponent(const mapping::rename_type::Entity entity)
 		{
 			ComponentArray<T>& array = GetArray<T>();
 			if (!array.Content(entity))
@@ -361,7 +358,7 @@ namespace cumulonimbus::ecs
 		 * ※caution  : EntityがT型を保持していない場合はnullptrを返す
 		 */
 		template <typename T>
-		[[nodiscard]] T* TryGetComponent(const Entity entity)
+		[[nodiscard]] T* TryGetComponent(const mapping::rename_type::Entity entity)
 		{
 			ComponentArray<T>& array = GetArray<T>();
 			if (!array.Content(entity))
@@ -371,7 +368,7 @@ namespace cumulonimbus::ecs
 		}
 
 		template <typename T, typename... Args>
-		T& AddComponent(const Entity entity, Args... args)
+		T& AddComponent(const mapping::rename_type::Entity entity, Args... args)
 		{
 			ComponentArray<T>& array = GetArray<T>();
 			array.AddComponent(this, entity, args...);
@@ -383,7 +380,7 @@ namespace cumulonimbus::ecs
 		 * brief : T型のComponentのEntityを削除
 		 */
 		template <typename T>
-		void RemoveComponent(const Entity entity)
+		void RemoveComponent(const mapping::rename_type::Entity entity)
 		{
 			ComponentArray<T>& array = GetArray<T>();
 			array.RemoveComponent(entity);
@@ -411,7 +408,7 @@ namespace cumulonimbus::ecs
 		 *         なければ、コンポーネントを作る
 		 */
 		template<typename T, typename... Args>
-		T& GetOrEmplaceComponent(Entity entity, Args... args)
+		T& GetOrEmplaceComponent(mapping::rename_type::Entity entity, Args... args)
 		{
 			T* t = TryGetComponent<T>(entity);
 			if (t)
@@ -424,7 +421,7 @@ namespace cumulonimbus::ecs
 
 		}
 
-		[[nodiscard]] const std::unordered_map<Entity, std::pair<Entity, EntityName>>& GetEntities()
+		[[nodiscard]] const std::unordered_map<mapping::rename_type::Entity, std::pair<mapping::rename_type::Entity, mapping::rename_type::EntityName>>& GetEntities()
 		{
 			return entities;
 		}
@@ -432,7 +429,7 @@ namespace cumulonimbus::ecs
 		/*
 		 * brief : Entityの作成
 		 */
-		Entity CreateEntity();
+		mapping::rename_type::Entity CreateEntity();
 
 		/*
 		 * brief        : T型のComponentArrayを登録
@@ -443,7 +440,7 @@ namespace cumulonimbus::ecs
 		template <typename T>
 		void RegistryComponent()
 		{
-			const ComponentName component_name = file_path_helper::GetTypeName<T>();
+			const mapping::rename_type::ComponentName component_name = file_path_helper::GetTypeName<T>();
 
 			if (component_arrays.contains(component_name))
 				return;
@@ -506,12 +503,12 @@ namespace cumulonimbus::ecs
 		/*
 		 * brief : entitiesにEntityId(uint64_t),EntityName(std::string)の登録
 		 */
-		void CreateEntity(ecs::Entity ent);
+		void CreateEntity(mapping::rename_type::Entity ent);
 
 		//---------- values ----------//
 
-		std::unordered_map<ComponentName, std::unique_ptr<ComponentArrayBase>> component_arrays;
-		std::unordered_map<Entity, std::pair<Entity, EntityName>> entities;
+		std::unordered_map<mapping::rename_type::ComponentName, std::unique_ptr<ComponentArrayBase>> component_arrays;
+		std::unordered_map<mapping::rename_type::Entity, std::pair<mapping::rename_type::Entity, mapping::rename_type::EntityName>> entities;
 		Scene* scene;
 	};
 }

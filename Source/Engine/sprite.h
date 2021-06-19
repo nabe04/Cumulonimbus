@@ -1,5 +1,4 @@
 #pragma once
-
 #include <array>
 #include <memory>
 
@@ -7,13 +6,12 @@
 #include <DirectXMath.h>
 #include <wrl.h>
 #include <cereal/cereal.hpp>
-#include <cereal/types/array.hpp>
-#include <cereal/types/memory.hpp>
+#include <cereal/types/polymorphic.hpp>
 
-#include "cereal_helper.h"
 #include "component_base.h"
-#include "ecs.h"
+#include "cereal_helper.h"
 #include "texture.h"
+#include "rename_type_mapping.h"
 
 enum class PivotType
 {
@@ -31,12 +29,12 @@ namespace cumulonimbus::component
 	class SpriteComponent : public ComponentBase
 	{
 	public:
+		explicit SpriteComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent,
+		                         ID3D11Device* device,
+		                         const char* filename, PivotType pivot_type,
+		                         int src_left, int src_top,
+		                         int src_width, int src_height);
 		explicit SpriteComponent() = default;	// For cereal
-		explicit SpriteComponent(ecs::Registry* const registry, const ecs::Entity ent,
-			ID3D11Device* device,
-			const char* filename, PivotType pivot_type,
-			int src_left, int src_top,
-			int src_width, int src_height);
 		~SpriteComponent() override = default;
 
 		void NewFrame(const float delta_time)override {};
@@ -106,5 +104,5 @@ namespace cumulonimbus::component
 	};
 }
 
-CEREAL_REGISTER_TYPE(cumulonimbus::component::SpriteComponent);
+CEREAL_REGISTER_TYPE(cumulonimbus::component::SpriteComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::SpriteComponent)
