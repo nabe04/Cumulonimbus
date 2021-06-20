@@ -71,9 +71,8 @@ void Scene::Initialize()
 	// Create Light
 	if (!this->light)
 	{
-		Light::LightData data{};
-		light = std::make_unique<Light>(Locator::GetDx11Device()->device.Get(), data);
-		light->SetLightDir(XMFLOAT4{ .0f,.0f,1.f,1.f });
+		light = std::make_unique<Light>(Locator::GetDx11Device()->device.Get());
+		light->SetLightDir(XMFLOAT3{ .0f,.0f,1.f, });
 	}
 
 	if (!this->view)
@@ -152,7 +151,7 @@ void Scene::Update(const float elapsed_time)
 	view->SetProjection(XM_PI / 8.0f, static_cast<float>(Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
 
 	// View update
-	view->Activate();
+	view->Update();
 
 	// light update
 	light->Update(view.get());

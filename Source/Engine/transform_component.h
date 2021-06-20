@@ -8,6 +8,8 @@
 #include <cereal/types/polymorphic.hpp>
 
 #include "component_base.h"
+#include "constant_buffer.h"
+#include "shader_interop_renderer.h"
 #include "rename_type_mapping.h"
 
 namespace cumulonimbus::component
@@ -26,7 +28,9 @@ namespace cumulonimbus::component
 		void Save(const std::string& file_path) override;
 		void Load(const std::string& file_path_and_name) override;
 
-		//-- Creating a World Transformation Matrix --//
+		void BindCBuffer(const TransformCB& transform, bool set_in_vs = true, bool set_in_ps = true) const;
+
+		//-- Creating a World TransforBmation Matrix --//
 		void CreateWorldTransformMatrix();
 
 		//-- Position --//
@@ -157,6 +161,8 @@ namespace cumulonimbus::component
 		}
 
 	private:
+		std::shared_ptr<buffer::ConstantBuffer<TransformCB>> cb_transform;
+
 		DirectX::SimpleMath::Vector3  position{ 0.0f,0.0f,0.0f };
 		DirectX::SimpleMath::Vector3 prev_pos{ 0.0f,0.0f,0.0f };
 		DirectX::SimpleMath::Vector3 scale{ 1.0f,1.0f,1.0f };

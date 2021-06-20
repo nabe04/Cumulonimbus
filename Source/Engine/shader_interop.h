@@ -22,16 +22,16 @@ typedef DirectX::XMINT2		int2;
 typedef DirectX::XMINT3		int3;
 typedef DirectX::XMINT4		int4;
 
-#define CB_GetBindSlot(name) __CBUFFERBINDSLOT__##name##__
-#define CBuffer(name, slot) static const int CB_GetBindSlot(name) = slot; struct alignas(16) name
-#define ConstantBuffer(name, type, slot) CBuffer(name, slot)
+#define CG_GETBINDSLOT(name) __CBUFFERBINDSLOT__##name##__
+#define CBUFFER(name, slot) static const int CG_GETBINDSLOT(name) = slot; struct alignas(16) name
+#define CONSTANTBUFFER(name, type, slot) CBUFFER(name, slot)
 
 #else
 
 // Shader - side types:
 
-#define CBuffer(name, slot)					cbuffer name : register(b ## slot)
-#define ConstantBuffer(name, type, slot)	ConstantBuffer< type > name : register(b ## slot)
+#define CBUFFER(name, slot)					cbuffer name : register(b ## slot)
+#define CONSTANTBUFFER(name, type, slot)	CONSTANTBUFFER< type > name : register(b ## slot)
 
 #define TEXTURE1D(name, type, slot)			Texture1D< type > name : register(t ## slot)
 #define TEXTURE1DARRAY(name, type, slot)	Texture1DArray< type > name : register(t ## slot)

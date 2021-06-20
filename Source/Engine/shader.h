@@ -104,13 +104,13 @@ namespace shader
 	//
 	//------------------------------
 
-	static const int MaxBones = 128;
+	//static const int MaxBones = 128;
 	// Transformation (b0)
 	struct CB_CoordinateTransformation
 	{
 		//XMMATRIX world;
 		DirectX::XMFLOAT4X4 mat_view_projection;
-		DirectX::XMFLOAT4X4 bone_transforms[MaxBones];
+		DirectX::XMFLOAT4X4 bone_transforms[128];
 		DirectX::XMFLOAT4X4 transform_matrix;
 	};
 

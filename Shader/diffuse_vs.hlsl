@@ -1,22 +1,23 @@
-#define USE_LOCAL_POSITION
-#define USE_BONE_WEIGHTS
-#define USE_BONE_INDICES
-#define USE_VIN_NORMAL
-#define USE_TEXCOORD0
-#define USE_NDC_POSITION
-#define USE_TEXTURE_POSITION
-#define USE_VOUT_COLOR
-#define USE_VOUT_NORMAL
+// VS_Input
+#define VIN_USE_LOCAL_POSITION
+#define VIN_USE_NORMAL
+#define VIN_USE_TEXCOORD0
+#define VIN_USE_BONE_WEIGHTS
+#define VIN_USE_BONE_INDICES
+// PS_Input(VS_Output)
+#define PIN_USE_WVP_POSITION
+#define PIN_USE_NORMAL
+#define PIN_USE_COLOR
+#define PIN_USE_TEX_POSITION  // ShadowMap比較用UV値
+#define PIN_USE_TEXCOORD0     // 読み込んだテクスチャのUV値
 
-#include "general.hlsli"
+#include "globals.hlsli"
 #include "diffuse.hlsli"
 #include "shadow_map.hlsli"
 
-PS_Input main(VS_Input vin)
+VS_OutPut main(VS_Input vin)
 {
-    PS_Input vout = (PS_Input) 0;
-
-   // float4 localPos = float4(vin.position, 1.0f); // Converts a float3 type "vin.positon" to a float4 type
+    VS_OutPut vout = (VS_OutPut) 0;
 
     float3 worldPos = { 0, 0, 0 };
     float3 normal   = { 0, 0, 0 };
@@ -25,18 +26,17 @@ PS_Input main(VS_Input vin)
 		// boneWeight[0] == boneWeight.x
         // 多分元の頂点にボーンオフセット行列を掛けて位置を算出している
         // それぞれのウェイトの影響度を加算
-        worldPos += (vin.boneWeights[i] * mul(vin.position, boneTransforms[vin.boneIndices[i]])).xyz;
-        normal   += (vin.boneWeights[i] * mul(float4(vin.normal, 0), boneTransforms[vin.boneIndices[i]])).xyz;
+        worldPos += (vin.bone_weights[i] * mul(bone_transforms[vin.bone_indices[i]], vin.position)).xyz;
+        normal   += (vin.bone_weights[i] * mul(bone_transforms[vin.bone_indices[i]], float4(vin.normal, 0))).xyz;
     }
 
-    float4 wvpPos = mul(float4(worldPos, 1.0f), viewProjection); // World coordinate transformation
+    float4 wvp_pos = mul(camera_view_projection_matrix,float4(worldPos, 1.0f)); // World coordinate transformation
 
-    vout.position   = wvpPos;
-    vout.ndc_position = wvpPos;
-    vout.texture_coodinate = GetShadowTexture(light_orthographic_view_projection_matrix, worldPos);
-    vout.normal     = normalize(normal);
-    vout.texcoord0  = vin.texcoord0;
-    vout.color      = m_Color;
-
+    vout.position       = wvp_pos;
+    vout.wvp_position   = wvp_pos;
+    vout.normal         = normalize(normal);
+    vout.color          = material.base_color;
+    vout.tex_position   = GetShadowTexture(light_orthographic_view_projection_matrix, worldPos);
+    vout.texcoord0      = vin.texcoord0;
     return vout;
 }

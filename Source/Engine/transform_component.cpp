@@ -12,6 +12,7 @@
 #include "component_base.h"
 #include "file_path_helper.h"
 #include "transform.h"
+#include "locator.h"
 
 using namespace DirectX;
 
@@ -22,6 +23,8 @@ namespace cumulonimbus::component
 	TransformComponent::TransformComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent)
 		: ComponentBase{ registry,ent}
 	{
+		cb_transform = std::make_shared<buffer::ConstantBuffer<TransformCB>>(Locator::GetDx11Device()->device.Get());
+
 		// Initialize XMFLOAT4x4
 		CreateIdentity4x4(&scaling_matrix);
 		CreateIdentity4x4(&rotation_matrix);
@@ -66,6 +69,14 @@ namespace cumulonimbus::component
 			ImGui::TreePop();
 		}
 	}
+
+	void TransformComponent::BindCBuffer(const TransformCB& transform, bool set_in_vs, bool set_in_ps) const
+	{
+		cb_transform->data = transform;
+		cb_transform->Activate(Locator::GetDx11Device()->immediate_context.Get(), CBSlot_Transform, set_in_vs, set_in_ps);
+	}
+
+
 
 	void TransformComponent::CreateScaling4x4()
 	{

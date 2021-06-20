@@ -1,128 +1,128 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <FxCompile Include="Shader\3d_standard_ps.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
     <FxCompile Include="Shader\3d_standard_vs.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\convolution_ps.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\cook_torrance_ps.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
+      <Filter>Shader%28HLSL%29\VS</Filter>
     </FxCompile>
     <FxCompile Include="Shader\cook_torrance_vs.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\cpu_particle_ps.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
+      <Filter>Shader%28HLSL%29\VS</Filter>
     </FxCompile>
     <FxCompile Include="Shader\cpu_particle_vs.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\diffuse_ps.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
+      <Filter>Shader%28HLSL%29\VS</Filter>
     </FxCompile>
     <FxCompile Include="Shader\diffuse_vs.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\gaussian_blur_convolution_ps.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\gaussian_blur_downsampling_ps.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\gaussian_blur_horizontal_ps.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\gaussian_blur_vertical_ps.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\glow_extraction_ps.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\monochrome_ps.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\outline_extraction_ps.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\phong_ps.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
+      <Filter>Shader%28HLSL%29\VS</Filter>
     </FxCompile>
     <FxCompile Include="Shader\phong_vs.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\reflection_mapping_ps.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\reflection_mapping_vs.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\refraction_mapping_ps.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\refraction_mapping_vs.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\shadow_map_ps.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\shadow_map_vs.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\single_color_ps.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\single_color_vs.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\sky_box_ps.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\sky_box_vs.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\sorbel_filter_convolution_ps.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\spot_light_ps.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\spot_light_vs.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\sprite2d_ps.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\sprite2d_vs.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\standard_sprite_ps.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\standard_sprite_vs.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\toon_ps.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\toon_vs.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
-    </FxCompile>
-    <FxCompile Include="Shader\normal_shadow_depth_extraction_ps.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
+      <Filter>Shader%28HLSL%29\VS</Filter>
     </FxCompile>
     <FxCompile Include="Shader\normal_shadow_depth_extraction_vs.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
+      <Filter>Shader%28HLSL%29\VS</Filter>
     </FxCompile>
-    <FxCompile Include="Shader\variance_shadow_depth_extraction_vs.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
+    <FxCompile Include="Shader\reflection_mapping_vs.hlsl">
+      <Filter>Shader%28HLSL%29\VS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\refraction_mapping_vs.hlsl">
+      <Filter>Shader%28HLSL%29\VS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\shadow_map_vs.hlsl">
+      <Filter>Shader%28HLSL%29\VS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\single_color_vs.hlsl">
+      <Filter>Shader%28HLSL%29\VS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\sky_box_vs.hlsl">
+      <Filter>Shader%28HLSL%29\VS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\spot_light_vs.hlsl">
+      <Filter>Shader%28HLSL%29\VS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\sprite2d_vs.hlsl">
+      <Filter>Shader%28HLSL%29\VS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\toon_vs.hlsl">
+      <Filter>Shader%28HLSL%29\VS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\standard_sprite_vs.hlsl">
+      <Filter>Shader%28HLSL%29\VS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\3d_standard_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\cook_torrance_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\convolution_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\cpu_particle_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\gaussian_blur_convolution_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\gaussian_blur_downsampling_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\gaussian_blur_horizontal_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\gaussian_blur_vertical_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\glow_extraction_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\normal_shadow_depth_extraction_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\monochrome_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\outline_extraction_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\phong_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\reflection_mapping_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\refraction_mapping_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\shadow_map_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\single_color_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\sky_box_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\sorbel_filter_convolution_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\spot_light_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\sprite2d_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\standard_sprite_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\toon_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
     </FxCompile>
     <FxCompile Include="Shader\variance_shadow_depth_extraction_ps.hlsl">
-      <Filter>Shader%28HLSL%29</Filter>
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\diffuse_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\variance_shadow_depth_extraction_vs.hlsl">
+      <Filter>Shader%28HLSL%29\VS</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -748,55 +748,58 @@
     <ResourceCompile Include="Cumulonimbus.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram.cd" />
     <None Include="Shader\3d_standard.hlsli">
-      <Filter>Shader%28HLSL%29</Filter>
+      <Filter>Shader%28HLSL%29\HF</Filter>
     </None>
     <None Include="Shader\bloom.hlsli">
-      <Filter>Shader%28HLSL%29</Filter>
+      <Filter>Shader%28HLSL%29\HF</Filter>
     </None>
     <None Include="Shader\cook_torrance.hlsli">
-      <Filter>Shader%28HLSL%29</Filter>
+      <Filter>Shader%28HLSL%29\HF</Filter>
     </None>
     <None Include="Shader\diffuse.hlsli">
-      <Filter>Shader%28HLSL%29</Filter>
+      <Filter>Shader%28HLSL%29\HF</Filter>
     </None>
     <None Include="Shader\functions.hlsli">
-      <Filter>Shader%28HLSL%29</Filter>
+      <Filter>Shader%28HLSL%29\HF</Filter>
     </None>
     <None Include="Shader\general.hlsli">
-      <Filter>Shader%28HLSL%29</Filter>
+      <Filter>Shader%28HLSL%29\HF</Filter>
+    </None>
+    <None Include="Shader\globals.hlsli">
+      <Filter>Shader%28HLSL%29\HF</Filter>
     </None>
     <None Include="Shader\monochrome.hlsli">
-      <Filter>Shader%28HLSL%29</Filter>
+      <Filter>Shader%28HLSL%29\HF</Filter>
     </None>
     <None Include="Shader\phong.hlsli">
-      <Filter>Shader%28HLSL%29</Filter>
-    </None>
-    <None Include="Shader\shadow_map.hlsli">
-      <Filter>Shader%28HLSL%29</Filter>
-    </None>
-    <None Include="Shader\single_color.hlsli">
-      <Filter>Shader%28HLSL%29</Filter>
-    </None>
-    <None Include="Shader\sorbel_filter.hlsli">
-      <Filter>Shader%28HLSL%29</Filter>
-    </None>
-    <None Include="Shader\spot_light.hlsli">
-      <Filter>Shader%28HLSL%29</Filter>
-    </None>
-    <None Include="Shader\sprite2d.hlsli">
-      <Filter>Shader%28HLSL%29</Filter>
-    </None>
-    <None Include="Shader\toon.hlsli">
-      <Filter>Shader%28HLSL%29</Filter>
-    </None>
-    <None Include="Shader\shadow_functions.hlsli">
-      <Filter>Shader%28HLSL%29</Filter>
+      <Filter>Shader%28HLSL%29\HF</Filter>
     </None>
     <None Include="Shader\shader_resource_mapping.hlsli">
-      <Filter>Shader%28HLSL%29</Filter>
+      <Filter>Shader%28HLSL%29\HF</Filter>
     </None>
-    <None Include="ClassDiagram.cd" />
+    <None Include="Shader\shadow_functions.hlsli">
+      <Filter>Shader%28HLSL%29\HF</Filter>
+    </None>
+    <None Include="Shader\shadow_map.hlsli">
+      <Filter>Shader%28HLSL%29\HF</Filter>
+    </None>
+    <None Include="Shader\single_color.hlsli">
+      <Filter>Shader%28HLSL%29\HF</Filter>
+    </None>
+    <None Include="Shader\sorbel_filter.hlsli">
+      <Filter>Shader%28HLSL%29\HF</Filter>
+    </None>
+    <None Include="Shader\spot_light.hlsli">
+      <Filter>Shader%28HLSL%29\HF</Filter>
+    </None>
+    <None Include="Shader\sprite2d.hlsli">
+      <Filter>Shader%28HLSL%29\HF</Filter>
+    </None>
+    <None Include="Shader\toon.hlsli">
+      <Filter>Shader%28HLSL%29\HF</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header">
@@ -849,6 +852,18 @@
     </Filter>
     <Filter Include="Header\System\Mapping">
       <UniqueIdentifier>{bda1b557-cfe0-41a5-b9e9-7d017a13d137}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader%28HLSL%29\VS">
+      <UniqueIdentifier>{5f97243d-ddd1-4849-b3fb-ba6b9c46c3d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader%28HLSL%29\PS">
+      <UniqueIdentifier>{1cddda7f-5162-4b0c-b24f-fe40910f8adb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader%28HLSL%29\HF">
+      <UniqueIdentifier>{ded5ad76-82b3-454e-aa8e-80813837481d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader%28HLSL%29\CS">
+      <UniqueIdentifier>{3fec1b3a-5e9d-4078-8212-5812449ea139}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

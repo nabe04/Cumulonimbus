@@ -6,6 +6,7 @@
 #include "sampler_mapping.h"
 #include "scene.h"
 #include "texture_resource_mapping.h"
+#include "shader_interop_renderer.h"
 #include "view.h"
 
 // Components
@@ -239,7 +240,7 @@ namespace cumulonimbus::renderer
 	{
 		component::GeomPrimComponent& geom_prim = registry->GetComponent<component::GeomPrimComponent>(entity);
 
-		light->ActivateCBuffer(immediate_context, true, true);
+		light->BindCBuffer(true, true);
 
 		BindDirectXStates(immediate_context, &registry->GetComponent<component::MeshObjectComponent>(entity));
 		Locator::GetDx11Device()->BindPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -299,7 +300,7 @@ namespace cumulonimbus::renderer
 			immediate_context->DrawIndexed(geom_prim.GetMesh().num_indices, 0, 0);
 		}
 
-		light->DeactivateCBuffer(immediate_context);
+		light->UnbindCBuffer();
 	}
 
 	void RenderPath::RenderOBJ(ID3D11DeviceContext* immediate_context,
@@ -308,7 +309,7 @@ namespace cumulonimbus::renderer
 							   const View* view, const Light* light)
 	{
 		//-- Set of Constant Buffer --//
-		{ // Transform
+		{// Transform
 			shader::CB_CoordinateTransformation cb{};
 			cb.mat_view_projection = view->GetView() * view->GetProjection();
 
@@ -318,7 +319,7 @@ namespace cumulonimbus::renderer
 		}
 
 		{// Light
-			light->ActivateCBuffer(immediate_context, true, true);
+			light->BindCBuffer(true, true);
 		}
 
 		Locator::GetDx11Device()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleList);
@@ -369,7 +370,7 @@ namespace cumulonimbus::renderer
 			}
 		}
 
-		light->DeactivateCBuffer(immediate_context);
+		light->UnbindCBuffer();
 	}
 
 	void RenderPath::RenderFBX(ID3D11DeviceContext* immediate_context,
@@ -380,13 +381,16 @@ namespace cumulonimbus::renderer
 		const component::FbxModelComponent& model	= registry->GetComponent<component::FbxModelComponent>(entity);
 		const FbxModelResource* resource			= model.GetResource();
 
-		light->ActivateCBuffer(immediate_context, true, true);
+		light->BindCBuffer(true, true);
 
 		for(const auto& mesh : resource->GetModelData().meshes)
 		{
 			// メッシュ用定数バッファ更新
 			shader::CB_CoordinateTransformation cb_mesh{};
 			::memset(&cb_mesh, 0, sizeof(cb_mesh));
+
+			TransformCB transform{};
+			CameraCB camera{};
 
 			if (mesh.node_indices.size() > 0)
 			{
@@ -404,12 +408,17 @@ namespace cumulonimbus::renderer
 			}
 			else
 			{
+				transform.bone_transforms[0] = registry->GetComponent<component::TransformComponent>(entity).GetWorld4x4();
+				camera.camera_view_projection_matrix = view->GetView() * view->GetProjection();;
+
 				cb_mesh.bone_transforms[0]  = registry->GetComponent<component::TransformComponent>(entity).GetWorld4x4();
 				cb_mesh.mat_view_projection = view->GetView() * view->GetProjection();
-				//XMStoreFloat4x4(&cb_mesh.mat_view_projection, XMLoadFloat4x4(&view->GetView()) * XMLoadFloat4x4(&view->GetProjection()));
 			}
-			cbuffer_transformation->data = cb_mesh;
-			cbuffer_transformation->Activate(immediate_context, 0);
+			//cbuffer_transformation->data = cb_mesh;
+			//cbuffer_transformation->Activate(immediate_context, 0);
+
+			registry->GetComponent<component::TransformComponent>(entity).BindCBuffer(transform);
+			view->BindCBuffer();
 
 			UINT stride = sizeof(shader::Vertex);
 			UINT offset = 0;
@@ -423,7 +432,7 @@ namespace cumulonimbus::renderer
 				cb_subset.color			= subset.material != NULL ? subset.material->color : XMFLOAT4{ 0.8f, 0.8f, 0.8f, 1.0f };
 				cb_subset.color.w		= model.GetColor().w;
 				cbuffer_material->data	= cb_subset;
-				cbuffer_material->Activate(immediate_context, 1);
+				//cbuffer_material->Activate(immediate_context, 1);
 				if (subset.material && subset.material->shader_resource_view)
 				{
 					immediate_context->PSSetShaderResources(0, 1, subset.material->shader_resource_view.GetAddressOf());
@@ -437,7 +446,7 @@ namespace cumulonimbus::renderer
 
 		}
 
-		light->DeactivateCBuffer(immediate_context);
+		light->UnbindCBuffer();
 	}
 
 	void RenderPath::RenderSkyBox(ID3D11DeviceContext* immediate_context,

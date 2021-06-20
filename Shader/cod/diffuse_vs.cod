@@ -4,41 +4,68 @@
 //
 // Buffer Definitions: 
 //
-// cbuffer CBTranslation
+// cbuffer CameraCB
 // {
 //
-//   row_major float4x4 viewProjection; // Offset:    0 Size:    64
-//   row_major float4x4 boneTransforms[128];// Offset:   64 Size:  8192
-//   row_major float4x4 transform_matrix;// Offset: 8256 Size:    64 [unused]
+//   float4x4 camera_view_matrix;       // Offset:    0 Size:    64 [unused]
+//   float4x4 camera_projection_matrix; // Offset:   64 Size:    64 [unused]
+//   float4x4 camera_view_projection_matrix;// Offset:  128 Size:    64
+//   float3 camera_position;            // Offset:  192 Size:    12 [unused]
+//   float camera_distance_from_origin; // Offset:  204 Size:     4 [unused]
+//   float3 camera_at;                  // Offset:  208 Size:    12 [unused]
+//   float camera_near_z;               // Offset:  220 Size:     4 [unused]
+//   float3 camera_up;                  // Offset:  224 Size:    12 [unused]
+//   float camera_far_z;                // Offset:  236 Size:     4 [unused]
+//   float3 camera_right;               // Offset:  240 Size:    12 [unused]
+//   float camera_fov;                  // Offset:  252 Size:     4 [unused]
+//   float3 camera_front;               // Offset:  256 Size:    12 [unused]
+//   float camera_aspect;               // Offset:  268 Size:     4 [unused]
+//   float camera_width;                // Offset:  272 Size:     4 [unused]
+//   float camera_height;               // Offset:  276 Size:     4 [unused]
+//   float2 camera_padding;             // Offset:  280 Size:     8 [unused]
 //
 // }
 //
-// cbuffer CBMesh
+// cbuffer LightCB
 // {
 //
-//   float4 m_Color;                    // Offset:    0 Size:    16
-//   float4 m_Ka;                       // Offset:   16 Size:    16 [unused]
-//   float4 m_Kd;                       // Offset:   32 Size:    16 [unused]
-//   float4 m_Ks;                       // Offset:   48 Size:    16 [unused]
+//   float3 light_position;             // Offset:    0 Size:    12 [unused]
+//   float orthographic_view_width;     // Offset:   12 Size:     4 [unused]
+//   float3 light_direction;            // Offset:   16 Size:    12 [unused]
+//   float orthographic_view_height;    // Offset:   28 Size:     4 [unused]
+//   float3 light_color;                // Offset:   32 Size:    12 [unused]
+//   float orthographic_near_z;         // Offset:   44 Size:     4 [unused]
+//   float orthographic_far_z;          // Offset:   48 Size:     4 [unused]
+//   float3 light_padding;              // Offset:   52 Size:    12 [unused]
+//   float4x4 light_perspective_projection_matrix;// Offset:   64 Size:    64 [unused]
+//   float4x4 light_perspective_view_projection_matrix;// Offset:  128 Size:    64 [unused]
+//   float4x4 light_orthographic_projection_matrix;// Offset:  192 Size:    64 [unused]
+//   float4x4 light_orthographic_view_projection_matrix;// Offset:  256 Size:    64
 //
 // }
 //
-// cbuffer CBLight
+// cbuffer TransformCB
 // {
 //
-//   float4 light_position;             // Offset:    0 Size:    16 [unused]
-//   float4 light_direction;            // Offset:   16 Size:    16 [unused]
-//   float4 light_ambient;              // Offset:   32 Size:    16 [unused]
-//   float4 light_color;                // Offset:   48 Size:    16 [unused]
-//   row_major float4x4 light_view_matrix;// Offset:   64 Size:    64 [unused]
-//   row_major float4x4 light_perspective_projection_matrix;// Offset:  128 Size:    64 [unused]
-//   row_major float4x4 light_perspective_view_projection_matrix;// Offset:  192 Size:    64 [unused]
-//   float light_orthographic_view_width;// Offset:  256 Size:     4 [unused]
-//   float light_orthographic_view_height;// Offset:  260 Size:     4 [unused]
-//   float light_orthographic_near_z;   // Offset:  264 Size:     4 [unused]
-//   float light_orthographic_far_z;    // Offset:  268 Size:     4 [unused]
-//   row_major float4x4 light_orthographic_projection_matrix;// Offset:  272 Size:    64 [unused]
-//   row_major float4x4 light_orthographic_view_projection_matrix;// Offset:  336 Size:    64
+//   float4x4 bone_transforms[128];     // Offset:    0 Size:  8192
+//   float4x4 transform_matrix;         // Offset: 8192 Size:    64 [unused]
+//
+// }
+//
+// cbuffer MaterialCB
+// {
+//
+//   struct ShaderMaterial
+//   {
+//       
+//       float4 base_color;             // Offset:    0
+//       float4 emissive_color;         // Offset:   16
+//       float roughness;               // Offset:   32
+//       float reflectance;             // Offset:   36
+//       float metalness;               // Offset:   40
+//       float material_padding;        // Offset:   44
+//
+//   } material;                        // Offset:    0 Size:    48
 //
 // }
 //
@@ -47,9 +74,10 @@
 //
 // Name                                 Type  Format         Dim      HLSL Bind  Count
 // ------------------------------ ---------- ------- ----------- -------------- ------
-// CBTranslation                     cbuffer      NA          NA            cb0      1 
-// CBMesh                            cbuffer      NA          NA            cb1      1 
-// CBLight                           cbuffer      NA          NA            cb2      1 
+// CameraCB                          cbuffer      NA          NA            cb1      1 
+// LightCB                           cbuffer      NA          NA            cb2      1 
+// TransformCB                       cbuffer      NA          NA            cb3      1 
+// MaterialCB                        cbuffer      NA          NA            cb4      1 
 //
 //
 //
@@ -69,10 +97,10 @@
 // Name                 Index   Mask Register SysValue  Format   Used
 // -------------------- ----- ------ -------- -------- ------- ------
 // SV_POSITION              0   xyzw        0      POS   float   xyzw
-// NDC_POSITION             0   xyzw        1     NONE   float   xyzw
-// TEXTURE_POSITON          0   xyz         2     NONE   float   xyz 
-// NORMAL                   0   xyz         3     NONE   float   xyz 
-// COLOR                    0   xyzw        4     NONE   float   xyzw
+// WVP_POSITION             0   xyzw        1     NONE   float   xyzw
+// NORMAL                   0   xyz         2     NONE   float   xyz 
+// COLOR                    0   xyzw        3     NONE   float   xyzw
+// TEX_POSITION             0   xyz         4     NONE   float   xyz 
 // TEXCOORD                 0   xy          5     NONE   float   xy  
 //
 vs_5_0
@@ -85,9 +113,10 @@ dcl_immediateConstantBuffer { { 1.000000, 0, 0, 0},
                               { 0, -1, 0, 0},
                               { 0, 0, -1, 0},
                               { 0, 0, 0, -1} }
-dcl_constantbuffer CB0[516], dynamicIndexed
-dcl_constantbuffer CB1[1], immediateIndexed
-dcl_constantbuffer CB2[25], immediateIndexed
+dcl_constantbuffer CB1[12], immediateIndexed
+dcl_constantbuffer CB2[20], immediateIndexed
+dcl_constantbuffer CB3[512], dynamicIndexed
+dcl_constantbuffer CB4[1], immediateIndexed
 dcl_input v0.xyzw
 dcl_input v1.xyz
 dcl_input v2.xy
@@ -96,8 +125,8 @@ dcl_input v4.xyzw
 dcl_output_siv o0.xyzw, position
 dcl_output o1.xyzw
 dcl_output o2.xyz
-dcl_output o3.xyz
-dcl_output o4.xyzw
+dcl_output o3.xyzw
+dcl_output o4.xyz
 dcl_output o5.xy
 dcl_temps 8
 //
@@ -105,22 +134,22 @@ dcl_temps 8
 //   v0.x <- vin.position.x; v0.y <- vin.position.y; v0.z <- vin.position.z; v0.w <- vin.position.w; 
 //   v1.x <- vin.normal.x; v1.y <- vin.normal.y; v1.z <- vin.normal.z; 
 //   v2.x <- vin.texcoord0.x; v2.y <- vin.texcoord0.y; 
-//   v3.x <- vin.boneWeights.x; v3.y <- vin.boneWeights.y; v3.z <- vin.boneWeights.z; v3.w <- vin.boneWeights.w; 
-//   v4.x <- vin.boneIndices.x; v4.y <- vin.boneIndices.y; v4.z <- vin.boneIndices.z; v4.w <- vin.boneIndices.w; 
+//   v3.x <- vin.bone_weights.x; v3.y <- vin.bone_weights.y; v3.z <- vin.bone_weights.z; v3.w <- vin.bone_weights.w; 
+//   v4.x <- vin.bone_indices.x; v4.y <- vin.bone_indices.y; v4.z <- vin.bone_indices.z; v4.w <- vin.bone_indices.w; 
 //   o5.x <- <main return value>.texcoord0.x; o5.y <- <main return value>.texcoord0.y; 
-//   o4.x <- <main return value>.color.x; o4.y <- <main return value>.color.y; o4.z <- <main return value>.color.z; o4.w <- <main return value>.color.w; 
-//   o3.x <- <main return value>.normal.x; o3.y <- <main return value>.normal.y; o3.z <- <main return value>.normal.z; 
-//   o2.x <- <main return value>.texture_coodinate.x; o2.y <- <main return value>.texture_coodinate.y; o2.z <- <main return value>.texture_coodinate.z; 
-//   o1.x <- <main return value>.ndc_position.x; o1.y <- <main return value>.ndc_position.y; o1.z <- <main return value>.ndc_position.z; o1.w <- <main return value>.ndc_position.w; 
+//   o4.x <- <main return value>.tex_position.x; o4.y <- <main return value>.tex_position.y; o4.z <- <main return value>.tex_position.z; 
+//   o3.x <- <main return value>.color.x; o3.y <- <main return value>.color.y; o3.z <- <main return value>.color.z; o3.w <- <main return value>.color.w; 
+//   o2.x <- <main return value>.normal.x; o2.y <- <main return value>.normal.y; o2.z <- <main return value>.normal.z; 
+//   o1.x <- <main return value>.wvp_position.x; o1.y <- <main return value>.wvp_position.y; o1.z <- <main return value>.wvp_position.z; o1.w <- <main return value>.wvp_position.w; 
 //   o0.x <- <main return value>.position.x; o0.y <- <main return value>.position.y; o0.z <- <main return value>.position.z; o0.w <- <main return value>.position.w
 //
-#line 21 "D:\Desktop\Cumulonimbus\Shader\diffuse_vs.hlsl"
+#line 22 "D:\チEクトップ\Cumulonimbus\Shader\diffuse_vs.hlsl"
 itof r0.xyz, l(0, 0, 0, 0)  // r0.x <- worldPos.x; r0.y <- worldPos.y; r0.z <- worldPos.z
 
-#line 22
+#line 23
 itof r1.xyz, l(0, 0, 0, 0)  // r1.x <- normal.x; r1.y <- normal.y; r1.z <- normal.z
 
-#line 23
+#line 24
 mov r0.w, l(0)  // r0.w <- i
 mov r2.xyz, r1.xyzx  // r2.x <- normal.x; r2.y <- normal.y; r2.z <- normal.z
 mov r3.x, r0.x  // r3.x <- worldPos.x
@@ -131,127 +160,114 @@ loop
   ilt r2.w, r1.w, l(4)
   breakc_z r2.w
 
-#line 28
+#line 29
   dp4 r2.w, v3.xyzw, icb[r1.w + 0].xyzw
   and r4.xyzw, v4.xyzw, icb[r1.w + 4].xyzw
   or r4.xy, r4.ywyy, r4.xzxx
   or r4.x, r4.y, r4.x
   imul null, r4.x, r4.x, l(4)
-  mul r4.yzw, v0.xxxx, cb0[r4.x + 4].xxyz
-  mul r5.xyz, v0.yyyy, cb0[r4.x + 5].xyzx
+  mul r4.yzw, v0.xxxx, cb3[r4.x + 0].xxyz
+  mul r5.xyz, v0.yyyy, cb3[r4.x + 1].xyzx
   add r4.yzw, r4.yyzw, r5.xxyz
-  mul r5.xyz, v0.zzzz, cb0[r4.x + 6].xyzx
+  mul r5.xyz, v0.zzzz, cb3[r4.x + 2].xyzx
   add r4.yzw, r4.yyzw, r5.xxyz
-  mul r5.xyz, v0.wwww, cb0[r4.x + 7].xyzx
+  mul r5.xyz, v0.wwww, cb3[r4.x + 3].xyzx
   add r4.xyz, r4.yzwy, r5.xyzx
   mul r4.xyz, r2.wwww, r4.xyzx
   add r3.xyz, r4.xyzx, r3.xyzx
 
-#line 29
+#line 30
   dp4 r2.w, v3.xyzw, icb[r1.w + 0].xyzw
-  itof r4.x, l(0)
-  and r5.xyzw, v4.xyzw, icb[r1.w + 4].xyzw
-  or r4.yz, r5.yywy, r5.xxzx
-  or r4.y, r4.z, r4.y
-  imul null, r4.y, r4.y, l(4)
-  mul r5.xyz, v1.xxxx, cb0[r4.y + 4].xyzx
-  mul r6.xyz, v1.yyyy, cb0[r4.y + 5].xyzx
+  and r4.xyzw, v4.xyzw, icb[r1.w + 4].xyzw
+  or r4.xy, r4.ywyy, r4.xzxx
+  or r4.x, r4.y, r4.x
+  imul null, r4.x, r4.x, l(4)
+  itof r4.y, l(0)
+  mul r5.xyz, v1.xxxx, cb3[r4.x + 0].xyzx
+  mul r6.xyz, v1.yyyy, cb3[r4.x + 1].xyzx
   add r5.xyz, r5.xyzx, r6.xyzx
-  mul r6.xyz, v1.zzzz, cb0[r4.y + 6].xyzx
+  mul r6.xyz, v1.zzzz, cb3[r4.x + 2].xyzx
   add r5.xyz, r5.xyzx, r6.xyzx
-  mul r4.xyz, r4.xxxx, cb0[r4.y + 7].xyzx
+  mul r4.xyz, r4.yyyy, cb3[r4.x + 3].xyzx
   add r4.xyz, r4.xyzx, r5.xyzx
   mul r4.xyz, r2.wwww, r4.xyzx
   add r2.xyz, r2.xyzx, r4.xyzx
 
-#line 30
+#line 31
   iadd r1.w, r1.w, l(1)
 endloop 
 
-#line 32
-mul r0.xyzw, r3.xxxx, cb0[0].xyzw
-mul r1.xyzw, r3.yyyy, cb0[1].xyzw
+#line 33
+mul r0.xyzw, r3.xxxx, cb1[8].xyzw
+mul r1.xyzw, r3.yyyy, cb1[9].xyzw
 add r0.xyzw, r0.xyzw, r1.xyzw
-mul r1.xyzw, r3.zzzz, cb0[2].xyzw
+mul r1.xyzw, r3.zzzz, cb1[10].xyzw
 add r0.xyzw, r0.xyzw, r1.xyzw
-mul r1.xyzw, cb0[3].xyzw, l(1.000000, 1.000000, 1.000000, 1.000000)
-add r0.xyzw, r0.xyzw, r1.xyzw  // r0.x <- wvpPos.x; r0.y <- wvpPos.y; r0.z <- wvpPos.z; r0.w <- wvpPos.w
-
-#line 34
-mov r0.xyzw, r0.xyzw  // r0.x <- vout.position.x; r0.y <- vout.position.y; r0.z <- vout.position.z; r0.w <- vout.position.w
+mul r1.xyzw, cb1[11].xyzw, l(1.000000, 1.000000, 1.000000, 1.000000)
+add r0.xyzw, r0.xyzw, r1.xyzw  // r0.x <- wvp_pos.x; r0.y <- wvp_pos.y; r0.z <- wvp_pos.z; r0.w <- wvp_pos.w
 
 #line 35
-mov r0.xyzw, r0.xyzw  // r0.x <- vout.ndc_position.x; r0.y <- vout.ndc_position.y; r0.z <- vout.ndc_position.z; r0.w <- vout.ndc_position.w
+mov r0.xyzw, r0.xyzw  // r0.x <- vout.position.x; r0.y <- vout.position.y; r0.z <- vout.position.z; r0.w <- vout.position.w
 
 #line 36
+mov r0.xyzw, r0.xyzw  // r0.x <- vout.wvp_position.x; r0.y <- vout.wvp_position.y; r0.z <- vout.wvp_position.z; r0.w <- vout.wvp_position.w
+
+#line 37
+dp3 r1.x, r2.xyzx, r2.xyzx
+rsq r1.x, r1.x
+mul r1.xyz, r1.xxxx, r2.xyzx  // r1.x <- vout.normal.x; r1.y <- vout.normal.y; r1.z <- vout.normal.z
+
+#line 38
+mov r2.xyzw, cb4[0].xyzw  // r2.x <- vout.color.x; r2.y <- vout.color.y; r2.z <- vout.color.z; r2.w <- vout.color.w
+
+#line 39
 nop 
-mov r1.x, cb2[21].x
-mov r4.x, cb2[21].y
-mov r5.x, cb2[21].z
-mov r6.x, cb2[21].w
-mov r1.y, cb2[22].x
-mov r4.y, cb2[22].y
-mov r5.y, cb2[22].z
-mov r6.y, cb2[22].w
-mov r1.z, cb2[23].x
-mov r4.z, cb2[23].y
-mov r5.z, cb2[23].z
-mov r6.z, cb2[23].w
-mov r7.xyzw, cb2[24].xyzw
+mov r4.xyzw, cb2[16].xyzw
+mov r5.xyzw, cb2[17].xyzw
+mov r6.xyzw, cb2[18].xyzw
+mov r7.xyzw, cb2[19].xyzw
 mov r3.x, r3.x
 mov r3.y, r3.y
 mov r3.z, r3.z
 
-#line 23 "D:\Desktop\Cumulonimbus\Shader\shadow_map.hlsli"
+#line 23 "D:\デスクトップ\Cumulonimbus\Shader\shadow_map.hlsli"
 mov r3.xyz, r3.xyzx  // r3.x <- wvp_pos.x; r3.y <- wvp_pos.y; r3.z <- wvp_pos.z
 
 #line 24
 itof r3.w, l(1)  // r3.w <- wvp_pos.w
 
 #line 25
-mov r1.w, r7.x
-dp4 r1.x, r3.xyzw, r1.xyzw  // r1.x <- wvp_pos.x
-mov r4.w, r7.y
-dp4 r1.y, r3.xyzw, r4.xyzw  // r1.y <- wvp_pos.y
-mov r5.w, r7.z
-dp4 r1.z, r3.xyzw, r5.xyzw  // r1.z <- wvp_pos.z
-mov r6.w, r7.w
-dp4 r1.w, r3.xyzw, r6.xyzw  // r1.w <- wvp_pos.w
+dp4 r4.x, r3.xyzw, r4.xyzw  // r4.x <- wvp_pos.x
+dp4 r4.y, r3.xyzw, r5.xyzw  // r4.y <- wvp_pos.y
+dp4 r4.z, r3.xyzw, r6.xyzw  // r4.z <- wvp_pos.z
+dp4 r1.w, r3.xyzw, r7.xyzw  // r1.w <- wvp_pos.w
 
 #line 26
-div r1.xyz, r1.xyzx, r1.wwww
+div r3.xyz, r4.xyzx, r1.wwww  // r3.x <- wvp_pos.x; r3.y <- wvp_pos.y; r3.z <- wvp_pos.z
 
 #line 29
-mov r1.w, -r1.y  // r1.w <- wvp_pos.y
+mov r3.w, -r3.y  // r3.w <- wvp_pos.y
 
 #line 30
-mul r3.xy, r1.xwxx, l(0.500000, 0.500000, 0.000000, 0.000000)
-add r1.xy, r3.xyxx, l(0.500000, 0.500000, 0.000000, 0.000000)  // r1.y <- wvp_pos.y
+mul r4.xy, r3.xwxx, l(0.500000, 0.500000, 0.000000, 0.000000)
+add r3.xy, r4.xyxx, l(0.500000, 0.500000, 0.000000, 0.000000)  // r3.y <- wvp_pos.y
 
 #line 32
-mov r1.xy, r1.xyxx  // r1.x <- <GetShadowTexture return value>.x; r1.y <- <GetShadowTexture return value>.y
-mov r1.z, r1.z  // r1.z <- <GetShadowTexture return value>.z
+mov r3.xy, r3.xyxx  // r3.x <- <GetShadowTexture return value>.x; r3.y <- <GetShadowTexture return value>.y
+mov r3.z, r3.z  // r3.z <- <GetShadowTexture return value>.z
 
-#line 36 "D:\Desktop\Cumulonimbus\Shader\diffuse_vs.hlsl"
-mov r1.xyz, r1.xyzx  // r1.x <- vout.texture_coodinate.x; r1.y <- vout.texture_coodinate.y; r1.z <- vout.texture_coodinate.z
+#line 39 "D:\チEクトップ\Cumulonimbus\Shader\diffuse_vs.hlsl"
+mov r3.xyz, r3.xyzx  // r3.x <- vout.tex_position.x; r3.y <- vout.tex_position.y; r3.z <- vout.tex_position.z
 
-#line 37
-dp3 r1.w, r2.xyzx, r2.xyzx
-rsq r1.w, r1.w
-mul r2.xyz, r1.wwww, r2.xyzx  // r2.x <- vout.normal.x; r2.y <- vout.normal.y; r2.z <- vout.normal.z
-
-#line 38
-mov r3.xy, v2.xyxx  // r3.x <- vout.texcoord0.x; r3.y <- vout.texcoord0.y
-
-#line 39
-mov r4.xyzw, cb1[0].xyzw  // r4.x <- vout.color.x; r4.y <- vout.color.y; r4.z <- vout.color.z; r4.w <- vout.color.w
+#line 40
+mov r4.xy, v2.xyxx  // r4.x <- vout.texcoord0.x; r4.y <- vout.texcoord0.y
 
 #line 41
 mov o0.xyzw, r0.xyzw
 mov o1.xyzw, r0.xyzw
-mov o4.xyzw, r4.xyzw
+mov o3.xyzw, r2.xyzw
 mov o2.xyz, r1.xyzx
-mov o3.xyz, r2.xyzx
-mov o5.xy, r3.xyxx
+mov o4.xyz, r3.xyzx
+mov o5.xy, r4.xyxx
 ret 
-// Approximately 97 instruction slots used
+// Approximately 84 instruction slots used

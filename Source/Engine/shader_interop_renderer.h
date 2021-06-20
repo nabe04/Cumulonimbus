@@ -12,21 +12,23 @@ struct ShaderMaterial
 	float roughness;
 	float reflectance;
 	float metalness;
-	float padding;
+	float material_padding;
 };
 
 // 共通のコンスタントバッファ
 // slot 0 (b0)
-CBuffer(FrameCB, CBSlot_Renderer_Frame)
+CBUFFER(FrameCB, CBSlot_Renderer_Frame)
 {
-	float2 screen_width_height;
-	float2 padding;
+	float	screen_width;
+	float	screen_height;
+	float2	renderer_frame_padding;
 };
 
 // slot1 (b1)
-CBuffer(CameraCB, CBSlot_Camera)
+CBUFFER(CameraCB, CBSlot_Camera)
 {
 	float4x4 camera_view_matrix;
+	float4x4 camera_projection_matrix;
 	float4x4 camera_view_projection_matrix;
 
 	float3	 camera_position;
@@ -37,41 +39,49 @@ CBuffer(CameraCB, CBSlot_Camera)
 
 	float3	 camera_up;
 	float	 camera_far_z;
+
+	float3	 camera_right;
+	float	 camera_fov;
+
+	float3	 camera_front;
+	float	 camera_aspect;
+
+	float	 camera_width;
+	float	 camera_height;
+	float2	 camera_padding;
 };
 
 // slot2 (b2)
-CBuffer(LightCB, CBSlot_Light)
+CBUFFER(LightCB, CBSlot_Light)
 {
-	float3	light_position;
-	float	orthographic_view_width;
+	float3	light_position;				// ライト位置
+	float	orthographic_view_width;	// 平行投影 : 幅
 
-	float3	light_direction;
-	float	orthographic_view_height;
+	float3	light_direction;			// ライト向き
+	float	orthographic_view_height;	// 平行投影 : 高さ
 
 	float3	light_color;
-	float	orthographic_near_z;
+	float	orthographic_near_z;		// 平行投影 : 最近値
 
-	float	orthographic_far_z;
-	float3	padding;
+	float	orthographic_far_z;			// 平行投影 : 最遠値
+	float3	light_padding;
 
-	float4x4 light_view_matrix;
+	float4x4 light_perspective_projection_matrix;		// プロジェクション行列(透視投影)
+	float4x4 light_perspective_view_projection_matrix;	// ビュー・プロジェクション行列(透視投影)
 
-	float4x4 light_perspective_projection_matrix;
-	float4x4 light_perspective_view_projection_matrix;
-
-	float4x4 light_orthographic_projection_matrix;
-	float4x4 light_orthographic_view_projection_matrix;
+	float4x4 light_orthographic_projection_matrix;		// プロジェクション行列(平行投影)
+	float4x4 light_orthographic_view_projection_matrix;	// ビュー・プロジェクション行列(平行投影)
 };
 
 // slot3 (b3)
-CBuffer(TransformCB, CBSlot_Transform)
+CBUFFER(TransformCB, CBSlot_Transform)
 {
 	float4x4 bone_transforms[MaxBones];
 	float4x4 transform_matrix;
 };
 
 // slot4 (b4)
-CBuffer(MaterialCB, CBSlot_Material)
+CBUFFER(MaterialCB, CBSlot_Material)
 {
 	ShaderMaterial material;
 };

@@ -4,22 +4,21 @@
 //
 // Buffer Definitions: 
 //
-// cbuffer CBLight
+// cbuffer LightCB
 // {
 //
-//   float4 light_position;             // Offset:    0 Size:    16 [unused]
-//   float4 light_direction;            // Offset:   16 Size:    16
-//   float4 light_ambient;              // Offset:   32 Size:    16 [unused]
-//   float4 light_color;                // Offset:   48 Size:    16 [unused]
-//   row_major float4x4 light_view_matrix;// Offset:   64 Size:    64 [unused]
-//   row_major float4x4 light_perspective_projection_matrix;// Offset:  128 Size:    64 [unused]
-//   row_major float4x4 light_perspective_view_projection_matrix;// Offset:  192 Size:    64 [unused]
-//   float light_orthographic_view_width;// Offset:  256 Size:     4 [unused]
-//   float light_orthographic_view_height;// Offset:  260 Size:     4 [unused]
-//   float light_orthographic_near_z;   // Offset:  264 Size:     4 [unused]
-//   float light_orthographic_far_z;    // Offset:  268 Size:     4 [unused]
-//   row_major float4x4 light_orthographic_projection_matrix;// Offset:  272 Size:    64 [unused]
-//   row_major float4x4 light_orthographic_view_projection_matrix;// Offset:  336 Size:    64 [unused]
+//   float3 light_position;             // Offset:    0 Size:    12 [unused]
+//   float orthographic_view_width;     // Offset:   12 Size:     4 [unused]
+//   float3 light_direction;            // Offset:   16 Size:    12
+//   float orthographic_view_height;    // Offset:   28 Size:     4 [unused]
+//   float3 light_color;                // Offset:   32 Size:    12 [unused]
+//   float orthographic_near_z;         // Offset:   44 Size:     4 [unused]
+//   float orthographic_far_z;          // Offset:   48 Size:     4 [unused]
+//   float3 light_padding;              // Offset:   52 Size:    12 [unused]
+//   float4x4 light_perspective_projection_matrix;// Offset:   64 Size:    64 [unused]
+//   float4x4 light_perspective_view_projection_matrix;// Offset:  128 Size:    64 [unused]
+//   float4x4 light_orthographic_projection_matrix;// Offset:  192 Size:    64 [unused]
+//   float4x4 light_orthographic_view_projection_matrix;// Offset:  256 Size:    64 [unused]
 //
 // }
 //
@@ -29,9 +28,9 @@
 // Name                                 Type  Format         Dim      HLSL Bind  Count
 // ------------------------------ ---------- ------- ----------- -------------- ------
 // default_sampler                   sampler      NA          NA             s0      1 
-// diffuse_texture                   texture  float4          2d             t0      1 
-// depth_texture                     texture  float4          2d             t1      1 
-// CBLight                           cbuffer      NA          NA            cb2      1 
+// texture_depth                     texture  float4          2d             t0      1 
+// texture_diffuse                   texture  float4          2d            t20      1 
+// LightCB                           cbuffer      NA          NA            cb2      1 
 //
 //
 //
@@ -40,10 +39,10 @@
 // Name                 Index   Mask Register SysValue  Format   Used
 // -------------------- ----- ------ -------- -------- ------- ------
 // SV_POSITION              0   xyzw        0      POS   float       
-// NDC_POSITION             0   xyzw        1     NONE   float       
-// TEXTURE_POSITON          0   xyz         2     NONE   float   xyz 
-// NORMAL                   0   xyz         3     NONE   float   xyz 
-// COLOR                    0   xyzw        4     NONE   float   xyz 
+// WVP_POSITION             0   xyzw        1     NONE   float       
+// NORMAL                   0   xyz         2     NONE   float   xyz 
+// COLOR                    0   xyzw        3     NONE   float   xyz 
+// TEX_POSITION             0   xyz         4     NONE   float   xyz 
 // TEXCOORD                 0   xy          5     NONE   float   xy  
 //
 //
@@ -58,7 +57,7 @@ dcl_globalFlags refactoringAllowed | skipOptimization
 dcl_constantbuffer CB2[2], immediateIndexed
 dcl_sampler s0, mode_default
 dcl_resource_texture2d (float,float,float,float) t0
-dcl_resource_texture2d (float,float,float,float) t1
+dcl_resource_texture2d (float,float,float,float) t20
 dcl_input_ps linear v2.xyz
 dcl_input_ps linear v3.xyz
 dcl_input_ps linear v4.xyz
@@ -68,24 +67,24 @@ dcl_temps 4
 //
 // Initial variable locations:
 //   v0.x <- pin.position.x; v0.y <- pin.position.y; v0.z <- pin.position.z; v0.w <- pin.position.w; 
-//   v1.x <- pin.ndc_position.x; v1.y <- pin.ndc_position.y; v1.z <- pin.ndc_position.z; v1.w <- pin.ndc_position.w; 
-//   v2.x <- pin.texture_coodinate.x; v2.y <- pin.texture_coodinate.y; v2.z <- pin.texture_coodinate.z; 
-//   v3.x <- pin.normal.x; v3.y <- pin.normal.y; v3.z <- pin.normal.z; 
-//   v4.x <- pin.color.x; v4.y <- pin.color.y; v4.z <- pin.color.z; v4.w <- pin.color.w; 
+//   v1.x <- pin.wvp_position.x; v1.y <- pin.wvp_position.y; v1.z <- pin.wvp_position.z; v1.w <- pin.wvp_position.w; 
+//   v2.x <- pin.normal.x; v2.y <- pin.normal.y; v2.z <- pin.normal.z; 
+//   v3.x <- pin.color.x; v3.y <- pin.color.y; v3.z <- pin.color.z; v3.w <- pin.color.w; 
+//   v4.x <- pin.tex_position.x; v4.y <- pin.tex_position.y; v4.z <- pin.tex_position.z; 
 //   v5.x <- pin.texcoord0.x; v5.y <- pin.texcoord0.y; 
 //   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
 //
-#line 21 "D:\Desktop\Cumulonimbus\Shader\diffuse_ps.hlsl"
+#line 21 "D:\チEクトップ\Cumulonimbus\Shader\diffuse_ps.hlsl"
 mov r0.xyz, l(1.000000,1.000000,1.000000,0)  // r0.x <- reflectance.x; r0.y <- reflectance.y; r0.z <- reflectance.z
 
 #line 23
 nop 
-mov r1.xyz, v3.xyzx
+mov r1.xyz, v2.xyzx
 mov r2.xyz, cb2[1].xyzx
-mov r3.xyz, v4.xyzx
+mov r3.xyz, v3.xyzx
 mov r0.xyz, r0.xyzx
 
-#line 11 "D:\Desktop\Cumulonimbus\Shader\functions.hlsli"
+#line 11 "D:\デスクトップ\Cumulonimbus\Shader\functions.hlsli"
 mov r2.xyz, -r2.xyzx
 dp3 r0.w, r1.xyzx, r2.xyzx  // r0.w <- D
 
@@ -97,22 +96,22 @@ max r0.w, r0.w, r1.x
 mul r0.xyz, r3.xyzx, r0.xyzx
 mul r0.xyz, r0.wwww, r0.xyzx  // r0.x <- <Diffuse return value>.x; r0.y <- <Diffuse return value>.y; r0.z <- <Diffuse return value>.z
 
-#line 23 "D:\Desktop\Cumulonimbus\Shader\diffuse_ps.hlsl"
+#line 23 "D:\チEクトップ\Cumulonimbus\Shader\diffuse_ps.hlsl"
 mov r0.xyz, r0.xyzx  // r0.x <- f3_diffuse.x; r0.y <- f3_diffuse.y; r0.z <- f3_diffuse.z
 
 #line 25
 nop 
 nop 
 nop 
-mov r1.x, v2.z
+mov r1.x, v4.z
 mov r1.y, l(0.000001)
 
-#line 6 "D:\Desktop\Cumulonimbus\Shader\shadow_functions.hlsli"
-sample_indexable(texture2d)(float,float,float,float) r1.z, v2.xyxx, t1.yzxw, s0
+#line 6 "D:\デスクトップ\Cumulonimbus\Shader\shadow_functions.hlsli"
+sample_indexable(texture2d)(float,float,float,float) r1.z, v4.xyxx, t0.yzxw, s0
 mov r1.z, r1.z  // r1.z <- d
 
 #line 7
-sample_indexable(texture2d)(float,float,float,float) r1.w, v2.xyxx, t1.xzwy, s0
+sample_indexable(texture2d)(float,float,float,float) r1.w, v4.xyxx, t0.xzwy, s0
 mov r1.w, r1.w  // r1.w <- d2
 
 #line 10
@@ -137,11 +136,11 @@ min r1.xyz, r1.xxxx, l(1.000000, 1.000000, 1.000000, 0.000000)  // r1.z <- p_max
 #line 18
 mov r1.xyz, r1.xyzx  // r1.x <- <GetVarianceShadow return value>.x; r1.y <- <GetVarianceShadow return value>.y; r1.z <- <GetVarianceShadow return value>.z
 
-#line 25 "D:\Desktop\Cumulonimbus\Shader\diffuse_ps.hlsl"
+#line 25 "D:\チEクトップ\Cumulonimbus\Shader\diffuse_ps.hlsl"
 mov r1.xyz, r1.xyzx  // r1.x <- shadow_color.x; r1.y <- shadow_color.y; r1.z <- shadow_color.z
 
 #line 27
-sample_indexable(texture2d)(float,float,float,float) r2.xyzw, v5.xyxx, t0.xyzw, s0
+sample_indexable(texture2d)(float,float,float,float) r2.xyzw, v5.xyxx, t20.xyzw, s0
 itof r0.w, l(1)
 mul r0.xyzw, r0.xyzw, r2.xyzw
 itof r1.w, l(1)

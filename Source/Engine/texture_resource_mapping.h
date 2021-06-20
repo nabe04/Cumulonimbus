@@ -49,4 +49,4 @@
 #define TexSlot_RoughnessMap    TexSlot_OnDemand7
 #define TexSlot_SpecularMap		TexSlot_OnDemand8
 
-#endif TEXTURE_RESOURCE_MAPPING_H
+#endif //TEXTURE_RESOURCE_MAPPING_H

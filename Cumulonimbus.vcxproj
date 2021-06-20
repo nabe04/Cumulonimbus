@@ -235,6 +235,7 @@
     <None Include="Shader\diffuse.hlsli" />
     <None Include="Shader\functions.hlsli" />
     <None Include="Shader\general.hlsli" />
+    <None Include="Shader\globals.hlsli" />
     <None Include="Shader\monochrome.hlsli" />
     <None Include="Shader\phong.hlsli" />
     <None Include="Shader\shader_resource_mapping.hlsli" />

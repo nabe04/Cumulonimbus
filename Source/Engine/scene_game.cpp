@@ -30,8 +30,8 @@ void SceneGame::InitializeScene()
 	registry->SetScene(this);
 
 	//-- Light --//
-	light->SetLightDir({ 0.0f,-.6f,1.f ,1.f });
-	light->SetPosition({ -400, 500, 0 ,1 });
+	light->SetLightDir({ 0.0f,-.6f,1.f });
+	light->SetPosition({ -400, 500, 0 });
 
 	//-- View --//
 	view->SetCameraPos({ 25,100,-300 }, { .0f, .0f, .0f }, XMFLOAT3(.0f, 1.0f, .0f));
@@ -109,11 +109,11 @@ void SceneGame::InitializeScene()
 	registry->GetComponent<cum::component::TransformComponent>(ent_floor).SetWorldRotation_X(90);
 	registry->GetComponent<cum::component::MeshObjectComponent>(ent_floor).SetSamplerState(RenderingSampleState::Linear_Wrap);
 
-	const cum::mapping::rename_type::Entity ent_bunny = registry->CreateEntity();
-	registry->AddComponent<cum::component::MeshObjectComponent>(ent_bunny);
-	registry->GetComponent<cum::component::MeshObjectComponent>(ent_bunny).SetShaderState(shader::MeshShaderTypes::Metal);
-	registry->AddComponent<cum::component::FbxModelComponent>(ent_bunny, Locator::GetResourceManager()->FbxModelResouece("stanford_bunny"));
-	registry->GetComponent<cum::component::TransformComponent>(ent_bunny).SetScale(0.1f);
+	//const cum::mapping::rename_type::Entity ent_bunny = registry->CreateEntity();
+	//registry->AddComponent<cum::component::MeshObjectComponent>(ent_bunny);
+	//registry->GetComponent<cum::component::MeshObjectComponent>(ent_bunny).SetShaderState(shader::MeshShaderTypes::Metal);
+	//registry->AddComponent<cum::component::FbxModelComponent>(ent_bunny, Locator::GetResourceManager()->FbxModelResouece("stanford_bunny"));
+	//registry->GetComponent<cum::component::TransformComponent>(ent_bunny).SetScale(0.1f);
 
 
 	//auto* sample01 = AddEntity(UpdateOrder::Default, EntityTag::Bunny);
