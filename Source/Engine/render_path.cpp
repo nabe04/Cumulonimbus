@@ -53,7 +53,7 @@ namespace cumulonimbus::renderer
 		if(set_rasterizer)
 			rasterizer->Activate(immediate_context, mesh_object->GetRasterizerState());
 		if(set_sampler)
-			samplers.at(mesh_object->GetSamplerState())->Activate(immediate_context, mapping::sampler::SSlot_OnDemand0);
+			samplers.at(mesh_object->GetSamplerState())->Activate(immediate_context, SSlot_OnDemand0);
 		if(set_depth_stencil)
 			depth_stencil->Activate(immediate_context, mesh_object->GetDepthStencilState());
 		if(set_blend)
@@ -68,7 +68,7 @@ namespace cumulonimbus::renderer
 		if (set_rasterizer)
 			rasterizer->Activate(immediate_context, sprite_object->GetRasterizerState());
 		if (set_sampler)
-			samplers.at(static_cast<int>(sprite_object->GetSamplerState()))->Activate(immediate_context, mapping::sampler::SSlot_OnDemand0);
+			samplers.at(static_cast<int>(sprite_object->GetSamplerState()))->Activate(immediate_context, SSlot_OnDemand0);
 		if (set_depth_stencil)
 			depth_stencil->Activate(immediate_context, sprite_object->GetDepthStencilState());
 		if (set_blend)

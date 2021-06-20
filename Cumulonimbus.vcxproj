@@ -43,6 +43,7 @@
     <ClInclude Include="Source\Engine\component_base.h" />
     <ClInclude Include="Source\Engine\component_list.h" />
     <ClInclude Include="Source\Engine\constant_buffer.h" />
+    <ClInclude Include="Source\Engine\constant_buffer_mapping.h" />
     <ClInclude Include="Source\Engine\content_browser.h" />
     <ClInclude Include="Source\Engine\depth_map.h" />
     <ClInclude Include="Source\Engine\depth_stencil.h" />
@@ -91,6 +92,8 @@
     <ClInclude Include="Source\Engine\resource_manager.h" />
     <ClInclude Include="Source\Engine\sampler_mapping.h" />
     <ClInclude Include="Source\Engine\shader_filename_mapping.h" />
+    <ClInclude Include="Source\Engine\shader_interop.h" />
+    <ClInclude Include="Source\Engine\shader_interop_renderer.h" />
     <ClInclude Include="Source\Engine\texture_resource_mapping.h" />
     <ClInclude Include="Source\Engine\sampler.h" />
     <ClInclude Include="Source\Engine\scene.h" />

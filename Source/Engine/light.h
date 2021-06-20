@@ -17,7 +17,7 @@ public:
 		DirectX::XMFLOAT4  ambient{ 1.f,1.f,1.f,1.f };	// アンビエント
 		DirectX::XMFLOAT4  color{ 1.f,1.f,1.f,1.f };	// 色
 
-		DirectX::XMFLOAT4X4 view_matrix{};
+		DirectX::XMFLOAT4X4 light_view_matrix{};
 
 		// 透視投影用
 		DirectX::XMFLOAT4X4 perspective_projection_matrix{}; //プロジェクション行列

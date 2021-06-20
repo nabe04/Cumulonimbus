@@ -725,14 +725,23 @@
     <ClInclude Include="Source\Engine\graphics_mapping.h">
       <Filter>Header\System\Mapping</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\resource_manager.h">
-      <Filter>Header\System</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Engine\rename_type_mapping.h">
       <Filter>Header\System\Mapping</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\sky_box.h">
       <Filter>Header\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\resource_manager.h">
+      <Filter>Header\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\shader_interop.h">
+      <Filter>Header\System\Mapping</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\constant_buffer_mapping.h">
+      <Filter>Header\System\Mapping</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\shader_interop_renderer.h">
+      <Filter>Header\System\Mapping</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

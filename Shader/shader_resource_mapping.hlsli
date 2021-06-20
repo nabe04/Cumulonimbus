@@ -1,4 +1,5 @@
-
+#ifndef SHADER_RESOURCE_MAPPING_H
+#define SHADER_RESOURCE_MAPPING_H
 
 #define TexSlot_Depth		     0
 #define TexSlot_LinearDepth      1
@@ -45,3 +46,5 @@
 #define TexSlot_TransmissionMap TexSlot_OnDemand6
 #define TexSlot_RoughnessMap    TexSlot_OnDemand7
 #define TexSlot_SpecularMap		TexSlot_OnDemand8
+
+#endif //SHADER_RESOURCE_MAPPING_H
