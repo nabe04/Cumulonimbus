@@ -102,7 +102,8 @@ namespace shader
 	//*********************************************
 	void CB_Light::Update(Scene* scene)
 	{
-		light_dir = scene->GetLight()->GetLightDir();
+		XMFLOAT3 dir = scene->GetLight()->GetLightDir();
+		light_dir = XMFLOAT4{ dir.x,dir.y,dir.z,1.0f };
 		eye_pos   = XMFLOAT4{ scene->GetView()->GetEyePosition().x, scene->GetView()->GetEyePosition().y, scene->GetView()->GetEyePosition().z, 1.0f };
 
 		auto* light = scene->GetLight();

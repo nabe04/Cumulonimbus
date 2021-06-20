@@ -66,6 +66,8 @@ CBUFFER(LightCB, CBSlot_Light)
 	float	orthographic_far_z;			// 平行投影 : 最遠値
 	float3	light_padding;
 
+	float4x4 light_view_matrix;
+
 	float4x4 light_perspective_projection_matrix;		// プロジェクション行列(透視投影)
 	float4x4 light_perspective_view_projection_matrix;	// ビュー・プロジェクション行列(透視投影)
 

@@ -161,8 +161,8 @@ namespace cumulonimbus::renderer
 			BindDirectXStates(immediate_context, &mesh_object);
 
 			// TODO: Shaderのスロットをmapping用に変更したら消す
-			Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, depth_map->GetDepthExtractionSRV(), 1);
-			Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, sky_box_srv.GetAddressOf(), 2);
+			Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, depth_map->GetDepthExtractionSRV(), TexSlot_Depth);
+			//Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, sky_box_srv.GetAddressOf(), 2);
 
 			shader_manager->Activate(immediate_context, registry->GetComponent<component::MeshObjectComponent>(ent).GetShaderState());
 
@@ -392,33 +392,31 @@ namespace cumulonimbus::renderer
 			TransformCB transform{};
 			CameraCB camera{};
 
-			if (mesh.node_indices.size() > 0)
-			{
-				for (size_t i = 0; i < mesh.node_indices.size(); ++i)
+			{ // TODO: このスコープ内はFbxModelComponentのUpdate関数に移行できる
+				if (mesh.node_indices.size() > 0)
 				{
-					DirectX::SimpleMath::Matrix reverse;
-					reverse.Right(DirectX::SimpleMath::Vector3(-1, 0, 0));
+					for (size_t i = 0; i < mesh.node_indices.size(); ++i)
+					{
+						DirectX::SimpleMath::Matrix reverse;
+						reverse.Right(DirectX::SimpleMath::Vector3(-1, 0, 0));
 
-					DirectX::SimpleMath::Matrix world_transform   = DirectX::XMLoadFloat4x4(&model.GetNodes().at(mesh.node_indices.at(i)).world_transform);
-					DirectX::SimpleMath::Matrix inverse_transform = DirectX::XMLoadFloat4x4(&mesh.inverse_transforms.at(i));
-					DirectX::SimpleMath::Matrix bone_transform    = inverse_transform * world_transform;
-					XMStoreFloat4x4(&cb_mesh.bone_transforms[i], bone_transform);
-					cb_mesh.mat_view_projection = view->GetView() * view->GetProjection();
+						DirectX::SimpleMath::Matrix world_transform   = DirectX::XMLoadFloat4x4(&model.GetNodes().at(mesh.node_indices.at(i)).world_transform);
+						DirectX::SimpleMath::Matrix inverse_transform = DirectX::XMLoadFloat4x4(&mesh.inverse_transforms.at(i));
+						DirectX::SimpleMath::Matrix bone_transform    = inverse_transform * world_transform;
+						XMStoreFloat4x4(&transform.bone_transforms[i], bone_transform);
+						camera.camera_view_projection_matrix = view->GetView() * view->GetProjection();;
+					}
 				}
-			}
-			else
-			{
-				transform.bone_transforms[0] = registry->GetComponent<component::TransformComponent>(entity).GetWorld4x4();
-				camera.camera_view_projection_matrix = view->GetView() * view->GetProjection();;
+				else
+				{
+					transform.bone_transforms[0] = registry->GetComponent<component::TransformComponent>(entity).GetWorld4x4();
+					// 多分camera_view_projection_matrixはViewクラスのUpdate関数内でやっているので必要ない??
+					camera.camera_view_projection_matrix = view->GetView() * view->GetProjection();;
+				}
 
-				cb_mesh.bone_transforms[0]  = registry->GetComponent<component::TransformComponent>(entity).GetWorld4x4();
-				cb_mesh.mat_view_projection = view->GetView() * view->GetProjection();
+				registry->GetComponent<component::TransformComponent>(entity).BindCBuffer(transform);
+				view->BindCBuffer();
 			}
-			//cbuffer_transformation->data = cb_mesh;
-			//cbuffer_transformation->Activate(immediate_context, 0);
-
-			registry->GetComponent<component::TransformComponent>(entity).BindCBuffer(transform);
-			view->BindCBuffer();
 
 			UINT stride = sizeof(shader::Vertex);
 			UINT offset = 0;
@@ -428,18 +426,32 @@ namespace cumulonimbus::renderer
 
 			for (const ModelData::Subset& subset : mesh.subsets)
 			{
-				shader::CB_Material cb_subset;
-				cb_subset.color			= subset.material != NULL ? subset.material->color : XMFLOAT4{ 0.8f, 0.8f, 0.8f, 1.0f };
-				cb_subset.color.w		= model.GetColor().w;
-				cbuffer_material->data	= cb_subset;
+				/* TODO: FbxModelComponentないでSetMaterial関数を作成し,
+				 *       引数として、subsetを持ってくる
+				*/
+				MaterialCB cb_material;
+				cb_material.material.base_color   = subset.material != NULL ? subset.material->color : XMFLOAT4{ 0.8f, 0.8f, 0.8f, 1.0f };
+				cb_material.material.base_color.w = model.GetColor().w;
+				model.SetAndBindCBuffer(cb_material);
+				//shader::CB_Material cb_subset;
+				//cb_subset.color			= subset.material != NULL ? subset.material->color : XMFLOAT4{ 0.8f, 0.8f, 0.8f, 1.0f };
+				//cb_subset.color.w		= model.GetColor().w;
+				//cbuffer_material->data	= cb_subset;
 				//cbuffer_material->Activate(immediate_context, 1);
+
 				if (subset.material && subset.material->shader_resource_view)
 				{
-					immediate_context->PSSetShaderResources(0, 1, subset.material->shader_resource_view.GetAddressOf());
+					Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
+																 subset.material->shader_resource_view.GetAddressOf(),
+																 TexSlot_BaseColorMap);
+					//immediate_context->PSSetShaderResources(0, 1, subset.material->shader_resource_view.GetAddressOf());
 				}
 				else
 				{
-					immediate_context->PSSetShaderResources(0, 1, dummy_texture->dummy_texture.GetAddressOf());
+					Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
+																 dummy_texture->dummy_texture.GetAddressOf(),
+																 TexSlot_BaseColorMap);
+					//immediate_context->PSSetShaderResources(0, 1, dummy_texture->dummy_texture.GetAddressOf());
 				}
 				immediate_context->DrawIndexed(subset.index_count, subset.start_index, 0);
 			}

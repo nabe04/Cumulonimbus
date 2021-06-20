@@ -16,13 +16,13 @@ struct PS_IN
 };
 
 // ワールド座標をライト座標空間に変換
-float3 GetShadowTexture(row_major float4x4 vp, float3 w_pos)
+float3 GetShadowTexture(float4x4 vp, float3 w_pos)
 {
     // 正規化デバイス座標(NDC座標)
     float4 wvp_pos;
     wvp_pos.xyz = w_pos;
     wvp_pos.w = 1;
-    wvp_pos = mul(wvp_pos, vp);
+    wvp_pos = mul(vp, wvp_pos);
     wvp_pos /= wvp_pos.w;
 
     // テクスチャ座標

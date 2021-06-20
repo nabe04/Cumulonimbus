@@ -34,9 +34,10 @@ void Light::Update(const View* view)
 	view_up.Normalize();
 
 	DirectX::XMFLOAT3 target_pos = view->GetFocusPosition();
-	DirectX::XMFLOAT3 position = cb_light->data.light_position;
-	const XMMATRIX view_mat = XMMatrixLookAtLH(XMLoadFloat3(&position), { 0,0,0 }, XMLoadFloat3(&view_up));
+	DirectX::XMFLOAT3 position   = cb_light->data.light_position;
+	const XMMATRIX view_mat      = XMMatrixLookAtLH(XMLoadFloat3(&position), { 0,0,0 }, XMLoadFloat3(&view_up));
 
+	cb_light->data.light_view_matrix = view->GetView();
 	const XMMATRIX perspective_projection_mat = XMMatrixPerspectiveFovLH(view->GetFov(), view->GetAspect(), view->GetNearZ(), view->GetFarZ());
 	XMStoreFloat4x4(&cb_light->data.light_perspective_projection_matrix, perspective_projection_mat);
 	XMStoreFloat4x4(&cb_light->data.light_perspective_view_projection_matrix, XMMatrixMultiply(view_mat, perspective_projection_mat));

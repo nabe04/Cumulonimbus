@@ -52,8 +52,8 @@ namespace cumulonimbus::component
 		auto GetOldPosition() const { return prev_pos; }
 		auto DeltaPosition() const
 		{
-			DirectX::XMFLOAT3 deltaPos{ position.x - prev_pos.x ,position.y - prev_pos.y,position.z - prev_pos.z };
-			return deltaPos;
+			const DirectX::XMFLOAT3 delta_pos{ position.x - prev_pos.x ,position.y - prev_pos.y,position.z - prev_pos.z };
+			return delta_pos;
 		}
 		const DirectX::SimpleMath::Matrix& TransformMat() { return translation_matrix; }
 
@@ -164,11 +164,11 @@ namespace cumulonimbus::component
 		std::shared_ptr<buffer::ConstantBuffer<TransformCB>> cb_transform;
 
 		DirectX::SimpleMath::Vector3  position{ 0.0f,0.0f,0.0f };
-		DirectX::SimpleMath::Vector3 prev_pos{ 0.0f,0.0f,0.0f };
-		DirectX::SimpleMath::Vector3 scale{ 1.0f,1.0f,1.0f };
-		DirectX::SimpleMath::Vector3 angle{ 0.0f,0.0f,0.0f };
-		DirectX::SimpleMath::Vector3 prev_angle{};
-		DirectX::SimpleMath::Matrix world_f4x4 =
+		DirectX::SimpleMath::Vector3  prev_pos{ 0.0f,0.0f,0.0f };
+		DirectX::SimpleMath::Vector3  scale{ 1.0f,1.0f,1.0f };
+		DirectX::SimpleMath::Vector3  angle{ 0.0f,0.0f,0.0f };
+		DirectX::SimpleMath::Vector3  prev_angle{};
+		DirectX::SimpleMath::Matrix   world_f4x4 =
 		{
 			1, 0, 0, 0,
 			0, 1, 0, 0,
@@ -181,14 +181,15 @@ namespace cumulonimbus::component
 		DirectX::SimpleMath::Matrix translation_matrix;
 
 
-		// TODO: constメンバ変数にしたいが、Entityの削除の際のstd::iter_swap関数でエラーが出るため非constにしている
-		DirectX::SimpleMath::Vector3 right = { 1.0f,0.0f,0.0f };
-		DirectX::SimpleMath::Vector3 up = { 0.0f,1.0f,0.0f };
-		DirectX::SimpleMath::Vector3 front = { 0.0f,0.0f,1.0f };
+		/* TODO: constメンバ変数にしたいが、
+		 * Entityの削除の際のstd::iter_swap関数でエラーが出るため非constにしている*/
+		DirectX::SimpleMath::Vector3 right	= { 1.0f,0.0f,0.0f };
+		DirectX::SimpleMath::Vector3 up		= { 0.0f,1.0f,0.0f };
+		DirectX::SimpleMath::Vector3 front	= { 0.0f,0.0f,1.0f };
 
 		// Orientation vector
 		DirectX::SimpleMath::Vector3 model_right = { 1.0f,0.0f,0.0f };
-		DirectX::SimpleMath::Vector3 model_up = { 0.0f,1.0f,0.0f };
+		DirectX::SimpleMath::Vector3 model_up	 = { 0.0f,1.0f,0.0f };
 		DirectX::SimpleMath::Vector3 model_front = { 0.0f,0.0f,1.0f };
 
 		DirectX::SimpleMath::Matrix orientation =

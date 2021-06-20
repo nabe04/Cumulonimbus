@@ -1,7 +1,9 @@
-#define USE_WORLD_VIEW_POSITION
-#define USE_NDC_POSITION
+// PS_Input(VS_Output)
+#define PIN_USE_WVP_POSITION
+#define PIN_USE_WV_POSITION
 
-#include "general.hlsli"
+
+#include "globals.hlsli"
 
 float4 main(PS_Input pin) : SV_TARGET
 {
@@ -10,7 +12,7 @@ float4 main(PS_Input pin) : SV_TARGET
     // semantic : POSITION
     float4 color;
     //color.r = pin.world_view_position.z / pin.world_view_position.w; // wvpãÛä‘Ç≈ÇÃê[ìxíl(0.0 ~ 1.0)
-    color.r = pin.ndc_position.z / pin.ndc_position.w;
+    color.r = pin.wvp_position.z / pin.wvp_position.w;
     color.g = color.r * color.r;
     color.b = 0;
     color.a = 1;

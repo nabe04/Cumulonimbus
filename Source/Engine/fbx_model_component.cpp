@@ -19,6 +19,8 @@ namespace cumulonimbus::component
 	FbxModelComponent::FbxModelComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const std::shared_ptr<FbxModelResource>& resource)
 		:ComponentBase{ registry , ent }
 	{
+		cb_material = std::make_shared<buffer::ConstantBuffer<MaterialCB>>(Locator::GetDx11Device()->device.Get());
+
 		this->resource = resource;
 
 		// ノード
@@ -44,7 +46,7 @@ namespace cumulonimbus::component
 		// アニメーションの初期値をセット
 		SwitchAnimation(0, false, 0.0f);
 	}
-	
+
 	void FbxModelComponent::NewFrame(const float delta_time)
 	{
 
@@ -389,6 +391,30 @@ namespace cumulonimbus::component
 
 		return DirectX::SimpleMath::Matrix::Identity;
 	}
+
+	void FbxModelComponent::SetMaterial(const MaterialCB& material) const
+	{
+		cb_material->data = material;
+	}
+
+	void FbxModelComponent::BindCBuffer(bool set_in_vs, bool set_in_ps) const
+	{
+		cb_material->Activate(Locator::GetDx11Device()->immediate_context.Get(), CBSlot_Material, set_in_vs, set_in_ps);
+	}
+
+	void FbxModelComponent::UnbindCBuffer() const
+	{
+		cb_material->Deactivate(Locator::GetDx11Device()->immediate_context.Get());
+	}
+
+
+	void FbxModelComponent::SetAndBindCBuffer(const MaterialCB& material,
+											  bool set_in_vs, bool set_in_ps) const
+	{
+		SetMaterial(material);
+		BindCBuffer(set_in_vs, set_in_ps);
+	}
+
 
 	void FbxModelComponent::Save(const std::string& file_path)
 	{

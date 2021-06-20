@@ -29,8 +29,8 @@ public:
 
 	void SetEyePosition(const DirectX::SimpleMath::Vector3& pos) { cb_camera->data.camera_position = pos; }
 
-	[[nodiscard]] const DirectX::SimpleMath::Matrix& GetView() const		{ return cb_camera->data.camera_view_matrix; }
-	[[nodiscard]] const DirectX::SimpleMath::Matrix& GetProjection() const	{ return  cb_camera->data.camera_view_projection_matrix; }
+	[[nodiscard]] DirectX::SimpleMath::Matrix GetView() const			{ return cb_camera->data.camera_view_matrix; }
+	[[nodiscard]] DirectX::SimpleMath::Matrix GetProjection() const	{ return  cb_camera->data.camera_view_projection_matrix; }
 
 	[[nodiscard]] DirectX::SimpleMath::Vector3 GetEyePosition()   const { return cb_camera->data.camera_position; }
 	[[nodiscard]] DirectX::SimpleMath::Vector3 GetFocusPosition() const { return cb_camera->data.camera_at; }

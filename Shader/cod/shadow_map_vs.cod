@@ -82,7 +82,7 @@ dcl_output_siv o0.xyzw, position
 dcl_output o1.xyzw
 dcl_output o2.xyz
 dcl_output o3.xyz
-dcl_temps 8
+dcl_temps 7
 //
 // Initial variable locations:
 //   v0.x <- vin.position.x; v0.y <- vin.position.y; v0.z <- vin.position.z; v0.w <- vin.position.w; 
@@ -166,19 +166,10 @@ mov r0.xyzw, r0.xyzw  // r0.x <- vout.ndc_wvp_position.x; r0.y <- vout.ndc_wvp_p
 
 #line 22
 nop 
-mov r1.x, cb2[17].x
-mov r4.x, cb2[17].y
-mov r5.x, cb2[17].z
-mov r6.x, cb2[17].w
-mov r1.y, cb2[18].x
-mov r4.y, cb2[18].y
-mov r5.y, cb2[18].z
-mov r6.y, cb2[18].w
-mov r1.z, cb2[19].x
-mov r4.z, cb2[19].y
-mov r5.z, cb2[19].z
-mov r6.z, cb2[19].w
-mov r7.xyzw, cb2[20].xyzw
+mov r1.xyzw, cb2[17].xyzw
+mov r4.xyzw, cb2[18].xyzw
+mov r5.xyzw, cb2[19].xyzw
+mov r6.xyzw, cb2[20].xyzw
 mov r3.x, r3.x
 mov r3.y, r3.y
 mov r3.z, r3.z
@@ -190,14 +181,10 @@ mov r3.xyz, r3.xyzx  // r3.x <- wvp_pos.x; r3.y <- wvp_pos.y; r3.z <- wvp_pos.z
 itof r3.w, l(1)  // r3.w <- wvp_pos.w
 
 #line 25
-mov r1.w, r7.x
-dp4 r1.x, r3.xyzw, r1.xyzw  // r1.x <- wvp_pos.x
-mov r4.w, r7.y
-dp4 r1.y, r3.xyzw, r4.xyzw  // r1.y <- wvp_pos.y
-mov r5.w, r7.z
-dp4 r1.z, r3.xyzw, r5.xyzw  // r1.z <- wvp_pos.z
-mov r6.w, r7.w
-dp4 r1.w, r3.xyzw, r6.xyzw  // r1.w <- wvp_pos.w
+dp4 r1.x, r1.xyzw, r3.xyzw  // r1.x <- wvp_pos.x
+dp4 r1.y, r4.xyzw, r3.xyzw  // r1.y <- wvp_pos.y
+dp4 r1.z, r5.xyzw, r3.xyzw  // r1.z <- wvp_pos.z
+dp4 r1.w, r6.xyzw, r3.xyzw  // r1.w <- wvp_pos.w
 
 #line 26
 div r1.xyz, r1.xyzx, r1.wwww
@@ -227,4 +214,4 @@ mov o1.xyzw, r0.xyzw
 mov o2.xyz, r1.xyzx
 mov o3.xyz, r2.xyzx
 ret 
-// Approximately 93 instruction slots used
+// Approximately 80 instruction slots used

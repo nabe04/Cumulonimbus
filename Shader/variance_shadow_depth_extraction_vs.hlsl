@@ -1,14 +1,15 @@
-// For VS input
-#define USE_LOCAL_POSITION
-#define USE_VIN_NORMAL
-#define USE_BONE_WEIGHTS
-#define USE_BONE_INDICES
-// For VS output
-#define USE_WORLD_VIEW_POSITION
-#define USE_NDC_POSITION
+// VS_Input
+#define VIN_USE_LOCAL_POSITION
+#define VIN_USE_NORMAL
+#define VIN_USE_TEXCOORD0
+#define VIN_USE_BONE_WEIGHTS
+#define VIN_USE_BONE_INDICES
+// PS_Input(VS_Output)
+#define PIN_USE_WVP_POSITION
+#define PIN_USE_WV_POSITION
 
-#include "general.hlsli"
-#include "shadow_map.hlsli"
+
+#include "globals.hlsli"
 
 
 VS_OutPut main(VS_Input vin)
@@ -22,15 +23,16 @@ VS_OutPut main(VS_Input vin)
 		// boneWeight[0] == boneWeight.x
         // 多分元の頂点にボーンオフセット行列を掛けて位置を算出している
         // それぞれのウェイトの影響度を加算
-        world_pos += (vin.boneWeights[i] * mul(vin.position, boneTransforms[vin.boneIndices[i]])).xyz;
-        normal += (vin.boneWeights[i] * mul(float4(vin.normal, 0), boneTransforms[vin.boneIndices[i]])).xyz;
+        world_pos += (vin.bone_weights[i] * mul(bone_transforms[vin.bone_indices[i]], vin.position)).xyz;
+        normal    += (vin.bone_weights[i] * mul(bone_transforms[vin.bone_indices[i]], float4(vin.normal, 0))).xyz;
     }
-    const float4 wvp_pos = mul(float4(world_pos, 1.0f), light_orthographic_view_projection_matrix); // World coordinate transformation
-    const float4 wv_pos = mul(float4(world_pos, 1.0f), light_view_matrix); // ビュー空間までの変換(分散シャドウマップの比較などに使用)
 
-    vs_out.position = wvp_pos;
-    vs_out.ndc_position = wvp_pos;
-    vs_out.world_view_position = wv_pos;
+   const float4  wvp_pos = mul(light_orthographic_view_projection_matrix, float4(world_pos, 1.0f)); // World coordinate transformation
+    const float4 wv_pos  = mul(light_view_matrix                        , float4(world_pos, 1.0f)); // ビュー空間までの変換(分散シャドウマップの比較などに使用)
+
+    vs_out.position     = wvp_pos;
+    vs_out.wvp_position = wvp_pos;
+    vs_out.wv_position  = wv_pos;
 
     return vs_out;
 }

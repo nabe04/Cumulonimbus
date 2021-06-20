@@ -4,31 +4,30 @@
 //
 // Buffer Definitions: 
 //
-// cbuffer CBTranslation
+// cbuffer LightCB
 // {
 //
-//   row_major float4x4 viewProjection; // Offset:    0 Size:    64 [unused]
-//   row_major float4x4 boneTransforms[128];// Offset:   64 Size:  8192
-//   row_major float4x4 transform_matrix;// Offset: 8256 Size:    64 [unused]
+//   float3 light_position;             // Offset:    0 Size:    12 [unused]
+//   float orthographic_view_width;     // Offset:   12 Size:     4 [unused]
+//   float3 light_direction;            // Offset:   16 Size:    12 [unused]
+//   float orthographic_view_height;    // Offset:   28 Size:     4 [unused]
+//   float3 light_color;                // Offset:   32 Size:    12 [unused]
+//   float orthographic_near_z;         // Offset:   44 Size:     4 [unused]
+//   float orthographic_far_z;          // Offset:   48 Size:     4 [unused]
+//   float3 light_padding;              // Offset:   52 Size:    12 [unused]
+//   float4x4 light_view_matrix;        // Offset:   64 Size:    64
+//   float4x4 light_perspective_projection_matrix;// Offset:  128 Size:    64 [unused]
+//   float4x4 light_perspective_view_projection_matrix;// Offset:  192 Size:    64 [unused]
+//   float4x4 light_orthographic_projection_matrix;// Offset:  256 Size:    64 [unused]
+//   float4x4 light_orthographic_view_projection_matrix;// Offset:  320 Size:    64
 //
 // }
 //
-// cbuffer CBLight
+// cbuffer TransformCB
 // {
 //
-//   float4 light_position;             // Offset:    0 Size:    16 [unused]
-//   float4 light_direction;            // Offset:   16 Size:    16 [unused]
-//   float4 light_ambient;              // Offset:   32 Size:    16 [unused]
-//   float4 light_color;                // Offset:   48 Size:    16 [unused]
-//   row_major float4x4 light_view_matrix;// Offset:   64 Size:    64
-//   row_major float4x4 light_perspective_projection_matrix;// Offset:  128 Size:    64 [unused]
-//   row_major float4x4 light_perspective_view_projection_matrix;// Offset:  192 Size:    64 [unused]
-//   float light_orthographic_view_width;// Offset:  256 Size:     4 [unused]
-//   float light_orthographic_view_height;// Offset:  260 Size:     4 [unused]
-//   float light_orthographic_near_z;   // Offset:  264 Size:     4 [unused]
-//   float light_orthographic_far_z;    // Offset:  268 Size:     4 [unused]
-//   row_major float4x4 light_orthographic_projection_matrix;// Offset:  272 Size:    64 [unused]
-//   row_major float4x4 light_orthographic_view_projection_matrix;// Offset:  336 Size:    64
+//   float4x4 bone_transforms[128];     // Offset:    0 Size:  8192
+//   float4x4 transform_matrix;         // Offset: 8192 Size:    64 [unused]
 //
 // }
 //
@@ -37,8 +36,8 @@
 //
 // Name                                 Type  Format         Dim      HLSL Bind  Count
 // ------------------------------ ---------- ------- ----------- -------------- ------
-// CBTranslation                     cbuffer      NA          NA            cb0      1 
-// CBLight                           cbuffer      NA          NA            cb2      1 
+// LightCB                           cbuffer      NA          NA            cb2      1 
+// TransformCB                       cbuffer      NA          NA            cb3      1 
 //
 //
 //
@@ -48,8 +47,9 @@
 // -------------------- ----- ------ -------- -------- ------- ------
 // POSITION                 0   xyzw        0     NONE   float   xyzw
 // NORMAL                   0   xyz         1     NONE   float       
-// WEIGHTS                  0   xyzw        2     NONE   float   xyzw
-// BONES                    0   xyzw        3     NONE    uint   xyzw
+// TEXCOORD                 0   xy          2     NONE   float       
+// WEIGHTS                  0   xyzw        3     NONE   float   xyzw
+// BONES                    0   xyzw        4     NONE    uint   xyzw
 //
 //
 // Output signature:
@@ -57,8 +57,8 @@
 // Name                 Index   Mask Register SysValue  Format   Used
 // -------------------- ----- ------ -------- -------- ------- ------
 // SV_POSITION              0   xyzw        0      POS   float   xyzw
-// WORLD_VIEW_POSITION      0   xyzw        1     NONE   float   xyzw
-// NDC_POSITION             0   xyzw        2     NONE   float   xyzw
+// WV_POSITION              0   xyzw        1     NONE   float   xyzw
+// WVP_POSITION             0   xyzw        2     NONE   float   xyzw
 //
 vs_5_0
 dcl_globalFlags refactoringAllowed | skipOptimization
@@ -70,11 +70,11 @@ dcl_immediateConstantBuffer { { 1.000000, 0, 0, 0},
                               { 0, -1, 0, 0},
                               { 0, 0, -1, 0},
                               { 0, 0, 0, -1} }
-dcl_constantbuffer CB0[516], dynamicIndexed
-dcl_constantbuffer CB2[25], immediateIndexed
+dcl_constantbuffer CB2[24], immediateIndexed
+dcl_constantbuffer CB3[512], dynamicIndexed
 dcl_input v0.xyzw
-dcl_input v2.xyzw
 dcl_input v3.xyzw
+dcl_input v4.xyzw
 dcl_output_siv o0.xyzw, position
 dcl_output o1.xyzw
 dcl_output o2.xyzw
@@ -83,16 +83,17 @@ dcl_temps 5
 // Initial variable locations:
 //   v0.x <- vin.position.x; v0.y <- vin.position.y; v0.z <- vin.position.z; v0.w <- vin.position.w; 
 //   v1.x <- vin.normal.x; v1.y <- vin.normal.y; v1.z <- vin.normal.z; 
-//   v2.x <- vin.boneWeights.x; v2.y <- vin.boneWeights.y; v2.z <- vin.boneWeights.z; v2.w <- vin.boneWeights.w; 
-//   v3.x <- vin.boneIndices.x; v3.y <- vin.boneIndices.y; v3.z <- vin.boneIndices.z; v3.w <- vin.boneIndices.w; 
-//   o2.x <- <main return value>.ndc_position.x; o2.y <- <main return value>.ndc_position.y; o2.z <- <main return value>.ndc_position.z; o2.w <- <main return value>.ndc_position.w; 
-//   o1.x <- <main return value>.world_view_position.x; o1.y <- <main return value>.world_view_position.y; o1.z <- <main return value>.world_view_position.z; o1.w <- <main return value>.world_view_position.w; 
+//   v2.x <- vin.texcoord0.x; v2.y <- vin.texcoord0.y; 
+//   v3.x <- vin.bone_weights.x; v3.y <- vin.bone_weights.y; v3.z <- vin.bone_weights.z; v3.w <- vin.bone_weights.w; 
+//   v4.x <- vin.bone_indices.x; v4.y <- vin.bone_indices.y; v4.z <- vin.bone_indices.z; v4.w <- vin.bone_indices.w; 
+//   o2.x <- <main return value>.wvp_position.x; o2.y <- <main return value>.wvp_position.y; o2.z <- <main return value>.wvp_position.z; o2.w <- <main return value>.wvp_position.w; 
+//   o1.x <- <main return value>.wv_position.x; o1.y <- <main return value>.wv_position.y; o1.z <- <main return value>.wv_position.z; o1.w <- <main return value>.wv_position.w; 
 //   o0.x <- <main return value>.position.x; o0.y <- <main return value>.position.y; o0.z <- <main return value>.position.z; o0.w <- <main return value>.position.w
 //
-#line 18 "D:\Desktop\Cumulonimbus\Shader\variance_shadow_depth_extraction_vs.hlsl"
+#line 19 "D:\Desktop\Cumulonimbus\Shader\variance_shadow_depth_extraction_vs.hlsl"
 itof r0.xyz, l(0, 0, 0, 0)  // r0.x <- world_pos.x; r0.y <- world_pos.y; r0.z <- world_pos.z
 
-#line 20
+#line 21
 mov r0.w, l(0)  // r0.w <- i
 mov r1.xyz, r0.xyzx  // r1.x <- world_pos.x; r1.y <- world_pos.y; r1.z <- world_pos.z
 mov r1.w, r0.w  // r1.w <- i
@@ -100,36 +101,36 @@ loop
   ilt r2.x, r1.w, l(4)
   breakc_z r2.x
 
-#line 25
-  dp4 r2.x, v2.xyzw, icb[r1.w + 0].xyzw
-  and r3.xyzw, v3.xyzw, icb[r1.w + 4].xyzw
+#line 26
+  dp4 r2.x, v3.xyzw, icb[r1.w + 0].xyzw
+  and r3.xyzw, v4.xyzw, icb[r1.w + 4].xyzw
   or r2.yz, r3.yywy, r3.xxzx
   or r2.y, r2.z, r2.y
   imul null, r2.y, r2.y, l(4)
-  mul r3.xyz, v0.xxxx, cb0[r2.y + 4].xyzx
-  mul r4.xyz, v0.yyyy, cb0[r2.y + 5].xyzx
+  mul r3.xyz, v0.xxxx, cb3[r2.y + 0].xyzx
+  mul r4.xyz, v0.yyyy, cb3[r2.y + 1].xyzx
   add r3.xyz, r3.xyzx, r4.xyzx
-  mul r4.xyz, v0.zzzz, cb0[r2.y + 6].xyzx
+  mul r4.xyz, v0.zzzz, cb3[r2.y + 2].xyzx
   add r3.xyz, r3.xyzx, r4.xyzx
-  mul r2.yzw, v0.wwww, cb0[r2.y + 7].xxyz
+  mul r2.yzw, v0.wwww, cb3[r2.y + 3].xxyz
   add r2.yzw, r2.yyzw, r3.xxyz
   mul r2.xyz, r2.yzwy, r2.xxxx
   add r1.xyz, r1.xyzx, r2.xyzx
 
-#line 27
+#line 28
   iadd r1.w, r1.w, l(1)
 endloop 
 
-#line 28
-mul r0.xyzw, r1.xxxx, cb2[21].xyzw
-mul r2.xyzw, r1.yyyy, cb2[22].xyzw
+#line 30
+mul r0.xyzw, r1.xxxx, cb2[20].xyzw
+mul r2.xyzw, r1.yyyy, cb2[21].xyzw
 add r0.xyzw, r0.xyzw, r2.xyzw
-mul r2.xyzw, r1.zzzz, cb2[23].xyzw
+mul r2.xyzw, r1.zzzz, cb2[22].xyzw
 add r0.xyzw, r0.xyzw, r2.xyzw
-mul r2.xyzw, cb2[24].xyzw, l(1.000000, 1.000000, 1.000000, 1.000000)
+mul r2.xyzw, cb2[23].xyzw, l(1.000000, 1.000000, 1.000000, 1.000000)
 add r0.xyzw, r0.xyzw, r2.xyzw  // r0.x <- wvp_pos.x; r0.y <- wvp_pos.y; r0.z <- wvp_pos.z; r0.w <- wvp_pos.w
 
-#line 29
+#line 31
 mul r2.xyzw, r1.xxxx, cb2[4].xyzw
 mul r3.xyzw, r1.yyyy, cb2[5].xyzw
 add r2.xyzw, r2.xyzw, r3.xyzw
@@ -138,16 +139,16 @@ add r1.xyzw, r1.xyzw, r2.xyzw
 mul r2.xyzw, cb2[7].xyzw, l(1.000000, 1.000000, 1.000000, 1.000000)
 add r1.xyzw, r1.xyzw, r2.xyzw  // r1.x <- wv_pos.x; r1.y <- wv_pos.y; r1.z <- wv_pos.z; r1.w <- wv_pos.w
 
-#line 31
+#line 33
 mov r0.xyzw, r0.xyzw  // r0.x <- vs_out.position.x; r0.y <- vs_out.position.y; r0.z <- vs_out.position.z; r0.w <- vs_out.position.w
 
-#line 32
-mov r0.xyzw, r0.xyzw  // r0.x <- vs_out.ndc_position.x; r0.y <- vs_out.ndc_position.y; r0.z <- vs_out.ndc_position.z; r0.w <- vs_out.ndc_position.w
-
-#line 33
-mov r1.xyzw, r1.xyzw  // r1.x <- vs_out.world_view_position.x; r1.y <- vs_out.world_view_position.y; r1.z <- vs_out.world_view_position.z; r1.w <- vs_out.world_view_position.w
+#line 34
+mov r0.xyzw, r0.xyzw  // r0.x <- vs_out.wvp_position.x; r0.y <- vs_out.wvp_position.y; r0.z <- vs_out.wvp_position.z; r0.w <- vs_out.wvp_position.w
 
 #line 35
+mov r1.xyzw, r1.xyzw  // r1.x <- vs_out.wv_position.x; r1.y <- vs_out.wv_position.y; r1.z <- vs_out.wv_position.z; r1.w <- vs_out.wv_position.w
+
+#line 37
 mov o0.xyzw, r0.xyzw
 mov o1.xyzw, r1.xyzw
 mov o2.xyzw, r0.xyzw

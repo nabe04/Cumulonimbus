@@ -69,7 +69,7 @@ void SceneTutorial::InitializeScene()
 	//sphere->SetEntityName("Sphere");
 
 	//-- Light --//
-	light->SetLightDir({ .0f,-.6f,1.f ,1.f });
+	light->SetLightDir({ .0f,-.6f,1.f});
 
 	//-- View --//
 	view->SetCameraPos(XMFLOAT3(.0f, 30.0, -100.0f), XMFLOAT3(.0f, .0f, .0f), XMFLOAT3(.0f, 1.0f, .0f));
