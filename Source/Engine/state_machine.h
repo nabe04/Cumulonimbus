@@ -25,7 +25,7 @@ private:
 
 public:
 	~StateMachine() = default;
-	
+
 	void AddState(Key state, std::function<ReturnVal(Args...)> callback)
 	{
 		if (states.contains(state))

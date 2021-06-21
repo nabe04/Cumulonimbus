@@ -80,6 +80,12 @@ namespace cumulonimbus::component
 		cb_transform->Activate(Locator::GetDx11Device()->immediate_context.Get(), CBSlot_Transform, set_in_vs, set_in_ps);
 	}
 
+	void TransformComponent::UnbindCBuffer()
+	{
+		cb_transform->Deactivate(Locator::GetDx11Device()->immediate_context.Get());
+	}
+
+
 	void TransformComponent::SetAndBindCBuffer(const TransformCB& transform, bool set_in_vs, bool set_in_ps) const
 	{
 		SetTransformCB(transform);

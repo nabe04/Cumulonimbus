@@ -4,22 +4,22 @@
 //
 // Buffer Definitions: 
 //
-// cbuffer CBLight
+// cbuffer LightCB
 // {
 //
-//   float4 light_position;             // Offset:    0 Size:    16
-//   float4 light_direction;            // Offset:   16 Size:    16 [unused]
-//   float4 light_ambient;              // Offset:   32 Size:    16 [unused]
-//   float4 light_color;                // Offset:   48 Size:    16 [unused]
-//   row_major float4x4 light_view_matrix;// Offset:   64 Size:    64 [unused]
-//   row_major float4x4 light_perspective_projection_matrix;// Offset:  128 Size:    64 [unused]
-//   row_major float4x4 light_perspective_view_projection_matrix;// Offset:  192 Size:    64 [unused]
-//   float light_orthographic_view_width;// Offset:  256 Size:     4 [unused]
-//   float light_orthographic_view_height;// Offset:  260 Size:     4 [unused]
-//   float light_orthographic_near_z;   // Offset:  264 Size:     4 [unused]
-//   float light_orthographic_far_z;    // Offset:  268 Size:     4 [unused]
-//   row_major float4x4 light_orthographic_projection_matrix;// Offset:  272 Size:    64 [unused]
-//   row_major float4x4 light_orthographic_view_projection_matrix;// Offset:  336 Size:    64 [unused]
+//   float3 light_position;             // Offset:    0 Size:    12
+//   float orthographic_view_width;     // Offset:   12 Size:     4 [unused]
+//   float3 light_direction;            // Offset:   16 Size:    12 [unused]
+//   float orthographic_view_height;    // Offset:   28 Size:     4 [unused]
+//   float3 light_color;                // Offset:   32 Size:    12 [unused]
+//   float orthographic_near_z;         // Offset:   44 Size:     4 [unused]
+//   float orthographic_far_z;          // Offset:   48 Size:     4 [unused]
+//   float3 light_padding;              // Offset:   52 Size:    12 [unused]
+//   float4x4 light_view_matrix;        // Offset:   64 Size:    64 [unused]
+//   float4x4 light_perspective_projection_matrix;// Offset:  128 Size:    64 [unused]
+//   float4x4 light_perspective_view_projection_matrix;// Offset:  192 Size:    64 [unused]
+//   float4x4 light_orthographic_projection_matrix;// Offset:  256 Size:    64 [unused]
+//   float4x4 light_orthographic_view_projection_matrix;// Offset:  320 Size:    64 [unused]
 //
 // }
 //
@@ -29,8 +29,8 @@
 // Name                                 Type  Format         Dim      HLSL Bind  Count
 // ------------------------------ ---------- ------- ----------- -------------- ------
 // default_sampler                   sampler      NA          NA             s0      1 
-// texture_cube                      texture  float4        cube             t2      1 
-// CBLight                           cbuffer      NA          NA            cb2      1 
+// texture_cube                      texture  float4        cube            t29      1 
+// LightCB                           cbuffer      NA          NA            cb2      1 
 //
 //
 //
@@ -39,9 +39,9 @@
 // Name                 Index   Mask Register SysValue  Format   Used
 // -------------------- ----- ------ -------- -------- ------- ------
 // SV_POSITION              0   xyzw        0      POS   float       
-// WORLD_POSITION           0   xyzw        1     NONE   float   xyz 
+// W_POSITION               0   xyzw        1     NONE   float   xyz 
 // NORMAL                   0   xyz         2     NONE   float   xyz 
-// TEXCOORD                 0   xy          3     NONE   float       
+// COLOR                    0   xyzw        3     NONE   float       
 //
 //
 // Output signature:
@@ -54,7 +54,7 @@ ps_5_0
 dcl_globalFlags refactoringAllowed | skipOptimization
 dcl_constantbuffer CB2[1], immediateIndexed
 dcl_sampler s0, mode_default
-dcl_resource_texturecube (float,float,float,float) t2
+dcl_resource_texturecube (float,float,float,float) t29
 dcl_input_ps linear v1.xyz
 dcl_input_ps linear v2.xyz
 dcl_output o0.xyzw
@@ -62,28 +62,28 @@ dcl_temps 2
 //
 // Initial variable locations:
 //   v0.x <- pin.position.x; v0.y <- pin.position.y; v0.z <- pin.position.z; v0.w <- pin.position.w; 
-//   v1.x <- pin.world_position.x; v1.y <- pin.world_position.y; v1.z <- pin.world_position.z; v1.w <- pin.world_position.w; 
+//   v1.x <- pin.w_position.x; v1.y <- pin.w_position.y; v1.z <- pin.w_position.z; v1.w <- pin.w_position.w; 
 //   v2.x <- pin.normal.x; v2.y <- pin.normal.y; v2.z <- pin.normal.z; 
-//   v3.x <- pin.texcoord0.x; v3.y <- pin.texcoord0.y; 
+//   v3.x <- pin.color.x; v3.y <- pin.color.y; v3.z <- pin.color.z; v3.w <- pin.color.w; 
 //   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
 //
-#line 15 "D:\Desktop\Cumulonimbus\Shader\reflection_mapping_ps.hlsl"
+#line 12 "D:\Desktop\Cumulonimbus\Shader\reflection_mapping_ps.hlsl"
 mov r0.xyz, -cb2[0].xyzx
 add r0.xyz, r0.xyzx, v1.xyzx  // r0.x <- ref.x; r0.y <- ref.y; r0.z <- ref.z
 
-#line 16
+#line 13
 dp3 r0.w, r0.xyzx, v2.xyzx
 add r0.w, r0.w, r0.w
 mov r0.w, -r0.w
 mul r1.xyz, r0.wwww, v2.xyzx
 add r0.xyz, r0.xyzx, r1.xyzx
 
-#line 17
+#line 14
 dp3 r0.w, r0.xyzx, r0.xyzx
 rsq r0.w, r0.w
 mul r0.xyz, r0.wwww, r0.xyzx
 
-#line 19
-sample_indexable(texturecube)(float,float,float,float) o0.xyzw, r0.xyzx, t2.xyzw, s0
+#line 16
+sample_indexable(texturecube)(float,float,float,float) o0.xyzw, r0.xyzx, t29.xyzw, s0
 ret 
 // Approximately 12 instruction slots used

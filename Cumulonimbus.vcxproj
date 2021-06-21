@@ -231,7 +231,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
-    <None Include="Shader\3d_standard.hlsli" />
     <None Include="Shader\bloom.hlsli" />
     <None Include="Shader\cook_torrance.hlsli" />
     <None Include="Shader\diffuse.hlsli" />

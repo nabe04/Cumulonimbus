@@ -38,8 +38,8 @@ namespace cumulonimbus::component
 			dst.translate = src.translate;
 		}
 
-		anim_states.AddState(FbxAnimationState::Switch, [this](const float elapsedTime) {BlendNextAnimation(elapsedTime); });
-		anim_states.AddState(FbxAnimationState::Update, [this](const float elapsedTime) {UpdateAnimation(elapsedTime); });
+		anim_states.AddState(FbxAnimationState::Switch, [this](const float dt) { BlendNextAnimation(dt); });
+		anim_states.AddState(FbxAnimationState::Update, [this](const float dt) { UpdateAnimation(dt); });
 
 		// アニメーションの初期値をセット
 		SwitchAnimation(0, false, 0.0f);
@@ -56,6 +56,8 @@ namespace cumulonimbus::component
 
 		CalculateLocalTransform();
 		CalculateWorldTransform(world_transform);
+
+		//UpdateAnimState(delta_time);
 
 		if(!is_static)
 		{

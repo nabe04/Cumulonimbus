@@ -35,10 +35,6 @@ namespace cumulonimbus::renderer
 		depth_stencil		= std::make_unique<DepthStencil>(device);
 		rasterizer			= std::make_unique<Rasterizer>(device);
 
-		cbuffer_transformation	= std::make_unique<buffer::ConstantBuffer<shader::CB_CoordinateTransformation>>(device);
-		cbuffer_material		= std::make_unique<buffer::ConstantBuffer<shader::CB_Material>>(device);
-		cbuffer_light			= std::make_unique<buffer::ConstantBuffer<shader::CB_Light>>(device);
-
 		samplers.at(Linear_Border)	= std::make_unique<Sampler>(device, D3D11_FILTER_MIN_MAG_MIP_LINEAR	, D3D11_TEXTURE_ADDRESS_BORDER	, D3D11_COMPARISON_ALWAYS, 0.0f, 0.0f, 0.0f, 1.0f);
 		samplers.at(Point_Wrap)		= std::make_unique<Sampler>(device, D3D11_FILTER_MIN_MAG_MIP_POINT	, D3D11_TEXTURE_ADDRESS_WRAP	, D3D11_COMPARISON_ALWAYS, 0.0f, 0.0f, 0.0f, 1.0f);
 		samplers.at(Linear_Wrap)	= std::make_unique<Sampler>(device, D3D11_FILTER_MIN_MAG_MIP_LINEAR	, D3D11_TEXTURE_ADDRESS_WRAP	, D3D11_COMPARISON_ALWAYS, 0.0f, 0.0f, 0.0f, 1.0f);
@@ -102,6 +98,7 @@ namespace cumulonimbus::renderer
 								  const View* view, const Light* light)
 	{
 		depth_map->Activate(immediate_context);
+		light->BindCBuffer();
 
 		for(auto& mesh_object : registry->GetArray<component::MeshObjectComponent>().GetComponents())
 		{
@@ -128,6 +125,7 @@ namespace cumulonimbus::renderer
 			}
 		}
 
+		light->UnbindCBuffer();
 		depth_map->Deactivate(immediate_context);
 	}
 
@@ -145,12 +143,16 @@ namespace cumulonimbus::renderer
 							  ecs::Registry* registry,
 							  const View* view, const Light* light)
 	{
+		light->BindCBuffer();
+
 		auto& components = registry->GetArray<component::SkyBoxComponent>().GetComponents();
 		for(auto& sky_box : registry->GetArray<component::SkyBoxComponent>().GetComponents())
 		{
 			mapping::rename_type::Entity ent = sky_box.GetEntity();
 			RenderSkyBox(immediate_context, registry, sky_box.GetEntity(), view, light);
 		}
+
+		Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, sky_box_srv.GetAddressOf(), TexSlot_SkyMap);
 
 		//off_screen->Activate(immediate_context);
 		for (auto& mesh_object : registry->GetArray<component::MeshObjectComponent>().GetComponents())
@@ -179,6 +181,7 @@ namespace cumulonimbus::renderer
 			}
 		}
 
+		light->UnbindCBuffer();
 		off_screen->Deactivate(immediate_context);
 		Blit(immediate_context);
 	}
@@ -222,12 +225,8 @@ namespace cumulonimbus::renderer
 	void RenderPath::Blit(ID3D11DeviceContext* immediate_context) const
 	{
 		Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
-															off_screen->GetRenderTargetSRV(),
-															0);
-		//TODO : Shaderのスロットをmapping用に変更したら適用(上は削除)
-		//Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
-		//													off_screen->GetRenderTargetSRV(),
-		//													mapping::texture_resource::TexSlot_BaseColorMap);
+													 off_screen->GetRenderTargetSRV(),
+													 TexSlot_BaseColorMap);
 		fullscreen_quad->Blit(immediate_context, true, true, true);
 		ID3D11ShaderResourceView* const pSRV[1] = { nullptr };
 	}
@@ -239,51 +238,33 @@ namespace cumulonimbus::renderer
 	{
 		component::GeomPrimComponent& geom_prim = registry->GetComponent<component::GeomPrimComponent>(entity);
 
-		light->BindCBuffer(true, true);
-
 		BindDirectXStates(immediate_context, &registry->GetComponent<component::MeshObjectComponent>(entity));
 		Locator::GetDx11Device()->BindPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 		// テクスチャのセット
 		if(auto* texture = registry->TryGetComponent<component::SpriteComponent>(entity))
 		{// テクスチャを保持している場合、そのテクスチャをセット
-
 			Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
-															   texture->GetTexture(),
-															   0);
-			// TODO: Shaderのスロットをmapping用に変更したら適用(上は削除)
-			//Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
-			//												   texture->GetTexture(),
-			//												   mapping::texture_resource::TexSlot_BaseColorMap);
+														 texture->GetTexture(),
+														 TexSlot_BaseColorMap);
 		}
 		else
 		{
 			Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
-															   dummy_texture->dummy_texture.GetAddressOf(),
-															   0);
-			// TODO: Shaderのスロットをmapping用に変更したら適用(上は削除)
-			//Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
-			//												   dummy_texture->dummy_texture.GetAddressOf(),
-			//												   mapping::texture_resource::TexSlot_BaseColorMap);
+													     dummy_texture->dummy_texture.GetAddressOf(),
+														 TexSlot_BaseColorMap);
 		}
 
 		{// Transform
-			shader::CB_CoordinateTransformation cb{};
-			cb.mat_view_projection = view->GetView() * view->GetProjection();
-
-			cb.bone_transforms[0] = registry->GetComponent<component::TransformComponent>(entity).GetWorld4x4();
-			cbuffer_transformation->data = cb;
-			cbuffer_transformation->Activate(immediate_context, 0);
+			TransformCB transform{};
+			transform.bone_transforms[0] = registry->GetComponent<component::TransformComponent>(entity).GetWorld4x4();
+			registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
 		}
 
 		{// Set constant buffer (Material)
-			shader::CB_Material cb{};
-			cb.color = geom_prim.GetMaterial().color;
-			cb.Ka    = geom_prim.GetMaterial().Ka;
-			cb.Kd    = geom_prim.GetMaterial().Kd;
-			cb.Ks    = geom_prim.GetMaterial().Ks;
-			cbuffer_material->data = cb;
-			cbuffer_material->Activate(immediate_context, 1);
+			MaterialCB material{};
+			material.material.base_color = geom_prim.GetMaterial().color;;
+			registry->GetComponent<component::MaterialComponent>(entity).SetAndBindCBuffer(material);
 		}
 
 		{// 描画処理
@@ -299,7 +280,8 @@ namespace cumulonimbus::renderer
 			immediate_context->DrawIndexed(geom_prim.GetMesh().num_indices, 0, 0);
 		}
 
-		light->UnbindCBuffer();
+		registry->GetComponent<component::TransformComponent>(entity).UnbindCBuffer();
+		registry->GetComponent<component::MaterialComponent>(entity).UnbindCBuffer();
 	}
 
 	void RenderPath::RenderOBJ(ID3D11DeviceContext* immediate_context,
@@ -309,16 +291,10 @@ namespace cumulonimbus::renderer
 	{
 		//-- Set of Constant Buffer --//
 		{// Transform
-			shader::CB_CoordinateTransformation cb{};
-			cb.mat_view_projection = view->GetView() * view->GetProjection();
+			TransformCB transform{};
 
-			cb.bone_transforms[0] = registry->GetComponent<component::TransformComponent>(entity).GetWorld4x4();
-			cbuffer_transformation->data = cb;
-			cbuffer_transformation->Activate(immediate_context, 0);
-		}
-
-		{// Light
-			light->BindCBuffer(true, true);
+			transform.bone_transforms[0] = registry->GetComponent<component::TransformComponent>(entity).GetWorld4x4();
+			registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
 		}
 
 		Locator::GetDx11Device()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleList);
@@ -332,32 +308,21 @@ namespace cumulonimbus::renderer
 
 		for(auto& material : obj_model.GetMaterials())
 		{
-			shader::CB_Material data;
-			data.color	= material.data.color;
-			data.Ka		= XMFLOAT4(material.data.Ka.x, material.data.Ka.y, material.data.Ka.z, 1.0f);
-			data.Kd		= XMFLOAT4(material.data.Kd.x, material.data.Kd.y, material.data.Kd.z, 1.0f);
-
-			cbuffer_material->data = data;
-			cbuffer_material->Activate(immediate_context, 1);
+			MaterialCB cb_material{};
+			cb_material.material.base_color = material.data.color;
+			registry->GetComponent<component::MaterialComponent>(entity).SetAndBindCBuffer(cb_material);
 
 			if (material.texture)
 			{// Set of Texture
-				immediate_context->PSSetShaderResources(0, 1, material.texture->GetTextureData()->texture_view.GetAddressOf());
 				Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
-																   material.texture,
-																   0);
-				// TODO: Shaderのスロットをmapping用に変更したら適用(上は削除)
-				//Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
-				//												     material.texture,
-				//												     mapping::texture_resource::TexSlot_BaseColorMap);
+														     material.texture,
+														     TexSlot_BaseColorMap);
 			}
 			else
 			{// Set of Dummy texture
-				immediate_context->PSSetShaderResources(0, 1, dummy_texture->dummy_texture.GetAddressOf());
-				// TODO: Shaderのスロットをmapping用に変更したら適用(上は削除)
-				//Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
-				//												     dummy_texture->dummy_texture.GetAddressOf(),
-				//												     mapping::texture_resource::TexSlot_BaseColorMap);
+				Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
+															 dummy_texture->dummy_texture.GetAddressOf(),
+															 TexSlot_BaseColorMap);
 			}
 
 			for (auto& subset : obj_model.GetSubsets())
@@ -367,9 +332,11 @@ namespace cumulonimbus::renderer
 					immediate_context->DrawIndexed(subset.index_count, subset.index_start, 0);
 				}
 			}
+
+			registry->GetComponent<component::MaterialComponent>(entity).UnbindCBuffer();
 		}
 
-		light->UnbindCBuffer();
+		registry->GetComponent<component::TransformComponent>(entity).UnbindCBuffer();
 	}
 
 	void RenderPath::RenderFBX(ID3D11DeviceContext* immediate_context,
@@ -379,8 +346,6 @@ namespace cumulonimbus::renderer
 	{
 		const component::FbxModelComponent& model	= registry->GetComponent<component::FbxModelComponent>(entity);
 		const FbxModelResource* resource			= model.GetResource();
-
-		light->BindCBuffer(true, true);
 
 		for(const auto& mesh : resource->GetModelData().meshes)
 		{
@@ -437,10 +402,7 @@ namespace cumulonimbus::renderer
 
 				registry->GetComponent<component::MaterialComponent>(entity).UnbindCBuffer();
 			}
-
 		}
-
-		light->UnbindCBuffer();
 	}
 
 	void RenderPath::RenderSkyBox(ID3D11DeviceContext* immediate_context,
@@ -455,22 +417,19 @@ namespace cumulonimbus::renderer
 		rasterizer->Activate(immediate_context, RasterizeState::Cull_None);
 
 		{// Transform
-			shader::CB_CoordinateTransformation cb{};
-			cb.mat_view_projection = view->GetView() * view->GetProjection();
+			//shader::CB_CoordinateTransformation cb{};
+			//cb.mat_view_projection = view->GetView() * view->GetProjection();
+			TransformCB transform{};
 
-			cb.bone_transforms[0] = registry->GetComponent<component::TransformComponent>(entity).GetWorld4x4();
-			cbuffer_transformation->data = cb;
-			cbuffer_transformation->Activate(immediate_context, 0);
+			transform.bone_transforms[0] = registry->GetComponent<component::TransformComponent>(entity).GetWorld4x4();
+			registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
 		}
 
 		Locator::GetDx11Device()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleList);
+
 		Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
-														   sky_box.GetShaderResoueceViewAddress(),
-														   0);
-		//TODO : Shaderのスロットをmapping用に変更したら適用(上は削除)
-		//Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
-		//												   sky_box.GetShaderResoueceViewAddress(),
-		//												   mapping::texture_resource::TexSlot_BaseColorMap);
+													 sky_box.GetShaderResoueceViewAddress(),
+													 TexSlot_SkyMap);
 
 		// Set of Vertex Buffers
 		UINT stride = sizeof(shader::Vertex);
@@ -482,8 +441,7 @@ namespace cumulonimbus::renderer
 
 		sky_box_srv = sky_box.GetShaderResoueceView();
 		sky_box.DeactivateShader(immediate_context);
-		//TODO : Shaderのスロットをmapping用に変更したらそれ用に変更
-		Locator::GetDx11Device()->UnbindShaderResource(mapping::graphics::ShaderStage::PS, 0);
+		Locator::GetDx11Device()->UnbindShaderResource(mapping::graphics::ShaderStage::PS, TexSlot_SkyMap);;
 		//off_screen->Deactivate(immediate_context);
 
 		//Blit(immediate_context);
@@ -495,9 +453,9 @@ namespace cumulonimbus::renderer
 		component::SpriteComponent&		sprite		= registry->GetComponent<component::SpriteComponent>(entity);
 		component::TransformComponent&	transform	= registry->GetComponent<component::TransformComponent>(entity);
 
-		Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, sprite.GetTexture(), 0);
-		//TODO : SRVのスロットがmappingに対応すれば変える
-		//Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, sprite.GetTexture(), mapping::texture_resource::TexSlot_BaseColorMap);
+		Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
+													 sprite.GetTexture(),
+													 TexSlot_BaseColorMap);
 
 		// 2Dに必要ない値のリセット
 		transform.SetPositionZ(0.0f);
@@ -581,10 +539,10 @@ namespace cumulonimbus::renderer
 		vertex.at(1).position = DirectX::XMFLOAT4{ pos[1].x,pos[1].y,.0f,1.f };
 		vertex.at(2).position = DirectX::XMFLOAT4{ pos[2].x,pos[2].y,.0f,1.f };
 		vertex.at(3).position = DirectX::XMFLOAT4{ pos[3].x,pos[3].y,.0f,1.f };
-		vertex.at(0).color = sprite.Color();
-		vertex.at(1).color = sprite.Color();
-		vertex.at(2).color = sprite.Color();
-		vertex.at(3).color = sprite.Color();
+		vertex.at(0).color	  = sprite.Color();
+		vertex.at(1).color	  = sprite.Color();
+		vertex.at(2).color	  = sprite.Color();
+		vertex.at(3).color	  = sprite.Color();
 		vertex.at(0).texcoord = sprite.GetVariableTexcoords().at(0);
 		vertex.at(1).texcoord = sprite.GetVariableTexcoords().at(1);
 		vertex.at(2).texcoord = sprite.GetVariableTexcoords().at(2);
@@ -606,9 +564,9 @@ namespace cumulonimbus::renderer
 		component::AnimSpriteComponent& anim_sprite = registry->GetComponent<component::AnimSpriteComponent>(entity);
 		component::TransformComponent&  transform	= registry->GetComponent<component::TransformComponent>(entity);
 
-		Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, anim_sprite.GetTexture(), 0);
-		//TODO : SRVのスロットがmappingに対応すれば変える
-		//Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, sprite.GetTexture(), mapping::texture_resource::TexSlot_BaseColorMap);
+		Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
+													 anim_sprite.GetTexture(),
+													 TexSlot_BaseColorMap);
 
 		// 2Dに必要ない値のリセット
 		transform.SetPositionZ(0.0f);

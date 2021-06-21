@@ -1,13 +1,22 @@
-#include "general.hlsli"
+// PS_Input(VS_Output)
+#define PIN_USE_WVP_POSITION
+#define PIN_USE_NORMAL
+#define PIN_USE_COLOR
+#define PIN_USE_TEX_POSITION  // ShadowMap比較用UV値
+#define PIN_USE_TEXCOORD0     // 読み込んだテクスチャのUV値
+
+#include "globals.hlsli"
 #include "functions.hlsli"
 #include "cook_torrance.hlsli"
 
-float4 main(VS_OUT pin) : SV_TARGET
+float4 main(PS_Input pin) : SV_TARGET
 {
+	const float3 eye_vector = light_position - pin.wvp_position.xyz;
+
     float3 L = light_direction.xyz; // Light Vector
     float3 N = normalize(pin.normal);         // Normals (normalized)
-    float3 H = normalize(-L + pin.eyeVector); // Half Vector (Light vector and Eye vector)
-    float3 E = normalize(pin.eyeVector);
+    float3 H = normalize(-L + eye_vector); // Half Vector (Light vector and Eye vector)
+    float3 E = normalize(eye_vector);
 
     //-- Each angle used in the calculation --//
     float NE = dot(N, E);
@@ -29,11 +38,11 @@ float4 main(VS_OUT pin) : SV_TARGET
     float gnc   = g - LH;
     float cgpc  = LH * gpc - 1;
     float cgnc  = LH * gnc + 1;
-    float F = 0.5f * gnc * gnc * (1 + cgpc * cgpc / (cgnc * cgnc)) / (gpc * gpc);
+    float F     = 0.5f * gnc * gnc * (1 + cgpc * cgpc / (cgnc * cgnc)) / (gpc * gpc);
 
     float3 zero = float3(0,0,0);
-    float4 f4_diffuse = pin.color * min(0.0f, float4(Diffuse(N, L, light_ambient.rgb, float3(1.0f, 1.0f, 1.0f)), 1.0f));
+    float4 f4_diffuse = pin.color * min(0.0f, float4(Diffuse(N, L, light_color.rgb, float3(1.0f, 1.0f, 1.0f)), 1.0f));
     f4_diffuse.w = 1.0f;
 
-    return f4_diffuse + light_ambient * max(0, F * D * G / NE);
+    return f4_diffuse + float4(light_color, 1.0f) * max(0, F * D * G / NE);
 }

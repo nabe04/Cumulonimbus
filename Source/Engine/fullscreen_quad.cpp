@@ -43,7 +43,7 @@ FullscreenQuad::FullscreenQuad(ID3D11Device* device)
 	}
 
 	const std::string fullscreen_quad_ps =
-		"Texture2D texture_map : register( t0 );\n"
+		"Texture2D texture_map : register( t20 );\n"
 		"SamplerState texture_map_sampler_state : register( s0 );\n"
 		"struct VS_OUT\n"
 		"{\n"
@@ -70,7 +70,7 @@ FullscreenQuad::FullscreenQuad(ID3D11Device* device)
 	}
 
 	const std::string fullscreen_quad_ps_ms =
-		"Texture2DMS<float4> texture_map : register(t0);\n"
+		"Texture2DMS<float4> texture_map : register(t20);\n"
 		"struct VS_OUT\n"
 		"{\n"
 		"	float4 position : SV_POSITION;\n"

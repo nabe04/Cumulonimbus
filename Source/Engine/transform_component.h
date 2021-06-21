@@ -30,6 +30,7 @@ namespace cumulonimbus::component
 
 		void SetTransformCB(const TransformCB transform) const;
 		void BindCBuffer(bool set_in_vs = true, bool set_in_ps = true) const;
+		void UnbindCBuffer();
 		void SetAndBindCBuffer(const TransformCB& transform, bool set_in_vs = true, bool set_in_ps = true) const;
 
 		//-- Creating a World TransforBmation Matrix --//

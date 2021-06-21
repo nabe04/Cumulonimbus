@@ -61,11 +61,6 @@ namespace cumulonimbus::renderer
 		std::unique_ptr<DepthStencil>	depth_stencil;
 		std::array< std::unique_ptr<Sampler>, static_cast<int>(RenderingSampleState::End)> samplers;
 
-		// TODO : コンスタントバッファ関連を使用するコンポーネントに持っていく
-		std::unique_ptr<buffer::ConstantBuffer<shader::CB_CoordinateTransformation>>	cbuffer_transformation;
-		std::unique_ptr<buffer::ConstantBuffer<shader::CB_Material>>					cbuffer_material;
-		std::unique_ptr<buffer::ConstantBuffer<shader::CB_Light>>						cbuffer_light;
-
 		std::unique_ptr<DummyTexture>		dummy_texture;
 		std::unique_ptr<FrameBuffer>		off_screen;
 		std::unique_ptr<DepthMap>			depth_map;

@@ -7,7 +7,7 @@
 // Name                                 Type  Format         Dim      HLSL Bind  Count
 // ------------------------------ ---------- ------- ----------- -------------- ------
 // defaultSampler                    sampler      NA          NA             s0      1 
-// diffuseTexture                    texture  float4          2d             t0      1 
+// texture_base_color                texture  float4          2d            t20      1 
 //
 //
 //
@@ -17,8 +17,8 @@
 // -------------------- ----- ------ -------- -------- ------- ------
 // SV_POSITION              0   xyzw        0      POS   float       
 // NORMAL                   0   xyz         1     NONE   float       
-// TEXCOORD                 0   xy          2     NONE   float   xy  
-// COLOR                    0   xyzw        3     NONE   float   xyzw
+// COLOR                    0   xyzw        2     NONE   float   xyzw
+// TEXCOORD                 0   xy          3     NONE   float   xy  
 //
 //
 // Output signature:
@@ -30,21 +30,21 @@
 ps_5_0
 dcl_globalFlags refactoringAllowed | skipOptimization
 dcl_sampler s0, mode_default
-dcl_resource_texture2d (float,float,float,float) t0
-dcl_input_ps linear v2.xy
-dcl_input_ps linear v3.xyzw
+dcl_resource_texture2d (float,float,float,float) t20
+dcl_input_ps linear v2.xyzw
+dcl_input_ps linear v3.xy
 dcl_output o0.xyzw
 dcl_temps 1
 //
 // Initial variable locations:
 //   v0.x <- pin.position.x; v0.y <- pin.position.y; v0.z <- pin.position.z; v0.w <- pin.position.w; 
 //   v1.x <- pin.normal.x; v1.y <- pin.normal.y; v1.z <- pin.normal.z; 
-//   v2.x <- pin.texcoord.x; v2.y <- pin.texcoord.y; 
-//   v3.x <- pin.color.x; v3.y <- pin.color.y; v3.z <- pin.color.z; v3.w <- pin.color.w; 
+//   v2.x <- pin.color.x; v2.y <- pin.color.y; v2.z <- pin.color.z; v2.w <- pin.color.w; 
+//   v3.x <- pin.texcoord0.x; v3.y <- pin.texcoord0.y; 
 //   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
 //
-#line 12 "D:\Desktop\Cumulonimbus\Shader\3d_standard_ps.hlsl"
-sample_indexable(texture2d)(float,float,float,float) r0.xyzw, v2.xyxx, t0.xyzw, s0
-mul o0.xyzw, r0.xyzw, v3.xyzw
+#line 14 "D:\Desktop\Cumulonimbus\Shader\3d_standard_ps.hlsl"
+sample_indexable(texture2d)(float,float,float,float) r0.xyzw, v3.xyxx, t20.xyzw, s0
+mul o0.xyzw, r0.xyzw, v2.xyzw
 ret 
 // Approximately 3 instruction slots used

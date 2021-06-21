@@ -1,9 +1,19 @@
-#include "general.hlsli"
-#include "3d_standard.hlsli"
+// VS_Input
+#define VIN_USE_LOCAL_POSITION
+#define VIN_USE_NORMAL
+#define VIN_USE_TEXCOORD0
+#define VIN_USE_BONE_WEIGHTS
+#define VIN_USE_BONE_INDICES
+// PS_Input(VS_Output)
+#define PIN_USE_COLOR
+#define PIN_USE_NORMAL
+#define PIN_USE_TEXCOORD0
 
-VS_OUT main(VS_IN vin)
+#include "globals.hlsli"
+
+VS_OutPut main(VS_Input vin)
 {
-    VS_OUT vout = (VS_OUT) 0;
+    VS_OutPut vout = (VS_OutPut) 0;
 
     float3 worldPos = { 0, 0, 0 };
     float3 normal = { 0, 0, 0 };
@@ -12,16 +22,16 @@ VS_OUT main(VS_IN vin)
 		// boneWeight[0] == boneWeight.x
         // 多分元の頂点にボーンオフセット行列を掛けて位置を算出している
         // それぞれのウェイトの影響度を加算
-        worldPos += (vin.boneWeights[i] * mul(vin.position, boneTransforms[vin.boneIndices[i]])).xyz;
-        normal += (vin.boneWeights[i] * mul(float4(vin.normal, 0), boneTransforms[vin.boneIndices[i]])).xyz;
+        worldPos += (vin.bone_weights[i] * mul(bone_transforms[vin.bone_indices[i]], vin.position)).xyz;
+        normal   += (vin.bone_weights[i] * mul(bone_transforms[vin.bone_indices[i]], float4(vin.normal, 0))).xyz;
     }
 
-    float4 wvpPos = mul(float4(worldPos, 1.0f), viewProjection); // World coordinate transformation
+    float4 wvp_pos = mul(camera_view_projection_matrix, float4(worldPos, 1.0f)); // World coordinate transformation
 
-    vout.position = wvpPos;
-    vout.color    = m_Color;
-    vout.normal = normalize(normal);
-    vout.texcoord = vin.texcoord;
+    vout.position  = wvp_pos;
+    vout.color     = material.base_color;
+    vout.normal    = normalize(normal);
+    vout.texcoord0 = vin.texcoord0;
 
     return vout;
 }

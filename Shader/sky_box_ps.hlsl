@@ -1,18 +1,14 @@
-#define USE_LOCAL_POSITION
-#define USE_BONE_WEIGHTS
-#define USE_BONE_INDICES
-#define USE_VOUT_NORMAL
-#define USE_TEXCOORD0
-#define USE_WORLD_POSITION
+// PS_Input(VS_Output)
+#define PIN_USE_W_POSITION
+#define PIN_USE_NORMAL
 
-#include "general.hlsli"
+#include "globals.hlsli"
 
-TextureCube texture_cube : register(t0);
 SamplerState default_sampler : register(s0);
 
 float4 main(PS_Input pin) : SV_TARGET
 {
-    float3 view_vec = pin.world_position.xyz;
+    float3 view_vec = pin.w_position.xyz;
     float3 ref = reflect(view_vec, pin.normal);
     ref = normalize(ref);
 

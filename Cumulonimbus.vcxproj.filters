@@ -755,9 +755,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
-    <None Include="Shader\3d_standard.hlsli">
-      <Filter>Shader%28HLSL%29\HF</Filter>
-    </None>
     <None Include="Shader\bloom.hlsli">
       <Filter>Shader%28HLSL%29\HF</Filter>
     </None>

@@ -1,22 +1,30 @@
-#include "general.hlsli"
+// PS_Input(VS_Output)
+#define PIN_USE_WVP_POSITION
+#define PIN_USE_NORMAL
+#define PIN_USE_COLOR
+#define PIN_USE_TEXCOORD0     // 読み込んだテクスチャのUV値
+
+#include "globals.hlsli"
 #include "phong.hlsli"
 #include "functions.hlsli"
 
 //*******************************************
 //  Txture
 //*******************************************
-Texture2D diffuseTexture : register(t0);
+//Texture2D diffuseTexture : register(t0);
 SamplerState defaultSampler : register(s0);
 
-float4 main(VS_OUT pin) : SV_TARGET
+float4 main(PS_Input pin) : SV_TARGET
 {
-    float4 color        = diffuseTexture.Sample(defaultSampler, pin.texcoord);
+    float3 eye_vector = light_position.xyz - pin.wvp_position.xyz;
+
+    float4 color        = texture_base_color.Sample(defaultSampler, pin.texcoord0);
     float3 N            = normalize(pin.normal);    // Normal
-    float3 E            = normalize(pin.eyeVector); // Eye vector
+    float3 E            = normalize(eye_vector); // Eye vector
     float3 L            = normalize(light_direction.xyz);  // Light direction
     float3 reflectance  = { 1.0f, 1.0f, 1.0f };
 
-    float3 A = m_Ka.xyz;
+    float3 A = light_color;
 
     float3 D = Diffuse(N, L, pin.color.xyz, reflectance);
 
