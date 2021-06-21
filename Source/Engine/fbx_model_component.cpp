@@ -13,13 +13,14 @@
 #include "locator.h"
 #include "shader_manager.h"
 #include "transform_component.h"
+#include "material_component.h"
 
 namespace cumulonimbus::component
 {
 	FbxModelComponent::FbxModelComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const std::shared_ptr<FbxModelResource>& resource)
 		:ComponentBase{ registry , ent }
 	{
-		cb_material = std::make_shared<buffer::ConstantBuffer<MaterialCB>>(Locator::GetDx11Device()->device.Get());
+		registry->AddComponent<component::MaterialComponent>(ent);
 
 		this->resource = resource;
 
@@ -390,29 +391,6 @@ namespace cumulonimbus::component
 		assert(!"Not found node name");
 
 		return DirectX::SimpleMath::Matrix::Identity;
-	}
-
-	void FbxModelComponent::SetMaterial(const MaterialCB& material) const
-	{
-		cb_material->data = material;
-	}
-
-	void FbxModelComponent::BindCBuffer(bool set_in_vs, bool set_in_ps) const
-	{
-		cb_material->Activate(Locator::GetDx11Device()->immediate_context.Get(), CBSlot_Material, set_in_vs, set_in_ps);
-	}
-
-	void FbxModelComponent::UnbindCBuffer() const
-	{
-		cb_material->Deactivate(Locator::GetDx11Device()->immediate_context.Get());
-	}
-
-
-	void FbxModelComponent::SetAndBindCBuffer(const MaterialCB& material,
-											  bool set_in_vs, bool set_in_ps) const
-	{
-		SetMaterial(material);
-		BindCBuffer(set_in_vs, set_in_ps);
 	}
 
 

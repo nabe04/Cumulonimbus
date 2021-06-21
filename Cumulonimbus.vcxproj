@@ -75,6 +75,7 @@
     <ClInclude Include="Source\Engine\light.h" />
     <ClInclude Include="Source\Engine\locator.h" />
     <ClInclude Include="Source\Engine\Logger.h" />
+    <ClInclude Include="Source\Engine\material_component.h" />
     <ClInclude Include="Source\Engine\mesh_object.h" />
     <ClInclude Include="Source\Engine\mesh_particle.h" />
     <ClInclude Include="Source\Engine\obj_model_component.h" />
@@ -179,6 +180,7 @@
     <ClCompile Include="Source\Engine\light.cpp" />
     <ClCompile Include="Source\Engine\Logger.cpp" />
     <ClCompile Include="Source\Engine\main.cpp" />
+    <ClCompile Include="Source\Engine\material_component.cpp" />
     <ClCompile Include="Source\Engine\mesh_object.cpp" />
     <ClCompile Include="Source\Engine\mesh_particle.cpp" />
     <ClCompile Include="Source\Engine\obj_model_component.cpp" />

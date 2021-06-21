@@ -1,9 +1,9 @@
 #pragma once
-
 #include <cassert>
 
 #include <d3d11.h>
 #include <wrl.h>
+#include <cereal/cereal.hpp>
 
 namespace buffer
 {
@@ -14,7 +14,7 @@ namespace buffer
 	public:
 		T data;
 
-		ConstantBuffer(ID3D11Device* const device)
+		explicit ConstantBuffer(ID3D11Device* const device)
 		{
 			int size = sizeof(T);
 			if (sizeof(T) % 16 != 0)
@@ -32,6 +32,7 @@ namespace buffer
 				assert(!"CreateBuffer error(Constant buffer)");
 		}
 
+		explicit ConstantBuffer() = default; // for cereal
 		virtual ~ConstantBuffer() = default;
 		//ConstantBuffer(ConstantBuffer&) = delete;
 		//ConstantBuffer(ConstantBuffer&&) = delete;
@@ -62,10 +63,14 @@ namespace buffer
 
 		void SetData(const T& data) { this->data = data; }
 
+		template<typename Archive>
+		void serialize(Archive&& archive)
+		{
+			archive(CEREAL_NVP(data));
+		}
 	private:
 		unsigned int using_slot{};
 		Microsoft::WRL::ComPtr<ID3D11Buffer> buffer_object{};
-
 	};
 
 }

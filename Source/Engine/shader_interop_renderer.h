@@ -1,5 +1,12 @@
 #ifndef SHADER_INTEROP_RENDERER_H
 #define SHADER_INTEROP_RENDERER_H
+
+#ifdef __cplusplus
+	#include <cereal/cereal.hpp>
+
+	#include "cereal_helper.h"
+#endif // __cplusplus
+
 #include "shader_interop.h"
 
 #define MaxBones 128 // ボーンの最大数
@@ -13,6 +20,21 @@ struct ShaderMaterial
 	float reflectance;
 	float metalness;
 	float material_padding;
+
+#ifdef __cplusplus
+	template<typename Archive>
+	void serialize(Archive&& archive)
+	{
+		archive(
+			CEREAL_NVP(base_color),
+			CEREAL_NVP(emissive_color),
+			CEREAL_NVP(roughness),
+			CEREAL_NVP(reflectance),
+			CEREAL_NVP(metalness)
+		);
+	}
+
+#endif // __cplusplus
 };
 
 // 共通のコンスタントバッファ
@@ -86,6 +108,16 @@ CBUFFER(TransformCB, CBSlot_Transform)
 CBUFFER(MaterialCB, CBSlot_Material)
 {
 	ShaderMaterial material;
+
+#ifdef __cplusplus
+	template<typename Archive>
+	void serialize(Archive && archive)
+	{
+		archive(
+			CEREAL_NVP(material)
+		);
+	}
+#endif // __cplusplus
 };
 
 

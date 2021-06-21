@@ -3,7 +3,6 @@
 
 #include <cereal/cereal.hpp>
 
-//#include "ecs.h"
 #include "rename_type_mapping.h"
 
 namespace cumulonimbus::ecs

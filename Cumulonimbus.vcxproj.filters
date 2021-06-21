@@ -411,6 +411,9 @@
     <ClCompile Include="Source\Engine\component_base.cpp">
       <Filter>Source\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\material_component.cpp">
+      <Filter>Source\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -742,6 +745,9 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\shader_interop_renderer.h">
       <Filter>Header\System\Mapping</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\material_component.h">
+      <Filter>Header\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -97,11 +97,6 @@ namespace cumulonimbus::component
 		 */
 		void SetIsStatic(const bool flg) { is_static = flg; }
 
-		void SetMaterial(const MaterialCB& material) const;
-		void BindCBuffer(bool set_in_vs = true, bool set_in_ps = true) const;
-		void UnbindCBuffer() const;
-		void SetAndBindCBuffer(const MaterialCB& material, bool set_in_vs = true, bool set_in_ps = true) const;
-
 		void Save(const std::string& file_path) override;
 		void Load(const std::string& file_path_and_name) override;
 
@@ -136,8 +131,6 @@ namespace cumulonimbus::component
 	private:
 		std::shared_ptr<FbxModelResource>	resource{nullptr};
 		std::vector<Node>					nodes{};
-
-		std::shared_ptr<buffer::ConstantBuffer<MaterialCB>> cb_material;
 
 		int	current_animation_index = -1;
 		int	prev_animation_index	= -1;	// 前のアニメーションのインデックス番号(ブレンドで使用)

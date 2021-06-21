@@ -26,6 +26,7 @@
 #include "sprite.h"
 #include "sprite_object.h"
 #include "transform_component.h"
+#include "material_component.h"
 
 namespace cumulonimbus::ecs
 {
@@ -114,6 +115,7 @@ namespace cumulonimbus::ecs
 		RegistryComponent<component::GeomPrimComponent>();
 		RegistryComponent<component::ObjModelComponent>();
 		RegistryComponent<component::SkyBoxComponent>();
+		RegistryComponent<component::MaterialComponent>();
 	}
 
 	void Registry::Save(const std::string& filename)

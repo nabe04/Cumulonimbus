@@ -70,13 +70,21 @@ namespace cumulonimbus::component
 		}
 	}
 
-	void TransformComponent::BindCBuffer(const TransformCB& transform, bool set_in_vs, bool set_in_ps) const
+	void TransformComponent::SetTransformCB(const TransformCB transform) const
 	{
 		cb_transform->data = transform;
+	}
+
+	void TransformComponent::BindCBuffer(bool set_in_vs, bool set_in_ps) const
+	{
 		cb_transform->Activate(Locator::GetDx11Device()->immediate_context.Get(), CBSlot_Transform, set_in_vs, set_in_ps);
 	}
 
-
+	void TransformComponent::SetAndBindCBuffer(const TransformCB& transform, bool set_in_vs, bool set_in_ps) const
+	{
+		SetTransformCB(transform);
+		BindCBuffer(set_in_vs, set_in_ps);
+	}
 
 	void TransformComponent::CreateScaling4x4()
 	{

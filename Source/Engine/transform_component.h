@@ -28,7 +28,9 @@ namespace cumulonimbus::component
 		void Save(const std::string& file_path) override;
 		void Load(const std::string& file_path_and_name) override;
 
-		void BindCBuffer(const TransformCB& transform, bool set_in_vs = true, bool set_in_ps = true) const;
+		void SetTransformCB(const TransformCB transform) const;
+		void BindCBuffer(bool set_in_vs = true, bool set_in_ps = true) const;
+		void SetAndBindCBuffer(const TransformCB& transform, bool set_in_vs = true, bool set_in_ps = true) const;
 
 		//-- Creating a World TransforBmation Matrix --//
 		void CreateWorldTransformMatrix();
