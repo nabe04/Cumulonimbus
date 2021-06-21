@@ -161,9 +161,7 @@ namespace cumulonimbus::renderer
 			// sampler stateはメッシュに関係なくLinearBorderを使用
 			BindDirectXStates(immediate_context, &mesh_object);
 
-			// TODO: Shaderのスロットをmapping用に変更したら消す
 			Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, depth_map->GetDepthExtractionSRV(), TexSlot_Depth);
-			//Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, sky_box_srv.GetAddressOf(), 2);
 
 			shader_manager->Activate(immediate_context, registry->GetComponent<component::MeshObjectComponent>(ent).GetShaderState());
 

@@ -13,15 +13,12 @@
 #include "locator.h"
 #include "shader_manager.h"
 #include "transform_component.h"
-#include "material_component.h"
 
 namespace cumulonimbus::component
 {
 	FbxModelComponent::FbxModelComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const std::shared_ptr<FbxModelResource>& resource)
 		:ComponentBase{ registry , ent }
 	{
-		registry->AddComponent<component::MaterialComponent>(ent);
-
 		this->resource = resource;
 
 		// ÉmÅ[Éh

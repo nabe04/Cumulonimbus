@@ -66,9 +66,9 @@ namespace cumulonimbus::component
 			}
 		};
 
-		explicit FbxModelComponent() = default; // For cereal
+		explicit FbxModelComponent() = default; // for cereal
 		explicit FbxModelComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const std::shared_ptr<FbxModelResource>& resource);
-		~FbxModelComponent()override = default;
+		~FbxModelComponent() override = default;
 
 		void NewFrame(float delta_time) override;
 		void Update(float delta_time) override;

@@ -1,13 +1,17 @@
 #include "mesh_object.h"
 
+#include <fstream>
 #include <string>
 #include <vector>
-#include <fstream>
 
+#include <imgui.h>
 #include <nameof.h>
 #include <cereal/archives/json.hpp>
+#include <cereal/types/vector.hpp>
 
+#include "ecs.h"
 #include "file_path_helper.h"
+#include "material_component.h"
 #include "sampler.h"
 
 namespace cumulonimbus::component
@@ -15,6 +19,8 @@ namespace cumulonimbus::component
 	MeshObjectComponent::MeshObjectComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent)
 		:ComponentBase{ registry, ent }
 	{
+		registry->AddComponent<component::MaterialComponent>(ent);
+
 		blend_state.SetState(BlendState::Alpha);
 		rasterizer_state.SetState(RasterizeState::Cull_Back);
 		sampler_state.SetState(RenderingSampleState::Linear_Border);

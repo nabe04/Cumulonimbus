@@ -24,6 +24,8 @@ private:
 	bool is_switched = false;
 
 public:
+	~StateMachine() = default;
+	
 	void AddState(Key state, std::function<ReturnVal(Args...)> callback)
 	{
 		if (states.contains(state))

@@ -137,6 +137,7 @@ void Scene::Initialize()
 
 void Scene::UnInitialize()
 {
+	registry->DestroyAllEntities();
 	UnInitializeScene();
 }
 
