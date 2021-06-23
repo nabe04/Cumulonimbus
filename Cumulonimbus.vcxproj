@@ -79,6 +79,7 @@
     <ClInclude Include="Source\Engine\material_instance_component.h" />
     <ClInclude Include="Source\Engine\mesh_object.h" />
     <ClInclude Include="Source\Engine\mesh_particle.h" />
+    <ClInclude Include="Source\Engine\normal_map_resource.h" />
     <ClInclude Include="Source\Engine\obj_model_component.h" />
     <ClInclude Include="Source\Engine\metal.h" />
     <ClInclude Include="Source\Engine\Misc.h" />

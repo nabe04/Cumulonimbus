@@ -116,23 +116,28 @@ void SceneGame::InitializeScene()
 	registry->AddComponent<cum::component::FbxModelComponent>(ent_bunny, Locator::GetResourceManager()->FbxModelResouece("stanford_bunny"));
 	registry->GetComponent<cum::component::TransformComponent>(ent_bunny).SetScale(0.1f);
 
+	const cum::mapping::rename_type::Entity ent_player = registry->CreateEntity();
+	const char* ganfaul_filename = "./Data/Assets/Bin/ganfaul.bin";
+	std::shared_ptr<FbxModelResource> ganfaul_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), ganfaul_filename, "./Data/Assets/FBX/ganfaul/character.fbm/");
+	registry->AddComponent<cum::component::MeshObjectComponent>(ent_player);
+	registry->AddComponent<cum::component::FbxModelComponent>(ent_player, Locator::GetResourceManager()->FbxModelResouece("ganfaul"));
+	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetScale(0.3f);
+	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetPosition({ 30, 10, 0 });
+	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetWorldRotation_Y(180);
+	registry->GetComponent<cum::component::MeshObjectComponent>(ent_player).SetRasterizerState(RasterizeState::Cull_Front_CCW_True);
+	registry->GetComponent<cum::component::FbxModelComponent>(ent_player).SwitchAnimation(2, true);
 
-	//auto* sample01 = AddEntity(UpdateOrder::Default, EntityTag::Bunny);
-	//sample01->AddComponent<MeshObject>();
-	//sample01->GetComponent<MeshObject>()->SetShaderState(shader::MeshShaderTypes::Metal);
-	//sample01->AddComponent<FbxModelComponent>(Locator::GetResourceManager()->FbxModelResouece("stanford_bunny"));
-	//sample01->GetComponent<TransformComponent>()->SetScale(0.01f);
-	//sample01->GetComponent<TransformComponent>()->SetEyePosition({ 0,4,30 });
-	//sample01->GetComponent<TransformComponent>()->SetScale(0.01f);
-	//sample01->AddComponent<SampleRotation>();
-	//sample01->SetEntityName("Bunny");
-
-	//auto& com	 = registry->GetArray<cum::component::SkyBoxComponent>();
-	//auto& com2 = registry->GetArray<cum::component::TransformComponent>();
-	//auto& com3    = registry->GetArray<cum::component::ActorComponent>();
-
-	//int a;
-	//a = 0;
+	//const char* ganfaul_filename = "./Data/Assets/Bin/ganfaul.bin";
+	//std::shared_ptr<FbxModelResource> ganfaul_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), ganfaul_filename, "./Data/Assets/FBX/ganfaul/character.fbm/");
+	//auto* player = AddEntity(UpdateOrder::Default, EntityTag::Player);
+	//player->AddComponent<MeshObject>();
+	//player->AddComponent<FbxModelComponent>(Locator::GetResourceManager()->FbxModelResouece("ganfaul"));
+	//player->GetComponent<TransformComponent>()->SetScale(0.3f);
+	//player->GetComponent<TransformComponent>()->SetPosition({ 0,10, 0 });
+	//player->GetComponent<TransformComponent>()->SetWorldRotation_Y(180);
+	//player->GetComponent<MeshObject>()->SetRasterizerState(RasterizeState::Cull_Back_CCW_True);
+	//player->GetComponent<FbxModelComponent>()->SwitchAnimation(2, true); // 0,1 T_Pose 2 Walk 3 Run 4 Attack
+	//player->SetEntityName("Player");
 }
 
 void SceneGame::UpdateScene(const float delta_time)

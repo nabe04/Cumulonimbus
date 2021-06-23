@@ -57,8 +57,8 @@ public:
 	}
 
 private:
-	inline static std::shared_ptr<InputSystem> input{};
-	inline static std::shared_ptr<ResourceManager> resource_manager{};
-	inline static std::shared_ptr<Window> window{};
-	inline static std::shared_ptr<Dx11Device> dx11_configurator{};
+	inline static std::shared_ptr<InputSystem>		input{};
+	inline static std::shared_ptr<ResourceManager>	resource_manager{};
+	inline static std::shared_ptr<Window>			window{};
+	inline static std::shared_ptr<Dx11Device>		dx11_configurator{};
 };

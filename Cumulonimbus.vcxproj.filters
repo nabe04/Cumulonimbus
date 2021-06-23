@@ -779,6 +779,9 @@
     <ClInclude Include="Source\Engine\material_instance_component.h">
       <Filter>Header\Components</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\normal_map_resource.h">
+      <Filter>Header\System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Cumulonimbus.rc" />

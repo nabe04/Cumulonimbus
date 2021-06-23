@@ -29,7 +29,6 @@ CBUFFER(PhongCB, CBSlot_Phong)
 			CEREAL_NVP(phong_pow_value)
 		);
 	}
-	
 #endif // __cplusplus
 };
 

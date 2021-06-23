@@ -9,10 +9,8 @@
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <DirectXTex.h>
+#include <cereal/cereal.hpp>
 
-#include "cereal/cereal.hpp"
-#include "cereal/types/string.hpp"
-#include "cereal/types/memory.hpp"
 
 class TextureResource final
 {
@@ -23,8 +21,8 @@ private:
 		std::string file_path;
 		std::string filename;
 		DXGI_FORMAT format;
-		u_int width;
-		u_int height;
+		u_int		width;
+		u_int		height;
 		DirectX::TexMetadata metadata;
 		DirectX::ScratchImage scratch;
 
@@ -43,7 +41,7 @@ public:
 	TextureResource(ID3D11Device* device, const char* tex_filename);
 	TextureResource() = default; // for cereal
 	[[nodiscard]] const TextureData* GetTextureData() const { return texture_data.get(); }
-	
+
 	template<class Archive>
 	void serialize(Archive&& archive)
 	{
