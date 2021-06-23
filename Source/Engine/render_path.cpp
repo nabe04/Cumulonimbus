@@ -29,7 +29,7 @@ namespace cumulonimbus::renderer
 		fullscreen_quad = std::make_unique<FullscreenQuad>(device);
 		depth_map		= std::make_unique<DepthMap>(device);
 
-		shader_manager		= std::make_unique<shader::ShaderManager>( device );
+		old_shader_manager		= std::make_unique<shader::ShaderManager>( device );
 		shader_manager_2d	= std::make_unique<shader::SpriteShaderManager>(device);
 		blend				= std::make_unique<Blend>(device);
 		depth_stencil		= std::make_unique<DepthStencil>(device);
@@ -165,7 +165,7 @@ namespace cumulonimbus::renderer
 
 			Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, depth_map->GetDepthExtractionSRV(), TexSlot_Depth);
 
-			shader_manager->Activate(immediate_context, registry->GetComponent<component::MeshObjectComponent>(ent).GetShaderState());
+			old_shader_manager->Activate(immediate_context, registry->GetComponent<component::MeshObjectComponent>(ent).GetShaderState());
 
 			if (auto* geom = registry->TryGetComponent<component::GeomPrimComponent>(ent))
 			{

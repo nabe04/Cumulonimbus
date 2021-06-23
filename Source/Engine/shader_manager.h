@@ -1,9 +1,9 @@
 #pragma once
 
 #include <memory>
+#include <unordered_map>
 
 #include <d3d11.h>
-
 #include <cereal/cereal.hpp>
 
 #include "shader.h"
@@ -202,6 +202,38 @@ namespace cumulonimbus
 			 *		   シェーダーを変える
 			 */
 			void BindShader(mapping::shader_assets::ShaderAsset2D asset);
+
+
+			void UnbindShader(mapping::shader_assets::ShaderAsset3D asset);
+
+			void UnbindShader(mapping::shader_assets::ShaderAsset2D asset);
+		private:
+			std::unordered_map<mapping::shader_assets::ShaderAsset3D, std::unique_ptr<shader_system::Shader>> shader3d_map;
+			std::unordered_map<mapping::shader_assets::ShaderAsset2D, std::unique_ptr<shader_system::Shader>> shader2d_map;
+
+			/*
+			 * brief : 作成したシェーダーの登録(3D)
+			 */
+			template<typename T>
+			void RegistryShader(mapping::shader_assets::ShaderAsset3D asset_type)
+			{
+				if (shader3d_map.contains(asset_type))
+					return;
+
+				shader3d_map.emplace(asset_type, std::make_unique<T>());
+			}
+
+			/*
+			 * brief : 作成したシェーダーの登録(2D)
+			 */
+			template<typename T>
+			void RegistryShader(mapping::shader_assets::ShaderAsset2D asset_type)
+			{
+				if (shader2d_map.contains(asset_type))
+					return;
+
+				shader2d_map.emplace(asset_type, std::make_unique<T>());
+			}
 		};
 	}
 }

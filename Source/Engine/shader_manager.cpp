@@ -5,6 +5,16 @@
 #include "scene.h"
 #include "gaussian_blur.h"
 
+// Shaders
+#include "3d_standard.h"
+#include "diffuse.h"
+#include "phong.h"
+#include "metal.h"
+#include "toon.h"
+#include "reflection_mapping.h"
+#include "refraction_mapping.h"
+#include "single_color.h"
+
 namespace shader
 {
 	//***************************************
@@ -323,5 +333,43 @@ namespace shader
 	{
 		deactivate_shader_state.SetState(state);
 		deactivate_shader_state.Update(immediate_context);
+	}
+}
+
+
+namespace cumulonimbus::shader_system
+{
+	ShaderManager::ShaderManager()
+	{
+		using namespace mapping::shader_assets;
+		// Shader‚ÌƒRƒ“ƒpƒCƒ‹
+		// 3D
+		RegistryShader<shader_system::Standard3DShader>			(ShaderAsset3D::Standard);
+		RegistryShader<shader_system::DiffuseShader>			(ShaderAsset3D::Diffuse);
+		RegistryShader<shader_system::PhongShader>				(ShaderAsset3D::Phong);
+		RegistryShader<shader_system::MetalShader>				(ShaderAsset3D::Metal);
+		RegistryShader<shader_system::ToonShader>				(ShaderAsset3D::Toon);
+		RegistryShader<shader_system::ReflectionMappingShader>	(ShaderAsset3D::ReflectionMapping);
+		RegistryShader<shader_system::RefractionMappingShader>	(ShaderAsset3D::RefractionMapping);
+		RegistryShader<shader_system::SingleColorShader>		(ShaderAsset3D::SingleColor);
+	}
+
+	void ShaderManager::BindShader(mapping::shader_assets::ShaderAsset3D asset)
+	{
+		shader3d_map.at(asset)->BindShader();
+	}
+
+	void ShaderManager::BindShader(mapping::shader_assets::ShaderAsset2D asset)
+	{
+
+	}
+
+	void ShaderManager::UnbindShader(mapping::shader_assets::ShaderAsset3D asset)
+	{
+		shader3d_map.at(asset)->UnbindShader();
+	}
+
+	void ShaderManager::UnbindShader(mapping::shader_assets::ShaderAsset2D asset)
+	{
 	}
 }

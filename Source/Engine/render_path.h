@@ -52,7 +52,10 @@ namespace cumulonimbus::renderer
 
 	private:
 		// すべてのシェーダーの生成とセット
-		std::unique_ptr<shader::ShaderManager>		 shader_manager;
+		//std::unique_ptr<shader_system::ShaderManager>
+
+		// TODO: ShaderManagerを変更完了すれば消す
+		std::unique_ptr<shader::ShaderManager>		 old_shader_manager;
 		std::unique_ptr<shader::SpriteShaderManager> shader_manager_2d;
 
 		//-- DirectX States --//
