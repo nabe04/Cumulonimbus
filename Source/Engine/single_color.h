@@ -1,15 +1,66 @@
-#pragma once
+#ifndef SINGLE_COLOR_H
+#define SINGLE_COLOR_H
 
+#ifdef __cplusplus
 #include <memory>
 
 #include <DirectXMath.h>
-
-#include <cereal/cereal.hpp>
 #include <imgui.h>
+#include <cereal/cereal.hpp>
 
-#include "shader.h"
-#include "constant_buffer.h"
 #include "cereal_helper.h"
+#include "constant_buffer.h"
+#include "shader.h"
+#include "shader_asset.h"
+#endif // __cplusplus
+
+#include "shader_interop_renderer.h"
+
+CBUFFER(SingleColorCB, CBSlot_SingleColor)
+{
+	float4 single_color;
+
+#ifdef __cplusplus
+	template<typename Archive>
+	void serialize(Archive&& archive)
+	{
+		archive(
+			CEREAL_NVP(single_color)
+		);
+	}
+#endif // __cplusplus
+};
+
+#ifdef __cplusplus
+namespace cumulonimbus
+{
+	namespace shader_system
+	{
+		class SingleColorShader final : public Shader
+		{
+		public:
+			explicit SingleColorShader();
+		};
+	}
+
+	namespace shader_asset
+	{
+		class SingleColorAsset final : public ShaderAsset
+		{
+		public:
+			SingleColorAsset();
+
+			void BindCBuffer()   override;
+			void UnbindCBuffer() override;
+			void RenderImGui()   override;
+
+		private:
+			std::unique_ptr<buffer::ConstantBuffer<SingleColorCB>> cb_single_color{ nullptr };
+		};
+	}
+}
+
+
 
 namespace shader
 {
@@ -55,3 +106,7 @@ namespace shader
 		void Deactivate(ID3D11DeviceContext* immediate_context) override;
 	};
 }
+
+#endif // __cplusplus
+
+#endif // SINGLE_COLOR_H

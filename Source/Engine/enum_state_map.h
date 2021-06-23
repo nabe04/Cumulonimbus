@@ -30,6 +30,8 @@ public:
 				std::make_pair(
 					nameof::nameof_enum(flag).data(),
 					static_cast<T>(i)));
+
+			state_names.emplace_back(nameof::nameof_enum(flag).data());
 		}
 
 		auto flag	  = static_cast<T>(0);
@@ -42,6 +44,8 @@ public:
 	}
 
 	[[nodiscard]] unsigned int NumState() const { return state_map.size(); }
+	[[nodiscard]] const std::map<std::string, T>& GetStateMap() const { return state_map; }
+	[[nodiscard]] const std::vector<std::string>  GetStateNames() const { return state_names; }
 
 	[[nodiscard]] const T& GetCurrentState() const { return current_state; }
 	[[nodiscard]] std::string GetCurrentStateName() { return nameof::nameof_enum(current_state).data(); }
@@ -76,6 +80,7 @@ public:
 
 private:
 	std::map<std::string, T> state_map{};
+	std::vector<std::string> state_names{};
 
 	T current_state{};
 };

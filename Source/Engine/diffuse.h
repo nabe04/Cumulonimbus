@@ -1,7 +1,6 @@
 #pragma once
-#include <wrl.h>
-
 #include "shader.h"
+#include "shader_asset.h"
 
 namespace shader
 {
@@ -17,4 +16,31 @@ namespace shader
 		void Activate(ID3D11DeviceContext* immediate_context) override;
 		void Deactivate(ID3D11DeviceContext* immediate_context) override;
 	};
+}
+
+namespace cumulonimbus
+{
+	namespace shader_system
+	{
+		class DiffuseShader : public Shader
+		{
+		public:
+			DiffuseShader();
+		};
+	}
+
+	namespace shader_asset
+	{
+		class DiffuseAsset final : public ShaderAsset
+		{
+		public:
+			explicit DiffuseAsset()  = default;
+			~DiffuseAsset() override = default;
+
+			void BindCBuffer()   override {}
+			void UnbindCBuffer() override {}
+			void RenderImGui()   override {}
+		};
+	}
+
 }

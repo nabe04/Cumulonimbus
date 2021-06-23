@@ -3,8 +3,7 @@
 #include <memory>
 
 #include "framework.h"
-
-#include "imgui.h"
+#include "shader_filename_mapping.h"
 
 namespace shader
 {
@@ -25,5 +24,19 @@ namespace shader
 	{
 		vertex_shader->Deactivate(immediate_context);
 		pixel_shader->Deactivate(immediate_context);
+	}
+}
+
+namespace cumulonimbus
+{
+	namespace shader_system
+	{
+		DiffuseShader::DiffuseShader()
+			:Shader{}
+		{
+			vertex_shader = std::make_unique<shader_system::VertexShader>(mapping::shader_filename::vs::Diffuse_VS().c_str());
+			pixel_shader  = std::make_unique<shader_system::PixelShader>(mapping::shader_filename::ps::Diffuse_PS().c_str());
+		}
+
 	}
 }

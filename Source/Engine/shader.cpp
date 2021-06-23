@@ -67,7 +67,6 @@ namespace shader
 		auto it = checkShader.find(cso_name);
 		if (it != checkShader.end())
 		{
-			// ���݂��Ă����
 			*pixel_shader = it->second.Get();
 			(*pixel_shader)->AddRef();
 			return S_OK;
@@ -182,4 +181,84 @@ namespace shader
 	{
 		immediate_context->PSSetShader(default_shader_object.Get(), 0, 0);
 	}
+}
+
+namespace cumulonimbus::shader_system
+{
+	void Shader::BindShader() const
+	{
+		if (vertex_shader)
+			vertex_shader->BindVS();
+		if (pixel_shader)
+			pixel_shader->BindPS();
+	}
+
+	void Shader::BindShader(const mapping::graphics::ShaderStage stage) const
+	{
+		using namespace mapping::graphics;
+
+		switch(stage)
+		{
+		case ShaderStage::VS:
+			if (vertex_shader)
+			 vertex_shader->BindVS();
+			break;
+		//case ShaderStage::DS:
+
+		//	break;
+		//case ShaderStage::GS:
+
+		//	break;
+		case ShaderStage::PS:
+			if (pixel_shader)
+			 pixel_shader->BindPS();
+			break;
+		//case ShaderStage::CS:
+
+		//	break;
+		default:
+			assert(0);
+			break;
+		}
+	}
+
+	void Shader::UnbindShader() const
+	{
+		if(vertex_shader)
+			vertex_shader->UnbindVS();
+		if(pixel_shader)
+			pixel_shader->UnbindPS();
+	}
+
+	void Shader::UnbindShader(mapping::graphics::ShaderStage stage) const
+	{
+		using namespace mapping::graphics;
+
+		switch (stage)
+		{
+		case ShaderStage::VS:
+			if (vertex_shader)
+			 vertex_shader->UnbindVS();
+			break;
+		//case ShaderStage::DS:
+
+		//	break;
+		//case ShaderStage::GS:
+
+		//	break;
+		case ShaderStage::PS:
+			if (pixel_shader)
+			 pixel_shader->UnbindPS();
+			break;
+		//case ShaderStage::CS:
+
+		//	break;
+		default:
+			assert(0);
+			break;
+		}
+	}
+
+
+
 }

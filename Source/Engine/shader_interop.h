@@ -22,8 +22,11 @@ typedef DirectX::XMINT2		int2;
 typedef DirectX::XMINT3		int3;
 typedef DirectX::XMINT4		int4;
 
+// ïœêîñº
 #define CG_GETBINDSLOT(name) __CBUFFERBINDSLOT__##name##__
-#define CBUFFER(name, slot) static const int CG_GETBINDSLOT(name) = slot; struct alignas(16) name
+#define CBUFFER(name, slot) \
+	static const int CG_GETBINDSLOT(name) = slot; \
+	struct alignas(16) name
 #define CONSTANTBUFFER(name, type, slot) CBUFFER(name, slot)
 
 #else

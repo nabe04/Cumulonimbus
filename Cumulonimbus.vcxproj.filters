@@ -243,12 +243,6 @@
     <ClCompile Include="Source\Engine\refraction_mapping.cpp">
       <Filter>Source\Shader%28.cpp%29</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\shader.cpp">
-      <Filter>Source\Shader%28.cpp%29</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\shader_manager.cpp">
-      <Filter>Source\Shader%28.cpp%29</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Engine\shadow_map.cpp">
       <Filter>Source\Shader%28.cpp%29</Filter>
     </ClCompile>
@@ -414,6 +408,24 @@
     <ClCompile Include="Source\Engine\material_component.cpp">
       <Filter>Source\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\shader_manager.cpp">
+      <Filter>Source\Shader%28.cpp%29\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\shader.cpp">
+      <Filter>Source\Shader%28.cpp%29\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\vertex_shader.cpp">
+      <Filter>Source\Shader%28.cpp%29\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\pixel_shader.cpp">
+      <Filter>Source\Shader%28.cpp%29\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\shader_assets_component.cpp">
+      <Filter>Source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\material_instance_component.cpp">
+      <Filter>Source\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -528,12 +540,6 @@
       <Filter>Header\Shader%28.h%29</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\shadow_map.h">
-      <Filter>Header\Shader%28.h%29</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\shader_manager.h">
-      <Filter>Header\Shader%28.h%29</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\shader.h">
       <Filter>Header\Shader%28.h%29</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\refraction_mapping.h">
@@ -749,6 +755,30 @@
     <ClInclude Include="Source\Engine\material_component.h">
       <Filter>Header\Components</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\shader_asset_mapping.h">
+      <Filter>Header\System\Mapping</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\shader_manager.h">
+      <Filter>Header\Shader%28.h%29\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\shader.h">
+      <Filter>Header\Shader%28.h%29\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\vertex_shader.h">
+      <Filter>Header\Shader%28.h%29\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\pixel_shader.h">
+      <Filter>Header\Shader%28.h%29\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\shader_asset.h">
+      <Filter>Header\Shader%28.h%29\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\shader_assets_component.h">
+      <Filter>Header\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\material_instance_component.h">
+      <Filter>Header\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Cumulonimbus.rc" />
@@ -867,6 +897,12 @@
     </Filter>
     <Filter Include="Shader%28HLSL%29\CS">
       <UniqueIdentifier>{3fec1b3a-5e9d-4078-8212-5812449ea139}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Shader%28.h%29\System">
+      <UniqueIdentifier>{5e337ae4-2443-41ab-82fa-54e9a430b2a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Shader%28.cpp%29\System">
+      <UniqueIdentifier>{6befa1f9-9451-4628-83ee-660e5eba045a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -14,17 +14,17 @@ namespace cumulonimbus::component
 	{
 	public:
 		explicit MaterialComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
-		explicit MaterialComponent() = default; // for cereal
+		explicit MaterialComponent()  = default; // for cereal
 		~MaterialComponent() override = default;
 
 		void NewFrame(float dt) override {}
-		void Update(float dt)	override {}
+		void Update(float dt)	override;
 		void RenderImGui()		override;
 
 		void Load(const std::string& file_path_and_name) override;
 		void Save(const std::string& file_path) override;
 
-		[[nodiscard]] const MaterialCB& GetMaterialData() const { return cb_material->data; }
+	//	[[nodiscard]] const MaterialCB& GetMaterialData() const { return cb_material->data; }
 		void SetMaterialCB(const MaterialCB& material) const;
 		void BindCBuffer(bool set_in_vs = true, bool set_in_ps = true) const;
 		void SetAndBindCBuffer(const MaterialCB& material, bool set_in_vs = true, bool set_in_ps = true) const;

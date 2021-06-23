@@ -7,6 +7,9 @@
 #include <DirectXMath.h>
 
 #include "constant_buffer.h"
+#include "vertex_shader.h"
+#include "pixel_shader.h"
+#include "graphics_mapping.h"
 
 #include "imgui.h"
 
@@ -228,6 +231,37 @@ namespace shader
 	};
 }
 
+namespace cumulonimbus::shader_system
+{
+	class Shader
+	{
+	public:
+		explicit Shader() = default;
+		virtual ~Shader() = default;
+
+		/*
+		 * brief : nullptrでないシェーダーをすべてセット(Activate)
+		 */
+		void BindShader() const;
+		/*
+		 * brief : シェーダーを個別にセット(Activate)
+		 */
+		void BindShader(mapping::graphics::ShaderStage stage) const;
+
+		/*
+		 * brief : nullptrでないシェーダーをすべてリセット(Deactivate)
+		 */
+		void UnbindShader() const;
+		/*
+		 * brief : シェーダーを個別にリセット(Deactivate)
+		 */
+		void UnbindShader(mapping::graphics::ShaderStage stage) const;
+
+	protected:
+		std::unique_ptr<shader_system::VertexShader> vertex_shader{nullptr};
+		std::unique_ptr<shader_system::PixelShader>  pixel_shader {nullptr};
+	};
+}
 
 
 

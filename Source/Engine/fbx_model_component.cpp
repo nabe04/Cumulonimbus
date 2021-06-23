@@ -38,8 +38,8 @@ namespace cumulonimbus::component
 			dst.translate = src.translate;
 		}
 
-		anim_states.AddState(FbxAnimationState::Switch, [this](const float dt) { BlendNextAnimation(dt); });
-		anim_states.AddState(FbxAnimationState::Update, [this](const float dt) { UpdateAnimation(dt); });
+		anim_states.AddState(FbxAnimationState::Switch, [ent, registry](const float dt) { registry->GetComponent<FbxModelComponent>(ent).BlendNextAnimation(dt); });
+		anim_states.AddState(FbxAnimationState::Update, [ent, registry](const float dt) { registry->GetComponent<FbxModelComponent>(ent).UpdateAnimation(dt); });
 
 		// アニメーションの初期値をセット
 		SwitchAnimation(0, false, 0.0f);
@@ -57,12 +57,12 @@ namespace cumulonimbus::component
 		CalculateLocalTransform();
 		CalculateWorldTransform(world_transform);
 
-		//UpdateAnimState(delta_time);
+		UpdateAnimState(delta_time);
 
-		if(!is_static)
-		{
-			UpdateAnimState(delta_time);
-		}
+		//if(!is_static)
+		//{
+		//	UpdateAnimState(delta_time);
+		//}
 	}
 
 	void FbxModelComponent::RenderImGui()

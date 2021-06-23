@@ -13,6 +13,7 @@
 #include "file_path_helper.h"
 #include "material_component.h"
 #include "sampler.h"
+#include "material_instance_component.h"
 
 namespace cumulonimbus::component
 {
@@ -20,6 +21,7 @@ namespace cumulonimbus::component
 		:ComponentBase{ registry, ent }
 	{
 		registry->AddComponent<component::MaterialComponent>(ent);
+		registry->AddComponent<component::MaterialInstance3DComponent>(ent);
 
 		blend_state.SetState(BlendState::Alpha);
 		rasterizer_state.SetState(RasterizeState::Cull_Back);

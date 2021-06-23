@@ -76,6 +76,7 @@
     <ClInclude Include="Source\Engine\locator.h" />
     <ClInclude Include="Source\Engine\Logger.h" />
     <ClInclude Include="Source\Engine\material_component.h" />
+    <ClInclude Include="Source\Engine\material_instance_component.h" />
     <ClInclude Include="Source\Engine\mesh_object.h" />
     <ClInclude Include="Source\Engine\mesh_particle.h" />
     <ClInclude Include="Source\Engine\obj_model_component.h" />
@@ -84,6 +85,7 @@
     <ClInclude Include="Source\Engine\model_data.h" />
     <ClInclude Include="Source\Engine\model_render.h" />
     <ClInclude Include="Source\Engine\phong.h" />
+    <ClInclude Include="Source\Engine\pixel_shader.h" />
     <ClInclude Include="Source\Engine\rasterizer.h" />
     <ClInclude Include="Source\Engine\reflection_mapping.h" />
     <ClInclude Include="Source\Engine\refraction_mapping.h" />
@@ -92,6 +94,9 @@
     <ClInclude Include="Source\Engine\render_path.h" />
     <ClInclude Include="Source\Engine\resource_manager.h" />
     <ClInclude Include="Source\Engine\sampler_mapping.h" />
+    <ClInclude Include="Source\Engine\shader_asset.h" />
+    <ClInclude Include="Source\Engine\shader_assets_component.h" />
+    <ClInclude Include="Source\Engine\shader_asset_mapping.h" />
     <ClInclude Include="Source\Engine\shader_filename_mapping.h" />
     <ClInclude Include="Source\Engine\shader_interop.h" />
     <ClInclude Include="Source\Engine\shader_interop_renderer.h" />
@@ -124,6 +129,7 @@
     <ClInclude Include="Source\Engine\transform_component.h" />
     <ClInclude Include="Source\Engine\type_rename.h" />
     <ClInclude Include="Source\Engine\vertex_buffer.h" />
+    <ClInclude Include="Source\Engine\vertex_shader.h" />
     <ClInclude Include="Source\Engine\view.h" />
     <ClInclude Include="Source\Engine\window.h" />
     <ClInclude Include="Source\Game\rotation_sample.h" />
@@ -181,6 +187,7 @@
     <ClCompile Include="Source\Engine\Logger.cpp" />
     <ClCompile Include="Source\Engine\main.cpp" />
     <ClCompile Include="Source\Engine\material_component.cpp" />
+    <ClCompile Include="Source\Engine\material_instance_component.cpp" />
     <ClCompile Include="Source\Engine\mesh_object.cpp" />
     <ClCompile Include="Source\Engine\mesh_particle.cpp" />
     <ClCompile Include="Source\Engine\obj_model_component.cpp" />
@@ -188,6 +195,7 @@
     <ClCompile Include="Source\Engine\model_data.cpp" />
     <ClCompile Include="Source\Engine\model_render.cpp" />
     <ClCompile Include="Source\Engine\phong.cpp" />
+    <ClCompile Include="Source\Engine\pixel_shader.cpp" />
     <ClCompile Include="Source\Engine\rasterize.cpp" />
     <ClCompile Include="Source\Engine\reflection_mapping.cpp" />
     <ClCompile Include="Source\Engine\refraction_mapping.cpp" />
@@ -201,6 +209,7 @@
     <ClCompile Include="Source\Engine\scene_title.cpp" />
     <ClCompile Include="Source\Engine\scene_tutorial.cpp" />
     <ClCompile Include="Source\Engine\shader.cpp" />
+    <ClCompile Include="Source\Engine\shader_assets_component.cpp" />
     <ClCompile Include="Source\Engine\shader_filename_mapping.cpp" />
     <ClCompile Include="Source\Engine\shader_manager.cpp" />
     <ClCompile Include="Source\Engine\shadow_map.cpp" />
@@ -219,6 +228,7 @@
     <ClCompile Include="Source\Engine\texture2d_shader.cpp" />
     <ClCompile Include="Source\Engine\transform.cpp" />
     <ClCompile Include="Source\Engine\transform_component.cpp" />
+    <ClCompile Include="Source\Engine\vertex_shader.cpp" />
     <ClCompile Include="Source\Engine\view.cpp" />
     <ClCompile Include="Source\Engine\toon.cpp" />
     <ClCompile Include="Source\Engine\window.cpp" />

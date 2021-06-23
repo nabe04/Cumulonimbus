@@ -15,20 +15,40 @@ namespace cumulonimbus::component
 		:ComponentBase{ registry,ent }
 	{
 		cb_material = std::make_shared<buffer::ConstantBuffer<MaterialCB>>(Locator::GetDx11Device()->device.Get());
+
+		cb_material->data.material.base_color = {0,0,0,0};
+		cb_material->data.material.emissive_color = { 0,0,0,0 };
+		cb_material->data.material.roughness = 1;
+		cb_material->data.material.reflectance = 1;
+		cb_material->data.material.metalness = 0;
 	}
+
+	void MaterialComponent::Update(float dt)
+	{
+
+	}
+
 
 	void MaterialComponent::RenderImGui()
 	{
-		if(ImGui::TreeNode("MaterialComponent"))
-		{
-			ImGui::ColorEdit4("Base Color"		, (float*)&cb_material->data.material.base_color);
-			ImGui::ColorEdit4("Emissive Color"	, (float*)&cb_material->data.material.emissive_color);
+		cb_material->data.material.metalness = 0;
 
-			const float drag_speed = 0.001f;
-			ImGui::DragFloat("Roughness"  , &cb_material->data.material.roughness	, drag_speed, .0f, 1.f);
-			ImGui::DragFloat("Reflectance", &cb_material->data.material.reflectance	, drag_speed, .0f, 1.f);
-			ImGui::DragFloat("metalness"  , &cb_material->data.material.metalness	, drag_speed, .0f, 1.f);
-		}
+		int a;
+		a = 0;
+
+
+		//if(ImGui::TreeNode("MaterialComponent"))
+		//{
+		//	ImGui::ColorEdit4("Base Color"		, (float*)&cb_material->data.material.base_color);
+		//	ImGui::ColorEdit4("Emissive Color"	, (float*)&cb_material->data.material.emissive_color);
+
+		//	const float drag_speed = 0.001f;
+		//	ImGui::DragFloat("Roughness"  , &cb_material->data.material.roughness	, drag_speed, .0f, 1.f);
+		//	ImGui::DragFloat("Reflectance", &cb_material->data.material.reflectance	, drag_speed, .0f, 1.f);
+		//	ImGui::DragFloat("metalness"  , &cb_material->data.material.metalness	, drag_speed, .0f, 1.f);
+
+		//	ImGui::TreePop();
+		//}
 	}
 
 	void MaterialComponent::Save(const std::string& file_path)

@@ -1,5 +1,22 @@
 #include "reflection_mapping.h"
 
+#include "shader_filename_mapping.h"
+
+namespace cumulonimbus
+{
+	namespace shader_system
+	{
+		ReflectionMappingShader::ReflectionMappingShader()
+			:Shader{}
+		{
+			using namespace mapping::shader_filename;
+			vertex_shader = std::make_unique<shader_system::VertexShader>(vs::ReflectionMapping_VS().c_str());
+			pixel_shader  = std::make_unique<shader_system::PixelShader>(ps::ReflectionMapping_PS().c_str());
+		}
+
+	}
+}
+
 namespace shader
 {
 	ReflectionMapping::ReflectionMapping(ID3D11Device* device)

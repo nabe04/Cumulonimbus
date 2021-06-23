@@ -1,8 +1,40 @@
-#pragma once
+#ifndef REFLECTION_MAPPING_H
+#define REFLECTION_MAPPING_H
 
-#include "imgui.h"
+#ifdef __cplusplus
+#include <cereal/cereal.hpp>
+#include <cereal/types/polymorphic.hpp>
 
 #include "shader.h"
+#include "shader_asset.h"
+#endif // __cplusplus
+
+#include "shader_interop_renderer.h"
+
+namespace cumulonimbus
+{
+	namespace shader_system
+	{
+		class ReflectionMappingShader final : public Shader
+		{
+		public:
+			explicit  ReflectionMappingShader();
+		};
+	}
+
+	namespace shader_asset
+	{
+		class ReflectionMappingAsset final : public ShaderAsset
+		{
+		public:
+			explicit ReflectionMappingAsset() = default;
+
+			void BindCBuffer()	 override {}
+			void UnbindCBuffer() override {}
+			void RenderImGui()   override {}
+		};
+	}
+}
 
 namespace shader
 {
@@ -19,3 +51,5 @@ namespace shader
 		void Deactivate(ID3D11DeviceContext* immediate_context) override;
 	};
 }
+
+#endif // REFLECTION_MAPPING_H

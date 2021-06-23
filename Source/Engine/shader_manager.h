@@ -9,6 +9,7 @@
 #include "shader.h"
 #include "state_machine.h"
 #include "enum_state_map.h"
+#include "shader_asset_mapping.h"
 
 //-- Shader 3D --//
 #include "3d_standard.h"
@@ -176,4 +177,31 @@ namespace shader
 	private:
 		SpriteShaderTypes shader_type = SpriteShaderTypes::Standard;
 	};
+}
+
+namespace cumulonimbus
+{
+	namespace shader_system
+	{
+		class ShaderManager final
+		{
+		public:
+			explicit ShaderManager();
+			~ShaderManager() = default;
+
+			/*
+			 * brief : Material3DComponentに登録されている
+			 *		   現在のマテリアルに応じてセットする
+			 *		   シェーダーを変える
+			 */
+			void BindShader(mapping::shader_assets::ShaderAsset3D asset);
+
+			/*
+			 * brief : Material2DComponentに登録されている
+			 *		   現在のマテリアルに応じてセットする
+			 *		   シェーダーを変える
+			 */
+			void BindShader(mapping::shader_assets::ShaderAsset2D asset);
+		};
+	}
 }

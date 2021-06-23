@@ -18,20 +18,22 @@
 #include "collision_component.h"
 #include "fbx_model_component.h"
 #include "geometric_primitive_component.h"
+#include "material_component.h"
 #include "mesh_object.h"
 #include "obj_model_component.h"
 #include "scene.h"
+#include "shader_assets_component.h"
 #include "sky_box.h"
 #include "sphere_collision_component.h"
 #include "sprite.h"
 #include "sprite_object.h"
 #include "transform_component.h"
-#include "material_component.h"
+#include "material_instance_component.h"
 
 namespace cumulonimbus::ecs
 {
 	using namespace mapping::rename_type;
-	
+
 	Entity Registry::CreateEntity()
 	{
 		uint64_t entity = START_ID;
@@ -116,6 +118,8 @@ namespace cumulonimbus::ecs
 		RegistryComponent<component::ObjModelComponent>();
 		RegistryComponent<component::SkyBoxComponent>();
 		RegistryComponent<component::MaterialComponent>();
+		RegistryComponent<component::ShaderAssets3DComponent>();
+		RegistryComponent<component::MaterialInstance3DComponent>();
 	}
 
 	void Registry::Save(const std::string& filename)

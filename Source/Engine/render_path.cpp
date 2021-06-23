@@ -344,8 +344,8 @@ namespace cumulonimbus::renderer
 							   const component::MeshObjectComponent* mesh_object,
 							   const View* view, const Light* light)
 	{
-		const component::FbxModelComponent& model	= registry->GetComponent<component::FbxModelComponent>(entity);
-		const FbxModelResource* resource			= model.GetResource();
+		const component::FbxModelComponent&	 model		= registry->GetComponent<component::FbxModelComponent>(entity);
+		const FbxModelResource*				 resource	= model.GetResource();
 
 		for(const auto& mesh : resource->GetModelData().meshes)
 		{

@@ -12,8 +12,8 @@ namespace cumulonimbus::renderer
 
 		gaussian_blur = std::make_unique<GaussianBlur>(device, width, height);
 
-		depth_extraction_vs = std::make_unique<shader::VertexShader>(device, mapping::shader_filename::DepthExtraction_VS().c_str());
-		depth_extraction_ps = std::make_unique<shader::PixelShader>(device , mapping::shader_filename::DepthExtraction_PS().c_str());
+		depth_extraction_vs = std::make_unique<shader::VertexShader>(device, mapping::shader_filename::vs::DepthExtraction_VS().c_str());
+		depth_extraction_ps = std::make_unique<shader::PixelShader>(device , mapping::shader_filename::ps::DepthExtraction_PS().c_str());
 	}
 
 	void DepthMap::Begin(ID3D11DeviceContext* const immediate_context) const
