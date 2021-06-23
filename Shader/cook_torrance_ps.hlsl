@@ -7,7 +7,7 @@
 
 #include "globals.hlsli"
 #include "functions.hlsli"
-#include "cook_torrance.hlsli"
+#include "../Source/Engine/metal.h"
 
 float4 main(PS_Input pin) : SV_TARGET
 {
@@ -26,7 +26,7 @@ float4 main(PS_Input pin) : SV_TARGET
     float LH = dot(-L, H);
 
     // Beckmann distribution function value
-    float D = Beckmann(roughness, NH);
+    float D = Beckmann(metal_roughness, NH);
 
     // Geometric reduction ratio
     float G = min(1, min(2 * NH * NE / EH, 2 * NH * NL / EH));

@@ -23,10 +23,11 @@
 //
 // }
 //
-// cbuffer RefractionMapping
+// cbuffer RefractionCB
 // {
 //
-//   float4 refractive_index;           // Offset:    0 Size:    16
+//   float refraction_refractive_index; // Offset:    0 Size:     4
+//   float3 refraction_padding;         // Offset:    4 Size:    12 [unused]
 //
 // }
 //
@@ -38,7 +39,7 @@
 // default_sampler                   sampler      NA          NA             s0      1 
 // texture_cube                      texture  float4        cube            t29      1 
 // LightCB                           cbuffer      NA          NA            cb2      1 
-// RefractionMapping                 cbuffer      NA          NA            cb6      1 
+// RefractionCB                      cbuffer      NA          NA           cb10      1 
 //
 //
 //
@@ -61,7 +62,7 @@
 ps_5_0
 dcl_globalFlags refactoringAllowed | skipOptimization
 dcl_constantbuffer CB2[1], immediateIndexed
-dcl_constantbuffer CB6[1], immediateIndexed
+dcl_constantbuffer CB10[1], immediateIndexed
 dcl_sampler s0, mode_default
 dcl_resource_texturecube (float,float,float,float) t29
 dcl_input_ps linear v1.xyz
@@ -76,38 +77,38 @@ dcl_temps 3
 //   v3.x <- pin.color.x; v3.y <- pin.color.y; v3.z <- pin.color.z; v3.w <- pin.color.w; 
 //   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
 //
-#line 17 "D:\Desktop\Cumulonimbus\Shader\refraction_mapping_ps.hlsl"
+#line 13 "D:\Desktop\Cumulonimbus\Shader\refraction_mapping_ps.hlsl"
 mov r0.xyz, -cb2[0].xyzx
 add r0.xyz, r0.xyzx, v1.xyzx  // r0.x <- ref.x; r0.y <- ref.y; r0.z <- ref.z
 
-#line 18
+#line 14
 dp3 r0.w, v2.xyzx, v2.xyzx
 rsq r0.w, r0.w
 mul r1.xyz, r0.wwww, v2.xyzx
 dp3 r0.w, r0.xyzx, r1.xyzx
 mul r1.w, r0.w, r0.w
-mul r2.x, cb6[0].x, cb6[0].x
+mul r2.x, cb10[0].x, cb10[0].x
 mov r1.w, -r1.w
 add r1.w, r1.w, l(1.000000)
 mul r1.w, r1.w, r2.x
 mov r1.w, -r1.w
 add r1.w, r1.w, l(1.000000)
 sqrt r2.x, r1.w
-mul r0.w, r0.w, cb6[0].x
+mul r0.w, r0.w, cb10[0].x
 add r0.w, r2.x, r0.w
 ge r1.w, r1.w, l(0.000000)
-mul r0.xyz, r0.xyzx, cb6[0].xxxx
+mul r0.xyz, r0.xyzx, cb10[0].xxxx
 mul r1.xyz, r1.xyzx, r0.wwww
 mov r1.xyz, -r1.xyzx
 add r0.xyz, r0.xyzx, r1.xyzx
 movc r0.xyz, r1.wwww, r0.xyzx, l(0,0,0,0)  // r0.x <- ref.x; r0.y <- ref.y; r0.z <- ref.z
 
-#line 19
+#line 15
 dp3 r0.w, r0.xyzx, r0.xyzx
 rsq r0.w, r0.w
 mul r0.xyz, r0.wwww, r0.xyzx
 
-#line 21
+#line 17
 sample_indexable(texturecube)(float,float,float,float) o0.xyzw, r0.xyzx, t29.xyzw, s0
 ret 
 // Approximately 27 instruction slots used

@@ -22,6 +22,9 @@ namespace cumulonimbus::component
 		void Update(float dt)	override {}
 		void RenderImGui()		override;
 
+		void BindCBuffer(mapping::shader_assets::ShaderAsset3D asset);
+		void UnbindCBuffer(mapping::shader_assets::ShaderAsset3D asset);
+
 		void RenderImGui(mapping::shader_assets::ShaderAsset3D asset);
 
 		void Load(const std::string& file_path_and_name) override {}

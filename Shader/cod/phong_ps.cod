@@ -23,13 +23,13 @@
 //
 // }
 //
-// cbuffer CB_Environment
+// cbuffer PhongCB
 // {
 //
-//   float specular;                    // Offset:    0 Size:     4
-//   float refCoefficient;              // Offset:    4 Size:     4
-//   float powValue;                    // Offset:    8 Size:     4
-//   float padding;                     // Offset:   16 Size:     4 [unused]
+//   float phong_specular;              // Offset:    0 Size:     4
+//   float phong_ref_coefficient;       // Offset:    4 Size:     4
+//   float phong_pow_value;             // Offset:    8 Size:     4
+//   float phong_padding;               // Offset:   12 Size:     4 [unused]
 //
 // }
 //
@@ -41,7 +41,7 @@
 // defaultSampler                    sampler      NA          NA             s0      1 
 // texture_base_color                texture  float4          2d            t20      1 
 // LightCB                           cbuffer      NA          NA            cb2      1 
-// CB_Environment                    cbuffer      NA          NA            cb6      1 
+// PhongCB                           cbuffer      NA          NA           cb10      1 
 //
 //
 //
@@ -65,7 +65,7 @@
 ps_5_0
 dcl_globalFlags refactoringAllowed | skipOptimization
 dcl_constantbuffer CB2[3], immediateIndexed
-dcl_constantbuffer CB6[1], immediateIndexed
+dcl_constantbuffer CB10[1], immediateIndexed
 dcl_sampler s0, mode_default
 dcl_resource_texture2d (float,float,float,float) t20
 dcl_input_ps linear v1.xyz
@@ -83,35 +83,35 @@ dcl_temps 8
 //   v4.x <- pin.texcoord0.x; v4.y <- pin.texcoord0.y; 
 //   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
 //
-#line 19 "D:\Desktop\Cumulonimbus\Shader\phong_ps.hlsl"
+#line 15 "D:\Desktop\Cumulonimbus\Shader\phong_ps.hlsl"
 mov r0.xyz, -v1.xyzx
 add r0.xyz, r0.xyzx, cb2[0].xyzx  // r0.x <- eye_vector.x; r0.y <- eye_vector.y; r0.z <- eye_vector.z
 
-#line 21
+#line 17
 sample_indexable(texture2d)(float,float,float,float) r1.xyzw, v4.xyxx, t20.xyzw, s0  // r1.x <- color.x; r1.y <- color.y; r1.z <- color.z; r1.w <- color.w
 
-#line 22
+#line 18
 dp3 r0.w, v2.xyzx, v2.xyzx
 rsq r0.w, r0.w
 mul r2.xyz, r0.wwww, v2.xyzx  // r2.x <- N.x; r2.y <- N.y; r2.z <- N.z
 
-#line 23
+#line 19
 dp3 r0.w, r0.xyzx, r0.xyzx
 rsq r0.w, r0.w
 mul r0.xyz, r0.wwww, r0.xyzx  // r0.x <- E.x; r0.y <- E.y; r0.z <- E.z
 
-#line 24
+#line 20
 dp3 r0.w, cb2[1].xyzx, cb2[1].xyzx
 rsq r0.w, r0.w
 mul r3.xyz, r0.wwww, cb2[1].xyzx  // r3.x <- L.x; r3.y <- L.y; r3.z <- L.z
 
-#line 25
+#line 21
 mov r4.xyz, l(1.000000,1.000000,1.000000,0)  // r4.x <- reflectance.x; r4.y <- reflectance.y; r4.z <- reflectance.z
 
-#line 27
+#line 23
 mov r5.xyz, cb2[2].xyzx  // r5.x <- A.x; r5.y <- A.y; r5.z <- A.z
 
-#line 29
+#line 25
 nop 
 mov r2.xyz, r2.xyzx
 mov r3.xyz, r3.xyzx
@@ -130,17 +130,17 @@ max r0.w, r0.w, r2.w
 mul r4.xyz, r6.xyzx, r4.xyzx
 mul r4.xyz, r0.wwww, r4.xyzx  // r4.x <- <Diffuse return value>.x; r4.y <- <Diffuse return value>.y; r4.z <- <Diffuse return value>.z
 
-#line 29 "D:\Desktop\Cumulonimbus\Shader\phong_ps.hlsl"
+#line 25 "D:\Desktop\Cumulonimbus\Shader\phong_ps.hlsl"
 mov r4.xyz, r4.xyzx  // r4.x <- D.x; r4.y <- D.y; r4.z <- D.z
 
-#line 31
+#line 27
 nop 
 mov r2.xyz, r2.xyzx
 mov r3.xyz, r3.xyzx
 mov r0.xyz, r0.xyzx
-mov r0.w, cb6[0].x
-mov r2.w, cb6[0].y
-mov r3.w, cb6[0].z
+mov r0.w, cb10[0].x
+mov r2.w, cb10[0].y
+mov r3.w, cb10[0].z
 
 #line 51 "D:\Desktop\Cumulonimbus\Shader\functions.hlsli"
 mov r6.xyz, -r0.xyzx
@@ -163,17 +163,17 @@ mul r0.xyz, r0.xyzx, r3.wwww
 exp r0.xyz, r0.xyzx
 mul r0.xyz, r0.xyzx, r0.wwww  // r0.x <- <PhongSpecular return value>.x; r0.y <- <PhongSpecular return value>.y; r0.z <- <PhongSpecular return value>.z
 
-#line 31 "D:\Desktop\Cumulonimbus\Shader\phong_ps.hlsl"
+#line 27 "D:\Desktop\Cumulonimbus\Shader\phong_ps.hlsl"
 mov r0.xyz, r0.xyzx  // r0.x <- F.x; r0.y <- F.y; r0.z <- F.z
 
-#line 33
+#line 29
 add r2.xyz, r4.xyzx, r5.xyzx
 add r0.xyz, r0.xyzx, r2.xyzx
 mov r0.w, l(1.000000)
 mul r0.xyzw, r0.xyzw, v3.xyzw
 mul r0.xyzw, r0.xyzw, r1.xyzw  // r0.x <- color.x; r0.y <- color.y; r0.z <- color.z; r0.w <- color.w
 
-#line 34
+#line 30
 mov o0.xyzw, r0.xyzw
 ret 
 // Approximately 56 instruction slots used

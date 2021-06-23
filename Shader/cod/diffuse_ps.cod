@@ -30,7 +30,7 @@
 // ------------------------------ ---------- ------- ----------- -------------- ------
 // default_sampler                   sampler      NA          NA             s0      1 
 // texture_depth                     texture  float4          2d             t0      1 
-// texture_diffuse                   texture  float4          2d            t20      1 
+// texture_base_color                texture  float4          2d            t20      1 
 // LightCB                           cbuffer      NA          NA            cb2      1 
 //
 //
@@ -75,10 +75,10 @@ dcl_temps 4
 //   v5.x <- pin.texcoord0.x; v5.y <- pin.texcoord0.y; 
 //   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
 //
-#line 21 "D:\Desktop\Cumulonimbus\Shader\diffuse_ps.hlsl"
+#line 20 "D:\Desktop\Cumulonimbus\Shader\diffuse_ps.hlsl"
 mov r0.xyz, l(1.000000,1.000000,1.000000,0)  // r0.x <- reflectance.x; r0.y <- reflectance.y; r0.z <- reflectance.z
 
-#line 23
+#line 22
 nop 
 mov r1.xyz, v2.xyzx
 mov r2.xyz, cb2[1].xyzx
@@ -97,10 +97,10 @@ max r0.w, r0.w, r1.x
 mul r0.xyz, r3.xyzx, r0.xyzx
 mul r0.xyz, r0.wwww, r0.xyzx  // r0.x <- <Diffuse return value>.x; r0.y <- <Diffuse return value>.y; r0.z <- <Diffuse return value>.z
 
-#line 23 "D:\Desktop\Cumulonimbus\Shader\diffuse_ps.hlsl"
+#line 22 "D:\Desktop\Cumulonimbus\Shader\diffuse_ps.hlsl"
 mov r0.xyz, r0.xyzx  // r0.x <- f3_diffuse.x; r0.y <- f3_diffuse.y; r0.z <- f3_diffuse.z
 
-#line 25
+#line 24
 nop 
 nop 
 nop 
@@ -137,10 +137,10 @@ min r1.xyz, r1.xxxx, l(1.000000, 1.000000, 1.000000, 0.000000)  // r1.z <- p_max
 #line 18
 mov r1.xyz, r1.xyzx  // r1.x <- <GetVarianceShadow return value>.x; r1.y <- <GetVarianceShadow return value>.y; r1.z <- <GetVarianceShadow return value>.z
 
-#line 25 "D:\Desktop\Cumulonimbus\Shader\diffuse_ps.hlsl"
+#line 24 "D:\Desktop\Cumulonimbus\Shader\diffuse_ps.hlsl"
 mov r1.xyz, r1.xyzx  // r1.x <- shadow_color.x; r1.y <- shadow_color.y; r1.z <- shadow_color.z
 
-#line 27
+#line 26
 sample_indexable(texture2d)(float,float,float,float) r2.xyzw, v5.xyxx, t20.xyzw, s0
 itof r0.w, l(1)
 mul r0.xyzw, r0.xyzw, r2.xyzw

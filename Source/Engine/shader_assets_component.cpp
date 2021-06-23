@@ -31,6 +31,16 @@ namespace cumulonimbus::component
 
 	}
 
+	void ShaderAssets3DComponent::BindCBuffer(mapping::shader_assets::ShaderAsset3D asset)
+	{
+		shader_asset_map.at(asset)->BindCBuffer();
+	}
+
+	void ShaderAssets3DComponent::UnbindCBuffer(mapping::shader_assets::ShaderAsset3D asset)
+	{
+		shader_asset_map.at(asset)->UnbindCBuffer();
+	}
+
 	void ShaderAssets3DComponent::RenderImGui(mapping::shader_assets::ShaderAsset3D asset)
 	{
 		shader_asset_map.at(asset)->RenderImGui();

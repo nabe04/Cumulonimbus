@@ -21,6 +21,8 @@ namespace cumulonimbus::component
 		void Save(const std::string& file_path)			 override;
 		void Load(const std::string& file_path_and_name) override;
 
+		[[nodiscard]] mapping::shader_assets::ShaderAsset3D GetCurrentAsset() const { return shader_assets.GetCurrentState(); }
+
 	private:
 		EnumStateMap<mapping::shader_assets::ShaderAsset3D> shader_assets;
 

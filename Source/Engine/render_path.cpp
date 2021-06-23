@@ -20,6 +20,8 @@
 #include "sprite.h"
 #include "sprite_object.h"
 #include "transform_component.h"
+#include "material_instance_component.h"
+#include "shader_assets_component.h"
 
 namespace cumulonimbus::renderer
 {
@@ -29,7 +31,8 @@ namespace cumulonimbus::renderer
 		fullscreen_quad = std::make_unique<FullscreenQuad>(device);
 		depth_map		= std::make_unique<DepthMap>(device);
 
-		old_shader_manager		= std::make_unique<shader::ShaderManager>( device );
+		shader_manager		= std::make_unique<shader_system::ShaderManager>();
+		old_shader_manager	= std::make_unique<shader::ShaderManager>( device );
 		shader_manager_2d	= std::make_unique<shader::SpriteShaderManager>(device);
 		blend				= std::make_unique<Blend>(device);
 		depth_stencil		= std::make_unique<DepthStencil>(device);
@@ -165,7 +168,11 @@ namespace cumulonimbus::renderer
 
 			Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, depth_map->GetDepthExtractionSRV(), TexSlot_Depth);
 
-			old_shader_manager->Activate(immediate_context, registry->GetComponent<component::MeshObjectComponent>(ent).GetShaderState());
+			const auto asset = registry->GetComponent<component::MaterialInstance3DComponent>(ent).GetCurrentAsset();
+			shader_manager->BindShader(asset);
+			registry->GetComponent<component::ShaderAssets3DComponent>(ent).BindCBuffer(asset);
+			//registry->GetComponent<component::>()
+			//old_shader_manager->Activate(immediate_context, registry->GetComponent<component::MeshObjectComponent>(ent).GetShaderState());
 
 			if (auto* geom = registry->TryGetComponent<component::GeomPrimComponent>(ent))
 			{

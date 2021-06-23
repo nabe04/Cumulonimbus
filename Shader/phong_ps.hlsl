@@ -5,13 +5,9 @@
 #define PIN_USE_TEXCOORD0     // 読み込んだテクスチャのUV値
 
 #include "globals.hlsli"
-#include "phong.hlsli"
 #include "functions.hlsli"
+#include "../Source/Engine/phong.h"
 
-//*******************************************
-//  Txture
-//*******************************************
-//Texture2D diffuseTexture : register(t0);
 SamplerState defaultSampler : register(s0);
 
 float4 main(PS_Input pin) : SV_TARGET
@@ -28,7 +24,7 @@ float4 main(PS_Input pin) : SV_TARGET
 
     float3 D = Diffuse(N, L, pin.color.xyz, reflectance);
 
-    float3 F = PhongSpecular(N, L, E, specular, refCoefficient, powValue);
+    float3 F = PhongSpecular(N, L, E, phong_specular, phong_ref_coefficient, phong_pow_value);
 
     color *= pin.color * float4(A + D + F, 1.0f);
     return color;
