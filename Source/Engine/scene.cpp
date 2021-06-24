@@ -71,7 +71,7 @@ void Scene::Initialize()
 	// Create Light
 	if (!this->light)
 	{
-		light = std::make_unique<Light>(Locator::GetDx11Device()->device.Get());
+		light = std::make_unique<Light>(cumulonimbus::locator::Locator::GetDx11Device()->device.Get());
 		light->SetLightDir(XMFLOAT3{ .0f,.0f,1.f, });
 	}
 
@@ -87,7 +87,7 @@ void Scene::Initialize()
 
 	if(!this->render_path)
 	{
-		render_path = std::make_unique<cumulonimbus::renderer::RenderPath>(Locator::GetDx11Device()->device.Get());
+		render_path = std::make_unique<cumulonimbus::renderer::RenderPath>(cumulonimbus::locator::Locator::GetDx11Device()->device.Get());
 	}
 
 	if (!this->geom_prim_res)
@@ -111,11 +111,18 @@ void Scene::Initialize()
 	}
 #endif
 
+	if (!this->texture_resource_manager)
+	{
+		using namespace cumulonimbus;
+		texture_resource_manager = std::make_shared<manager::texture::TextureResourceManager>(locator::Locator::GetDx11Device()->device.Get());
+		locator::Locator::Provide<manager::texture::TextureResourceManager>(texture_resource_manager);
+	}
+
 	if(!this->resource_manager)
 	{
 		resource_manager = std::make_shared<ResourceManager>();
 		resource_manager->Initialize(GetFramework()->GetDevice());
-		Locator::Provide<ResourceManager>(resource_manager);
+		cumulonimbus::locator::Locator::Provide<ResourceManager>(resource_manager);
 	}
 
 	//pad_combine = std::make_unique<pad_link::PadLink>();
@@ -149,7 +156,7 @@ void Scene::Update(const float elapsed_time)
 	registry->PreUpdate(elapsed_time);
 	registry->Update(elapsed_time);
 
-	view->SetProjection(XM_PI / 8.0f, static_cast<float>(Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
+	view->SetProjection(XM_PI / 8.0f, static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
 
 	// View update
 	view->Update();
@@ -159,12 +166,12 @@ void Scene::Update(const float elapsed_time)
 
 	UpdateScene(elapsed_time);
 
-	if (Locator::GetInput()->Keyboard().GetState(Keycode::A) == ButtonState::Press)
+	if (cumulonimbus::locator::Locator::GetInput()->Keyboard().GetState(Keycode::A) == ButtonState::Press)
 	{
 		//this->SaveScene(this->scene_name);
 	}
 
-	if (Locator::GetInput()->Keyboard().GetState(Keycode::L) == ButtonState::Press)
+	if (cumulonimbus::locator::Locator::GetInput()->Keyboard().GetState(Keycode::L) == ButtonState::Press)
 	{
 		//this->LoadScene("./Content/Scene/Scene_Title");
 	}
@@ -188,8 +195,8 @@ void Scene::Render()
 		{
 			registry->RenderImGui();
 		}
-		ImGui::Text("window x : %d", Locator::GetWindow()->WindowRect().left);
-		ImGui::Text("window y : %d", Locator::GetWindow()->WindowRect().top);
+		ImGui::Text("window x : %d", cumulonimbus::locator::Locator::GetWindow()->WindowRect().left);
+		ImGui::Text("window y : %d", cumulonimbus::locator::Locator::GetWindow()->WindowRect().top);
 		POINT po{};
 		GetCursorPos(&po);
 		ImGui::Text("mouse x : %d",po.x);

@@ -10,7 +10,7 @@
 
 void ContentBrawser::Render(Scene* scene)
 {
-	auto* model_resource = Locator::GetResourceManager();
+	auto* model_resource = cumulonimbus::locator::Locator::GetResourceManager();
 
 	{
 		ImGuiWindowFlags window_flags{};
@@ -80,23 +80,23 @@ void ContentBrawser::SelectedContent(Scene* scene)
 {
 	if (is_selected.test(Contents::FBX))
 	{
-		for (int n = 0; n < Locator::GetResourceManager()->FbxModelNames().size(); ++n)
+		for (int n = 0; n < cumulonimbus::locator::Locator::GetResourceManager()->FbxModelNames().size(); ++n)
 		{
 			ImGui::PushID(n);
-			if (ImGui::ImageButton((void*)Locator::GetResourceManager()->GetTextureResouece("no_image_256")->GetTextureData()->texture_view.Get(), { 150,150 }))
+			if (ImGui::ImageButton((void*)cumulonimbus::locator::Locator::GetResourceManager()->GetTextureResource("no_image_256")->GetTextureData()->texture_view.Get(), { 150,150 }))
 			{
 
 			}
 
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
 			{// 選択されているモデルの追加
-				std::string model_name = Locator::GetResourceManager()->FbxModelNames().at(n);
+				std::string model_name = cumulonimbus::locator::Locator::GetResourceManager()->FbxModelNames().at(n);
 				//auto* entity = scene->AddEntity();
 				//entity->AddComponent<MeshObject>();
-				//entity->AddComponent<FbxModelComponent>(Locator::GetResourceManager()->FbxModelResouece(model_name));
+				//entity->AddComponent<FbxModelComponent>(cumulonimbus::locator::Locator::GetResourceManager()->FbxModelResouece(model_name));
 			}
 
-			//ImGui::Text(Locator::GetResourceManager().FbxModelNames().at(n).c_str());
+			//ImGui::Text(cumulonimbus::locator::Locator::GetResourceManager().FbxModelNames().at(n).c_str());
 			ImGui::SameLine();
 
 			// Our buttons are both drag sources and drag targets here!
@@ -111,15 +111,15 @@ void ContentBrawser::SelectedContent(Scene* scene)
 				// ここに保存したテクスチャを指定すると出てくると思う
 
 				{// ドラック時に出てくるテクスチャ
-					ImGui::Image((void*)Locator::GetResourceManager()->GetTextureResouece("no_image_256")->GetTextureData()->texture_view.Get(), { 150,150 });
-					ImGui::Text(Locator::GetResourceManager()->FbxModelNames().at(n).c_str());
+					ImGui::Image((void*)cumulonimbus::locator::Locator::GetResourceManager()->GetTextureResource("no_image_256")->GetTextureData()->texture_view.Get(), { 150,150 });
+					ImGui::Text(cumulonimbus::locator::Locator::GetResourceManager()->FbxModelNames().at(n).c_str());
 				}
 
 				POINT po{};
 				GetCursorPos(&po);
 
 				// 最終目標
-				if (Locator::GetWindow()->IsWithinWindow({ po.x,po.y }))
+				if (cumulonimbus::locator::Locator::GetWindow()->IsWithinWindow({ po.x,po.y }))
 				{// モデルの追加
 
 				}

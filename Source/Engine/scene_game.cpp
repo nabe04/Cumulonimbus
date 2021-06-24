@@ -56,7 +56,7 @@ void SceneGame::InitializeScene()
 	//std::shared_ptr<FbxModelResource> ganfaul_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), ganfaul_filename, "./Data/Assets/FBX/ganfaul/character.fbm/");
 	//auto* player = AddEntity(UpdateOrder::Default, EntityTag::Player);
 	//player->AddComponent<MeshObject>();
-	//player->AddComponent<FbxModelComponent>(Locator::GetResourceManager()->FbxModelResouece("ganfaul"));
+	//player->AddComponent<FbxModelComponent>(cum::locator::Locator::GetResourceManager()->FbxModelResouece("ganfaul"));
 	//player->GetComponent<TransformComponent>()->SetScale(0.3f);
 	//player->GetComponent<TransformComponent>()->SetPosition({ 0,10, 0 });
 	//player->GetComponent<TransformComponent>()->SetWorldRotation_Y(180);
@@ -76,7 +76,7 @@ void SceneGame::InitializeScene()
 	//std::shared_ptr<FbxModelResource> ganfaul_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), ganfaul_filename, "./Data/Assets/FBX/ganfaul/character.fbm/");
 	//auto* player = AddEntity(UpdateOrder::Default, EntityTag::Player);
 	//player->AddComponent<MeshObject>();
-	//player->AddComponent<FbxModelComponent>(Locator::GetResourceManager()->FbxModelResouece("ganfaul"));
+	//player->AddComponent<FbxModelComponent>(locator::cum::locator::Locator::GetResourceManager()->FbxModelResouece("ganfaul"));
 	//player->GetComponent<TransformComponent>()->SetScale(0.3f);
 	//player->GetComponent<TransformComponent>()->SetPosition({ 0,10, 0 });
 	//player->GetComponent<TransformComponent>()->SetWorldRotation_Y(180);
@@ -96,7 +96,7 @@ void SceneGame::InitializeScene()
 
 	const char* sky_filename = "./Data/Assets/cubemap/skybox";
 	const cum::mapping::rename_type::Entity ent_sky_box = registry->CreateEntity();
-	registry->AddComponent<cum::component::SkyBoxComponent>(ent_sky_box, Locator::GetDx11Device()->device.Get(), sky_filename);
+	registry->AddComponent<cum::component::SkyBoxComponent>(ent_sky_box, cum::locator::Locator::GetDx11Device()->device.Get(), sky_filename);
 	registry->GetComponent<cum::component::TransformComponent>(ent_sky_box).SetScale(3.f);
 
 	const char* ground_filename = "./Data/Assets/Bin/ground.bin";  // "./Data/Assets/FBX/stage/stage.fbm/"
@@ -113,14 +113,14 @@ void SceneGame::InitializeScene()
 	const cum::mapping::rename_type::Entity ent_bunny = registry->CreateEntity();
 	registry->AddComponent<cum::component::MeshObjectComponent>(ent_bunny);
 	registry->GetComponent<cum::component::MeshObjectComponent>(ent_bunny).SetShaderState(shader::MeshShaderTypes::Metal);
-	registry->AddComponent<cum::component::FbxModelComponent>(ent_bunny, Locator::GetResourceManager()->FbxModelResouece("stanford_bunny"));
+	registry->AddComponent<cum::component::FbxModelComponent>(ent_bunny, cum::locator::Locator::GetResourceManager()->FbxModelResouece("stanford_bunny"));
 	registry->GetComponent<cum::component::TransformComponent>(ent_bunny).SetScale(0.1f);
 
 	const cum::mapping::rename_type::Entity ent_player = registry->CreateEntity();
 	const char* ganfaul_filename = "./Data/Assets/Bin/ganfaul.bin";
 	std::shared_ptr<FbxModelResource> ganfaul_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), ganfaul_filename, "./Data/Assets/FBX/ganfaul/character.fbm/");
 	registry->AddComponent<cum::component::MeshObjectComponent>(ent_player);
-	registry->AddComponent<cum::component::FbxModelComponent>(ent_player, Locator::GetResourceManager()->FbxModelResouece("ganfaul"));
+	registry->AddComponent<cum::component::FbxModelComponent>(ent_player, cum::locator::Locator::GetResourceManager()->FbxModelResouece("ganfaul"));
 	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetScale(0.3f);
 	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetPosition({ 30, 10, 0 });
 	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetWorldRotation_Y(180);
@@ -131,7 +131,7 @@ void SceneGame::InitializeScene()
 	//std::shared_ptr<FbxModelResource> ganfaul_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), ganfaul_filename, "./Data/Assets/FBX/ganfaul/character.fbm/");
 	//auto* player = AddEntity(UpdateOrder::Default, EntityTag::Player);
 	//player->AddComponent<MeshObject>();
-	//player->AddComponent<FbxModelComponent>(Locator::GetResourceManager()->FbxModelResouece("ganfaul"));
+	//player->AddComponent<FbxModelComponent>(cum::locator::Locator::GetResourceManager()->FbxModelResouece("ganfaul"));
 	//player->GetComponent<TransformComponent>()->SetScale(0.3f);
 	//player->GetComponent<TransformComponent>()->SetPosition({ 0,10, 0 });
 	//player->GetComponent<TransformComponent>()->SetWorldRotation_Y(180);

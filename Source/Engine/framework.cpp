@@ -18,12 +18,12 @@ bool Framework::Initialize()
 {
 	dx11_configurator = std::make_shared<Dx11Device>(window->GetHWND());
 	dx11_configurator->Initialize(window->GetHWND(), device.GetAddressOf(), immediate_context.GetAddressOf(), window->Width(), window->Height());
-	Locator::Provide<Dx11Device>(dx11_configurator);
+	cumulonimbus::locator::Locator::Provide<Dx11Device>(dx11_configurator);
 
-	Locator::Provide<Window>(window);
+	cumulonimbus::locator::Locator::Provide<Window>(window);
 	input_system = std::make_shared<InputSystem>(window->GetHWND());
 	input_system->Initialize(window->GetHWND());
-	Locator::Provide<InputSystem>(input_system);
+	cumulonimbus::locator::Locator::Provide<InputSystem>(input_system);
 
 	// TextureManager Initialization
 	TextureManager::GetInstance()->Initialize(device.Get());
@@ -66,7 +66,7 @@ int Framework::Run()
 
 void Framework::DrawBegin()
 {
-	Locator::GetDx11Device()->Clear();
+	cumulonimbus::locator::Locator::GetDx11Device()->Clear();
 }
 
 void Framework::DrawEnd()
@@ -76,7 +76,7 @@ void Framework::DrawEnd()
 #endif
 
 	// Screen flip
-	Locator::GetDx11Device()->Flip(1);
+	cumulonimbus::locator::Locator::GetDx11Device()->Flip(1);
 }
 
 LRESULT Framework::HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
@@ -156,13 +156,13 @@ bool Framework::ProcessLoop()
 	imgui::Update();
 #endif
 	//InputSystem::Instance()->UpdateStates();
-	Locator::GetInput()->UpdateStates();
+	cumulonimbus::locator::Locator::GetInput()->UpdateStates();
 
 	//key_input::KeyUpdate();
 	//mouse_input::MouseUpdate();
 	//pad_input::Update();
 
-	if (Locator::GetInput()->Keyboard().GetState(Keycode::Esc) == ButtonState::Press)
+	if (cumulonimbus::locator::Locator::GetInput()->Keyboard().GetState(Keycode::Esc) == ButtonState::Press)
 	{
 		return false;
 	}

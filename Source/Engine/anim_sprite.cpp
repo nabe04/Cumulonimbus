@@ -128,7 +128,7 @@ namespace cumulonimbus::component
 			cereal::JSONInputArchive i_archive(ifs);
 			i_archive(*this);
 
-			texture = Locator::GetResourceManager()->GetTextureResouece(texture->GetTextureData()->filename);
+			texture = locator::Locator::GetResourceManager()->GetTextureResource(texture->GetTextureData()->filename);
 
 			variable_texcoords.at(0) = { .0f,.0f };
 			variable_texcoords.at(1) = { 1.f,.0f };

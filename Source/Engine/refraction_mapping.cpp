@@ -24,7 +24,7 @@ namespace cumulonimbus
 		RefractionMappingAsset::RefractionMappingAsset()
 			:ShaderAsset{}
 		{
-			cb_refraction = std::make_unique<buffer::ConstantBuffer<RefractionCB>>(Locator::GetDx11Device()->device.Get());
+			cb_refraction = std::make_unique<buffer::ConstantBuffer<RefractionCB>>(locator::Locator::GetDx11Device()->device.Get());
 
 			// ‰ŠúÝ’è
 			cb_refraction->data.refraction_refractive_index = 0.5f;
@@ -32,12 +32,12 @@ namespace cumulonimbus
 
 		void RefractionMappingAsset::BindCBuffer()
 		{
-			cb_refraction->Activate(Locator::GetDx11Device()->immediate_context.Get(), CBSlot_RefractionMapping);
+			cb_refraction->Activate(locator::Locator::GetDx11Device()->immediate_context.Get(), CBSlot_RefractionMapping);
 		}
 
 		void RefractionMappingAsset::UnbindCBuffer()
 		{
-			cb_refraction->Deactivate(Locator::GetDx11Device()->immediate_context.Get());
+			cb_refraction->Deactivate(locator::Locator::GetDx11Device()->immediate_context.Get());
 		}
 
 		void RefractionMappingAsset::RenderImGui()

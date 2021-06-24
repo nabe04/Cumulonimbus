@@ -525,47 +525,6 @@ void BulidFBX::BuildMesh(FbxNode* fbx_node, FbxMesh* fbx_mesh)
 		subset.index_count += 3;
 	}
 
-	//// 頂点バッファ
-	//{
-	//	D3D11_BUFFER_DESC buffer_desc = {};
-	//	D3D11_SUBRESOURCE_DATA subresource_data = {};
-
-	//	buffer_desc.ByteWidth = static_cast<UINT>(sizeof(shader::Vertex) * vertices.size());
-	//	//buffer_desc.Usage = D3D11_USAGE_DEFAULT;
-	//	buffer_desc.Usage = D3D11_USAGE_IMMUTABLE;
-	//	buffer_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	//	buffer_desc.CPUAccessFlags = 0;
-	//	buffer_desc.MiscFlags = 0;
-	//	buffer_desc.StructureByteStride = 0;
-	//	subresource_data.pSysMem = vertices.data();
-	//	subresource_data.SysMemPitch = 0;
-	//	subresource_data.SysMemSlicePitch = 0;
-
-	//	HRESULT hr = device->CreateBuffer(&buffer_desc, &subresource_data, mesh.vertex_buffer.GetAddressOf());
-	//	if (FAILED(hr))
-	//		assert(!"CreateBuffer(Vertex) error of FbxModelResource class ");
-	//}
-
-	//// インデックスバッファ
-	//{
-	//	D3D11_BUFFER_DESC buffer_desc = {};
-	//	D3D11_SUBRESOURCE_DATA subresource_data = {};
-
-	//	buffer_desc.ByteWidth = static_cast<UINT>(sizeof(u_int) * indices.size());
-	//	//buffer_desc.Usage = D3D11_USAGE_DEFAULT;
-	//	buffer_desc.Usage = D3D11_USAGE_IMMUTABLE;
-	//	buffer_desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	//	buffer_desc.CPUAccessFlags = 0;
-	//	buffer_desc.MiscFlags = 0;
-	//	buffer_desc.StructureByteStride = 0;
-	//	subresource_data.pSysMem = indices.data();
-	//	subresource_data.SysMemPitch = 0; //Not use for index buffers.
-	//	subresource_data.SysMemSlicePitch = 0; //Not use for index buffers.
-	//	HRESULT hr = device->CreateBuffer(&buffer_desc, &subresource_data, mesh.index_buffer.GetAddressOf());
-	//	if (FAILED(hr))
-	//		assert(!"CreateBuffer(Index) error of FbxModelResource class ");
-	//}
-
 }
 
 // FBXシーン内のFBXマテリアルからマテリアルデータを構築する

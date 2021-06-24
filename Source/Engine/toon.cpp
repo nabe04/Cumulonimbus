@@ -24,17 +24,17 @@ namespace cumulonimbus
 		ToonAsset::ToonAsset()
 			:ShaderAsset{}
 		{
-			cb_toon = std::make_unique<buffer::ConstantBuffer<ToonCB>>(Locator::GetDx11Device()->device.Get());
+			cb_toon = std::make_unique<buffer::ConstantBuffer<ToonCB>>(locator::Locator::GetDx11Device()->device.Get());
 		}
 
 		void ToonAsset::BindCBuffer()
 		{
-			cb_toon->Activate(Locator::GetDx11Device()->immediate_context.Get(), CBSlot_Toon);
+			cb_toon->Activate(locator::Locator::GetDx11Device()->immediate_context.Get(), CBSlot_Toon);
 		}
 
 		void ToonAsset::UnbindCBuffer()
 		{
-			cb_toon->Deactivate(Locator::GetDx11Device()->immediate_context.Get());
+			cb_toon->Deactivate(locator::Locator::GetDx11Device()->immediate_context.Get());
 		}
 
 		void ToonAsset::RenderImGui()

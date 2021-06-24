@@ -14,7 +14,7 @@ namespace cumulonimbus::component
 	MaterialComponent::MaterialComponent(ecs::Registry* registry, mapping::rename_type::Entity ent)
 		:ComponentBase{ registry,ent }
 	{
-		cb_material = std::make_shared<buffer::ConstantBuffer<MaterialCB>>(Locator::GetDx11Device()->device.Get());
+		cb_material = std::make_shared<buffer::ConstantBuffer<MaterialCB>>(locator::Locator::GetDx11Device()->device.Get());
 
 		cb_material->data.material.base_color = {0,0,0,0};
 		cb_material->data.material.emissive_color = { 0,0,0,0 };
@@ -72,7 +72,7 @@ namespace cumulonimbus::component
 
 	void MaterialComponent::BindCBuffer(bool set_in_vs, bool set_in_ps) const
 	{
-		cb_material->Activate(Locator::GetDx11Device()->immediate_context.Get(), CBSlot_Material, set_in_vs, set_in_ps);
+		cb_material->Activate(locator::Locator::GetDx11Device()->immediate_context.Get(), CBSlot_Material, set_in_vs, set_in_ps);
 	}
 
 	void MaterialComponent::SetAndBindCBuffer(const MaterialCB& material, bool set_in_vs, bool set_in_ps) const
@@ -84,6 +84,6 @@ namespace cumulonimbus::component
 
 	void MaterialComponent::UnbindCBuffer() const
 	{
-		cb_material->Deactivate(Locator::GetDx11Device()->immediate_context.Get());
+		cb_material->Deactivate(locator::Locator::GetDx11Device()->immediate_context.Get());
 	}
 }

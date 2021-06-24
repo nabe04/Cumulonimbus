@@ -48,12 +48,12 @@ void Light::Update(const View* view)
 
 void Light::BindCBuffer(bool set_in_vs, bool set_in_ps) const
 {
-	cb_light->Activate(Locator::GetDx11Device()->immediate_context.Get(), CBSlot_Light, set_in_vs, set_in_ps);
+	cb_light->Activate(cumulonimbus::locator::Locator::GetDx11Device()->immediate_context.Get(), CBSlot_Light, set_in_vs, set_in_ps);
 }
 
 void Light::UnbindCBuffer() const
 {
-	cb_light->Deactivate(Locator::GetDx11Device()->immediate_context.Get());
+	cb_light->Deactivate(cumulonimbus::locator::Locator::GetDx11Device()->immediate_context.Get());
 }
 
 void Light::WriteImGui() const

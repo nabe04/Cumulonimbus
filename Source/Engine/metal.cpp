@@ -22,17 +22,17 @@ namespace cumulonimbus
 		MetalAsset::MetalAsset()
 			: ShaderAsset{}
 		{
-			cb_metal = std::make_unique<buffer::ConstantBuffer<MetalCB>>(Locator::GetDx11Device()->device.Get());
+			cb_metal = std::make_unique<buffer::ConstantBuffer<MetalCB>>(locator::Locator::GetDx11Device()->device.Get());
 		}
 
 		void MetalAsset::BindCBuffer()
 		{
-			cb_metal->Activate(Locator::GetDx11Device()->immediate_context.Get(), CBSlot_Metal);
+			cb_metal->Activate(locator::Locator::GetDx11Device()->immediate_context.Get(), CBSlot_Metal);
 		}
 
 		void MetalAsset::UnbindCBuffer()
 		{
-			cb_metal->Deactivate(Locator::GetDx11Device()->immediate_context.Get());
+			cb_metal->Deactivate(locator::Locator::GetDx11Device()->immediate_context.Get());
 		}
 
 

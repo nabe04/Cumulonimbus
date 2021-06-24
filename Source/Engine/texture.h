@@ -67,12 +67,12 @@ private:
 		D3D11_TEXTURE2D_DESC					tex2d_desc = {};
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> tex2d = {};
 		{
-			tex2d_desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-			tex2d_desc.Width = 1;
-			tex2d_desc.Height = 1;
-			tex2d_desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-			tex2d_desc.Usage = D3D11_USAGE_DEFAULT;
-			tex2d_desc.ArraySize = 1;
+			tex2d_desc.Format			= DXGI_FORMAT_R32G32B32A32_FLOAT;
+			tex2d_desc.Width			= 1;
+			tex2d_desc.Height			= 1;
+			tex2d_desc.BindFlags		= D3D11_BIND_SHADER_RESOURCE;
+			tex2d_desc.Usage			= D3D11_USAGE_DEFAULT;
+			tex2d_desc.ArraySize		= 1;
 			tex2d_desc.SampleDesc.Count = 1;
 
 			D3D11_SUBRESOURCE_DATA initData = {};
@@ -102,39 +102,17 @@ public:
 	}
 };
 
-class OldTextureResource final
-{
-private:
-	std::string tex_filename = {};
-
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shader_resource_view = {};
-	D3D11_TEXTURE2D_DESC							 texture2D_Desc		  = {};
-
-public:
-	OldTextureResource(const std::string& tex_filename, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv)
-		: tex_filename(tex_filename)
-		, shader_resource_view(std::move(srv)){}
-	~OldTextureResource() = default;
-
-	void   SetShaderResourceView(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv) { shader_resource_view = srv; }
-
-	auto&  GetTextureFilename() const		{ return tex_filename; }
-	auto*  GetShaderResourceView()			{ return shader_resource_view.Get(); }
-	auto** GetShaderResourceViewAddress()	{ return shader_resource_view.GetAddressOf(); }
-
-};
 
 class TextureManager final
 {
 private:
 	std::map<std::string, std::pair<std::unique_ptr<TextureResource>, int>> textures = {};
-	std::unique_ptr<OldTextureResource> dummy_texture = {};
-	//Microsoft::WRL::ComPtr<ID3D11Device> device = {};
+	std::unique_ptr<DummyTexture> dummy_texture_white = {};
 
 private:
 	TextureManager()
 	{
-		dummy_texture = std::make_unique<OldTextureResource>(std::string{}, nullptr);
+		//dummy_texture_white = std::make_unique<DummyTexture>(std::string{}, nullptr);
 	}
 
 	void RemoveTexture(const std::string_view tex_filename);
@@ -152,11 +130,8 @@ public:
 	void Initialize(ID3D11Device* device);
 
 	TextureResource* CreateTexture(ID3D11Device* device,const std::string_view tex_filename);
-	OldTextureResource* CreateDummyTexture(ID3D11Device* device, const DirectX::XMFLOAT4& color);
 
 	// Reference count
 	void IncrementRefCount(const std::string_view tex_filename);
 	void DecrementRefCount(const std::string_view tex_filename);
-
-	OldTextureResource* GetDummyTexture() { return dummy_texture.get(); }
 };

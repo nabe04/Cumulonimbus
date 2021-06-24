@@ -33,7 +33,7 @@ namespace cumulonimbus::component
 		//if (!registry->HasComponent<component::SpriteObjectComponent>(GetEntity()))
 		//	assert(!"Don't have SpriteObject(SpriteComponent)");
 
-		texture = Locator::GetResourceManager()->GetTextureResouece(texture_filename);
+		texture = locator::Locator::GetResourceManager()->GetTextureResource(texture_filename);
 
 		variable_texcoords.at(0) = { .0f,.0f };
 		variable_texcoords.at(1) = { 1.f,.0f };
@@ -170,7 +170,7 @@ namespace cumulonimbus::component
 
 		}
 
-		texture = Locator::GetResourceManager()->GetTextureResouece(texture->GetTextureData()->filename);
+		texture = locator::Locator::GetResourceManager()->GetTextureResource(texture->GetTextureData()->filename);
 
 		variable_texcoords.at(0) = { .0f,.0f };
 		variable_texcoords.at(1) = { 1.f,.0f };

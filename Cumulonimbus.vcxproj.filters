@@ -426,6 +426,9 @@
     <ClCompile Include="Source\Engine\material_instance_component.cpp">
       <Filter>Source\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\texture_resource_manager.cpp">
+      <Filter>Source\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -781,6 +784,12 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\normal_map_resource.h">
       <Filter>Header\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\texture_resource_manager.h">
+      <Filter>Header\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\texture_filename_mapping.h">
+      <Filter>Header\System\Mapping</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

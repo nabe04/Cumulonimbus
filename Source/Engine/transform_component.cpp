@@ -23,7 +23,7 @@ namespace cumulonimbus::component
 	TransformComponent::TransformComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent)
 		: ComponentBase{ registry,ent}
 	{
-		cb_transform = std::make_shared<buffer::ConstantBuffer<TransformCB>>(Locator::GetDx11Device()->device.Get());
+		cb_transform = std::make_shared<buffer::ConstantBuffer<TransformCB>>(locator::Locator::GetDx11Device()->device.Get());
 
 		// Initialize XMFLOAT4x4
 		CreateIdentity4x4(&scaling_matrix);
@@ -77,12 +77,12 @@ namespace cumulonimbus::component
 
 	void TransformComponent::BindCBuffer(bool set_in_vs, bool set_in_ps) const
 	{
-		cb_transform->Activate(Locator::GetDx11Device()->immediate_context.Get(), CBSlot_Transform, set_in_vs, set_in_ps);
+		cb_transform->Activate(locator::Locator::GetDx11Device()->immediate_context.Get(), CBSlot_Transform, set_in_vs, set_in_ps);
 	}
 
 	void TransformComponent::UnbindCBuffer()
 	{
-		cb_transform->Deactivate(Locator::GetDx11Device()->immediate_context.Get());
+		cb_transform->Deactivate(locator::Locator::GetDx11Device()->immediate_context.Get());
 	}
 
 

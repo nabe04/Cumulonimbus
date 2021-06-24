@@ -71,21 +71,21 @@ namespace cumulonimbus::component
 		{
 			// —v‘f‚ÌˆÊ’uŽæ“¾
 			// std::distance https://cpprefjp.github.io/reference/iterator/distance.html
-			auto v = Locator::GetResourceManager()->FbxModelNames();
+			auto v = locator::Locator::GetResourceManager()->FbxModelNames();
 			auto f = std::find(v.begin(), v.end(), resource->GetModelName());
 			int item_current_idx = static_cast<int>(std::distance(v.begin(), f));
-			const std::string combo_label = Locator::GetResourceManager()->FbxModelNames().at(item_current_idx).c_str();
+			const std::string combo_label = locator::Locator::GetResourceManager()->FbxModelNames().at(item_current_idx).c_str();
 			if (ImGui::BeginCombo("Resources", combo_label.c_str()))
 			{
-				for (int n = 0; n < Locator::GetResourceManager()->FbxModelNames().size(); n++)
+				for (int n = 0; n < locator::Locator::GetResourceManager()->FbxModelNames().size(); n++)
 				{
 					const bool is_selected = (item_current_idx == n);
-					if (ImGui::Selectable(Locator::GetResourceManager()->FbxModelNames().at(n).c_str(), is_selected))
+					if (ImGui::Selectable(locator::Locator::GetResourceManager()->FbxModelNames().at(n).c_str(), is_selected))
 					{
 						if (item_current_idx != n)
 						{
 							item_current_idx = n;
-							Initialize(Locator::GetResourceManager()->FbxModelResouece(Locator::GetResourceManager()->FbxModelNames().at(n)));
+							Initialize(locator::Locator::GetResourceManager()->FbxModelResouece(locator::Locator::GetResourceManager()->FbxModelNames().at(n)));
 						}
 					}
 					//Set the initial focus when opening the combo (scrolling + keyboard navigation focus)

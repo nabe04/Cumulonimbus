@@ -59,7 +59,7 @@ void SceneTitle::InitializeScene()
 	//auto* sample01 = AddEntity(UpdateOrder::Default, EntityTag::Bunny);
 	//sample01->AddComponent<MeshObject>();
 	//sample01->GetComponent<MeshObject>()->SetShaderState(shader::MeshShaderTypes::Metal);
-	//sample01->AddComponent<FbxModelComponent>(Locator::GetResourceManager()->FbxModelResouece("stanford_bunny"));
+	//sample01->AddComponent<FbxModelComponent>(cum::locator::Locator::GetResourceManager()->FbxModelResouece("stanford_bunny"));
 	//sample01->GetComponent<TransformComponent>()->SetScale(0.01f);
 	//sample01->GetComponent<TransformComponent>()->SetEyePosition({ 0,4,30 });
 	//sample01->GetComponent<TransformComponent>()->SetScale(0.01f);
@@ -70,7 +70,7 @@ void SceneTitle::InitializeScene()
 	//std::shared_ptr<FbxModelResource> ganfaul_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), ganfaul_filename, "./Data/Assets/FBX/ganfaul/character.fbm/");
 	//auto* player = AddEntity(UpdateOrder::Default, EntityTag::Player);
 	//player->AddComponent<MeshObject>();
-	//player->AddComponent<FbxModelComponent>(Locator::GetResourceManager()->FbxModelResouece("ganfaul"));
+	//player->AddComponent<FbxModelComponent>(cum::locator::Locator::GetResourceManager()->FbxModelResouece("ganfaul"));
 	//player->GetComponent<TransformComponent>()->SetScale(0.3f);
 	//player->GetComponent<TransformComponent>()->SetPosition({ -10,10,-500 });
 	//player->GetComponent<TransformComponent>()->SetWorldRotation_Y(180);
@@ -153,7 +153,7 @@ void SceneTitle::UnInitializeScene()
 
 void SceneTitle::UpdateScene(const float delta_time)
 {
-	if (Locator::GetInput()->Keyboard().GetState(Keycode::D1) == ButtonState::Press)
+	if (cumulonimbus::locator::Locator::GetInput()->Keyboard().GetState(Keycode::D1) == ButtonState::Press)
 	{
 		next_scene = std::make_shared<SceneGame>();
 	}

@@ -45,14 +45,14 @@ namespace cumulonimbus::shader_system
 
 	PixelShader::PixelShader(const char* cso)
 	{
-		HRESULT hr = CreatePixelShaderFromCSO(Locator::GetDx11Device()->device.Get(), cso, shader_object.GetAddressOf());
+		HRESULT hr = CreatePixelShaderFromCSO(locator::Locator::GetDx11Device()->device.Get(), cso, shader_object.GetAddressOf());
 		if (FAILED(hr))
 			assert(!"Create pixel shader error!");
 	}
 
 	void PixelShader::BindPS()
 	{
-		ID3D11DeviceContext* immediate_context = Locator::GetDx11Device()->immediate_context.Get();
+		ID3D11DeviceContext* immediate_context = locator::Locator::GetDx11Device()->immediate_context.Get();
 
 		immediate_context->PSGetShader(default_shader_object.ReleaseAndGetAddressOf(), 0, 0);
 		immediate_context->PSSetShader(shader_object.Get(), 0, 0);
@@ -60,7 +60,7 @@ namespace cumulonimbus::shader_system
 
 	void PixelShader::UnbindPS() const
 	{
-		ID3D11DeviceContext* immediate_context = Locator::GetDx11Device()->immediate_context.Get();
+		ID3D11DeviceContext* immediate_context = locator::Locator::GetDx11Device()->immediate_context.Get();
 
 		immediate_context->PSSetShader(default_shader_object.Get(), 0, 0);
 	}

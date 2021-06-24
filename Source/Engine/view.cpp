@@ -16,7 +16,7 @@
 View::View()
 {
 	camera_work = std::make_unique<CameraWork>(*this);
-	cb_camera   = std::make_unique<buffer::ConstantBuffer<CameraCB>>(Locator::GetDx11Device()->device.Get());
+	cb_camera   = std::make_unique<buffer::ConstantBuffer<CameraCB>>(cumulonimbus::locator::Locator::GetDx11Device()->device.Get());
 
 	// ‰ŠúÝ’è
 	cb_camera->data.camera_position = { .0f,.0f,.0f };
@@ -30,8 +30,8 @@ View::View()
 										cb_camera->data.camera_at.z - cb_camera->data.camera_position.z};
 	cb_camera->data.camera_fov		= 0.0f;
 	cb_camera->data.camera_aspect	= 0.0f;
-	cb_camera->data.camera_width	= Locator::GetWindow()->Width();
-	cb_camera->data.camera_height	= Locator::GetWindow()->Height();
+	cb_camera->data.camera_width	= cumulonimbus::locator::Locator::GetWindow()->Width();
+	cb_camera->data.camera_height	= cumulonimbus::locator::Locator::GetWindow()->Height();
 	cb_camera->data.camera_view_matrix				= { 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
 	cb_camera->data.camera_view_projection_matrix	= { 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
 }
@@ -43,12 +43,12 @@ View::~View()
 
 void View::BindCBuffer(bool set_in_vs, bool set_in_ps) const
 {
-	cb_camera->Activate(Locator::GetDx11Device()->immediate_context.Get(), CBSlot_Camera, set_in_vs, set_in_ps);
+	cb_camera->Activate(cumulonimbus::locator::Locator::GetDx11Device()->immediate_context.Get(), CBSlot_Camera, set_in_vs, set_in_ps);
 }
 
 void View::UnbindCBuffer() const
 {
-	cb_camera->Deactivate(Locator::GetDx11Device()->immediate_context.Get());
+	cb_camera->Deactivate(cumulonimbus::locator::Locator::GetDx11Device()->immediate_context.Get());
 }
 
 
@@ -111,9 +111,9 @@ void View::Update()
 	CalcCameraOrthogonalVector();
 
 #ifdef _DEBUG
-	if (Locator::GetInput()->Keyboard().GetState(Keycode::LeftShift) == ButtonState::Held)
+	if (cumulonimbus::locator::Locator::GetInput()->Keyboard().GetState(Keycode::LeftShift) == ButtonState::Held)
 	{
-		if (Locator::GetInput()->Keyboard().GetState(Keycode::F1) == ButtonState::Press)
+		if (cumulonimbus::locator::Locator::GetInput()->Keyboard().GetState(Keycode::F1) == ButtonState::Press)
 		{
 			is_debug_camera = !is_debug_camera;
 		}

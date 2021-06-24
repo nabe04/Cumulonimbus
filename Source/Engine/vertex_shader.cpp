@@ -67,7 +67,7 @@ namespace cumulonimbus::shader_system
 	{
 		if (input_element_desc)
 		{
-			HRESULT hr = CreateVertexShaderFromCSO(Locator::GetDx11Device()->device.Get(), cso, shader_object.GetAddressOf(), input_layout.GetAddressOf(), input_element_desc, num_elements);
+			HRESULT hr = CreateVertexShaderFromCSO(locator::Locator::GetDx11Device()->device.Get(), cso, shader_object.GetAddressOf(), input_layout.GetAddressOf(), input_element_desc, num_elements);
 			if (FAILED(hr))
 				assert(!"Create vertex shader error!");
 
@@ -86,7 +86,7 @@ namespace cumulonimbus::shader_system
 			}
 		};
 
-		HRESULT hr = CreateVertexShaderFromCSO(Locator::GetDx11Device()->device.Get(), cso, shader_object.GetAddressOf(), input_layout.GetAddressOf(), layout.data(), static_cast<u_int>(layout.size()));
+		HRESULT hr = CreateVertexShaderFromCSO(locator::Locator::GetDx11Device()->device.Get(), cso, shader_object.GetAddressOf(), input_layout.GetAddressOf(), layout.data(), static_cast<u_int>(layout.size()));
 		if (FAILED(hr))
 			assert(!"Create vertex shader error!");
 
@@ -95,7 +95,7 @@ namespace cumulonimbus::shader_system
 
 	void VertexShader::BindVS()
 	{
-		ID3D11DeviceContext* immediate_context = Locator::GetDx11Device()->immediate_context.Get();
+		ID3D11DeviceContext* immediate_context = locator::Locator::GetDx11Device()->immediate_context.Get();
 
 		immediate_context->IAGetInputLayout(default_input_layout.ReleaseAndGetAddressOf());
 		immediate_context->VSGetShader(default_shader_object.ReleaseAndGetAddressOf(), 0, 0);
@@ -106,7 +106,7 @@ namespace cumulonimbus::shader_system
 
 	void VertexShader::UnbindVS()
 	{
-		ID3D11DeviceContext* immediate_context = Locator::GetDx11Device()->immediate_context.Get();
+		ID3D11DeviceContext* immediate_context = locator::Locator::GetDx11Device()->immediate_context.Get();
 
 		immediate_context->IASetInputLayout(default_input_layout.Get());
 		immediate_context->VSSetShader(default_shader_object.Get(), 0, 0);

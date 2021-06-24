@@ -1,11 +1,11 @@
 #include "fbx_model_resource.h"
 
 #include <cassert>
+#include <fbxsdk.h>
 #include <fstream>
 
-#include <fbxsdk.h>
-
 #include "cereal_helper.h"
+#include "locator.h"
 
 FbxModelResource::FbxModelResource(ID3D11Device* device, const char* import_filename, const char* dir_path)
 {
@@ -40,7 +40,7 @@ FbxModelResource::FbxModelResource(ID3D11Device* device, const char* import_file
 
 		// モデルに使われているテクスチャのファイル名から
 		// ShaderResourceViewを作成
-		material.shader_resource_view = TextureManager::GetInstance()->CreateTexture(device ,path_buffer)->GetTextureData()->texture_view;
+		material.shader_resource_view = cumulonimbus::locator::Locator::GetTextureResourceManager()->CreateTexture(device, path_buffer)->GetTextureData()->texture_view;
 	}
 
 	for (auto& mesh : model_data.meshes)

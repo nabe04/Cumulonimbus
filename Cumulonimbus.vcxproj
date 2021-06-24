@@ -101,6 +101,8 @@
     <ClInclude Include="Source\Engine\shader_filename_mapping.h" />
     <ClInclude Include="Source\Engine\shader_interop.h" />
     <ClInclude Include="Source\Engine\shader_interop_renderer.h" />
+    <ClInclude Include="Source\Engine\texture_filename_mapping.h" />
+    <ClInclude Include="Source\Engine\texture_resource_manager.h" />
     <ClInclude Include="Source\Engine\texture_resource_mapping.h" />
     <ClInclude Include="Source\Engine\sampler.h" />
     <ClInclude Include="Source\Engine\scene.h" />
@@ -227,6 +229,7 @@
     <ClCompile Include="Source\Engine\string_helper.cpp" />
     <ClCompile Include="Source\Engine\texture.cpp" />
     <ClCompile Include="Source\Engine\texture2d_shader.cpp" />
+    <ClCompile Include="Source\Engine\texture_resource_manager.cpp" />
     <ClCompile Include="Source\Engine\transform.cpp" />
     <ClCompile Include="Source\Engine\transform_component.cpp" />
     <ClCompile Include="Source\Engine\vertex_shader.cpp" />

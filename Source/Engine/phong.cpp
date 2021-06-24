@@ -21,7 +21,7 @@ namespace cumulonimbus
 		PhongAsset::PhongAsset()
 			:ShaderAsset{}
 		{
-			cb_phong = std::make_unique<buffer::ConstantBuffer<PhongCB>>(Locator::GetDx11Device()->device.Get());
+			cb_phong = std::make_unique<buffer::ConstantBuffer<PhongCB>>(locator::Locator::GetDx11Device()->device.Get());
 
 			// ‰ŠúÝ’è
 			cb_phong->data.phong_specular			= 1.0f;
@@ -31,12 +31,12 @@ namespace cumulonimbus
 
 		void PhongAsset::BindCBuffer()
 		{
-			cb_phong->Activate(Locator::GetDx11Device()->immediate_context.Get(), CBSlot_Phong);
+			cb_phong->Activate(locator::Locator::GetDx11Device()->immediate_context.Get(), CBSlot_Phong);
 		}
 
 		void PhongAsset::UnbindCBuffer()
 		{
-			cb_phong->Deactivate(Locator::GetDx11Device()->immediate_context.Get());
+			cb_phong->Deactivate(locator::Locator::GetDx11Device()->immediate_context.Get());
 		}
 
 		void PhongAsset::RenderImGui()

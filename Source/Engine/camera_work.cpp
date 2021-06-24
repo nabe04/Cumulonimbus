@@ -16,8 +16,8 @@ void CameraWork::Update(bool is_debug)
 	CalcCameraDirectionalVector();
 	CalcCameraAngle(); //オイラー角で(現在)計算しているので今は使わない
 
-	const auto& mouse = Locator::GetInput()->Mouse();
-	const auto& key   = Locator::GetInput()->Keyboard();
+	const auto& mouse = cumulonimbus::locator::Locator::GetInput()->Mouse();
+	const auto& key   = cumulonimbus::locator::Locator::GetInput()->Keyboard();
 
 	if (mouse.GetState(MouseButton::Left) == ButtonState::Held &&
 		mouse.GetState(MouseButton::Right) == ButtonState::Held)

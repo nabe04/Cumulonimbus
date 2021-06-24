@@ -23,6 +23,7 @@
 #include "render_path.h"
 #include "resource_manager.h"
 #include "sound_resource.h"
+#include "texture_resource_manager.h"
 #include "view.h"
 
 class GeometricPrimitiveResource;
@@ -51,6 +52,7 @@ protected:
 	SceneType current_scene = SceneType::End;
 
 	std::shared_ptr<ResourceManager>					resource_manager	{ nullptr };
+	std::shared_ptr<cumulonimbus::manager::texture::TextureResourceManager> texture_resource_manager{ nullptr };
 	std::unique_ptr<cumulonimbus::ecs::Registry>		registry			{ nullptr };
 	std::unique_ptr<CollisionManager>					collision_manager	{ nullptr };
 	std::unique_ptr<EditorManager>						editor_manager		{ nullptr };
