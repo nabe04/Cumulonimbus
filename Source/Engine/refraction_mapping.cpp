@@ -1,4 +1,4 @@
-ï»¿#include "refraction_mapping.h"
+#include "refraction_mapping.h"
 
 #include <imgui.h>
 
@@ -15,7 +15,7 @@ namespace cumulonimbus
 		{
 			using namespace mapping::shader_filename;
 			vertex_shader = std::make_unique<shader_system::VertexShader>(vs::RefractionMapping_VS().c_str());
-			pixel_shader  = std::make_unique<shader_system::PixelShader>(ps::RefractionMapping_PS().c_str());
+			pixel_shader = std::make_unique<shader_system::PixelShader>(ps::RefractionMapping_PS().c_str());
 		}
 	}
 
@@ -26,7 +26,7 @@ namespace cumulonimbus
 		{
 			cb_refraction = std::make_unique<buffer::ConstantBuffer<RefractionCB>>(locator::Locator::GetDx11Device()->device.Get());
 
-			// åˆæœŸè¨­å®š
+			// ‰ŠúÝ’è
 			cb_refraction->data.refraction_refractive_index = 0.5f;
 		}
 
