@@ -26,14 +26,14 @@ namespace cumulonimbus::shader_asset
 	}
 
 
-	void Material3DManager::BindAsset(mapping::shader_assets::ShaderAsset3D asset)
+	void Material3DManager::BindAsset() const
 	{
-		shader_asset_map.at(asset)->BindCBuffer();
+		shader_asset_map.at(shader_assets.GetCurrentState())->BindCBuffer();
 	}
 
-	void Material3DManager::UnbindAsset(mapping::shader_assets::ShaderAsset3D asset)
+	void Material3DManager::UnbindAsset() const
 	{
-		shader_asset_map.at(asset)->UnbindCBuffer();
+		shader_asset_map.at(shader_assets.GetCurrentState())->UnbindCBuffer();
 	}
 
 	void Material3DManager::RenderImGuiComboShader()

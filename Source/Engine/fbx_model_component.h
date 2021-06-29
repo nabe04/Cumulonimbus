@@ -74,16 +74,22 @@ namespace cumulonimbus::component
 		void Update(float delta_time) override;
 		void RenderImGui() override;
 
+		/*
+		 * brief			: 指定された要素のマテリアル情報(シェーダー、シェーダーパラメータ、テクスチャ)の取得
+		 * material_index   : メッシュのsubsetが持つmaterial_indexを指定
+		 */
+		[[nodiscard]] const shader_asset::Material3DManager& GetMaterialsManager(uint material_index) const { return materials_manager.at(material_index); }
+
 		// アニメーション
 		[[nodiscard]] bool IsPlayAnimation() const { return current_animation_index >= 0; }
 		void SwitchAnimation(int animation_index, bool loop = false, float switch_time = 0.1f);
 
 		[[nodiscard]] const DirectX::SimpleMath::Matrix& GetNodeMatrix(const char* node_name);
 		[[nodiscard]] const DirectX::SimpleMath::Matrix& GetNodePareantMatrix(const char* node_name);
-		[[nodiscard]] const std::vector<Node>& GetNodes() const { return nodes; }
-		[[nodiscard]] std::vector<Node>& GetNodes() { return nodes; }
-		[[nodiscard]] const FbxModelResource* GetResource() const { return resource.get(); }
-		[[nodiscard]] const DirectX::XMFLOAT4& GetColor() const { return color; }
+		[[nodiscard]] const std::vector<Node>&			 GetNodes()		const	{ return nodes; }
+		[[nodiscard]] std::vector<Node>&				 GetNodes()				{ return nodes; }
+		[[nodiscard]] const FbxModelResource*			 GetResource()	const	{ return resource.get(); }
+		[[nodiscard]] const DirectX::XMFLOAT4&			 GetColor()		const	{ return color; }
 
 		void UpdateAnimState(const float delta_time) { anim_states.Update(delta_time); }
 

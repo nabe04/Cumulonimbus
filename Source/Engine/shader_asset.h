@@ -13,7 +13,6 @@ namespace cumulonimbus::shader_asset
 	 */
 	struct MaterialPath
 	{
-
 		std::string albedo_map_name{};
 		std::string normal_map_name{};
 		std::string pbr_map_name{}; // r : roughness, g : metalness, b : specular

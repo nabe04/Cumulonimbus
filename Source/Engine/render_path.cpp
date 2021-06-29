@@ -146,6 +146,7 @@ namespace cumulonimbus::renderer
 							  ecs::Registry* registry,
 							  const View* view, const Light* light)
 	{
+		// ライトパラメータをコンスタントバッファにバインド
 		light->BindCBuffer();
 
 		auto& components = registry->GetArray<component::SkyBoxComponent>().GetComponents();
@@ -155,9 +156,9 @@ namespace cumulonimbus::renderer
 			RenderSkyBox(immediate_context, registry, sky_box.GetEntity(), view, light);
 		}
 
+		// Skyマップをpixel shaderのshader resource viewにバインド
 		locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, sky_box_srv.GetAddressOf(), TexSlot_SkyMap);
 
-		//off_screen->Activate(immediate_context);
 		for (auto& mesh_object : registry->GetArray<component::MeshObjectComponent>().GetComponents())
 		{
 			const mapping::rename_type::Entity ent = mesh_object.GetEntity();
@@ -168,11 +169,10 @@ namespace cumulonimbus::renderer
 
 			locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, depth_map->GetDepthExtractionSRV(), TexSlot_Depth);
 
+			// TODO: FBXモデルのメッシュ単位でマテリアルの変更を適用できれば削除
 			const auto asset = registry->GetComponent<component::MaterialInstance3DComponent>(ent).GetCurrentAsset();
 			shader_manager->BindShader(asset);
 			registry->GetComponent<component::ShaderAssets3DComponent>(ent).BindCBuffer(asset);
-			//registry->GetComponent<component::>()
-			//old_shader_manager->Activate(immediate_context, registry->GetComponent<component::MeshObjectComponent>(ent).GetShaderState());
 
 			if (auto* geom = registry->TryGetComponent<component::GeomPrimComponent>(ent))
 			{
@@ -393,6 +393,9 @@ namespace cumulonimbus::renderer
 				cb_material.material.base_color.w = model.GetColor().w;
 				registry->GetComponent<component::MaterialComponent>(entity).SetAndBindCBuffer(cb_material);
 
+				//TODO: メッシュ単位のマテリアル適応
+				//model.GetMaterialsManager(subset.material_index).BindAsset();
+
 				if (subset.material && subset.material->shader_resource_view)
 				{
 					locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
@@ -408,6 +411,7 @@ namespace cumulonimbus::renderer
 				immediate_context->DrawIndexed(subset.index_count, subset.start_index, 0);
 
 				registry->GetComponent<component::MaterialComponent>(entity).UnbindCBuffer();
+				//model.GetMaterialsManager(subset.material_index).UnbindAsset();
 			}
 		}
 	}

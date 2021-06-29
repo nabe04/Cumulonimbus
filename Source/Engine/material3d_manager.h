@@ -14,9 +14,16 @@ namespace cumulonimbus::shader_asset
 		explicit Material3DManager();
 		~Material3DManager() = default;
 
-		// コンスタントバッファのバインド、アンバインド
-		void BindAsset(mapping::shader_assets::ShaderAsset3D asset);
-		void UnbindAsset(mapping::shader_assets::ShaderAsset3D asset);
+		/*
+		 * brief : 現在のセットされているシェーダーの
+		 *		   コンスタントバッファをバインド
+		 */
+		void BindAsset() const;
+		/*
+		 * brief : 現在のセットされているシェーダーの
+		 *          コンスタントバッファをアンバインド
+		 */
+		void UnbindAsset() const;
 
 		/*
 		 * brief     : Shader全体の種類を変更するためのImGui
