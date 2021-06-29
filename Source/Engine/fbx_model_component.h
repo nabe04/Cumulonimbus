@@ -132,6 +132,8 @@ namespace cumulonimbus::component
 		std::shared_ptr<FbxModelResource>	resource{nullptr};
 		std::vector<Node>					nodes{};
 
+		std::vector<shader_asset::Material3DManager> materials_manager; // mesh単位でマテリアル(テクスチャなど)を変更できるように
+
 		int	current_animation_index = -1;
 		int	prev_animation_index	= -1;	// 前のアニメーションのインデックス番号(ブレンドで使用)
 		int	current_keyframe		= 0;	// 現在のキーフレーム

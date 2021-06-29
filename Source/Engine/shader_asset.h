@@ -47,12 +47,20 @@ namespace cumulonimbus::shader_asset
 		 * brief : コンスタントバッファをGPUに送信したい場合に使用
 		 *	       (シェーダーが持つパラメータのセット)
 		 */
-		virtual void BindCBuffer() {};
+		virtual void BindCBuffer() {}
 		/*
 		 * brief : 使用したコンスタントバッファのリセット
 		 */
-		virtual void UnbindCBuffer() {};
-		virtual void RenderImGui() {};
+		virtual void UnbindCBuffer() {}
+		/*
+		 * brief : 各々のシェーダーが持つパラメータ(constant buffer)の編集
+		 */
+		virtual void RenderImGui() {}
+
+		/*
+		 * brief : 使用するテクスチャの編集
+		 */
+		virtual void RenderImGuiTextureCombo() {}
 
 		void SetMaterialPath(const MaterialPath& mat_path);
 		void SetAlbedoMapName(const std::string& name);

@@ -1,5 +1,6 @@
 #pragma once
 #include <unordered_map>
+#include <memory>
 
 #include "enum_state_map.h"
 #include "shader_asset.h"
@@ -20,12 +21,12 @@ namespace cumulonimbus::shader_asset
 		/*
 		 * brief     : Shader全体の種類を変更するためのImGui
 		 */
-		void RenderImGui();
+		void RenderImGuiComboShader();
 		/*
 		 * brief : mapping::shader_assets::ShaderAsset3Dで指定されたshader個々の
 		 *		  ImGui(パラメータ)表示
 		 */
-		void RenderImGui(mapping::shader_assets::ShaderAsset3D asset);
+		void RenderImGuiShaderParameter();
 
 		/*
 		 * brief : shader_asset_mapに登録されている全ての
@@ -42,7 +43,7 @@ namespace cumulonimbus::shader_asset
 		[[nodiscard]] mapping::shader_assets::ShaderAsset3D GetCurrentAsset() const { return shader_assets.GetCurrentState(); }
 
 	private:
-		std::unordered_map<mapping::shader_assets::ShaderAsset3D, shader_asset::ShaderAsset> shader_asset_map{};
+		std::unordered_map<mapping::shader_assets::ShaderAsset3D, std::shared_ptr<shader_asset::ShaderAsset>> shader_asset_map{};
 		EnumStateMap<mapping::shader_assets::ShaderAsset3D> shader_assets;
 
 		template<typename T>
@@ -51,7 +52,7 @@ namespace cumulonimbus::shader_asset
 			if (shader_asset_map.contains(asset_type))
 				return;
 
-			shader_asset_map.emplace(asset_type, T());
+			shader_asset_map.emplace(asset_type, std::make_shared<T>());
 		}
 	};
 }

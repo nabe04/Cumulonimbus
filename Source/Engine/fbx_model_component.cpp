@@ -24,6 +24,9 @@ namespace cumulonimbus::component
 	{
 		this->resource = resource;
 
+		// モデルのマテリアル数分作成
+		materials_manager.resize(resource->GetModelData().materials.size());
+
 		registry->AddComponent<component::MeshObjectComponent>(ent);
 
 		//registry->GetComponent<component::ShaderAssets3DComponent>(ent).SetMaterialPathForAllShaderAsset3D()
@@ -65,11 +68,6 @@ namespace cumulonimbus::component
 		CalculateWorldTransform(world_transform);
 
 		UpdateAnimState(delta_time);
-
-		//if(!is_static)
-		//{
-		//	UpdateAnimState(delta_time);
-		//}
 	}
 
 	void FbxModelComponent::RenderImGui()
@@ -116,15 +114,16 @@ namespace cumulonimbus::component
 				{
 					if (ImGui::TreeNode(mesh.mesh_name.c_str()))
 					{
-						// TODO: Material3DManager::RenderImGui()
-
 						for (int material_index = 0; material_index < mesh.material_count; ++material_index)
 						{
+							// TODO: Material3DManager::RenderImGui()
+							materials_manager.at(material_index).RenderImGuiComboShader();
+
 							helper::imgui::Image(resource->GetModelData().materials.at(material_index).shader_resource_view.Get());
 							ImGui::SameLine();
 
-							auto* my_texture = resource->GetModelData().materials.at(material_index).shader_resource_view.Get();
-							auto tex_filename = resource->GetModelData().materials.at(material_index).texture_filename;
+							auto* my_texture   = resource->GetModelData().materials.at(material_index).shader_resource_view.Get();
+							auto  tex_filename = resource->GetModelData().materials.at(material_index).texture_filename;
 							if(ImGui::BeginCombo("Textures", tex_filename.c_str()))
 							{
 								for (const auto& tex : locator::Locator::GetTextureResourceManager()->GetTextureResources())
@@ -145,9 +144,13 @@ namespace cumulonimbus::component
 
 								ImGui::EndCombo();
 							}
+
+							// TODO: Material3DManager::RenderImGui()
+							materials_manager.at(material_index).RenderImGuiShaderParameter();
 						}
 
 						// TODO: Material3DManager::RenderImGui(mapping::shader_assets::ShaderAsset3D asset)
+
 
 						ImGui::TreePop();
 					}

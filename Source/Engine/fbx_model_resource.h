@@ -2,13 +2,13 @@
 
 #include <string>
 #include <string_view>
+#include <vector>
 
 #include <d3d11.h>
-
 #include <cereal/cereal.hpp>
 
-#include "texture.h"
 #include "model_data.h"
+#include "material3d_manager.h"
 
 class FbxModelResource final
 {
@@ -39,8 +39,8 @@ public:
 	}
 
 private:
-	std::string model_name{};
-	ModelData model_data{};
+	std::string model_name{}; // FBX モデル名
+	ModelData   model_data{}; // 頂点情報などが入ったデータ
 
 	// Deserialize
 	void Import(const char* filename);

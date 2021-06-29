@@ -5,7 +5,6 @@
 #include "locator.h"
 #include "shader_filename_mapping.h"
 
-
 namespace cumulonimbus
 {
 	namespace shader_system

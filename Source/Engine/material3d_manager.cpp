@@ -28,58 +28,52 @@ namespace cumulonimbus::shader_asset
 
 	void Material3DManager::BindAsset(mapping::shader_assets::ShaderAsset3D asset)
 	{
-		shader_asset_map.at(asset).BindCBuffer();
+		shader_asset_map.at(asset)->BindCBuffer();
 	}
 
 	void Material3DManager::UnbindAsset(mapping::shader_assets::ShaderAsset3D asset)
 	{
-		shader_asset_map.at(asset).UnbindCBuffer();
+		shader_asset_map.at(asset)->UnbindCBuffer();
 	}
 
-	void Material3DManager::RenderImGui()
+	void Material3DManager::RenderImGuiComboShader()
 	{
-		if (ImGui::TreeNode("Material Instance"))
+		if (ImGui::BeginCombo("Shader", shader_assets.GetCurrentStateName().c_str()))
 		{
-			if (ImGui::BeginCombo("Shader Type", shader_assets.GetCurrentStateName().c_str()))
+			for (auto& name : shader_assets.GetStateNames())
 			{
-				for (auto& name : shader_assets.GetStateNames())
+				bool is_selected = (shader_assets.GetCurrentState() == shader_assets.GetStateMap().at(name));
+
+				if (ImGui::Selectable(name.c_str(), is_selected))
 				{
-					bool is_selected = (shader_assets.GetCurrentState() == shader_assets.GetStateMap().at(name));
-
-					if (ImGui::Selectable(name.c_str(), is_selected))
-					{
-						shader_assets.SetState(shader_assets.GetStateMap().at(name));
-					}
-					if (is_selected)
-					{
-						ImGui::SetItemDefaultFocus();
-					}
+					shader_assets.SetState(shader_assets.GetStateMap().at(name));
 				}
-
-				ImGui::EndCombo();
+				if (is_selected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
 			}
 
-			//RenderImGui(shader_assets.GetCurrentState());
-			ImGui::TreePop();
+			ImGui::EndCombo();
 		}
 	}
 
-	void Material3DManager::RenderImGui(mapping::shader_assets::ShaderAsset3D asset)
+	void Material3DManager::RenderImGuiShaderParameter()
 	{
-		shader_asset_map.at(asset).RenderImGui();
+		shader_asset_map.at(shader_assets.GetCurrentState())->RenderImGui();
 	}
 
 	void Material3DManager::SetMaterialPathForAllShaderAsset3D(const shader_asset::MaterialPath& material_path)
 	{
 		for (auto& asset : shader_asset_map)
 		{
-			asset.second.SetMaterialPath(material_path);
+			asset.second->SetMaterialPath(material_path);
 		}
 	}
 
 	void Material3DManager::SetMaterialPath(mapping::shader_assets::ShaderAsset3D asset,
 											   const shader_asset::MaterialPath& material_path)
 	{
-		shader_asset_map.at(asset).SetMaterialPath(material_path);
+		shader_asset_map.at(asset)->SetMaterialPath(material_path);
 	}
 }
