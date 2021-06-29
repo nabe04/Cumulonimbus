@@ -1,4 +1,4 @@
-#ifndef REFRACTION_MAPPING_H
+ï»¿#ifndef REFRACTION_MAPPING_H
 #define REFRACTION_MAPPING_H
 
 #ifdef __cplusplus
@@ -15,7 +15,7 @@
 
 CBUFFER(RefractionCB, CBSlot_RefractionMapping)
 {
-	float  refraction_refractive_index; // ‹üÜ—¦
+	float  refraction_refractive_index; // å±ˆæŠ˜ç‡
 	float3 refraction_padding;
 
 #ifdef __cplusplus
@@ -73,7 +73,7 @@ namespace shader
 {
 	struct M_Refraction
 	{// (b6)
-		DirectX::XMFLOAT4 refractive_index;	// ‹üÜ—¦(x¬•ª‚Ì‚İd—l)(0.0 ` 1.0)
+		DirectX::XMFLOAT4 refractive_index;	// å±ˆæŠ˜ç‡(xæˆåˆ†ã®ã¿ä»•æ§˜)(0.0 ï½ 1.0)
 
 		void EditParam()
 		{

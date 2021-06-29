@@ -1,4 +1,4 @@
-#include "single_color.h"
+ï»¿#include "single_color.h"
 
 #include "locator.h"
 #include "shader_filename_mapping.h"
@@ -23,7 +23,7 @@ namespace cumulonimbus
 		{
 			cb_single_color = std::make_unique<buffer::ConstantBuffer<SingleColorCB>>(locator::Locator::GetDx11Device()->device.Get());
 
-			// ‰ŠúÝ’è
+			// åˆæœŸè¨­å®š
 			cb_single_color->data.single_color = { 1.f,1.f,1.f,1.f };
 		}
 

@@ -26,7 +26,6 @@ namespace cumulonimbus::component
 
 		registry->AddComponent<component::MeshObjectComponent>(ent);
 
-		shader_asset::MaterialPath material_path;
 		//registry->GetComponent<component::ShaderAssets3DComponent>(ent).SetMaterialPathForAllShaderAsset3D()
 
 		// ÉmÅ[Éh
@@ -117,6 +116,8 @@ namespace cumulonimbus::component
 				{
 					if (ImGui::TreeNode(mesh.mesh_name.c_str()))
 					{
+						// TODO: Material3DManager::RenderImGui()
+
 						for (int material_index = 0; material_index < mesh.material_count; ++material_index)
 						{
 							helper::imgui::Image(resource->GetModelData().materials.at(material_index).shader_resource_view.Get());
@@ -140,25 +141,17 @@ namespace cumulonimbus::component
 									{
 										ImGui::SetItemDefaultFocus();
 									}
-
 								}
 
 								ImGui::EndCombo();
 							}
-
 						}
+
+						// TODO: Material3DManager::RenderImGui(mapping::shader_assets::ShaderAsset3D asset)
 
 						ImGui::TreePop();
 					}
 				}
-
-				//for (const auto&tex : locator::Locator::GetTextureResourceManager()->GetTextureResources())
-				//{
-				//	helper::imgui::Image(tex.second->GetTextureData()->texture_view.Get());
-
-				//}
-				//locator::Locator::GetTextureResourceManager().
-				//
 			}
 
 			ImGui::Text("Current Keyframe : %d", current_keyframe);

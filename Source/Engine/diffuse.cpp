@@ -37,6 +37,14 @@ namespace cumulonimbus
 			vertex_shader = std::make_unique<shader_system::VertexShader>(mapping::shader_filename::vs::Diffuse_VS().c_str());
 			pixel_shader  = std::make_unique<shader_system::PixelShader>(mapping::shader_filename::ps::Diffuse_PS().c_str());
 		}
+	} // shader_system
+
+	namespace shader_asset
+	{
+		DiffuseAsset::DiffuseAsset()
+		{
+			
+		}
 
 	}
-}
+} // cumulonimbus

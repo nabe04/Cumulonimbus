@@ -61,7 +61,7 @@ typedef PS_Input VS_OutPut;
 TEXTURE2D(texture_depth     , float4, TexSlot_Depth);
 TEXTURE2D(texture_base_color, float4, TexSlot_BaseColorMap);
 TEXTURECUBE(texture_cube, float4, TexSlot_SkyMap);
-
+TEXTURE2D(texture_normal, float4, TexSlot_NormalMap);
 
 inline float GetScreenWidth()  { return screen_width;  }
 inline float GetScreenHeight() { return screen_height; }

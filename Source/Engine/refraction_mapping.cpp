@@ -1,4 +1,4 @@
-#include "refraction_mapping.h"
+ï»¿#include "refraction_mapping.h"
 
 #include <imgui.h>
 
@@ -26,7 +26,7 @@ namespace cumulonimbus
 		{
 			cb_refraction = std::make_unique<buffer::ConstantBuffer<RefractionCB>>(locator::Locator::GetDx11Device()->device.Get());
 
-			// ‰ŠúÝ’è
+			// åˆæœŸè¨­å®š
 			cb_refraction->data.refraction_refractive_index = 0.5f;
 		}
 

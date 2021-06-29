@@ -6,6 +6,7 @@
 #include "enum_state_map.h"
 #include "shader_asset_mapping.h"
 
+// TODO : MaterialInstance
 namespace cumulonimbus::component
 {
 	class MaterialInstance3DComponent : public ComponentBase
@@ -25,7 +26,6 @@ namespace cumulonimbus::component
 
 	private:
 		EnumStateMap<mapping::shader_assets::ShaderAsset3D> shader_assets;
-
 	};
 }
 

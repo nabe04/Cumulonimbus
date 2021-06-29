@@ -17,10 +17,32 @@ namespace cumulonimbus::shader_asset
 		material_path.normal_map_name = name;
 	}
 
+	void ShaderAsset::SetPBRMapName(const std::string& name)
+	{
+		material_path.pbr_map_name = name;
+	}
+
 	void ShaderAsset::SetRoughnessMapName(const std::string& name)
 	{
 		material_path.roughness_map_name = name;
 	}
+
+	void ShaderAsset::SetMetalnessMapName(const std::string& name)
+	{
+		material_path.metalness_map_name = name;
+	}
+
+	void ShaderAsset::SetSpecularMapName(const std::string& name)
+	{
+		material_path.specular_map_name = name;
+	}
+
+	void ShaderAsset::SetAOMapName(const std::string& name)
+	{
+		material_path.ao_map_name = name;
+	}
+
+
 
 	const std::string& ShaderAsset::GetAlbedoMapName() const
 	{
@@ -37,8 +59,29 @@ namespace cumulonimbus::shader_asset
 		return material_path.roughness_map_name;
 	}
 
+	const std::string& ShaderAsset::GetPBRMapName() const
+	{
+		return material_path.pbr_map_name;
+	}
+
 	const MaterialPath& ShaderAsset::GetMaterialPath() const
 	{
 		return material_path;
 	}
+
+	const std::string& ShaderAsset::GetMetalnessMapName() const
+	{
+		return material_path.metalness_map_name;
+	}
+
+	const std::string& ShaderAsset::GetSpecularMapName() const
+	{
+		return material_path.specular_map_name;
+	}
+
+	const std::string& ShaderAsset::GetAOMapName() const
+	{
+		return material_path.ao_map_name;
+	}
+
 } // cumulonimbus::shader_asset

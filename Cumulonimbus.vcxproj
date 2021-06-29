@@ -86,6 +86,7 @@
     <ClInclude Include="Source\Engine\Misc.h" />
     <ClInclude Include="Source\Engine\model_data.h" />
     <ClInclude Include="Source\Engine\model_render.h" />
+    <ClInclude Include="Source\Engine\pch.h" />
     <ClInclude Include="Source\Engine\phong.h" />
     <ClInclude Include="Source\Engine\pixel_shader.h" />
     <ClInclude Include="Source\Engine\rasterizer.h" />
@@ -98,6 +99,7 @@
     <ClInclude Include="Source\Engine\sampler_mapping.h" />
     <ClInclude Include="Source\Engine\shader_asset.h" />
     <ClInclude Include="Source\Engine\shader_assets_component.h" />
+    <ClInclude Include="Source\Engine\material3d_manager.h" />
     <ClInclude Include="Source\Engine\shader_asset_mapping.h" />
     <ClInclude Include="Source\Engine\shader_filename_mapping.h" />
     <ClInclude Include="Source\Engine\shader_interop.h" />
@@ -198,6 +200,9 @@
     <ClCompile Include="Source\Engine\metal.cpp" />
     <ClCompile Include="Source\Engine\model_data.cpp" />
     <ClCompile Include="Source\Engine\model_render.cpp" />
+    <ClCompile Include="Source\Engine\pch.cpp">
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.h</PrecompiledHeaderFile>
+    </ClCompile>
     <ClCompile Include="Source\Engine\phong.cpp" />
     <ClCompile Include="Source\Engine\pixel_shader.cpp" />
     <ClCompile Include="Source\Engine\rasterize.cpp" />
@@ -215,6 +220,7 @@
     <ClCompile Include="Source\Engine\shader.cpp" />
     <ClCompile Include="Source\Engine\shader_asset.cpp" />
     <ClCompile Include="Source\Engine\shader_assets_component.cpp" />
+    <ClCompile Include="Source\Engine\material3d_manager.cpp" />
     <ClCompile Include="Source\Engine\shader_filename_mapping.cpp" />
     <ClCompile Include="Source\Engine\shader_manager.cpp" />
     <ClCompile Include="Source\Engine\shadow_map.cpp" />
@@ -689,8 +695,6 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -701,6 +705,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <PrecompiledHeaderFile>stdafx.h  pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
