@@ -25,7 +25,10 @@ namespace cumulonimbus::component
 		this->resource = resource;
 
 		// モデルのマテリアル数分作成
-		materials_manager.resize(resource->GetModelData().materials.size());
+		for (int i = 0; i < resource->GetModelData().materials.size(); ++i)
+		{
+			materials_manager.emplace_back(std::make_shared<shader_asset::Material3DManager>());
+		}
 
 		registry->AddComponent<component::MeshObjectComponent>(ent);
 
@@ -119,7 +122,7 @@ namespace cumulonimbus::component
 						for (int material_index = 0; material_index < mesh.material_count; ++material_index)
 						{// そのメッシュが持つマテリアル数分
 							// Shaderの種類を変えるためのImGui
-							materials_manager.at(material_index).RenderImGuiComboShader();
+							materials_manager.at(material_index)->RenderImGuiComboShader();
 
 							helper::imgui::Image(resource->GetModelData().materials.at(material_index).shader_resource_view.Get());
 							ImGui::SameLine();
@@ -148,7 +151,7 @@ namespace cumulonimbus::component
 							}
 
 							// 現在適応されているShaderのパラメータを編集するためのImGui
-							materials_manager.at(material_index).RenderImGuiShaderParameter();
+							materials_manager.at(material_index)->RenderImGuiShaderParameter();
 						}
 						ImGui::TreePop();
 					}

@@ -78,7 +78,7 @@ namespace cumulonimbus::component
 		 * brief			: 指定された要素のマテリアル情報(シェーダー、シェーダーパラメータ、テクスチャ)の取得
 		 * material_index   : メッシュのsubsetが持つmaterial_indexを指定
 		 */
-		[[nodiscard]] const shader_asset::Material3DManager& GetMaterialsManager(uint material_index) const { return materials_manager.at(material_index); }
+		[[nodiscard]] const shader_asset::Material3DManager* GetMaterialsManager(uint material_index) const { return materials_manager.at(material_index).get(); }
 
 		// アニメーション
 		[[nodiscard]] bool IsPlayAnimation() const { return current_animation_index >= 0; }
@@ -138,7 +138,7 @@ namespace cumulonimbus::component
 		std::shared_ptr<FbxModelResource>	resource{nullptr};
 		std::vector<Node>					nodes{};
 
-		std::vector<shader_asset::Material3DManager> materials_manager; // mesh単位でマテリアル(テクスチャなど)を変更できるように
+		std::vector<std::shared_ptr<shader_asset::Material3DManager>> materials_manager; // mesh単位でマテリアル(テクスチャなど)を変更できるように
 
 		int	current_animation_index = -1;
 		int	prev_animation_index	= -1;	// 前のアニメーションのインデックス番号(ブレンドで使用)

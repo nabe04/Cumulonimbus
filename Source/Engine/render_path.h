@@ -136,7 +136,7 @@ namespace cumulonimbus::renderer
 		void RenderFBX(ID3D11DeviceContext* immediate_context,
 					   ecs::Registry* registry, mapping::rename_type::Entity entity,
 					   const component::MeshObjectComponent* mesh_object,
-					   const View* view, const Light* light);
+					   const View* view, const Light* light, bool is_render_shadow);
 
 		/*
 		 * brief : "SkyBoxComponent"‚ª‚Âƒ‚ƒfƒ‹‚Ì•`‰æ

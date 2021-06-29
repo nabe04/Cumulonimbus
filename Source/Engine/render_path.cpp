@@ -124,7 +124,7 @@ namespace cumulonimbus::renderer
 			}
 			else if(auto* fbx_model = registry->TryGetComponent<component::FbxModelComponent>(ent))
 			{
-				RenderFBX(immediate_context, registry, ent, &mesh_object, view, light);
+				RenderFBX(immediate_context, registry, ent, &mesh_object, view, light, true);
 			}
 		}
 
@@ -170,9 +170,9 @@ namespace cumulonimbus::renderer
 			locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, depth_map->GetDepthExtractionSRV(), TexSlot_Depth);
 
 			// TODO: FBXモデルのメッシュ単位でマテリアルの変更を適用できれば削除
-			const auto asset = registry->GetComponent<component::MaterialInstance3DComponent>(ent).GetCurrentAsset();
-			shader_manager->BindShader(asset);
-			registry->GetComponent<component::ShaderAssets3DComponent>(ent).BindCBuffer(asset);
+			//const auto asset = registry->GetComponent<component::MaterialInstance3DComponent>(ent).GetCurrentAsset();
+			//shader_manager->BindShader(asset);
+			//registry->GetComponent<component::ShaderAssets3DComponent>(ent).BindCBuffer(asset);
 
 			if (auto* geom = registry->TryGetComponent<component::GeomPrimComponent>(ent))
 			{
@@ -184,7 +184,7 @@ namespace cumulonimbus::renderer
 			}
 			else if (auto* fbx_model = registry->TryGetComponent<component::FbxModelComponent>(ent))
 			{
-				RenderFBX(immediate_context, registry, ent, &mesh_object, view, light);
+				RenderFBX(immediate_context, registry, ent, &mesh_object, view, light, false);
 			}
 		}
 
@@ -349,7 +349,7 @@ namespace cumulonimbus::renderer
 	void RenderPath::RenderFBX(ID3D11DeviceContext* immediate_context,
 							   ecs::Registry* registry, mapping::rename_type::Entity entity,
 							   const component::MeshObjectComponent* mesh_object,
-							   const View* view, const Light* light)
+							   const View* view, const Light* light , bool is_render_shadow)
 	{
 		const component::FbxModelComponent&	 model		= registry->GetComponent<component::FbxModelComponent>(entity);
 		const FbxModelResource*				 resource	= model.GetResource();
@@ -394,7 +394,11 @@ namespace cumulonimbus::renderer
 				registry->GetComponent<component::MaterialComponent>(entity).SetAndBindCBuffer(cb_material);
 
 				//TODO: メッシュ単位のマテリアル適応
-				//model.GetMaterialsManager(subset.material_index).BindAsset();
+				if(!is_render_shadow)
+				{
+					shader_manager->BindShader(model.GetMaterialsManager(subset.material_index)->GetCurrentAsset());
+					model.GetMaterialsManager(subset.material_index)->BindAsset();
+				}
 
 				if (subset.material && subset.material->shader_resource_view)
 				{
@@ -411,7 +415,12 @@ namespace cumulonimbus::renderer
 				immediate_context->DrawIndexed(subset.index_count, subset.start_index, 0);
 
 				registry->GetComponent<component::MaterialComponent>(entity).UnbindCBuffer();
-				//model.GetMaterialsManager(subset.material_index).UnbindAsset();
+
+				if(!is_render_shadow)
+				{
+					model.GetMaterialsManager(subset.material_index)->UnbindAsset();
+					shader_manager->UnbindShader(model.GetMaterialsManager(subset.material_index)->GetCurrentAsset());
+				}
 			}
 		}
 	}
