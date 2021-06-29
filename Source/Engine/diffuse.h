@@ -1,6 +1,13 @@
-#pragma once
+#ifndef DIFFUSE_H
+#define DIFFUSE_H
+
+#include "shader_interop_renderer.h"
+
+#ifdef __cplusplus
 #include "shader.h"
 #include "shader_asset.h"
+
+
 
 namespace shader
 {
@@ -44,3 +51,7 @@ namespace cumulonimbus
 	}
 
 }
+#endif // __cplusplus
+
+#endif // DIFFUSE_H
+

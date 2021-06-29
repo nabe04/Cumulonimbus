@@ -389,7 +389,7 @@ namespace cumulonimbus::renderer
 			for (const ModelData::Subset& subset : mesh.subsets)
 			{
 				MaterialCB cb_material;
-				cb_material.material.base_color   = subset.material != NULL ? subset.material->color : XMFLOAT4{ 0.8f, 0.8f, 0.8f, 1.0f };
+				cb_material.material.base_color   = subset.material != nullptr ? subset.material->color : XMFLOAT4{ 0.8f, 0.8f, 0.8f, 1.0f };
 				cb_material.material.base_color.w = model.GetColor().w;
 				registry->GetComponent<component::MaterialComponent>(entity).SetAndBindCBuffer(cb_material);
 

@@ -8,10 +8,10 @@
 class Window final
 {
 private:
-	HWND hwnd{};
 	const wchar_t* window_class_name{};
-	u_int window_width{};
-	u_int window_height{};
+	HWND	hwnd{};
+	u_int	window_width{};
+	u_int	window_height{};
 
 	HINSTANCE instance{};
 	HINSTANCE prev_instance{};
@@ -36,8 +36,8 @@ public:
 	void SetHWND(HWND hwnd) { this->hwnd = hwnd; }
 	[[nodiscard]] u_int Width() const { return window_width; }
 	[[nodiscard]] u_int Height() const { return window_height; }
-	[[nodiscard]] RECT WindowRect();
-	[[nodiscard]] RECT ClientRect();
+	[[nodiscard]] RECT GetThisWindowRect();
+	[[nodiscard]] RECT GetThisClientRect();
 	[[nodiscard]] bool IsWithinWindow(DirectX::XMINT2 pos);
 	[[nodiscard]] const wchar_t* WindowClassName() const { return window_class_name; }
 };

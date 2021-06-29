@@ -367,6 +367,11 @@ namespace cumulonimbus::ecs
 			return &array.GetComponent(entity);
 		}
 
+		/*
+		 * brief : Component‚Ì’Ç‰Á
+		 *         ‚·‚Å‚ÉComponent‚ğŠ‚µ‚Ä‚¢‚½ê‡
+		 *         V‚µ‚­’Ç‰Á‚¹‚¸AŠ‚µ‚Ä‚¢‚éComponent‚ğ•Ô‚·
+		 */
 		template <typename T, typename... Args>
 		T& AddComponent(const mapping::rename_type::Entity entity, Args... args)
 		{

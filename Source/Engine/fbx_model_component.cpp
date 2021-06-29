@@ -3,14 +3,17 @@
 #include <algorithm>
 #include <iterator>
 #include <vector>
-#include <cereal/types/vector.hpp>
 #include <cereal/types/bitset.hpp>
+#include <cereal/types/vector.hpp>
 
 #include "cereal_helper.h"
 #include "collision_component.h"
+#include "cum_imgui_helper.h"
 #include "ecs.h"
 #include "fbx_model_resource.h"
 #include "locator.h"
+#include "mesh_object.h"
+#include "shader_assets_component.h"
 #include "shader_manager.h"
 #include "transform_component.h"
 
@@ -20,6 +23,11 @@ namespace cumulonimbus::component
 		:ComponentBase{ registry , ent }
 	{
 		this->resource = resource;
+
+		registry->AddComponent<component::MeshObjectComponent>(ent);
+
+		shader_asset::MaterialPath material_path;
+		//registry->GetComponent<component::ShaderAssets3DComponent>(ent).SetMaterialPathForAllShaderAsset3D()
 
 		// ÉmÅ[Éh
 		const std::vector<ModelData::Node>& res_nodes = resource->GetModelData().nodes;
@@ -96,11 +104,61 @@ namespace cumulonimbus::component
 			}
 
 			int no = 0;
-			for (auto& material : resource->GetModelData().materials)
+			for (const auto& material : resource->GetModelData().materials)
 			{
 				std::string str = "Color" + no;
 				ImGui::ColorEdit4(str.c_str(), (float*)&material.color);
 				++no;
+			}
+
+			if (ImGui::CollapsingHeader("Meshes"))
+			{
+				for (auto& mesh : resource->GetModelData().meshes)
+				{
+					if (ImGui::TreeNode(mesh.mesh_name.c_str()))
+					{
+						for (int material_index = 0; material_index < mesh.material_count; ++material_index)
+						{
+							helper::imgui::Image(resource->GetModelData().materials.at(material_index).shader_resource_view.Get());
+							ImGui::SameLine();
+
+							auto* my_texture = resource->GetModelData().materials.at(material_index).shader_resource_view.Get();
+							auto tex_filename = resource->GetModelData().materials.at(material_index).texture_filename;
+							if(ImGui::BeginCombo("Textures", tex_filename.c_str()))
+							{
+								for (const auto& tex : locator::Locator::GetTextureResourceManager()->GetTextureResources())
+								{
+									helper::imgui::Image(tex.second->GetTextureData()->texture_view.Get(), { 50,50 });
+									ImGui::SameLine();
+									bool is_selected = (my_texture == tex.second->GetTextureData()->texture_view.Get());
+									if (ImGui::Selectable(tex.first.c_str(), is_selected,0,{ 200,50}))
+									{
+										resource->SetMaterialTexture(material_index, tex.second->GetTextureData()->texture_view.Get());
+										resource->SetMaterialFilename(material_index, tex.first);
+									}
+									if (is_selected)
+									{
+										ImGui::SetItemDefaultFocus();
+									}
+
+								}
+
+								ImGui::EndCombo();
+							}
+
+						}
+
+						ImGui::TreePop();
+					}
+				}
+
+				//for (const auto&tex : locator::Locator::GetTextureResourceManager()->GetTextureResources())
+				//{
+				//	helper::imgui::Image(tex.second->GetTextureData()->texture_view.Get());
+
+				//}
+				//locator::Locator::GetTextureResourceManager().
+				//
 			}
 
 			ImGui::Text("Current Keyframe : %d", current_keyframe);
@@ -404,4 +462,4 @@ namespace cumulonimbus::component
 
 	}
 
-}
+} // cumulonimbus::component

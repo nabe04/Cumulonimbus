@@ -13,7 +13,6 @@ namespace cumulonimbus::component
 		:ComponentBase{ registry,ent }
 	{
 		registry->AddComponent<component::ShaderAssets3DComponent>(ent);
-		RegisterItem();
 	}
 
 	void MaterialInstance3DComponent::RenderImGui()
@@ -53,14 +52,5 @@ namespace cumulonimbus::component
 	{
 	}
 
-	void MaterialInstance3DComponent::RegisterItem()
-	{
-		for (const auto& state_name : shader_assets.GetStateNames())
-		{
-			const char* s = state_name.c_str();
-			asset_items.emplace_back(state_name.c_str());
-			s_name.emplace_back(state_name);
-		}
-	}
 }
 

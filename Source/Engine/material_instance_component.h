@@ -26,15 +26,6 @@ namespace cumulonimbus::component
 	private:
 		EnumStateMap<mapping::shader_assets::ShaderAsset3D> shader_assets;
 
-		// for ImGui
-		int current_asset;
-		std::vector<std::string > s_name;
-		std::vector<const char*> asset_items{};
-		/*
-		 * brief : shader_assets‚Ìstd::string‚Ìƒf[ƒ^‚ğ
-		 *         asset_items‚Ìconst char*‚É•ÏŠ·‚µ‚Ä’Ç‰Á
-		 */
-		void RegisterItem();
 	};
 }
 

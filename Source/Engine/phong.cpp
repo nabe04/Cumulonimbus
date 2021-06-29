@@ -24,9 +24,9 @@ namespace cumulonimbus
 			cb_phong = std::make_unique<buffer::ConstantBuffer<PhongCB>>(locator::Locator::GetDx11Device()->device.Get());
 
 			// ‰ŠúÝ’è
-			cb_phong->data.phong_specular			= 1.0f;
-			cb_phong->data.phong_ref_coefficient	= 1.0f;
-			cb_phong->data.phong_pow_value			= 1.0f;
+			cb_phong->data.phong_specular = 1.0f;
+			cb_phong->data.phong_ref_coefficient = 1.0f;
+			cb_phong->data.phong_pow_value = 1.0f;
 		}
 
 		void PhongAsset::BindCBuffer()

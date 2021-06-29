@@ -45,6 +45,7 @@
     <ClInclude Include="Source\Engine\constant_buffer.h" />
     <ClInclude Include="Source\Engine\constant_buffer_mapping.h" />
     <ClInclude Include="Source\Engine\content_browser.h" />
+    <ClInclude Include="Source\Engine\cum_imgui_helper.h" />
     <ClInclude Include="Source\Engine\depth_map.h" />
     <ClInclude Include="Source\Engine\depth_stencil.h" />
     <ClInclude Include="Source\Engine\diffuse.h" />
@@ -212,6 +213,7 @@
     <ClCompile Include="Source\Engine\scene_title.cpp" />
     <ClCompile Include="Source\Engine\scene_tutorial.cpp" />
     <ClCompile Include="Source\Engine\shader.cpp" />
+    <ClCompile Include="Source\Engine\shader_asset.cpp" />
     <ClCompile Include="Source\Engine\shader_assets_component.cpp" />
     <ClCompile Include="Source\Engine\shader_filename_mapping.cpp" />
     <ClCompile Include="Source\Engine\shader_manager.cpp" />

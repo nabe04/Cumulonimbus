@@ -186,6 +186,9 @@ void Scene::Render()
 #ifdef _DEBUG
 	// ImGui
 	{
+		const RECT window_rect = cumulonimbus::locator::Locator::GetWindow()->GetThisWindowRect();
+
+		ImGui::SetNextWindowPos(ImVec2{ static_cast<float>(window_rect.right), static_cast<float>(window_rect.top)});
 		ImGui::Begin("Scene");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		this->RenderImGui();
@@ -195,12 +198,20 @@ void Scene::Render()
 		{
 			registry->RenderImGui();
 		}
-		ImGui::Text("window x : %d", cumulonimbus::locator::Locator::GetWindow()->WindowRect().left);
-		ImGui::Text("window y : %d", cumulonimbus::locator::Locator::GetWindow()->WindowRect().top);
-		POINT po{};
-		GetCursorPos(&po);
-		ImGui::Text("mouse x : %d",po.x);
-		ImGui::Text("mouse y : %d", po.y);
+		ImGui::Text("window left    : %d", cumulonimbus::locator::Locator::GetWindow()->GetThisWindowRect().left);
+		ImGui::Text("window right   : %d", cumulonimbus::locator::Locator::GetWindow()->GetThisWindowRect().right);
+		ImGui::Text("window top     : %d", cumulonimbus::locator::Locator::GetWindow()->GetThisWindowRect().top);
+		ImGui::Text("window bottom  : %d", cumulonimbus::locator::Locator::GetWindow()->GetThisWindowRect().bottom);
+
+		ImGui::Text("client left    : %d", cumulonimbus::locator::Locator::GetWindow()->GetThisClientRect().left);
+		ImGui::Text("client right   : %d", cumulonimbus::locator::Locator::GetWindow()->GetThisClientRect().right);
+		ImGui::Text("client top     : %d", cumulonimbus::locator::Locator::GetWindow()->GetThisClientRect().top);
+		ImGui::Text("client bottom  : %d", cumulonimbus::locator::Locator::GetWindow()->GetThisClientRect().bottom);
+
+		POINT cursor_pos{};
+		GetCursorPos(&cursor_pos);
+		ImGui::Text("mouse x : %d", cursor_pos.x);
+		ImGui::Text("mouse y : %d", cursor_pos.y);
 
 		ImGui::End();
 

@@ -102,6 +102,9 @@ public:
 		Microsoft::WRL::ComPtr<ID3D11Buffer>	vertex_buffer;	// シリアライズの対象外
 		Microsoft::WRL::ComPtr<ID3D11Buffer>	index_buffer;	// シリアライズの対象外
 
+		int										material_count;
+		std::string								mesh_name;
+		
 		std::vector<Vertex>						vertices;
 		std::vector<UINT>						indices;
 		std::vector<Subset>						subsets;
@@ -114,6 +117,8 @@ public:
 		void serialize(Archive& archive, int version)
 		{
 			archive(
+				CEREAL_NVP(material_count),
+				CEREAL_NVP(mesh_name),
 				CEREAL_NVP(vertices),
 				CEREAL_NVP(indices),
 				CEREAL_NVP(subsets),

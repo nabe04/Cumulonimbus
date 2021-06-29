@@ -46,4 +46,17 @@ namespace cumulonimbus::component
 		shader_asset_map.at(asset)->RenderImGui();
 	}
 
+	void ShaderAssets3DComponent::SetMaterialPathForAllShaderAsset3D(const shader_asset::MaterialPath& material_path)
+	{
+		for(auto& asset : shader_asset_map)
+		{
+			asset.second->SetMaterialPath(material_path);
+		}
+	}
+
+	void ShaderAssets3DComponent::SetMaterialPath(mapping::shader_assets::ShaderAsset3D asset,
+		const shader_asset::MaterialPath& material_path)
+	{
+		shader_asset_map.at(asset)->SetMaterialPath(material_path);
+	}
 }

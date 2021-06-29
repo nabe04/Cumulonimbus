@@ -17,8 +17,17 @@ public:
 	explicit FbxModelResource(ID3D11Device* device, const char* import_filename, const char* dirname);
 	~FbxModelResource();
 
-	[[nodiscard]] const ModelData& GetModelData() const { return model_data; }
+	[[nodiscard]] const ModelData&   GetModelData() const { return model_data; }
 	[[nodiscard]] const std::string& GetModelName() const { return model_name; }
+
+	void SetMaterialTexture(u_int material_index, ID3D11ShaderResourceView* srv)
+	{
+		model_data.materials.at(material_index).shader_resource_view = srv;
+	}
+	void SetMaterialFilename(u_int material_index, const std::string& filename)
+	{
+		model_data.materials.at(material_index).texture_filename = filename;
+	}
 
 	template<typename Archive>
 	void serialize(Archive&& archive)

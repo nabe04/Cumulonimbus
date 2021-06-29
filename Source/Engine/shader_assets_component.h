@@ -29,6 +29,18 @@ namespace cumulonimbus::component
 
 		void Load(const std::string& file_path_and_name) override {}
 		void Save(const std::string& file_path)			 override {}
+
+		/*
+		 * brief : shader_asset_mapに登録されている全ての
+		 *         ShaderAsset3Dのmaterial_pathのセット
+		 */
+		void SetMaterialPathForAllShaderAsset3D(const shader_asset::MaterialPath& material_path);
+
+		/*
+		 * brief : assetで指定されたShaderAsset3Dの
+		 *         material_pathのセット
+		 */
+		void SetMaterialPath(mapping::shader_assets::ShaderAsset3D asset, const shader_asset::MaterialPath& material_path);
 	private:
 		std::unordered_map<mapping::shader_assets::ShaderAsset3D, std::shared_ptr<shader_asset::ShaderAsset>> shader_asset_map;
 

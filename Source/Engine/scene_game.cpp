@@ -99,22 +99,21 @@ void SceneGame::InitializeScene()
 	registry->AddComponent<cum::component::SkyBoxComponent>(ent_sky_box, cum::locator::Locator::GetDx11Device()->device.Get(), sky_filename);
 	registry->GetComponent<cum::component::TransformComponent>(ent_sky_box).SetScale(3.f);
 
-	const char* ground_filename = "./Data/Assets/Bin/ground.bin";  // "./Data/Assets/FBX/stage/stage.fbm/"
-	std::shared_ptr<FbxModelResource> ground_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), ground_filename, "./Data/Assets/FBX/ground/");
-	const cum::mapping::rename_type::Entity ent_floor = registry->CreateEntity();
-	registry->AddComponent<cum::component::MeshObjectComponent>(ent_floor);
-	registry->AddComponent<cum::component::FbxModelComponent>(ent_floor, ground_resource);
+	//const char* ground_filename = "./Data/Assets/Bin/ground.bin";  // "./Data/Assets/FBX/stage/stage.fbm/"
+	//std::shared_ptr<FbxModelResource> ground_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), ground_filename, "./Data/Assets/FBX/ground/");
+	//const cum::mapping::rename_type::Entity ent_floor = registry->CreateEntity();
+	//registry->AddComponent<cum::component::MeshObjectComponent>(ent_floor);
+	//registry->AddComponent<cum::component::FbxModelComponent>(ent_floor, ground_resource);
+	//registry->GetComponent<cum::component::FbxModelComponent>(ent_floor).SetIsStatic(true);
+	//registry->GetComponent<cum::component::TransformComponent>(ent_floor).SetScale(DirectX::XMFLOAT3{ 1,1,0.1f });
+	//registry->GetComponent<cum::component::TransformComponent>(ent_floor).SetWorldRotation_X(90);
+	//registry->GetComponent<cum::component::MeshObjectComponent>(ent_floor).SetSamplerState(RenderingSampleState::Linear_Wrap);
 
-	registry->GetComponent<cum::component::FbxModelComponent>(ent_floor).SetIsStatic(true);
-	registry->GetComponent<cum::component::TransformComponent>(ent_floor).SetScale(DirectX::XMFLOAT3{ 1,1,0.1f });
-	registry->GetComponent<cum::component::TransformComponent>(ent_floor).SetWorldRotation_X(90);
-	registry->GetComponent<cum::component::MeshObjectComponent>(ent_floor).SetSamplerState(RenderingSampleState::Linear_Wrap);
-
-	const cum::mapping::rename_type::Entity ent_bunny = registry->CreateEntity();
-	registry->AddComponent<cum::component::MeshObjectComponent>(ent_bunny);
-	registry->GetComponent<cum::component::MeshObjectComponent>(ent_bunny).SetShaderState(shader::MeshShaderTypes::Metal);
-	registry->AddComponent<cum::component::FbxModelComponent>(ent_bunny, cum::locator::Locator::GetResourceManager()->FbxModelResouece("stanford_bunny"));
-	registry->GetComponent<cum::component::TransformComponent>(ent_bunny).SetScale(0.1f);
+	//const cum::mapping::rename_type::Entity ent_bunny = registry->CreateEntity();
+	//registry->AddComponent<cum::component::MeshObjectComponent>(ent_bunny);
+	//registry->GetComponent<cum::component::MeshObjectComponent>(ent_bunny).SetShaderState(shader::MeshShaderTypes::Metal);
+	//registry->AddComponent<cum::component::FbxModelComponent>(ent_bunny, cum::locator::Locator::GetResourceManager()->FbxModelResouece("stanford_bunny"));
+	//registry->GetComponent<cum::component::TransformComponent>(ent_bunny).SetScale(0.1f);
 
 	const cum::mapping::rename_type::Entity ent_player = registry->CreateEntity();
 	const char* ganfaul_filename = "./Data/Assets/Bin/ganfaul.bin";

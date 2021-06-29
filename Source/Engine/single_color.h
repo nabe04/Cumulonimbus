@@ -48,7 +48,7 @@ namespace cumulonimbus
 		class SingleColorAsset final : public ShaderAsset
 		{
 		public:
-			SingleColorAsset();
+			explicit SingleColorAsset();
 
 			void BindCBuffer()   override;
 			void UnbindCBuffer() override;

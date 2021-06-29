@@ -39,13 +39,13 @@ void Window::Create(u_int width, u_int height, u_int pos_x, u_int pos_y)
 	window_height	  = height;
 }
 
-RECT Window::WindowRect()
+RECT Window::GetThisWindowRect()
 {
 	GetWindowRect(hwnd, &window_rect);
 	return window_rect;
 }
 
-RECT Window::ClientRect()
+RECT Window::GetThisClientRect()
 {
 	GetClientRect(hwnd, &client_rect);
 	return client_rect;
@@ -53,7 +53,7 @@ RECT Window::ClientRect()
 
 bool Window::IsWithinWindow(DirectX::XMINT2 pos)
 {
-	RECT rect = WindowRect();
+	RECT rect = GetThisClientRect();
 
 	if (pos.x < rect.left)
 		return false;
