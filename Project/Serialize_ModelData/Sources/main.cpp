@@ -16,8 +16,8 @@ int main()
 	//build_fbx.AddAnimation("../../Data/Assets/FBX/ganfaul/attack.fbx");
 	//build_fbx.Export("../../Data/Assets/Bin/ganfaul.bin");
 
-	BulidFBX bunny_fbx("../../Data/Assets/FBX/stanford_bunny.fbx");
-	bunny_fbx.Export("../../Data/Assets/Bin/stanford_bunny.bin");
+	//BulidFBX bunny_fbx("../../Data/Assets/FBX/stanford_bunny.fbx");
+	//bunny_fbx.Export("../../Data/Assets/Bin/stanford_bunny.bin");
 
 	//BulidFBX build_fbx("../../Data/Assets/FBX/Building/rpgpp_lt_building_01.fbx");
 	//build_fbx.Export("../../Data/Assets/Bin/rpgpp_lt_building_01.bin");
@@ -35,6 +35,9 @@ int main()
 	//build_fbx.AddAnimation("../../Data/TestData/RPG-Character/Unarmed/RPG-Character@Unarmed-Stunned.FBX");
 	//build_fbx.Export("../../Data/TestData/RPG-Character/RPG-Character.bin");
 
+	//-- Robot --//
+	BulidFBX bunny_fbx("../../Data/Assets/FBX/Robot/Robo_L.fbx");
+	bunny_fbx.Export("../../Data/Assets/Bin/Robo_L.bin");
 
 	//getchar();
 	return 0;

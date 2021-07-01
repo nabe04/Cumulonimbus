@@ -20,6 +20,14 @@ namespace cumulonimbus::manager::texture
 			return textures;
 	  	}
 
+		bool Contents(const std::string& texture_filename);
+
+		/*
+		 * brief     : ImGui::Comboを使用して、引数のfilenameを変更する
+		 * ※caution : ImGui上での編集なのでImGui以外の用途で使用しないように注意
+		 */
+		void ModifyTextureFilename(std::string& texture_filename, const std::string& combo_label);
+
 	private:
 		std::map<std::string, std::unique_ptr<TextureResource>> textures = {};
 		std::unique_ptr<DummyTexture> dummy_texture_white{ nullptr };

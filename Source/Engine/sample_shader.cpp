@@ -1,57 +1,34 @@
-#include "diffuse.h"
+#include "sample_shader.h"
 
-#include <memory>
-
-#include "framework.h"
 #include "locator.h"
 #include "shader_filename_mapping.h"
 #include "texture_filename_mapping.h"
-
-namespace shader
-{
-	Diffuse::Diffuse(ID3D11Device* device)
-		:Shader{ device }
-	{
-		vertex_shader = std::make_unique<VertexShader>(device, vs_name);
-		pixel_shader  = std::make_unique<PixelShader>(device, ps_name);
-	}
-
-	void Diffuse::Activate(ID3D11DeviceContext* immediate_context)
-	{
-		vertex_shader->Activate(immediate_context);
-		pixel_shader->Activate(immediate_context);
-	}
-
-	void Diffuse::Deactivate(ID3D11DeviceContext* immediate_context)
-	{
-		vertex_shader->Deactivate(immediate_context);
-		pixel_shader->Deactivate(immediate_context);
-	}
-}
+#include "texture_resource_mapping.h"
 
 namespace cumulonimbus
 {
 	namespace shader_system
 	{
-		DiffuseShader::DiffuseShader()
+		SampleShader::SampleShader()
 			:Shader{}
 		{
-			vertex_shader = std::make_unique<shader_system::VertexShader>(mapping::shader_filename::vs::Diffuse_VS().c_str());
-			pixel_shader  = std::make_unique<shader_system::PixelShader>(mapping::shader_filename::ps::Diffuse_PS().c_str());
+			using namespace mapping::shader_filename;
+			vertex_shader = std::make_unique<shader_system::VertexShader>(vs::SampleShader_VS().c_str());
+			pixel_shader  = std::make_unique<shader_system::PixelShader>(ps::SampleShader_PS().c_str());
 		}
 	} // shader_system
 
 	namespace shader_asset
 	{
-		DiffuseAsset::DiffuseAsset()
+		SampleShaderAsset::SampleShaderAsset()
 			:ShaderAsset{}
 		{
 			material_path.normal_map_name = mapping::texture_filename::DefaultNormalMap();
 		}
 
-		void DiffuseAsset::BindTexture()
+		void SampleShaderAsset::BindTexture()
 		{
-			if(locator::Locator::GetTextureResourceManager()->Contents(material_path.normal_map_name))
+			if (locator::Locator::GetTextureResourceManager()->Contents(material_path.normal_map_name))
 			{
 				TextureResource* normal_texture = locator::Locator::GetTextureResourceManager()->GetTextureResources().at(material_path.normal_map_name).get();
 				locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, normal_texture, TexSlot_NormalMap);
@@ -63,14 +40,14 @@ namespace cumulonimbus
 			}
 		}
 
-		void DiffuseAsset::UnbindTexture()
+		void SampleShaderAsset::UnbindTexture()
 		{
 			locator::Locator::GetDx11Device()->UnbindShaderResource(mapping::graphics::ShaderStage::PS, TexSlot_NormalMap);
 		}
 
-		void DiffuseAsset::RenderImGui()
+		void SampleShaderAsset::RenderImGui()
 		{
 			ModifyMaterialPath(material_path.normal_map_name, "Normal Map");
 		}
-	}
+	} // shader_asset
 } // cumulonimbus

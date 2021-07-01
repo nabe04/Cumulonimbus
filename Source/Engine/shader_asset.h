@@ -36,6 +36,10 @@ namespace cumulonimbus::shader_asset
 		}
 	};
 
+	/*
+	 * brief : シェーダーが持つパラメータの調整
+	 *         (コンスタントバッファの値)
+	 */
 	class ShaderAsset
 	{
 	public:
@@ -43,23 +47,26 @@ namespace cumulonimbus::shader_asset
 		virtual ~ShaderAsset() = default;
 
 		/*
-		 * brief : コンスタントバッファをGPUに送信したい場合に使用
-		 *	       (シェーダーが持つパラメータのセット)
+		 * brief : コンスタントバッファとテクスチャのバインド
 		 */
-		virtual void BindCBuffer() {}
+		void BindCBufferAndTexture()
+		{
+			BindCBuffer();
+			BindTexture();
+		}
 		/*
-		 * brief : 使用したコンスタントバッファのリセット
+		 * brief : コンスタントバッファとテクスチャのアンバインド
 		 */
-		virtual void UnbindCBuffer() {}
+		void UnbindCBufferAndTexture()
+		{
+			UnbindCBuffer();
+			UnbindTexture();
+		}
+
 		/*
 		 * brief : 各々のシェーダーが持つパラメータ(constant buffer)の編集
 		 */
 		virtual void RenderImGui() {}
-
-		/*
-		 * brief : 使用するテクスチャの編集
-		 */
-		virtual void RenderImGuiTextureCombo() {}
 
 		void SetMaterialPath(const MaterialPath& mat_path);
 		void SetAlbedoMapName(const std::string& name);
@@ -82,8 +89,41 @@ namespace cumulonimbus::shader_asset
 
 		template <typename Archive>
 		void serialize(Archive&& archive){}
-	private:
+	protected:
 		MaterialPath material_path;
+
+		/*
+		* brief : コンスタントバッファをGPUに送信したい場合に使用
+		*	       (シェーダーが持つパラメータのセット)
+		 */
+		virtual void BindCBuffer() {}
+		/*
+		 * brief : 使用したコンスタントバッファのリセット(アンバインド)
+		 */
+		virtual void UnbindCBuffer() {}
+
+		/*
+		 * brief : MaterialPath構造体が持つテクスチャのファイル名を
+		 *		   元にTextureManagerクラスのshader resource viewをセット
+		 */
+		virtual void BindTexture() {}
+		/*
+		 * brief : 使用したテクスチャのスロットのリセット(アンバインド)
+		 */
+		virtual void UnbindTexture() {}
+
+		
+		/*
+		 * brief			 : ImGui上でのシェーダーが使用するテクスチャの変更処理
+		 * material_filename : MaterialPathのメンバ変数が持つテクスチャのファイル名を渡す
+		 * combo_label		 : ImGui::Comboでのラベル名(任意で名前を変更できるようにするため変数などを使用せず直接記述)
+		 * ※caution(1)		 : この関数内でファイル名を変更するので、別のところで
+		 *					   変更しないこと
+		 * ※caution(2)		 : ImGui上での編集なのでImGui以外の用途で使用しないように注意
+		 * ※caution(3)      : 継承先で使用するテクスチャの編集(RenderImGui関数内)で使用
+		 */
+		void ModifyMaterialPath(std::string& material_filename, const std::string& combo_label);
+
 	};
 } // cumulonimbus::shader_asset
 

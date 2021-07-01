@@ -3,14 +3,6 @@
 #include <filesystem>
 #include <fstream>
 
-#include <imgui.h>
-#include <cereal/types/array.hpp>
-#include <cereal/types/bitset.hpp>
-#include <cereal/types/memory.hpp>
-#include <cereal/types/unordered_map.hpp>
-#include <cereal/types/utility.hpp>
-#include <cereal/types/vector.hpp>
-
 #include "actor_component.h"
 #include "anim_sprite.h"
 #include "camera_operation.h"
@@ -22,13 +14,11 @@
 #include "mesh_object.h"
 #include "obj_model_component.h"
 #include "scene.h"
-#include "shader_assets_component.h"
 #include "sky_box.h"
 #include "sphere_collision_component.h"
 #include "sprite.h"
 #include "sprite_object.h"
 #include "transform_component.h"
-#include "material_instance_component.h"
 
 namespace cumulonimbus::ecs
 {
@@ -97,7 +87,6 @@ namespace cumulonimbus::ecs
 		}
 	}
 
-
 	/*
 	 * brief     : component_arraysのキー値を予め登録
 	 * ※caution : デシリアライズの際の型の判別に使用
@@ -118,8 +107,6 @@ namespace cumulonimbus::ecs
 		RegistryComponent<component::ObjModelComponent>();
 		RegistryComponent<component::SkyBoxComponent>();
 		RegistryComponent<component::MaterialComponent>();
-		RegistryComponent<component::ShaderAssets3DComponent>();
-		RegistryComponent<component::MaterialInstance3DComponent>();
 	}
 
 	void Registry::Save(const std::string& filename)

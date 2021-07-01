@@ -126,6 +126,17 @@ void SceneGame::InitializeScene()
 	registry->GetComponent<cum::component::MeshObjectComponent>(ent_player).SetRasterizerState(RasterizeState::Cull_Front_CCW_True);
 	registry->GetComponent<cum::component::FbxModelComponent>(ent_player).SwitchAnimation(2, true);
 
+	const cum::mapping::rename_type::Entity ent_robo = registry->CreateEntity();
+	const char* robo_filename = "./Data/Assets/Bin/Robo_L.bin";
+	std::shared_ptr<FbxModelResource> robo_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), robo_filename, "./Data/Assets/FBX/Robot/");
+	registry->AddComponent<cum::component::MeshObjectComponent>(ent_robo);
+	registry->AddComponent<cum::component::FbxModelComponent>(ent_robo, cum::locator::Locator::GetResourceManager()->FbxModelResouece("Robo_L"));
+	registry->GetComponent<cum::component::TransformComponent>(ent_robo).SetScale(0.3f);
+	registry->GetComponent<cum::component::TransformComponent>(ent_robo).SetPosition({ -30, 10, 0 });
+	registry->GetComponent<cum::component::TransformComponent>(ent_robo).SetWorldRotation_Y(180);
+	registry->GetComponent<cum::component::MeshObjectComponent>(ent_robo).SetRasterizerState(RasterizeState::Cull_Front_CCW_True);
+	registry->GetComponent<cum::component::FbxModelComponent>(ent_robo).SwitchAnimation(0, true);
+
 	//const char* ganfaul_filename = "./Data/Assets/Bin/ganfaul.bin";
 	//std::shared_ptr<FbxModelResource> ganfaul_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), ganfaul_filename, "./Data/Assets/FBX/ganfaul/character.fbm/");
 	//auto* player = AddEntity(UpdateOrder::Default, EntityTag::Player);

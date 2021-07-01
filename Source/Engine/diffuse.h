@@ -31,10 +31,10 @@ namespace cumulonimbus
 {
 	namespace shader_system
 	{
-		class DiffuseShader : public Shader
+		class DiffuseShader final : public Shader
 		{
 		public:
-			DiffuseShader();
+			explicit DiffuseShader();
 		};
 	}  // shader_system
 
@@ -48,11 +48,9 @@ namespace cumulonimbus
 
 			void BindCBuffer()   override {}
 			void UnbindCBuffer() override {}
-			void RenderImGui()   override {}
-		private:
-			//TextureData normal_map;
-
-
+			void BindTexture()	 override;
+			void UnbindTexture() override;
+			void RenderImGui()   override;
 		};
 	}  // shader_asset
 

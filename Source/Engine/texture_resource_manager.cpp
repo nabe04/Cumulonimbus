@@ -1,5 +1,8 @@
 #include "texture_resource_manager.h"
 
+#include <imgui.h>
+
+#include "cum_imgui_helper.h"
 #include "string_helper.h"
 #include "texture_filename_mapping.h"
 
@@ -19,6 +22,8 @@ namespace cumulonimbus::manager::texture
 		CreateTexture(device, texture_filename::NoImage256().c_str());
 		CreateTexture(device, texture_filename::Coffee256().c_str());
 		CreateTexture(device, texture_filename::UvChecker().c_str());
+		CreateTexture(device, texture_filename::DefaultNormalMap().c_str());
+		CreateTexture(device, texture_filename::GanfaulNormalMap().c_str());
 	}
 
 
@@ -39,4 +44,45 @@ namespace cumulonimbus::manager::texture
 	{
 		textures.erase(tex_filename.data());
 	}
+
+	bool TextureResourceManager::Contents(const std::string& texture_filename)
+	{
+		if (textures.contains(texture_filename))
+			return true;
+
+		return false;
+	}
+
+	void TextureResourceManager::ModifyTextureFilename(std::string& texture_filename, const std::string& combo_label)
+	{
+		const std::string my_texture = texture_filename;
+		ImGui::Spacing();
+		ImGui::Text(combo_label.c_str());
+
+		if (textures.contains(texture_filename))
+		{
+			helper::imgui::Image(textures.at(texture_filename)->GetTextureData()->texture_view.Get());
+			ImGui::SameLine();
+		}
+
+		if(ImGui::BeginCombo(combo_label.c_str(),texture_filename.c_str()))
+		{
+			for(const auto& tex : textures)
+			{
+				helper::imgui::Image(tex.second->GetTextureData()->texture_view.Get(), { 50,50 });
+				ImGui::SameLine();
+				const bool is_selected = (my_texture == tex.second->GetTextureData()->file_path);
+				if (ImGui::Selectable(tex.first.c_str(), is_selected, 0, { 500,50 }))
+				{
+					texture_filename = tex.second->GetTextureData()->file_path;
+				}
+				if (is_selected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo(); // ImGui::BeginCombo(combo_label.c_str(),texture_filename.c_str())
+		}
+	}
+
 } // cumulonimbus::manager::texture

@@ -20,8 +20,6 @@
 #include "sprite.h"
 #include "sprite_object.h"
 #include "transform_component.h"
-#include "material_instance_component.h"
-#include "shader_assets_component.h"
 
 namespace cumulonimbus::renderer
 {
@@ -168,11 +166,6 @@ namespace cumulonimbus::renderer
 			BindDirectXStates(immediate_context, &mesh_object);
 
 			locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, depth_map->GetDepthExtractionSRV(), TexSlot_Depth);
-
-			// TODO: FBXモデルのメッシュ単位でマテリアルの変更を適用できれば削除
-			//const auto asset = registry->GetComponent<component::MaterialInstance3DComponent>(ent).GetCurrentAsset();
-			//shader_manager->BindShader(asset);
-			//registry->GetComponent<component::ShaderAssets3DComponent>(ent).BindCBuffer(asset);
 
 			if (auto* geom = registry->TryGetComponent<component::GeomPrimComponent>(ent))
 			{
@@ -356,7 +349,7 @@ namespace cumulonimbus::renderer
 
 		for(const auto& mesh : resource->GetModelData().meshes)
 		{
-			// メッシュ用定数バッファ更新
+			// メッシュ単位コンスタントバッファ更新
 			TransformCB transform{};
 
 			if (mesh.node_indices.size() > 0)
@@ -393,9 +386,8 @@ namespace cumulonimbus::renderer
 				cb_material.material.base_color.w = model.GetColor().w;
 				registry->GetComponent<component::MaterialComponent>(entity).SetAndBindCBuffer(cb_material);
 
-				//TODO: メッシュ単位のマテリアル適応
 				if(!is_render_shadow)
-				{
+				{// メッシュ単位でのマテリアル適応
 					shader_manager->BindShader(model.GetMaterialsManager(subset.material_index)->GetCurrentAsset());
 					model.GetMaterialsManager(subset.material_index)->BindAsset();
 				}

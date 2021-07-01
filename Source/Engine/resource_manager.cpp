@@ -18,6 +18,10 @@ void ResourceManager::Initialize(ID3D11Device* device)
 		const char* ganfaul = "./Data/Assets/Bin/ganfaul.bin";
 		std::shared_ptr<FbxModelResource> ganfaul_resource = std::make_shared<FbxModelResource>(device, ganfaul, "./Data/Assets/FBX/ganfaul/character.fbm/");
 		AddFBXData(ganfaul_resource);
+
+		const char* robo_filename = "./Data/Assets/Bin/Robo_L.bin";
+		std::shared_ptr<FbxModelResource> robo_resource = std::make_shared<FbxModelResource>(device, robo_filename, "./Data/Assets/FBX/Robot/");
+		AddFBXData(robo_resource);
 	}
 
 	{// Textureì«çûÇ›

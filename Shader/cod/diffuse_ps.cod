@@ -31,6 +31,7 @@
 // default_sampler                   sampler      NA          NA             s0      1 
 // texture_depth                     texture  float4          2d             t0      1 
 // texture_base_color                texture  float4          2d            t20      1 
+// texture_normal                    texture  float4          2d            t21      1 
 // LightCB                           cbuffer      NA          NA            cb2      1 
 //
 //
@@ -59,6 +60,7 @@ dcl_constantbuffer CB2[2], immediateIndexed
 dcl_sampler s0, mode_default
 dcl_resource_texture2d (float,float,float,float) t0
 dcl_resource_texture2d (float,float,float,float) t20
+dcl_resource_texture2d (float,float,float,float) t21
 dcl_input_ps linear v2.xyz
 dcl_input_ps linear v3.xyz
 dcl_input_ps linear v4.xyz
@@ -101,50 +103,54 @@ mul r0.xyz, r0.wwww, r0.xyzx  // r0.x <- <Diffuse return value>.x; r0.y <- <Diff
 mov r0.xyz, r0.xyzx  // r0.x <- f3_diffuse.x; r0.y <- f3_diffuse.y; r0.z <- f3_diffuse.z
 
 #line 24
-nop 
-nop 
-nop 
-mov r1.x, v4.z
-mov r1.y, l(0.000001)
-
-#line 6 "D:\Desktop\Cumulonimbus\Shader\shadow_functions.hlsli"
-sample_indexable(texture2d)(float,float,float,float) r1.z, v4.xyxx, t0.yzxw, s0
-mov r1.z, r1.z  // r1.z <- d
-
-#line 7
-sample_indexable(texture2d)(float,float,float,float) r1.w, v4.xyxx, t0.xzwy, s0
-mov r1.w, r1.w  // r1.w <- d2
-
-#line 10
-mov r2.x, l(1.000000)
-mul r2.y, r1.z, r1.z
-mul r2.x, r2.y, r2.x
-mov r2.x, -r2.x
-add r1.w, r1.w, r2.x
-max r1.y, r1.w, r1.y  // r1.y <- variance
-
-#line 13
-mov r1.z, -r1.z
-add r1.x, r1.z, r1.x
-mov r1.z, l(1.000000)
-mul r1.x, r1.x, r1.x
-mul r1.x, r1.x, r1.z
-add r1.x, r1.x, r1.y
-div r1.x, r1.y, r1.x
-max r1.x, r1.x, l(0.000000)
-min r1.xyz, r1.xxxx, l(1.000000, 1.000000, 1.000000, 0.000000)  // r1.z <- p_max
-
-#line 18
-mov r1.xyz, r1.xyzx  // r1.x <- <GetVarianceShadow return value>.x; r1.y <- <GetVarianceShadow return value>.y; r1.z <- <GetVarianceShadow return value>.z
-
-#line 24 "D:\Desktop\Cumulonimbus\Shader\diffuse_ps.hlsl"
-mov r1.xyz, r1.xyzx  // r1.x <- shadow_color.x; r1.y <- shadow_color.y; r1.z <- shadow_color.z
+sample_indexable(texture2d)(float,float,float,float) r1.xyzw, v5.xyxx, t21.xyzw, s0  // r1.x <- normal_map.x; r1.y <- normal_map.y; r1.z <- normal_map.z; r1.w <- normal_map.w
 
 #line 26
-sample_indexable(texture2d)(float,float,float,float) r2.xyzw, v5.xyxx, t20.xyzw, s0
+nop 
+nop 
+nop 
+mov r2.x, v4.z
+mov r2.y, l(0.000001)
+
+#line 6 "D:\Desktop\Cumulonimbus\Shader\shadow_functions.hlsli"
+sample_indexable(texture2d)(float,float,float,float) r2.z, v4.xyxx, t0.yzxw, s0
+mov r2.z, r2.z  // r2.z <- d
+
+#line 7
+sample_indexable(texture2d)(float,float,float,float) r2.w, v4.xyxx, t0.xzwy, s0
+mov r2.w, r2.w  // r2.w <- d2
+
+#line 10
+mov r3.x, l(1.000000)
+mul r3.y, r2.z, r2.z
+mul r3.x, r3.y, r3.x
+mov r3.x, -r3.x
+add r2.w, r2.w, r3.x
+max r2.y, r2.w, r2.y  // r2.y <- variance
+
+#line 13
+mov r2.z, -r2.z
+add r2.x, r2.z, r2.x
+mov r2.z, l(1.000000)
+mul r2.x, r2.x, r2.x
+mul r2.x, r2.x, r2.z
+add r2.x, r2.x, r2.y
+div r2.x, r2.y, r2.x
+max r2.x, r2.x, l(0.000000)
+min r2.xyz, r2.xxxx, l(1.000000, 1.000000, 1.000000, 0.000000)  // r2.z <- p_max
+
+#line 18
+mov r2.xyz, r2.xyzx  // r2.x <- <GetVarianceShadow return value>.x; r2.y <- <GetVarianceShadow return value>.y; r2.z <- <GetVarianceShadow return value>.z
+
+#line 26 "D:\Desktop\Cumulonimbus\Shader\diffuse_ps.hlsl"
+mov r2.xyz, r2.xyzx  // r2.x <- shadow_color.x; r2.y <- shadow_color.y; r2.z <- shadow_color.z
+
+#line 29
+sample_indexable(texture2d)(float,float,float,float) r3.xyzw, v5.xyxx, t20.xyzw, s0
 itof r0.w, l(1)
+mul r0.xyzw, r0.xyzw, r3.xyzw
+itof r2.w, l(1)
 mul r0.xyzw, r0.xyzw, r2.xyzw
-itof r1.w, l(1)
-mul o0.xyzw, r0.xyzw, r1.xyzw
+add o0.xyzw, r1.xyzw, r0.xyzw
 ret 
-// Approximately 45 instruction slots used
+// Approximately 47 instruction slots used

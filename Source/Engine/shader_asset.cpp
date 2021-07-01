@@ -1,7 +1,16 @@
 #include "shader_asset.h"
 
+#include "locator.h"
+
 namespace cumulonimbus::shader_asset
 {
+	void ShaderAsset::ModifyMaterialPath(std::string& material_filename, const std::string& combo_label)
+	{
+		locator::Locator::GetTextureResourceManager()->ModifyTextureFilename(material_filename, combo_label);
+	}
+
+	//----------------------  セッター  ------------------------//
+
 	void ShaderAsset::SetMaterialPath(const MaterialPath& mat_path)
 	{
 		material_path = mat_path;
@@ -43,6 +52,7 @@ namespace cumulonimbus::shader_asset
 	}
 
 
+	//----------------------  ゲッター  ------------------------//
 
 	const std::string& ShaderAsset::GetAlbedoMapName() const
 	{

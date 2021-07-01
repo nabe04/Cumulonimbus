@@ -18,8 +18,8 @@ private:
 	struct TextureData
 	{
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texture_view;
-		std::string file_path;
-		std::string filename;
+		std::string file_path;	// テクスチャまでのファイルパス(相対参照)
+		std::string filename;	// テクスチャ名のみ(ファイルパスや拡張子などを取り除いたもの)
 		DXGI_FORMAT format;
 		u_int		width;
 		u_int		height;
@@ -41,7 +41,7 @@ public:
 	TextureResource(ID3D11Device* device, const char* tex_filename);
 	TextureResource() = default; // for cereal
 	[[nodiscard]] const TextureData* GetTextureData() const { return texture_data.get(); }
-	
+
 	template<class Archive>
 	void serialize(Archive&& archive)
 	{
