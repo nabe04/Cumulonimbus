@@ -346,9 +346,7 @@ namespace cumulonimbus::shader_system
 		// Shader‚ÌƒRƒ“ƒpƒCƒ‹
 		// 3D
 		RegistryShader<shader_system::Standard3DShader>			(ShaderAsset3D::Standard);
-		RegistryShader<shader_system::SampleShader>
-
-		(ShaderAsset3D::SampleShader);
+		RegistryShader<shader_system::SampleShader>				(ShaderAsset3D::SampleShader);
 		RegistryShader<shader_system::DiffuseShader>			(ShaderAsset3D::Diffuse);
 		RegistryShader<shader_system::PhongShader>				(ShaderAsset3D::Phong);
 		RegistryShader<shader_system::MetalShader>				(ShaderAsset3D::Metal);
@@ -356,6 +354,8 @@ namespace cumulonimbus::shader_system
 		RegistryShader<shader_system::ReflectionMappingShader>	(ShaderAsset3D::ReflectionMapping);
 		RegistryShader<shader_system::RefractionMappingShader>	(ShaderAsset3D::RefractionMapping);
 		RegistryShader<shader_system::SingleColorShader>		(ShaderAsset3D::SingleColor);
+
+		CreateGBufferMap();
 	}
 
 	void ShaderManager::BindShader(mapping::shader_assets::ShaderAsset3D asset)
@@ -376,4 +376,16 @@ namespace cumulonimbus::shader_system
 	void ShaderManager::UnbindShader(mapping::shader_assets::ShaderAsset2D asset)
 	{
 	}
+
+	void ShaderManager::CreateGBufferMap()
+	{
+		for(auto& shader_3d : shader3d_map)
+		{
+			if (gbuffer_map.contains(shader_3d.first))
+				return;
+
+			gbuffer_map.emplace(shader_3d.first, std::make_unique<graphics::buffer::GBuffer>());
+		}
+	}
+
 }

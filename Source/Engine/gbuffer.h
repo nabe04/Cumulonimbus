@@ -6,7 +6,7 @@ namespace cumulonimbus::graphics::buffer
 	class GBuffer final
 	{
 	public:
-		explicit GBuffer(u_int width, u_int height);
+		explicit GBuffer();
 
 	private:
 

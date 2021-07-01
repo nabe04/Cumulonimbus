@@ -7,6 +7,7 @@
 #include "scene.h"
 #include "shader_interop_renderer.h"
 #include "texture_resource_mapping.h"
+#include "graphics_mapping.h"
 #include "view.h"
 
 // Components
@@ -188,10 +189,9 @@ namespace cumulonimbus::renderer
 
 	void RenderPath::Render3D_End(ID3D11DeviceContext* immediate_context)
 	{
-		using namespace cumulonimbus::mapping;
-		locator::Locator::GetDx11Device()->UnbindShaderResource(graphics::ShaderStage::PS, 0);
-		locator::Locator::GetDx11Device()->UnbindShaderResource(graphics::ShaderStage::PS, 1);
-		locator::Locator::GetDx11Device()->UnbindShaderResource(graphics::ShaderStage::PS, 2);
+		locator::Locator::GetDx11Device()->UnbindShaderResource(mapping::graphics::ShaderStage::PS, 0);
+		locator::Locator::GetDx11Device()->UnbindShaderResource(mapping::graphics::ShaderStage::PS, 1);
+		locator::Locator::GetDx11Device()->UnbindShaderResource(mapping::graphics::ShaderStage::PS, 2);
 
 		immediate_context->VSSetShader(nullptr, nullptr, 0);
 		immediate_context->PSSetShader(nullptr, nullptr, 0);

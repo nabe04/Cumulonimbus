@@ -10,6 +10,7 @@
 #include "state_machine.h"
 #include "enum_state_map.h"
 #include "shader_asset_mapping.h"
+#include "gbuffer.h"
 
 //-- Shader 3D --//
 #include "3d_standard.h"
@@ -211,6 +212,8 @@ namespace cumulonimbus
 			std::unordered_map<mapping::shader_assets::ShaderAsset3D, std::unique_ptr<shader_system::Shader>> shader3d_map;
 			std::unordered_map<mapping::shader_assets::ShaderAsset2D, std::unique_ptr<shader_system::Shader>> shader2d_map;
 
+			std::unordered_map<mapping::shader_assets::ShaderAsset3D, std::unique_ptr<graphics::buffer::GBuffer>> gbuffer_map;
+
 			/*
 			 * brief : 作成したシェーダーの登録(3D)
 			 */
@@ -234,6 +237,12 @@ namespace cumulonimbus
 
 				shader2d_map.emplace(asset_type, std::make_unique<T>());
 			}
+
+			/*
+			 * brief     : shader3d_map数分のGBufferの作成
+			 * ※caution : コンストラクタ内でRegistryShader関数を呼んだ後に呼ぶ
+			 */
+			void CreateGBufferMap();
 		};
 	}
 }
