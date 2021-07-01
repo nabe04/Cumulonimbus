@@ -5,6 +5,7 @@ namespace cumulonimbus::mapping::shader_assets
 	enum class ShaderAsset3D
 	{
 		Standard,
+		SampleShader,
 		Diffuse,
 		Phong,
 		Metal,

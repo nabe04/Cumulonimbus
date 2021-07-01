@@ -11,8 +11,6 @@
 #include "pixel_shader.h"
 #include "graphics_mapping.h"
 
-#include "imgui.h"
-
 class Scene;
 
 namespace shader
