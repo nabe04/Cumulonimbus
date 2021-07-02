@@ -356,6 +356,11 @@ namespace cumulonimbus::shader_system
 		RegistryShader<shader_system::SingleColorShader>		(ShaderAsset3D::SingleColor);
 
 		CreateGBufferMap();
+
+		const u_int width  = locator::Locator::GetWindow()->Width();
+		const u_int height = locator::Locator::GetWindow()->Height();
+		// GBuffer—pdsv,srv‚Ìì¬
+		locator::Locator::GetDx11Device()->CreateDepthStencilView(dsv_for_gbuffer, srv_for_gbuffer, width, height);
 	}
 
 	void ShaderManager::BindShader(mapping::shader_assets::ShaderAsset3D asset)
@@ -375,6 +380,27 @@ namespace cumulonimbus::shader_system
 
 	void ShaderManager::UnbindShader(mapping::shader_assets::ShaderAsset2D asset)
 	{
+
+	}
+
+	void ShaderManager::BindGBufferShader(mapping::shader_assets::ShaderAsset3D asset)
+	{
+		gbuffer_map.at(asset)->BindShader();
+	}
+
+	void ShaderManager::UnbindGBufferShader(mapping::shader_assets::ShaderAsset3D asset)
+	{
+		gbuffer_map.at(asset)->UnbindShader();
+	}
+
+	void ShaderManager::BindGBufferRTV(mapping::shader_assets::ShaderAsset3D asset)
+	{
+		gbuffer_map.at(asset)->BindRTV(dsv_for_gbuffer.Get());
+	}
+
+	void ShaderManager::UnbindGBufferRTV(mapping::shader_assets::ShaderAsset3D asset)
+	{
+		gbuffer_map.at(asset)->UnbindRTV();
 	}
 
 	void ShaderManager::CreateGBufferMap()

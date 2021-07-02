@@ -28,6 +28,10 @@
 #include "standard_sprite.h"
 
 class Scene;
+//namespace cumulonimbus::shader_system
+//{
+//	class
+//}
 
 namespace shader
 {
@@ -204,15 +208,33 @@ namespace cumulonimbus
 			 */
 			void BindShader(mapping::shader_assets::ShaderAsset2D asset);
 
-
 			void UnbindShader(mapping::shader_assets::ShaderAsset3D asset);
 
 			void UnbindShader(mapping::shader_assets::ShaderAsset2D asset);
+
+			/*
+			 * brief : GBuffer用シェーダーのセット
+			 */
+			void BindGBufferShader(mapping::shader_assets::ShaderAsset3D asset);
+			void UnbindGBufferShader(mapping::shader_assets::ShaderAsset3D asset);
+
+			/*
+			 * brief : GBuffer用のレンダーターゲットビューのセット
+			 */
+			void BindGBufferRTV(mapping::shader_assets::ShaderAsset3D asset);
+			void UnbindGBufferRTV(mapping::shader_assets::ShaderAsset3D asset);
+
 		private:
+			// モデルが使用するシェーダーのマップ(3D)
 			std::unordered_map<mapping::shader_assets::ShaderAsset3D, std::unique_ptr<shader_system::Shader>> shader3d_map;
+			// スプライトが使用するシェーダーのマップ(2D)
 			std::unordered_map<mapping::shader_assets::ShaderAsset2D, std::unique_ptr<shader_system::Shader>> shader2d_map;
 
+			// シェーダーによってのGBuffer
 			std::unordered_map<mapping::shader_assets::ShaderAsset3D, std::unique_ptr<graphics::buffer::GBuffer>> gbuffer_map;
+			// GBuffer用のdepth_stencil_view,shader_resource_view
+			Microsoft::WRL::ComPtr<ID3D11DepthStencilView>		dsv_for_gbuffer{ nullptr };
+			Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	srv_for_gbuffer{ nullptr };
 
 			/*
 			 * brief : 作成したシェーダーの登録(3D)

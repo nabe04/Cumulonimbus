@@ -134,9 +134,6 @@ HRESULT Dx11Device::CreateDevice(HWND hwnd,ID3D11Device** device, ID3D11DeviceCo
 //	Render Target Relationship
 //
 //**************************************
-//------------------------------
-//	Initialize
-//------------------------------
 bool Dx11Device::InitializeRenderTarget()
 {
 	// Get BackBuffer
@@ -166,9 +163,6 @@ bool Dx11Device::InitializeRenderTarget()
 	return true;
 }
 
-//--------------------------------
-// Create DepthStencil Buffer
-//--------------------------------
 bool Dx11Device::CreateDepthStencil()
 {
 	// Set up DepthStencil (Required to create a DepthStencilView)
@@ -211,10 +205,6 @@ bool Dx11Device::CreateDepthStencil()
 	return true;
 }
 
-
-//------------------------------------
-//	Clear
-//------------------------------------
 void Dx11Device::Clear(DWORD color)
 {
 	float clear_color[] = { 0.0f, 1.0f, 1.0f, 1.0f };
@@ -222,9 +212,6 @@ void Dx11Device::Clear(DWORD color)
 	immediate_context->ClearDepthStencilView(depth_stencil_view.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
-//-------------------------------------
-//	Flip
-//-------------------------------------
 void Dx11Device::Flip(int n)
 {
 	//imgui::Render();
@@ -235,9 +222,73 @@ void Dx11Device::Flip(int n)
 	swap_chain->Present(n, 0);
 }
 
-//------------------------------
-// Set up Viewport
-//------------------------------
+void Dx11Device::CreateDepthStencilView(Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& dsv,
+										Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& ds_srv,
+										u_int width, u_int height, 
+										DXGI_FORMAT depth_stencil_texture_format)
+{
+	const DXGI_FORMAT combinations_of_depth_stencil_formats[3][3] =
+	{
+		{ DXGI_FORMAT_R24G8_TYPELESS,	DXGI_FORMAT_D24_UNORM_S8_UINT ,DXGI_FORMAT_R24_UNORM_X8_TYPELESS },
+		{ DXGI_FORMAT_R32_TYPELESS,		DXGI_FORMAT_D32_FLOAT, DXGI_FORMAT_R32_FLOAT },
+		{ DXGI_FORMAT_R16_TYPELESS,		DXGI_FORMAT_D16_UNORM , DXGI_FORMAT_R16_UNORM },
+	};
+	int depth_stencil_texture2d_format_index = 0;
+	switch (depth_stencil_texture_format)
+	{
+	case DXGI_FORMAT_R24G8_TYPELESS:
+		depth_stencil_texture2d_format_index = 0;
+		break;
+	case DXGI_FORMAT_R32_TYPELESS:
+		depth_stencil_texture2d_format_index = 1;
+		break;
+	case DXGI_FORMAT_R16_TYPELESS:
+		depth_stencil_texture2d_format_index = 2;
+		break;
+	default:
+		assert(!"Don't use this format(depth_stencil_view)");
+		break;
+	}
+
+	D3D11_TEXTURE2D_DESC texture2d_desc = {};
+	texture2d_desc.Width				= width;
+	texture2d_desc.Height				= height;
+	texture2d_desc.MipLevels			= 1;
+	texture2d_desc.ArraySize			= 1;
+	texture2d_desc.Format				= combinations_of_depth_stencil_formats[depth_stencil_texture2d_format_index][0];
+	texture2d_desc.SampleDesc.Count		= 1;
+	texture2d_desc.SampleDesc.Quality	= 0;
+	texture2d_desc.Usage				= D3D11_USAGE_DEFAULT;
+	texture2d_desc.BindFlags			= (ds_srv != nullptr)  ? D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE : D3D11_BIND_DEPTH_STENCIL;
+	texture2d_desc.CPUAccessFlags		= 0;
+	texture2d_desc.MiscFlags			= 0;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> texture2d;
+	HRESULT hr = device->CreateTexture2D(&texture2d_desc, 0, texture2d.GetAddressOf());
+	if (FAILED(hr))
+		assert(!"CreateTexure2D error(FrameBuffer)");
+
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC depth_stencil_view_desc = {};
+	depth_stencil_view_desc.Format			= combinations_of_depth_stencil_formats[depth_stencil_texture2d_format_index][1];
+	depth_stencil_view_desc.ViewDimension	= D3D11_DSV_DIMENSION_TEXTURE2D;
+	depth_stencil_view_desc.Flags			= 0;
+	hr = device->CreateDepthStencilView(texture2d.Get(), &depth_stencil_view_desc, dsv.GetAddressOf());
+	if (FAILED(hr))
+		assert(!"CreateDepthStencilView error(FrameBuffer)");
+
+	if (ds_srv)
+	{// ds_srvにnullptrが入っていなければ作成
+		D3D11_SHADER_RESOURCE_VIEW_DESC shader_resource_view_desc = {};
+		shader_resource_view_desc.Format				= combinations_of_depth_stencil_formats[depth_stencil_texture2d_format_index][2];
+		shader_resource_view_desc.ViewDimension			= D3D11_SRV_DIMENSION_TEXTURE2D;
+		shader_resource_view_desc.Texture2D.MipLevels	= 1;
+		hr = device->CreateShaderResourceView(texture2d.Get(), &shader_resource_view_desc, ds_srv.GetAddressOf());
+		if (FAILED(hr))
+			assert(!"CreateShaderResourceView error(FrameBuffer)");
+	}
+}
+
+
 void Dx11Device::SetViewPort(int width, int height) const
 {
 	D3D11_VIEWPORT vp;
@@ -323,8 +374,6 @@ void Dx11Device::BindShaderResource(cumulonimbus::mapping::graphics::ShaderStage
 		break;
 	}
 }
-
-
 
 /*
  * brief : 指定のシェーダーのテクスチャをセット

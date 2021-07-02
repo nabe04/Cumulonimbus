@@ -41,10 +41,10 @@ public:
 		unsigned int clear_flags = D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
 		float depth = 1, unsigned char stencil = 0) const
 	{
-		float colour[4] = { r, g, b, a };
+		float color[4] = { r, g, b, a };
 		if (render_target_view)
 		{
-			immediate_context->ClearRenderTargetView(render_target_view.Get(), colour);
+			immediate_context->ClearRenderTargetView(render_target_view.Get(), color);
 		}
 		if (depth_stencil_view)
 		{
