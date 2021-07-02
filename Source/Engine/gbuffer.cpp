@@ -21,12 +21,28 @@ namespace cumulonimbus::graphics::buffer
 		gbuffer_ps = std::make_unique<shader_system::PixelShader>(ps::GBuffer_PS().c_str());
 	}
 
-	void GBuffer::Clear(float r, float g, float b, float a) const
+	void GBuffer::Clear(float r, float g, float b, float a)
 	{
+		is_used_gbuffer = false;
+		
 		float clear_color[4] = { r,g,b,a };
 		locator::Locator::GetDx11Device()->immediate_context->ClearRenderTargetView(albedo_buffer->GetRTV()  , clear_color);
 		locator::Locator::GetDx11Device()->immediate_context->ClearRenderTargetView(position_buffer->GetRTV(), clear_color);
 		locator::Locator::GetDx11Device()->immediate_context->ClearRenderTargetView(normal_buffer->GetRTV()  , clear_color);
+	}
+
+	void GBuffer::BindShaderAndRTV(ID3D11DepthStencilView* depth_stencil_view)
+	{
+		is_used_gbuffer = true;
+
+		BindShader();
+		BindRTV(depth_stencil_view);
+	}
+
+	void GBuffer::UnbindShaderAndRTV()
+	{
+		UnbindShader();
+		UnbindRTV();
 	}
 
 	void GBuffer::BindRTV(ID3D11DepthStencilView* depth_stencil_view)

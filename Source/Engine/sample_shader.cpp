@@ -13,7 +13,7 @@ namespace cumulonimbus
 			:Shader{}
 		{
 			using namespace mapping::shader_filename;
-			vertex_shader = std::make_unique<shader_system::VertexShader>(vs::SampleShader_VS().c_str());
+			//vertex_shader = std::make_unique<shader_system::VertexShader>(vs::SampleShader_VS().c_str());
 			pixel_shader  = std::make_unique<shader_system::PixelShader>(ps::SampleShader_PS().c_str());
 		}
 	} // shader_system

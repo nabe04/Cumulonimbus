@@ -79,14 +79,21 @@ namespace cumulonimbus::renderer
 							ecs::Registry* registry,
 							const View* view, const Light* light)
 	{
+		// ShadowMap作成
 		RenderShadow_Begin(immediate_context);
 		RenderShadow(immediate_context, registry, view, light);
 		RenderShadow_End(immediate_context);
 
-		Render3D_Begin(immediate_context);
-		Render3D(immediate_context, registry, view, light);
-		Render3D_End(immediate_context);
+		// GBufferへの描画処理
+		Render3DToGBuffer_Begin(immediate_context);
+		Render3DToGBuffer(immediate_context, registry, view, light);
+		Render3DToGBuffer_End(immediate_context);
 
+		//Render3D_Begin(immediate_context);
+		//Render3D(immediate_context, registry, view, light);
+		//Render3D_End(immediate_context);
+
+		// 2Dスプライトの描画
 		Render2D(immediate_context, registry);
 	}
 
@@ -123,7 +130,7 @@ namespace cumulonimbus::renderer
 			}
 			else if(auto* fbx_model = registry->TryGetComponent<component::FbxModelComponent>(ent))
 			{
-				RenderFBX(immediate_context, registry, ent, &mesh_object, view, light, true);
+				RenderFBX(immediate_context, registry, ent, &mesh_object, view, light, true, false);
 			}
 		}
 
@@ -135,6 +142,49 @@ namespace cumulonimbus::renderer
 	{
 		depth_map->End(immediate_context);
 	}
+
+	void RenderPath::Render3DToGBuffer_Begin(ID3D11DeviceContext* immediate_context) const
+	{
+		// GBuffer用RTVのクリア
+		shader_manager->ClearGBuffer();
+	}
+
+	void RenderPath::Render3DToGBuffer(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, const View* view, const Light* light)
+	{
+		for (auto& mesh_object : registry->GetArray<component::MeshObjectComponent>().GetComponents())
+		{
+			const mapping::rename_type::Entity ent = mesh_object.GetEntity();
+
+			// MeshObjectComponentが持つstate類の実行
+			// sampler stateはメッシュに関係なくLinearBorderを使用
+			BindDirectXStates(immediate_context, &mesh_object,
+				/*rasterizer*/   true, /*sampler*/false,
+				/*depth stencil*/true, /*blend*/  true);
+			samplers.at(RenderingSampleState::Linear_Border)->Activate(immediate_context, 0);
+
+			if (auto* geom = registry->TryGetComponent<component::GeomPrimComponent>(ent))
+			{
+				RenderGeomPrim(immediate_context, registry, ent, &mesh_object, view, light);
+			}
+			else if (auto* obj_model = registry->TryGetComponent<component::ObjModelComponent>(ent))
+			{
+				RenderOBJ(immediate_context, registry, ent, &mesh_object, view, light);
+			}
+			else if (auto* fbx_model = registry->TryGetComponent<component::FbxModelComponent>(ent))
+			{
+				RenderFBX(immediate_context, registry, ent, &mesh_object, view, light, false, true);
+			}
+		}
+	}
+
+	void RenderPath::Render3DToGBuffer_End(ID3D11DeviceContext* immediate_context) const
+	{
+		off_screen->Clear(immediate_context);
+		off_screen->Activate(immediate_context);
+		CombinationGBuffer();
+		off_screen->Deactivate(immediate_context);
+	}
+
 	void RenderPath::Render3D_Begin(ID3D11DeviceContext* immediate_context)
 	{
 		off_screen->Clear(immediate_context);
@@ -178,7 +228,7 @@ namespace cumulonimbus::renderer
 			}
 			else if (auto* fbx_model = registry->TryGetComponent<component::FbxModelComponent>(ent))
 			{
-				RenderFBX(immediate_context, registry, ent, &mesh_object, view, light, false);
+				RenderFBX(immediate_context, registry, ent, &mesh_object, view, light, false, false);
 			}
 		}
 
@@ -342,7 +392,8 @@ namespace cumulonimbus::renderer
 	void RenderPath::RenderFBX(ID3D11DeviceContext* immediate_context,
 							   ecs::Registry* registry, mapping::rename_type::Entity entity,
 							   const component::MeshObjectComponent* mesh_object,
-							   const View* view, const Light* light , bool is_render_shadow)
+							   const View* view, const Light* light,
+							   bool is_use_shadow, bool is_use_gbuffer)
 	{
 		const component::FbxModelComponent&	 model		= registry->GetComponent<component::FbxModelComponent>(entity);
 		const FbxModelResource*				 resource	= model.GetResource();
@@ -386,7 +437,11 @@ namespace cumulonimbus::renderer
 				cb_material.material.base_color.w = model.GetColor().w;
 				registry->GetComponent<component::MaterialComponent>(entity).SetAndBindCBuffer(cb_material);
 
-				if(!is_render_shadow)
+				if(is_use_gbuffer)
+				{
+					shader_manager->BindGBufferShaderAndRTV(model.GetMaterialsManager(subset.material_index)->GetCurrentAsset());
+				}
+				else if(!is_use_shadow)
 				{// メッシュ単位でのマテリアル適応
 					shader_manager->BindShader(model.GetMaterialsManager(subset.material_index)->GetCurrentAsset());
 					model.GetMaterialsManager(subset.material_index)->BindAsset();
@@ -408,7 +463,11 @@ namespace cumulonimbus::renderer
 
 				registry->GetComponent<component::MaterialComponent>(entity).UnbindCBuffer();
 
-				if(!is_render_shadow)
+				if (is_use_gbuffer)
+				{
+					shader_manager->UnbindGBufferShaderAndRTV(model.GetMaterialsManager(subset.material_index)->GetCurrentAsset());
+				}
+				if(!is_use_shadow)
 				{
 					model.GetMaterialsManager(subset.material_index)->UnbindAsset();
 					shader_manager->UnbindShader(model.GetMaterialsManager(subset.material_index)->GetCurrentAsset());
@@ -678,4 +737,22 @@ namespace cumulonimbus::renderer
 
 		immediate_context->Draw(4, 0);
 	}
+
+	void RenderPath::CombinationGBuffer() const
+	{
+		for(const auto& gbuffer : shader_manager->GetGBufferMap())
+		{
+			if(gbuffer.second->GetIsUsedGBuffer())
+			{
+				shader_manager->BindShader(mapping::shader_assets::ShaderAsset3D::SampleShader);
+				using namespace mapping::graphics;
+				locator::Locator::GetDx11Device()->BindShaderResource(ShaderStage::PS, gbuffer.second->GetAlbedoBufferSRV_Address()	 , TexSlot_BaseColorMap);
+				locator::Locator::GetDx11Device()->BindShaderResource(ShaderStage::PS, gbuffer.second->GetPositionBufferSRB_Address(), TexSlot_Position);
+				locator::Locator::GetDx11Device()->BindShaderResource(ShaderStage::PS, gbuffer.second->GetAlbedoBufferSRV_Address()	 , TexSlot_NormalMap);
+				fullscreen_quad->Blit(locator::Locator::GetDx11Device()->immediate_context.Get());
+			}
+		}
+	}
+
+
 }

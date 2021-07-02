@@ -10,7 +10,6 @@
 #include <cereal/cereal.hpp>
 #include <cereal/types/polymorphic.hpp>
 
-
 #include "component_base.h"
 #include "constant_buffer.h"
 #include "locator.h"

@@ -18,6 +18,11 @@ public:
 
 	std::unique_ptr<FrameBuffer> blend_buffer;
 
+	/*
+	 * brief     : テクスチャ(SRV)をRTVに描画
+	 * ※caution : SRV,RTVはBlit関数内ではセットしないため
+	 *			   事前にセットしておく必要がある
+	 */
 	void Blit(ID3D11DeviceContext* immediate_context,
 		bool use_embedded_rasterizer_state = true, bool use_embedded_depth_stencil_state = true,
 		bool use_embedded_pixel_shader = false, bool enable_msaa = false);

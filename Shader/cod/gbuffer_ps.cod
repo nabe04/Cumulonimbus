@@ -110,14 +110,14 @@ mov r2.xyzw, v1.xyzw  // r2.x <- position.x; r2.y <- position.y; r2.z <- positio
 #line 33
 mov r1.xyzw, r1.xyzw  // r1.x <- pout.albedo_color.x; r1.y <- pout.albedo_color.y; r1.z <- pout.albedo_color.z; r1.w <- pout.albedo_color.w
 
-#line 34
+#line 35
 mov r2.xyzw, r2.xyzw  // r2.x <- pout.position.x; r2.y <- pout.position.y; r2.z <- pout.position.z; r2.w <- pout.position.w
 
-#line 35
+#line 36
 mov r0.xyz, r0.xyzx  // r0.x <- pout.normal.x; r0.y <- pout.normal.y; r0.z <- pout.normal.z
 mov r0.w, l(1.000000)  // r0.w <- pout.normal.w
 
-#line 37
+#line 38
 mov o0.xyzw, r1.xyzw
 mov o1.xyzw, r0.xyzw
 mov o2.xyzw, r2.xyzw

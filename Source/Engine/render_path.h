@@ -101,6 +101,16 @@ namespace cumulonimbus::renderer
 		void RenderShadow_End(ID3D11DeviceContext* immediate_context) const;
 
 		/*
+		 * brief     : 3DモデルのGBufferへの描画
+		 */
+		void Render3DToGBuffer_Begin(ID3D11DeviceContext* immediate_context) const;
+		void Render3DToGBuffer(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, const View* view, const Light* light);
+		/*
+		 * brier : 各々のシェーダーに応じて作成したGBufferをoff_screenにまとめる
+		 */
+		void Render3DToGBuffer_End(ID3D11DeviceContext* immediate_context) const;
+
+		/*
 		 * brief     : 3Dモデルの描画
 		 * ※caution : "FBXModelComponent", "ObjModelComponent", "GeometricPrimitiveComponent"
 		 *			   を持つエンティティのみ描画される
@@ -131,12 +141,18 @@ namespace cumulonimbus::renderer
 					   const View* view, const Light* light);
 
 		/*
-		 * brief : "FbxModelComponent"が持つモデルの描画
+		 * brief		  : "FbxModelComponent"が持つモデルの描画
+		 * is_use_shadow  : 現在の描画目的が影の生成用か
+		 *					trueの場合マテリアル単位のシェーダーが利用されない
+		 * is_use_gbuffer : 現在の描画目的がGBufferの生成用か
+		 *					trueの場合マテリアルが使用するシェーダー単位での
+		 *					GBufferシェーダーが利用される
 		 */
 		void RenderFBX(ID3D11DeviceContext* immediate_context,
 					   ecs::Registry* registry, mapping::rename_type::Entity entity,
 					   const component::MeshObjectComponent* mesh_object,
-					   const View* view, const Light* light, bool is_render_shadow);
+					   const View* view, const Light* light,
+					   bool is_use_shadow, bool is_use_gbuffer);
 
 		/*
 		 * brief : "SkyBoxComponent"が持つモデルの描画
@@ -155,5 +171,11 @@ namespace cumulonimbus::renderer
 		void RenderSprite(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, mapping::rename_type::Entity entity);
 		// 2Dスプライト描画(Animationあり)
 		void RenderAnimSprite(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, mapping::rename_type::Entity entity);
+
+		/*
+		 * brief     : GBufferをoff_screenに結合
+		 * ※caution : FrameBufferのセットはこの関数では行わない
+		 */
+		void CombinationGBuffer() const;
 	};
 }

@@ -36,8 +36,12 @@ int main()
 	//build_fbx.Export("../../Data/TestData/RPG-Character/RPG-Character.bin");
 
 	//-- Robot --//
-	BulidFBX bunny_fbx("../../Data/Assets/FBX/Robot/Robo_L.fbx");
-	bunny_fbx.Export("../../Data/Assets/Bin/Robo_L.bin");
+	//BulidFBX bunny_fbx("../../Data/Assets/FBX/Robot/Robo_L.fbx");
+	//bunny_fbx.Export("../../Data/Assets/Bin/Robo_L.bin");
+
+
+	BulidFBX bunny_fbx("../../Data/Assets/FBX/Wolf_Test/fbx/Wolf.fbx");
+	bunny_fbx.Export("../../Data/Assets/Bin/Wolf_test.bin");
 
 	//getchar();
 	return 0;

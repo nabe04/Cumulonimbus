@@ -2,8 +2,6 @@
 
 #include <memory>
 
-#include <cereal/types/array.hpp>
-#include <cereal/types/bitset.hpp>
 
 #include "fbx_model_component.h"
 #include "input_manager.h"
@@ -14,8 +12,6 @@
 #include "mesh_object.h"
 #include "anim_sprite.h"
 
-#include "actor_component.h"
-#include "sprite_object.h"
 #include "transform_component.h"
 
 using namespace shader;
@@ -116,8 +112,8 @@ void SceneGame::InitializeScene()
 	//registry->GetComponent<cum::component::TransformComponent>(ent_bunny).SetScale(0.1f);
 
 	const cum::mapping::rename_type::Entity ent_player = registry->CreateEntity();
-	const char* ganfaul_filename = "./Data/Assets/Bin/ganfaul.bin";
-	std::shared_ptr<FbxModelResource> ganfaul_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), ganfaul_filename, "./Data/Assets/FBX/ganfaul/character.fbm/");
+	//const char* ganfaul_filename = "./Data/Assets/Bin/ganfaul.bin";
+	//std::shared_ptr<FbxModelResource> ganfaul_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), ganfaul_filename, "./Data/Assets/FBX/ganfaul/character.fbm/");
 	registry->AddComponent<cum::component::MeshObjectComponent>(ent_player);
 	registry->AddComponent<cum::component::FbxModelComponent>(ent_player, cum::locator::Locator::GetResourceManager()->FbxModelResouece("ganfaul"));
 	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetScale(0.3f);
@@ -127,8 +123,8 @@ void SceneGame::InitializeScene()
 	registry->GetComponent<cum::component::FbxModelComponent>(ent_player).SwitchAnimation(2, true);
 
 	const cum::mapping::rename_type::Entity ent_robo = registry->CreateEntity();
-	const char* robo_filename = "./Data/Assets/Bin/Robo_L.bin";
-	std::shared_ptr<FbxModelResource> robo_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), robo_filename, "./Data/Assets/FBX/Robot/");
+	//const char* robo_filename = "./Data/Assets/Bin/Robo_L.bin";
+	//std::shared_ptr<FbxModelResource> robo_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), robo_filename, "./Data/Assets/FBX/Robot/");
 	registry->AddComponent<cum::component::MeshObjectComponent>(ent_robo);
 	registry->AddComponent<cum::component::FbxModelComponent>(ent_robo, cum::locator::Locator::GetResourceManager()->FbxModelResouece("Robo_L"));
 	registry->GetComponent<cum::component::TransformComponent>(ent_robo).SetScale(0.3f);
@@ -136,6 +132,7 @@ void SceneGame::InitializeScene()
 	registry->GetComponent<cum::component::TransformComponent>(ent_robo).SetWorldRotation_Y(180);
 	registry->GetComponent<cum::component::MeshObjectComponent>(ent_robo).SetRasterizerState(RasterizeState::Cull_Front_CCW_True);
 	registry->GetComponent<cum::component::FbxModelComponent>(ent_robo).SwitchAnimation(0, true);
+
 
 	//const char* ganfaul_filename = "./Data/Assets/Bin/ganfaul.bin";
 	//std::shared_ptr<FbxModelResource> ganfaul_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), ganfaul_filename, "./Data/Assets/FBX/ganfaul/character.fbm/");

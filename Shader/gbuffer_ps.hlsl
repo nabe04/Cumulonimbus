@@ -31,6 +31,7 @@ PS_Output main(PS_Input pin)
     const float4 position = pin.w_position;
 
     pout.albedo_color   = color;
+    //pout.albedo_color   = float4(1, 1, 1, 1);
     pout.position       = position;
     pout.normal         = float4(normal, 1.0f);
 

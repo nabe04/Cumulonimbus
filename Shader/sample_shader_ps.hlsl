@@ -16,14 +16,8 @@ SamplerState default_sampler : register(s0);
 
 float4 main(PS_Input pin) : SV_TARGET
 {
-    const float3 reflectance = float3(1.0f, 1.0f, 1.0f);
-
-    float3 f3_diffuse = Diffuse(pin.normal.xyz, light_direction.xyz, pin.color.xyz, reflectance);
-
-    const float4 normal_map = texture_normal.Sample(default_sampler, pin.texcoord0);
-
-    float3 shadow_color = GetVarianceShadow(texture_depth, default_sampler, pin.tex_position, 0.6f, 0.000001f);
+    float4 albedo_color = texture_base_color.Sample(default_sampler, pin.texcoord0);
 
     //return normal_map_c;
-    return texture_base_color.Sample(default_sampler, pin.texcoord0) * float4(f3_diffuse, 1) * float4(shadow_color, 1) + normal_map;
+    return albedo_color;
 }

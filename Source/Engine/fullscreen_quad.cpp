@@ -132,8 +132,8 @@ FullscreenQuad::FullscreenQuad(ID3D11Device* device)
 		assert(!"CreateDepthStencilState error");
 }
 void FullscreenQuad::Blit(ID3D11DeviceContext* immediate_context,
-	bool use_embedded_rasterizer_state, bool use_embedded_depth_stencil_state,
-	bool use_embedded_pixel_shader, bool enable_msaa)
+	bool use_embedded_rasterizer_state	, bool use_embedded_depth_stencil_state,
+	bool use_embedded_pixel_shader		, bool enable_msaa)
 {
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> default_rasterizer_state;
 	if (use_embedded_rasterizer_state)

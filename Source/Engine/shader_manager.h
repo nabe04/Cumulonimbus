@@ -213,16 +213,17 @@ namespace cumulonimbus
 			void UnbindShader(mapping::shader_assets::ShaderAsset2D asset);
 
 			/*
-			 * brief : GBuffer用シェーダーのセット
+			 * brief : GBuffer用シェーダー、RTVのセット
 			 */
-			void BindGBufferShader(mapping::shader_assets::ShaderAsset3D asset);
-			void UnbindGBufferShader(mapping::shader_assets::ShaderAsset3D asset);
+			void BindGBufferShaderAndRTV(mapping::shader_assets::ShaderAsset3D asset);
+			void UnbindGBufferShaderAndRTV(mapping::shader_assets::ShaderAsset3D asset);
 
 			/*
-			 * brief : GBuffer用のレンダーターゲットビューのセット
+			 * brief : GBuffer用のレンダーターゲットビューのクリア処理
 			 */
-			void BindGBufferRTV(mapping::shader_assets::ShaderAsset3D asset);
-			void UnbindGBufferRTV(mapping::shader_assets::ShaderAsset3D asset);
+			void ClearGBuffer();
+
+			[[nodiscard]] const auto& GetGBufferMap() const { return gbuffer_map; }
 
 		private:
 			// モデルが使用するシェーダーのマップ(3D)

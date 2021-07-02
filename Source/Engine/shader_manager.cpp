@@ -363,14 +363,10 @@ namespace cumulonimbus::shader_system
 		locator::Locator::GetDx11Device()->CreateDepthStencilView(dsv_for_gbuffer, srv_for_gbuffer, width, height);
 	}
 
+	//-------------------  3D用シェーダーのBind,Unbind  ----------------------//
 	void ShaderManager::BindShader(mapping::shader_assets::ShaderAsset3D asset)
 	{
 		shader3d_map.at(asset)->BindShader();
-	}
-
-	void ShaderManager::BindShader(mapping::shader_assets::ShaderAsset2D asset)
-	{
-
 	}
 
 	void ShaderManager::UnbindShader(mapping::shader_assets::ShaderAsset3D asset)
@@ -378,31 +374,40 @@ namespace cumulonimbus::shader_system
 		shader3d_map.at(asset)->UnbindShader();
 	}
 
+	//-------------------  2D用シェーダーのBind,Unbind  ----------------------//
+	void ShaderManager::BindShader(mapping::shader_assets::ShaderAsset2D asset)
+	{
+
+	}
+
 	void ShaderManager::UnbindShader(mapping::shader_assets::ShaderAsset2D asset)
 	{
 
 	}
 
-	void ShaderManager::BindGBufferShader(mapping::shader_assets::ShaderAsset3D asset)
+	//------ GBuffer用シェーダー、レンダーターゲットビューのBind,Unbind ------//
+	void ShaderManager::BindGBufferShaderAndRTV(mapping::shader_assets::ShaderAsset3D asset)
 	{
-		gbuffer_map.at(asset)->BindShader();
+		gbuffer_map.at(asset)->BindShaderAndRTV(dsv_for_gbuffer.Get());
 	}
 
-	void ShaderManager::UnbindGBufferShader(mapping::shader_assets::ShaderAsset3D asset)
+	void ShaderManager::UnbindGBufferShaderAndRTV(mapping::shader_assets::ShaderAsset3D asset)
 	{
-		gbuffer_map.at(asset)->UnbindShader();
+		gbuffer_map.at(asset)->UnbindShaderAndRTV();
 	}
 
-	void ShaderManager::BindGBufferRTV(mapping::shader_assets::ShaderAsset3D asset)
+	// GBuffer用ののクリア処理
+	void ShaderManager::ClearGBuffer()
 	{
-		gbuffer_map.at(asset)->BindRTV(dsv_for_gbuffer.Get());
+		for(auto& gbuffer : gbuffer_map)
+		{
+			gbuffer.second->Clear();
+		}
+		// GBuffer用depth_stencil_viewのっクリア処置
+		locator::Locator::GetDx11Device()->immediate_context.Get()->ClearDepthStencilView(dsv_for_gbuffer.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
 	}
 
-	void ShaderManager::UnbindGBufferRTV(mapping::shader_assets::ShaderAsset3D asset)
-	{
-		gbuffer_map.at(asset)->UnbindRTV();
-	}
-
+	// shader3d_map数分のGBufferの作成
 	void ShaderManager::CreateGBufferMap()
 	{
 		for(auto& shader_3d : shader3d_map)

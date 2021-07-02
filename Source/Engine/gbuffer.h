@@ -12,28 +12,23 @@ namespace cumulonimbus::graphics::buffer
 		/*
 		 * brief : render_target_view(frame_buffer)とdepth_stencil_viewの画面クリア処理
 		 */
-		void Clear(float r = 0, float g = 0, float b = 0, float a = 1) const;
+		void Clear(float r = 0, float g = 0, float b = 0, float a = 1);
 
 		/*
-		 * brief     : GBuffer用のrender_target_viewのセット
-		 * ※caution : depth_stencil_viewは全てのGBufferで共通のものを使用する
+		 * brief : GBuffer用のRTVとシェーダーのバインド
 		 */
-		void BindRTV(ID3D11DepthStencilView* depth_stencil_view);
-		/*
-		 * brief     : セットされているrender_target_viewのdepth_stencil_viewを
-		 *			   "default" render_target_viewにセット
-		 */
-		void UnbindRTV();
+		void BindShaderAndRTV(ID3D11DepthStencilView* depth_stencil_view);
+		void UnbindShaderAndRTV();
 
+		[[nodiscard]] ID3D11ShaderResourceView** GetAlbedoBufferSRV_Address()		const { return albedo_buffer->GetRenderTargetSRV(); }
+		[[nodiscard]] ID3D11ShaderResourceView** GetPositionBufferSRB_Address()		const { return position_buffer->GetRenderTargetSRV(); }
+		[[nodiscard]] ID3D11ShaderResourceView** GetNormalBufferSRV_Address()		const { return normal_buffer->GetRenderTargetSRV(); }
+		
 		/*
-		 * brief : GBuffer用シェーダーのセット
- 		 */
-		void BindShader() const;
-		/*
-		 * brief : GBuffer用シェーダーのリセット
+		 * brief : RenderPathクラスのGBuffer同士のBlit処理に加えるのか
 		 */
-		void UnbindShader() const;
-
+		[[nodiscard]] bool GetIsUsedGBuffer() const { return is_used_gbuffer; }
+	
 	private:
 		/*
 		 * brief	 : GBufferとして使用するテクスチャ群
@@ -53,5 +48,29 @@ namespace cumulonimbus::graphics::buffer
 		// GBuffer用シェーダー
 		std::unique_ptr<shader_system::VertexShader> gbuffer_vs{ nullptr };
 		std::unique_ptr<shader_system::PixelShader>  gbuffer_ps{ nullptr };
+
+		// RenderPathクラスのGBuffer同士のBlit処理時に
+		// この変数がfalseならテクスチャを使用しない
+		bool is_used_gbuffer = false;
+
+		/*
+		 * brief     : GBuffer用のrender_target_viewのセット
+		 * ※caution : depth_stencil_viewは全てのGBufferで共通のものを使用する
+		 */
+		void BindRTV(ID3D11DepthStencilView* depth_stencil_view);
+		/*
+		 * brief     : セットされているrender_target_viewのdepth_stencil_viewを
+		 *			   "default" render_target_viewにセット
+		 */
+		void UnbindRTV();
+
+		/*
+		 * brief : GBuffer用シェーダーのセット
+		 */
+		void BindShader() const;
+		/*
+		 * brief : GBuffer用シェーダーのリセット
+		 */
+		void UnbindShader() const;
 	};
 } // cumulonimbus::graphics::buffer
