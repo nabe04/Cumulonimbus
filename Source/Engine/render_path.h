@@ -101,6 +101,14 @@ namespace cumulonimbus::renderer
 		void RenderShadow_End(ID3D11DeviceContext* immediate_context) const;
 
 		/*
+		 * brief : SkyBoxの描画
+		 *		   off_screenバッファを使用して書き込む
+		 */
+		void RenderSkyBox_Begin(ID3D11DeviceContext* immediate_context);
+		void RenderSkyBox(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, const View* view, const Light* light);
+		void RenderSkyBox_End(ID3D11DeviceContext* immediate_context);
+		
+		/*
 		 * brief     : 3DモデルのGBufferへの描画
 		 */
 		void Render3DToGBuffer_Begin(ID3D11DeviceContext* immediate_context) const;
@@ -110,6 +118,14 @@ namespace cumulonimbus::renderer
 		 */
 		void Render3DToGBuffer_End(ID3D11DeviceContext* immediate_context) const;
 
+		/*
+		 * brief : ポストプロセス処理
+		 *		   (Bloom)
+		 */
+		void RenderPostProcess_Begin(ID3D11DeviceContext* immediate_context);
+		void RenderPostProcess(ID3D11DeviceContext* immediate_context);
+		void RenderPostProcess_End(ID3D11DeviceContext* immediate_context);
+		
 		/*
 		 * brief     : 3Dモデルの描画
 		 * ※caution : "FBXModelComponent", "ObjModelComponent", "GeometricPrimitiveComponent"
@@ -155,12 +171,12 @@ namespace cumulonimbus::renderer
 					   bool is_use_shadow, bool is_use_gbuffer);
 
 		/*
-		 * brief : "SkyBoxComponent"が持つモデルの描画
+		 * brief :   "SkyBoxComponent"が持つモデルの描画
 		 */
 		void RenderSkyBox(ID3D11DeviceContext* immediate_context,
-						  ecs::Registry* registry, mapping::rename_type::Entity entity,
-						  const View* view, const Light* light);
-
+			ecs::Registry* registry, mapping::rename_type::Entity entity,
+			const View* view, const Light* light);
+		
 		/*
 		 * brief        : 2Dスプライトの描画
 		 * ※caution(1) : "SpriteObjectComponent", "SpriteComponent", "AnimSpriteComponent"

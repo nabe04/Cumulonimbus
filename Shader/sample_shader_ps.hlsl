@@ -1,8 +1,8 @@
 // PS_Input(VS_Output)
-#define PIN_USE_WVP_POSITION
-#define PIN_USE_NORMAL
-#define PIN_USE_COLOR
-#define PIN_USE_TEX_POSITION   // ShadowMap比較用UV値
+//#define PIN_USE_WVP_POSITION
+//#define PIN_USE_NORMAL
+//#define PIN_USE_COLOR
+//#define PIN_USE_TEX_POSITION   // ShadowMap比較用UV値
 #define PIN_USE_TEXCOORD0      // 読み込んだテクスチャのUV値
 
 #include "globals.hlsli"
@@ -19,5 +19,6 @@ float4 main(PS_Input pin) : SV_TARGET
     float4 albedo_color = texture_base_color.Sample(default_sampler, pin.texcoord0);
 
     //return normal_map_c;
+    //return float4(1, 0, 0, 1);
     return albedo_color;
 }

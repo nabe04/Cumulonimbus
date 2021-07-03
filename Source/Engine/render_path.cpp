@@ -84,10 +84,20 @@ namespace cumulonimbus::renderer
 		RenderShadow(immediate_context, registry, view, light);
 		RenderShadow_End(immediate_context);
 
+		// SkyBoxの描画
+		RenderSkyBox_Begin(immediate_context);
+		RenderSkyBox(immediate_context, registry, view, light);
+		RenderSkyBox_End(immediate_context);
+
 		// GBufferへの描画処理
 		Render3DToGBuffer_Begin(immediate_context);
 		Render3DToGBuffer(immediate_context, registry, view, light);
 		Render3DToGBuffer_End(immediate_context);
+
+		// ポストプロセス処理
+		RenderPostProcess_Begin(immediate_context);
+		RenderPostProcess(immediate_context);
+		RenderPostProcess_End(immediate_context);
 
 		//Render3D_Begin(immediate_context);
 		//Render3D(immediate_context, registry, view, light);
@@ -143,6 +153,33 @@ namespace cumulonimbus::renderer
 		depth_map->End(immediate_context);
 	}
 
+	void RenderPath::RenderSkyBox_Begin(ID3D11DeviceContext* immediate_context)
+	{
+		off_screen->Clear(immediate_context);
+		off_screen->Activate(immediate_context);
+	}
+
+	void RenderPath::RenderSkyBox(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, const View* view,
+		const Light* light)
+	{
+		// ライトパラメータをコンスタントバッファにバインド
+		light->BindCBuffer();
+
+		auto& components = registry->GetArray<component::SkyBoxComponent>().GetComponents();
+		for (auto& sky_box : registry->GetArray<component::SkyBoxComponent>().GetComponents())
+		{
+			mapping::rename_type::Entity ent = sky_box.GetEntity();
+			RenderSkyBox(immediate_context, registry, sky_box.GetEntity(), view, light);
+		}
+	}
+
+	void RenderPath::RenderSkyBox_End(ID3D11DeviceContext* immediate_context)
+	{
+		// Skyマップをpixel shaderのshader resource viewにバインド
+		locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, sky_box_srv.GetAddressOf(), TexSlot_SkyMap);
+		off_screen->Deactivate(immediate_context);
+	}
+
 	void RenderPath::Render3DToGBuffer_Begin(ID3D11DeviceContext* immediate_context) const
 	{
 		// GBuffer用RTVのクリア
@@ -179,11 +216,31 @@ namespace cumulonimbus::renderer
 
 	void RenderPath::Render3DToGBuffer_End(ID3D11DeviceContext* immediate_context) const
 	{
-		off_screen->Clear(immediate_context);
 		off_screen->Activate(immediate_context);
 		CombinationGBuffer();
 		off_screen->Deactivate(immediate_context);
 	}
+
+	void RenderPath::RenderPostProcess_Begin(ID3D11DeviceContext* immediate_context)
+	{
+
+	}
+
+	void RenderPath::RenderPostProcess(ID3D11DeviceContext* immediate_context)
+	{
+		locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
+															  off_screen->GetRenderTargetSRV(),
+															  TexSlot_BaseColorMap);
+		fullscreen_quad->Blit(immediate_context, true, true, true);
+		ID3D11ShaderResourceView* const pSRV[1] = { nullptr };
+	}
+
+	void RenderPath::RenderPostProcess_End(ID3D11DeviceContext* immediate_context)
+	{
+
+	}
+
+
 
 	void RenderPath::Render3D_Begin(ID3D11DeviceContext* immediate_context)
 	{

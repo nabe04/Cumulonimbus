@@ -7,6 +7,7 @@ namespace cumulonimbus::mapping::shader_filename
 	{
 		inline std::string Toon_VS()							{ return { "./Shader/cso/toon_vs.cso" }; }
 		inline std::string Phong_VS()							{ return { "./Shader/cso/phong_vs.cso" }; }
+		inline std::string Image_VS()							{ return { "./Shader/cso/image_vs.cso" }; }
 		inline std::string Metal_VS()							{ return { "./Shader/cso/cook_torrance_vs.cso" }; }
 		inline std::string Diffuse_VS()							{ return { "./Shader/cso/diffuse_vs.cso" }; }
 		inline std::string GBuffer_VS()							{ return { "./Shader/cso/gbuffer_vs.cso" }; }

@@ -19,6 +19,7 @@ namespace cumulonimbus::shader_system
 		VertexShader(VertexShader&) = delete;
 		VertexShader& operator=(VertexShader&) = delete;
 
+		void BindVS(ID3D11InputLayout* input_layout);
 		void BindVS();
 		void UnbindVS();
 

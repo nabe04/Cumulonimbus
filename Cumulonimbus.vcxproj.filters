@@ -136,6 +136,9 @@
     <FxCompile Include="Shader\gbuffer_ps.hlsl">
       <Filter>Shader%28HLSL%29\PS</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\image_vs.hlsl">
+      <Filter>Shader%28HLSL%29\VS</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\scene.cpp">

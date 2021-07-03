@@ -16,11 +16,7 @@
 // Name                 Index   Mask Register SysValue  Format   Used
 // -------------------- ----- ------ -------- -------- ------- ------
 // SV_POSITION              0   xyzw        0      POS   float       
-// WVP_POSITION             0   xyzw        1     NONE   float       
-// NORMAL                   0   xyz         2     NONE   float       
-// COLOR                    0   xyzw        3     NONE   float       
-// TEX_POSITION             0   xyz         4     NONE   float       
-// TEXCOORD                 0   xy          5     NONE   float   xy  
+// TEXCOORD                 0   xy          1     NONE   float   xy  
 //
 //
 // Output signature:
@@ -33,23 +29,19 @@ ps_5_0
 dcl_globalFlags refactoringAllowed | skipOptimization
 dcl_sampler s0, mode_default
 dcl_resource_texture2d (float,float,float,float) t20
-dcl_input_ps linear v5.xy
+dcl_input_ps linear v1.xy
 dcl_output o0.xyzw
 dcl_temps 1
 //
 // Initial variable locations:
 //   v0.x <- pin.position.x; v0.y <- pin.position.y; v0.z <- pin.position.z; v0.w <- pin.position.w; 
-//   v1.x <- pin.wvp_position.x; v1.y <- pin.wvp_position.y; v1.z <- pin.wvp_position.z; v1.w <- pin.wvp_position.w; 
-//   v2.x <- pin.normal.x; v2.y <- pin.normal.y; v2.z <- pin.normal.z; 
-//   v3.x <- pin.color.x; v3.y <- pin.color.y; v3.z <- pin.color.z; v3.w <- pin.color.w; 
-//   v4.x <- pin.tex_position.x; v4.y <- pin.tex_position.y; v4.z <- pin.tex_position.z; 
-//   v5.x <- pin.texcoord0.x; v5.y <- pin.texcoord0.y; 
+//   v1.x <- pin.texcoord0.x; v1.y <- pin.texcoord0.y; 
 //   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
 //
 #line 19 "D:\Desktop\Cumulonimbus\Shader\sample_shader_ps.hlsl"
-sample_indexable(texture2d)(float,float,float,float) r0.xyzw, v5.xyxx, t20.xyzw, s0  // r0.x <- albedo_color.x; r0.y <- albedo_color.y; r0.z <- albedo_color.z; r0.w <- albedo_color.w
+sample_indexable(texture2d)(float,float,float,float) r0.xyzw, v1.xyxx, t20.xyzw, s0  // r0.x <- albedo_color.x; r0.y <- albedo_color.y; r0.z <- albedo_color.z; r0.w <- albedo_color.w
 
-#line 22
+#line 23
 mov o0.xyzw, r0.xyzw
 ret 
 // Approximately 3 instruction slots used

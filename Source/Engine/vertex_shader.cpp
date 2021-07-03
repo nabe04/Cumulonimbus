@@ -93,6 +93,17 @@ namespace cumulonimbus::shader_system
 		return;
 	}
 
+	void VertexShader::BindVS(ID3D11InputLayout* input_layout)
+	{
+		ID3D11DeviceContext* immediate_context = locator::Locator::GetDx11Device()->immediate_context.Get();
+
+		immediate_context->IAGetInputLayout(default_input_layout.ReleaseAndGetAddressOf());
+		immediate_context->VSGetShader(default_shader_object.ReleaseAndGetAddressOf(), 0, 0);
+
+		immediate_context->IASetInputLayout(input_layout);
+		immediate_context->VSSetShader(shader_object.Get(), 0, 0);
+	}
+
 	void VertexShader::BindVS()
 	{
 		ID3D11DeviceContext* immediate_context = locator::Locator::GetDx11Device()->immediate_context.Get();

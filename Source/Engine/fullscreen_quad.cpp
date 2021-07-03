@@ -8,7 +8,9 @@
 #include <cassert>
 #include <string>
 
+#include "locator.h"
 #include "shader.h"
+#include "shader_filename_mapping.h"
 
 FullscreenQuad::FullscreenQuad(ID3D11Device* device)
 {
@@ -130,6 +132,10 @@ FullscreenQuad::FullscreenQuad(ID3D11Device* device)
 	hr = device->CreateDepthStencilState(&depth_stencil_desc, embedded_depth_stencil_state.GetAddressOf());
 	if (FAILED(hr))
 		assert(!"CreateDepthStencilState error");
+
+	// vertex_shader�̍쐬
+	//cumulonimbus::shader_system::
+	image_vs = std::make_unique<cumulonimbus::shader_system::VertexShader>(cumulonimbus::mapping::shader_filename::vs::Image_VS().c_str());
 }
 void FullscreenQuad::Blit(ID3D11DeviceContext* immediate_context,
 	bool use_embedded_rasterizer_state	, bool use_embedded_depth_stencil_state,
@@ -157,7 +163,8 @@ void FullscreenQuad::Blit(ID3D11DeviceContext* immediate_context,
 	immediate_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	immediate_context->IASetInputLayout(nullptr);
 
-	immediate_context->VSSetShader(embedded_vertex_shader.Get(), 0, 0);
+	//immediate_context->VSSetShader(embedded_vertex_shader.Get(), 0, 0);
+	image_vs->BindVS(nullptr);
 
 	immediate_context->Draw(4, 0);
 
@@ -202,6 +209,7 @@ void FullscreenQuad::Convolution(ID3D11DeviceContext* immediate_context,
 	immediate_context->IASetInputLayout(0);
 
 	immediate_context->VSSetShader(embedded_vertex_shader.Get(), 0, 0);
+	//image_vs->BindVS();
 
 	immediate_context->Draw(4, 0);
 

@@ -6,6 +6,7 @@
 #include <wrl.h>
 
 #include "frame_buffer.h"
+#include "shader.h"
 
 //'fullscreen_quad' dose not have pixel shader and sampler state. you have to make and set pixel shader and sampler state by yourself.
 class FullscreenQuad
@@ -32,6 +33,8 @@ public:
 		bool use_embedded_pixel_shader = false, bool enable_msaa = false);
 
 private:
+	std::unique_ptr<cumulonimbus::shader_system::VertexShader> image_vs;
+	
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> embedded_vertex_shader;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> embedded_pixel_shaders[2];
 
