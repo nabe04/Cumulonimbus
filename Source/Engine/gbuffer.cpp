@@ -24,7 +24,7 @@ namespace cumulonimbus::graphics::buffer
 	void GBuffer::Clear(float r, float g, float b, float a)
 	{
 		is_used_gbuffer = false;
-		
+
 		float clear_color[4] = { r,g,b,a };
 		locator::Locator::GetDx11Device()->immediate_context->ClearRenderTargetView(albedo_buffer->GetRTV()  , clear_color);
 		locator::Locator::GetDx11Device()->immediate_context->ClearRenderTargetView(position_buffer->GetRTV(), clear_color);
@@ -50,13 +50,13 @@ namespace cumulonimbus::graphics::buffer
 		ID3D11DeviceContext* immediate_context = locator::Locator::GetDx11Device()->immediate_context.Get();
 
 		immediate_context->OMGetRenderTargets(1, default_render_target_view.ReleaseAndGetAddressOf(), default_depth_stencil_view.ReleaseAndGetAddressOf());
-
 		ID3D11RenderTargetView* rtv[num_rtv] =
 		{
 			albedo_buffer->GetRTV(),
-			position_buffer->GetRTV(),
-			normal_buffer->GetRTV()
+			normal_buffer->GetRTV(),
+			position_buffer->GetRTV()
 		};
+
 		immediate_context->OMSetRenderTargets(num_rtv, rtv, depth_stencil_view);
 	}
 

@@ -21,7 +21,7 @@ namespace cumulonimbus::graphics::buffer
 		void UnbindShaderAndRTV();
 
 		[[nodiscard]] ID3D11ShaderResourceView** GetAlbedoBufferSRV_Address()		const { return albedo_buffer->GetRenderTargetSRV(); }
-		[[nodiscard]] ID3D11ShaderResourceView** GetPositionBufferSRB_Address()		const { return position_buffer->GetRenderTargetSRV(); }
+		[[nodiscard]] ID3D11ShaderResourceView** GetPositionBufferSRV_Address()		const { return position_buffer->GetRenderTargetSRV(); }
 		[[nodiscard]] ID3D11ShaderResourceView** GetNormalBufferSRV_Address()		const { return normal_buffer->GetRenderTargetSRV(); }
 		
 		/*

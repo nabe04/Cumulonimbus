@@ -7,7 +7,7 @@
 // Name                                 Type  Format         Dim      HLSL Bind  Count
 // ------------------------------ ---------- ------- ----------- -------------- ------
 // default_sampler                   sampler      NA          NA             s0      1 
-// texture_base_color                texture  float4          2d            t20      1 
+// texture_normal                    texture  float4          2d            t21      1 
 //
 //
 //
@@ -28,7 +28,7 @@
 ps_5_0
 dcl_globalFlags refactoringAllowed | skipOptimization
 dcl_sampler s0, mode_default
-dcl_resource_texture2d (float,float,float,float) t20
+dcl_resource_texture2d (float,float,float,float) t21
 dcl_input_ps linear v1.xy
 dcl_output o0.xyzw
 dcl_temps 1
@@ -38,10 +38,10 @@ dcl_temps 1
 //   v1.x <- pin.texcoord0.x; v1.y <- pin.texcoord0.y; 
 //   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
 //
-#line 19 "D:\Desktop\Cumulonimbus\Shader\sample_shader_ps.hlsl"
-sample_indexable(texture2d)(float,float,float,float) r0.xyzw, v1.xyxx, t20.xyzw, s0  // r0.x <- albedo_color.x; r0.y <- albedo_color.y; r0.z <- albedo_color.z; r0.w <- albedo_color.w
+#line 20 "D:\Desktop\Cumulonimbus\Shader\sample_shader_ps.hlsl"
+sample_indexable(texture2d)(float,float,float,float) r0.xyzw, v1.xyxx, t21.xyzw, s0  // r0.x <- normal_map.x; r0.y <- normal_map.y; r0.z <- normal_map.z; r0.w <- normal_map.w
 
-#line 23
+#line 25
 mov o0.xyzw, r0.xyzw
 ret 
 // Approximately 3 instruction slots used

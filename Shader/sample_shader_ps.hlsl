@@ -16,9 +16,11 @@ SamplerState default_sampler : register(s0);
 
 float4 main(PS_Input pin) : SV_TARGET
 {
-    float4 albedo_color = texture_base_color.Sample(default_sampler, pin.texcoord0);
+    float4 albedo_color = texture_base_color.Sample(default_sampler,pin.texcoord0);
+    float4 normal_map   = texture_normal.Sample(default_sampler, pin.texcoord0);
+    float4 position_map = texture_position.Sample(default_sampler, pin.texcoord0);
 
     //return normal_map_c;
     //return float4(1, 0, 0, 1);
-    return albedo_color;
+    return normal_map;
 }

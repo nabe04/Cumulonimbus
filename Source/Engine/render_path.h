@@ -107,7 +107,7 @@ namespace cumulonimbus::renderer
 		void RenderSkyBox_Begin(ID3D11DeviceContext* immediate_context);
 		void RenderSkyBox(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, const View* view, const Light* light);
 		void RenderSkyBox_End(ID3D11DeviceContext* immediate_context);
-		
+
 		/*
 		 * brief     : 3DモデルのGBufferへの描画
 		 */
@@ -125,7 +125,7 @@ namespace cumulonimbus::renderer
 		void RenderPostProcess_Begin(ID3D11DeviceContext* immediate_context);
 		void RenderPostProcess(ID3D11DeviceContext* immediate_context);
 		void RenderPostProcess_End(ID3D11DeviceContext* immediate_context);
-		
+
 		/*
 		 * brief     : 3Dモデルの描画
 		 * ※caution : "FBXModelComponent", "ObjModelComponent", "GeometricPrimitiveComponent"
@@ -176,7 +176,7 @@ namespace cumulonimbus::renderer
 		void RenderSkyBox(ID3D11DeviceContext* immediate_context,
 			ecs::Registry* registry, mapping::rename_type::Entity entity,
 			const View* view, const Light* light);
-		
+
 		/*
 		 * brief        : 2Dスプライトの描画
 		 * ※caution(1) : "SpriteObjectComponent", "SpriteComponent", "AnimSpriteComponent"

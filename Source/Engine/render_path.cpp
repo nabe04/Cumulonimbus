@@ -1,8 +1,5 @@
 #include "render_path.h"
 
-#include <cereal/types/array.hpp>
-#include <cereal/types/bitset.hpp>
-
 #include "sampler_mapping.h"
 #include "scene.h"
 #include "shader_interop_renderer.h"
@@ -804,9 +801,10 @@ namespace cumulonimbus::renderer
 				shader_manager->BindShader(mapping::shader_assets::ShaderAsset3D::SampleShader);
 				using namespace mapping::graphics;
 				locator::Locator::GetDx11Device()->BindShaderResource(ShaderStage::PS, gbuffer.second->GetAlbedoBufferSRV_Address()	 , TexSlot_BaseColorMap);
-				locator::Locator::GetDx11Device()->BindShaderResource(ShaderStage::PS, gbuffer.second->GetPositionBufferSRB_Address(), TexSlot_Position);
-				locator::Locator::GetDx11Device()->BindShaderResource(ShaderStage::PS, gbuffer.second->GetAlbedoBufferSRV_Address()	 , TexSlot_NormalMap);
+				locator::Locator::GetDx11Device()->BindShaderResource(ShaderStage::PS, gbuffer.second->GetNormalBufferSRV_Address()	 , TexSlot_NormalMap);
+				locator::Locator::GetDx11Device()->BindShaderResource(ShaderStage::PS, gbuffer.second->GetPositionBufferSRV_Address(), TexSlot_Position);
 				fullscreen_quad->Blit(locator::Locator::GetDx11Device()->immediate_context.Get());
+				shader_manager->UnbindShader(mapping::shader_assets::ShaderAsset3D::SampleShader);
 			}
 		}
 	}
