@@ -493,12 +493,16 @@ namespace cumulonimbus::renderer
 
 				if(is_use_gbuffer)
 				{
+					// GBuffer用のシェーダーとRTV(シェーダー毎)のセット
 					shader_manager->BindGBufferShaderAndRTV(model.GetMaterialsManager(subset.material_index)->GetCurrentAsset());
+					// シェーダーが持つテクスチャのセット
+					model.GetMaterialsManager(subset.material_index)->BindTexture();
 				}
 				else if(!is_use_shadow)
 				{// メッシュ単位でのマテリアル適応
 					shader_manager->BindShader(model.GetMaterialsManager(subset.material_index)->GetCurrentAsset());
-					model.GetMaterialsManager(subset.material_index)->BindAsset();
+					model.GetMaterialsManager(subset.material_index)->BindCBuffer();
+					model.GetMaterialsManager(subset.material_index)->BindTexture();
 				}
 
 				if (subset.material && subset.material->shader_resource_view)
@@ -520,10 +524,12 @@ namespace cumulonimbus::renderer
 				if (is_use_gbuffer)
 				{
 					shader_manager->UnbindGBufferShaderAndRTV(model.GetMaterialsManager(subset.material_index)->GetCurrentAsset());
+					model.GetMaterialsManager(subset.material_index)->UnbindCBuffer();
 				}
 				if(!is_use_shadow)
 				{
-					model.GetMaterialsManager(subset.material_index)->UnbindAsset();
+					model.GetMaterialsManager(subset.material_index)->UnbindCBuffer();
+					model.GetMaterialsManager(subset.material_index)->UnbindTexture();
 					shader_manager->UnbindShader(model.GetMaterialsManager(subset.material_index)->GetCurrentAsset());
 				}
 			}
@@ -794,6 +800,7 @@ namespace cumulonimbus::renderer
 
 	void RenderPath::CombinationGBuffer() const
 	{
+		blend->Activate(locator::Locator::GetDx11Device()->immediate_context.Get(), BlendState::Alpha);
 		for(const auto& gbuffer : shader_manager->GetGBufferMap())
 		{
 			if(gbuffer.second->GetIsUsedGBuffer())

@@ -15,15 +15,26 @@ namespace cumulonimbus::shader_asset
 		~Material3DManager() = default;
 
 		/*
-		 * brief : 現在のセットされているシェーダーの
-		 *		   コンスタントバッファをバインド
+		 * brief : 現在セットされているシェーダーの
+		 *		   コンスタントバッファのセット(バインド)
 		 */
-		void BindAsset() const;
+		void BindCBuffer() const;
 		/*
 		 * brief : 現在のセットされているシェーダーの
-		 *          コンスタントバッファをアンバインド
+		 *		    コンスタントバッファをリセット(アンバインド)
 		 */
-		void UnbindAsset() const;
+		void UnbindCBuffer() const;
+
+		/*
+		 * brief : 現在セットされているシェーダーの
+		 *		   テクスチャのセット(バインド)
+		 */
+		void BindTexture() const;
+		/*
+		 * brief : 現在　セットされているシェーダーの
+		 *		   テクスチャのリセット(アンバインド)
+		 */
+		void UnbindTexture() const;
 
 		/*
 		 * brief     : Shader全体の種類を変更するためのImGui

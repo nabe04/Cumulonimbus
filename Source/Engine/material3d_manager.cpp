@@ -25,15 +25,24 @@ namespace cumulonimbus::shader_asset
 		RegisterShaderAsset<shader_asset::SingleColorAsset>			(ShaderAsset3D::SingleColor);
 	}
 
-
-	void Material3DManager::BindAsset() const
+	void Material3DManager::BindCBuffer() const
 	{
-		shader_asset_map.at(shader_assets.GetCurrentState())->BindCBufferAndTexture();
+		shader_asset_map.at(shader_assets.GetCurrentState())->BindCBuffer();
 	}
 
-	void Material3DManager::UnbindAsset() const
+	void Material3DManager::UnbindCBuffer() const
 	{
-		shader_asset_map.at(shader_assets.GetCurrentState())->UnbindCBufferAndTexture();
+		shader_asset_map.at(shader_assets.GetCurrentState())->UnbindCBuffer();
+	}
+
+	void Material3DManager::BindTexture() const
+	{
+		shader_asset_map.at(shader_assets.GetCurrentState())->BindTexture();
+	}
+
+	void Material3DManager::UnbindTexture() const
+	{
+		shader_asset_map.at(shader_assets.GetCurrentState())->UnbindTexture();
 	}
 
 	void Material3DManager::RenderImGuiComboShader()
