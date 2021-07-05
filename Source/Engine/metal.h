@@ -3,9 +3,6 @@
 
 #ifdef __cplusplus
 
-#include <cereal/cereal.hpp>
-#include <cereal/types/polymorphic.hpp>
-
 #include "shader.h"
 #include "shader_asset.h"
 
@@ -40,6 +37,7 @@ namespace cumulonimbus
 		{
 		public:
 			explicit MetalShader();
+			~MetalShader() override = default;
 		};
 	}
 
@@ -48,7 +46,9 @@ namespace cumulonimbus
 		class MetalAsset final : public ShaderAsset
 		{
 		public:
-			explicit MetalAsset();
+			explicit MetalAsset(u_int gbuff_shader_slot);
+			explicit MetalAsset()  = default;
+			~MetalAsset() override = default;
 
 			void BindCBuffer()   override;
 			void UnbindCBuffer() override;

@@ -134,31 +134,31 @@ mov r7.xyz, -r5.xyzx
 mov r6.xyz, r6.xyzx
 mov r1.w, cb6[0].z
 
-#line 30 "D:\Desktop\Cumulonimbus\Shader\functions.hlsli"
+#line 42 "D:\Desktop\Cumulonimbus\Shader\functions.hlsli"
 mov r8.xyz, -r3.xyzx
 add r7.xyz, r7.xyzx, r8.xyzx
 dp3 r2.w, r7.xyzx, r7.xyzx
 rsq r2.w, r2.w
 mul r7.xyz, r2.wwww, r7.xyzx  // r7.x <- H.x; r7.y <- H.y; r7.z <- H.z
 
-#line 32
+#line 44
 dp3 r7.z, r7.xyzx, r2.xyzx
 mov r7.xyz, r7.zzzz  // r7.x <- S.x; r7.y <- S.y; r7.z <- S.z
 
-#line 33
+#line 45
 itof r8.xyz, l(0, 0, 0, 0)
 max r7.xyz, r7.xyzx, r8.xyzx
 
-#line 34
+#line 46
 log r7.xyz, r7.xyzx
 mul r7.xyz, r1.wwww, r7.xyzx
 exp r7.xyz, r7.xyzx  // r7.x <- S.x; r7.y <- S.y; r7.z <- S.z
 
-#line 35
+#line 47
 mul r7.xyz, r6.xyzx, r7.xyzx
 mul r7.xyz, r4.xyzx, r7.xyzx  // r7.x <- S.x; r7.y <- S.y; r7.z <- S.z
 
-#line 36
+#line 48
 mov r7.xyz, r7.xyzx  // r7.x <- <BlinnPhongSpecular return value>.x; r7.y <- <BlinnPhongSpecular return value>.y; r7.z <- <BlinnPhongSpecular return value>.z
 
 #line 20 "D:\Desktop\Cumulonimbus\Shader\toon_ps.hlsl"
@@ -186,15 +186,15 @@ mov r3.xyz, r3.xyzx
 mov r4.xyz, r4.xyzx
 mov r6.xyz, r6.xyzx
 
-#line 11 "D:\Desktop\Cumulonimbus\Shader\functions.hlsli"
+#line 23 "D:\Desktop\Cumulonimbus\Shader\functions.hlsli"
 mov r8.xyz, -r3.xyzx
 dp3 r1.w, r2.xyzx, r8.xyzx  // r1.w <- D
 
-#line 12
+#line 24
 itof r2.w, l(0)
 max r1.w, r1.w, r2.w
 
-#line 13
+#line 25
 mul r4.xyz, r4.xyzx, r6.xyzx
 mul r4.xyz, r1.wwww, r4.xyzx  // r4.x <- <Diffuse return value>.x; r4.y <- <Diffuse return value>.y; r4.z <- <Diffuse return value>.z
 

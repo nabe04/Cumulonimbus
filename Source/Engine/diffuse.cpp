@@ -43,8 +43,8 @@ namespace cumulonimbus
 
 	namespace shader_asset
 	{
-		DiffuseAsset::DiffuseAsset()
-			:ShaderAsset{}
+		DiffuseAsset::DiffuseAsset(u_int gbuff_shader_slot)
+			:ShaderAsset{ gbuff_shader_slot }
 		{
 			material_path.normal_map_name = mapping::texture_filename::DefaultNormalMap();
 		}

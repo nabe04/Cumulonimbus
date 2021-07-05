@@ -83,6 +83,7 @@ struct PS_Output
     float4 albedo_color : SV_TARGET0;
     float4 normal       : SV_TARGET1;
     float4 position     : SV_TARGET2;
+    float  shader_slot  : SV_TARGET3;
 };
 
 

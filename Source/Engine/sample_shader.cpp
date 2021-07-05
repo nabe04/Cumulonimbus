@@ -20,8 +20,8 @@ namespace cumulonimbus
 
 	namespace shader_asset
 	{
-		SampleShaderAsset::SampleShaderAsset()
-			:ShaderAsset{}
+		SampleShaderAsset::SampleShaderAsset(u_int gbuff_shader_slot)
+			:ShaderAsset{ gbuff_shader_slot }
 		{
 			material_path.normal_map_name = mapping::texture_filename::DefaultNormalMap();
 		}

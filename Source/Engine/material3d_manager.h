@@ -65,12 +65,12 @@ namespace cumulonimbus::shader_asset
 		EnumStateMap<mapping::shader_assets::ShaderAsset3D> shader_assets;
 
 		template<typename T>
-		void RegisterShaderAsset(mapping::shader_assets::ShaderAsset3D asset_type)
+		void RegisterShaderAsset(mapping::shader_assets::ShaderAsset3D asset_type, u_int gbuffer_shader_slot)
 		{
 			if (shader_asset_map.contains(asset_type))
 				return;
 
-			shader_asset_map.emplace(asset_type, std::make_shared<T>());
+			shader_asset_map.emplace(asset_type, std::make_shared<T>(gbuffer_shader_slot));
 		}
 	};
 }

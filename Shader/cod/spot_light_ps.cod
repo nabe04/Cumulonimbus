@@ -142,15 +142,15 @@ mov r0.xyz, r0.xyzx
 mov r3.xyz, r3.xyzx
 mov r5.xyz, r5.xyzx
 
-#line 11 "D:\Desktop\Cumulonimbus\Shader\functions.hlsli"
+#line 23 "D:\Desktop\Cumulonimbus\Shader\functions.hlsli"
 mov r6.xyz, -r0.xyzx
 dp3 r0.w, r4.xyzx, r6.xyzx  // r0.w <- D
 
-#line 12
+#line 24
 itof r1.w, l(0)
 max r0.w, r0.w, r1.w
 
-#line 13
+#line 25
 mul r6.xyz, r3.xyzx, r5.xyzx
 mul r6.xyz, r0.wwww, r6.xyzx  // r6.x <- <Diffuse return value>.x; r6.y <- <Diffuse return value>.y; r6.z <- <Diffuse return value>.z
 
@@ -168,22 +168,22 @@ mov r3.xyz, r3.xyzx
 mov r1.xyz, r1.xyzx
 mov r7.xyz, r7.xyzx
 
-#line 30 "D:\Desktop\Cumulonimbus\Shader\functions.hlsli"
+#line 42 "D:\Desktop\Cumulonimbus\Shader\functions.hlsli"
 mov r0.xyz, -r0.xyzx
 add r0.xyz, r1.xyzx, r0.xyzx
 dp3 r0.w, r0.xyzx, r0.xyzx
 rsq r0.w, r0.w
 mul r0.xyz, r0.wwww, r0.xyzx  // r0.x <- H.x; r0.y <- H.y; r0.z <- H.z
 
-#line 32
+#line 44
 dp3 r0.z, r0.xyzx, r4.xyzx
 mov r0.xyz, r0.zzzz  // r0.x <- S.x; r0.y <- S.y; r0.z <- S.z
 
-#line 33
+#line 45
 itof r8.xyz, l(0, 0, 0, 0)
 max r0.xyz, r0.xyzx, r8.xyzx
 
-#line 34
+#line 46
 mov r8.xyz, l(1.000000,1.000000,1.000000,0)
 mul r0.xyz, r0.xyzx, r0.xyzx
 mul r0.xyz, r0.xyzx, r0.xyzx
@@ -192,11 +192,11 @@ mul r0.xyz, r0.xyzx, r0.xyzx
 mul r0.xyz, r0.xyzx, r0.xyzx
 mul r0.xyz, r0.xyzx, r8.xyzx  // r0.x <- S.x; r0.y <- S.y; r0.z <- S.z
 
-#line 35
+#line 47
 mul r0.xyz, r7.xyzx, r0.xyzx
 mul r0.xyz, r3.xyzx, r0.xyzx  // r0.x <- S.x; r0.y <- S.y; r0.z <- S.z
 
-#line 36
+#line 48
 mov r0.xyz, r0.xyzx  // r0.x <- <BlinnPhongSpecular return value>.x; r0.y <- <BlinnPhongSpecular return value>.y; r0.z <- <BlinnPhongSpecular return value>.z
 
 #line 29 "D:\Desktop\Cumulonimbus\Shader\spot_light_ps.hlsl"
@@ -296,15 +296,15 @@ loop
   mov r13.xyz, r13.xyzx
   mov r15.xyz, r5.xyzx
 
-#line 11 "D:\Desktop\Cumulonimbus\Shader\functions.hlsli"
+#line 23 "D:\Desktop\Cumulonimbus\Shader\functions.hlsli"
   mov r16.xyz, -r11.xyzx
   dp3 r4.w, r14.xyzx, r16.xyzx  // r4.w <- D
 
-#line 12
+#line 24
   itof r5.w, l(0)
   max r4.w, r4.w, r5.w
 
-#line 13
+#line 25
   mul r14.xyz, r13.xyzx, r15.xyzx
   mul r14.xyz, r4.wwww, r14.xyzx  // r14.x <- <Diffuse return value>.x; r14.y <- <Diffuse return value>.y; r14.z <- <Diffuse return value>.z
 
@@ -322,22 +322,22 @@ loop
   mov r15.xyz, r1.xyzx
   mov r16.xyz, r7.xyzx
 
-#line 30 "D:\Desktop\Cumulonimbus\Shader\functions.hlsli"
+#line 42 "D:\Desktop\Cumulonimbus\Shader\functions.hlsli"
   mov r11.xyz, -r11.xyzx
   add r11.xyz, r15.xyzx, r11.xyzx
   dp3 r4.w, r11.xyzx, r11.xyzx
   rsq r4.w, r4.w
   mul r11.xyz, r4.wwww, r11.xyzx  // r11.x <- H.x; r11.y <- H.y; r11.z <- H.z
 
-#line 32
+#line 44
   dp3 r11.z, r11.xyzx, r14.xyzx
   mov r11.xyz, r11.zzzz  // r11.x <- S.x; r11.y <- S.y; r11.z <- S.z
 
-#line 33
+#line 45
   itof r14.xyz, l(0, 0, 0, 0)
   max r11.xyz, r11.xyzx, r14.xyzx
 
-#line 34
+#line 46
   mov r14.xyz, l(1.000000,1.000000,1.000000,0)
   mul r11.xyz, r11.xyzx, r11.xyzx
   mul r11.xyz, r11.xyzx, r11.xyzx
@@ -346,11 +346,11 @@ loop
   mul r11.xyz, r11.xyzx, r11.xyzx
   mul r11.xyz, r11.xyzx, r14.xyzx  // r11.x <- S.x; r11.y <- S.y; r11.z <- S.z
 
-#line 35
+#line 47
   mul r11.xyz, r16.xyzx, r11.xyzx
   mul r11.xyz, r13.xyzx, r11.xyzx  // r11.x <- S.x; r11.y <- S.y; r11.z <- S.z
 
-#line 36
+#line 48
   mov r11.xyz, r11.xyzx  // r11.x <- <BlinnPhongSpecular return value>.x; r11.y <- <BlinnPhongSpecular return value>.y; r11.z <- <BlinnPhongSpecular return value>.z
 
 #line 58 "D:\Desktop\Cumulonimbus\Shader\spot_light_ps.hlsl"

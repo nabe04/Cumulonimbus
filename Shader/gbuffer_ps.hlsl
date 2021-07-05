@@ -6,6 +6,7 @@
 #define PIN_USE_TEXCOORD0
 
 #include "globals.hlsli"
+#include "functions.hlsli"
 
 SamplerState default_sampler : register(s0);
 
@@ -31,9 +32,9 @@ PS_Output main(PS_Input pin)
     const float4 position = pin.w_position;
 
     pout.albedo_color   = color;
-    //pout.albedo_color   = float4(1, 1, 1, 1);
     pout.position       = position;
     pout.normal         = float4(normal, 1.0f);
+    pout.shader_slot    = CalcGBuffShaderSlotVal(shader_slot);
 
 	return pout;
 }

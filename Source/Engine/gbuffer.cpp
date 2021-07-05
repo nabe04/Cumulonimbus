@@ -27,9 +27,12 @@ namespace cumulonimbus::graphics::buffer
 		is_used_gbuffer = false;
 
 		float clear_color[4] = { r,g,b,a };
-		locator::Locator::GetDx11Device()->immediate_context->ClearRenderTargetView(albedo_buffer->GetRTV()  , clear_color);
-		locator::Locator::GetDx11Device()->immediate_context->ClearRenderTargetView(position_buffer->GetRTV(), clear_color);
-		locator::Locator::GetDx11Device()->immediate_context->ClearRenderTargetView(normal_buffer->GetRTV()  , clear_color);
+		// shader_slot_bufferのクリアカラーは白で固定する
+		const float clear_color_shader_slot[4] = { 1.f,1.f,1.f,1.f };
+		locator::Locator::GetDx11Device()->immediate_context->ClearRenderTargetView(albedo_buffer->GetRTV()		, clear_color);
+		locator::Locator::GetDx11Device()->immediate_context->ClearRenderTargetView(position_buffer->GetRTV()	, clear_color);
+		locator::Locator::GetDx11Device()->immediate_context->ClearRenderTargetView(normal_buffer->GetRTV()		, clear_color);
+		locator::Locator::GetDx11Device()->immediate_context->ClearRenderTargetView(shader_slot_buffer->GetRTV(), clear_color_shader_slot);
 	}
 
 	void GBuffer::BindShaderAndRTV(ID3D11DepthStencilView* depth_stencil_view)
@@ -55,7 +58,8 @@ namespace cumulonimbus::graphics::buffer
 		{
 			albedo_buffer->GetRTV(),
 			normal_buffer->GetRTV(),
-			position_buffer->GetRTV()
+			position_buffer->GetRTV(),
+			shader_slot_buffer->GetRTV()
 		};
 
 		immediate_context->OMSetRenderTargets(num_rtv, rtv, depth_stencil_view);

@@ -21,8 +21,8 @@ namespace cumulonimbus
 
 	namespace shader_asset
 	{
-		ToonAsset::ToonAsset()
-			:ShaderAsset{}
+		ToonAsset::ToonAsset(u_int gbuff_shader_slot)
+			:ShaderAsset{ gbuff_shader_slot }
 		{
 			cb_toon = std::make_unique<buffer::ConstantBuffer<ToonCB>>(locator::Locator::GetDx11Device()->device.Get());
 		}

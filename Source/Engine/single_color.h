@@ -40,6 +40,7 @@ namespace cumulonimbus
 		{
 		public:
 			explicit SingleColorShader();
+			~SingleColorShader() override = default;
 		};
 	}
 
@@ -48,8 +49,10 @@ namespace cumulonimbus
 		class SingleColorAsset final : public ShaderAsset
 		{
 		public:
-			explicit SingleColorAsset();
-
+			explicit SingleColorAsset(u_int gbuff_shader_slot);
+			explicit SingleColorAsset()  = default;
+			~SingleColorAsset() override = default;
+			
 			void BindCBuffer()   override;
 			void UnbindCBuffer() override;
 			void RenderImGui()   override;

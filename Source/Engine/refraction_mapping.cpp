@@ -20,8 +20,8 @@ namespace cumulonimbus
 
 	namespace shader_asset
 	{
-		RefractionMappingAsset::RefractionMappingAsset()
-			: ShaderAsset{}
+		RefractionMappingAsset::RefractionMappingAsset(u_int gbuff_shader_slot)
+			: ShaderAsset{ gbuff_shader_slot }
 		{
 			cb_refraction = std::make_unique<buffer::ConstantBuffer<RefractionCB>>(locator::Locator::GetDx11Device()->device.Get());
 

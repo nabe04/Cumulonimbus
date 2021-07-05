@@ -22,5 +22,5 @@ float4 main(PS_Input pin) : SV_TARGET
 
     //return normal_map_c;
     //return float4(1, 0, 0, 1);
-    return albedo_color + normal_map + position_map;
+    return albedo_color;
 }

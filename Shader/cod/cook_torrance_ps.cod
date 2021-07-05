@@ -124,10 +124,10 @@ nop
 mov r2.w, cb10[0].x
 mov r1.w, r1.w
 
-#line 74 "D:\Desktop\Cumulonimbus\Shader\functions.hlsli"
+#line 86 "D:\Desktop\Cumulonimbus\Shader\functions.hlsli"
 mul r3.x, r1.w, r1.w  // r3.x <- NH2
 
-#line 76
+#line 88
 itof r3.y, l(1)
 mov r3.z, -r3.x
 add r3.y, r3.z, r3.y
@@ -209,15 +209,15 @@ mov r1.xyz, r1.xyzx
 mov r3.xyz, cb2[2].xyzx
 mov r4.xyz, l(1.000000,1.000000,1.000000,0)
 
-#line 11 "D:\Desktop\Cumulonimbus\Shader\functions.hlsli"
+#line 23 "D:\Desktop\Cumulonimbus\Shader\functions.hlsli"
 mov r1.xyz, -r1.xyzx
 dp3 r0.z, r2.xyzx, r1.xyzx  // r0.z <- D
 
-#line 12
+#line 24
 itof r1.x, l(0)
 max r0.z, r0.z, r1.x
 
-#line 13
+#line 25
 mul r1.xyz, r3.xyzx, r4.xyzx
 mul r1.xyz, r0.zzzz, r1.xyzx  // r1.x <- <Diffuse return value>.x; r1.y <- <Diffuse return value>.y; r1.z <- <Diffuse return value>.z
 

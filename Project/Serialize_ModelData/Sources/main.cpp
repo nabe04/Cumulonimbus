@@ -36,12 +36,17 @@ int main()
 	//build_fbx.Export("../../Data/TestData/RPG-Character/RPG-Character.bin");
 
 	//-- Robot --//
-	//BulidFBX bunny_fbx("../../Data/Assets/FBX/Robot/Robo_L.fbx");
-	//bunny_fbx.Export("../../Data/Assets/Bin/Robo_L.bin");
+	BulidFBX robot_fbx("../../Data/Assets/FBX/Robot/Robo_L.fbx");
+	robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Idle_ver_B.fbx");
+	robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Walk_ver_B_Front.fbx");
+	robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Attack_3Combo_1.fbx");
+	
+	robot_fbx.Export("../../Data/Assets/Bin/Robo_L.bin");
+
 
 	//-- Cube --//
-	BulidFBX cube("../../Data/Assets/FBX/Geometric_Primitive/Cube.fbx");
-	cube.Export("../../Data/Assets/Bin/cube.bin");
+	//BulidFBX cube("../../Data/Assets/FBX/Geometric_Primitive/Cube.fbx");
+	//cube.Export("../../Data/Assets/Bin/cube.bin");
 
 	//getchar();
 	return 0;

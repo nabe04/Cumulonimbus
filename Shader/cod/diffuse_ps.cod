@@ -87,15 +87,15 @@ mov r2.xyz, cb2[1].xyzx
 mov r3.xyz, v3.xyzx
 mov r0.xyz, r0.xyzx
 
-#line 11 "D:\Desktop\Cumulonimbus\Shader\functions.hlsli"
+#line 23 "D:\Desktop\Cumulonimbus\Shader\functions.hlsli"
 mov r2.xyz, -r2.xyzx
 dp3 r0.w, r1.xyzx, r2.xyzx  // r0.w <- D
 
-#line 12
+#line 24
 itof r1.x, l(0)
 max r0.w, r0.w, r1.x
 
-#line 13
+#line 25
 mul r0.xyz, r3.xyzx, r0.xyzx
 mul r0.xyz, r0.wwww, r0.xyzx  // r0.x <- <Diffuse return value>.x; r0.y <- <Diffuse return value>.y; r0.z <- <Diffuse return value>.z
 

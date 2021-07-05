@@ -444,14 +444,14 @@
     <ClCompile Include="Source\Engine\material3d_manager.cpp">
       <Filter>Source\Shader%28.cpp%29\System</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\refraction_mapping.cpp">
-      <Filter>Shader%28HLSL%29</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Engine\sample_shader.cpp">
       <Filter>Source\Shader%28.cpp%29</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\gbuffer.cpp">
       <Filter>Source\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\refraction_mapping.cpp">
+      <Filter>Source\Shader%28.cpp%29</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

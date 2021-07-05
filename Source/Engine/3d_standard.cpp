@@ -36,14 +36,27 @@ namespace shader
 
 }
 
-namespace cumulonimbus::shader_system
+namespace cumulonimbus
 {
-	Standard3DShader::Standard3DShader()
-		:Shader{}
+	namespace shader_system
 	{
-		using namespace mapping::shader_filename;
-		vertex_shader = std::make_unique<VertexShader>(vs::Standard3D_VS().c_str());
-		pixel_shader  = std::make_unique<PixelShader>(ps::Standard3D_PS().c_str());
+		Standard3DShader::Standard3DShader()
+			:Shader{}
+		{
+			using namespace mapping::shader_filename;
+			vertex_shader = std::make_unique<VertexShader>(vs::Standard3D_VS().c_str());
+			pixel_shader = std::make_unique<PixelShader>(ps::Standard3D_PS().c_str());
+		}
+	} // shader_system
+
+	namespace shader_asset
+	{
+		Standard3DAsset::Standard3DAsset(u_int gbuff_shader_slot)
+			:ShaderAsset{ gbuff_shader_slot }
+		{
+
+		}
+
 	}
 
-}
+} // cumulonimbus

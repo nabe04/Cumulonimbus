@@ -14,8 +14,18 @@ namespace cumulonimbus
 			pixel_shader  = std::make_unique<shader_system::PixelShader>(ps::ReflectionMapping_PS().c_str());
 		}
 
-	}
-}
+	} // shader_system
+
+	namespace shader_asset
+	{
+		ReflectionMappingAsset::ReflectionMappingAsset(u_int gbuff_shader_slot)
+			:ShaderAsset{ gbuff_shader_slot }
+		{
+
+		}
+	} // shader_asset
+	
+} // cumulonimbus
 
 namespace shader
 {

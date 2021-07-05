@@ -23,19 +23,22 @@ namespace cumulonimbus
 {
 	namespace shader_system
 	{
-		class Standard3DShader : public Shader
+		class Standard3DShader final : public Shader
 		{
 		public:
-			Standard3DShader();
+			explicit Standard3DShader();
+			~Standard3DShader() override = default;
 		};
 	}
 
 	namespace shader_asset
 	{
-		class Standard3DAsset : public ShaderAsset
+		class Standard3DAsset final : public ShaderAsset
 		{
 		public:
-			explicit Standard3DAsset() = default; // for cereal
+			explicit Standard3DAsset(u_int gbuff_shader_slot);
+			explicit Standard3DAsset()  = default; // for cereal
+			~Standard3DAsset() override = default;
 
 			void BindCBuffer()	 override {}
 			void UnbindCBuffer() override {}

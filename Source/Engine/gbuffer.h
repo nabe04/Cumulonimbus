@@ -46,7 +46,7 @@ namespace cumulonimbus::graphics::buffer
 		// シェーダースロット用バッファ
 		std::unique_ptr<FrameBuffer> shader_slot_buffer{ nullptr };
 
-		static constexpr u_int num_rtv = 3; // GBufferで使用するrender_target_viewの総数
+		static constexpr u_int num_rtv = 4; // GBufferで使用するrender_target_viewの総数
 
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> default_render_target_view{ nullptr };
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> default_depth_stencil_view{ nullptr };

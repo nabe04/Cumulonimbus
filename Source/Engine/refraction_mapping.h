@@ -37,6 +37,7 @@ namespace cumulonimbus
 		{
 		public:
 			explicit RefractionMappingShader();
+			~RefractionMappingShader() override = default;
 		};
 	}
 
@@ -45,7 +46,9 @@ namespace cumulonimbus
 		class RefractionMappingAsset final : public ShaderAsset
 		{
 		public:
-			explicit RefractionMappingAsset();
+			explicit RefractionMappingAsset(u_int gbuff_shader_slot);
+			explicit RefractionMappingAsset()  = default;
+			~RefractionMappingAsset() override = default;
 
 			void BindCBuffer()   override;
 			void UnbindCBuffer() override;

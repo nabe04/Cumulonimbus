@@ -42,6 +42,7 @@ namespace cumulonimbus
 		{
 		public:
 			explicit PhongShader();
+			~PhongShader() override = default;
 		};
 	}
 
@@ -50,7 +51,9 @@ namespace cumulonimbus
 		class PhongAsset final : public ShaderAsset
 		{
 		public:
-			explicit PhongAsset();
+			explicit PhongAsset(u_int gbuff_shader_slot);
+			explicit PhongAsset()  = default;
+			~PhongAsset() override = default;
 
 			void BindCBuffer()	 override;
 			void UnbindCBuffer() override;

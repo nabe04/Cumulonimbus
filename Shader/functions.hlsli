@@ -1,3 +1,15 @@
+/*
+ * brief : GBuffer上のPS_Output::shader_slotの色情報の計算
+ *         R8_UNORMテクスチャなのでスロット番号を0～1の
+ *         256階調に変換する
+ * slot  : CB_ShaderSlot::shader_slotの値
+ */
+float CalcGBuffShaderSlotVal(int slot)
+{
+	// 0.00392156f : 1 / 255
+    return float(slot) * 0.00392156f;
+}
+
 //--------------------------------------
 // Diffuse reflecton function
 //--------------------------------------

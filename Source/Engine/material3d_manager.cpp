@@ -1,5 +1,7 @@
 #include "material3d_manager.h"
 
+#include "shader_asset_mapping.h"
+// shaders
 #include "3d_standard.h"
 #include "diffuse.h"
 #include "phong.h"
@@ -15,14 +17,14 @@ namespace cumulonimbus::shader_asset
 	{
 		using namespace mapping::shader_assets;
 		//çÏê¨ÇµÇΩShaderAssetÇÃìoò^
-		RegisterShaderAsset<shader_asset::Standard3DAsset>			(ShaderAsset3D::Standard);
-		RegisterShaderAsset<shader_asset::DiffuseAsset>				(ShaderAsset3D::Diffuse);
-		RegisterShaderAsset<shader_asset::PhongAsset>				(ShaderAsset3D::Phong);
-		RegisterShaderAsset<shader_asset::MetalAsset>				(ShaderAsset3D::Metal);
-		RegisterShaderAsset<shader_asset::ToonAsset>				(ShaderAsset3D::Toon);
-		RegisterShaderAsset<shader_asset::ReflectionMappingAsset>	(ShaderAsset3D::ReflectionMapping);
-		RegisterShaderAsset<shader_asset::RefractionMappingAsset>	(ShaderAsset3D::RefractionMapping);
-		RegisterShaderAsset<shader_asset::SingleColorAsset>			(ShaderAsset3D::SingleColor);
+		RegisterShaderAsset<shader_asset::Standard3DAsset>			(ShaderAsset3D::Standard			, ShaderSlot_Standard);
+		RegisterShaderAsset<shader_asset::DiffuseAsset>				(ShaderAsset3D::Diffuse				, ShaderSlot_Diffuse);
+		RegisterShaderAsset<shader_asset::PhongAsset>				(ShaderAsset3D::Phong				, ShaderSlot_Phong);
+		RegisterShaderAsset<shader_asset::MetalAsset>				(ShaderAsset3D::Metal				, ShaderSlot_Metal);
+		RegisterShaderAsset<shader_asset::ToonAsset>				(ShaderAsset3D::Toon				, ShaderSlot_Toon);
+		RegisterShaderAsset<shader_asset::ReflectionMappingAsset>	(ShaderAsset3D::ReflectionMapping	, ShaderSlot_ReflectionMapping);
+		RegisterShaderAsset<shader_asset::RefractionMappingAsset>	(ShaderAsset3D::RefractionMapping	, ShaderSlot_RefractionMapping);
+		RegisterShaderAsset<shader_asset::SingleColorAsset>			(ShaderAsset3D::SingleColor			, ShaderSlot_SingleColor);
 	}
 
 	void Material3DManager::BindCBuffer() const

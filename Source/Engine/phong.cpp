@@ -18,8 +18,8 @@ namespace cumulonimbus
 
 	namespace shader_asset
 	{
-		PhongAsset::PhongAsset()
-			:ShaderAsset{}
+		PhongAsset::PhongAsset(u_int gbuff_shader_slot)
+			:ShaderAsset{ gbuff_shader_slot }
 		{
 			cb_phong = std::make_unique<buffer::ConstantBuffer<PhongCB>>(locator::Locator::GetDx11Device()->device.Get());
 

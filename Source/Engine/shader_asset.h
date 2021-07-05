@@ -3,6 +3,8 @@
 
 #include <cereal/cereal.hpp>
 
+#include "constant_buffer.h"
+#include "shader_interop_renderer.h"
 #include "texture.h"
 
 namespace cumulonimbus::shader_asset
@@ -43,6 +45,10 @@ namespace cumulonimbus::shader_asset
 	class ShaderAsset
 	{
 	public:
+		/*
+		 * gbuff_shader_slot : shader_asset_mapping.hでのシェーダー毎のマクロを指定
+		 */
+		explicit ShaderAsset(u_int gbuff_shader_slot);
 		explicit ShaderAsset() = default; // for cereal;
 		virtual ~ShaderAsset() = default;
 
@@ -83,7 +89,15 @@ namespace cumulonimbus::shader_asset
 		 */
 		virtual void UnbindTexture() {}
 
-
+		/*
+		 * brief : GBuffer::shader_slot_bufferでのシェーダースロットのセット(バインド)
+		 */
+		void BindCBShaderSlot() const;
+		/*
+		 * brief : GBuffer::shader_slot_bufferでのシェーダースロットのリセット(アンバインド)
+		 */
+		void UnbindCBShaderSlot() const;
+		
 		/*
 		 * brief : 各々のシェーダーが持つパラメータ(constant buffer)の編集
 		 */
@@ -115,8 +129,8 @@ namespace cumulonimbus::shader_asset
 		// GBuffer上でのShaderの種類に応じてライティングを変更する場合に
 		// 使用するシェーダー独自のスロット番号
 		// (shader_asset_mapping.hにあるマクロをそれぞれのShaderAssetにのコンストラクタで適用する)
-		u_int		 shader_slot;
-
+		std::unique_ptr<buffer::ConstantBuffer<ShaderSlotCB>> cb_shader_slot{ nullptr };
+		
 		/*
 		 * brief			 : ImGui上でのシェーダーが使用するテクスチャの変更処理
 		 * material_filename : MaterialPathのメンバ変数が持つテクスチャのファイル名を渡す
@@ -127,7 +141,7 @@ namespace cumulonimbus::shader_asset
 		 * ※caution(3)      : 継承先で使用するテクスチャの編集(RenderImGui関数内)で使用
 		 */
 		void ModifyMaterialPath(std::string& material_filename, const std::string& combo_label);
-
 	};
+
 } // cumulonimbus::shader_asset
 

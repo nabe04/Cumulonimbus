@@ -11,6 +11,7 @@ namespace cumulonimbus
 		{
 		public:
 			explicit SampleShader();
+			~SampleShader() override = default;
 		};
 	} // shader_system
 
@@ -19,7 +20,8 @@ namespace cumulonimbus
 		class SampleShaderAsset final : public ShaderAsset
 		{
 		public:
-			explicit SampleShaderAsset();
+			explicit SampleShaderAsset(u_int gbuff_shader_slot);
+			explicit SampleShaderAsset() = default;
 			~SampleShaderAsset() override = default;
 
 			void BindCBuffer()	 override {}
@@ -28,6 +30,6 @@ namespace cumulonimbus
 			void UnbindTexture() override;
 			void RenderImGui()	 override;
 		};
-	}
+	} // shader_asset
 	
 } // cumulonimbus

@@ -118,15 +118,15 @@ mov r3.xyz, r3.xyzx
 mov r6.xyz, v3.xyzx
 mov r4.xyz, r4.xyzx
 
-#line 11 "D:\Desktop\Cumulonimbus\Shader\functions.hlsli"
+#line 23 "D:\Desktop\Cumulonimbus\Shader\functions.hlsli"
 mov r7.xyz, -r3.xyzx
 dp3 r0.w, r2.xyzx, r7.xyzx  // r0.w <- D
 
-#line 12
+#line 24
 itof r2.w, l(0)
 max r0.w, r0.w, r2.w
 
-#line 13
+#line 25
 mul r4.xyz, r6.xyzx, r4.xyzx
 mul r4.xyz, r0.wwww, r4.xyzx  // r4.x <- <Diffuse return value>.x; r4.y <- <Diffuse return value>.y; r4.z <- <Diffuse return value>.z
 
@@ -142,7 +142,7 @@ mov r0.w, cb10[0].x
 mov r2.w, cb10[0].y
 mov r3.w, cb10[0].z
 
-#line 51 "D:\Desktop\Cumulonimbus\Shader\functions.hlsli"
+#line 63 "D:\Desktop\Cumulonimbus\Shader\functions.hlsli"
 mov r6.xyz, -r0.xyzx
 itof r4.w, l(2)
 dp3 r0.x, r2.xyzx, r0.xyzx
@@ -150,13 +150,13 @@ mul r0.x, r0.x, r4.w
 mul r0.xyz, r2.xyzx, r0.xxxx
 add r0.xyz, r0.xyzx, r6.xyzx  // r0.x <- R.x; r0.y <- R.y; r0.z <- R.z
 
-#line 53
+#line 65
 itof r2.x, l(0)
 mov r3.xyz, -r3.xyzx
 dp3 r0.x, r3.xyzx, r0.xyzx
 max r0.xyz, r0.xxxx, r2.xxxx  // r0.x <- D.x; r0.y <- D.y; r0.z <- D.z
 
-#line 55
+#line 67
 mul r0.w, r0.w, r2.w
 log r0.xyz, r0.xyzx
 mul r0.xyz, r0.xyzx, r3.wwww

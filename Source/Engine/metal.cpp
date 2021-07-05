@@ -19,8 +19,8 @@ namespace cumulonimbus
 
 	namespace shader_asset
 	{
-		MetalAsset::MetalAsset()
-			: ShaderAsset{}
+		MetalAsset::MetalAsset(u_int gbuff_shader_slot)
+			: ShaderAsset{ gbuff_shader_slot }
 		{
 			cb_metal = std::make_unique<buffer::ConstantBuffer<MetalCB>>(locator::Locator::GetDx11Device()->device.Get());
 		}

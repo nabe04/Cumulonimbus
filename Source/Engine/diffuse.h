@@ -43,7 +43,8 @@ namespace cumulonimbus
 		class DiffuseAsset final : public ShaderAsset
 		{
 		public:
-			explicit DiffuseAsset();
+			explicit DiffuseAsset(u_int gbuff_shader_slot);
+			explicit DiffuseAsset()  = default;
 			~DiffuseAsset() override = default;
 
 			void BindCBuffer()   override {}

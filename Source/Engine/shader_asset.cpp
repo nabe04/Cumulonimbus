@@ -9,7 +9,23 @@ namespace cumulonimbus::shader_asset
 		locator::Locator::GetTextureResourceManager()->ModifyTextureFilename(material_filename, combo_label);
 	}
 
+	void ShaderAsset::BindCBShaderSlot() const
+	{
+		cb_shader_slot->Activate(locator::Locator::GetDx11Device()->immediate_context.Get(), CBSlot_ShaderSlot);
+	}
+
+	void ShaderAsset::UnbindCBShaderSlot() const
+	{
+		cb_shader_slot->Deactivate(locator::Locator::GetDx11Device()->immediate_context.Get());
+	}
+
 	//----------------------  セッター  ------------------------//
+
+	ShaderAsset::ShaderAsset(u_int gbuff_shader_slot)
+	{
+		cb_shader_slot = std::make_unique<buffer::ConstantBuffer<ShaderSlotCB>>(locator::Locator::GetDx11Device()->device.Get());
+		cb_shader_slot->data.shader_slot = gbuff_shader_slot;
+	}
 
 	void ShaderAsset::SetMaterialPath(const MaterialPath& mat_path)
 	{

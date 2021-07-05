@@ -18,8 +18,8 @@ namespace cumulonimbus
 
 	namespace shader_asset
 	{
-		SingleColorAsset::SingleColorAsset()
-			:ShaderAsset{}
+		SingleColorAsset::SingleColorAsset(u_int gbuff_shader_slot)
+			:ShaderAsset{ gbuff_shader_slot }
 		{
 			cb_single_color = std::make_unique<buffer::ConstantBuffer<SingleColorCB>>(locator::Locator::GetDx11Device()->device.Get());
 
