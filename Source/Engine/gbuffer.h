@@ -23,12 +23,13 @@ namespace cumulonimbus::graphics::buffer
 		[[nodiscard]] ID3D11ShaderResourceView** GetAlbedoBufferSRV_Address()		const { return albedo_buffer->GetRenderTargetSRV(); }
 		[[nodiscard]] ID3D11ShaderResourceView** GetPositionBufferSRV_Address()		const { return position_buffer->GetRenderTargetSRV(); }
 		[[nodiscard]] ID3D11ShaderResourceView** GetNormalBufferSRV_Address()		const { return normal_buffer->GetRenderTargetSRV(); }
-		
+		[[nodiscard]] ID3D11ShaderResourceView** GetShaderSlotBufferSRV_Address()   const { return shader_slot_buffer->GetRenderTargetSRV(); }
+
 		/*
 		 * brief : RenderPathクラスのGBuffer同士のBlit処理に加えるのか
 		 */
 		[[nodiscard]] bool GetIsUsedGBuffer() const { return is_used_gbuffer; }
-	
+
 	private:
 		/*
 		 * brief	 : GBufferとして使用するテクスチャ群
@@ -36,9 +37,14 @@ namespace cumulonimbus::graphics::buffer
 		 *			   FrameBufferのActivateでのOMSetRenderTargetは
 		 *			   FrameBufferクラスのみのRenderTargetViewのセットだから
 		 */
+		// テクスチャ本来の色情報バッファ
 		std::unique_ptr<FrameBuffer> albedo_buffer	{ nullptr };
+		// ワールド座標バッファ
 		std::unique_ptr<FrameBuffer> position_buffer{ nullptr };
+		// 法線情報バッファ
 		std::unique_ptr<FrameBuffer> normal_buffer	{ nullptr };
+		// シェーダースロット用バッファ
+		std::unique_ptr<FrameBuffer> shader_slot_buffer{ nullptr };
 
 		static constexpr u_int num_rtv = 3; // GBufferで使用するrender_target_viewの総数
 

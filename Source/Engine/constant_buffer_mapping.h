@@ -8,6 +8,7 @@
 #define CBSlot_Light			2
 #define CBSlot_Transform		3
 #define CBSlot_Material			4
+#define CBSlot_ShaderSlot		5
 
 // オンデマンド
 #define CBSlot_OnDemand0		10

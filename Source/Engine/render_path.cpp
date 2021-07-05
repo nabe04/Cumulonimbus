@@ -237,8 +237,6 @@ namespace cumulonimbus::renderer
 
 	}
 
-
-
 	void RenderPath::Render3D_Begin(ID3D11DeviceContext* immediate_context)
 	{
 		off_screen->Clear(immediate_context);

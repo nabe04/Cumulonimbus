@@ -120,5 +120,22 @@ CBUFFER(MaterialCB, CBSlot_Material)
 #endif // __cplusplus
 };
 
+// slot5 (b5)
+CBUFFER(ShaderSlotCB, CBSlot_ShaderSlot)
+{
+	int		shader_slot;
+	float3	shader_slot_dummy;
+
+#ifdef __cplusplus
+	template<typename Archive>
+	void serialize(Archive && archive)
+	{
+		archive(
+			CEREAL_NVP(shader_slot)
+		);
+	}
+#endif // __cplusplus
+};
+
 
 #endif // SHADER_INTEROP_RENDERER_H

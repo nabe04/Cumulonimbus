@@ -112,7 +112,11 @@ namespace cumulonimbus::shader_asset
 		void serialize(Archive&& archive){}
 	protected:
 		MaterialPath material_path;
-		
+		// GBuffer上でのShaderの種類に応じてライティングを変更する場合に
+		// 使用するシェーダー独自のスロット番号
+		// (shader_asset_mapping.hにあるマクロをそれぞれのShaderAssetにのコンストラクタで適用する)
+		u_int		 shader_slot;
+
 		/*
 		 * brief			 : ImGui上でのシェーダーが使用するテクスチャの変更処理
 		 * material_filename : MaterialPathのメンバ変数が持つテクスチャのファイル名を渡す

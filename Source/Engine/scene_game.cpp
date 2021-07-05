@@ -97,13 +97,12 @@ void SceneGame::InitializeScene()
 
 	//const char* ground_filename = "./Data/Assets/Bin/ground.bin";  // "./Data/Assets/FBX/stage/stage.fbm/"
 	//std::shared_ptr<FbxModelResource> ground_resource = std::make_shared<FbxModelResource>(GetFramework()->GetDevice(), ground_filename, "./Data/Assets/FBX/ground/");
-	//const cum::mapping::rename_type::Entity ent_floor = registry->CreateEntity();
-	//registry->AddComponent<cum::component::MeshObjectComponent>(ent_floor);
-	//registry->AddComponent<cum::component::FbxModelComponent>(ent_floor, ground_resource);
-	//registry->GetComponent<cum::component::FbxModelComponent>(ent_floor).SetIsStatic(true);
-	//registry->GetComponent<cum::component::TransformComponent>(ent_floor).SetScale(DirectX::XMFLOAT3{ 1,1,0.1f });
-	//registry->GetComponent<cum::component::TransformComponent>(ent_floor).SetWorldRotation_X(90);
-	//registry->GetComponent<cum::component::MeshObjectComponent>(ent_floor).SetSamplerState(RenderingSampleState::Linear_Wrap);
+	const cum::mapping::rename_type::Entity ent_floor = registry->CreateEntity();
+	registry->AddComponent<cum::component::MeshObjectComponent>(ent_floor);
+	registry->AddComponent<cum::component::FbxModelComponent>(ent_floor, cum::locator::Locator::GetResourceManager()->FbxModelResouece("cube"));
+	registry->GetComponent<cum::component::TransformComponent>(ent_floor).SetScale(DirectX::XMFLOAT3{ 10,10,0.1f });
+	registry->GetComponent<cum::component::TransformComponent>(ent_floor).SetWorldRotation_X(90);
+	registry->GetComponent<cum::component::MeshObjectComponent>(ent_floor).SetSamplerState(RenderingSampleState::Linear_Wrap);
 
 	const cum::mapping::rename_type::Entity ent_bunny = registry->CreateEntity();
 	registry->AddComponent<cum::component::MeshObjectComponent>(ent_bunny);
@@ -115,8 +114,8 @@ void SceneGame::InitializeScene()
 	registry->AddComponent<cum::component::MeshObjectComponent>(ent_player);
 	registry->AddComponent<cum::component::FbxModelComponent>(ent_player, cum::locator::Locator::GetResourceManager()->FbxModelResouece("ganfaul"));
 	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetScale(0.3f);
-	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetPosition({ 0, -20, 0 });
-	//registry->GetComponent<cum::component::TransformComponent>(ent_player).SetPosition({ 30, 10, 0 });
+	//registry->GetComponent<cum::component::TransformComponent>(ent_player).SetPosition({ 0, -20, 0 });
+	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetPosition({ 30, 10, 0 });
 	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetWorldRotation_Y(180);
 	registry->GetComponent<cum::component::MeshObjectComponent>(ent_player).SetRasterizerState(RasterizeState::Cull_Front_CCW_True);
 	registry->GetComponent<cum::component::FbxModelComponent>(ent_player).SwitchAnimation(2, true);

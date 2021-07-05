@@ -39,9 +39,9 @@ int main()
 	//BulidFBX bunny_fbx("../../Data/Assets/FBX/Robot/Robo_L.fbx");
 	//bunny_fbx.Export("../../Data/Assets/Bin/Robo_L.bin");
 
-
-	BulidFBX bunny_fbx("../../Data/Assets/FBX/Wolf_Test/fbx/Wolf.fbx");
-	bunny_fbx.Export("../../Data/Assets/Bin/Wolf_test.bin");
+	//-- Cube --//
+	BulidFBX cube("../../Data/Assets/FBX/Geometric_Primitive/Cube.fbx");
+	cube.Export("../../Data/Assets/Bin/cube.bin");
 
 	//getchar();
 	return 0;
