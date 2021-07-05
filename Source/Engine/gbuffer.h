@@ -17,7 +17,7 @@ namespace cumulonimbus::graphics::buffer
 		/*
 		 * brief : GBuffer用のRTVとシェーダーのバインド
 		 */
-		void BindShaderAndRTV(ID3D11DepthStencilView* depth_stencil_view);
+		void BindShaderAndRTV();
 		void UnbindShaderAndRTV();
 
 		[[nodiscard]] ID3D11ShaderResourceView** GetAlbedoBufferSRV_Address()		const { return albedo_buffer->GetRenderTargetSRV(); }
@@ -51,6 +51,10 @@ namespace cumulonimbus::graphics::buffer
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> default_render_target_view{ nullptr };
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> default_depth_stencil_view{ nullptr };
 
+		// GBuffer用のdepth_stencil_view,shader_resource_view
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilView>		dsv_for_gbuffer{ nullptr };
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	srv_for_gbuffer{ nullptr };
+
 		// GBuffer用シェーダー
 		std::unique_ptr<shader_system::VertexShader> gbuffer_vs{ nullptr };
 		std::unique_ptr<shader_system::PixelShader>  gbuffer_ps{ nullptr };
@@ -63,7 +67,7 @@ namespace cumulonimbus::graphics::buffer
 		 * brief     : GBuffer用のrender_target_viewのセット
 		 * ※caution : depth_stencil_viewは全てのGBufferで共通のものを使用する
 		 */
-		void BindRTV(ID3D11DepthStencilView* depth_stencil_view);
+		void BindRTV();
 		/*
 		 * brief     : セットされているrender_target_viewのdepth_stencil_viewを
 		 *			   "default" render_target_viewにセット

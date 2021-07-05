@@ -34,7 +34,8 @@ PS_Output main(PS_Input pin)
     pout.albedo_color   = color;
     pout.position       = position;
     pout.normal         = float4(normal, 1.0f);
-    pout.shader_slot    = CalcGBuffShaderSlotVal(shader_slot);
+    //pout.shader_slot    = CalcGBuffShaderSlotVal(shader_slot);
+    pout.shader_slot    = shader_slot;
 
 	return pout;
 }

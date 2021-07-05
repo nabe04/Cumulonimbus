@@ -186,6 +186,7 @@ namespace shader
 
 namespace cumulonimbus
 {
+	// TODO : GBuffer系の処理をRenderPathに移す
 	namespace shader_system
 	{
 		class ShaderManager final
@@ -200,6 +201,7 @@ namespace cumulonimbus
 			 *		   シェーダーを変える
 			 */
 			void BindShader(mapping::shader_assets::ShaderAsset3D asset);
+			void UnbindShader(mapping::shader_assets::ShaderAsset3D asset);
 
 			/*
 			 * brief : Material2DComponentに登録されている
@@ -207,36 +209,12 @@ namespace cumulonimbus
 			 *		   シェーダーを変える
 			 */
 			void BindShader(mapping::shader_assets::ShaderAsset2D asset);
-
-			void UnbindShader(mapping::shader_assets::ShaderAsset3D asset);
-
 			void UnbindShader(mapping::shader_assets::ShaderAsset2D asset);
-
-			/*
-			 * brief : GBuffer用シェーダー、RTVのセット
-			 */
-			void BindGBufferShaderAndRTV(mapping::shader_assets::ShaderAsset3D asset);
-			void UnbindGBufferShaderAndRTV(mapping::shader_assets::ShaderAsset3D asset);
-
-			/*
-			 * brief : GBuffer用のレンダーターゲットビューのクリア処理
-			 */
-			void ClearGBuffer();
-
-			[[nodiscard]] const auto& GetGBufferMap() const { return gbuffer_map; }
-
 		private:
 			// モデルが使用するシェーダーのマップ(3D)
 			std::unordered_map<mapping::shader_assets::ShaderAsset3D, std::unique_ptr<shader_system::Shader>> shader3d_map;
 			// スプライトが使用するシェーダーのマップ(2D)
 			std::unordered_map<mapping::shader_assets::ShaderAsset2D, std::unique_ptr<shader_system::Shader>> shader2d_map;
-
-			// シェーダーによってのGBuffer
-			std::unordered_map<mapping::shader_assets::ShaderAsset3D, std::unique_ptr<graphics::buffer::GBuffer>> gbuffer_map;
-			// GBuffer用のdepth_stencil_view,shader_resource_view
-			Microsoft::WRL::ComPtr<ID3D11DepthStencilView>		dsv_for_gbuffer{ nullptr };
-			Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	srv_for_gbuffer{ nullptr };
-
 			/*
 			 * brief : 作成したシェーダーの登録(3D)
 			 */
@@ -260,12 +238,6 @@ namespace cumulonimbus
 
 				shader2d_map.emplace(asset_type, std::make_unique<T>());
 			}
-
-			/*
-			 * brief     : shader3d_map数分のGBufferの作成
-			 * ※caution : コンストラクタ内でRegistryShader関数を呼んだ後に呼ぶ
-			 */
-			void CreateGBufferMap();
 		};
 	}
 }

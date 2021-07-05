@@ -14,12 +14,15 @@ namespace cumulonimbus::graphics::buffer
 		albedo_buffer	     = std::make_unique<FrameBuffer>(device, width, height, false, 1, DXGI_FORMAT_R8G8B8A8_UNORM	   , DXGI_FORMAT_R24G8_TYPELESS, true, false);
 		position_buffer      = std::make_unique<FrameBuffer>(device, width, height, false, 1, DXGI_FORMAT_R16G16B16A16_FLOAT, DXGI_FORMAT_R24G8_TYPELESS, true, false);
 		normal_buffer	     = std::make_unique<FrameBuffer>(device, width, height, false, 1, DXGI_FORMAT_R16G16B16A16_FLOAT, DXGI_FORMAT_R24G8_TYPELESS, true, false);
-		shader_slot_buffer	 = std::make_unique<FrameBuffer>(device, width, height, false, 1, DXGI_FORMAT_R8_UNORM		   , DXGI_FORMAT_R24G8_TYPELESS, true, false);
+		shader_slot_buffer	 = std::make_unique<FrameBuffer>(device, width, height, false, 1, DXGI_FORMAT_R16_FLOAT			, DXGI_FORMAT_R24G8_TYPELESS, true, false);
 
 		// shaderの作成
 		using namespace mapping::shader_filename;
 		gbuffer_vs = std::make_unique<shader_system::VertexShader>(vs::GBuffer_VS().c_str());
 		gbuffer_ps = std::make_unique<shader_system::PixelShader>(ps::GBuffer_PS().c_str());
+
+		// GBuffer用dsv,srvの作成
+		locator::Locator::GetDx11Device()->CreateDepthStencilView(dsv_for_gbuffer, srv_for_gbuffer, width, height);
 	}
 
 	void GBuffer::Clear(float r, float g, float b, float a)
@@ -28,19 +31,22 @@ namespace cumulonimbus::graphics::buffer
 
 		float clear_color[4] = { r,g,b,a };
 		// shader_slot_bufferのクリアカラーは白で固定する
-		const float clear_color_shader_slot[4] = { 1.f,1.f,1.f,1.f };
+		const float clear_color_shader_slot[4] = { 0.f,0.f,0.f,0.f };
 		locator::Locator::GetDx11Device()->immediate_context->ClearRenderTargetView(albedo_buffer->GetRTV()		, clear_color);
 		locator::Locator::GetDx11Device()->immediate_context->ClearRenderTargetView(position_buffer->GetRTV()	, clear_color);
 		locator::Locator::GetDx11Device()->immediate_context->ClearRenderTargetView(normal_buffer->GetRTV()		, clear_color);
 		locator::Locator::GetDx11Device()->immediate_context->ClearRenderTargetView(shader_slot_buffer->GetRTV(), clear_color_shader_slot);
+
+		// GBuffer用depth_stencil_viewのっクリア処置
+		locator::Locator::GetDx11Device()->immediate_context.Get()->ClearDepthStencilView(dsv_for_gbuffer.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
 	}
 
-	void GBuffer::BindShaderAndRTV(ID3D11DepthStencilView* depth_stencil_view)
+	void GBuffer::BindShaderAndRTV()
 	{
 		is_used_gbuffer = true;
 
 		BindShader();
-		BindRTV(depth_stencil_view);
+		BindRTV();
 	}
 
 	void GBuffer::UnbindShaderAndRTV()
@@ -49,7 +55,7 @@ namespace cumulonimbus::graphics::buffer
 		UnbindRTV();
 	}
 
-	void GBuffer::BindRTV(ID3D11DepthStencilView* depth_stencil_view)
+	void GBuffer::BindRTV()
 	{
 		ID3D11DeviceContext* immediate_context = locator::Locator::GetDx11Device()->immediate_context.Get();
 
@@ -62,7 +68,7 @@ namespace cumulonimbus::graphics::buffer
 			shader_slot_buffer->GetRTV()
 		};
 
-		immediate_context->OMSetRenderTargets(num_rtv, rtv, depth_stencil_view);
+		immediate_context->OMSetRenderTargets(num_rtv, rtv, dsv_for_gbuffer.Get());
 	}
 
 	void GBuffer::UnbindRTV()

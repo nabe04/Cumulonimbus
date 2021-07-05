@@ -3,7 +3,6 @@
 #include <imgui.h>
 
 #include "scene.h"
-#include "gaussian_blur.h"
 
 // Shaders
 #include "3d_standard.h"
@@ -290,21 +289,6 @@ namespace shader
 		shader_states.Update();
 	}
 
-	//template <typename Archive>
-	//void MeshShaderState::serialize(Archive&& archive)
-	//{
-	//	archive(
-	//		cereal::make_nvp("M_Phong"		, m_phong),
-	//		cereal::make_nvp("M_Metal"		, m_metal),
-	//		cereal::make_nvp("M_Toon"		, m_toon),
-	//		cereal::make_nvp("M_Refraction"	, m_refraction),
-	//		cereal::make_nvp("M_SingleColor", m_single_color),
-	//		cereal::make_nvp("shader type"	,shader_type),
-	//		cereal::make_nvp("item current"	,item_current)
-	//		//cereal::make_nvp("shader state"	,shader_states)
-	//	);
-	//}
-
 
 	//-- SpriteShaderManager class--//
 	SpriteShaderManager::SpriteShaderManager(ID3D11Device* device)
@@ -354,13 +338,6 @@ namespace cumulonimbus::shader_system
 		RegistryShader<shader_system::ReflectionMappingShader>	(ShaderAsset3D::ReflectionMapping);
 		RegistryShader<shader_system::RefractionMappingShader>	(ShaderAsset3D::RefractionMapping);
 		RegistryShader<shader_system::SingleColorShader>		(ShaderAsset3D::SingleColor);
-
-		CreateGBufferMap();
-
-		const u_int width  = locator::Locator::GetWindow()->Width();
-		const u_int height = locator::Locator::GetWindow()->Height();
-		// GBuffer用dsv,srvの作成
-		locator::Locator::GetDx11Device()->CreateDepthStencilView(dsv_for_gbuffer, srv_for_gbuffer, width, height);
 	}
 
 	//-------------------  3D用シェーダーのBind,Unbind  ----------------------//
@@ -383,40 +360,6 @@ namespace cumulonimbus::shader_system
 	void ShaderManager::UnbindShader(mapping::shader_assets::ShaderAsset2D asset)
 	{
 
-	}
-
-	//------ GBuffer用シェーダー、レンダーターゲットビューのBind,Unbind ------//
-	void ShaderManager::BindGBufferShaderAndRTV(mapping::shader_assets::ShaderAsset3D asset)
-	{
-		gbuffer_map.at(asset)->BindShaderAndRTV(dsv_for_gbuffer.Get());
-	}
-
-	void ShaderManager::UnbindGBufferShaderAndRTV(mapping::shader_assets::ShaderAsset3D asset)
-	{
-		gbuffer_map.at(asset)->UnbindShaderAndRTV();
-	}
-
-	// GBuffer用ののクリア処理
-	void ShaderManager::ClearGBuffer()
-	{
-		for(auto& gbuffer : gbuffer_map)
-		{
-			gbuffer.second->Clear();
-		}
-		// GBuffer用depth_stencil_viewのっクリア処置
-		locator::Locator::GetDx11Device()->immediate_context.Get()->ClearDepthStencilView(dsv_for_gbuffer.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
-	}
-
-	// shader3d_map数分のGBufferの作成
-	void ShaderManager::CreateGBufferMap()
-	{
-		for(auto& shader_3d : shader3d_map)
-		{
-			if (gbuffer_map.contains(shader_3d.first))
-				return;
-
-			gbuffer_map.emplace(shader_3d.first, std::make_unique<graphics::buffer::GBuffer>());
-		}
 	}
 
 } // cumulonimbus::shader_system

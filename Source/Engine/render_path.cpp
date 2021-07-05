@@ -1,10 +1,11 @@
 #include "render_path.h"
 
+#include "gbuffer.h"
+#include "graphics_mapping.h"
 #include "sampler_mapping.h"
 #include "scene.h"
 #include "shader_interop_renderer.h"
 #include "texture_resource_mapping.h"
-#include "graphics_mapping.h"
 #include "view.h"
 
 // Components
@@ -23,13 +24,14 @@ namespace cumulonimbus::renderer
 {
 	RenderPath::RenderPath(ID3D11Device* device)
 	{
-		off_screen		= std::make_unique<FrameBuffer>(device, locator::Locator::GetWindow()->Width(), locator::Locator::GetWindow()->Height());
-		fullscreen_quad = std::make_unique<FullscreenQuad>(device);
-		depth_map		= std::make_unique<DepthMap>(device);
+		off_screen			= std::make_unique<FrameBuffer>(device, locator::Locator::GetWindow()->Width(), locator::Locator::GetWindow()->Height());
+		fullscreen_quad		= std::make_unique<FullscreenQuad>(device);
+		depth_map			= std::make_unique<DepthMap>(device);
 
 		shader_manager		= std::make_unique<shader_system::ShaderManager>();
-		old_shader_manager	= std::make_unique<shader::ShaderManager>( device );
 		shader_manager_2d	= std::make_unique<shader::SpriteShaderManager>(device);
+		g_buffer			= std::make_unique<graphics::buffer::GBuffer>();
+
 		blend				= std::make_unique<Blend>(device);
 		depth_stencil		= std::make_unique<DepthStencil>(device);
 		rasterizer			= std::make_unique<Rasterizer>(device);
@@ -92,9 +94,9 @@ namespace cumulonimbus::renderer
 		Render3DToGBuffer_End(immediate_context);
 
 		// ポストプロセス処理
-		RenderPostProcess_Begin(immediate_context);
-		RenderPostProcess(immediate_context);
-		RenderPostProcess_End(immediate_context);
+		//RenderPostProcess_Begin(immediate_context);
+		//RenderPostProcess(immediate_context);
+		//RenderPostProcess_End(immediate_context);
 
 		//Render3D_Begin(immediate_context);
 		//Render3D(immediate_context, registry, view, light);
@@ -180,7 +182,10 @@ namespace cumulonimbus::renderer
 	void RenderPath::Render3DToGBuffer_Begin(ID3D11DeviceContext* immediate_context) const
 	{
 		// GBuffer用RTVのクリア
-		shader_manager->ClearGBuffer();
+		//shader_manager->ClearGBuffer();
+
+		g_buffer->Clear();
+		g_buffer->BindShaderAndRTV();
 	}
 
 	void RenderPath::Render3DToGBuffer(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, const View* view, const Light* light)
@@ -213,6 +218,7 @@ namespace cumulonimbus::renderer
 
 	void RenderPath::Render3DToGBuffer_End(ID3D11DeviceContext* immediate_context) const
 	{
+		g_buffer->UnbindShaderAndRTV();
 		off_screen->Activate(immediate_context);
 		CombinationGBuffer();
 		off_screen->Deactivate(immediate_context);
@@ -491,8 +497,8 @@ namespace cumulonimbus::renderer
 
 				if(is_use_gbuffer)
 				{
-					// GBuffer用のシェーダーとRTV(シェーダー毎)のセット
-					shader_manager->BindGBufferShaderAndRTV(model.GetMaterialsManager(subset.material_index)->GetCurrentAsset());
+					// GBuffer用shader_slot(ライティングの変更)のセット
+					model.GetMaterialsManager(subset.material_index)->BindGBuffShaderSlot();
 					// シェーダーが持つテクスチャのセット
 					model.GetMaterialsManager(subset.material_index)->BindTexture();
 				}
@@ -521,10 +527,10 @@ namespace cumulonimbus::renderer
 
 				if (is_use_gbuffer)
 				{
-					shader_manager->UnbindGBufferShaderAndRTV(model.GetMaterialsManager(subset.material_index)->GetCurrentAsset());
+					model.GetMaterialsManager(subset.material_index)->UnbindGBuffShaderSlot();
 					model.GetMaterialsManager(subset.material_index)->UnbindCBuffer();
 				}
-				if(!is_use_shadow)
+				else if(!is_use_shadow)
 				{
 					model.GetMaterialsManager(subset.material_index)->UnbindCBuffer();
 					model.GetMaterialsManager(subset.material_index)->UnbindTexture();
@@ -798,20 +804,20 @@ namespace cumulonimbus::renderer
 
 	void RenderPath::CombinationGBuffer() const
 	{
-		blend->Activate(locator::Locator::GetDx11Device()->immediate_context.Get(), BlendState::Alpha);
-		for(const auto& gbuffer : shader_manager->GetGBufferMap())
-		{
-			if(gbuffer.second->GetIsUsedGBuffer())
-			{
-				shader_manager->BindShader(mapping::shader_assets::ShaderAsset3D::SampleShader);
-				using namespace mapping::graphics;
-				locator::Locator::GetDx11Device()->BindShaderResource(ShaderStage::PS, gbuffer.second->GetAlbedoBufferSRV_Address()	 , TexSlot_BaseColorMap);
-				locator::Locator::GetDx11Device()->BindShaderResource(ShaderStage::PS, gbuffer.second->GetNormalBufferSRV_Address()	 , TexSlot_NormalMap);
-				locator::Locator::GetDx11Device()->BindShaderResource(ShaderStage::PS, gbuffer.second->GetPositionBufferSRV_Address(), TexSlot_Position);
-				fullscreen_quad->Blit(locator::Locator::GetDx11Device()->immediate_context.Get());
-				shader_manager->UnbindShader(mapping::shader_assets::ShaderAsset3D::SampleShader);
-			}
-		}
+		//blend->Activate(locator::Locator::GetDx11Device()->immediate_context.Get(), BlendState::Alpha);
+		//for(const auto& gbuffer : shader_manager->GetGBufferMap())
+		//{
+		//	if(gbuffer.second->GetIsUsedGBuffer())
+		//	{
+		//		shader_manager->BindShader(mapping::shader_assets::ShaderAsset3D::SampleShader);
+		//		using namespace mapping::graphics;
+		//		locator::Locator::GetDx11Device()->BindShaderResource(ShaderStage::PS, gbuffer.second->GetAlbedoBufferSRV_Address()	 , TexSlot_BaseColorMap);
+		//		locator::Locator::GetDx11Device()->BindShaderResource(ShaderStage::PS, gbuffer.second->GetNormalBufferSRV_Address()	 , TexSlot_NormalMap);
+		//		locator::Locator::GetDx11Device()->BindShaderResource(ShaderStage::PS, gbuffer.second->GetPositionBufferSRV_Address(), TexSlot_Position);
+		//		fullscreen_quad->Blit(locator::Locator::GetDx11Device()->immediate_context.Get());
+		//		shader_manager->UnbindShader(mapping::shader_assets::ShaderAsset3D::SampleShader);
+		//	}
+		//}
 	}
 
 

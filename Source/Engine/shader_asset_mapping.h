@@ -5,7 +5,7 @@
 
 namespace cumulonimbus::mapping::shader_assets
 {
-	enum class ShaderAsset3D
+	enum class ShaderAsset3D : int
 	{
 		Standard,
 		SampleShader,
@@ -33,15 +33,15 @@ namespace cumulonimbus::mapping::shader_assets
 /*
  * brief : GBufferÇÃShaderSlotópÉ}ÉNÉç
  *		   enum class ShaderAsset3DÇ…çáÇÌÇπÇÈ
- */ 
-#define ShaderSlot_Standard				static_cast<int>(cumulonimbus::mapping::shader_assets::ShaderAsset3D::Standard)
-#define ShaderSlot_SampleShader			static_cast<int>(cumulonimbus::mapping::shader_assets::ShaderAsset3D::SampleShader)
-#define ShaderSlot_Diffuse				static_cast<int>(cumulonimbus::mapping::shader_assets::ShaderAsset3D::Diffuse)
-#define ShaderSlot_Phong				static_cast<int>(cumulonimbus::mapping::shader_assets::ShaderAsset3D::Phong)
-#define ShaderSlot_Metal				static_cast<int>(cumulonimbus::mapping::shader_assets::ShaderAsset3D::Metal)
-#define ShaderSlot_Toon					static_cast<int>(cumulonimbus::mapping::shader_assets::ShaderAsset3D::Toon)
-#define ShaderSlot_ReflectionMapping	static_cast<int>(cumulonimbus::mapping::shader_assets::ShaderAsset3D::ReflectionMapping)
-#define ShaderSlot_RefractionMapping	static_cast<int>(cumulonimbus::mapping::shader_assets::ShaderAsset3D::RefractionMapping)
-#define ShaderSlot_SingleColor			static_cast<int>(cumulonimbus::mapping::shader_assets::ShaderAsset3D::SingleColor)
+ */
+#define ShaderSlot_Standard				static_cast<int>(cumulonimbus::mapping::shader_assets::ShaderAsset3D::Standard)				+ 1
+#define ShaderSlot_SampleShader			static_cast<int>(cumulonimbus::mapping::shader_assets::ShaderAsset3D::SampleShader)			+ 1
+#define ShaderSlot_Diffuse				static_cast<int>(cumulonimbus::mapping::shader_assets::ShaderAsset3D::Diffuse)				+ 1
+#define ShaderSlot_Phong				static_cast<int>(cumulonimbus::mapping::shader_assets::ShaderAsset3D::Phong)				+ 1
+#define ShaderSlot_Metal				static_cast<int>(cumulonimbus::mapping::shader_assets::ShaderAsset3D::Metal)				+ 1
+#define ShaderSlot_Toon					static_cast<int>(cumulonimbus::mapping::shader_assets::ShaderAsset3D::Toon)					+ 1
+#define ShaderSlot_ReflectionMapping	static_cast<int>(cumulonimbus::mapping::shader_assets::ShaderAsset3D::ReflectionMapping)	+ 1
+#define ShaderSlot_RefractionMapping	static_cast<int>(cumulonimbus::mapping::shader_assets::ShaderAsset3D::RefractionMapping)	+ 1
+#define ShaderSlot_SingleColor			static_cast<int>(cumulonimbus::mapping::shader_assets::ShaderAsset3D::SingleColor)			+ 1
 
 #endif // SHADER_ASSET_MAPPING_H

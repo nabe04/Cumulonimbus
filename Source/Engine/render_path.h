@@ -16,7 +16,6 @@
 #include "fullscreen_quad.h"
 #include "light.h"
 #include "rasterizer.h"
-#include "shader.h"
 #include "shader_manager.h"
 #include "texture.h"
 
@@ -25,21 +24,26 @@ namespace cumulonimbus
 	namespace ecs
 	{
 		class Registry;
-	}
+	} // ecs
 
 	namespace renderer
 	{
 		class DepthMap;
-	}
+	} // renderer
 
 	namespace component
 	{
 		class MeshObjectComponent;
 		class SpriteObjectComponent;
 		class GeomPrimComponent;
+	} // component
+
+	namespace graphics::buffer
+	{
+		class GBuffer;
 	}
 
-}
+} // cumulonimbus
 
 namespace cumulonimbus::renderer
 {
@@ -53,9 +57,6 @@ namespace cumulonimbus::renderer
 	private:
 		// すべてのシェーダーの生成とセット
 		std::unique_ptr<shader_system::ShaderManager> shader_manager;
-
-		// TODO: ShaderManagerを変更完了すれば消す
-		std::unique_ptr<shader::ShaderManager>		 old_shader_manager;
 		std::unique_ptr<shader::SpriteShaderManager> shader_manager_2d;
 
 		//-- DirectX States --//
@@ -64,6 +65,7 @@ namespace cumulonimbus::renderer
 		std::unique_ptr<DepthStencil>	depth_stencil;
 		std::array< std::unique_ptr<Sampler>, static_cast<int>(RenderingSampleState::End)> samplers;
 
+		std::unique_ptr<graphics::buffer::GBuffer> g_buffer{ nullptr };
 		std::unique_ptr<DummyTexture>		dummy_texture;
 		std::unique_ptr<FrameBuffer>		off_screen;
 		std::unique_ptr<DepthMap>			depth_map;
@@ -194,4 +196,4 @@ namespace cumulonimbus::renderer
 		 */
 		void CombinationGBuffer() const;
 	};
-}
+} //  cumulonimbus::renderer

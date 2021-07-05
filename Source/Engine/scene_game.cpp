@@ -110,15 +110,15 @@ void SceneGame::InitializeScene()
 	//registry->AddComponent<cum::component::FbxModelComponent>(ent_bunny, cum::locator::Locator::GetResourceManager()->FbxModelResouece("stanford_bunny"));
 	//registry->GetComponent<cum::component::TransformComponent>(ent_bunny).SetScale(0.1f);
 
-	//const cum::mapping::rename_type::Entity ent_player = registry->CreateEntity();
-	//registry->AddComponent<cum::component::MeshObjectComponent>(ent_player);
-	//registry->AddComponent<cum::component::FbxModelComponent>(ent_player, cum::locator::Locator::GetResourceManager()->FbxModelResouece("ganfaul"));
-	//registry->GetComponent<cum::component::TransformComponent>(ent_player).SetScale(0.3f);
-	////registry->GetComponent<cum::component::TransformComponent>(ent_player).SetPosition({ 0, -20, 0 });
-	//registry->GetComponent<cum::component::TransformComponent>(ent_player).SetPosition({ 30, 10, 0 });
-	//registry->GetComponent<cum::component::TransformComponent>(ent_player).SetWorldRotation_Y(180);
-	//registry->GetComponent<cum::component::MeshObjectComponent>(ent_player).SetRasterizerState(RasterizeState::Cull_Front_CCW_True);
-	//registry->GetComponent<cum::component::FbxModelComponent>(ent_player).SwitchAnimation(2, true);
+	const cum::mapping::rename_type::Entity ent_player = registry->CreateEntity();
+	registry->AddComponent<cum::component::MeshObjectComponent>(ent_player);
+	registry->AddComponent<cum::component::FbxModelComponent>(ent_player, cum::locator::Locator::GetResourceManager()->FbxModelResouece("ganfaul"));
+	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetScale(0.3f);
+	//registry->GetComponent<cum::component::TransformComponent>(ent_player).SetPosition({ 0, -20, 0 });
+	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetPosition({ 30, 10, 0 });
+	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetWorldRotation_Y(180);
+	registry->GetComponent<cum::component::MeshObjectComponent>(ent_player).SetRasterizerState(RasterizeState::Cull_Front_CCW_True);
+	registry->GetComponent<cum::component::FbxModelComponent>(ent_player).SwitchAnimation(2, true);
 
 	const cum::mapping::rename_type::Entity ent_robo = registry->CreateEntity();
 	registry->AddComponent<cum::component::MeshObjectComponent>(ent_robo);
@@ -127,7 +127,7 @@ void SceneGame::InitializeScene()
 	registry->GetComponent<cum::component::TransformComponent>(ent_robo).SetPosition({ -30, 10, 0 });
 	registry->GetComponent<cum::component::TransformComponent>(ent_robo).SetWorldRotation_Y(180);
 	registry->GetComponent<cum::component::MeshObjectComponent>(ent_robo).SetRasterizerState(RasterizeState::Cull_Front_CCW_True);
-	registry->GetComponent<cum::component::FbxModelComponent>(ent_robo).SwitchAnimation(3, true);
+	registry->GetComponent<cum::component::FbxModelComponent>(ent_robo).SwitchAnimation(0, true);
 
 }
 

@@ -133,21 +133,13 @@ mov r2.xyzw, r2.xyzw  // r2.x <- pout.position.x; r2.y <- pout.position.y; r2.z 
 mov r0.xyz, r0.xyzx  // r0.x <- pout.normal.x; r0.y <- pout.normal.y; r0.z <- pout.normal.z
 mov r0.w, l(1.000000)  // r0.w <- pout.normal.w
 
-#line 37
-nop 
-mov r3.x, cb5[0].x
+#line 38
+itof r3.x, cb5[0].x  // r3.x <- pout.shader_slot
 
-#line 10 "D:\Desktop\Cumulonimbus\Shader\functions.hlsli"
-itof r3.x, r3.x
-mul r3.x, r3.x, l(0.003922)  // r3.x <- <CalcGBuffShaderSlotVal return value>
-
-#line 37 "D:\Desktop\Cumulonimbus\Shader\gbuffer_ps.hlsl"
-mov r3.x, r3.x  // r3.x <- pout.shader_slot
-
-#line 39
+#line 40
 mov o0.xyzw, r1.xyzw
 mov o1.xyzw, r0.xyzw
 mov o2.xyzw, r2.xyzw
 mov o3.x, r3.x
 ret 
-// Approximately 45 instruction slots used
+// Approximately 41 instruction slots used

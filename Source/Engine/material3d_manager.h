@@ -8,7 +8,7 @@
 
 namespace cumulonimbus::shader_asset
 {
-	class Material3DManager final
+	class Material3DManager
 	{
 	public:
 		explicit Material3DManager();
@@ -35,6 +35,14 @@ namespace cumulonimbus::shader_asset
 		 *		   テクスチャのリセット(アンバインド)
 		 */
 		void UnbindTexture() const;
+
+
+		/*
+		 * brief : ShaderAssetが持つGBuffer用のシェーダースロットのセット(バインド)
+		 *		   ライティング時に使用
+		 */
+		void BindGBuffShaderSlot()   const;
+		void UnbindGBuffShaderSlot() const;
 
 		/*
 		 * brief     : Shader全体の種類を変更するためのImGui

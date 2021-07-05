@@ -47,6 +47,16 @@ namespace cumulonimbus::shader_asset
 		shader_asset_map.at(shader_assets.GetCurrentState())->UnbindTexture();
 	}
 
+	void Material3DManager::BindGBuffShaderSlot() const
+	{
+		shader_asset_map.at(shader_assets.GetCurrentState())->BindCBShaderSlot();
+	}
+
+	void Material3DManager::UnbindGBuffShaderSlot() const
+	{
+		shader_asset_map.at(shader_assets.GetCurrentState())->UnbindCBShaderSlot();
+	}
+
 	void Material3DManager::RenderImGuiComboShader()
 	{
 		if (ImGui::BeginCombo("Shader", shader_assets.GetCurrentStateName().c_str()))
