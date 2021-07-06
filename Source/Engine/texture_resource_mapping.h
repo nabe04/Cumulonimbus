@@ -50,5 +50,6 @@
 #define TexSlot_SpecularMap		TexSlot_OnDemand8
 #define TexSlot_SkyMap			TexSlot_OnDemand9
 #define TexSlot_Position		TexSlot_OnDemand10
+#define TexSlot_ShaderSlot		TexSlot_OnDemand11
 
 #endif //TEXTURE_RESOURCE_MAPPING_H

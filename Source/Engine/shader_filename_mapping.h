@@ -37,6 +37,7 @@ namespace cumulonimbus::mapping::shader_filename
 		inline std::string GlowExtraction_PS()					{ return { "./Shader/cso/glow_extraction_ps.cso" }; }
 		inline std::string StandardSprite_PS()					{ return { "./Shader/cso/standard_sprite_ps.cso" }; }
 		inline std::string DepthExtraction_PS()					{ return { "./Shader/cso/variance_shadow_depth_extraction_ps.cso" }; }
+		inline std::string GBufferLighting_PS()					{ return { "./Shader/cso/gbuffer_lighting_ps.cso" }; }
 		inline std::string OutlineExtraction_PS()				{ return { "./Shader/cso/outline_extraction_ps.cso" }; }
 		inline std::string RefractionMapping_PS()				{ return { "./Shader/cso/refraction_mapping_ps.cso" }; }
 		inline std::string ReflectionMapping_PS()				{ return { "./Shader/cso/reflection_mapping_ps.cso" }; }

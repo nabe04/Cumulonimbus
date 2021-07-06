@@ -65,11 +65,11 @@ namespace cumulonimbus::renderer
 		std::unique_ptr<DepthStencil>	depth_stencil;
 		std::array< std::unique_ptr<Sampler>, static_cast<int>(RenderingSampleState::End)> samplers;
 
-		std::unique_ptr<graphics::buffer::GBuffer> g_buffer{ nullptr };
-		std::unique_ptr<DummyTexture>		dummy_texture;
-		std::unique_ptr<FrameBuffer>		off_screen;
-		std::unique_ptr<DepthMap>			depth_map;
-		std::unique_ptr<FullscreenQuad>		fullscreen_quad;
+		std::unique_ptr<graphics::buffer::GBuffer>	g_buffer{ nullptr };
+		std::unique_ptr<DummyTexture>				dummy_texture;
+		std::unique_ptr<FrameBuffer>				off_screen;
+		std::unique_ptr<DepthMap>					depth_map;
+		std::unique_ptr<FullscreenQuad>				fullscreen_quad;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> sky_box_srv;
 
 		/*
@@ -113,10 +113,19 @@ namespace cumulonimbus::renderer
 		/*
 		 * brief     : 3DモデルのGBufferへの描画
 		 */
+		/*
+		 * brief     : GBuffer用のRTVのクリア、セット、シェーダーのセット
+		 * ※caution : シェーダをBeginの段階でセットするのでGBufferの描画中は
+		 *			   シェーダをセットしないようにする
+		 */
 		void Render3DToGBuffer_Begin(ID3D11DeviceContext* immediate_context) const;
+		/*
+		 * brief : GBufferを描画先にしたモデルの描画
+		 */
 		void Render3DToGBuffer(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, const View* view, const Light* light);
 		/*
-		 * brier : 各々のシェーダーに応じて作成したGBufferをoff_screenにまとめる
+		 * brier     : 各々のシェーダーに応じて作成したGBufferをoff_screenにまとめる
+		 * ※caution : Render3DToGBuffer_Begin関数でセットしたGBuffer用のシェーダアンバインドする
 		 */
 		void Render3DToGBuffer_End(ID3D11DeviceContext* immediate_context) const;
 

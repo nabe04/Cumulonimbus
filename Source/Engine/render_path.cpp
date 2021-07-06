@@ -94,9 +94,9 @@ namespace cumulonimbus::renderer
 		Render3DToGBuffer_End(immediate_context);
 
 		// ポストプロセス処理
-		//RenderPostProcess_Begin(immediate_context);
-		//RenderPostProcess(immediate_context);
-		//RenderPostProcess_End(immediate_context);
+		RenderPostProcess_Begin(immediate_context);
+		RenderPostProcess(immediate_context);
+		RenderPostProcess_End(immediate_context);
 
 		//Render3D_Begin(immediate_context);
 		//Render3D(immediate_context, registry, view, light);
@@ -182,9 +182,8 @@ namespace cumulonimbus::renderer
 	void RenderPath::Render3DToGBuffer_Begin(ID3D11DeviceContext* immediate_context) const
 	{
 		// GBuffer用RTVのクリア
-		//shader_manager->ClearGBuffer();
-
 		g_buffer->Clear();
+		// GBuffer用のシェーダーとRTVのセット
 		g_buffer->BindShaderAndRTV();
 	}
 
@@ -219,8 +218,14 @@ namespace cumulonimbus::renderer
 	void RenderPath::Render3DToGBuffer_End(ID3D11DeviceContext* immediate_context) const
 	{
 		g_buffer->UnbindShaderAndRTV();
+
 		off_screen->Activate(immediate_context);
-		CombinationGBuffer();
+		// GBufferに書き出したテクスチャのセット
+		g_buffer->BindGBufferTextures();
+		// GBufferライティング用シェーダー(PS)のセット
+		g_buffer->BindGBuffLightingShader();
+		fullscreen_quad->Blit(immediate_context);
+
 		off_screen->Deactivate(immediate_context);
 	}
 
@@ -804,6 +809,8 @@ namespace cumulonimbus::renderer
 
 	void RenderPath::CombinationGBuffer() const
 	{
+		//g_buffer->
+
 		//blend->Activate(locator::Locator::GetDx11Device()->immediate_context.Get(), BlendState::Alpha);
 		//for(const auto& gbuffer : shader_manager->GetGBufferMap())
 		//{

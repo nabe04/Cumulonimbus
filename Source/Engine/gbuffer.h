@@ -1,6 +1,14 @@
 #pragma once
-#include "frame_buffer.h"
-#include "shader.h"
+#include <d3d11.h>
+#include <wrl.h>
+
+class FrameBuffer;
+
+namespace cumulonimbus::shader_system
+{
+	class VertexShader;
+	class PixelShader;
+} // cumulonimbus::shader_system
 
 namespace cumulonimbus::graphics::buffer
 {
@@ -20,15 +28,88 @@ namespace cumulonimbus::graphics::buffer
 		void BindShaderAndRTV();
 		void UnbindShaderAndRTV();
 
-		[[nodiscard]] ID3D11ShaderResourceView** GetAlbedoBufferSRV_Address()		const { return albedo_buffer->GetRenderTargetSRV(); }
-		[[nodiscard]] ID3D11ShaderResourceView** GetPositionBufferSRV_Address()		const { return position_buffer->GetRenderTargetSRV(); }
-		[[nodiscard]] ID3D11ShaderResourceView** GetNormalBufferSRV_Address()		const { return normal_buffer->GetRenderTargetSRV(); }
-		[[nodiscard]] ID3D11ShaderResourceView** GetShaderSlotBufferSRV_Address()   const { return shader_slot_buffer->GetRenderTargetSRV(); }
+		/*
+		 * brief	 : GBufferのライティング用シェーダーのセット
+		 * ※caution : ピクセルシェーダーのみのセット
+		 */
+		void BindGBuffLightingShader() const;
 
 		/*
-		 * brief : RenderPathクラスのGBuffer同士のBlit処理に加えるのか
+		 * brief : 全てのGBufferテクスチャのバインド
+		 * バインドされるテクスチャのスロット番号
+		 * slot TexSlot_BaseColorMap(20) : AlbedoBufferテクスチャ
+		 * slot TexSlot_NormalMap(21)	 : NormalBufferテクスチャ
+		 * slot TexSlot_Position(30)	 : PositionBufferテクスチャ
+		 * slot TexSlot_ShaderSlot(31)	 : ShaderSlotBufferテクスチャ
 		 */
-		[[nodiscard]] bool GetIsUsedGBuffer() const { return is_used_gbuffer; }
+		void BindGBufferTextures() const;
+
+		/*
+		 * brief : 全てのGBufferテクスチャのアンバインド
+		 * バインドされるテクスチャのスロット番号
+		 * slot TexSlot_BaseColorMap(20) : AlbedoBufferテクスチャ
+		 * slot TexSlot_NormalMap(21)	 : NormalBufferテクスチャ
+		 * slot TexSlot_Position(30)	 : PositionBufferテクスチャ
+		 * slot TexSlot_ShaderSlot(31)	 : ShaderSlotBufferテクスチャ
+		 */
+		void UnbindGBufferTextures() const;
+
+
+		/*
+		 * brief : GBufferテクスチャの個別のSRVのバインド
+		 */
+		/*
+		 * brief	: albedo_bufferテクスチャのバインド
+		 * slot番号 : TexSlot_BaseColorMap(20)
+		 */
+		void BindAlbedoTexture() const;
+		/*
+		 * brief	: normal_bufferテクスチャのバインド
+		 * slot番号 : TexSlot_NormalMap(21)
+		 */
+		void BindNormalMapTexture() const;
+		/*
+		 * brief	: position_bufferテクスチャのバインド
+		 * slot番号 : TexSlot_Position(30)
+		 */
+		void BindPositionTexture() const;
+		/*
+		 * brief	: shader_slot_bufferテクスチャのバインド
+		 * slot番号 : TexSlot_ShaderSlot(31)
+		 */
+		void BindShaderSlotTexture() const;
+
+		/*
+		 * brief : GBufferテクスチャの個別のSRVのアンバインド
+		*/
+		/*
+		 * brief	 : albedo_bufferテクスチャのアンバインド
+		* slot番号 : TexSlot_BaseColorMap(20)
+		 */
+		void UnbindAlbedoTexture() const;
+		/*
+		 * brief	: normal_bufferテクスチャのアンバインド
+		 * slot番号 : TexSlot_NormalMap(21)
+		 */
+		void UnbindNormalMapTexture() const;
+		/*
+		 * brief	: position_bufferテクスチャのアンバインド
+		 * slot番号 : TexSlot_Position(30)
+		 */
+		void UnbindPositionTexture() const;
+		/*
+		 * brief	: shader_slot_bufferテクスチャのアンバインド
+		 * slot番号 : TexSlot_ShaderSlot(31)
+		 */
+		void UnbindShaderSlotTexture() const;
+
+		/*
+		 * brief : GBufferテクスチャのSRVのゲット
+		 */
+		[[nodiscard]] ID3D11ShaderResourceView** GetAlbedoBufferSRV_Address()		const;
+		[[nodiscard]] ID3D11ShaderResourceView** GetPositionBufferSRV_Address()		const;
+		[[nodiscard]] ID3D11ShaderResourceView** GetNormalBufferSRV_Address()		const;
+		[[nodiscard]] ID3D11ShaderResourceView** GetShaderSlotBufferSRV_Address()   const;
 
 	private:
 		/*
@@ -52,16 +133,14 @@ namespace cumulonimbus::graphics::buffer
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> default_depth_stencil_view{ nullptr };
 
 		// GBuffer用のdepth_stencil_view,shader_resource_view
-		Microsoft::WRL::ComPtr<ID3D11DepthStencilView>		dsv_for_gbuffer{ nullptr };
-		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	srv_for_gbuffer{ nullptr };
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilView>		dsv_for_g_buffer{ nullptr };
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	srv_for_g_buffer{ nullptr };
 
 		// GBuffer用シェーダー
-		std::unique_ptr<shader_system::VertexShader> gbuffer_vs{ nullptr };
-		std::unique_ptr<shader_system::PixelShader>  gbuffer_ps{ nullptr };
-
-		// RenderPathクラスのGBuffer同士のBlit処理時に
-		// この変数がfalseならテクスチャを使用しない
-		bool is_used_gbuffer = false;
+		std::unique_ptr<shader_system::VertexShader> g_buffer_vs{ nullptr };
+		std::unique_ptr<shader_system::PixelShader>  g_buffer_ps{ nullptr };
+		// GBufferのライティング用シェーダー
+		std::unique_ptr<shader_system::PixelShader> g_buff_lighting_ps{ nullptr };
 
 		/*
 		 * brief     : GBuffer用のrender_target_viewのセット

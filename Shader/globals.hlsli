@@ -83,14 +83,15 @@ struct PS_Output
     float4 albedo_color : SV_TARGET0;
     float4 normal       : SV_TARGET1;
     float4 position     : SV_TARGET2;
-    float   shader_slot  : SV_TARGET3;
+    float  shader_slot  : SV_TARGET3;
 };
 
 
-TEXTURE2D(texture_depth     , float4, TexSlot_Depth);
-TEXTURE2D(texture_base_color, float4, TexSlot_BaseColorMap);
-TEXTURE2D(texture_normal    , float4, TexSlot_NormalMap);
-TEXTURE2D(texture_position  , float4, TexSlot_Position);
+TEXTURE2D(texture_depth      , float4, TexSlot_Depth);
+TEXTURE2D(texture_base_color , float4, TexSlot_BaseColorMap);
+TEXTURE2D(texture_normal     , float4, TexSlot_NormalMap);
+TEXTURE2D(texture_position   , float4, TexSlot_Position);
+TEXTURE2D(texture_shader_slot, float , TexSlot_ShaderSlot);
 TEXTURECUBE(texture_cube    , float4, TexSlot_SkyMap);
 
 inline float GetScreenWidth()  { return screen_width;  }
