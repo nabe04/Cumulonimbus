@@ -12,15 +12,15 @@ namespace cumulonimbus
 		{
 			using namespace mapping::shader_filename;
 			vertex_shader = std::make_unique<shader_system::VertexShader>(vs::Metal_VS().c_str());
-			pixel_shader  = std::make_unique<shader_system::PixelShader>(ps::Metal_PS().c_str());
+			pixel_shader  = std::make_unique<shader_system::PixelShader>(ps::MetalMTR_PS().c_str());
 		}
 
 	}
 
 	namespace shader_asset
 	{
-		MetalAsset::MetalAsset(u_int gbuff_shader_slot)
-			: ShaderAsset{ gbuff_shader_slot }
+		MetalAsset::MetalAsset()
+			: ShaderAsset{}
 		{
 			cb_metal = std::make_unique<buffer::ConstantBuffer<MetalCB>>(locator::Locator::GetDx11Device()->device.Get());
 		}

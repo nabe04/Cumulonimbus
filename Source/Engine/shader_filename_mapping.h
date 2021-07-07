@@ -29,18 +29,26 @@ namespace cumulonimbus::mapping::shader_filename
 		inline std::string Metal_PS()							{ return { "./Shader/cso/cook_torrance_ps.cso" }; }
 		inline std::string Diffuse_PS()							{ return { "./Shader/cso/diffuse_ps.cso" }; }
 		inline std::string GBuffer_PS()							{ return { "./Shader/cso/gbuffer_ps.cso" }; }
+		inline std::string ToonMTR_PS()							{ return {"./Shader/cso/toon_mtr_ps.cso"}; }
+		inline std::string MetalMTR_PS()						{ return { "./Shader/cso/metal_mtr_ps.cso" }; }
+		inline std::string PhongMTR_PS()						{ return { "./Shader/cso/phong_mtr_ps.cso" }; }
 		inline std::string Sprite2D_PS()						{ return { "./Shader/cso/sprite2d_ps.cso" }; }
+		inline std::string DiffuseMRT_PS()						{ return { "./Shader/cso/diffuse_mrt_ps.cso" }; }
 		inline std::string Monochrome_PS()						{ return { "./Shader/cso/monochrome_ps.cso" }; }
 		inline std::string Standard3D_PS()						{ return { "./Shader/cso/3d_standard_ps.cso" }; }
 		inline std::string SingleColor_PS()						{ return { "./Shader/cso/single_color_ps.cso" }; }
 		inline std::string SampleShader_PS()					{ return { "./Shader/cso/sample_shader_ps.cso" }; }
 		inline std::string GlowExtraction_PS()					{ return { "./Shader/cso/glow_extraction_ps.cso" }; }
 		inline std::string StandardSprite_PS()					{ return { "./Shader/cso/standard_sprite_ps.cso" }; }
+		inline std::string SingleColorMTR_PS()					{ return { "./Shader/cso/single_color_mtr_ps.cso" }; }
+		inline std::string SampleShaderMTR_PS()					{ return { "./Shader/cso/sample_shader_mtr_ps.cso" }; }
 		inline std::string DepthExtraction_PS()					{ return { "./Shader/cso/variance_shadow_depth_extraction_ps.cso" }; }
 		inline std::string GBufferLighting_PS()					{ return { "./Shader/cso/gbuffer_lighting_ps.cso" }; }
 		inline std::string OutlineExtraction_PS()				{ return { "./Shader/cso/outline_extraction_ps.cso" }; }
-		inline std::string RefractionMapping_PS()				{ return { "./Shader/cso/refraction_mapping_ps.cso" }; }
 		inline std::string ReflectionMapping_PS()				{ return { "./Shader/cso/reflection_mapping_ps.cso" }; }
+		inline std::string RefractionMapping_PS()				{ return { "./Shader/cso/refraction_mapping_ps.cso" }; }
+		inline std::string ReflectionMappingMTR_PS()			{ return { "./Shader/cso/reflection_mapping_mtr_ps.cso" }; }
+		inline std::string RefractionMappingMTR_PS()			{ return { "./Shader/cso/refraction_mapping_mtr_ps.cso" }; }
 		inline std::string GaussianBlurVertical_PS()			{ return { "./Shader/cso/gaussian_blur_vertical_ps.cso" }; }
 		inline std::string GaussianBlurHorizontal_PS()			{ return { "./Shader/cso/gaussian_blur_horizontal_ps.cso" }; }
 		inline std::string SorbelFilterConvolution_PS()			{ return { "./Shader/cso/sorbel_filter_convolution_ps.cso" }; }

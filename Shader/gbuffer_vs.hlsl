@@ -43,8 +43,8 @@ VS_OutPut main(VS_Input vin)
     vx = normalize(vx);
     vy = cross(vz, vx);
     vy = normalize(vy);
-    vout.tangent = vx;
-	vout.binorma = vy;
+    vout.tangent  = vx;
+	vout.binormal = vy;
 
 	return vout;
 }

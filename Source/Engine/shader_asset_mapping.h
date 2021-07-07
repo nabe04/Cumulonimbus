@@ -10,7 +10,6 @@ namespace cumulonimbus::mapping::shader_assets
 	 */
 	enum class ShaderAsset3D : int
 	{
-		Standard,
 		SampleShader,
 		Diffuse,
 		Phong,

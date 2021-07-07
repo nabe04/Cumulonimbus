@@ -16,7 +16,7 @@ PS_Output main(PS_Input pin)
 
 	// Ú‹óŠÔ²
     const float3 vx = normalize(pin.tangent);
-    const float3 vy = normalize(pin.binorma);
+    const float3 vy = normalize(pin.binormal);
     const float3 vz = normalize(pin.normal);
 
 	// Ú‹óŠÔs—ñ
@@ -31,10 +31,9 @@ PS_Output main(PS_Input pin)
     const float4 color    = texture_base_color.Sample(default_sampler, pin.texcoord0);
     const float4 position = pin.w_position;
 
-    pout.albedo_color   = color;
+    pout.color          = color;
     pout.position       = position;
     pout.normal         = float4(normal, 1.0f);
-    pout.shader_slot    = shader_slot;
 
 	return pout;
 }

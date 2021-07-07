@@ -12,14 +12,14 @@ namespace cumulonimbus
 		{
 			using namespace mapping::shader_filename;
 			vertex_shader = std::make_unique<shader_system::VertexShader>(vs::Phong_VS().c_str());
-			pixel_shader  = std::make_unique<shader_system::PixelShader>(ps::Phong_PS().c_str());
+			pixel_shader  = std::make_unique<shader_system::PixelShader>(ps::PhongMTR_PS().c_str());
 		}
 	}
 
 	namespace shader_asset
 	{
-		PhongAsset::PhongAsset(u_int gbuff_shader_slot)
-			:ShaderAsset{ gbuff_shader_slot }
+		PhongAsset::PhongAsset()
+			:ShaderAsset{}
 		{
 			cb_phong = std::make_unique<buffer::ConstantBuffer<PhongCB>>(locator::Locator::GetDx11Device()->device.Get());
 

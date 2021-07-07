@@ -20,8 +20,7 @@ namespace cumulonimbus
 		class SampleShaderAsset final : public ShaderAsset
 		{
 		public:
-			explicit SampleShaderAsset(u_int gbuff_shader_slot);
-			explicit SampleShaderAsset() = default;
+			explicit SampleShaderAsset();
 			~SampleShaderAsset() override = default;
 
 			void BindCBuffer()	 override {}

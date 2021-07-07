@@ -14,14 +14,14 @@ namespace cumulonimbus
 		{
 			using namespace mapping::shader_filename;
 			vertex_shader = std::make_unique<shader_system::VertexShader>(vs::RefractionMapping_VS().c_str());
-			pixel_shader = std::make_unique<shader_system::PixelShader>(ps::RefractionMapping_PS().c_str());
+			pixel_shader  = std::make_unique<shader_system::PixelShader>(ps::RefractionMappingMTR_PS().c_str());
 		}
 	}
 
 	namespace shader_asset
 	{
-		RefractionMappingAsset::RefractionMappingAsset(u_int gbuff_shader_slot)
-			: ShaderAsset{ gbuff_shader_slot }
+		RefractionMappingAsset::RefractionMappingAsset()
+			: ShaderAsset{}
 		{
 			cb_refraction = std::make_unique<buffer::ConstantBuffer<RefractionCB>>(locator::Locator::GetDx11Device()->device.Get());
 

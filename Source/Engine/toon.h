@@ -51,8 +51,7 @@ namespace cumulonimbus
 		class ToonAsset final : public ShaderAsset
 		{
 		public:
-			explicit ToonAsset(u_int gbuff_shader_slot);
-			explicit ToonAsset()  = default;
+			explicit ToonAsset();
 			~ToonAsset() override = default;
 
 			void BindCBuffer()	 override;

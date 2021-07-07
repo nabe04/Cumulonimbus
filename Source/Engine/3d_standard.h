@@ -36,8 +36,7 @@ namespace cumulonimbus
 		class Standard3DAsset final : public ShaderAsset
 		{
 		public:
-			explicit Standard3DAsset(u_int gbuff_shader_slot);
-			explicit Standard3DAsset()  = default; // for cereal
+			explicit Standard3DAsset(); // for cereal
 			~Standard3DAsset() override = default;
 
 			void BindCBuffer()	 override {}

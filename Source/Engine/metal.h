@@ -46,8 +46,7 @@ namespace cumulonimbus
 		class MetalAsset final : public ShaderAsset
 		{
 		public:
-			explicit MetalAsset(u_int gbuff_shader_slot);
-			explicit MetalAsset()  = default;
+			explicit MetalAsset();
 			~MetalAsset() override = default;
 
 			void BindCBuffer()   override;

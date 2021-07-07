@@ -48,7 +48,6 @@ namespace cumulonimbus::shader_asset
 		/*
 		 * gbuff_shader_slot : shader_asset_mapping.hでのシェーダー毎のマクロを指定
 		 */
-		explicit ShaderAsset(u_int gbuff_shader_slot);
 		explicit ShaderAsset() = default; // for cereal;
 		virtual ~ShaderAsset() = default;
 
@@ -88,15 +87,6 @@ namespace cumulonimbus::shader_asset
 		 * brief : 使用したテクスチャのスロットのリセット(アンバインド)
 		 */
 		virtual void UnbindTexture() {}
-
-		/*
-		 * brief : GBuffer::shader_slot_bufferでのシェーダースロットのセット(バインド)
-		 */
-		void BindCBShaderSlot() const;
-		/*
-		 * brief : GBuffer::shader_slot_bufferでのシェーダースロットのリセット(アンバインド)
-		 */
-		void UnbindCBShaderSlot() const;
 		
 		/*
 		 * brief : 各々のシェーダーが持つパラメータ(constant buffer)の編集
@@ -126,10 +116,6 @@ namespace cumulonimbus::shader_asset
 		void serialize(Archive&& archive){}
 	protected:
 		MaterialPath material_path;
-		// GBuffer上でのShaderの種類に応じてライティングを変更する場合に
-		// 使用するシェーダー独自のスロット番号
-		// (shader_asset_mapping.hにあるマクロをそれぞれのShaderAssetにのコンストラクタで適用する)
-		std::unique_ptr<buffer::ConstantBuffer<ShaderSlotCB>> cb_shader_slot{ nullptr };
 		
 		/*
 		 * brief			 : ImGui上でのシェーダーが使用するテクスチャの変更処理

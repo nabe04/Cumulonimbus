@@ -6,7 +6,10 @@
 #define VIN_USE_BONE_INDICES
 // PS_Input(VS_Output)
 #define PIN_USE_WVP_POSITION
+#define PIN_USE_W_POSITION
 #define PIN_USE_NORMAL
+#define PIN_USE_TANGENT
+#define PIN_USE_BINORMAL
 #define PIN_USE_COLOR
 #define PIN_USE_TEX_POSITION  // ShadowMap比較用UV値
 #define PIN_USE_TEXCOORD0     // 読み込んだテクスチャのUV値

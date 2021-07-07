@@ -46,8 +46,7 @@ namespace cumulonimbus
 		class RefractionMappingAsset final : public ShaderAsset
 		{
 		public:
-			explicit RefractionMappingAsset(u_int gbuff_shader_slot);
-			explicit RefractionMappingAsset()  = default;
+			explicit RefractionMappingAsset();
 			~RefractionMappingAsset() override = default;
 
 			void BindCBuffer()   override;

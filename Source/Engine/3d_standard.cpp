@@ -51,10 +51,10 @@ namespace cumulonimbus
 
 	namespace shader_asset
 	{
-		Standard3DAsset::Standard3DAsset(u_int gbuff_shader_slot)
-			:ShaderAsset{ gbuff_shader_slot }
+		Standard3DAsset::Standard3DAsset()
+			:ShaderAsset{}
 		{
-
+			
 		}
 
 	}

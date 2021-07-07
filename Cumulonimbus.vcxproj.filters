@@ -142,6 +142,30 @@
     <FxCompile Include="Shader\gbuffer_lighting_ps.hlsl">
       <Filter>Shader%28HLSL%29\PS</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\diffuse_mrt_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\metal_mtr_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\phong_mtr_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\reflection_mapping_mtr_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\refraction_mapping_mtr_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\sample_shader_mtr_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\toon_mtr_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\single_color_mtr_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\scene.cpp">

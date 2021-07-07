@@ -36,14 +36,6 @@ namespace cumulonimbus::shader_asset
 		 */
 		void UnbindTexture() const;
 
-
-		/*
-		 * brief : ShaderAssetが持つGBuffer用のシェーダースロットのセット(バインド)
-		 *		   ライティング時に使用
-		 */
-		void BindGBuffShaderSlot()   const;
-		void UnbindGBuffShaderSlot() const;
-
 		/*
 		 * brief     : Shader全体の種類を変更するためのImGui
 		 */
@@ -61,6 +53,11 @@ namespace cumulonimbus::shader_asset
 		void SetMaterialPathForAllShaderAsset3D(const shader_asset::MaterialPath& material_path);
 
 		/*
+		 * 使用するシェーダーのセット
+		 */
+		void SetShaderAsset(mapping::shader_assets::ShaderAsset3D asset);
+		
+		/*
 		 * brief : assetで指定されたShaderAsset3Dの
 		 *         material_pathのセット
 		 */
@@ -73,12 +70,12 @@ namespace cumulonimbus::shader_asset
 		EnumStateMap<mapping::shader_assets::ShaderAsset3D> shader_assets;
 
 		template<typename T>
-		void RegisterShaderAsset(mapping::shader_assets::ShaderAsset3D asset_type, u_int gbuffer_shader_slot)
+		void RegisterShaderAsset(mapping::shader_assets::ShaderAsset3D asset_type)
 		{
 			if (shader_asset_map.contains(asset_type))
 				return;
 
-			shader_asset_map.emplace(asset_type, std::make_shared<T>(gbuffer_shader_slot));
+			shader_asset_map.emplace(asset_type, std::make_shared<T>());
 		}
 	};
 }

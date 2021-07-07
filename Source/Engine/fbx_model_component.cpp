@@ -29,6 +29,8 @@ namespace cumulonimbus::component
 		{
 			pbr_materials.emplace_back(std::make_shared<shader_asset::PBRMaterial>());
 			materials_manager.emplace_back(std::make_shared<shader_asset::Material3DManager>());
+			// デフォルトでDiffuseシェーダーをセット
+			materials_manager.back()->SetShaderAsset(mapping::shader_assets::ShaderAsset3D::Diffuse);
 		}
 
 		registry->AddComponent<component::MeshObjectComponent>(ent);

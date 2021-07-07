@@ -81,11 +81,11 @@ HRESULT Dx11Device::CreateDevice(HWND hwnd,ID3D11Device** device, ID3D11DeviceCo
 	DXGI_SWAP_CHAIN_DESC scd;
 	scd.BufferDesc.Width					= screen_width;
 	scd.BufferDesc.Height					= screen_height;
-	scd.BufferDesc.RefreshRate.Numerator = 60;
-	scd.BufferDesc.RefreshRate.Denominator = 1;
-	scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; //DXGI_FORMAT_R8G8B8A8_UNORM_SRGB DXGI_FORMAT_R8G8B8A8_UNORM
-	scd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-	scd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+	scd.BufferDesc.RefreshRate.Numerator	= 60;
+	scd.BufferDesc.RefreshRate.Denominator	= 1;
+	scd.BufferDesc.Format					= DXGI_FORMAT_R8G8B8A8_UNORM; //DXGI_FORMAT_R8G8B8A8_UNORM_SRGB DXGI_FORMAT_R8G8B8A8_UNORM
+	scd.BufferDesc.ScanlineOrdering			= DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+	scd.BufferDesc.Scaling					= DXGI_MODE_SCALING_UNSPECIFIED;
 	UINT msaa_quality_level;
 	UINT sample_count = 1;
 	hr = this->device->CheckMultisampleQualityLevels(scd.BufferDesc.Format, sample_count, &msaa_quality_level);
@@ -224,7 +224,7 @@ void Dx11Device::Flip(int n)
 
 void Dx11Device::CreateDepthStencilView(Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& dsv,
 										Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& ds_srv,
-										u_int width, u_int height, 
+										u_int width, u_int height,
 										DXGI_FORMAT depth_stencil_texture_format)
 {
 	const DXGI_FORMAT combinations_of_depth_stencil_formats[3][3] =

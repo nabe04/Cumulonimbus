@@ -7,7 +7,12 @@
 // PS_Input(VS_Output)
 #define PIN_USE_W_POSITION
 #define PIN_USE_NORMAL
+#define PIN_USE_NORMAL
+#define PIN_USE_TANGENT
+#define PIN_USE_BINORMAL
 #define PIN_USE_COLOR
+#define PIN_USE_TEXCOORD0     // 読み込んだテクスチャのUV値
+
 
 
 #include "globals.hlsli"
@@ -33,6 +38,18 @@ PS_Input main(VS_Input vin)
     //vout.position.z = vout.position.w;
     vout.w_position = float4(world_pos, 1.0f);
     vout.normal     = normalize(normal);
+    vout.texcoord0  = vin.texcoord0;
+
+	// 接空間行列
+    float3 vy = { 0.0f, 1.0f, 0.001f }; // 仮ベクトル
+    float3 vz = normal;
+    float3 vx = { 0.0f, 0.0f, 0.0f };
+    vx = cross(vy, vz);
+    vx = normalize(vx);
+    vy = cross(vz, vx);
+    vy = normalize(vy);
+    vout.tangent = vx;
+    vout.binormal = vy;
 
     return vout;
 }

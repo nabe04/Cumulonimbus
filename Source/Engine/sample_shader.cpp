@@ -14,14 +14,14 @@ namespace cumulonimbus
 		{
 			using namespace mapping::shader_filename;
 			vertex_shader = std::make_unique<shader_system::VertexShader>(vs::SampleShader_VS().c_str());
-			pixel_shader  = std::make_unique<shader_system::PixelShader>(ps::SampleShader_PS().c_str());
+			pixel_shader  = std::make_unique<shader_system::PixelShader>(ps::SampleShaderMTR_PS().c_str());
 		}
 	} // shader_system
 
 	namespace shader_asset
 	{
-		SampleShaderAsset::SampleShaderAsset(u_int gbuff_shader_slot)
-			:ShaderAsset{ gbuff_shader_slot }
+		SampleShaderAsset::SampleShaderAsset()
+			:ShaderAsset{ }
 		{
 			material_path.normal_map_name = mapping::texture_filename::DefaultNormalMap();
 		}

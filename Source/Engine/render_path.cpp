@@ -89,18 +89,19 @@ namespace cumulonimbus::renderer
 		RenderSkyBox_End(immediate_context);
 
 		// GBufferへの描画処理
-		Render3DToGBuffer_Begin(immediate_context);
-		Render3DToGBuffer(immediate_context, registry, view, light);
-		Render3DToGBuffer_End(immediate_context);
+		//Render3DToGBuffer_Begin(immediate_context);
+		//Render3DToGBuffer(immediate_context, registry, view, light);
+		//Render3DToGBuffer_End(immediate_context);
+
+		// モデルの描画
+		Render3D_Begin(immediate_context);
+		Render3D(immediate_context, registry, view, light);
+		Render3D_End(immediate_context);
 
 		// ポストプロセス処理
 		RenderPostProcess_Begin(immediate_context);
 		RenderPostProcess(immediate_context);
 		RenderPostProcess_End(immediate_context);
-
-		//Render3D_Begin(immediate_context);
-		//Render3D(immediate_context, registry, view, light);
-		//Render3D_End(immediate_context);
 
 		// 2Dスプライトの描画
 		Render2D(immediate_context, registry);
@@ -250,8 +251,10 @@ namespace cumulonimbus::renderer
 
 	void RenderPath::Render3D_Begin(ID3D11DeviceContext* immediate_context)
 	{
-		off_screen->Clear(immediate_context);
-		off_screen->Activate(immediate_context);
+		//off_screen->Clear(immediate_context);
+		//off_screen->Activate(immediate_context);
+		g_buffer->Clear();
+		g_buffer->BindRTV();
 	}
 
 	void RenderPath::Render3D(ID3D11DeviceContext* immediate_context,
@@ -296,12 +299,17 @@ namespace cumulonimbus::renderer
 		}
 
 		light->UnbindCBuffer();
-		off_screen->Deactivate(immediate_context);
-		Blit(immediate_context);
+		//off_screen->Deactivate(immediate_context);
 	}
 
 	void RenderPath::Render3D_End(ID3D11DeviceContext* immediate_context)
 	{
+		g_buffer->UnbindRTV();
+		off_screen->Activate(immediate_context);
+		g_buffer->BindColorTexture();
+		Blit(immediate_context);
+		off_screen->Deactivate(immediate_context);
+
 		locator::Locator::GetDx11Device()->UnbindShaderResource(mapping::graphics::ShaderStage::PS, 0);
 		locator::Locator::GetDx11Device()->UnbindShaderResource(mapping::graphics::ShaderStage::PS, 1);
 		locator::Locator::GetDx11Device()->UnbindShaderResource(mapping::graphics::ShaderStage::PS, 2);
@@ -503,9 +511,9 @@ namespace cumulonimbus::renderer
 				if(is_use_gbuffer)
 				{
 					// GBuffer用shader_slot(ライティングの変更)のセット
-					model.GetMaterialsManager(subset.material_index)->BindGBuffShaderSlot();
+					//model.GetMaterialsManager(subset.material_index)->BindGBuffShaderSlot();
 					// シェーダーが持つテクスチャのセット
-					//model.GetMaterialsManager(subset.material_index)->BindTexture();
+					// model.GetMaterialsManager(subset.material_index)->BindTexture();
 					model.BindPBRMaterialCBuffAndTexture(subset.material_index);
 				}
 				else if(!is_use_shadow)
@@ -533,7 +541,7 @@ namespace cumulonimbus::renderer
 
 				if (is_use_gbuffer)
 				{
-					model.GetMaterialsManager(subset.material_index)->UnbindGBuffShaderSlot();
+					//model.GetMaterialsManager(subset.material_index)->UnbindGBuffShaderSlot();
 					//model.GetMaterialsManager(subset.material_index)->UnbindCBuffer();
 					model.UnbindPBRMaterialCBuffAndTexture(subset.material_index);
 				}
@@ -820,7 +828,7 @@ namespace cumulonimbus::renderer
 		//	{
 		//		shader_manager->BindShader(mapping::shader_assets::ShaderAsset3D::SampleShader);
 		//		using namespace mapping::graphics;
-		//		locator::Locator::GetDx11Device()->BindShaderResource(ShaderStage::PS, gbuffer.second->GetAlbedoBufferSRV_Address()	 , TexSlot_BaseColorMap);
+		//		locator::Locator::GetDx11Device()->BindShaderResource(ShaderStage::PS, gbuffer.second->GetColorBufferSRV_Address()	 , TexSlot_BaseColorMap);
 		//		locator::Locator::GetDx11Device()->BindShaderResource(ShaderStage::PS, gbuffer.second->GetNormalBufferSRV_Address()	 , TexSlot_NormalMap);
 		//		locator::Locator::GetDx11Device()->BindShaderResource(ShaderStage::PS, gbuffer.second->GetPositionBufferSRV_Address(), TexSlot_Position);
 		//		fullscreen_quad->Blit(locator::Locator::GetDx11Device()->immediate_context.Get());

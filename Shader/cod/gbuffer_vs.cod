@@ -98,7 +98,7 @@ dcl_temps 7
 //   v3.x <- vin.bone_weights.x; v3.y <- vin.bone_weights.y; v3.z <- vin.bone_weights.z; v3.w <- vin.bone_weights.w; 
 //   v4.x <- vin.bone_indices.x; v4.y <- vin.bone_indices.y; v4.z <- vin.bone_indices.z; v4.w <- vin.bone_indices.w; 
 //   o5.x <- <main return value>.texcoord0.x; o5.y <- <main return value>.texcoord0.y; 
-//   o4.x <- <main return value>.binorma.x; o4.y <- <main return value>.binorma.y; o4.z <- <main return value>.binorma.z; 
+//   o4.x <- <main return value>.binormal.x; o4.y <- <main return value>.binormal.y; o4.z <- <main return value>.binormal.z; 
 //   o3.x <- <main return value>.tangent.x; o3.y <- <main return value>.tangent.y; o3.z <- <main return value>.tangent.z; 
 //   o2.x <- <main return value>.normal.x; o2.y <- <main return value>.normal.y; o2.z <- <main return value>.normal.z; 
 //   o1.x <- <main return value>.w_position.x; o1.y <- <main return value>.w_position.y; o1.z <- <main return value>.w_position.z; o1.w <- <main return value>.w_position.w; 
@@ -212,7 +212,7 @@ mul r2.xyz, r1.wwww, r2.xyzx
 mov r5.xyz, r5.xyzx  // r5.x <- vout.tangent.x; r5.y <- vout.tangent.y; r5.z <- vout.tangent.z
 
 #line 47
-mov r2.xyz, r2.xyzx  // r2.x <- vout.binorma.x; r2.y <- vout.binorma.y; r2.z <- vout.binorma.z
+mov r2.xyz, r2.xyzx  // r2.x <- vout.binormal.x; r2.y <- vout.binormal.y; r2.z <- vout.binormal.z
 
 #line 49
 mov o0.xyzw, r0.xyzw

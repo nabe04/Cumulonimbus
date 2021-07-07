@@ -29,6 +29,26 @@ namespace cumulonimbus::graphics::buffer
 		void UnbindShaderAndRTV();
 
 		/*
+		 * brief     : GBuffer用のrender_target_viewのセット
+		 * ※caution : depth_stencil_viewは全てのGBufferで共通のものを使用する
+		 */
+		void BindRTV();
+		/*
+		 * brief     : セットされているrender_target_viewのdepth_stencil_viewを
+		 *			   "default" render_target_viewにセット
+		 */
+		void UnbindRTV();
+
+		/*
+		 * brief : GBuffer用シェーダーのセット
+		 */
+		void BindShader() const;
+		/*
+		 * brief : GBuffer用シェーダーのリセット
+		 */
+		void UnbindShader() const;
+
+		/*
 		 * brief	 : GBufferのライティング用シェーダーのセット
 		 * ※caution : ピクセルシェーダーのみのセット
 		 */
@@ -62,7 +82,7 @@ namespace cumulonimbus::graphics::buffer
 		 * brief	: albedo_bufferテクスチャのバインド
 		 * slot番号 : TexSlot_BaseColorMap(20)
 		 */
-		void BindAlbedoTexture() const;
+		void BindColorTexture() const;
 		/*
 		 * brief	: normal_bufferテクスチャのバインド
 		 * slot番号 : TexSlot_NormalMap(21)
@@ -73,11 +93,6 @@ namespace cumulonimbus::graphics::buffer
 		 * slot番号 : TexSlot_Position(30)
 		 */
 		void BindPositionTexture() const;
-		/*
-		 * brief	: shader_slot_bufferテクスチャのバインド
-		 * slot番号 : TexSlot_ShaderSlot(31)
-		 */
-		void BindShaderSlotTexture() const;
 
 		/*
 		 * brief : GBufferテクスチャの個別のSRVのアンバインド
@@ -86,7 +101,7 @@ namespace cumulonimbus::graphics::buffer
 		 * brief	 : albedo_bufferテクスチャのアンバインド
 		* slot番号 : TexSlot_BaseColorMap(20)
 		 */
-		void UnbindAlbedoTexture() const;
+		void UnbindColorTexture() const;
 		/*
 		 * brief	: normal_bufferテクスチャのアンバインド
 		 * slot番号 : TexSlot_NormalMap(21)
@@ -97,19 +112,14 @@ namespace cumulonimbus::graphics::buffer
 		 * slot番号 : TexSlot_Position(30)
 		 */
 		void UnbindPositionTexture() const;
-		/*
-		 * brief	: shader_slot_bufferテクスチャのアンバインド
-		 * slot番号 : TexSlot_ShaderSlot(31)
-		 */
-		void UnbindShaderSlotTexture() const;
+
 
 		/*
 		 * brief : GBufferテクスチャのSRVのゲット
 		 */
-		[[nodiscard]] ID3D11ShaderResourceView** GetAlbedoBufferSRV_Address()		const;
+		[[nodiscard]] ID3D11ShaderResourceView** GetColorBufferSRV_Address()		const;
 		[[nodiscard]] ID3D11ShaderResourceView** GetPositionBufferSRV_Address()		const;
 		[[nodiscard]] ID3D11ShaderResourceView** GetNormalBufferSRV_Address()		const;
-		[[nodiscard]] ID3D11ShaderResourceView** GetShaderSlotBufferSRV_Address()   const;
 
 	private:
 		/*
@@ -119,15 +129,14 @@ namespace cumulonimbus::graphics::buffer
 		 *			   FrameBufferクラスのみのRenderTargetViewのセットだから
 		 */
 		// テクスチャ本来の色情報バッファ
-		std::unique_ptr<FrameBuffer> albedo_buffer	{ nullptr };
+		std::unique_ptr<FrameBuffer> color_buffer	{ nullptr };
 		// ワールド座標バッファ
 		std::unique_ptr<FrameBuffer> position_buffer{ nullptr };
 		// 法線情報バッファ
 		std::unique_ptr<FrameBuffer> normal_buffer	{ nullptr };
-		// シェーダースロット用バッファ
-		std::unique_ptr<FrameBuffer> shader_slot_buffer{ nullptr };
 
-		static constexpr u_int num_rtv = 4; // GBufferで使用するrender_target_viewの総数
+
+		static constexpr u_int num_rtv = 3; // GBufferで使用するrender_target_viewの総数
 
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> default_render_target_view{ nullptr };
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilView> default_depth_stencil_view{ nullptr };
@@ -141,25 +150,5 @@ namespace cumulonimbus::graphics::buffer
 		std::unique_ptr<shader_system::PixelShader>  g_buffer_ps{ nullptr };
 		// GBufferのライティング用シェーダー
 		std::unique_ptr<shader_system::PixelShader> g_buff_lighting_ps{ nullptr };
-
-		/*
-		 * brief     : GBuffer用のrender_target_viewのセット
-		 * ※caution : depth_stencil_viewは全てのGBufferで共通のものを使用する
-		 */
-		void BindRTV();
-		/*
-		 * brief     : セットされているrender_target_viewのdepth_stencil_viewを
-		 *			   "default" render_target_viewにセット
-		 */
-		void UnbindRTV();
-
-		/*
-		 * brief : GBuffer用シェーダーのセット
-		 */
-		void BindShader() const;
-		/*
-		 * brief : GBuffer用シェーダーのリセット
-		 */
-		void UnbindShader() const;
 	};
 } // cumulonimbus::graphics::buffer

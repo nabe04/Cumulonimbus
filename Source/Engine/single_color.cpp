@@ -12,14 +12,14 @@ namespace cumulonimbus
 		{
 			using namespace mapping::shader_filename;
 			vertex_shader = std::make_unique<shader_system::VertexShader>(vs::SingleColor_VS().c_str());
-			pixel_shader  = std::make_unique<shader_system::PixelShader>(ps::SingleColor_PS().c_str());
+			pixel_shader  = std::make_unique<shader_system::PixelShader>(ps::SampleShaderMTR_PS().c_str());
 		}
 	}
 
 	namespace shader_asset
 	{
-		SingleColorAsset::SingleColorAsset(u_int gbuff_shader_slot)
-			:ShaderAsset{ gbuff_shader_slot }
+		SingleColorAsset::SingleColorAsset()
+			:ShaderAsset{}
 		{
 			cb_single_color = std::make_unique<buffer::ConstantBuffer<SingleColorCB>>(locator::Locator::GetDx11Device()->device.Get());
 

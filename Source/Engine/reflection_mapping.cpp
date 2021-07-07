@@ -11,20 +11,20 @@ namespace cumulonimbus
 		{
 			using namespace mapping::shader_filename;
 			vertex_shader = std::make_unique<shader_system::VertexShader>(vs::ReflectionMapping_VS().c_str());
-			pixel_shader  = std::make_unique<shader_system::PixelShader>(ps::ReflectionMapping_PS().c_str());
+			pixel_shader  = std::make_unique<shader_system::PixelShader>(ps::ReflectionMappingMTR_PS().c_str());
 		}
 
 	} // shader_system
 
 	namespace shader_asset
 	{
-		ReflectionMappingAsset::ReflectionMappingAsset(u_int gbuff_shader_slot)
-			:ShaderAsset{ gbuff_shader_slot }
+		ReflectionMappingAsset::ReflectionMappingAsset()
+			:ShaderAsset{}
 		{
 
 		}
 	} // shader_asset
-	
+
 } // cumulonimbus
 
 namespace shader

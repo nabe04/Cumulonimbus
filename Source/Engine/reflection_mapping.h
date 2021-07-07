@@ -28,8 +28,7 @@ namespace cumulonimbus
 		class ReflectionMappingAsset final : public ShaderAsset
 		{
 		public:
-			explicit ReflectionMappingAsset(u_int gbuff_shader_slot);
-			explicit ReflectionMappingAsset()  = default;
+			explicit ReflectionMappingAsset();
 			~ReflectionMappingAsset() override = default;
 			
 			void BindCBuffer()	 override {}

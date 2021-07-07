@@ -14,10 +14,9 @@ namespace cumulonimbus::graphics::buffer
 		ID3D11Device* device = locator::Locator::GetDx11Device()->device.Get();
 		const float width    = locator::Locator::GetWindow()->Width();
 		const float height   = locator::Locator::GetWindow()->Height();
-		albedo_buffer	     = std::make_unique<FrameBuffer>(device, width, height, false, 1, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB	   , DXGI_FORMAT_R24G8_TYPELESS, true, false);
+		color_buffer = std::make_unique<FrameBuffer>(device, width, height, false, 1, DXGI_FORMAT_R8G8B8A8_UNORM	   , DXGI_FORMAT_R24G8_TYPELESS, true, false);
 		position_buffer      = std::make_unique<FrameBuffer>(device, width, height, false, 1, DXGI_FORMAT_R16G16B16A16_FLOAT, DXGI_FORMAT_R24G8_TYPELESS, true, false);
 		normal_buffer	     = std::make_unique<FrameBuffer>(device, width, height, false, 1, DXGI_FORMAT_R16G16B16A16_FLOAT, DXGI_FORMAT_R24G8_TYPELESS, true, false);
-		shader_slot_buffer	 = std::make_unique<FrameBuffer>(device, width, height, false, 1, DXGI_FORMAT_R16_FLOAT		   , DXGI_FORMAT_R24G8_TYPELESS, true, false);
 
 		//  GBuffer用シェーダーの作成
 		using namespace mapping::shader_filename;
@@ -35,10 +34,9 @@ namespace cumulonimbus::graphics::buffer
 		float clear_color[4] = { r,g,b,a };
 		// shader_slot_bufferのクリアカラーは白で固定する
 		const float clear_color_shader_slot[4] = { 0.f,0.f,0.f,0.f };
-		locator::Locator::GetDx11Device()->immediate_context->ClearRenderTargetView(albedo_buffer->GetRTV()		, clear_color);
+		locator::Locator::GetDx11Device()->immediate_context->ClearRenderTargetView(color_buffer->GetRTV()		, clear_color);
 		locator::Locator::GetDx11Device()->immediate_context->ClearRenderTargetView(position_buffer->GetRTV()	, clear_color);
 		locator::Locator::GetDx11Device()->immediate_context->ClearRenderTargetView(normal_buffer->GetRTV()		, clear_color);
-		locator::Locator::GetDx11Device()->immediate_context->ClearRenderTargetView(shader_slot_buffer->GetRTV(), clear_color_shader_slot);
 
 		// GBuffer用depth_stencil_viewのっクリア処置
 		locator::Locator::GetDx11Device()->immediate_context.Get()->ClearDepthStencilView(dsv_for_g_buffer.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1, 0);
@@ -66,7 +64,7 @@ namespace cumulonimbus::graphics::buffer
 		// albedoテクスチャ
 		locator::Locator::GetDx11Device()->BindShaderResource(
 												mapping::graphics::ShaderStage::PS,
-												albedo_buffer->GetRenderTargetSRV(),
+												color_buffer->GetRenderTargetSRV(),
 												TexSlot_BaseColorMap);
 		// normal_mapテクスチャ
 		locator::Locator::GetDx11Device()->BindShaderResource(
@@ -78,12 +76,6 @@ namespace cumulonimbus::graphics::buffer
 												mapping::graphics::ShaderStage::PS,
 												position_buffer->GetRenderTargetSRV(),
 												TexSlot_Position);
-
-		// shader_slotテクスチャ
-		locator::Locator::GetDx11Device()->BindShaderResource(
-												mapping::graphics::ShaderStage::PS,
-												shader_slot_buffer->GetRenderTargetSRV(),
-												TexSlot_ShaderSlot);
 	}
 
 	void GBuffer::UnbindGBufferTextures() const
@@ -106,11 +98,11 @@ namespace cumulonimbus::graphics::buffer
 												TexSlot_ShaderSlot);
 	}
 
-	void GBuffer::BindAlbedoTexture() const
+	void GBuffer::BindColorTexture() const
 	{
 		locator::Locator::GetDx11Device()->BindShaderResource(
 												mapping::graphics::ShaderStage::PS,
-												albedo_buffer->GetRenderTargetSRV(),
+												color_buffer->GetRenderTargetSRV(),
 												TexSlot_BaseColorMap);
 	}
 
@@ -130,15 +122,7 @@ namespace cumulonimbus::graphics::buffer
 												TexSlot_Position);
 	}
 
-	void GBuffer::BindShaderSlotTexture() const
-	{
-		locator::Locator::GetDx11Device()->BindShaderResource(
-												mapping::graphics::ShaderStage::PS,
-												shader_slot_buffer->GetRenderTargetSRV(),
-												TexSlot_ShaderSlot);
-	}
-
-	void GBuffer::UnbindAlbedoTexture() const
+	void GBuffer::UnbindColorTexture() const
 	{
 		locator::Locator::GetDx11Device()->UnbindShaderResource(
 												mapping::graphics::ShaderStage::PS,
@@ -159,16 +143,9 @@ namespace cumulonimbus::graphics::buffer
 												TexSlot_Position);
 	}
 
-	void GBuffer::UnbindShaderSlotTexture() const
+	ID3D11ShaderResourceView** GBuffer::GetColorBufferSRV_Address() const
 	{
-		locator::Locator::GetDx11Device()->UnbindShaderResource(
-												mapping::graphics::ShaderStage::PS,
-												TexSlot_ShaderSlot);
-	}
-
-	ID3D11ShaderResourceView** GBuffer::GetAlbedoBufferSRV_Address() const
-	{
-		return albedo_buffer->GetRenderTargetSRV();
+		return color_buffer->GetRenderTargetSRV();
 	}
 
 	ID3D11ShaderResourceView** GBuffer::GetPositionBufferSRV_Address() const
@@ -181,11 +158,6 @@ namespace cumulonimbus::graphics::buffer
 		return normal_buffer->GetRenderTargetSRV();
 	}
 
-	ID3D11ShaderResourceView** GBuffer::GetShaderSlotBufferSRV_Address() const
-	{
-		return shader_slot_buffer->GetRenderTargetSRV();
-	}
-
 	void GBuffer::BindRTV()
 	{
 		ID3D11DeviceContext* immediate_context = locator::Locator::GetDx11Device()->immediate_context.Get();
@@ -193,10 +165,9 @@ namespace cumulonimbus::graphics::buffer
 		immediate_context->OMGetRenderTargets(1, default_render_target_view.ReleaseAndGetAddressOf(), default_depth_stencil_view.ReleaseAndGetAddressOf());
 		ID3D11RenderTargetView* rtv[num_rtv] =
 		{
-			albedo_buffer->GetRTV(),
+			color_buffer->GetRTV(),
 			normal_buffer->GetRTV(),
 			position_buffer->GetRTV(),
-			shader_slot_buffer->GetRTV()
 		};
 
 		immediate_context->OMSetRenderTargets(num_rtv, rtv, dsv_for_g_buffer.Get());

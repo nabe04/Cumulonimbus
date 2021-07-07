@@ -59,7 +59,7 @@ struct PS_Input
 #endif // PIN_USE_TANGENT_VEC
 
 #if defined(PIN_USE_BINORMAL)
-	float3 binorma : BI_NORMAL;
+	float3 binormal : BI_NORMAL;
 #endif // PIN_USE_BINORMAL
 
 #if defined(PIN_USE_COLOR)
@@ -80,10 +80,9 @@ typedef PS_Input VS_OutPut;
 // for geometry buffer(gbuffer)
 struct PS_Output
 {
-    float4 albedo_color : SV_TARGET0;
+    float4 color        : SV_TARGET0;   // MRTのみの使用する場合はライティングされたを返す
     float4 normal       : SV_TARGET1;
     float4 position     : SV_TARGET2;
-    float  shader_slot  : SV_TARGET3;
 };
 
 
