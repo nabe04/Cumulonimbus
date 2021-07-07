@@ -6,14 +6,9 @@
 #include <wrl.h>
 #include <d3d11.h>
 #include <DirectXMath.h>
-using namespace DirectX;
 
 #include <cereal/cereal.hpp>
-#include <cereal/archives/binary.hpp>
-#include <cereal/types/string.hpp>
-#include <cereal/types/vector.hpp>
 
-#include "shader.h"
 #include "enum_state_map.h"
 
 class ModelData
@@ -78,11 +73,11 @@ public:
 
 	struct Vertex
 	{
-		XMFLOAT4 position{};
-		XMFLOAT3 normal{};
-		XMFLOAT2 tex{};		// UV coordinates
-		XMFLOAT4 bone_weight = { 1.0f,0.0f,0.0f,0.0f };
-		XMUINT4  bone_index = { 0,0,0,0 };
+		DirectX::XMFLOAT4 position{};
+		DirectX::XMFLOAT3 normal{};
+		DirectX::XMFLOAT2 tex{};		// UV coordinates
+		DirectX::XMFLOAT4 bone_weight = { 1.0f,0.0f,0.0f,0.0f };
+		DirectX::XMUINT4  bone_index = { 0,0,0,0 };
 
 		template<class Archive>
 		void serialize(Archive& archive, int version)
@@ -104,7 +99,7 @@ public:
 
 		int										material_count;
 		std::string								mesh_name;
-		
+
 		std::vector<Vertex>						vertices;
 		std::vector<UINT>						indices;
 		std::vector<Subset>						subsets;

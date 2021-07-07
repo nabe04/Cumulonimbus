@@ -23,6 +23,7 @@ namespace cumulonimbus::manager::texture
 		CreateTexture(device, texture_filename::Coffee256().c_str());
 		CreateTexture(device, texture_filename::UvChecker().c_str());
 		CreateTexture(device, texture_filename::DefaultNormalMap().c_str());
+		CreateTexture(device, texture_filename::White8x8Map().c_str());
 		CreateTexture(device, texture_filename::GanfaulNormalMap().c_str());
 	}
 

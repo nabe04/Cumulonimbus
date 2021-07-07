@@ -182,7 +182,7 @@ namespace cumulonimbus::renderer
 	void RenderPath::Render3DToGBuffer_Begin(ID3D11DeviceContext* immediate_context) const
 	{
 		// GBuffer用RTVのクリア
-		g_buffer->Clear();
+		g_buffer->Clear(0, 0, 0, 0);
 		// GBuffer用のシェーダーとRTVのセット
 		g_buffer->BindShaderAndRTV();
 	}
@@ -505,7 +505,8 @@ namespace cumulonimbus::renderer
 					// GBuffer用shader_slot(ライティングの変更)のセット
 					model.GetMaterialsManager(subset.material_index)->BindGBuffShaderSlot();
 					// シェーダーが持つテクスチャのセット
-					model.GetMaterialsManager(subset.material_index)->BindTexture();
+					//model.GetMaterialsManager(subset.material_index)->BindTexture();
+					model.BindPBRMaterialCBuffAndTexture(subset.material_index);
 				}
 				else if(!is_use_shadow)
 				{// メッシュ単位でのマテリアル適応
@@ -533,7 +534,8 @@ namespace cumulonimbus::renderer
 				if (is_use_gbuffer)
 				{
 					model.GetMaterialsManager(subset.material_index)->UnbindGBuffShaderSlot();
-					model.GetMaterialsManager(subset.material_index)->UnbindCBuffer();
+					//model.GetMaterialsManager(subset.material_index)->UnbindCBuffer();
+					model.UnbindPBRMaterialCBuffAndTexture(subset.material_index);
 				}
 				else if(!is_use_shadow)
 				{

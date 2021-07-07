@@ -10,7 +10,9 @@
 #include "ecs.h"
 #include "fbx_model_resource.h"
 #include "locator.h"
+#include "material3d_manager.h"
 #include "mesh_object.h"
+#include "pbr_material.h"
 
 #include "shader_manager.h"
 #include "transform_component.h"
@@ -25,6 +27,7 @@ namespace cumulonimbus::component
 		// モデルのマテリアル数分作成
 		for (int i = 0; i < resource->GetModelData().materials.size(); ++i)
 		{
+			pbr_materials.emplace_back(std::make_shared<shader_asset::PBRMaterial>());
 			materials_manager.emplace_back(std::make_shared<shader_asset::Material3DManager>());
 		}
 
@@ -163,6 +166,46 @@ namespace cumulonimbus::component
 
 			ImGui::TreePop();
 		}
+	}
+
+	const shader_asset::Material3DManager* FbxModelComponent::GetMaterialsManager(uint material_index) const
+	{
+		return materials_manager.at(material_index).get();
+	}
+
+	const shader_asset::PBRMaterial* FbxModelComponent::GetPBRMaterial(uint material_index) const
+	{
+		return pbr_materials.at(material_index).get();
+	}
+
+	void FbxModelComponent::BindPBRMaterialCBuff(uint material_index) const
+	{
+		pbr_materials.at(material_index)->BindCBuffer();
+	}
+
+	void FbxModelComponent::UnbindPBRMaterialCBuff(uint material_index) const
+	{
+		pbr_materials.at(material_index)->UnbindCBuffer();
+	}
+
+	void FbxModelComponent::BindPBRMaterialTexture(uint material_index) const
+	{
+		pbr_materials.at(material_index)->BindTexture();
+	}
+
+	void FbxModelComponent::UnbindPBRMaterialTexture(uint material_index) const
+	{
+		pbr_materials.at(material_index)->UnbindTexture();
+	}
+
+	void FbxModelComponent::BindPBRMaterialCBuffAndTexture(uint material_index) const
+	{
+		pbr_materials.at(material_index)->BindCBufferAndTexture();
+	}
+
+	void FbxModelComponent::UnbindPBRMaterialCBuffAndTexture(uint material_index) const
+	{
+		pbr_materials.at(material_index)->UnbindCBufferAndTexture();
 	}
 
 	void FbxModelComponent::Initialize(const std::shared_ptr<FbxModelResource>& resource)

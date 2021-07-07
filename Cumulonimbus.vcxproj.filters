@@ -456,6 +456,9 @@
     <ClCompile Include="Source\Engine\refraction_mapping.cpp">
       <Filter>Source\Shader%28.cpp%29</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\pbr_material.cpp">
+      <Filter>Source\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -827,6 +830,9 @@
     <ClInclude Include="Source\Engine\gbuffer.h">
       <Filter>Header\System</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\pbr_material.h">
+      <Filter>Header\System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Cumulonimbus.rc" />
@@ -879,6 +885,12 @@
       <Filter>Shader%28HLSL%29\HF</Filter>
     </None>
     <None Include="Shader\toon.hlsli">
+      <Filter>Shader%28HLSL%29\HF</Filter>
+    </None>
+    <None Include="Shader\functions_utility.hlsli">
+      <Filter>Shader%28HLSL%29\HF</Filter>
+    </None>
+    <None Include="Shader\functions_lighting.hlsli">
       <Filter>Shader%28HLSL%29\HF</Filter>
     </None>
   </ItemGroup>

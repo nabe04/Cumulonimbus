@@ -5,6 +5,9 @@
 
 namespace cumulonimbus::mapping::shader_assets
 {
+	/*
+	 * ※caution : Shaderを増減した場合は下のマクロの値も変更する
+	 */
 	enum class ShaderAsset3D : int
 	{
 		Standard,
@@ -34,14 +37,14 @@ namespace cumulonimbus::mapping::shader_assets
  * brief : GBufferのShaderSlot用マクロ
  *		   enum class ShaderAsset3Dに合わせる
  */
-#define ShaderSlot_Standard				static_cast<int>(cumulonimbus::mapping::shader_assets::ShaderAsset3D::Standard)				+ 1
-#define ShaderSlot_SampleShader			static_cast<int>(cumulonimbus::mapping::shader_assets::ShaderAsset3D::SampleShader)			+ 1
-#define ShaderSlot_Diffuse				static_cast<int>(cumulonimbus::mapping::shader_assets::ShaderAsset3D::Diffuse)				+ 1
-#define ShaderSlot_Phong				static_cast<int>(cumulonimbus::mapping::shader_assets::ShaderAsset3D::Phong)				+ 1
-#define ShaderSlot_Metal				static_cast<int>(cumulonimbus::mapping::shader_assets::ShaderAsset3D::Metal)				+ 1
-#define ShaderSlot_Toon					static_cast<int>(cumulonimbus::mapping::shader_assets::ShaderAsset3D::Toon)					+ 1
-#define ShaderSlot_ReflectionMapping	static_cast<int>(cumulonimbus::mapping::shader_assets::ShaderAsset3D::ReflectionMapping)	+ 1
-#define ShaderSlot_RefractionMapping	static_cast<int>(cumulonimbus::mapping::shader_assets::ShaderAsset3D::RefractionMapping)	+ 1
-#define ShaderSlot_SingleColor			static_cast<int>(cumulonimbus::mapping::shader_assets::ShaderAsset3D::SingleColor)			+ 1
+#define ShaderSlot_Standard				1
+#define ShaderSlot_SampleShader			2
+#define ShaderSlot_Diffuse				3
+#define ShaderSlot_Phong				4
+#define ShaderSlot_Metal				5
+#define ShaderSlot_Toon					6
+#define ShaderSlot_ReflectionMapping	7
+#define ShaderSlot_RefractionMapping	8
+#define ShaderSlot_SingleColor			9
 
 #endif // SHADER_ASSET_MAPPING_H

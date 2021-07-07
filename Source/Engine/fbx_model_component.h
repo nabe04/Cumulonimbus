@@ -11,8 +11,6 @@
 #include <cereal/types/polymorphic.hpp>
 
 #include "component_base.h"
-#include "constant_buffer.h"
-#include "locator.h"
 #include "model_data.h"
 #include "rename_type_mapping.h"
 #include "shader_interop_renderer.h"
@@ -20,11 +18,20 @@
 
 class FbxModelResource;
 
-namespace shader
+//namespace shader
+//{
+//	class MeshShaderState;
+//	enum class MeshShaderTypes;
+//} // shader
+
+namespace cumulonimbus
 {
-	class MeshShaderState;
-	enum class MeshShaderTypes;
-}
+	namespace shader_asset
+	{
+		class Material3DManager;
+		class PBRMaterial;
+	} // shader_asset
+} // cumulonimbus
 
 enum class FbxAnimationState
 {
@@ -77,7 +84,39 @@ namespace cumulonimbus::component
 		 * brief			: 指定された要素のマテリアル情報(シェーダー、シェーダーパラメータ、テクスチャ)の取得
 		 * material_index   : メッシュのsubsetが持つmaterial_indexを指定
 		 */
-		[[nodiscard]] const shader_asset::Material3DManager* GetMaterialsManager(uint material_index) const { return materials_manager.at(material_index).get(); }
+		[[nodiscard]] const shader_asset::Material3DManager* GetMaterialsManager(uint material_index) const;
+		/*
+		 * brief			: 指定されて要素のPBRマテリアル情報の取得
+		 * material_index   : メッシュのsubsetが持つmaterial_indexを指定
+		 */
+		[[nodiscard]] const shader_asset::PBRMaterial* GetPBRMaterial(uint material_index) const;
+
+		/*
+		 * brief			: 指定された要素のPBRマテリアルの持つコンスタントバッファのバインド
+		 * material_index	: メッシュのsubsetが持つmaterial_index
+		 * slot番号			: CBSlot_Material(4)
+		 */
+		void BindPBRMaterialCBuff(uint material_index) const;
+		void UnbindPBRMaterialCBuff(uint material_index) const;
+		/*
+		 * brief			: 指定された要素のPBRマテリアルの持つテクスチャのバインド
+		 * material_index	: メッシュのsubsetが持つmaterial_index
+		 * slot番号			: TexSlot_BaseColorMap(20)
+		 *					  TexSlot_NormalMap(21)
+		 *					  TexSlot_PBRMap(32)
+		 *					  TexSlot_RoughnessMap(27)
+		 *					  TexSlot_SpecularMap(28)
+		 *					  TexSlot_AOMap(33)
+		 */
+		void BindPBRMaterialTexture(uint material_index) const;
+		void UnbindPBRMaterialTexture(uint material_index) const;
+		/*
+		 * brief			:  指定された要素のPBRマテリアルの持つ
+		 *					   コンスタントバッファ、テクスチャのバインド
+		 * material_index	: メッシュのsubsetが持つmaterial_index
+		 */
+		void BindPBRMaterialCBuffAndTexture(uint material_index) const;
+		void UnbindPBRMaterialCBuffAndTexture(uint material_index) const;
 
 		// アニメーション
 		[[nodiscard]] bool IsPlayAnimation() const { return current_animation_index >= 0; }
@@ -137,7 +176,8 @@ namespace cumulonimbus::component
 		std::shared_ptr<FbxModelResource>	resource{nullptr};
 		std::vector<Node>					nodes{};
 
-		std::vector<std::shared_ptr<shader_asset::Material3DManager>> materials_manager; // mesh単位でマテリアル(テクスチャなど)を変更できるように
+		std::vector <std::shared_ptr<shader_asset::PBRMaterial>>		pbr_materials;	   // mesh単位でマテリアル(テクスチャなど)を変更できるように
+		std::vector<std::shared_ptr<shader_asset::Material3DManager>>	materials_manager; // mesh単位でマテリアル(テクスチャなど)を変更できるように
 
 		int	current_animation_index = -1;
 		int	prev_animation_index	= -1;	// 前のアニメーションのインデックス番号(ブレンドで使用)
@@ -172,7 +212,7 @@ namespace cumulonimbus::component
 		void BlendNextAnimation(float elapsedTime);
 		void UpdateAnimation(float elapsedTime);
 	};
-}
+} // cumulonimbus::component
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::FbxModelComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::FbxModelComponent)

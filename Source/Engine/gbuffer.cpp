@@ -14,7 +14,7 @@ namespace cumulonimbus::graphics::buffer
 		ID3D11Device* device = locator::Locator::GetDx11Device()->device.Get();
 		const float width    = locator::Locator::GetWindow()->Width();
 		const float height   = locator::Locator::GetWindow()->Height();
-		albedo_buffer	     = std::make_unique<FrameBuffer>(device, width, height, false, 1, DXGI_FORMAT_R8G8B8A8_UNORM	   , DXGI_FORMAT_R24G8_TYPELESS, true, false);
+		albedo_buffer	     = std::make_unique<FrameBuffer>(device, width, height, false, 1, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB	   , DXGI_FORMAT_R24G8_TYPELESS, true, false);
 		position_buffer      = std::make_unique<FrameBuffer>(device, width, height, false, 1, DXGI_FORMAT_R16G16B16A16_FLOAT, DXGI_FORMAT_R24G8_TYPELESS, true, false);
 		normal_buffer	     = std::make_unique<FrameBuffer>(device, width, height, false, 1, DXGI_FORMAT_R16G16B16A16_FLOAT, DXGI_FORMAT_R24G8_TYPELESS, true, false);
 		shader_slot_buffer	 = std::make_unique<FrameBuffer>(device, width, height, false, 1, DXGI_FORMAT_R16_FLOAT		   , DXGI_FORMAT_R24G8_TYPELESS, true, false);
@@ -25,7 +25,7 @@ namespace cumulonimbus::graphics::buffer
 		g_buffer_ps = std::make_unique<shader_system::PixelShader>(ps::GBuffer_PS().c_str());
 		// GBufferのライティング用シェーダーの作成
 		g_buff_lighting_ps = std::make_unique<shader_system::PixelShader>(ps::GBufferLighting_PS().c_str());
-		
+
 		// GBuffer用dsv,srvの作成
 		locator::Locator::GetDx11Device()->CreateDepthStencilView(dsv_for_g_buffer, srv_for_g_buffer, width, height);
 	}

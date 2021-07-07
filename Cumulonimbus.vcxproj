@@ -86,6 +86,7 @@
     <ClInclude Include="Source\Engine\Misc.h" />
     <ClInclude Include="Source\Engine\model_data.h" />
     <ClInclude Include="Source\Engine\model_render.h" />
+    <ClInclude Include="Source\Engine\pbr_material.h" />
     <ClInclude Include="Source\Engine\pch.h" />
     <ClInclude Include="Source\Engine\phong.h" />
     <ClInclude Include="Source\Engine\pixel_shader.h" />
@@ -200,6 +201,7 @@
     <ClCompile Include="Source\Engine\metal.cpp" />
     <ClCompile Include="Source\Engine\model_data.cpp" />
     <ClCompile Include="Source\Engine\model_render.cpp" />
+    <ClCompile Include="Source\Engine\pbr_material.cpp" />
     <ClCompile Include="Source\Engine\pch.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -261,6 +263,7 @@
     <None Include="Shader\cook_torrance.hlsli" />
     <None Include="Shader\diffuse.hlsli" />
     <None Include="Shader\functions.hlsli" />
+    <None Include="Shader\functions_lighting.hlsli" />
     <None Include="Shader\general.hlsli" />
     <None Include="Shader\globals.hlsli" />
     <None Include="Shader\monochrome.hlsli" />
@@ -273,6 +276,7 @@
     <None Include="Shader\spot_light.hlsli" />
     <None Include="Shader\sprite2d.hlsli" />
     <None Include="Shader\toon.hlsli" />
+    <None Include="Shader\functions_utility.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\3d_standard_ps.hlsl">

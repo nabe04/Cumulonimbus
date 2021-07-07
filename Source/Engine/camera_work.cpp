@@ -125,7 +125,7 @@ void CameraWork::Pan(const float velocity)
 {
 	// クォータニオン Ver
 	DirectX::SimpleMath::Quaternion q{};
-	q = SimpleMath::Quaternion::Identity;
+	q = DirectX::SimpleMath::Quaternion::Identity;
 	q.Normalize();
 	q = q.CreateFromAxisAngle(up_vec, DirectX::XMConvertToRadians(velocity * camera_velocity.x * 0.1f));
 	front_vec = DirectX::SimpleMath::Vector3::Transform(front_vec, q);
@@ -144,7 +144,7 @@ void CameraWork::Tilt(const float velocity)
 {
 	// クォータニオン Ver
 	DirectX::SimpleMath::Quaternion q{};
-	q = SimpleMath::Quaternion::Identity;
+	q = DirectX::SimpleMath::Quaternion::Identity;
 	q.Normalize();
 	q = q.CreateFromAxisAngle(right_vec, DirectX::XMConvertToRadians(velocity * camera_velocity.y * 0.1f));
 	front_vec = DirectX::SimpleMath::Vector3::Transform(front_vec, q);

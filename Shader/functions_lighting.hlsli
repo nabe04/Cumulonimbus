@@ -1,14 +1,15 @@
-// TODO: functionsをutility_functionとlighting_functionに変更すれば消す
+#ifndef FUNCTIONS_LIGHTING_SHF
+#define FUNCTIONS_LIGHTING_SHF
 
 //--------------------------------------
 // Diffuse reflecton function
 //--------------------------------------
-// N : Normals (normalized)
-// L : Incident vector (normalized)
-// C : Incident light (color・intensity)
-// K : Reflectance (0 ～ 1.0f)
+// N : 法線(正規化済み)
+// L : 入射ベクトル(正規化済み)
+// C : 入射光(色・強さ)
+// K : 反射率
 //---------------------------------------
-float3 Diffuse(float3 N,float3 L,float3 C,float3 K)
+float3 Diffuse(float3 N, float3 L, float3 C, float3 K)
 {
     float D = dot(N, -L);
     D = max(0, D);
@@ -71,10 +72,11 @@ float3 PhongSpecular(float3 N, float3 L, float3 E, float S, float K, float power
 // m  : Roughness
 // NH : dot (Normal * Harf vector)
 //---------------------------------------------
-float Beckmann (float m,float NH)
+float Beckmann(float m, float NH)
 {
     float NH2 = NH * NH;
-    
+
     return exp(-(1 - NH2) / (NH2 * m * m)) / (4 * m * m * NH2 * NH2);
 }
 
+#endif // FUNCTIONS_LIGHTING_SHF

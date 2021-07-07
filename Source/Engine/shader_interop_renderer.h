@@ -2,6 +2,8 @@
 #define SHADER_INTEROP_RENDERER_H
 
 #ifdef __cplusplus
+	#include<string>
+
 	#include <cereal/cereal.hpp>
 
 	#include "cereal_helper.h"
@@ -19,7 +21,7 @@ struct ShaderMaterial
 	float roughness;
 	float reflectance;
 	float metalness;
-	float material_padding;
+	int   material_use_custom; // 0 : 既存のテクスチャを使用, 1 : 本構造体のパラメータを使用
 
 #ifdef __cplusplus
 	template<typename Archive>
@@ -36,6 +38,19 @@ struct ShaderMaterial
 
 #endif // __cplusplus
 };
+
+//#ifdef __cplusplus
+//	struct MaterialFilename
+//	{
+//		std::string albedo_color_filename;
+//		std::string emissive_color_filename;
+//
+//		std::string roughness_map_filename;
+//		std::string reflectance_map_filename;
+//		std::string metalness_map_filename;
+//	};
+//
+//#endif // __cplusplus
 
 // 共通のコンスタントバッファ
 // slot 0 (b0)

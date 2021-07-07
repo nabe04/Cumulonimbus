@@ -45,7 +45,7 @@
 //       float roughness;               // Offset:   32
 //       float reflectance;             // Offset:   36
 //       float metalness;               // Offset:   40
-//       float material_padding;        // Offset:   44
+//       int material_use_custom;       // Offset:   44
 //
 //   } material;                        // Offset:    0 Size:    48
 //

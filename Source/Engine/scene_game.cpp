@@ -128,7 +128,6 @@ void SceneGame::InitializeScene()
 	registry->GetComponent<cum::component::TransformComponent>(ent_robo).SetWorldRotation_Y(180);
 	registry->GetComponent<cum::component::MeshObjectComponent>(ent_robo).SetRasterizerState(RasterizeState::Cull_Front_CCW_True);
 	registry->GetComponent<cum::component::FbxModelComponent>(ent_robo).SwitchAnimation(0, true);
-
 }
 
 void SceneGame::UpdateScene(const float delta_time)

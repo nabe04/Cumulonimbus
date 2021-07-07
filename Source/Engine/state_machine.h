@@ -5,9 +5,6 @@
 #include <map>
 
 #include <cereal/cereal.hpp>
-#include <cereal/types/map.hpp>
-#include <cereal/types/string.hpp>
-#include <cereal/types/functional.hpp>
 
 // brief : State Machine
 // Key	 : State Key

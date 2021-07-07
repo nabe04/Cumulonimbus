@@ -133,10 +133,10 @@ mov r2.xyzw, r2.xyzw  // r2.x <- pout.position.x; r2.y <- pout.position.y; r2.z 
 mov r0.xyz, r0.xyzx  // r0.x <- pout.normal.x; r0.y <- pout.normal.y; r0.z <- pout.normal.z
 mov r0.w, l(1.000000)  // r0.w <- pout.normal.w
 
-#line 38
+#line 37
 itof r3.x, cb5[0].x  // r3.x <- pout.shader_slot
 
-#line 40
+#line 39
 mov o0.xyzw, r1.xyzw
 mov o1.xyzw, r0.xyzw
 mov o2.xyzw, r2.xyzw

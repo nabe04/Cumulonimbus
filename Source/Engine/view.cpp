@@ -2,7 +2,6 @@
 
 #include <cassert>
 #include <cmath>
-
 #include <wrl.h>
 
 #include <imgui.h>
@@ -11,7 +10,7 @@
 #include "framework.h"
 #include "locator.h"
 #include "camera_work.h"
-
+using namespace DirectX;
 
 View::View()
 {
@@ -147,7 +146,7 @@ void View::WriteImGui()
 	if (ImGui::CollapsingHeader("Camera"))
 	{
 		auto& camera = cb_camera->data;
-		
+
 		ImGui::Checkbox("Debug", &is_debug_camera);
 
 		ImGui::Text("Camera Pos X %f"	, camera.camera_position.x);
