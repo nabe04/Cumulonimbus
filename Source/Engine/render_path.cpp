@@ -307,7 +307,7 @@ namespace cumulonimbus::renderer
 		g_buffer->UnbindRTV();
 		off_screen->Activate(immediate_context);
 		g_buffer->BindColorTexture();
-		Blit(immediate_context);
+		fullscreen_quad->Blit(immediate_context, true, true, true);
 		off_screen->Deactivate(immediate_context);
 
 		locator::Locator::GetDx11Device()->UnbindShaderResource(mapping::graphics::ShaderStage::PS, 0);
