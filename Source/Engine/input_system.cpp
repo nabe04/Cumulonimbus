@@ -131,8 +131,21 @@ const DirectX::XMFLOAT2 GamePadState::LeftThumbStick(const int index) const
 {
     if (index >= DirectX::GamePad::MAX_PLAYER_COUNT)
         assert(!"The registration limit on the gamepad has been exceeded");
-
     return DirectX::XMFLOAT2{ states.at(index).thumbSticks.leftX,states.at(index).thumbSticks.leftY };
+}
+
+const float GamePadState::RightTrigger(const int index) const
+{
+    if (index >= DirectX::GamePad::MAX_PLAYER_COUNT)
+        assert(!"The registration limit on the gamepad has been exceeded");
+    return states.at(index).triggers.right;
+}
+
+const float GamePadState::LeftTrigger(const int index) const
+{
+    if (index >= DirectX::GamePad::MAX_PLAYER_COUNT)
+        assert(!"The registration limit on the gamepad has been exceeded");
+    return states.at(index).triggers.left;
 }
 
 #pragma endregion GamePad

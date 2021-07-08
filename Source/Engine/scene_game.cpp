@@ -11,6 +11,7 @@
 #include "sky_box.h"
 #include "mesh_object.h"
 #include "anim_sprite.h"
+#include "player_component.h"
 
 #include "transform_component.h"
 
@@ -110,24 +111,39 @@ void SceneGame::InitializeScene()
 	//registry->AddComponent<cum::component::FbxModelComponent>(ent_bunny, cum::locator::Locator::GetResourceManager()->FbxModelResouece("stanford_bunny"));
 	//registry->GetComponent<cum::component::TransformComponent>(ent_bunny).SetScale(0.1f);
 
+	// ‚±‚±‚©‚ç
+	//const cum::mapping::rename_type::Entity ent_ganfaul = registry->CreateEntity();
+	//registry->AddComponent<cum::component::MeshObjectComponent>(ent_ganfaul);
+	//registry->AddComponent<cum::component::FbxModelComponent>(ent_ganfaul, cum::locator::Locator::GetResourceManager()->FbxModelResouece("ganfaul"));
+	//registry->GetComponent<cum::component::TransformComponent>(ent_ganfaul).SetScale(0.3f);
+	////registry->GetComponent<cum::component::TransformComponent>(ent_player).SetPosition({ 0, -20, 0 });
+	//registry->GetComponent<cum::component::TransformComponent>(ent_ganfaul).SetPosition({ 30, 10, 0 });
+	//registry->GetComponent<cum::component::TransformComponent>(ent_ganfaul).SetWorldRotation_Y(180);
+	//registry->GetComponent<cum::component::MeshObjectComponent>(ent_ganfaul).SetRasterizerState(RasterizeState::Cull_Front_CCW_True);
+	//registry->GetComponent<cum::component::FbxModelComponent>(ent_ganfaul).SwitchAnimation(2, true);
+
 	const cum::mapping::rename_type::Entity ent_player = registry->CreateEntity();
 	registry->AddComponent<cum::component::MeshObjectComponent>(ent_player);
-	registry->AddComponent<cum::component::FbxModelComponent>(ent_player, cum::locator::Locator::GetResourceManager()->FbxModelResouece("ganfaul"));
+	registry->AddComponent<cum::component::PlayerComponent>(ent_player);
+	registry->AddComponent<cum::component::FbxModelComponent>(ent_player, cum::locator::Locator::GetResourceManager()->FbxModelResouece("Robo_L"));
 	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetScale(0.3f);
-	//registry->GetComponent<cum::component::TransformComponent>(ent_player).SetPosition({ 0, -20, 0 });
-	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetPosition({ 30, 10, 0 });
+	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetPosition({ -30, 10, 0 });
 	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetWorldRotation_Y(180);
 	registry->GetComponent<cum::component::MeshObjectComponent>(ent_player).SetRasterizerState(RasterizeState::Cull_Front_CCW_True);
-	registry->GetComponent<cum::component::FbxModelComponent>(ent_player).SwitchAnimation(2, true);
+	registry->GetComponent<cum::component::FbxModelComponent>(ent_player).SwitchAnimation(4, true);
 
-	const cum::mapping::rename_type::Entity ent_robo = registry->CreateEntity();
-	registry->AddComponent<cum::component::MeshObjectComponent>(ent_robo);
-	registry->AddComponent<cum::component::FbxModelComponent>(ent_robo, cum::locator::Locator::GetResourceManager()->FbxModelResouece("Robo_L"));
-	registry->GetComponent<cum::component::TransformComponent>(ent_robo).SetScale(0.3f);
-	registry->GetComponent<cum::component::TransformComponent>(ent_robo).SetPosition({ -30, 10, 0 });
-	registry->GetComponent<cum::component::TransformComponent>(ent_robo).SetWorldRotation_Y(180);
-	registry->GetComponent<cum::component::MeshObjectComponent>(ent_robo).SetRasterizerState(RasterizeState::Cull_Front_CCW_True);
-	registry->GetComponent<cum::component::FbxModelComponent>(ent_robo).SwitchAnimation(0, true);
+	////TestRobo_L_Normal
+	//const cum::mapping::rename_type::Entity ent_test = registry->CreateEntity();
+	//registry->AddComponent<cum::component::MeshObjectComponent>(ent_test);
+	//registry->AddComponent<cum::component::PlayerComponent>(ent_test);
+	//registry->AddComponent<cum::component::FbxModelComponent>(ent_test, cum::locator::Locator::GetResourceManager()->FbxModelResouece("TestRobo_L_Mirror"));
+	//registry->GetComponent<cum::component::TransformComponent>(ent_test).SetScale(0.3f);
+	//registry->GetComponent<cum::component::TransformComponent>(ent_test).SetPosition({ -30, 10, 0 });
+	//registry->GetComponent<cum::component::TransformComponent>(ent_test).SetWorldRotation_Y(180);
+	//registry->GetComponent<cum::component::MeshObjectComponent>(ent_test).SetRasterizerState(RasterizeState::Cull_Front_CCW_True);
+	//registry->GetComponent<cum::component::FbxModelComponent>(ent_test).SwitchAnimation(1, true);
+
+
 }
 
 void SceneGame::UpdateScene(const float delta_time)

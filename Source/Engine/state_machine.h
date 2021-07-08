@@ -42,6 +42,10 @@ public:
 
 	Key GetState() { return current_state; }
 	Key GetOldState() { return old_state; }
+
+	/*
+	 * brief : State‚ªØ‚è‘Ö‚í‚Á‚½‚Ì‰‚ß‚ÌƒtƒŒ[ƒ€‚Ì‚İ“ü‚éˆ—
+	 */
 	bool GetInitialize()
 	{
 		if (!is_switched) return false;

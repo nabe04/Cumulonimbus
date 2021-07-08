@@ -1,6 +1,6 @@
 #include <Windows.h>
 #include <memory>
-#include <assert.h>
+#include <cassert>
 #include "locator.h"
 #include <tchar.h>
 

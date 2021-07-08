@@ -4,6 +4,7 @@
 
 #include "component_base.h"
 #include "state_machine.h"
+#include "enum_state_map.h"
 
 namespace cumulonimbus::component
 {
@@ -13,15 +14,18 @@ namespace cumulonimbus::component
 		// プレイヤーの状態を表す
 		enum class PlayerState
 		{
-			Stay,
+			T_Pose,
+			Idle,
+			Walk,
 			Run,
 			Evasion,
-			Attack01,
-			Attack02,
-			Attack03,
+			Attack_01,
+			Attack_02,
+			Attack_03,
+			Run_Attack,
 			Damage,
-			Counter,
-			Death,
+			Revenge_Guard,
+			Die,
 
 			End
 		};
@@ -29,7 +33,25 @@ namespace cumulonimbus::component
 		// FBXが持つアニメーションデータ
 		enum class AnimationState
 		{
+			T_Pose,
+			Idle,
+			Walk_Front,
+			Walk_Back,
+			Attack_01,
+			Attack_02,
+			Attack_03,
+			Run,
+			Run_Attack,
+			Damage,
+			Die,
+			Die_Loop,
+			Revenge_Guard_Start,
+			Revenge_Guard_Loop,
+			Revenge_Guard_End,
+			Evade_Front,
+			Evade_Back,
 
+			End
 		};
 
 	public:
@@ -46,15 +68,23 @@ namespace cumulonimbus::component
 	private:
 		StateMachine<PlayerState, void, const float> player_state{};
 
+		// パッド入力のデッドゾーン値
+		float threshold = 0.05f;
+
+		[[nodiscard]] int GetAnimStateIndex(AnimationState anim_state) const;
+
 		// StateMachineで管理するプレイヤーの状態関数
-		void Stay(float dt);
+		void TPose(float dt);
+		void Idle(float dt);
+		void Walk(float dt);
 		void Run(float dt);
-		void Evasinon(float dt);
+		void RunAttack(float dt);
+		void Damage(float dt);
+		void Evasion(float dt);
 		void Attack01(float dt);
 		void Attack02(float dt);
 		void Attack03(float dt);
-		void Damage(float dt);
-		void Counter(float dt);
+		void RevengeGuard(float dt);
 		void Death(float dt);
 	};
 } // cumulonimbus::component

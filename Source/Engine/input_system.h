@@ -197,6 +197,9 @@ public:
     [[nodiscard]] const DirectX::XMFLOAT2 RightThumbStick(const int index) const;
     [[nodiscard]] const DirectX::XMFLOAT2 LeftThumbStick(const int index) const;
 
+    [[nodiscard]] const float RightTrigger(const int index) const;
+    [[nodiscard]] const float LeftTrigger(const int index) const;
+
 public:
     using Bitset = std::bitset<static_cast<size_t>(GamePadButton::End)>;
 

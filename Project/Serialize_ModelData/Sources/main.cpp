@@ -39,10 +39,27 @@ int main()
 	BulidFBX robot_fbx("../../Data/Assets/FBX/Robot/Robo_L.fbx");
 	robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Idle_ver_B.fbx");
 	robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Walk_ver_B_Front.fbx");
+	robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Walk_ver_B_Back.fbx");
 	robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Attack_3Combo_1.fbx");
-	
+	robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Attack_3Combo_2.fbx");
+	robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Attack_3Combo_3.fbx");
+	robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Run_ver_B.fbx");
+	robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Dash_Attack_ver_B.fbx");
+	robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Damage_Front_Big_ver_A.fbx");
+	robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Damage_Die.fbx");
+	robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Damage_Die_Loop.fbx");
+	robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Revenge_Guard_Start.fbx");
+	robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Revenge_Guard_Loop.fbx");
+	robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Revenge_Guard_End.fbx");
+	robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Evade_Front.fbx");
+	robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Evade_Back.fbx");
+
 	robot_fbx.Export("../../Data/Assets/Bin/Robo_L.bin");
 
+	////-- Robot Test--//
+	//BulidFBX robot_fbx("../../Data/Assets/FBX/Robot/Robo_L.fbx");
+	//robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/TestAnimations/Mirror/Attack_3Combo_1_mirror.fbx");
+	//robot_fbx.Export("../../Data/Assets/Bin/TestRobo_L_Mirror.bin");
 
 	//-- Cube --//
 	//BulidFBX cube("../../Data/Assets/FBX/Geometric_Primitive/Cube.fbx");

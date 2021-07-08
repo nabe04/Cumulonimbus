@@ -23,11 +23,11 @@ namespace cumulonimbus::locator
 		}
 		~Locator() = default;
 
-		static InputSystem* GetInput() { return input.get(); }
+		static InputSystem*		GetInput() { return input.get(); }
 		static ResourceManager* GetResourceManager() { return resource_manager.get(); }
 		static manager::texture::TextureResourceManager* GetTextureResourceManager() { return texture_resource_manager.get(); }
-		static Window* GetWindow() { return window.get(); }
-		static Dx11Device* GetDx11Device() { return dx11_configurator.get(); }
+		static Window*			GetWindow() { return window.get(); }
+		static Dx11Device*		GetDx11Device() { return dx11_configurator.get(); }
 
 		template<class T>
 		static void Provide(const std::shared_ptr<T>& s)
