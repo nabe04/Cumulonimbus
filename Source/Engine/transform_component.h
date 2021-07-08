@@ -228,7 +228,7 @@ namespace cumulonimbus::component
 		DirectX::XMMATRIX GetRotationMatrix(DirectX::XMFLOAT3 axis, float angle/* degree */);
 		DirectX::XMVECTOR GetRotationVec(DirectX::XMFLOAT3 axis, float angle/* degree */);
 	};
-}
+} // cumulonimbus::component
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::TransformComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::TransformComponent)

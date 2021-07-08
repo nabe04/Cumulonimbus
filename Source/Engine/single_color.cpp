@@ -14,7 +14,7 @@ namespace cumulonimbus
 			vertex_shader = std::make_unique<shader_system::VertexShader>(vs::SingleColor_VS().c_str());
 			pixel_shader  = std::make_unique<shader_system::PixelShader>(ps::SampleShaderMTR_PS().c_str());
 		}
-	}
+	} // shader_system
 
 	namespace shader_asset
 	{
@@ -41,8 +41,8 @@ namespace cumulonimbus
 		{
 			ImGui::ColorEdit4("Color", (float*)&cb_single_color->data.single_color);
 		}
-	}
-}
+	} // shader_asset
+} // cumulonimbus
 
 namespace shader
 {
