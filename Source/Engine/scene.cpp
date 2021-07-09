@@ -188,7 +188,7 @@ void Scene::Render()
 	{
 		const RECT window_rect = cumulonimbus::locator::Locator::GetWindow()->GetThisWindowRect();
 
-		ImGui::SetNextWindowPos(ImVec2{ static_cast<float>(window_rect.right), static_cast<float>(window_rect.top)});
+		//ImGui::SetNextWindowPos(ImVec2{ static_cast<float>(window_rect.right), static_cast<float>(window_rect.top)});
 		ImGui::Begin("Scene");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		this->RenderImGui();

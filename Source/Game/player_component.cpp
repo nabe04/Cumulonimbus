@@ -38,25 +38,6 @@ namespace cumulonimbus::component
 		DirectX::XMFLOAT2 stick = Locator::GetInput()->GamePad().LeftThumbStick(0);
 
 		player_state.Update(dt);
-
-		//if(stick.x > 0.01f || stick.y > 0.01f)
-		//{
-		//	GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimStateIndex(AnimationState::Walk_Front), true);
-		//}
-		//else
-		//{
-		//	//GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimStateIndex(AnimationState::Idle), true);
-		//}
-
-		//static bool flg = true;
-		//if(flg)
-		//{
-		//	//GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimStateIndex(AnimationState::Idle), true);
-		//	//GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimStateIndex(AnimationState::Walk_Front), true);
-		//}
-
-		//flg = false;
-
 	}
 
 	void PlayerComponent::RenderImGui()
@@ -91,15 +72,20 @@ namespace cumulonimbus::component
 	void PlayerComponent::Idle(float dt)
 	{
 		if(player_state.GetInitialize())
-		{// アニメションセット
+		{// アニメションセット(Idle)
 			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimStateIndex(AnimationState::Idle), true);
 		}
 
 		using namespace locator;
 		const DirectX::XMFLOAT2 stick = Locator::GetInput()->GamePad().LeftThumbStick(0);
 		if(stick.x > threshold || stick.y > threshold)
-		{
+		{// Walk状態に遷移
 			player_state.SetState(PlayerState::Walk);
+		}
+
+		if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
+		{// Attack_01状態に遷移
+			player_state.SetState(PlayerState::Attack_01);
 		}
 
 	}
@@ -107,21 +93,26 @@ namespace cumulonimbus::component
 	void PlayerComponent::Walk(float dt)
 	{
 		if (player_state.GetInitialize())
-		{// アニメションセット
+		{// アニメーションセット(Walk)
 			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimStateIndex(AnimationState::Walk_Front), true);
 		}
 
 		using namespace locator;
 		const DirectX::XMFLOAT2 stick_left = Locator::GetInput()->GamePad().LeftThumbStick(0);
 		if(stick_left.x < threshold && stick_left.y < threshold)
-		{
+		{// Idle状態に遷移
 			player_state.SetState(PlayerState::Idle);
 		}
 
 		const float trigger_right = Locator::GetInput()->GamePad().RightTrigger(0);
 		if(trigger_right > threshold)
-		{
+		{// Run状態に遷移
 			player_state.SetState(PlayerState::Run);
+		}
+
+		if(ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
+		{// Attack_01状態に遷移
+			player_state.SetState(PlayerState::Attack_01);
 		}
 	}
 
@@ -130,25 +121,25 @@ namespace cumulonimbus::component
 		using namespace locator;
 
 		if (player_state.GetInitialize())
-		{// アニメションセット
+		{// アニメションセット(Run)
 			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimStateIndex(AnimationState::Run), true);
 		}
 
 		if(ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-		{// Run_Attackに遷移
+		{// Run_Attack状態に遷移
 			player_state.SetState(PlayerState::Run_Attack);
 		}
 
 		const DirectX::XMFLOAT2 stick_left = Locator::GetInput()->GamePad().LeftThumbStick(0);
 		if (stick_left.x < threshold && stick_left.y < threshold)
-		{
+		{// Idle状態に遷移
 			player_state.SetState(PlayerState::Idle);
 		}
 		else
 		{
 			const float trigger_right = Locator::GetInput()->GamePad().RightTrigger(0);
 			if (trigger_right < threshold)
-			{
+			{// Walk状態に遷移
 				player_state.SetState(PlayerState::Walk);
 			}
 		}
@@ -157,12 +148,13 @@ namespace cumulonimbus::component
 	void PlayerComponent::RunAttack(float dt)
 	{
 		if (player_state.GetInitialize())
-		{// アニメションセット
-			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimStateIndex(AnimationState::Run_Attack), false);
+		{// アニメーションセット(RunAttack)
+			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimStateIndex(AnimationState::Run_Attack), false, 0.01f);
 		}
 
+		// アニメーションが終われば
 		if(!GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).IsPlayAnimation())
-		{// アニメーションが終われば
+		{// Walk状態に遷移
 			player_state.SetState(PlayerState::Walk);
 		}
 	}
@@ -173,14 +165,63 @@ namespace cumulonimbus::component
 
 	void PlayerComponent::Attack01(float dt)
 	{
+		if(player_state.GetInitialize())
+		{// アニメーションセット(Attack01)
+			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_01), false, 0.01f);
+		}
+
+		// アニメーションが再生中か
+		if(GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).IsPlayAnimation())
+		{
+			if(ButtonState::Press == locator::Locator::GetInput()->GamePad().GetState(GamePadButton::X))
+			{
+				// Attack_02状態に遷移
+				player_state.SetState(PlayerState::Attack_02);
+			}
+		}
+		else
+		{
+			// Idle状態に遷移
+			player_state.SetState(PlayerState::Idle);
+		}
 	}
 
 	void PlayerComponent::Attack02(float dt)
 	{
+		if(player_state.GetInitialize())
+		{// アニメーションセット(Attack_02)
+			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_02), false);
+		}
+
+		// アニメーションが再生中か
+		if (GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).IsPlayAnimation())
+		{
+			if (ButtonState::Press == locator::Locator::GetInput()->GamePad().GetState(GamePadButton::X))
+			{
+				// Attack_03状態に遷移
+				player_state.SetState(PlayerState::Attack_03);
+			}
+		}
+		else
+		{
+			// Idle状態に遷移
+			player_state.SetState(PlayerState::Idle);
+		}
 	}
 
 	void PlayerComponent::Attack03(float dt)
 	{
+		if (player_state.GetInitialize())
+		{// アニメーションセット(Attack_03)
+			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_03), false);
+		}
+
+		// アニメーションが再生中か
+		if (!GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).IsPlayAnimation())
+		{
+			// Idle状態に遷移
+			player_state.SetState(PlayerState::Idle);
+		}
 	}
 
 	void PlayerComponent::Damage(float dt)

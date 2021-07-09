@@ -227,9 +227,9 @@ public:
     void Initialize(const HWND hwnd);
     void UpdateStates();
 
-    [[nodiscard]] const KeyboardState& Keyboard() const { return *keyboard; }
-    [[nodiscard]] const MouseState& Mouse() const { return *mouse; }
-    [[nodiscard]] const GamePadState& GamePad() const { return *gamepad; }
+    [[nodiscard]] const KeyboardState& Keyboard()  const { return *keyboard; }
+    [[nodiscard]] const MouseState&    Mouse()     const { return *mouse; }
+    [[nodiscard]] const GamePadState&  GamePad()   const { return *gamepad; }
 
 private:
     std::unique_ptr<KeyboardState>  keyboard = {};

@@ -20,6 +20,8 @@
 #include "sprite_object.h"
 #include "transform_component.h"
 
+#include "cum_imgui_helper.h"
+
 namespace cumulonimbus::renderer
 {
 	RenderPath::RenderPath(ID3D11Device* device)
@@ -105,6 +107,14 @@ namespace cumulonimbus::renderer
 
 		// 2Dスプライトの描画
 		Render2D(immediate_context, registry);
+
+		ImGui::Begin("RTV");
+		if(ImGui::IsWindowFocused() && ImGui::IsMouseDown(ImGuiMouseButton_Left))
+		{
+			ImGui::Text("True");
+		}
+		helper::imgui::Image(off_screen->render_target_shader_resource_view.Get(), { 920,540 });
+		ImGui::End();
 	}
 
 	void RenderPath::RenderShadow_Begin(ID3D11DeviceContext* const immediate_context) const
