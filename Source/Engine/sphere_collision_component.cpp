@@ -1,140 +1,256 @@
 #include "sphere_collision_component.h"
 
-#include <cereal/types/bitset.hpp>
+#include <cassert>
 
-#include "scene.h"
-#include "geometric_primitive_resource.h"
+#include "ecs.h"
 #include "transform_component.h"
-#include "collision.h"
+#include "fbx_model_resource.h"
+#include "fbx_model_component.h"
 
 namespace cumulonimbus::component
 {
 	SphereCollisionComponent::SphereCollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, CollisionTag tag)
-		:CollisionComponent{ registry , ent ,tag }
+		:CollisionComponent{ registry,ent ,tag }
 	{
-		type = CollisionType::Sphere;
-		mesh = GetRegistry()->GetScene()->GetGeomPrimRes()->GetMeshData(GeomPrimType::Sphere);
 	}
 
-	void SphereCollisionComponent::Update(const float delta_time)
+	void SphereCollisionComponent::NewFrame(float dt)
 	{
-		auto ent_world_pos = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetPosition();
-		const auto& ent_transform_matrix = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).TransformMat();
-		XMMATRIX ent_world_translate_matrix = XMMatrixTranslation(ent_world_pos.x, ent_world_pos.y, ent_world_pos.z);
+	}
 
-		XMMATRIX ent_world_matrix = XMLoadFloat4x4(&GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorld4x4());
+	void SphereCollisionComponent::Update(float dt)
+	{
 
-		for (auto& data : sphere_datas)
+	}
+
+	void SphereCollisionComponent::PostUpdate(float dt)
+	{
+		// 判定(球)データの更新
+		for (auto& sphere : spheres)
 		{
 			// Scaling
-			DirectX::SimpleMath::Matrix s = XMMatrixScaling(data.radius * 2, data.radius * 2, data.radius * 2);
+			const DirectX::SimpleMath::Matrix s = DirectX::XMMatrixScaling(sphere.second.radius, sphere.second.radius, sphere.second.radius);
 			// Rotation
-			DirectX::SimpleMath::Matrix r = XMMatrixIdentity();
+			const DirectX::SimpleMath::Matrix r = DirectX::XMMatrixIdentity();
 			// Parallel movement
-			DirectX::SimpleMath::Matrix t;
-			t.Translation(data.ajust_pos);
+			DirectX::SimpleMath::Matrix t		= DirectX::SimpleMath::Matrix::Identity;
+			t.Translation(sphere.second.offset);
 			// Local matrix
-			DirectX::SimpleMath::Matrix model_local_matrix = s * r * t;
+			const DirectX::SimpleMath::Matrix model_local_matrix = s * r * t;
 
-			// World matrix
-			if (data.bone_matrix == DirectX::SimpleMath::Matrix::Identity)
+			if(sphere.second.bone_name.empty())
 			{
-				data.world_matrix = model_local_matrix * ent_world_matrix;
+				sphere.second.world_matrix = model_local_matrix * GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorld4x4();
 			}
 			else
 			{
-				data.world_matrix = model_local_matrix * data.bone_matrix;
+				sphere.second.world_matrix = model_local_matrix * GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).GetNodeMatrix(sphere.second.bone_name.c_str());
 			}
 		}
 	}
 
-	void SphereCollisionComponent::OnCollision(const CollisionComponent* other)
-	{
-
-	}
-
-	bool SphereCollisionComponent::IntersectSphere(SphereCollisionComponent* other)
-	{
-		bool isHit = false;
-
-		for (auto& my_data : sphere_datas)
-		{
-			for (auto& other_data : other->GetSphereData())
-			{
-				if (intersect::SphereSphere(my_data, other_data))
-				{
-					isHit = true;
-					my_data.color_RGB = other_data.color_RGB = color_red;
-					my_data.isHit = other_data.isHit = true;
-#ifndef _DEBUG
-					return true;
-#endif
-					//	my_data.isHit = other_data.isHit = true;
-				}
-				else
-				{
-					// Color of the judgment range
-					my_data.color_RGB = color_blue;
-				}
-			}
-		}
-
-#ifdef _DEBUG
-		for (auto& other_data : other->GetSphereData())
-		{
-			if (!isHit)
-				other_data.color_RGB = color_blue;
-		}
-#else
-
-
-#endif
-
-		return isHit;
-	}
-
-
-	void SphereCollisionComponent::AddSphere(XMFLOAT3 local_position, float radius)
-	{
-		DirectX::SimpleMath::Matrix matrix;
-		matrix.Identity;
-		matrix.Translation(local_position);
-
-		SphereCollisionData sphere_data{ matrix, {},local_position, color_blue, radius ,false };
-		sphere_datas.emplace_back(sphere_data);
-	}
-
-	void SphereCollisionComponent::SetRadiusAll(const float radius)
-	{
-		for (auto& data : sphere_datas)
-		{
-			data.radius = radius;
-		}
-	}
-
-	void SphereCollisionComponent::SetRadius(const float radius, const int index)
-	{
-		sphere_datas.at(index).radius = radius;
-	}
 
 	void SphereCollisionComponent::RenderImGui()
 	{
-		if (ImGui::TreeNode("Collision(Sphere)"))
-		{
-			int no = 0;
+	}
 
-			for (auto& data : sphere_datas)
+	void SphereCollisionComponent::Save(const std::string& file_path)
+	{
+	}
+
+	void SphereCollisionComponent::Load(const std::string& file_path_and_name)
+	{
+	}
+
+	void SphereCollisionComponent::AddSphere(std::string& name, const collision::Sphere& sphere)
+	{
+		if(name == "")
+		{// 名前の指定がない場合は「sphere(番号)」という名前にする
+			int no = spheres.size();
+			name = "CollisionTag tag(" + std::to_string(no) + ")";
+			while(true)
 			{
-				if (ImGui::TreeNode((void*)(intptr_t)no, "Info %d", no))
-				{
-					ImGui::DragFloat3("Position", (float*)&data.ajust_pos, 0.01f, -100.0f, 100.0f);
-					ImGui::DragFloat("Radius", &data.radius, 0.1f, 0.1f, 50);
-
-					ImGui::TreePop();
+				if (spheres.contains(name))
+				{// 名前の重複があったので番号を+1する
+					++no;
 				}
-				no++;
+				else
+				{
+					spheres.emplace(name, sphere);
+					break;
+				}
 			}
-			ImGui::TreePop();
+		}
+		else
+		{
+			if (spheres.contains(name))
+				assert((!"The sphere name already exists(SphereCollisionComponent::AddSphere)"));
+
+			spheres.emplace(name, sphere);
 		}
 	}
-}
+
+	void SphereCollisionComponent::AddSphereAndRegisterBoneName(
+		const std::string&		 bone_name,
+		std::string&			 sphere_name,
+		const collision::Sphere& sphere)
+	{
+		AddSphere(sphere_name, sphere);
+		spheres.at(sphere_name).bone_name = bone_name;
+	}
+
+	void SphereCollisionComponent::SetOffset(const std::string& sphere_name, const DirectX::SimpleMath::Vector3& offset)
+	{
+		if (!spheres.contains(sphere_name))
+			assert(!"Name is not registered(SphereCollisionComponent::SetOffset)");
+		spheres.at(sphere_name).offset = offset;
+	}
+
+	void SphereCollisionComponent::SetAllOffset(const DirectX::SimpleMath::Vector3& offset)
+	{
+		for(auto& sphere : spheres)
+		{
+			sphere.second.offset = offset;
+		}
+	}
+} // cumulonimbus::component
+
+//
+//#include <cereal/types/bitset.hpp>
+//
+//#include "scene.h"
+//#include "geometric_primitive_resource.h"
+//#include "transform_component.h"
+//#include "collision.h"
+//
+//namespace cumulonimbus::component
+//{
+//	SphereCollisionComponent::SphereCollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, CollisionTag tag)
+//		:CollisionComponent{ registry , ent ,tag }
+//	{
+//		type = CollisionType::Sphere;
+//		mesh = GetRegistry()->GetScene()->GetGeomPrimRes()->GetMeshData(GeomPrimType::Sphere);
+//	}
+//
+//	void SphereCollisionComponent::Update(const float delta_time)
+//	{
+//		auto ent_world_pos = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetPosition();
+//		const auto& ent_transform_matrix = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).TransformMat();
+//		XMMATRIX ent_world_translate_matrix = XMMatrixTranslation(ent_world_pos.x, ent_world_pos.y, ent_world_pos.z);
+//
+//		XMMATRIX ent_world_matrix = XMLoadFloat4x4(&GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorld4x4());
+//
+//		for (auto& data : sphere_datas)
+//		{
+//			// Scaling
+//			DirectX::SimpleMath::Matrix s = XMMatrixScaling(data.radius * 2, data.radius * 2, data.radius * 2);
+//			// Rotation
+//			DirectX::SimpleMath::Matrix r = XMMatrixIdentity();
+//			// Parallel movement
+//			DirectX::SimpleMath::Matrix t;
+//			t.Translation(data.ajust_pos);
+//			// Local matrix
+//			DirectX::SimpleMath::Matrix model_local_matrix = s * r * t;
+//
+//			// World matrix
+//			if (data.bone_matrix == DirectX::SimpleMath::Matrix::Identity)
+//			{
+//				data.world_matrix = model_local_matrix * ent_world_matrix;
+//			}
+//			else
+//			{
+//				data.world_matrix = model_local_matrix * data.bone_matrix;
+//			}
+//		}
+//	}
+//
+//	void SphereCollisionComponent::OnCollision(const CollisionComponent* other)
+//	{
+//
+//	}
+//
+//	bool SphereCollisionComponent::IntersectSphere(SphereCollisionComponent* other)
+//	{
+//		bool isHit = false;
+//
+//		for (auto& my_data : sphere_datas)
+//		{
+//			for (auto& other_data : other->GetSphereData())
+//			{
+//				if (intersect::SphereSphere(my_data, other_data))
+//				{
+//					isHit = true;
+//					my_data.color_RGB = other_data.color_RGB = color_red;
+//					my_data.isHit = other_data.isHit = true;
+//#ifndef _DEBUG
+//					return true;
+//#endif
+//					//	my_data.isHit = other_data.isHit = true;
+//				}
+//				else
+//				{
+//					// Color of the judgment range
+//					my_data.color_RGB = color_blue;
+//				}
+//			}
+//		}
+//
+//#ifdef _DEBUG
+//		for (auto& other_data : other->GetSphereData())
+//		{
+//			if (!isHit)
+//				other_data.color_RGB = color_blue;
+//		}
+//#else
+//
+//
+//#endif
+//
+//		return isHit;
+//	}
+//
+//
+//	void SphereCollisionComponent::AddSphere(XMFLOAT3 local_position, float radius)
+//	{
+//		DirectX::SimpleMath::Matrix matrix;
+//		matrix.Identity;
+//		matrix.Translation(local_position);
+//
+//		SphereCollisionData sphere_data{ matrix, {},local_position, color_blue, radius ,false };
+//		sphere_datas.emplace_back(sphere_data);
+//	}
+//
+//	void SphereCollisionComponent::SetRadiusAll(const float radius)
+//	{
+//		for (auto& data : sphere_datas)
+//		{
+//			data.radius = radius;
+//		}
+//	}
+//
+//	void SphereCollisionComponent::SetRadius(const float radius, const int index)
+//	{
+//		sphere_datas.at(index).radius = radius;
+//	}
+//
+//	void SphereCollisionComponent::RenderImGui()
+//	{
+//		if (ImGui::TreeNode("Collision(Sphere)"))
+//		{
+//			int no = 0;
+//
+//			for (auto& data : sphere_datas)
+//			{
+//				if (ImGui::TreeNode((void*)(intptr_t)no, "Info %d", no))
+//				{
+//					ImGui::DragFloat3("Position", (float*)&data.ajust_pos, 0.01f, -100.0f, 100.0f);
+//					ImGui::DragFloat("Radius", &data.radius, 0.1f, 0.1f, 50);
+//
+//					ImGui::TreePop();
+//				}
+//				no++;
+//			}
+//			ImGui::TreePop();
+//		}
+//	}
+//}

@@ -5,6 +5,7 @@
 #include "scene.h"
 
 // Shaders
+// 3D
 #include "3d_standard.h"
 #include "sample_shader.h"
 #include "diffuse.h"
@@ -14,6 +15,9 @@
 #include "reflection_mapping.h"
 #include "refraction_mapping.h"
 #include "single_color.h"
+// 2D
+// Other
+#include "debug_collision.h"
 
 namespace shader
 {
@@ -337,6 +341,9 @@ namespace cumulonimbus::shader_system
 		RegistryShader<shader_system::ReflectionMappingShader>	(ShaderAsset3D::ReflectionMapping);
 		RegistryShader<shader_system::RefractionMappingShader>	(ShaderAsset3D::RefractionMapping);
 		RegistryShader<shader_system::SingleColorShader>		(ShaderAsset3D::SingleColor);
+		// 2D
+		// その他のシェーダー(Local Shader)
+		RegisterShader<shader_system::DebugCollisionShader>     (LocalShader::Collision);
 	}
 
 	//-------------------  3D用シェーダーのBind,Unbind  ----------------------//
@@ -361,4 +368,14 @@ namespace cumulonimbus::shader_system
 
 	}
 
+	//------------------ モデル以外のシェーダーのBind,Unbind -----------------//
+	void ShaderManager::BindLocalShader(mapping::shader_assets::LocalShader asset)
+	{
+		local_shader_map.at(asset)->BindShader();
+	}
+
+	void ShaderManager::UnbindLocalShader(mapping::shader_assets::LocalShader asset)
+	{
+		local_shader_map.at(asset)->UnbindShader();
+	}
 } // cumulonimbus::shader_system

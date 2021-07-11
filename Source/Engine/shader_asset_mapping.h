@@ -6,6 +6,7 @@
 namespace cumulonimbus::mapping::shader_assets
 {
 	/*
+	 * brief	 : モデルを描画する際に使用するシェーダーの種類 
 	 * ※caution : Shaderを増減した場合は下のマクロの値も変更する
 	 */
 	enum class ShaderAsset3D : int
@@ -18,6 +19,16 @@ namespace cumulonimbus::mapping::shader_assets
 		ReflectionMapping,
 		RefractionMapping,
 		SingleColor,
+
+		End
+	};
+
+	/*
+	 * brief : モデルの描画以外(ポストプロセスなど)に使用するシェーダーの種類
+	 */
+	enum class LocalShader
+	{
+		Collision,
 
 		End
 	};

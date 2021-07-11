@@ -189,6 +189,13 @@ namespace cumulonimbus::renderer
 			const View* view, const Light* light);
 
 		/*
+		 * brief : 当たり判定の描画
+		 */
+		void RenderCollisionn(ID3D11DeviceContext* immediate_context,
+			ecs::Registry* registry, mapping::rename_type::Entity entity,
+			const View* view);
+		
+		/*
 		 * brief        : 2Dスプライトの描画
 		 * ※caution(1) : "SpriteObjectComponent", "SpriteComponent", "AnimSpriteComponent"
 		 *                を持つエンティティのみ描画される

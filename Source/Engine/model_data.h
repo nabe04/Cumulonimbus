@@ -188,4 +188,9 @@ public:
 	std::vector<Mesh>		meshes;
 	std::vector<Animation>  animations;
 	int						root_motion_node_index = -1;
+
+	[[nodiscard]] const std::vector<Node>&		GetNodes()		const { return nodes; }
+	[[nodiscard]] const std::vector<Mesh>&		GetMeshes()		const { return meshes; }
+	[[nodiscard]] const std::vector<Material>&	GetMaterials()	const { return materials; }
+	[[nodiscard]] const std::vector<Animation>& GetAnimations() const { return animations; }
 };

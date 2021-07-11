@@ -47,8 +47,8 @@ namespace cumulonimbus::component
 			dst.name = src.name;
 			dst.parent_index = src.parent_index >= 0 ? src.parent_index : -1;
 			//dst.parent		 = src.parent_index >= 0 ? &nodes.at(src.parent_index) : nullptr;
-			dst.scale = src.scale;
-			dst.rotate = src.rotate;
+			dst.scale	  = src.scale;
+			dst.rotate	  = src.rotate;
 			dst.translate = src.translate;
 		}
 
@@ -412,9 +412,9 @@ namespace cumulonimbus::component
 		for (Node& node : nodes)
 		{
 			DirectX::XMMATRIX scale, rotate, translate;
-			scale = DirectX::XMMatrixScaling(node.scale.x, node.scale.y, node.scale.z);
-			rotate = DirectX::XMMatrixRotationQuaternion(DirectX::XMVectorSet(node.rotate.x, node.rotate.y, node.rotate.z, node.rotate.w));
-			translate = DirectX::XMMatrixTranslation(node.translate.x, node.translate.y, node.translate.z);
+			scale		= DirectX::XMMatrixScaling(node.scale.x, node.scale.y, node.scale.z);
+			rotate		= DirectX::XMMatrixRotationQuaternion(DirectX::XMVectorSet(node.rotate.x, node.rotate.y, node.rotate.z, node.rotate.w));
+			translate	= DirectX::XMMatrixTranslation(node.translate.x, node.translate.y, node.translate.z);
 
 			DirectX::XMStoreFloat4x4(&node.local_transform, scale * rotate * translate);
 		}
@@ -477,7 +477,7 @@ namespace cumulonimbus::component
 		return DirectX::SimpleMath::Matrix::Identity;
 	}
 
-	const DirectX::SimpleMath::Matrix& FbxModelComponent::GetNodePareantMatrix(const char* node_name)
+	const DirectX::SimpleMath::Matrix& FbxModelComponent::GetNodeParentMatrix(const char* node_name)
 	{
 		for (const auto& node : nodes)
 		{

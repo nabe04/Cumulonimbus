@@ -17,12 +17,15 @@
 #define CBSlot_OnDemand3		13
 #define CBSlot_OnDemand4		14
 
-// それぞれのシェーダー独自のCBuffer
+// それぞれのシェーダー独自のCBuffer(3Dモデル用)
 #define CBSlot_Phong				CBSlot_OnDemand0
 #define CBSlot_Metal				CBSlot_OnDemand0
 #define CBSlot_Toon					CBSlot_OnDemand0
 #define CBSlot_ReflectionMapping	CBSlot_OnDemand0
 #define CBSlot_RefractionMapping	CBSlot_OnDemand0
 #define CBSlot_SingleColor			CBSlot_OnDemand0
+
+// その他のシェーダー
+#define CBSlot_DebugCollision		CBSlot_OnDemand0
 
 #endif // CONSTANT_BUFFER_MAPPING_H

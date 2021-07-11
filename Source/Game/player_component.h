@@ -1,14 +1,18 @@
 #pragma once
+#include <d3d11.h>
+#include <DirectXMath.h>
+#include <SimpleMath.h>
+
 #include <cereal/cereal.hpp>
 #include <cereal/types/polymorphic.hpp>
 
-#include "component_base.h"
+#include "actor3d_component.h"
 #include "state_machine.h"
 #include "enum_state_map.h"
 
 namespace cumulonimbus::component
 {
-	class PlayerComponent final : public ComponentBase
+	class PlayerComponent final : public Actor3DComponent
 	{
 	private:
 		// プレイヤーの状態を表す
@@ -56,7 +60,7 @@ namespace cumulonimbus::component
 
 	public:
 		explicit PlayerComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent);
-		explicit PlayerComponent() = default; // for cereal
+		explicit PlayerComponent()  = default; // for cereal
 		~PlayerComponent() override = default;
 
 		void NewFrame(float dt) override;
@@ -71,9 +75,19 @@ namespace cumulonimbus::component
 		// パッド入力のデッドゾーン値
 		float threshold = 0.05f;
 
+		/*
+		 * brief : enum class(AnimationState)をint型に変換
+		 */
 		[[nodiscard]] int GetAnimStateIndex(AnimationState anim_state) const;
 
-		// StateMachineで管理するプレイヤーの状態関数
+		/*
+		 * brief : レイキャストで使用するパラメータのセット
+		 */
+		void SetRayCastParameter(float dt);
+
+		/*
+		 * brief : StateMachineクラスで管理するプレイヤーの状態関数
+		 */
 		void TPose(float dt);
 		void Idle(float dt);
 		void Walk(float dt);

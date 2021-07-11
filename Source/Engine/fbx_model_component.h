@@ -123,7 +123,7 @@ namespace cumulonimbus::component
 		void SwitchAnimation(int animation_index, bool loop = false, float switch_time = 0.1f);
 
 		[[nodiscard]] const DirectX::SimpleMath::Matrix& GetNodeMatrix(const char* node_name);
-		[[nodiscard]] const DirectX::SimpleMath::Matrix& GetNodePareantMatrix(const char* node_name);
+		[[nodiscard]] const DirectX::SimpleMath::Matrix& GetNodeParentMatrix(const char* node_name);
 		[[nodiscard]] const std::vector<Node>&			 GetNodes()		const	{ return nodes; }
 		[[nodiscard]] std::vector<Node>&				 GetNodes()				{ return nodes; }
 		[[nodiscard]] const FbxModelResource*			 GetResource()	const	{ return resource.get(); }

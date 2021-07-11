@@ -3,22 +3,25 @@
 #include <filesystem>
 #include <fstream>
 
+// components(engine)
+#include "actor3d_component.h"
 #include "actor_component.h"
 #include "anim_sprite.h"
 #include "camera_operation.h"
 #include "child_actor.h"
-#include "collision_component.h"
 #include "fbx_model_component.h"
 #include "geometric_primitive_component.h"
 #include "material_component.h"
 #include "mesh_object.h"
 #include "obj_model_component.h"
+#include "raycast_component.h"
 #include "scene.h"
 #include "sky_box.h"
-#include "sphere_collision_component.h"
 #include "sprite.h"
 #include "sprite_object.h"
 #include "transform_component.h"
+// components(game)
+#include "player_component.h"
 
 namespace cumulonimbus::ecs
 {
@@ -46,14 +49,12 @@ namespace cumulonimbus::ecs
 		if (static_cast<uint64_t>(ent) == 0)
 		{
 			entities.emplace(ent, std::make_pair(ent, ent_name));
-			return;
 		}
 		else
 		{
 			const int no = static_cast<int>(ent);
 			ent_name += "(" + std::to_string(no) + ")";
 			entities.emplace(ent, std::make_pair(ent, ent_name));
-			return;
 		}
 	}
 
@@ -70,6 +71,14 @@ namespace cumulonimbus::ecs
 		for(auto& component : component_arrays)
 		{
 			component.second->Update(dt);
+		}
+	}
+
+	void Registry::PostUpdate(float dt)
+	{
+		for (auto& component : component_arrays)
+		{
+			component.second->PostUpdate(dt);
 		}
 	}
 
@@ -93,6 +102,7 @@ namespace cumulonimbus::ecs
 	 */
 	void Registry::RegisterComponentName()
 	{
+		// engine
 		RegistryComponent<component::ActorComponent>();
 		RegistryComponent<component::ChildActorComponent>();
 		RegistryComponent<component::TransformComponent>();
@@ -100,13 +110,13 @@ namespace cumulonimbus::ecs
 		RegistryComponent<component::AnimSpriteComponent>();
 		RegistryComponent<component::SpriteObjectComponent>();
 		RegistryComponent<component::MeshObjectComponent>();
-		RegistryComponent<component::CollisionComponent>();
-		RegistryComponent<component::SphereCollisionComponent>();
 		RegistryComponent<component::FbxModelComponent>();
 		RegistryComponent<component::GeomPrimComponent>();
 		RegistryComponent<component::ObjModelComponent>();
 		RegistryComponent<component::SkyBoxComponent>();
 		RegistryComponent<component::MaterialComponent>();
+		// game
+		RegistryComponent<component::PlayerComponent>();
 	}
 
 	void Registry::Save(const std::string& filename)

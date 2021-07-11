@@ -59,9 +59,10 @@ namespace cumulonimbus::ecs
 	public:
 		virtual ~ComponentArrayBase() = default;
 
-		virtual void PreUpdate(float dt) = 0;
-		virtual void Update(float dt) = 0;
-		virtual void Destroy(mapping::rename_type::Entity entity) = 0;
+		virtual void PreUpdate(float dt)	= 0;
+		virtual void Update(float dt)		= 0;
+		virtual void PostUpdate(float dt)	= 0;
+		virtual void Destroy(mapping::rename_type::Entity entity)	  = 0;
 		virtual void RenderImGui(mapping::rename_type::Entity entity) = 0;
 		virtual void Save(const std::string& filename) = 0;
 		virtual void Load(const std::string& filename) = 0;
@@ -92,6 +93,14 @@ namespace cumulonimbus::ecs
 			for (auto& component : components)
 			{
 				component.Update(dt);
+			}
+		}
+
+		void PostUpdate(float dt) override
+		{
+			for (auto& component : components)
+			{
+				component.PostUpdate(dt);
 			}
 		}
 
@@ -302,6 +311,11 @@ namespace cumulonimbus::ecs
 		 * brief : Component‘S‘Ì‚ÌUpdateˆ—
 		 */
 		void Update(float dt);
+
+		/*
+		 * brief : Component‘S‘Ì‚ÌPostUpdateˆ—
+		 */
+		void PostUpdate(float dt);
 
 		/*
 		 * brief : Entity‚ª‚ÂComponent‚Ì

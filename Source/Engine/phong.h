@@ -44,7 +44,7 @@ namespace cumulonimbus
 			explicit PhongShader();
 			~PhongShader() override = default;
 		};
-	}
+	} // shader_system
 
 	namespace shader_asset
 	{
@@ -69,8 +69,8 @@ namespace cumulonimbus
 		private:
 			std::unique_ptr<buffer::ConstantBuffer<PhongCB>> cb_phong{ nullptr };
 		};
-	}
-}
+	} // shader_asset
+} // cumulonimbus
 
 CEREAL_REGISTER_TYPE(cumulonimbus::shader_asset::PhongAsset)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::shader_asset::ShaderAsset, cumulonimbus::shader_asset::PhongAsset)

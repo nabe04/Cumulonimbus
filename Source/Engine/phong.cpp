@@ -14,7 +14,7 @@ namespace cumulonimbus
 			vertex_shader = std::make_unique<shader_system::VertexShader>(vs::Phong_VS().c_str());
 			pixel_shader  = std::make_unique<shader_system::PixelShader>(ps::PhongMTR_PS().c_str());
 		}
-	}
+	} //shader_system
 
 	namespace shader_asset
 	{
@@ -47,8 +47,8 @@ namespace cumulonimbus
 		}
 
 
-	}
-}
+	} // shader_asset
+} // cumulonimbus
 
 namespace shader
 {

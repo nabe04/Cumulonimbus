@@ -28,6 +28,7 @@
     <ClInclude Include="Libraries\imgui\imstb_textedit.h" />
     <ClInclude Include="Libraries\imgui\imstb_truetype.h" />
     <ClInclude Include="Source\Engine\3d_standard.h" />
+    <ClInclude Include="Source\Engine\actor3d_component.h" />
     <ClInclude Include="Source\Engine\actor_component.h" />
     <ClInclude Include="Source\Engine\anim_sprite.h" />
     <ClInclude Include="Source\Engine\arithmetic.h" />
@@ -40,12 +41,14 @@
     <ClInclude Include="Source\Engine\child_actor.h" />
     <ClInclude Include="Source\Engine\collision.h" />
     <ClInclude Include="Source\Engine\collision_component.h" />
+    <ClInclude Include="Source\Engine\collision_manager.h" />
     <ClInclude Include="Source\Engine\component_base.h" />
     <ClInclude Include="Source\Engine\component_list.h" />
     <ClInclude Include="Source\Engine\constant_buffer.h" />
     <ClInclude Include="Source\Engine\constant_buffer_mapping.h" />
     <ClInclude Include="Source\Engine\content_browser.h" />
     <ClInclude Include="Source\Engine\cum_imgui_helper.h" />
+    <ClInclude Include="Source\Engine\debug_collision.h" />
     <ClInclude Include="Source\Engine\depth_map.h" />
     <ClInclude Include="Source\Engine\depth_stencil.h" />
     <ClInclude Include="Source\Engine\diffuse.h" />
@@ -91,6 +94,7 @@
     <ClInclude Include="Source\Engine\phong.h" />
     <ClInclude Include="Source\Engine\pixel_shader.h" />
     <ClInclude Include="Source\Engine\rasterizer.h" />
+    <ClInclude Include="Source\Engine\raycast_component.h" />
     <ClInclude Include="Source\Engine\reflection_mapping.h" />
     <ClInclude Include="Source\Engine\refraction_mapping.h" />
     <ClInclude Include="Source\Engine\rename_type_mapping.h" />
@@ -153,6 +157,7 @@
     <ClCompile Include="Libraries\imgui\imgui_tables.cpp" />
     <ClCompile Include="Libraries\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Source\Engine\3d_standard.cpp" />
+    <ClCompile Include="Source\Engine\actor3d_component.cpp" />
     <ClCompile Include="Source\Engine\actor_component.cpp" />
     <ClCompile Include="Source\Engine\anim_sprite.cpp" />
     <ClCompile Include="Source\Engine\arithmetic.cpp" />
@@ -164,10 +169,12 @@
     <ClCompile Include="Source\Engine\child_actor.cpp" />
     <ClCompile Include="Source\Engine\collision.cpp" />
     <ClCompile Include="Source\Engine\collision_component.cpp" />
+    <ClCompile Include="Source\Engine\collision_manager.cpp" />
     <ClCompile Include="Source\Engine\component_base.cpp" />
     <ClCompile Include="Source\Engine\component_list.cpp" />
     <ClCompile Include="Source\Engine\constant_buffer.cpp" />
     <ClCompile Include="Source\Engine\content_brawser.cpp" />
+    <ClCompile Include="Source\Engine\debug_collision.cpp" />
     <ClCompile Include="Source\Engine\depth_map.cpp" />
     <ClCompile Include="Source\Engine\depth_stencil.cpp" />
     <ClCompile Include="Source\Engine\diffuse.cpp" />
@@ -212,6 +219,7 @@
     <ClCompile Include="Source\Engine\phong.cpp" />
     <ClCompile Include="Source\Engine\pixel_shader.cpp" />
     <ClCompile Include="Source\Engine\rasterize.cpp" />
+    <ClCompile Include="Source\Engine\raycast_component.cpp" />
     <ClCompile Include="Source\Engine\reflection_mapping.cpp" />
     <ClCompile Include="Source\Engine\refraction_mapping.cpp" />
     <ClCompile Include="Source\Engine\rendering_buffer.cpp" />
@@ -356,6 +364,18 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Shader\cpu_particle_vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\debug_collision_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\debug_collision_vs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>

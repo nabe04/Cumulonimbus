@@ -15,18 +15,19 @@ namespace cumulonimbus::component
 	class ComponentBase
 	{
 	public:
-		ComponentBase() = default;
-		ComponentBase(ecs::Registry* registry, mapping::rename_type::Entity ent)
+		explicit ComponentBase() = default;
+		explicit ComponentBase(ecs::Registry* registry, mapping::rename_type::Entity ent)
 			: registry{ registry }
 			, entity{ ent }
 		{
 		}
 		virtual ~ComponentBase() = default;
 
-		virtual void NewFrame(float dt) = 0;
-		virtual void Update(float dt) = 0;
-		virtual void RenderImGui() = 0;
-		virtual void Save(const std::string& file_path) = 0;
+		virtual void NewFrame(float dt)	  {}
+		virtual void Update(float dt)	  {}
+		virtual void PostUpdate(float dt) {}
+		virtual void RenderImGui()		  {}
+		virtual void Save(const std::string& file_path)			 = 0;
 		virtual void Load(const std::string& file_path_and_name) = 0;
 
 		template<typename Archive>

@@ -210,11 +210,20 @@ namespace cumulonimbus
 			 */
 			void BindShader(mapping::shader_assets::ShaderAsset2D asset);
 			void UnbindShader(mapping::shader_assets::ShaderAsset2D asset);
+
+			/*
+			 * brief : LocalShaderの種類に応じてのシェーダーのバインド
+			 */
+			void BindLocalShader(mapping::shader_assets::LocalShader asset);
+			void UnbindLocalShader(mapping::shader_assets::LocalShader asset);
+
 		private:
 			// モデルが使用するシェーダーのマップ(3D)
 			std::unordered_map<mapping::shader_assets::ShaderAsset3D, std::unique_ptr<shader_system::Shader>> shader3d_map;
 			// スプライトが使用するシェーダーのマップ(2D)
 			std::unordered_map<mapping::shader_assets::ShaderAsset2D, std::unique_ptr<shader_system::Shader>> shader2d_map;
+			// モデルの描画以外のシェーダー(ポストプロセスなど)
+			std::unordered_map<mapping::shader_assets::LocalShader  , std::unique_ptr<shader_system::Shader>> local_shader_map;
 			/*
 			 * brief : 作成したシェーダーの登録(3D)
 			 */
@@ -237,6 +246,18 @@ namespace cumulonimbus
 					return;
 
 				shader2d_map.emplace(asset_type, std::make_unique<T>());
+			}
+
+			/*
+			 * brief :作成したシェーダーの登録(LocalShader)
+			 */
+			template<typename T>
+			void RegisterShader(mapping::shader_assets::LocalShader asset_type)
+			{
+				if (local_shader_map.contains(asset_type))
+					return;
+
+				local_shader_map.emplace(asset_type, std::make_unique<T>());
 			}
 		};
 	}

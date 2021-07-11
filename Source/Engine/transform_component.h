@@ -33,7 +33,7 @@ namespace cumulonimbus::component
 		void UnbindCBuffer();
 		void SetAndBindCBuffer(const TransformCB& transform, bool set_in_vs = true, bool set_in_ps = true) const;
 
-		//-- Creating a World TransforBmation Matrix --//
+		//-- Creating a World Transformation Matrix --//
 		void CreateWorldTransformMatrix();
 
 		//-- Position --//

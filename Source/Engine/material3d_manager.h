@@ -78,4 +78,5 @@ namespace cumulonimbus::shader_asset
 			shader_asset_map.emplace(asset_type, std::make_shared<T>());
 		}
 	};
-}
+} //  cumulonimbus::shader_asset
+

@@ -100,6 +100,9 @@ namespace cumulonimbus::renderer
 		Render3D(immediate_context, registry, view, light);
 		Render3D_End(immediate_context);
 
+		// 当たり判定の描画
+		
+
 		// ポストプロセス処理
 		RenderPostProcess_Begin(immediate_context);
 		RenderPostProcess(immediate_context);
