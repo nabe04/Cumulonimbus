@@ -34,12 +34,20 @@ void ResourceManager::Initialize(ID3D11Device* device)
 		std::shared_ptr<FbxModelResource> test_robo_mirror_resource = std::make_shared<FbxModelResource>(device, test_robo_mirror_filename, "./Data/Assets/FBX/Robot/");
 		AddFBXData(test_robo_mirror_resource);
 
-
 		// Cube
 		const char* cube_filename  = "./Data/Assets/Bin/cube.bin";  // "./Data/Assets/FBX/stage/stage.fbm/"
 		std::shared_ptr<FbxModelResource> cube_resource = std::make_shared<FbxModelResource>(device, cube_filename, " ");
 		AddFBXData(cube_resource);
 
+		// Sphere
+		const char* sphere_filename = "./Data/Assets/Bin/sphere.bin";
+		std::shared_ptr<FbxModelResource> sphere_resource = std::make_shared<FbxModelResource>(device, sphere_filename, " ");
+		AddFBXData(sphere_resource);
+
+		// Capsule
+		const char* capsule_filename = "./Data/Assets/Bin/capsule.bin";
+		std::shared_ptr<FbxModelResource> capsule_resource = std::make_shared<FbxModelResource>(device, capsule_filename, " ");
+		AddFBXData(capsule_resource);
 	}
 
 	{// Textureì«çûÇ›

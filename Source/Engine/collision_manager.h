@@ -1,6 +1,4 @@
 #pragma once
-#include <map>
-
 #include <DirectXMath.h>
 
 #include "rename_type_mapping.h"
@@ -17,13 +15,14 @@ namespace cumulonimbus
 	namespace component
 	{
 		class FbxModelComponent;
+		class SphereCollisionComponent;
 	} // component
 
 	namespace collision
 	{
 		struct HitResult;
+		struct Sphere;
 	} // collision
-
 } // cumulonimbus
 
 namespace cumulonimbus::collision
@@ -46,18 +45,27 @@ namespace cumulonimbus::collision
 		 */
 		void RegistryRayCastModel(mapping::rename_type::Entity ent);
 
+
 	private:
 		// レイキャストの判定を行う際の判定が行われる(地形)データ群
 		std::vector<mapping::rename_type::Entity> ent_terrains{};
 		
 		/*
-		 * レイとモデルの衝突判定
+		 * brief : レイとモデルの衝突判定
 		 */
 		bool IntersectRayVsModel(
 			const DirectX::XMFLOAT3& start,
 			const DirectX::XMFLOAT3& end,
 			const component::FbxModelComponent& model,
 			HitResult& result
+		);
+
+		/*
+		 * brief : 球と球の当たり判定
+		 */
+		bool IntersectSphereVsSphere(
+			const component::SphereCollisionComponent& s1,
+			const component::SphereCollisionComponent& s2
 		);
 	};
 

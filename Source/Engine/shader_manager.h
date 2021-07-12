@@ -214,8 +214,8 @@ namespace cumulonimbus
 			/*
 			 * brief : LocalShaderの種類に応じてのシェーダーのバインド
 			 */
-			void BindLocalShader(mapping::shader_assets::LocalShader asset);
-			void UnbindLocalShader(mapping::shader_assets::LocalShader asset);
+			void BindLocalShader(mapping::shader_assets::LocalShaderAsset asset);
+			void UnbindLocalShader(mapping::shader_assets::LocalShaderAsset asset);
 
 		private:
 			// モデルが使用するシェーダーのマップ(3D)
@@ -223,7 +223,7 @@ namespace cumulonimbus
 			// スプライトが使用するシェーダーのマップ(2D)
 			std::unordered_map<mapping::shader_assets::ShaderAsset2D, std::unique_ptr<shader_system::Shader>> shader2d_map;
 			// モデルの描画以外のシェーダー(ポストプロセスなど)
-			std::unordered_map<mapping::shader_assets::LocalShader  , std::unique_ptr<shader_system::Shader>> local_shader_map;
+			std::unordered_map<mapping::shader_assets::LocalShaderAsset  , std::unique_ptr<shader_system::Shader>> local_shader_map;
 			/*
 			 * brief : 作成したシェーダーの登録(3D)
 			 */
@@ -249,10 +249,10 @@ namespace cumulonimbus
 			}
 
 			/*
-			 * brief :作成したシェーダーの登録(LocalShader)
+			 * brief :作成したシェーダーの登録(LocalShaderAsset)
 			 */
 			template<typename T>
-			void RegisterShader(mapping::shader_assets::LocalShader asset_type)
+			void RegisterShader(mapping::shader_assets::LocalShaderAsset asset_type)
 			{
 				if (local_shader_map.contains(asset_type))
 					return;

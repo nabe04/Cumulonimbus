@@ -14,7 +14,7 @@ namespace cumulonimbus
 	{
 		struct Sphere
 		{
-			DirectX::SimpleMath::Matrix  world_matrix{ DirectX::SimpleMath::Matrix::Identity };		  // ワールド行列
+			DirectX::SimpleMath::Matrix  world_transform_matrix{ DirectX::SimpleMath::Matrix::Identity }; // ワールド変換行列
 			DirectX::SimpleMath::Vector3 offset{};		 // 球の位置調節値
 			std::string bone_name{""};					 // FBXモデルのボーンの位置名
 			float		radius{ 1.f };					 // 半径
@@ -45,7 +45,7 @@ namespace cumulonimbus
 			 * sphere	 : 判定用の球データ
 			 * ※caution : nameを「""」とした場合、名前が「sphere(番号)」になる
 			 */
-			void AddSphere(std::string& name, const collision::Sphere& sphere = {});
+			std::string AddSphere(const std::string& name = "", const collision::Sphere& sphere = {});
 
 			/*
 			 * brief	   : 球の位置をFBXモデルのボーンの位置追加
@@ -56,7 +56,7 @@ namespace cumulonimbus
 			 */
 			void AddSphereAndRegisterBoneName(
 					const std::string& bone_name,
-					std::string&	   sphere_name,
+					const std::string&	   sphere_name,
 					const collision::Sphere& sphere = {});
 
 			/*
@@ -68,6 +68,22 @@ namespace cumulonimbus
 			 * brief : spheres全ての"offset"のセット
 			 */
 			void SetAllOffset(const DirectX::SimpleMath::Vector3& offset);
+
+			/*
+			 * brief		: 個々の"radius"のセット
+			 * sphere_name	: spheresに登録されているキー値
+			 */
+			void SetRadius(const std::string& sphere_name, float radius);
+
+			/*
+			 * brief : spheres全ての"offset"のセット 
+			 */
+			void SetAllRadius(float radius);
+			
+			/*
+			 * brief : mapに登録されているcollision::Sphereの取得
+			 */
+			const std::unordered_map<std::string, collision::Sphere>& GetSpheres() const;
 		private:
 			// 判定用データ群
 			std::unordered_map<std::string, collision::Sphere> spheres;

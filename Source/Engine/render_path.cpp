@@ -1,5 +1,6 @@
 #include "render_path.h"
 
+#include "debug_collision.h"
 #include "gbuffer.h"
 #include "graphics_mapping.h"
 #include "sampler_mapping.h"
@@ -16,6 +17,7 @@
 #include "mesh_object.h"
 #include "obj_model_component.h"
 #include "sky_box.h"
+#include "sphere_collision_component.h"
 #include "sprite.h"
 #include "sprite_object.h"
 #include "transform_component.h"
@@ -30,9 +32,10 @@ namespace cumulonimbus::renderer
 		fullscreen_quad		= std::make_unique<FullscreenQuad>(device);
 		depth_map			= std::make_unique<DepthMap>(device);
 
-		shader_manager		= std::make_unique<shader_system::ShaderManager>();
-		shader_manager_2d	= std::make_unique<shader::SpriteShaderManager>(device);
-		g_buffer			= std::make_unique<graphics::buffer::GBuffer>();
+		shader_manager				= std::make_unique<shader_system::ShaderManager>();
+		shader_manager_2d			= std::make_unique<shader::SpriteShaderManager>(device);
+		g_buffer					= std::make_unique<graphics::buffer::GBuffer>();
+		local_shader_asset_manager	= std::make_unique<shader_asset::LocalShaderAssetManager>();
 
 		blend				= std::make_unique<Blend>(device);
 		depth_stencil		= std::make_unique<DepthStencil>(device);
@@ -101,7 +104,9 @@ namespace cumulonimbus::renderer
 		Render3D_End(immediate_context);
 
 		// 当たり判定の描画
-		
+		RenderCollision_Begin(immediate_context, view);
+		RenderCollision(immediate_context, registry);
+		RenderCollision_End(immediate_context, view);
 
 		// ポストプロセス処理
 		RenderPostProcess_Begin(immediate_context);
@@ -608,6 +613,81 @@ namespace cumulonimbus::renderer
 		//off_screen->Deactivate(immediate_context);
 
 		//Blit(immediate_context);
+	}
+
+	void RenderPath::RenderCollision_Begin(ID3D11DeviceContext* immediate_context, const View* view)
+	{
+		off_screen->Activate(immediate_context);
+		// DirectX graphics stateのバインド
+		rasterizer->Activate(immediate_context, RasterizeState::Wireframe);
+		depth_stencil->Activate(immediate_context, DepthStencilState::DepthTest_True_Write_True);
+		blend->Activate(immediate_context, BlendState::Alpha);
+		// シェーダーのバインド
+		shader_manager->BindLocalShader(mapping::shader_assets::LocalShaderAsset::Collision);
+		local_shader_asset_manager->BindCBuffer(mapping::shader_assets::LocalShaderAsset::Collision);
+		// ビュー行列のバインド
+		view->BindCBuffer();
+
+	}
+
+	void RenderPath::RenderCollision(ID3D11DeviceContext* immediate_context, ecs::Registry* registry)
+	{
+		for (auto& sphere_collision : registry->GetArray<component::SphereCollisionComponent>().GetComponents())
+		{
+			const mapping::rename_type::Entity ent = sphere_collision.GetEntity();
+			const auto& model_resource = locator::Locator::GetResourceManager()->FbxModelResouece("sphere");
+			RenderCollisionModel(immediate_context, registry, ent, model_resource.get());
+		}
+	}
+
+
+	void RenderPath::RenderCollisionModel(ID3D11DeviceContext* immediate_context,
+										  ecs::Registry* registry, mapping::rename_type::Entity entity,
+										  const FbxModelResource* model_resource)
+	{
+		const auto& sphere_collision = registry->GetComponent<component::SphereCollisionComponent>(entity);
+		for (const auto& sphere : sphere_collision.GetSpheres())
+		{
+			for (const auto& mesh : model_resource->GetModelData().meshes)
+			{
+				// メッシュ単位コンスタントバッファ更新
+				TransformCB transform{};
+				transform.bone_transforms[0] = sphere.second.world_transform_matrix;
+
+				registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
+
+				UINT stride = sizeof(shader::Vertex);
+				UINT offset = 0;
+				immediate_context->IASetVertexBuffers(0, 1, mesh.vertex_buffer.GetAddressOf(), &stride, &offset);
+				immediate_context->IASetIndexBuffer(mesh.index_buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+				locator::Locator::GetDx11Device()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleList);
+
+				for (const ModelData::Subset& subset : mesh.subsets)
+				{
+
+					DebugCollisionCB cb_collision;
+					if (sphere.second.is_hit)
+					{
+						cb_collision.collider_color = { 1.f,.0f,.0f,1.f };
+					}
+					else
+					{
+						cb_collision.collider_color = { .0f,.0f,1.f,1.f };
+					}
+					immediate_context->DrawIndexed(subset.index_count, subset.start_index, 0);
+				}
+			}
+		}
+	}
+
+	void RenderPath::RenderCollision_End(ID3D11DeviceContext* immediate_context, const View* view)
+	{
+		// ビュー行列のバインド
+		view->UnbindCBuffer();
+		// シェーダーのバインド
+		shader_manager->UnbindLocalShader(mapping::shader_assets::LocalShaderAsset::Collision);
+		local_shader_asset_manager->UnbindCBuffer(mapping::shader_assets::LocalShaderAsset::Collision);
+		off_screen->Deactivate(immediate_context);
 	}
 
 	void RenderPath::RenderSprite(ID3D11DeviceContext* immediate_context,

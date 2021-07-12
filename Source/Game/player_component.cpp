@@ -39,7 +39,7 @@ namespace cumulonimbus::component
 
 	void PlayerComponent::NewFrame(float dt)
 	{
-		GetRegistry()->GetComponent<TransformComponent>(GetEntity()).AdjustPositionY(-2.f * dt);
+		//GetRegistry()->GetComponent<TransformComponent>(GetEntity()).AdjustPositionY(-2.f * dt);
 	}
 
 	void PlayerComponent::Update(float dt)

@@ -39,7 +39,7 @@ namespace cumulonimbus::shader_asset
 	};
 
 	/*
-	 * brief : シェーダーが持つパラメータの調整
+	 * brief : 3Dモデルのシェーダーが持つパラメータの調整
 	 *         (コンスタントバッファの値)
 	 */
 	class ShaderAsset
@@ -103,13 +103,13 @@ namespace cumulonimbus::shader_asset
 		void SetAOMapName(const std::string& name);
 
 		[[nodiscard]] const MaterialPath& GetMaterialPath()		const;
-		[[nodiscard]] const std::string& GetAlbedoMapName()		const;
-		[[nodiscard]] const std::string& GetNormalMapName()		const;
-		[[nodiscard]] const std::string& GetPBRMapName()		const;
-		[[nodiscard]] const std::string& GetRoughnessMapName()	const;
-		[[nodiscard]] const std::string& GetMetalnessMapName()  const;
-		[[nodiscard]] const std::string& GetSpecularMapName()   const;
-		[[nodiscard]] const std::string& GetAOMapName()			const;
+		[[nodiscard]] const std::string&  GetAlbedoMapName()		const;
+		[[nodiscard]] const std::string&  GetNormalMapName()		const;
+		[[nodiscard]] const std::string&  GetPBRMapName()		const;
+		[[nodiscard]] const std::string&  GetRoughnessMapName()	const;
+		[[nodiscard]] const std::string&  GetMetalnessMapName()  const;
+		[[nodiscard]] const std::string&  GetSpecularMapName()   const;
+		[[nodiscard]] const std::string&  GetAOMapName()			const;
 
 
 		template <typename Archive>

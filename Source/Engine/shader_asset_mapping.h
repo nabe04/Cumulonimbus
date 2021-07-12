@@ -26,7 +26,7 @@ namespace cumulonimbus::mapping::shader_assets
 	/*
 	 * brief : モデルの描画以外(ポストプロセスなど)に使用するシェーダーの種類
 	 */
-	enum class LocalShader
+	enum class LocalShaderAsset
 	{
 		Collision,
 

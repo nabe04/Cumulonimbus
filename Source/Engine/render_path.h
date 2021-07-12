@@ -18,6 +18,10 @@
 #include "rasterizer.h"
 #include "shader_manager.h"
 #include "texture.h"
+#include "local_shader_manager.h"
+
+enum class CollisionType;
+class FbxModelResource;
 
 namespace cumulonimbus
 {
@@ -41,7 +45,7 @@ namespace cumulonimbus
 	namespace graphics::buffer
 	{
 		class GBuffer;
-	}
+	} // graphics::buffer
 
 } // cumulonimbus
 
@@ -65,12 +69,13 @@ namespace cumulonimbus::renderer
 		std::unique_ptr<DepthStencil>	depth_stencil;
 		std::array< std::unique_ptr<Sampler>, static_cast<int>(RenderingSampleState::End)> samplers;
 
-		std::unique_ptr<graphics::buffer::GBuffer>	g_buffer{ nullptr };
-		std::unique_ptr<DummyTexture>				dummy_texture;
-		std::unique_ptr<FrameBuffer>				off_screen;
-		std::unique_ptr<DepthMap>					depth_map;
-		std::unique_ptr<FullscreenQuad>				fullscreen_quad;
-		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> sky_box_srv;
+		std::unique_ptr<graphics::buffer::GBuffer>				g_buffer					{ nullptr };
+		std::unique_ptr<DummyTexture>							dummy_texture				{ nullptr };
+		std::unique_ptr<FrameBuffer>							off_screen					{ nullptr };
+		std::unique_ptr<DepthMap>								depth_map					{ nullptr };
+		std::unique_ptr<FullscreenQuad>							fullscreen_quad				{ nullptr };
+		std::unique_ptr<shader_asset::LocalShaderAssetManager>	local_shader_asset_manager	{ nullptr };
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>		sky_box_srv					{ nullptr };
 
 		/*
 		 * brief : "MeshObjectComponent"がもつDirectX stateのセット
@@ -78,11 +83,11 @@ namespace cumulonimbus::renderer
 		 */
 		void BindDirectXStates(ID3D11DeviceContext* immediate_context,
 							   const component::MeshObjectComponent* mesh_object,
-							   bool set_rasterizer = true, bool set_sampler = true,
+							   bool set_rasterizer = true	, bool set_sampler = true,
 							   bool set_depth_stencil = true, bool set_blend = true);
 		void BindDirectXStates(ID3D11DeviceContext* immediate_context,
 							   const component::SpriteObjectComponent* sprite_object,
-							   bool set_rasterizer = true, bool set_sampler = true,
+							   bool set_rasterizer = true	, bool set_sampler = true,
 							   bool set_depth_stencil = true, bool set_blend = true);
 
 		/*
@@ -185,16 +190,19 @@ namespace cumulonimbus::renderer
 		 * brief :   "SkyBoxComponent"が持つモデルの描画
 		 */
 		void RenderSkyBox(ID3D11DeviceContext* immediate_context,
-			ecs::Registry* registry, mapping::rename_type::Entity entity,
-			const View* view, const Light* light);
+						  ecs::Registry* registry, mapping::rename_type::Entity entity,
+						  const View* view, const Light* light);
 
 		/*
 		 * brief : 当たり判定の描画
 		 */
-		void RenderCollisionn(ID3D11DeviceContext* immediate_context,
-			ecs::Registry* registry, mapping::rename_type::Entity entity,
-			const View* view);
-		
+		void RenderCollision_Begin(ID3D11DeviceContext* immediate_context, const View* view);
+		void RenderCollision(ID3D11DeviceContext* immediate_context, ecs::Registry* registry);
+		void RenderCollisionModel(ID3D11DeviceContext* immediate_context,
+								  ecs::Registry* registry, mapping::rename_type::Entity entity,
+								  const FbxModelResource* model_resource);
+		void RenderCollision_End(ID3D11DeviceContext* immediate_context, const View* view);
+
 		/*
 		 * brief        : 2Dスプライトの描画
 		 * ※caution(1) : "SpriteObjectComponent", "SpriteComponent", "AnimSpriteComponent"

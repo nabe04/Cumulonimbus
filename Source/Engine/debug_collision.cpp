@@ -25,7 +25,7 @@ namespace cumulonimbus
 			cb_debug_collision = std::make_unique<buffer::ConstantBuffer<DebugCollisionCB>>(locator::Locator::GetDx11Device()->device.Get());
 
 			// ‰ŠúÝ’è
-			cb_debug_collision->data.color = DirectX::XMFLOAT4{ 1.f,1.f,1.f,1.f };
+			cb_debug_collision->data.collider_color = DirectX::XMFLOAT4{ 1.f,1.f,1.f,1.f };
 		}
 
 		void DebugCollisionAsset::BindCBuffer()

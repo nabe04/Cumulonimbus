@@ -501,6 +501,9 @@
     <ClCompile Include="Source\Engine\debug_collision.cpp">
       <Filter>Source\Engine\Shader%28.cpp%29</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\local_shader_manager.cpp">
+      <Filter>Source\Engine\Shader%28.cpp%29\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -886,6 +889,9 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\debug_collision.h">
       <Filter>Header\Engine\Shader%28.h%29</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\local_shader_manager.h">
+      <Filter>Header\Engine\Shader%28.h%29\System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

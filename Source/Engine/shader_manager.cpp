@@ -343,7 +343,7 @@ namespace cumulonimbus::shader_system
 		RegistryShader<shader_system::SingleColorShader>		(ShaderAsset3D::SingleColor);
 		// 2D
 		// その他のシェーダー(Local Shader)
-		RegisterShader<shader_system::DebugCollisionShader>     (LocalShader::Collision);
+		RegisterShader<shader_system::DebugCollisionShader>     (LocalShaderAsset::Collision);
 	}
 
 	//-------------------  3D用シェーダーのBind,Unbind  ----------------------//
@@ -369,12 +369,12 @@ namespace cumulonimbus::shader_system
 	}
 
 	//------------------ モデル以外のシェーダーのBind,Unbind -----------------//
-	void ShaderManager::BindLocalShader(mapping::shader_assets::LocalShader asset)
+	void ShaderManager::BindLocalShader(mapping::shader_assets::LocalShaderAsset asset)
 	{
 		local_shader_map.at(asset)->BindShader();
 	}
 
-	void ShaderManager::UnbindLocalShader(mapping::shader_assets::LocalShader asset)
+	void ShaderManager::UnbindLocalShader(mapping::shader_assets::LocalShaderAsset asset)
 	{
 		local_shader_map.at(asset)->UnbindShader();
 	}

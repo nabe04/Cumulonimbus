@@ -8,9 +8,10 @@
 
 #include "globals.hlsli"
 #include "diffuse.hlsli"
+#include "../Source/Engine/debug_collision.h"
 
 
-float4 main() : SV_TARGET
+float4 main(PS_Input pin) : SV_TARGET
 {
-	return float4(1.0f, 1.0f, 1.0f, 1.0f);
+    return collider_color;
 }

@@ -29,7 +29,7 @@ namespace cumulonimbus::component
 		for (auto& sphere : spheres)
 		{
 			// Scaling
-			const DirectX::SimpleMath::Matrix s = DirectX::XMMatrixScaling(sphere.second.radius, sphere.second.radius, sphere.second.radius);
+			const DirectX::SimpleMath::Matrix s = DirectX::XMMatrixScaling(sphere.second.radius * 0.5f, sphere.second.radius * 0.5f, sphere.second.radius * 0.5f);
 			// Rotation
 			const DirectX::SimpleMath::Matrix r = DirectX::XMMatrixIdentity();
 			// Parallel movement
@@ -40,11 +40,14 @@ namespace cumulonimbus::component
 
 			if(sphere.second.bone_name.empty())
 			{
-				sphere.second.world_matrix = model_local_matrix * GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorld4x4();
+				// モデルが持つワールド変換行列
+				DirectX::SimpleMath::Matrix world_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorld4x4();
+				world_transform._11 = world_transform._22 = world_transform._33 = world_transform._44 = 1.0f;
+				sphere.second.world_transform_matrix = model_local_matrix * world_transform;
 			}
 			else
 			{
-				sphere.second.world_matrix = model_local_matrix * GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).GetNodeMatrix(sphere.second.bone_name.c_str());
+				sphere.second.world_transform_matrix = model_local_matrix * GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).GetNodeMatrix(sphere.second.bone_name.c_str());
 			}
 		}
 	}
@@ -62,22 +65,23 @@ namespace cumulonimbus::component
 	{
 	}
 
-	void SphereCollisionComponent::AddSphere(std::string& name, const collision::Sphere& sphere)
+	std::string SphereCollisionComponent::AddSphere(const std::string& name, const collision::Sphere& sphere)
 	{
 		if(name == "")
 		{// 名前の指定がない場合は「sphere(番号)」という名前にする
 			int no = spheres.size();
-			name = "CollisionTag tag(" + std::to_string(no) + ")";
+			std::string new_name{};
+			new_name = "CollisionTag tag(" + std::to_string(no) + ")";
 			while(true)
 			{
-				if (spheres.contains(name))
+				if (spheres.contains(new_name))
 				{// 名前の重複があったので番号を+1する
 					++no;
 				}
 				else
 				{
-					spheres.emplace(name, sphere);
-					break;
+					spheres.emplace(new_name, sphere);
+					return new_name;
 				}
 			}
 		}
@@ -87,16 +91,17 @@ namespace cumulonimbus::component
 				assert((!"The sphere name already exists(SphereCollisionComponent::AddSphere)"));
 
 			spheres.emplace(name, sphere);
+			return name;
 		}
 	}
 
 	void SphereCollisionComponent::AddSphereAndRegisterBoneName(
 		const std::string&		 bone_name,
-		std::string&			 sphere_name,
+		const std::string&		 sphere_name,
 		const collision::Sphere& sphere)
 	{
-		AddSphere(sphere_name, sphere);
-		spheres.at(sphere_name).bone_name = bone_name;
+		const std::string name = AddSphere(sphere_name, sphere);
+		spheres.at(name).bone_name = bone_name;
 	}
 
 	void SphereCollisionComponent::SetOffset(const std::string& sphere_name, const DirectX::SimpleMath::Vector3& offset)
@@ -113,6 +118,29 @@ namespace cumulonimbus::component
 			sphere.second.offset = offset;
 		}
 	}
+
+	void SphereCollisionComponent::SetRadius(const std::string& sphere_name, float radius)
+	{
+		if (!spheres.contains(sphere_name))
+			assert(!"Name is not registered(SphereCollisionComponent::SetOffset)");
+		spheres.at(sphere_name).radius = radius;
+	}
+
+	void SphereCollisionComponent::SetAllRadius(float radius)
+	{
+		for (auto& sphere : spheres)
+		{
+			sphere.second.radius = radius;
+		}
+	}
+
+
+
+	const std::unordered_map<std::string, collision::Sphere>& SphereCollisionComponent::GetSpheres() const
+	{
+		return spheres;
+	}
+
 } // cumulonimbus::component
 
 //

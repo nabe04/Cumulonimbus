@@ -5,6 +5,7 @@
 #include "fbx_model_resource.h"
 #include "fbx_model_component.h"
 #include "raycast_component.h"
+#include "sphere_collision_component.h"
 #include "rename_type_mapping.h"
 
 namespace cumulonimbus::collision
@@ -28,6 +29,15 @@ namespace cumulonimbus::collision
 					int a;
 					a = 0;
 				}
+			}
+		}
+
+		auto& sphere_collisions = registry->GetArray<component::SphereCollisionComponent>();
+		for(int s1 = 0; s1 < sphere_collisions.GetComponents().size(); ++s1)
+		{
+			for (int s2 = s1 + 1; s2 < sphere_collisions.GetComponents().size(); ++s2)
+			{
+				IntersectSphereVsSphere(sphere_collisions.GetComponents().at(s1), sphere_collisions.GetComponents().at(s2));
 			}
 		}
 	}
@@ -168,6 +178,13 @@ namespace cumulonimbus::collision
 			}
 		}
 		return hit;
+	}
+
+	bool CollisionManager::IntersectSphereVsSphere(
+							const component::SphereCollisionComponent& s1,
+							const component::SphereCollisionComponent& s2)
+	{
+
 	}
 
 } // cumulonimbus::collision

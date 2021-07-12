@@ -8,7 +8,7 @@
 
 namespace cumulonimbus::shader_asset
 {
-	class Material3DManager
+	class Material3DManager final
 	{
 	public:
 		explicit Material3DManager();
@@ -42,7 +42,7 @@ namespace cumulonimbus::shader_asset
 		void RenderImGuiComboShader();
 		/*
 		 * brief : mapping::shader_assets::ShaderAsset3Dで指定されたshader個々の
-		 *		  ImGui(パラメータ)表示
+		 *		   ImGui(パラメータ)表示
 		 */
 		void RenderImGuiShaderParameter();
 
