@@ -124,11 +124,14 @@ void SceneGame::InitializeScene()
 	//registry->GetComponent<cum::component::MeshObjectComponent>(ent_ganfaul).SetRasterizerState(RasterizeState::Cull_Front_CCW_True);
 	//registry->GetComponent<cum::component::FbxModelComponent>(ent_ganfaul).SwitchAnimation(2, true);
 
-	//const cum::mapping::rename_type::Entity ent_sphere = registry->CreateEntity();
-	//registry->AddComponent<cum::component::MeshObjectComponent>(ent_sphere);
-	//registry->AddComponent<cum::component::FbxModelComponent>(ent_sphere, cum::locator::Locator::GetResourceManager()->FbxModelResouece("sphere"));
-	//registry->GetComponent<cum::component::TransformComponent>(ent_sphere).SetPosition({ 0, 0, 0 });
-	//registry->GetComponent<cum::component::TransformComponent>(ent_sphere).SetWorldRotation_Y(180);
+	const cum::mapping::rename_type::Entity ent_sphere = registry->CreateEntity();
+	registry->AddComponent<cum::component::MeshObjectComponent>(ent_sphere);
+	registry->AddComponent<cum::component::FbxModelComponent>(ent_sphere, cum::locator::Locator::GetResourceManager()->FbxModelResouece("sphere"));
+	registry->GetComponent<cum::component::TransformComponent>(ent_sphere).SetPosition({ 50, 0, 0 });
+	registry->GetComponent<cum::component::TransformComponent>(ent_sphere).SetWorldRotation_Y(180);
+	registry->AddComponent<cum::component::SphereCollisionComponent>(ent_sphere, CollisionTag::Player);
+	registry->GetComponent<cum::component::SphereCollisionComponent>(ent_sphere).AddSphere();
+	registry->GetComponent<cum::component::SphereCollisionComponent>(ent_sphere).SetAllRadius(30.0f);
 
 	//const cum::mapping::rename_type::Entity ent_sphere2 = registry->CreateEntity();
 	//registry->AddComponent<cum::component::MeshObjectComponent>(ent_sphere2);

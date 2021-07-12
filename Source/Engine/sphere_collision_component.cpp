@@ -29,7 +29,7 @@ namespace cumulonimbus::component
 		for (auto& sphere : spheres)
 		{
 			// Scaling
-			const DirectX::SimpleMath::Matrix s = DirectX::XMMatrixScaling(sphere.second.radius * 0.5f, sphere.second.radius * 0.5f, sphere.second.radius * 0.5f);
+			const DirectX::SimpleMath::Matrix s = DirectX::XMMatrixScaling(sphere.second.radius, sphere.second.radius, sphere.second.radius);
 			// Rotation
 			const DirectX::SimpleMath::Matrix r = DirectX::XMMatrixIdentity();
 			// Parallel movement
@@ -55,6 +55,7 @@ namespace cumulonimbus::component
 
 	void SphereCollisionComponent::RenderImGui()
 	{
+
 	}
 
 	void SphereCollisionComponent::Save(const std::string& file_path)

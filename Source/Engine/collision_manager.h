@@ -62,10 +62,11 @@ namespace cumulonimbus::collision
 
 		/*
 		 * brief : ‹…‚Æ‹…‚Ì“–‚½‚è”»’è
+		 *	     : SphereCollisionComponent‚ª‚ÂSphere•ªˆ—‚ğ‰ñ‚·
 		 */
 		bool IntersectSphereVsSphere(
-			const component::SphereCollisionComponent& s1,
-			const component::SphereCollisionComponent& s2
+			const component::SphereCollisionComponent& sphere_1,
+			const component::SphereCollisionComponent& sphere_2
 		);
 	};
 

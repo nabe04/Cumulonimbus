@@ -181,10 +181,24 @@ namespace cumulonimbus::collision
 	}
 
 	bool CollisionManager::IntersectSphereVsSphere(
-							const component::SphereCollisionComponent& s1,
-							const component::SphereCollisionComponent& s2)
+		const component::SphereCollisionComponent& sphere_1,
+		const component::SphereCollisionComponent& sphere_2)
 	{
+		for(const auto& s1 : sphere_1.GetSpheres())
+		{
+			for(const auto& s2 : sphere_2.GetSpheres())
+			{
+				const DirectX::SimpleMath::Vector3 s1_translation = s1.second.world_transform_matrix.Translation();
+				const DirectX::SimpleMath::Vector3 s2_translation = s2.second.world_transform_matrix.Translation();
 
+				const DirectX::SimpleMath::Vector3 v = { s1_translation - s2_translation };
+				const float l = v.Length();
+
+				if (l <= s1.second.radius + s2.second.radius)
+					return true;
+			}
+		}
+		return false;
 	}
 
 } // cumulonimbus::collision
