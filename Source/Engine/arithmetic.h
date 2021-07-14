@@ -1,72 +1,222 @@
 #pragma once
-
 #include <d3d11.h>
-
 #include <DirectXMath.h>
 #include <SimpleMath.h>
 
 namespace arithmetic
 {
-	DirectX::XMFLOAT2 CalcVecFromTwoPositions(DirectX::XMFLOAT2 vec1, DirectX::XMFLOAT2 vec2);
-	DirectX::XMFLOAT3 CalcVecFromTwoPositions(DirectX::XMFLOAT3 vec1, DirectX::XMFLOAT3 vec2);
+	/**
+	 * @brief : 直線の定義
+	 */
+	struct Line
+	{
+		DirectX::SimpleMath::Vector3 point;	// 直線上の任意の点
+		DirectX::SimpleMath::Vector3 vec;	// 直線の方向ベクトル
+	};
 
-	/*
-	* brief : calculate up vector
-	* font  : front vector
-	* right : right vector
+	/**
+	 * @brief  : 丸め誤差を考慮した同値関数
+	 * @return : true -> 同値
+	 */
+	[[nodiscard]]
+	bool IsEqual(float l_val, float r_val);
+
+	/**
+	 * @brief : [min,max]の範囲までnをクランプ
+	 */
+	[[nodiscard]]
+	float Clamp(float n, float min, float max);
+
+	[[nodiscard]] DirectX::XMFLOAT2 CalcVecFromTwoPositions(DirectX::XMFLOAT2 vec1, DirectX::XMFLOAT2 vec2);
+	[[nodiscard]] DirectX::XMFLOAT3 CalcVecFromTwoPositions(DirectX::XMFLOAT3 vec1, DirectX::XMFLOAT3 vec2);
+
+	/**
+	* @brief		: upベクトルの算出
+	* @param front  : front vector(z軸)
+	* @param right  : right vector(x軸)
 	*/
+	[[nodiscard]]
 	DirectX::XMFLOAT3 CalcUpVec(
 		const DirectX::XMFLOAT3& front,
 		const DirectX::XMFLOAT3& right);
 
-	/*
-	* brief : calculate right vector
-	* up    : up vector
-	* front : front vector
+	/**
+	* @brief		: rightベクトルの算出
+	* @param up     : up vector(y軸)
+	* @param front  : front vector(z軸)
 	*/
+	[[nodiscard]]
 	DirectX::XMFLOAT3 CalcRightVec(
 		const DirectX::XMFLOAT3& up,
 		const DirectX::XMFLOAT3& front);
 
-	/*
-	* brief : calculate front vector
-	* right : right vector
-	* up    : up vector
+	/**
+	* @brief	   : calculate front vector
+	* @param right : right vector(x軸)
+	* @param up    : up vector(y軸)
 	*/
+	[[nodiscard]]
 	DirectX::XMFLOAT3 CalcFrontVec(
 		const DirectX::XMFLOAT3& right,
 		const DirectX::XMFLOAT3& up);
 
+	[[nodiscard]]
 	DirectX::XMFLOAT3 SphereLinear(
-		const DirectX::XMVECTOR v1,
-		const DirectX::XMVECTOR v2, float s);
+		const DirectX::XMVECTOR& v1,
+		const DirectX::XMVECTOR& v2, float s);
 
+	/**
+	 * @brief	 : 角度を(-180° ～ 180°)に正規化
+	 * @example	 : 190° -> -170°、-200° -> 160°
+	 */
+	[[nodiscard]]
 	float NormalizeAngle(const float angle);
 
-	/*
-	 * brief : 二つのベクトルから角度を算出
+	/**
+	 * @brief     : 二つのベクトルから角度を算出
+	 * @return    : 度数法での角度
 	 */
+	[[nodiscard]]
 	float CalcAngleFromTwoVec(
 		const DirectX::XMFLOAT3& v0,
 		const DirectX::XMFLOAT3& v1);
 
-	/*
-	 * brief : 左手座標系を基底にした時のそれぞれの角度
+	/**
+	 * @brief : 左手座標系を基底にした時のそれぞれの角度
 	 */
-	float CalcAngle_X(const DirectX::SimpleMath::Vector3& v);
-	float CalcAngle_Y(const DirectX::SimpleMath::Vector3& v);
-	float CalcAngle_Z(const DirectX::SimpleMath::Vector3& v);
+	[[nodiscard]] float CalcAngle_X(const DirectX::SimpleMath::Vector3& v);
+	[[nodiscard]] float CalcAngle_Y(const DirectX::SimpleMath::Vector3& v);
+	[[nodiscard]] float CalcAngle_Z(const DirectX::SimpleMath::Vector3& v);
 
-	/*
-	 * brief : 正射影ベクトルの算出
+	/**
+	 * @brief				: 正射影ベクトルの算出
+	 *						  project_vec から onto_vecへの正射影ベクトルを算出する
+	 * @param project_vec	: 射影元ベクトル
+	 * @param onto_vec		: 射影先ベクトル
 	 */
+	[[nodiscard]]
 	DirectX::XMFLOAT3 CalcProjectVector(
 		const DirectX::XMFLOAT3& project_vec,
 		const DirectX::XMFLOAT3& onto_vec);
 
-	/*
-	 * brief : 乱数生成
+	/**
+	 * @brief  : 乱数生成(int)
+	 * @return : minからmaxの範囲での乱数(int)
 	 */
-	int   RandomIntInRange(const int min, const int max);
-	float RandomFloatInRange(const float min, const float max);
-}
+	[[nodiscard]] int   RandomIntInRange(int min, int max);
+	/**
+	 * @brief  : 乱数生成(float)
+	 * @return : minからmaxの範囲での乱数(float)
+	 */
+	[[nodiscard]] float RandomFloatInRange(float min, float max);
+
+	/**
+	 * @brief  : 2つのベクトルが平行どうか判定
+	 * @return : true -> 平行、 false -> 平行じゃない
+	 */
+	[[nodiscard]]
+	bool IsParallel(
+		const DirectX::SimpleMath::Vector3& v1,
+		const DirectX::SimpleMath::Vector3& v2);
+
+	/**
+	 * @brief			: 直線と点との最近接点を算出
+	 * @param l_start	: 直線の端点(このままだと線分になるので関数内でLineに変換)
+	 * @param l_end		: 直線の端点(このままだと線分になるので関数内でLineに変換)
+	 * @param p			: 任意の点
+	 * @return			: 直線上の最近接点の位置
+	 */
+	[[nodiscard]]
+	DirectX::SimpleMath::Vector3 ClosestPtPointLine(
+		const DirectX::SimpleMath::Vector3& l_start,
+		const DirectX::SimpleMath::Vector3& l_end,
+		const DirectX::SimpleMath::Vector3& p
+	);
+
+	/**
+	 * @brief	: 直線と点との最近接点を算出
+	 * @param l	: 直線l
+	 * @param p	: 任意の点p
+	 * @return  : 直線上の最近接点の位置
+	 */
+	[[nodiscard]]
+	DirectX::SimpleMath::Vector3 ClosestPtPointLine(
+		const Line& l,
+		const DirectX::SimpleMath::Vector3& p
+	);
+
+	/**
+	 * @brief	  : 与えられた線分abおよび点cに対して、ab上の最近接点dを計算
+	 *			  : d(t) = a + t * (b - a)により表されるdの位置に対するtも返す
+	 * @param a	  : 線分abの端点
+	 * @param b   : 線分abの端点
+	 * @param c	  : 任意の点
+	 * @param d	  : 最近接点
+	 * @param t	  : dの位置に対するt
+	 * @attention : d,tは参照渡しをしているので算出された結果が入ることに注意
+	 */
+	void ClosestPtPointSegment(
+		const DirectX::SimpleMath::Vector3& a,
+		const DirectX::SimpleMath::Vector3& b,
+		const DirectX::SimpleMath::Vector3& c,
+		DirectX::SimpleMath::Vector3& d,
+		float& t);
+
+	/**
+	 * @brief			: 2直線の最短距離の算出
+	 * @param l1_start	: 直線の端点(このままだと線分になるので関数内でLineに変換)
+	 * @param l1_end    : 直線の端点(このままだと線分になるので関数内でLineに変換)
+	 * @param l2_start  : 直線の端点(このままだと線分になるので関数内でLineに変換)
+	 * @param l2_end    : 直線の端点(このままだと線分になるので関数内でLineに変換)
+	 * @param p1		: 直線l1の垂線の位置
+	 * @param p2		: 直線l2の垂線の位置
+	 * @return			: 2直線の最短距離
+	 */
+	[[nodiscard]]
+	float ClosestPtLineLine(
+		const DirectX::SimpleMath::Vector3& l1_start,
+		const DirectX::SimpleMath::Vector3& l1_end,
+		const DirectX::SimpleMath::Vector3& l2_start,
+		const DirectX::SimpleMath::Vector3& l2_end,
+		DirectX::SimpleMath::Vector3& p1,
+		DirectX::SimpleMath::Vector3& p2
+	);
+
+	/**
+	 * @brief			: 2直線の最短距離の算出
+	 * @param l1		: 直線の設定
+	 * @param l2		: 直線の設定
+	 * @param p1		: 直線l1の垂線の位置
+	 * @param p2		: 直線l2の垂線の位置
+	 * @return			: 2直線の最短距離
+	 */
+	[[nodiscard]]
+	float ClosestPtLineLine(
+		const Line& l1,
+		const Line& l2,
+		DirectX::SimpleMath::Vector3& p1,
+		DirectX::SimpleMath::Vector3& p2
+	);
+
+	/**
+	 * @brief			: 線分と線分の最近接点と最近接点間の距離の算出
+	 * @param p_start	: 線分pの始点
+	 * @param p_end		: 線分pの終点
+	 * @param q_start	: 線分qの始点
+	 * @param q_end		: 線分qの終点
+	 * @param s			: S1(s) = p_start + s * (p_end - p_start)
+	 * @param t			: S2(t) = q_start + t * (q_end - q_start)
+	 * @param c1		: 点pの最近接点
+	 * @param c2		: 点qの最近接点
+	 * @return			: 最近接点間の距離(最短距離)
+	 */
+	[[nodiscard]]
+	float ClosestPtSegmentSegment(
+		const DirectX::SimpleMath::Vector3& p_start,
+		const DirectX::SimpleMath::Vector3& p_end,
+		const DirectX::SimpleMath::Vector3& q_start,
+		const DirectX::SimpleMath::Vector3& q_end,
+		float& s, float& t,
+		DirectX::SimpleMath::Vector3& c1,
+		DirectX::SimpleMath::Vector3& c2);
+} // arithmetic

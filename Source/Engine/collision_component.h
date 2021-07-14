@@ -46,6 +46,7 @@ namespace cumulonimbus::collision
 		DirectX::XMFLOAT3	normal			= { 0.0f,0.0f,0.0f };
 		float				distance		= 0.0f;
 		int					materialIndex	= -1;
+		bool				is_hit			= false;
 	};
 } // cumulonimbus::collision
 
@@ -67,7 +68,7 @@ namespace cumulonimbus::component
 		void Save(const std::string& file_path)			 override {};
 
 		void SetCollisionTag(CollisionTag tag);
-		CollisionTag GetCollisionTag() const;
+		[[nodiscard]] CollisionTag GetCollisionTag() const;
 
 		collision::HitResult& GetHitResult();
 	protected:

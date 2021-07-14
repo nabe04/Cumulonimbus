@@ -56,13 +56,13 @@ int main()
 
 	//robot_fbx.Export("../../Data/Assets/Bin/Robo_L.bin");
 
-	//-- Cube --//
-	BulidFBX cube("../../Data/Assets/FBX/Geometric_Primitive/cube_maya.fbx");
-	cube.Export("../../Data/Assets/Bin/cube.bin");
+	////-- Cube --//
+	//BulidFBX cube("../../Data/Assets/FBX/Geometric_Primitive/cube_maya.fbx");
+	//cube.Export("../../Data/Assets/Bin/cube.bin");
 
-	//-- Sphere --//
-	BulidFBX sphere("../../Data/Assets/FBX/Geometric_Primitive/sphere_maya.fbx");
-	sphere.Export("../../Data/Assets/Bin/sphere.bin");
+	////-- Sphere --//
+	//BulidFBX sphere("../../Data/Assets/FBX/Geometric_Primitive/sphere_maya.fbx");
+	//sphere.Export("../../Data/Assets/Bin/sphere.bin");
 
 	//-- Capsule --//
 	BulidFBX capsule("../../Data/Assets/FBX/Geometric_Primitive/capsule_maya.fbx");

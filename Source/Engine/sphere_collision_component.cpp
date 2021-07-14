@@ -25,7 +25,7 @@ namespace cumulonimbus::component
 
 	void SphereCollisionComponent::PostUpdate(float dt)
 	{
-		// 判定(球)データの更新
+		// 判定用(球)データの更新
 		for (auto& sphere : spheres)
 		{
 			// Scaling
@@ -96,13 +96,14 @@ namespace cumulonimbus::component
 		}
 	}
 
-	void SphereCollisionComponent::AddSphereAndRegisterBoneName(
+	std::string SphereCollisionComponent::AddSphereAndRegisterBoneName(
 		const std::string&		 bone_name,
 		const std::string&		 sphere_name,
 		const collision::Sphere& sphere)
 	{
 		const std::string name = AddSphere(sphere_name, sphere);
 		spheres.at(name).bone_name = bone_name;
+		return name;
 	}
 
 	void SphereCollisionComponent::SetOffset(const std::string& sphere_name, const DirectX::SimpleMath::Vector3& offset)

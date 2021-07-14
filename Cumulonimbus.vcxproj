@@ -37,6 +37,7 @@
     <ClInclude Include="Source\Engine\bloom.h" />
     <ClInclude Include="Source\Engine\camera_operation.h" />
     <ClInclude Include="Source\Engine\camera_work.h" />
+    <ClInclude Include="Source\Engine\capsule_collison_component.h" />
     <ClInclude Include="Source\Engine\cereal_helper.h" />
     <ClInclude Include="Source\Engine\child_actor.h" />
     <ClInclude Include="Source\Engine\collision.h" />
@@ -167,6 +168,7 @@
     <ClCompile Include="Source\Engine\bloom.cpp" />
     <ClCompile Include="Source\Engine\camera_operation.cpp" />
     <ClCompile Include="Source\Engine\camera_work.cpp" />
+    <ClCompile Include="Source\Engine\capsule_collison_component.cpp" />
     <ClCompile Include="Source\Engine\child_actor.cpp" />
     <ClCompile Include="Source\Engine\collision.cpp" />
     <ClCompile Include="Source\Engine\collision_component.cpp" />

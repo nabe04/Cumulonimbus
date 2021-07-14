@@ -18,7 +18,6 @@ namespace cumulonimbus
 			DirectX::SimpleMath::Vector3 offset{};		 // 球の位置調節値
 			std::string bone_name{""};					 // FBXモデルのボーンの位置名
 			float		radius{ 1.f };					 // 半径
-			bool		is_hit{ false };				 // 判定フラグ
 		};
 	} // collision
 
@@ -39,51 +38,53 @@ namespace cumulonimbus
 			void Save(const std::string& file_path)			 override;
 			void Load(const std::string& file_path_and_name) override;
 
-			/*
-			 * brief	 : 球の追加
-			 * name		 : 球名(std::unordered_mapのキー値として使用)
-			 * sphere	 : 判定用の球データ
-			 * ※caution : nameを「""」とした場合、名前が「sphere(番号)」になる
+			/**
+			 * @brief		 : 球の追加
+			 * @param name	 : 球名(std::unordered_mapのキー値として使用)
+			 * @param sphere : 判定用の球データ
+			 * @attention	 : nameを「""」とした場合、名前が「sphere(番号)」になる
 			 */
 			std::string AddSphere(const std::string& name = "", const collision::Sphere& sphere = {});
 
-			/*
-			 * brief	   : 球の位置をFBXモデルのボーンの位置追加
-			 * bone_name   : 関連付けたいFBXモデルのボーン名
-			 * sphere_name : 球名(std::unordered_mapのキー値として使用)
-			 * sphere	   : 判定用の球データ
-			 * ※caution   : nameを「""」とした場合、名前が「sphere(番号)」になる
+			/**
+			 * @brief				: 球追加、位置をFBXモデルのボーンにアタッチ
+			 * @param bone_name		: 関連付けたいFBXモデルのボーン名
+			 * @param sphere_name	: 球名(std::unordered_mapのキー値として使用)
+			 * @param sphere		: 判定用の球データ
+			 * @attention			: nameを「""」とした場合、名前が「sphere(番号)」になる
 			 */
-			void AddSphereAndRegisterBoneName(
-					const std::string& bone_name,
-					const std::string&	   sphere_name,
+			std::string AddSphereAndRegisterBoneName(
+					const std::string&		 bone_name,
+					const std::string&	     sphere_name = "",
 					const collision::Sphere& sphere = {});
 
-			/*
-			 * brief		: 個々の"offset"のセット
-			 * sphere_name	: spheresに登録されているキー値
+			/**
+			 * @brief				: 個々の"offset"のセット
+			 * @param sphere_name	: spheresに登録されているキー値
 			 */
 			void SetOffset(const std::string& sphere_name, const DirectX::SimpleMath::Vector3& offset);
-			/*
-			 * brief : spheres全ての"offset"のセット
+			/**
+			 * @brief : spheres全ての"offset"のセット
 			 */
 			void SetAllOffset(const DirectX::SimpleMath::Vector3& offset);
 
-			/*
-			 * brief		: 個々の"radius"のセット
-			 * sphere_name	: spheresに登録されているキー値
+			/**
+			 * @brief				: 個々の"radius"のセット
+			 * @param sphere_name	: spheresに登録されているキー値
+			 * @param radius		: 半径
 			 */
 			void SetRadius(const std::string& sphere_name, float radius);
 
-			/*
-			 * brief : spheres全ての"offset"のセット 
+			/**
+			 * @brief				: spheres全ての"offset"のセット
+			 * @param radius		: 半径
 			 */
 			void SetAllRadius(float radius);
-			
-			/*
-			 * brief : mapに登録されているcollision::Sphereの取得
+
+			/**
+			 * @brief : mapに登録されているcollision::Sphereの取得
 			 */
-			const std::unordered_map<std::string, collision::Sphere>& GetSpheres() const;
+			[[nodiscard]] const std::unordered_map<std::string, collision::Sphere>& GetSpheres() const;
 		private:
 			// 判定用データ群
 			std::unordered_map<std::string, collision::Sphere> spheres;

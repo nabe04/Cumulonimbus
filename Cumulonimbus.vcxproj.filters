@@ -504,6 +504,9 @@
     <ClCompile Include="Source\Engine\local_shader_manager.cpp">
       <Filter>Source\Engine\Shader%28.cpp%29\System</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\capsule_collison_component.cpp">
+      <Filter>Source\Engine\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -644,13 +647,7 @@
     <ClInclude Include="Source\Engine\arithmetic.h">
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\blend.h">
-      <Filter>Header\Engine\System</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Engine\camera_work.h">
-      <Filter>Header\Engine\System</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\cereal_helper.h">
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\collision.h">
@@ -665,13 +662,7 @@
     <ClInclude Include="Source\Engine\content_browser.h">
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\depth_stencil.h">
-      <Filter>Header\Engine\System</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Engine\dx11_configurator.h">
-      <Filter>Header\Engine\System</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\editor_manager.h">
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\fbx_model_resource.h">
@@ -698,13 +689,7 @@
     <ClInclude Include="Source\Engine\input_device.h">
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\input_manager.h">
-      <Filter>Header\Engine\System</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Engine\input_system.h">
-      <Filter>Header\Engine\System</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\InputManager.h">
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\light.h">
@@ -722,13 +707,7 @@
     <ClInclude Include="Source\Engine\model_data.h">
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\rasterizer.h">
-      <Filter>Header\Engine\System</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Engine\rendering_buffer.h">
-      <Filter>Header\Engine\System</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\sampler.h">
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Sound.h">
@@ -776,9 +755,6 @@
     <ClInclude Include="Source\Engine\component_base.h">
       <Filter>Header\Engine\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\file_path_helper.h">
-      <Filter>Header\Engine\System</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Engine\render_path.h">
       <Filter>Header\Engine\Render</Filter>
     </ClInclude>
@@ -805,9 +781,6 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\sky_box.h">
       <Filter>Header\Engine\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\resource_manager.h">
-      <Filter>Header\Engine\System</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\shader_interop.h">
       <Filter>Header\Engine\System\Mapping</Filter>
@@ -840,9 +813,6 @@
       <Filter>Header\Engine\Shader%28.h%29\System</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\normal_map_resource.h">
-      <Filter>Header\Engine\System</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\texture_resource_manager.h">
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\texture_filename_mapping.h">
@@ -878,9 +848,6 @@
     <ClInclude Include="Source\Game\player_component.h">
       <Filter>Header\Game</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\collision_manager.h">
-      <Filter>Header\Engine\System</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Engine\raycast_component.h">
       <Filter>Header\Engine\Components</Filter>
     </ClInclude>
@@ -892,6 +859,45 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\local_shader_manager.h">
       <Filter>Header\Engine\Shader%28.h%29\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\capsule_collison_component.h">
+      <Filter>Header\Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\blend.h">
+      <Filter>Header\Engine\Graphics_State</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\depth_stencil.h">
+      <Filter>Header\Engine\Graphics_State</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\rasterizer.h">
+      <Filter>Header\Engine\Graphics_State</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\sampler.h">
+      <Filter>Header\Engine\Graphics_State</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\cereal_helper.h">
+      <Filter>Header\Engine\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\collision_manager.h">
+      <Filter>Header\Engine\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\texture_resource_manager.h">
+      <Filter>Header\Engine\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\resource_manager.h">
+      <Filter>Header\Engine\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\InputManager.h">
+      <Filter>Header\Engine\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\input_manager.h">
+      <Filter>Header\Engine\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\editor_manager.h">
+      <Filter>Header\Engine\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\file_path_helper.h">
+      <Filter>Header\Engine\Helper</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1041,6 +1047,12 @@
     </Filter>
     <Filter Include="Header\Game">
       <UniqueIdentifier>{29cd19ed-39e6-4fe2-8468-edd702ef246c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Engine\Graphics_State">
+      <UniqueIdentifier>{afb46666-4e94-4d00-9c4b-1c5ef88313d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Engine\Manager">
+      <UniqueIdentifier>{81860592-f47f-4ddb-9485-408911fe663e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

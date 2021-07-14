@@ -11,6 +11,7 @@
 
 // Components
 #include "anim_sprite.h"
+#include "capsule_collison_component.h"
 #include "fbx_model_component.h"
 #include "geometric_primitive_component.h"
 #include "material_component.h"
@@ -636,12 +637,18 @@ namespace cumulonimbus::renderer
 		{
 			const mapping::rename_type::Entity ent = sphere_collision.GetEntity();
 			const auto& model_resource = locator::Locator::GetResourceManager()->FbxModelResouece("sphere");
-			RenderCollisionModel(immediate_context, registry, ent, model_resource.get());
+			RenderSphereCollisionModel(immediate_context, registry, ent, model_resource.get());
+		}
+		for(auto& capsule_collision : registry->GetArray<component::CapsuleCollisionComponent>().GetComponents())
+		{
+			const mapping::rename_type::Entity ent = capsule_collision.GetEntity();
+			const auto& model_resource = locator::Locator::GetResourceManager()->FbxModelResouece("capsule");
+			RenderCapsuleCollisionModel(immediate_context, registry, ent, model_resource.get());
 		}
 	}
 
 
-	void RenderPath::RenderCollisionModel(ID3D11DeviceContext* immediate_context,
+	void RenderPath::RenderSphereCollisionModel(ID3D11DeviceContext* immediate_context,
 										  ecs::Registry* registry, mapping::rename_type::Entity entity,
 										  const FbxModelResource* model_resource)
 	{
@@ -666,19 +673,57 @@ namespace cumulonimbus::renderer
 				{
 
 					DebugCollisionCB cb_collision;
-					if (sphere.second.is_hit)
-					{
-						cb_collision.collider_color = { 1.f,.0f,.0f,1.f };
-					}
-					else
-					{
-						cb_collision.collider_color = { .0f,.0f,1.f,1.f };
-					}
+					//if (sphere.second.is_hit)
+					//{
+					//	cb_collision.collider_color = { 1.f,.0f,.0f,1.f };
+					//}
+					//else
+					//{
+					//	cb_collision.collider_color = { .0f,.0f,1.f,1.f };
+					//}
 					immediate_context->DrawIndexed(subset.index_count, subset.start_index, 0);
 				}
 			}
 		}
 	}
+
+	void RenderPath::RenderCapsuleCollisionModel(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, mapping::rename_type::Entity entity, const FbxModelResource* model_resource)
+	{
+		const auto& capsule_collision = registry->GetComponent<component::CapsuleCollisionComponent>(entity);
+		for (const auto& capsule : capsule_collision.GetCapsules())
+		{
+			for (const auto& mesh : model_resource->GetModelData().meshes)
+			{
+				// メッシュ単位コンスタントバッファ更新
+				TransformCB transform{};
+				transform.bone_transforms[0] = capsule.second.world_transform_matrix;
+
+				registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
+
+				UINT stride = sizeof(shader::Vertex);
+				UINT offset = 0;
+				immediate_context->IASetVertexBuffers(0, 1, mesh.vertex_buffer.GetAddressOf(), &stride, &offset);
+				immediate_context->IASetIndexBuffer(mesh.index_buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+				locator::Locator::GetDx11Device()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleList);
+
+				for (const ModelData::Subset& subset : mesh.subsets)
+				{
+
+					DebugCollisionCB cb_collision;
+					//if (sphere.second.is_hit)
+					//{
+					//	cb_collision.collider_color = { 1.f,.0f,.0f,1.f };
+					//}
+					//else
+					//{
+					//	cb_collision.collider_color = { .0f,.0f,1.f,1.f };
+					//}
+					immediate_context->DrawIndexed(subset.index_count, subset.start_index, 0);
+				}
+			}
+		}
+	}
+
 
 	void RenderPath::RenderCollision_End(ID3D11DeviceContext* immediate_context, const View* view)
 	{

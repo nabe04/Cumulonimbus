@@ -198,9 +198,12 @@ namespace cumulonimbus::renderer
 		 */
 		void RenderCollision_Begin(ID3D11DeviceContext* immediate_context, const View* view);
 		void RenderCollision(ID3D11DeviceContext* immediate_context, ecs::Registry* registry);
-		void RenderCollisionModel(ID3D11DeviceContext* immediate_context,
-								  ecs::Registry* registry, mapping::rename_type::Entity entity,
-								  const FbxModelResource* model_resource);
+		void RenderSphereCollisionModel(ID3D11DeviceContext* immediate_context,
+									    ecs::Registry* registry, mapping::rename_type::Entity entity,
+										const FbxModelResource* model_resource);
+		void RenderCapsuleCollisionModel(ID3D11DeviceContext* immediate_context,
+										 ecs::Registry* registry, mapping::rename_type::Entity entity,
+										 const FbxModelResource* model_resource);
 		void RenderCollision_End(ID3D11DeviceContext* immediate_context, const View* view);
 
 		/*

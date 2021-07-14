@@ -13,6 +13,7 @@
 #include "anim_sprite.h"
 #include "player_component.h"
 #include "sphere_collision_component.h"
+#include "capsule_collison_component.h"
 
 #include "transform_component.h"
 
@@ -129,9 +130,9 @@ void SceneGame::InitializeScene()
 	registry->AddComponent<cum::component::FbxModelComponent>(ent_sphere, cum::locator::Locator::GetResourceManager()->FbxModelResouece("sphere"));
 	registry->GetComponent<cum::component::TransformComponent>(ent_sphere).SetPosition({ 50, 0, 0 });
 	registry->GetComponent<cum::component::TransformComponent>(ent_sphere).SetWorldRotation_Y(180);
-	registry->AddComponent<cum::component::SphereCollisionComponent>(ent_sphere, CollisionTag::Player);
-	registry->GetComponent<cum::component::SphereCollisionComponent>(ent_sphere).AddSphere();
-	registry->GetComponent<cum::component::SphereCollisionComponent>(ent_sphere).SetAllRadius(30.0f);
+	registry->AddComponent<cum::component::CapsuleCollisionComponent>(ent_sphere, CollisionTag::Player);
+	registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_sphere).AddCapsule();
+	registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_sphere).SetAllRadius(30.0f);
 
 	//const cum::mapping::rename_type::Entity ent_sphere2 = registry->CreateEntity();
 	//registry->AddComponent<cum::component::MeshObjectComponent>(ent_sphere2);
