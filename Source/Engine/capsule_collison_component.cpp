@@ -4,6 +4,7 @@
 #include <cassert>
 
 #include "ecs.h"
+#include "arithmetic.h"
 #include "transform_component.h"
 #include "fbx_model_resource.h"
 #include "fbx_model_component.h"
@@ -29,34 +30,70 @@ namespace cumulonimbus::component
 		for(auto& capsule : capsules)
 		{
 			// Scaling
-			//const DirectX::SimpleMath::Matrix s = DirectX::XMMatrixScaling(capsule.second.radius, capsule.second.length * 0.5f, capsule.second.radius);
-			const DirectX::SimpleMath::Matrix s = DirectX::SimpleMath::Matrix::Identity;
+			const DirectX::SimpleMath::Matrix s = DirectX::XMMatrixScaling(capsule.second.radius, capsule.second.length * 0.5f, capsule.second.radius);
+			//const DirectX::SimpleMath::Matrix s = DirectX::SimpleMath::Matrix::Identity;
 			// Rotation
-			//const DirectX::SimpleMath::Matrix r = DirectX::XMMatrixRotationRollPitchYawFromVector(capsule.second.rotation);
-			const DirectX::SimpleMath::Matrix r = DirectX::SimpleMath::Matrix::Identity;
+			DirectX::SimpleMath::Vector3 radian = { arithmetic::NormalizeAngle(capsule.second.rotation.x), arithmetic::NormalizeAngle(capsule.second.rotation.y),arithmetic::NormalizeAngle(capsule.second.rotation.z) };
+			radian.x = DirectX::XMConvertToRadians(radian.x);
+			radian.y = DirectX::XMConvertToRadians(radian.y);
+			radian.z = DirectX::XMConvertToRadians(radian.z);
+			const DirectX::SimpleMath::Matrix r = DirectX::XMMatrixRotationRollPitchYawFromVector(radian);
+			//const DirectX::SimpleMath::Matrix r = DirectX::SimpleMath::Matrix::Identity;
 			// Parallel movement
 			const DirectX::SimpleMath::Matrix t = DirectX::XMMatrixTranslation(capsule.second.offset.x, capsule.second.offset.y, capsule.second.offset.z);
 			// Local matrix
 			const DirectX::SimpleMath::Matrix model_local_matrix = s * r * t;
 			if (capsule.second.bone_name.empty())
 			{
-				// モデルが持つワールド変換行列
-				DirectX::SimpleMath::Matrix world_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorld4x4();
-				world_transform._11 = world_transform._22 = world_transform._33 = world_transform._44 = 1.0f;
-				capsule.second.world_transform_matrix = model_local_matrix * world_transform;
+				// モデルが持つ回転 × 平行移動行列から行列を作成(モデルの拡縮は考慮しない)
+				DirectX::SimpleMath::Matrix st_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetRotationMat() * GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetTransformMat();
+				//world_transform._11 = world_transform._22   = world_transform._33 = world_transform._44 = 1.0f;
+				capsule.second.world_transform_matrix	    = model_local_matrix * st_transform;
 			}
 			else
 			{
 				capsule.second.world_transform_matrix = model_local_matrix * GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).GetNodeMatrix(capsule.second.bone_name.c_str());
 			}
 
-			capsule.second.start = capsule.second.world_transform_matrix.Up() * -(capsule.second.world_transform_matrix.Translation() * 0.5f);
-			capsule.second.end   = capsule.second.world_transform_matrix.Up() *  (capsule.second.world_transform_matrix.Translation() * 0.5f);
+			DirectX::SimpleMath::Vector3 up = capsule.second.world_transform_matrix.Up();
+			up.Normalize();
+			const DirectX::SimpleMath::Vector3 reference_point = capsule.second.world_transform_matrix.Translation();
+			capsule.second.start = reference_point + up * -(capsule.second.length * 0.5f);
+			capsule.second.end   = reference_point + up *  (capsule.second.length * 0.5f);
 		}
 	}
 
 	void CapsuleCollisionComponent::RenderImGui()
 	{
+		if(ImGui::TreeNode("CapsuleCollisionComponent"))
+		{
+			int id = 0;
+			for(auto& capsule : capsules)
+			{
+				ImGui::PushID(id);
+				if (ImGui::TreeNode(capsule.first.c_str()))
+				{
+					ImGui::Text("Is Hit : %d", capsule.second.is_hit);
+					ImGui::Text("Fetch Bone Name : %s", capsule.second.bone_name.c_str());
+					ImGui::Text("Segment Start.x : %f", capsule.second.start.x);
+					ImGui::Text("Segment Start.y : %f", capsule.second.start.y);
+					ImGui::Text("Segment Start.z : %f", capsule.second.start.z);
+					ImGui::Text("Segment End.x   : %f", capsule.second.end.x);
+					ImGui::Text("Segment End.y   : %f", capsule.second.end.y);
+					ImGui::Text("Segment End.z   : %f", capsule.second.end.z);
+					ImGui::DragFloat3("Offset", (float*)&capsule.second.offset, 0.1f, -1000, 1000);
+					ImGui::DragFloat3("Rotation", (float*)&capsule.second.rotation, 0.5f, -180.f, 180.f);
+					ImGui::DragFloat("Length", &capsule.second.length, 0.1f, 1.0f, 1000.0f);
+					ImGui::DragFloat("Radius", &capsule.second.radius, 0.1f, 1.0f, 1000.0f);
+					++id;
+					ImGui::TreePop();
+				}
+
+				ImGui::PopID();
+			}
+
+			ImGui::TreePop();
+		}
 	}
 
 	void CapsuleCollisionComponent::Load(const std::string& file_path_and_name)
@@ -73,7 +110,7 @@ namespace cumulonimbus::component
 		{// 名前の指定がない場合は「sphere(番号)」という名前にする
 			int no = capsules.size();
 			std::string new_name{};
-			new_name = "CollisionTag tag(" + std::to_string(no) + ")";
+			new_name = "capsule(" + std::to_string(no) + ")";
 			while (true)
 			{
 				if (capsules.contains(new_name))
@@ -139,7 +176,22 @@ namespace cumulonimbus::component
 		}
 	}
 
-	const std::unordered_map<std::string, collision::Capsule>& CapsuleCollisionComponent::GetCapsules() const
+	void CapsuleCollisionComponent::SetLength(const std::string& capsule_name, float length)
+	{
+		if (!capsules.contains(capsule_name))
+			assert(!"Name is not registered(CapsuleCollisionComponent::SetOffset)");
+		capsules.at(capsule_name).length = length;
+	}
+
+	void CapsuleCollisionComponent::SetAllLength(float length)
+	{
+		for (auto& capsule : capsules)
+		{
+			capsule.second.length = length;
+		}
+	}
+
+	std::unordered_map<std::string, collision::Capsule>& CapsuleCollisionComponent::GetCapsules()
 	{
 		return capsules;
 	}

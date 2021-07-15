@@ -1,11 +1,13 @@
 #include "collision_manager.h"
 
+#include "arithmetic.h"
 #include "ecs.h"
 #include "model_data.h"
 #include "fbx_model_resource.h"
 #include "fbx_model_component.h"
 #include "raycast_component.h"
 #include "sphere_collision_component.h"
+#include "capsule_collison_component.h"
 #include "rename_type_mapping.h"
 
 namespace cumulonimbus::collision
@@ -32,6 +34,7 @@ namespace cumulonimbus::collision
 			}
 		}
 
+		// 球同士の当たり判定
 		auto& sphere_collisions = registry->GetArray<component::SphereCollisionComponent>();
 		for(int s1 = 0; s1 < sphere_collisions.GetComponents().size(); ++s1)
 		{
@@ -40,6 +43,18 @@ namespace cumulonimbus::collision
 				IntersectSphereVsSphere(sphere_collisions.GetComponents().at(s1), sphere_collisions.GetComponents().at(s2));
 			}
 		}
+
+		// カプセル同士の判定
+		auto& capsule_collisions = registry->GetArray<component::CapsuleCollisionComponent>();
+		for(int c1 = 0;c1 < capsule_collisions.GetComponents().size(); ++c1)
+		{
+			for(int c2 = c1 + 1; c2 < capsule_collisions.GetComponents().size(); ++c2)
+			{
+				IntersectCapsuleVsCapsule(capsule_collisions.GetComponents().at(c1), capsule_collisions.GetComponents().at(c2));
+			}
+		}
+
+		
 	}
 
 	void CollisionManager::RegistryRayCastModel(mapping::rename_type::Entity ent)
@@ -200,5 +215,37 @@ namespace cumulonimbus::collision
 		}
 		return false;
 	}
+
+	bool CollisionManager::IntersectCapsuleVsCapsule(
+		component::CapsuleCollisionComponent& capsule_1,
+		component::CapsuleCollisionComponent& capsule_2)
+	{
+		for(auto& c1 : capsule_1.GetCapsules())
+		{
+			for(auto& c2 : capsule_2.GetCapsules())
+			{
+				// それぞれのカプセルの線分(始点)からの大きさ
+				float c1_t, c2_t;
+				DirectX::SimpleMath::Vector3 c1_p, c2_p;
+
+				// 線分の最近距離
+				float len = arithmetic::ClosestPtSegmentSegment(
+								c1.second.start, c1.second.end,
+								c2.second.start, c2.second.end,
+								c1_t, c2_t,
+								c1_p, c2_p);
+
+				if(len <c1.second.radius + c2.second.radius)
+				{
+					c1.second.is_hit = c2.second.is_hit = true;
+					return true;
+				}
+
+				c1.second.is_hit = c2.second.is_hit = false;
+			}
+		}
+		return false;
+	}
+
 
 } // cumulonimbus::collision

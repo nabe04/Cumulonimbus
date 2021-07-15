@@ -22,6 +22,7 @@ namespace cumulonimbus
 			std::string bone_name{ "" };							 // FBXモデルのボーンの位置名
 			float		length = 2;									 // カプセルの端点間の長さ
 			float		radius = 1;									 // カプセルの半径
+			bool		is_hit = false;								 // 判定フラグ
 		};
 	} // collision
 
@@ -66,35 +67,48 @@ namespace cumulonimbus
 				const collision::Capsule& capsule = {});
 
 			/**
-			 * @brief				: 個々の"offset"のセット
-			 * @param capsule_name	: spheresに登録されているキー値
+			 * @brief				: 個々のカプセルの"offset"のセット
+			 * @param capsule_name	: capsuleに登録されているキー値
 			 */
 			void SetOffset(const std::string& capsule_name, const DirectX::SimpleMath::Vector3& offset);
 			/**
-			 * @brief : spheres全ての"offset"のセット
+			 * @brief : 全てのカプセルの"offset"のセット
 			 */
 			void SetAllOffset(const DirectX::SimpleMath::Vector3& offset);
 
 			/**
-			 * @brief				: 個々の"radius"のセット
-			 * @param capsule_name	: spheresに登録されているキー値
+			 * @brief				: 個々の"カプセルのradius"のセット
+			 * @param capsule_name	: capsuleに登録されているキー値
 			 * @param radius		: 半径
 			 */
 			void SetRadius(const std::string& capsule_name, float radius);
 
 			/**
-			 * @brief		  : spheres全ての"offset"のセット
-			 * @param radius : 半径
+			 * @brief		  : 全てのカプセルの"offset"のセット
+			 * @param radius  : 半径
 			 */
 			void SetAllRadius(float radius);
 
 			/**
-				 * @brief : mapに登録されているcollision::Capsuleの取得
-				 */
-			[[nodiscard]] const std::unordered_map<std::string, collision::Capsule>& GetCapsules() const;
+			 * @brief				: 個々のカプセルの"length"のセット
+			 * @param capsule_name	: capsuleに登録されているキー値
+			 * @param length		: カプセル内の線分の長さ
+			 */
+			void SetLength(const std::string& capsule_name, float length);
+
+			/**
+			 * @brief		  : 全てのカプセルの"length"のセット
+			 * @param length  : カプセル内の線分の長さ
+			 */
+			void SetAllLength(float length);
+
+			/**
+			* @brief : mapに登録されているcollision::Capsuleの取得
+			*/
+			[[nodiscard]] std::unordered_map<std::string, collision::Capsule>& GetCapsules();
 		private:
 			// 判定用データ群
-			std::unordered_map<std::string, collision::Capsule> capsules;
+			std::unordered_map<std::string, collision::Capsule> capsules{};
 		};
 	} // component
 

@@ -50,15 +50,14 @@ namespace cumulonimbus::component
 			position.y += adjust_val.y;
 			position.z += adjust_val.z;
 		}
-		auto& GetPosition()const { return position; }
+		[[nodiscard]] auto& GetPosition()const	   { return position; }
 		void SetOldPosition(DirectX::XMFLOAT3 pos) { prev_pos = pos; }
-		auto GetOldPosition() const { return prev_pos; }
-		auto DeltaPosition() const
+		[[nodiscard]] auto GetOldPosition() const  { return prev_pos; }
+		[[nodiscard]] auto DeltaPosition() const
 		{
 			const DirectX::XMFLOAT3 delta_pos{ position.x - prev_pos.x ,position.y - prev_pos.y,position.z - prev_pos.z };
 			return delta_pos;
 		}
-		const DirectX::SimpleMath::Matrix& TransformMat() { return translation_matrix; }
 
 
 		//-- Scale --//
@@ -86,7 +85,7 @@ namespace cumulonimbus::component
 		void AdjustWorldRotation_Y(const float y) { angle.y += y; }
 		void AdjustWorldRotation_Z(const float z) { angle.z += z; }
 		auto& GetWorldRotation() { return angle; }
-		DirectX::XMFLOAT3 const GetDeltaAngle()
+		DirectX::XMFLOAT3 GetDeltaAngle() const
 		{
 			return DirectX::XMFLOAT3{ angle.x - prev_angle.x,angle.y - prev_angle.y,angle.z - prev_angle.z };
 		}
@@ -113,7 +112,10 @@ namespace cumulonimbus::component
 		void CalcLocalRotation_Y();
 		void CalcLocalRotation_Z();
 
-		[[nodiscard]] auto& GetRotation4x4() const { return rotation_matrix; }
+
+		[[nodiscard]] const DirectX::SimpleMath::Matrix& GetRotationMat()	 const { return rotation_matrix; }
+		[[nodiscard]] const DirectX::SimpleMath::Matrix& GetScalingMat()	 const { return scaling_matrix; }
+		[[nodiscard]] const DirectX::SimpleMath::Matrix& GetTransformMat()   const { return translation_matrix; }
 
 		/*
 		* brief : Front Billboard

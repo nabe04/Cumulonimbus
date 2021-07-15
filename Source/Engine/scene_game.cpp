@@ -132,7 +132,8 @@ void SceneGame::InitializeScene()
 	registry->GetComponent<cum::component::TransformComponent>(ent_sphere).SetWorldRotation_Y(180);
 	registry->AddComponent<cum::component::CapsuleCollisionComponent>(ent_sphere, CollisionTag::Player);
 	registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_sphere).AddCapsule();
-	registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_sphere).SetAllRadius(30.0f);
+	registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_sphere).SetAllRadius(10.0f);
+	registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_sphere).SetAllLength(20.0f);
 
 	//const cum::mapping::rename_type::Entity ent_sphere2 = registry->CreateEntity();
 	//registry->AddComponent<cum::component::MeshObjectComponent>(ent_sphere2);
@@ -144,14 +145,15 @@ void SceneGame::InitializeScene()
 	registry->AddComponent<cum::component::MeshObjectComponent>(ent_player);
 	registry->AddComponent<cum::component::PlayerComponent>(ent_player);
 	registry->AddComponent<cum::component::FbxModelComponent>(ent_player, cum::locator::Locator::GetResourceManager()->FbxModelResouece("Robo_L"));
-	registry->AddComponent<cum::component::SphereCollisionComponent>(ent_player, CollisionTag::Player);
+	registry->AddComponent<cum::component::CapsuleCollisionComponent>(ent_player, CollisionTag::Player);
 	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetScale(0.3f);
 	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetPosition({ -30, 10, 0 });
 	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetWorldRotation_Y(180);
 	registry->GetComponent<cum::component::MeshObjectComponent>(ent_player).SetRasterizerState(RasterizeState::Cull_Front_CCW_True);
 	registry->GetComponent<cum::component::FbxModelComponent>(ent_player).SwitchAnimation(4, true);
-	registry->GetComponent<cum::component::SphereCollisionComponent>(ent_player).AddSphere();
-	registry->GetComponent<cum::component::SphereCollisionComponent>(ent_player).SetAllRadius(50.0f);
+	registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_player).AddCapsule();
+	registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_player).SetAllRadius(20.0f);
+	registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_player).SetAllLength(40.0f);
 }
 
 void SceneGame::UpdateScene(const float delta_time)

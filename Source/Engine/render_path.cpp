@@ -689,8 +689,8 @@ namespace cumulonimbus::renderer
 
 	void RenderPath::RenderCapsuleCollisionModel(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, mapping::rename_type::Entity entity, const FbxModelResource* model_resource)
 	{
-		const auto& capsule_collision = registry->GetComponent<component::CapsuleCollisionComponent>(entity);
-		for (const auto& capsule : capsule_collision.GetCapsules())
+		auto& capsule_collision = registry->GetComponent<component::CapsuleCollisionComponent>(entity);
+		for (auto& capsule : capsule_collision.GetCapsules())
 		{
 			for (const auto& mesh : model_resource->GetModelData().meshes)
 			{
