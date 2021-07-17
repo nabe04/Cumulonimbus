@@ -625,11 +625,14 @@ void BulidFBX::BuildAnimations(FbxScene* fbx_scene)
 		FbxTime fbx_frame_time;
 		fbx_frame_time.SetTime(0, 0, 0, 1, 0, fbx_time_mode);	// 1フレーム当たりの時間を算出?
 
-		float sampling_rate = static_cast<float>(fbx_frame_time.GetFrameRate(fbx_time_mode));
-		float sampling_time = 1.0f / sampling_rate;
+		const float sampling_rate = static_cast<float>(fbx_frame_time.GetFrameRate(fbx_time_mode));
+		const float sampling_time = 1.0f / sampling_rate;
+		animation.sampling_rate = sampling_rate;
+		animation.sampling_time = sampling_time;
 
-		FbxString* fbx_anim_stack_name = fbx_anim_stack_names.GetAt(fbx_animation_index);
-		FbxAnimStack* fbx_anim_stack = fbx_scene->FindMember<FbxAnimStack>(fbx_anim_stack_name->Buffer());
+		FbxString*	  fbx_anim_stack_name	= fbx_anim_stack_names.GetAt(fbx_animation_index);
+		animation.animation_name			= fbx_anim_stack_name->Buffer();
+		FbxAnimStack* fbx_anim_stack		= fbx_scene->FindMember<FbxAnimStack>(fbx_anim_stack_name->Buffer());
 
 		// 再生するアニメーションを指定する。
 		fbx_scene->SetCurrentAnimationStack(fbx_anim_stack);
@@ -646,7 +649,8 @@ void BulidFBX::BuildAnimations(FbxScene* fbx_scene)
 
 		int start_frame = static_cast<int>(fbx_start_time.Get() / fbx_sampling_step.Get());
 		int end_frame = static_cast<int>(fbx_end_time.Get() / fbx_sampling_step.Get());
-		int frame_count = static_cast<int>((fbx_end_time.Get() - fbx_start_time.Get()) / fbx_sampling_step.Get());
+		const int frame_count = static_cast<int>((fbx_end_time.Get() - fbx_start_time.Get()) / fbx_sampling_step.Get());
+		animation.num_key_frame = frame_count;
 
 		// アニメーションの対象となるノードを列挙する
 		std::vector<FbxNode*> fbx_nodes;
@@ -664,7 +668,6 @@ void BulidFBX::BuildAnimations(FbxScene* fbx_scene)
 		float seconds = 0.0f;
 		ModelData::Keyframe* keyframe = animation.keyframes.data();
 		size_t fbx_node_count = fbx_nodes.size();
-		FbxTime fbxCurrentTime = fbx_start_time;
 		for (FbxTime fbx_current_time = fbx_start_time; fbx_current_time < fbx_end_time; fbx_current_time += fbx_sampling_step, ++keyframe)
 		{
 			// キーフレーム毎の姿勢データを取り出す。
@@ -678,26 +681,26 @@ void BulidFBX::BuildAnimations(FbxScene* fbx_scene)
 				{
 					// アニメーション対象のノードがなかったのでダミーデータを設定
 					ModelData::Node& node = model_data.nodes.at(fbx_node_index);
-					key_data.scale = node.scale;
-					key_data.rotate = node.rotate;
-					key_data.translate = node.translate;
+					key_data.scale		= node.scale;
+					key_data.rotate		= node.rotate;
+					key_data.translate	= node.translate;
 				}
 				else if (fbx_node_index == root_motion_node_index)
 				{
 					// ルートモーションは無視する
 					ModelData::Node& node = model_data.nodes.at(fbx_node_index);
-					key_data.scale = DirectX::XMFLOAT3(1, 1, 1);
-					key_data.rotate = DirectX::XMFLOAT4(0, 0, 0, 1);
-					key_data.translate = DirectX::XMFLOAT3(0, 0, 0);
+					key_data.scale		= DirectX::XMFLOAT3(1, 1, 1);
+					key_data.rotate		= DirectX::XMFLOAT4(0, 0, 0, 1);
+					key_data.translate	= DirectX::XMFLOAT3(0, 0, 0);
 				}
 				else
 				{
 					// 指定時間のローカル行列からスケール値、回転値、移動値を取り出す。
 					const FbxAMatrix& fbxLocalTransform = fbx_node->EvaluateLocalTransform(fbx_current_time);
 
-					key_data.scale = FbxDouble4ToFloat3(fbxLocalTransform.GetS());
-					key_data.rotate = FbxDouble4ToFloat4(fbxLocalTransform.GetQ());
-					key_data.translate = FbxDouble4ToFloat3(fbxLocalTransform.GetT());
+					key_data.scale		= FbxDouble4ToFloat3(fbxLocalTransform.GetS());
+					key_data.rotate		= FbxDouble4ToFloat4(fbxLocalTransform.GetQ());
+					key_data.translate	= FbxDouble4ToFloat3(fbxLocalTransform.GetT());
 				}
 			}
 			seconds += sampling_time;

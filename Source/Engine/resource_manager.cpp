@@ -24,15 +24,10 @@ void ResourceManager::Initialize(ID3D11Device* device)
 		std::shared_ptr<FbxModelResource> robo_resource = std::make_shared<FbxModelResource>(device, robo_filename, "./Data/Assets/FBX/Robot/");
 		AddFBXData(robo_resource);
 
-		// Test Robot Normal
-		const char* test_robo_filename = "./Data/Assets/Bin/TestRobo_L_Normal.bin";
-		std::shared_ptr<FbxModelResource> test_robo_resource = std::make_shared<FbxModelResource>(device, test_robo_filename, "./Data/Assets/FBX/Robot/");
-		AddFBXData(test_robo_resource);
-
-		// Test Robot Mirror
-		const char* test_robo_mirror_filename = "./Data/Assets/Bin/TestRobo_L_Mirror.bin";
-		std::shared_ptr<FbxModelResource> test_robo_mirror_resource = std::make_shared<FbxModelResource>(device, test_robo_mirror_filename, "./Data/Assets/FBX/Robot/");
-		AddFBXData(test_robo_mirror_resource);
+		// Robo
+		const char* robo2_filename = "./Data/Assets/Bin/Robo.bin";
+		std::shared_ptr<FbxModelResource> robo2_resource = std::make_shared<FbxModelResource>(device, robo2_filename, "./Data/Assets/FBX/Robo/");
+		AddFBXData(robo2_resource);
 
 		// Cube
 		const char* cube_filename  = "./Data/Assets/Bin/cube.bin";  // "./Data/Assets/FBX/stage/stage.fbm/"

@@ -144,7 +144,7 @@ void SceneGame::InitializeScene()
 	const cum::mapping::rename_type::Entity ent_player = registry->CreateEntity();
 	registry->AddComponent<cum::component::MeshObjectComponent>(ent_player);
 	registry->AddComponent<cum::component::PlayerComponent>(ent_player);
-	registry->AddComponent<cum::component::FbxModelComponent>(ent_player, cum::locator::Locator::GetResourceManager()->FbxModelResouece("Robo_L"));
+	registry->AddComponent<cum::component::FbxModelComponent>(ent_player, cum::locator::Locator::GetResourceManager()->FbxModelResouece("Robo"));
 	registry->AddComponent<cum::component::CapsuleCollisionComponent>(ent_player, CollisionTag::Player);
 	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetScale(0.3f);
 	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetPosition({ -30, 10, 0 });

@@ -65,8 +65,12 @@ int main()
 	//sphere.Export("../../Data/Assets/Bin/sphere.bin");
 
 	//-- Capsule --//
-	BulidFBX capsule("../../Data/Assets/FBX/Geometric_Primitive/capsule_maya.fbx");
-	capsule.Export("../../Data/Assets/Bin/capsule.bin");
+	//BulidFBX capsule("../../Data/Assets/FBX/Geometric_Primitive/capsule_maya.fbx");
+	//capsule.Export("../../Data/Assets/Bin/capsule.bin");
+
+	// Robo
+	BulidFBX robot_fbx("../../Data/Assets/FBX/Robo/Robo_L.fbx");
+	robot_fbx.Export("../../Data/Assets/Bin/Robo.bin");
 
 	//getchar();
 	return 0;

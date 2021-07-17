@@ -38,7 +38,7 @@ namespace cumulonimbus::component
 		enum class AnimationState
 		{
 			T_Pose,
-			Idle,
+			Idle = 22,
 			Walk_Front,
 			Walk_Back,
 			Attack_01,

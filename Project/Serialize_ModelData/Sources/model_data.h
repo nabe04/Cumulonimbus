@@ -153,17 +153,27 @@ public:
 			);
 		}
 	};
+	
 	struct Animation
 	{
-		float						seconds_length;
 		std::vector<Keyframe>		keyframes;
-
+		float						seconds_length; // キーフレームの長さ(秒)
+		float						sampling_rate;  // アニメーションのキーフレイムレイト
+		float						sampling_time;	// 1フレーム当たりのキーフレームの長さ(1 / sampling_rate)
+		int							num_key_frame;	// キーフレーム数
+		std::string					animation_name;	// アニメションの名
+		
+		
 		template<class Archive>
 		void serialize(Archive& archive, int version)
 		{
 			archive(
 				CEREAL_NVP(seconds_length),
-				CEREAL_NVP(keyframes)
+				CEREAL_NVP(keyframes),
+				CEREAL_NVP(sampling_rate),
+				CEREAL_NVP(sampling_time),
+				CEREAL_NVP(num_key_frame),
+				CEREAL_NVP(animation_name)
 			);
 		}
 	};

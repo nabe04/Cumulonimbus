@@ -44,7 +44,7 @@ namespace cumulonimbus::component
 			auto&& src = res_nodes.at(node_index);
 			auto&& dst = nodes.at(node_index);
 
-			dst.name = src.name;
+			dst.name	  = src.name;
 			dst.parent_index = src.parent_index >= 0 ? src.parent_index : -1;
 			//dst.parent		 = src.parent_index >= 0 ? &nodes.at(src.parent_index) : nullptr;
 			dst.scale	  = src.scale;
@@ -251,14 +251,14 @@ namespace cumulonimbus::component
 	// アニメーション再生
 	void FbxModelComponent::SwitchAnimation(int animation_index, bool loop, float switch_time)
 	{
-		prev_animation_index = current_animation_index;
+		prev_animation_index	= current_animation_index;
 		current_animation_index = animation_index;
-		loop_animation = loop;
-		end_animation = false;
-		prev_seconds = current_seconds;
-		current_seconds = 0.0f;
-		animation_switch_time = switch_time;
-		current_keyframe = 0;
+		loop_animation			= loop;
+		end_animation			= false;
+		prev_seconds			= current_seconds;
+		current_seconds			= 0.0f;
+		animation_switch_time	= switch_time;
+		current_keyframe		= 0;
 
 		if (anim_states.GetOldState() == FbxAnimationState::Blending ||
 			anim_states.GetOldState() == FbxAnimationState::Switch)
