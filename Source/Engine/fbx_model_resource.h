@@ -17,6 +17,7 @@ public:
 	explicit FbxModelResource(ID3D11Device* device, const char* import_filename, const char* dirname);
 	~FbxModelResource();
 
+	[[nodiscard]] ModelData&		 GetModelData()		  { return model_data; }
 	[[nodiscard]] const ModelData&   GetModelData() const { return model_data; }
 	[[nodiscard]] const std::string& GetModelName() const { return model_name; }
 
@@ -48,14 +49,31 @@ public:
 	 */
 	void SetAnimationKeyFrame(u_int animation_index, u_int frames);
 	/**
-	 * @brief  : ModelData::animations(std::vector)のアニメーション名から
-	 *			 アニメーションのキーフレーム数を指定
+	 * @brief					: ModelData::animations(std::vector)のアニメーション名から
+	 *							  アニメーションのキーフレーム数を指定
 	 * @param animation_name	: モデルが持つアニメーション名
 	 *							  (ModelData::Animation::animation_name)
 	 * @param frames			: 新しいキーフレーム数
 	 * @attention				: 設定したキーフレームが最終フレームになる
+	 * @attention				: animation_nameの名前が一致しない場合アサーションで処理が落ちる
 	 */
 	void SetAnimationKeyFrame(const std::string& animation_name, u_int frames);
+
+	/**
+	 * @brief					: ModelData::animations(std::vector)の要素番号から
+	 *							  アニメーションの再生速度を指定(倍率)
+	 * @param animation_index   : ModelData::animations(std::vector)の要素番号
+	 * @param playback_speed    : 再生速度(倍率)
+	 */
+	void SetAnimationPlaybackSpeed(u_int animation_index, float playback_speed);
+	/**
+	 * @brief					: ModelData::animations(std::vector)のアニメーション名から
+	 *							  アニメーションのキーフレーム数を指定
+	 * @param animation_name    : モデルが持つアニメーション名
+	 * @param playback_speed    : 再生速度(倍率)
+	 * @attention				: animation_nameの名前が一致しない場合アサーションで処理が落ちる
+	 */
+	void SetAnimationPlaybackSpeed(const std::string& animation_name, float playback_speed);
 	
 	template<typename Archive>
 	void serialize(Archive&& archive)

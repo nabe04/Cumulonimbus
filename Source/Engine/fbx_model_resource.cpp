@@ -98,6 +98,46 @@ FbxModelResource::~FbxModelResource()
 
 }
 
+void FbxModelResource::SetAnimationKeyFrame(u_int animation_index, u_int frames)
+{
+	model_data.animations.at(animation_index).num_key_frame = frames;
+	// 1モーション間のキーフレームの長さ(秒)調整
+	model_data.animations.at(animation_index).seconds_length = frames * model_data.animations.at(animation_index).sampling_time;
+}
+
+void FbxModelResource::SetAnimationKeyFrame(const std::string& animation_name, u_int frames)
+{
+	for(auto& animation : model_data.animations)
+	{// animations(std::vector)から指定のアニメーションを検索
+		if(animation.animation_name == animation_name)
+		{
+			animation.num_key_frame = frames;
+			// 1モーション間のキーフレームの長さ(秒)調整
+			animation.seconds_length = frames * animation.sampling_time;
+			return;
+		}
+	}
+	assert(!"Animation names did not match(FbxModelResource::SetAnimationKeyFrame)");
+}
+
+void FbxModelResource::SetAnimationPlaybackSpeed(u_int animation_index, float playback_speed)
+{
+	model_data.animations.at(animation_index).playback_speed = playback_speed;
+}
+
+void FbxModelResource::SetAnimationPlaybackSpeed(const std::string& animation_name, float playback_speed)
+{
+	for (auto& animation : model_data.animations)
+	{// animations(std::vector)から指定のアニメーションを検索
+		if (animation.animation_name == animation_name)
+		{
+			animation.playback_speed = playback_speed;
+			return;
+		}
+	}
+	assert(!"Animation names did not match(FbxModelResource::SetAnimationPlaybackSpeed)");
+}
+
 void FbxModelResource::Import(const char* filename)
 {
 	std::ifstream ifs(filename, std::ios::binary);

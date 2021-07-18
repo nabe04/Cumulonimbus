@@ -167,9 +167,29 @@ namespace cumulonimbus::component
 			// モデルの持つアニメーション情報
 			if (ImGui::CollapsingHeader("Animations"))
 			{
-				for(auto& animation : resource->GetModelData().GetAnimations())
+				for (int animation_index = 0; animation_index < resource->GetModelData().GetAnimations().size(); ++animation_index)
 				{
+					ImGui::PushID(animation_index);
+					ModelData& model_data = resource->GetModelData();
+					auto& animation = model_data.animations.at(animation_index);
+					if (ImGui::TreeNode(animation.animation_name.c_str()))
+					{
+						ImGui::Text("Seconds Length : %f", animation.seconds_length);
+						ImGui::Text("Sampling Rate : %f" , animation.sampling_rate);
+						ImGui::Text("Sampling Time : %f" , animation.sampling_time);
 
+						ImGui::InputInt("End Frame", &animation.num_key_frame);
+						ImGui::DragFloat("Playback Speed", &animation.playback_speed, 0.01f, 0.01f, 10.0f);
+						if(ImGui::Button("Switch Animation"))
+						{
+							SwitchAnimation(animation_index, true);
+						}
+						resource->SetAnimationKeyFrame(animation_index, animation.num_key_frame);
+
+						ImGui::TreePop();
+					}
+
+					ImGui::PopID();
 				}
 			}
 
@@ -410,7 +430,7 @@ namespace cumulonimbus::component
 			else
 			{
 				current_seconds = animation.seconds_length;
-				end_animation = true;
+				end_animation   = true;
 			}
 		}
 	}
