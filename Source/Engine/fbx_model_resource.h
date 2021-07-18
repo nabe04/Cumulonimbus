@@ -20,15 +20,43 @@ public:
 	[[nodiscard]] const ModelData&   GetModelData() const { return model_data; }
 	[[nodiscard]] const std::string& GetModelName() const { return model_name; }
 
+	/**
+	 * @brief				 : マテリアルに適応するテクスチャのセット
+	 * @param material_index : ModelData::materials(std::vector)への要素番号
+	 * @param srv            : shader resource view
+	 */
 	void SetMaterialTexture(u_int material_index, ID3D11ShaderResourceView* srv)
 	{
 		model_data.materials.at(material_index).shader_resource_view = srv;
 	}
+	/**
+	 * @brief					: マテリアルに適応するテクスチャファイル名のセット
+	 * @param material_index	: ModelData::materials(std::vector)への要素番号
+	 * @param filename          : ファイル名
+	 */
 	void SetMaterialFilename(u_int material_index, const std::string& filename)
 	{
 		model_data.materials.at(material_index).texture_filename = filename;
 	}
 
+	/**
+	 * @brief					: ModelData::animations(std::vector)の要素番号から
+	 *							  アニメーションのキーフレーム数を指定
+	 * @param animation_index	: ModelData::animations(std::vector)の要素番号
+	 * @param frames			: 新しいキーフレーム数
+	 * @attention				: 設定したキーフレームが最終フレームになる
+	 */
+	void SetAnimationKeyFrame(u_int animation_index, u_int frames);
+	/**
+	 * @brief  : ModelData::animations(std::vector)のアニメーション名から
+	 *			 アニメーションのキーフレーム数を指定
+	 * @param animation_name	: モデルが持つアニメーション名
+	 *							  (ModelData::Animation::animation_name)
+	 * @param frames			: 新しいキーフレーム数
+	 * @attention				: 設定したキーフレームが最終フレームになる
+	 */
+	void SetAnimationKeyFrame(const std::string& animation_name, u_int frames);
+	
 	template<typename Archive>
 	void serialize(Archive&& archive)
 	{

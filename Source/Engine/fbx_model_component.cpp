@@ -164,6 +164,15 @@ namespace cumulonimbus::component
 				}
 			}
 
+			// モデルの持つアニメーション情報
+			if (ImGui::CollapsingHeader("Animations"))
+			{
+				for(auto& animation : resource->GetModelData().GetAnimations())
+				{
+
+				}
+			}
+
 			ImGui::Text("Current Keyframe : %d", current_keyframe);
 
 			ImGui::TreePop();
@@ -339,7 +348,7 @@ namespace cumulonimbus::component
 		const std::vector<ModelData::Keyframe>& keyframes = animation.keyframes;
 
 		size_t key_count = static_cast<size_t>(keyframes.size());
-		for (size_t key_index = 0; key_index < key_count - 1; ++key_index)
+		for (size_t key_index = 0; key_index < animation.num_key_frame - 1; ++key_index)
 		{
 			// 現在の時間がどのキーフレームの間にいるか判定する
 			const ModelData::Keyframe& keyframe0 = keyframes.at(key_index);
@@ -384,14 +393,14 @@ namespace cumulonimbus::component
 		// 最終フレーム処理
 		if (end_animation)
 		{
-			end_animation = false;
+			end_animation			= false;
 			current_animation_index = -1;
-			prev_key_index = 0;
+			prev_key_index			= 0;
 			return;
 		}
 
 		// 時間経過
-		current_seconds += elapsedTime;
+		current_seconds += elapsedTime * animation.playback_speed;
 		if (current_seconds >= animation.seconds_length)
 		{
 			if (loop_animation)
