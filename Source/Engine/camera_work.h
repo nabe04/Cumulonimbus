@@ -21,9 +21,11 @@ public:
 	void Update(float dt);
 	void RenderImGui();
 
-#pragma region
-	/*
-	 * brief    : カメラの位置、注視点、アップベクトルのセット
+	/**
+	 * @brief				: カメラの位置、注視点、アップベクトルのセット
+	 * @param eye_position	: 位置
+	 * @param target		: 注視点
+	 * @param up_vec		: アップベクトル
 	 */
 	void SetCameraInfo(
 		const DirectX::SimpleMath::Vector3& eye_position /* 位置 */,
@@ -40,10 +42,26 @@ public:
 
 	void SetCameraSpeed(const DirectX::SimpleMath::Vector2& speed) { this->camera_velocity = speed; }
 
-	[[nodiscard]] const DirectX::SimpleMath::Vector3& GetPosition() const { return eye_position; }
+	[[nodiscard]] const DirectX::SimpleMath::Vector3& GetPosition()		 const { return eye_position; }
 	[[nodiscard]] const DirectX::SimpleMath::Vector3& GetFocusPosition() const { return focus_position; }
-	[[nodiscard]] const DirectX::SimpleMath::Vector3& GetCameraFront() const { return front_vec; }
-#pragma endregion Setter & Getter
+	[[nodiscard]] const DirectX::SimpleMath::Vector3& GetCameraFront()	 const { return front_vec; }
+
+	//-- オブジェクトアタッチ用関数 --//
+	/**
+	 * @brief						: オブジェクトカメラを使用する際の
+	 *								  対象モデルのエンティティを指定
+	 * @param ent					: 対象モデルのエンティティ
+	 * @param switch_object_camera	: カメラ処理をオブジェクト用にするか(true : オブジェクト用カメラを使用)
+	 */
+	void AttachObject(cumulonimbus::mapping::rename_type::Entity ent, bool switch_object_camera = true);
+
+	/**
+	 * @brief				: オブジェクト用カメラのパラメータの初期化
+	 *						  カメラの初期位置をオブジェクトの後方にセット
+	 *						  (オブジェクトのフロントベクトル * -1) * camera_length
+	 * @param camera_length : オブジェクトとカメラ間の長さ(デフォルト == 50)
+	 */
+	void InitializeObjectCameraParam(float camera_length = 50.0f);
 
 private:
 	cumulonimbus::ecs::Registry* registry{ nullptr };
@@ -74,6 +92,8 @@ private:
 	//-- カメラとオブジェクトのアタッチ用変数 --//
 	cumulonimbus::mapping::rename_type::Entity attach_entity;	// アタッチするオブジェクトのエンティティ
 	bool is_use_camera_for_object = false; // オブジェクトアタッチ用フラグ(true : オブジェクトにアタッチされている)
+	float camera_length; // オブジェクトとカメラの長さ
+
 
 	/**
 	 * @brief : オブジェクトアタッチ時の更新関数
@@ -88,6 +108,16 @@ private:
 	void UpdateDefaultCamera(float dt);
 
 	/**
+	 * @brief   : 現在のカメラの正規直行ベクトルを算出
+	 */
+	void CalcCameraDirectionalVector();
+
+	/**
+	 * @brief : 左手座標軸を基準にしてのカメラの角度(Degree)計算
+	 */
+	void CalcCameraAngle();
+
+	/**
 	 * @brief			: カメラワーク時の動作
 	 * @param velocity	: カメラスピード(デバックの設定で変更可能)
 	 */
@@ -98,7 +128,4 @@ private:
 		const DirectX::SimpleMath::Vector3& axis /*基準軸*/);								// カメラの左右移動(向きは固定)
 	void Crane(float velocity,
 			   const DirectX::SimpleMath::Vector3& axis /*基準軸*/);	// カメラの上下移動(向きは固定)
-
-	void CalcCameraDirectionalVector();
-	void CalcCameraAngle();
 };

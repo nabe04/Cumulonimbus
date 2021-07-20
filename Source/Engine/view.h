@@ -11,7 +11,7 @@ class CameraWork;
 namespace cumulonimbus::ecs
 {
 	class Registry;
-}
+} // cumulonimbus::ecs
 
 class View final
 {
@@ -54,6 +54,7 @@ public:
 	[[nodiscard]] float GetNearZ()  const { return cb_camera->data.camera_near_z; }
 	[[nodiscard]] float GetFarZ()   const { return cb_camera->data.camera_far_z; }
 
+	[[nodiscard]] CameraWork* GetCameraWork() const { return camera_work.get(); }
 
 	void IsDebugCamera(const bool flg) { is_debug_camera = flg; }
 	[[nodiscard]] bool IsDebugCamera() const { return is_debug_camera; }
@@ -62,25 +63,8 @@ private:
 	std::unique_ptr<CameraWork> camera_work{};
 	std::unique_ptr<buffer::ConstantBuffer<CameraCB>> cb_camera;
 
-	//DirectX::SimpleMath::Vector3 eye_position{ 0.0f,0.0f,0.0f };	// à íu
-	//DirectX::SimpleMath::Vector3 focus_position{ 0.0f,0.0f,0.0f };	// íçéãì_
-	//DirectX::SimpleMath::Vector3 up_vec{ 0.0f,1.0f,0.0f };
-	//DirectX::SimpleMath::Vector3 right_vec{ 1.0f,0.0f,0.0f };
-	//DirectX::SimpleMath::Vector3 front_vec{ focus_position.x - eye_position.x,
-	//										focus_position.y - eye_position.y,
-	//										focus_position.z - eye_position.z };
-
-
 	DirectX::SimpleMath::Vector3 view_up_vec{ 0.0f,1.0f,0.0f };
-	//DirectX::SimpleMath::Matrix view_f4x4;
-	//DirectX::SimpleMath::Matrix projection_f4x4;
-	//float fov = 0.0f;
-	//float aspect = 0.0f;
-	//float near_z = 0.0f;
-	//float far_z = 1.0f;
-	//float width = 0;
-	//float height = 0;
-	bool  is_perspective = true;
+	bool  is_perspective  = true;
 	bool  is_debug_camera = false;
 
 	//-- Camera controlled activate mouse eye_position --//

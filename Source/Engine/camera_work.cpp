@@ -5,6 +5,7 @@
 #include "arithmetic.h"
 #include "locator.h"
 #include "ecs.h"
+#include "transform_component.h"
 
 CameraWork::CameraWork(cumulonimbus::ecs::Registry* registry)
 	:registry{ registry }
@@ -26,6 +27,15 @@ void CameraWork::Update(float dt)
 	{
 		UpdateDefaultCamera(dt);
 	}
+}
+
+void CameraWork::RenderImGui()
+{
+	ImGui::Text("focus_position x : %f\nfocus_position y : %f\nfocus_position z : %f", focus_position.x, focus_position.y, focus_position.z);
+	ImGui::Text("angle x  : %f\nangle y  : %f\nangle z  : %f", camera_angle.x, camera_angle.y, camera_angle.z);
+	ImGui::Text("Pos x  : %f\n Pos y  : %f\n Pos z  : %f", eye_position.x, eye_position.y, eye_position.z);
+
+	ImGui::DragFloat2("CameraSpeed", (float*)&camera_velocity, 0.5f, 1, 10);
 }
 
 void CameraWork::UpdateDefaultCamera(float dt)
@@ -58,8 +68,6 @@ void CameraWork::UpdateDefaultCamera(float dt)
 		Pan(static_cast<float>(mouse.DeltaX()));
 		Tilt(static_cast<float>(mouse.DeltaY()));
 
-		//PanAndTilt(0, { static_cast<float>(mouse.DeltaX()) ,static_cast<float>(mouse.DeltaY()) ,.0f });
-
 		if (key.GetState(Keycode::D) == ButtonState::Held)
 			Track(camera_velocity.x, right_vec);
 		if (key.GetState(Keycode::A) == ButtonState::Held)
@@ -75,8 +83,6 @@ void CameraWork::UpdateObjectCamera(float dt)
 {
 
 }
-
-
 
 void CameraWork::SetCameraUpRightFrontVector(const DirectX::SimpleMath::Vector3& up,
 											 const DirectX::SimpleMath::Vector3& right,
@@ -105,17 +111,6 @@ void CameraWork::SetCameraInfo(const View& v)
 	SetCameraUpRightFrontVector(v.GetCameraUp(), v.GetCameraRight(), v.GetCameraFront());
 }
 
-
-
-void CameraWork::RenderImGui()
-{
-	ImGui::Text("focus_position x : %f\nfocus_position y : %f\nfocus_position z : %f", focus_position.x, focus_position.y, focus_position.z);
-	ImGui::Text("angle x  : %f\nangle y  : %f\nangle z  : %f", camera_angle.x, camera_angle.y, camera_angle.z);
-	ImGui::Text("Pos x  : %f\n Pos y  : %f\n Pos z  : %f", eye_position.x, eye_position.y, eye_position.z);
-
-	ImGui::DragFloat2("CameraSpeed",(float*)&camera_velocity, 0.5f, 1, 10);
-}
-
 void CameraWork::SetPosition(const DirectX::SimpleMath::Vector3& eye_position)
 {
 	this->eye_position = eye_position;
@@ -136,6 +131,54 @@ void CameraWork::SetCameraUp(const DirectX::SimpleMath::Vector3& up)
 		assert(!"Vector is zero");
 
 	this->up_vec = up;
+}
+
+void CameraWork::AttachObject(
+	cumulonimbus::mapping::rename_type::Entity ent,
+	bool switch_object_camera)
+{
+	attach_entity = ent;
+	is_use_camera_for_object = switch_object_camera;
+}
+
+void CameraWork::InitializeObjectCameraParam(float camera_length)
+{
+	this->camera_length = camera_length;
+	auto& transform_comp = registry->GetComponent<cumulonimbus::component::TransformComponent>(attach_entity);
+	// カメラの位置をエンティティの持つオブジェクトの後方にセット
+	eye_position   = transform_comp.GetPosition() + (transform_comp.GetModelFront() * -1 * camera_length);
+	// 注視点をエンティティの位置にセット
+	focus_position = transform_comp.GetPosition();
+}
+
+
+void CameraWork::CalcCameraDirectionalVector()
+{
+	front_vec	 = DirectX::SimpleMath::Vector3{ focus_position - eye_position };
+	camera_right = arithmetic::CalcRightVec(up_vec, front_vec);
+	up_vec		 = arithmetic::CalcUpVec(front_vec, camera_right);
+
+	front_vec.Normalize();
+	camera_right.Normalize();
+	current_camera_up.Normalize();
+}
+
+void CameraWork::CalcCameraAngle()
+{
+	using namespace DirectX::SimpleMath;
+
+	const Vector3 right{ 1,0,0 };
+	const Vector3 up{ 0,1,0 };
+	const Vector3 front{ 0,0,1 };
+
+	camera_angle.x = DirectX::XMConvertToDegrees(acosf(up.Dot(up_vec)));
+	if (up.Cross(up_vec).x < 0)
+		camera_angle.x *= -1;
+	camera_angle.y = DirectX::XMConvertToDegrees(acosf(front.Dot(front_vec)));
+	if (front.Cross(front_vec).y < 0)
+		camera_angle.y *= -1;
+
+	camera_angle.z = arithmetic::CalcAngle_Z(front_vec);
 }
 
 
@@ -245,42 +288,6 @@ void CameraWork::Crane( float velocity, const DirectX::SimpleMath::Vector3& axis
 	// カメラの注視点と位置を同じだけ移動
 	focus_position += axis * velocity;
 	eye_position   += axis * velocity;
-}
-
-
-/*
- * brief   : 現在のカメラの正規直行ベクトルを算出
- */
-void CameraWork::CalcCameraDirectionalVector()
-{
-	front_vec			= DirectX::SimpleMath::Vector3{ focus_position - eye_position };
-	camera_right		= arithmetic::CalcRightVec(up_vec, front_vec);
-	up_vec				= arithmetic::CalcUpVec(front_vec, camera_right);
-
-	front_vec.Normalize();
-	camera_right.Normalize();
-	current_camera_up.Normalize();
-}
-
-/*
- * brief : 左手座標軸を基準にしてのカメラの角度(Degree)計算
- */
-void CameraWork::CalcCameraAngle()
-{
-	using namespace DirectX::SimpleMath;
-
-	const Vector3 right{ 1,0,0 };
-	const Vector3 up{ 0,1,0 };
-	const Vector3 front{ 0,0,1 };
-
-	camera_angle.x = DirectX::XMConvertToDegrees(acosf(up.Dot(up_vec)));
-	if (up.Cross(up_vec).x < 0)
-		camera_angle.x *= -1;
-	camera_angle.y = DirectX::XMConvertToDegrees(acosf(front.Dot(front_vec)));
-	if (front.Cross(front_vec).y < 0)
-		camera_angle.y *= -1;
-
-	camera_angle.z = arithmetic::CalcAngle_Z(front_vec);
 }
 
 
