@@ -68,14 +68,14 @@ void Scene::Initialize()
 		light->SetLightDir(XMFLOAT3{ .0f,.0f,1.f, });
 	}
 
-	if (!this->view)
-	{// Create View
-		view = std::make_unique<View>();
-	}
-
 	if(!this->registry)
 	{
 		registry = std::make_unique<cumulonimbus::ecs::Registry>();
+	}
+
+	if (!this->view)
+	{// Create View
+		view = std::make_unique<View>(registry.get());
 	}
 
 	if(!this->render_path)
@@ -153,7 +153,7 @@ void Scene::Update(const float elapsed_time)
 	view->SetProjection(XM_PI / 8.0f, static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
 
 	// View update
-	view->Update();
+	view->Update(elapsed_time);
 
 	// light update
 	light->Update(view.get());

@@ -5,14 +5,20 @@
 #include <SimpleMath.h>
 
 #include "view.h"
+#include "rename_type_mapping.h"
+
+namespace cumulonimbus::ecs
+{
+	class Registry;
+} // cumulonimbus::ecs
 
 class CameraWork final
 {
 public:
-	CameraWork(const View& v);
+	CameraWork(cumulonimbus::ecs::Registry* registry);
 	~CameraWork() = default;
 
-	void Update(bool is_debug);
+	void Update(float dt);
 	void RenderImGui();
 
 #pragma region
@@ -40,6 +46,8 @@ public:
 #pragma endregion Setter & Getter
 
 private:
+	cumulonimbus::ecs::Registry* registry{ nullptr };
+
 	// カメラの最大角度(軸基準) (y,zは未定義)
 	const DirectX::SimpleMath::Vector3 max_camera_angle{ 85.0f,0,0 };
 
@@ -60,12 +68,28 @@ private:
 
 	DirectX::SimpleMath::Vector3 camera_angle{}; // カメラの角度(Degree),左手系の座標軸からの角度
 
-	// for debug
+	//-- for debug --//
 	DirectX::SimpleMath::Vector2 camera_velocity{ 3.f,3.f };
 
-	/*
-	 * brief    : カメラワーク時の動作
-	 * velocity : カメラスピード(デバックの設定で変更可能)
+	//-- カメラとオブジェクトのアタッチ用変数 --//
+	cumulonimbus::mapping::rename_type::Entity attach_entity;	// アタッチするオブジェクトのエンティティ
+	bool is_use_camera_for_object = false; // オブジェクトアタッチ用フラグ(true : オブジェクトにアタッチされている)
+
+	/**
+	 * @brief : オブジェクトアタッチ時の更新関数
+	 *			is_use_camera_for_object == true時に実行される
+	 */
+	void UpdateObjectCamera(float dt);
+
+	/**
+	 * @brief : 非オブジェクトアタッチ時の更新関数
+	 *			is_use_camera_for_object == false時に実行される
+	 */
+	void UpdateDefaultCamera(float dt);
+
+	/**
+	 * @brief			: カメラワーク時の動作
+	 * @param velocity	: カメラスピード(デバックの設定で変更可能)
 	 */
 	void Pan(float velocity);								// カメラの左右の傾き(位置は固定)
 	void Tilt(float velocity);								// カメラの上下の傾き(位置は固定)
@@ -74,8 +98,7 @@ private:
 		const DirectX::SimpleMath::Vector3& axis /*基準軸*/);								// カメラの左右移動(向きは固定)
 	void Crane(float velocity,
 			   const DirectX::SimpleMath::Vector3& axis /*基準軸*/);	// カメラの上下移動(向きは固定)
-	void CraneIn_Y_Up_Axis(float velocity);
-	
+
 	void CalcCameraDirectionalVector();
 	void CalcCameraAngle();
 };

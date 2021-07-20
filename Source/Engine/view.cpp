@@ -12,9 +12,9 @@
 #include "camera_work.h"
 using namespace DirectX;
 
-View::View()
+View::View(cumulonimbus::ecs::Registry* registry)
 {
-	camera_work = std::make_unique<CameraWork>(*this);
+	camera_work = std::make_unique<CameraWork>(registry);
 	cb_camera   = std::make_unique<buffer::ConstantBuffer<CameraCB>>(cumulonimbus::locator::Locator::GetDx11Device()->device.Get());
 
 	// ‰ŠúÝ’è
@@ -101,10 +101,10 @@ void View::SetOrtho(float width, float height, float min, float max)
 	camera.camera_far_z		= max;
 }
 
-void View::Update()
+void View::Update(float dt)
 {
 	camera_work->SetCameraInfo(*this);
-	camera_work->Update(true);
+	camera_work->Update(dt);
 	SetFocusPosition(camera_work->GetFocusPosition());
 	SetEyePosition(camera_work->GetPosition());
 	CalcCameraOrthogonalVector();

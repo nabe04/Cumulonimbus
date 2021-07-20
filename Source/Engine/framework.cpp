@@ -34,7 +34,7 @@ bool Framework::Initialize()
 #endif
 
 	//-- Setting of frame rate --//
-	hr_timer.setFrameRate(frameRate);
+	hr_timer.setFrameRate(frame_fate);
 	hr_timer.start();
 
 	return true;

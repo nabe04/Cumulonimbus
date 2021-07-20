@@ -136,17 +136,19 @@ public:
         return true;
     }
 
-    LONGLONG getLastTime() const { return last_time; }
-    double GetDeltaTime() const { return delta_time; }
-    double GetComparisonTime() { return comparison_time; }
-    void ResetComparisonTime() { comparison_time = 0; }
+    [[nodiscard]] LONGLONG getLastTime()      const   { return last_time; }
+    [[nodiscard]] double GetDeltaTime()       const   { return delta_time; }
+    [[nodiscard]] double GetComparisonTime()  const   { return comparison_time; }
+    [[nodiscard]] float GetFrameRate()        const   { return frame_rate; }
+    void ResetComparisonTime()   { comparison_time = 0; }
 
-    void setFrameRate(double frameRate)
+    void setFrameRate(float frame_rate)
     {
         LONGLONG counts_per_sec;
         QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&counts_per_sec));
         seconds_per_count = 1.0 / static_cast<double>(counts_per_sec);
-        frames_per_sec = (LONGLONG)(counts_per_sec / frameRate);
+        frames_per_sec = (LONGLONG)(counts_per_sec / frame_rate);
+        this->frame_rate = frame_rate;
     }
 
 private:
@@ -154,6 +156,7 @@ private:
     double seconds_per_count;
     double delta_time;
     double comparison_time = 0;
+    float frame_rate;
 
     LONGLONG this_time = 0;
     LONGLONG base_time = 0;

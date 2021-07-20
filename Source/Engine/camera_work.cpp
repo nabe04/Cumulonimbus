@@ -4,20 +4,34 @@
 
 #include "arithmetic.h"
 #include "locator.h"
+#include "ecs.h"
 
-CameraWork::CameraWork(const View& v)
+CameraWork::CameraWork(cumulonimbus::ecs::Registry* registry)
+	:registry{ registry }
 {
 
 }
 
 
-void CameraWork::Update(bool is_debug)
+void CameraWork::Update(float dt)
 {
 	CalcCameraDirectionalVector();
 	CalcCameraAngle(); //オイラー角で(現在)計算しているので今は使わない
 
+	if(is_use_camera_for_object)
+	{
+		UpdateObjectCamera(dt);
+	}
+	else
+	{
+		UpdateDefaultCamera(dt);
+	}
+}
+
+void CameraWork::UpdateDefaultCamera(float dt)
+{
 	const auto& mouse = cumulonimbus::locator::Locator::GetInput()->Mouse();
-	const auto& key   = cumulonimbus::locator::Locator::GetInput()->Keyboard();
+	const auto& key = cumulonimbus::locator::Locator::GetInput()->Keyboard();
 
 	if (mouse.GetState(MouseButton::Left) == ButtonState::Held &&
 		mouse.GetState(MouseButton::Right) == ButtonState::Held)
@@ -25,13 +39,13 @@ void CameraWork::Update(bool is_debug)
 		Track(static_cast<float>(mouse.DeltaX()), right_vec);
 		Crane(static_cast<float>(-mouse.DeltaY()), { 0,1,0 });
 	}
-	else if(mouse.GetState(MouseButton::Left) == ButtonState::Held)
+	else if (mouse.GetState(MouseButton::Left) == ButtonState::Held)
 	{
 		DollyInOut(static_cast<float>(mouse.DeltaY()));
 		Pan(static_cast<float>(mouse.DeltaX()));
 
 		if (key.GetState(Keycode::D) == ButtonState::Held)
-			Track(camera_velocity.x ,right_vec);
+			Track(camera_velocity.x, right_vec);
 		if (key.GetState(Keycode::A) == ButtonState::Held)
 			Track(-camera_velocity.x, right_vec);
 		if (key.GetState(Keycode::W) == ButtonState::Held)
@@ -39,7 +53,7 @@ void CameraWork::Update(bool is_debug)
 		if (key.GetState(Keycode::S) == ButtonState::Held)
 			Crane(-camera_velocity.y, up_vec);
 	}
-	else if(mouse.GetState(MouseButton::Right) == ButtonState::Held)
+	else if (mouse.GetState(MouseButton::Right) == ButtonState::Held)
 	{
 		Pan(static_cast<float>(mouse.DeltaX()));
 		Tilt(static_cast<float>(mouse.DeltaY()));
@@ -56,6 +70,13 @@ void CameraWork::Update(bool is_debug)
 			Crane(-camera_velocity.y, up_vec);
 	}
 }
+
+void CameraWork::UpdateObjectCamera(float dt)
+{
+
+}
+
+
 
 void CameraWork::SetCameraUpRightFrontVector(const DirectX::SimpleMath::Vector3& up,
 											 const DirectX::SimpleMath::Vector3& right,

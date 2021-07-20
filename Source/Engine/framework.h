@@ -25,7 +25,7 @@ private:
 	std::shared_ptr<InputSystem> input_system{};
 	std::shared_ptr<Dx11Device> dx11_configurator{};
 
-	const double frameRate = 60;
+	const float frame_fate = 60.0f;
 	HighResolutionTimer hr_timer;
 
 	bool debug_mode = false;
@@ -33,7 +33,7 @@ private:
 private:
 	bool Initialize();
 	bool UnInitialize();
-	 void CalculateFrameStates();
+	void CalculateFrameStates();
 
 public:
 	explicit Framework(const std::shared_ptr<Window>& w)
@@ -47,10 +47,10 @@ public:
 
 	[[nodiscard]] LRESULT CALLBACK HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
-	[[nodiscard]] auto* GetDevice()const{ return device.Get(); }
-	[[nodiscard]] auto* GetDeviceContext() const{ return immediate_context.Get(); }
-	[[nodiscard]] auto GetHighResolutionTimer() const{ return hr_timer; }
-	[[nodiscard]] const auto& GetWindow() const { return window; }
-	[[nodiscard]] bool getDebugMode() const { return debug_mode; }
+	[[nodiscard]] auto*		  GetDevice()				const{ return device.Get(); }
+	[[nodiscard]] auto*		  GetDeviceContext()		const{ return immediate_context.Get(); }
+	[[nodiscard]] auto		  GetHighResolutionTimer()	const{ return hr_timer; }
+	[[nodiscard]] const auto& GetWindow()				const { return window; }
+	[[nodiscard]] bool		  getDebugMode()			const { return debug_mode; }
 };
 

@@ -132,7 +132,7 @@ namespace cumulonimbus::component
 		void UpdateAnimState(const float delta_time) { anim_states.Update(delta_time); }
 
 		// 現在のキーフレーム
-		[[nodiscard]] int CurrentKeyframe() { return current_keyframe; }
+		[[nodiscard]] int CurrentKeyframe() const { return current_keyframe; }
 
 		/*
 		 * brief : アニメーションを再生させるか
