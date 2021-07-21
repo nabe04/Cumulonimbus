@@ -64,15 +64,6 @@ void View::Update(float dt)
 	SetEyePosition(eye_position);
 	CalcCameraOrthogonalVector();
 
-#ifdef _DEBUG
-	if (cumulonimbus::locator::Locator::GetInput()->Keyboard().GetState(Keycode::LeftShift) == ButtonState::Held)
-	{
-		if (cumulonimbus::locator::Locator::GetInput()->Keyboard().GetState(Keycode::F1) == ButtonState::Press)
-		{
-			is_debug_camera = !is_debug_camera;
-		}
-	}
-#endif // _DEBUG
 	// ƒrƒ…[•ÏŠ·s—ñ‚Ìì¬
 	const XMMATRIX view_mat = XMMatrixLookAtLH(XMVectorSet(eye_position.x, eye_position.y, eye_position.z, 0),
 		XMVectorSet(focus_position.x, focus_position.y, focus_position.z, 0),
@@ -104,8 +95,7 @@ void View::WriteImGui()
 	{
 		auto& camera = cb_camera->data;
 
-		ImGui::Checkbox("Debug", &is_debug_camera);
-
+		ImGui::Checkbox("Attach Object", &is_use_camera_for_object);
 		ImGui::Text("Camera Pos X %f", camera.camera_position.x);
 		ImGui::Text("Camera Pos Y %f", camera.camera_position.y);
 		ImGui::Text("Camera Pos Z %f", camera.camera_position.z);

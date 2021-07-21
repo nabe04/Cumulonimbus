@@ -80,9 +80,6 @@ public:
 	[[nodiscard]] float GetNearZ()  const { return near_z; }
 	[[nodiscard]] float GetFarZ()   const { return far_z; }
 
-	void IsDebugCamera(const bool flg) { is_debug_camera = flg; }
-	[[nodiscard]] bool IsDebugCamera() const { return is_debug_camera; }
-
 private:
 	std::unique_ptr<buffer::ConstantBuffer<CameraCB>> cb_camera;
 
@@ -126,7 +123,6 @@ private:
 
 	DirectX::SimpleMath::Vector3 view_up_vec{ 0.0f,1.0f,0.0f };
 	bool  is_perspective  = true;
-	bool  is_debug_camera = false;
 
 	//-- Camera controlled activate mouse eye_position --//
 	DirectX::SimpleMath::Vector2 cur_mouse_pos{ 0.0f,0.0f };		// Current mouse eye_position
