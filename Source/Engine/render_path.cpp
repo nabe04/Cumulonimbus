@@ -587,7 +587,7 @@ namespace cumulonimbus::renderer
 
 		{// Transform
 			//shader::CB_CoordinateTransformation cb{};
-			//cb.mat_view_projection = view->GetView() * view->GetProjection();
+			//cb.mat_view_projection = view->GetViewMat() * view->GetProjectionMat();
 			TransformCB transform{};
 
 			transform.bone_transforms[0] = registry->GetComponent<component::TransformComponent>(entity).GetWorld4x4();

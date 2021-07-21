@@ -73,28 +73,29 @@ void View::Update(float dt)
 		}
 	}
 #endif // _DEBUG
-	auto& camera = cb_camera->data;
 	// ビュー変換行列の作成
-	const XMMATRIX view_mat = XMMatrixLookAtLH(XMVectorSet(camera.camera_position.x, camera.camera_position.y, camera.camera_position.z, 0),
-		XMVectorSet(camera.camera_at.x, camera.camera_at.y, camera.camera_at.z, 0),
+	const XMMATRIX view_mat = XMMatrixLookAtLH(XMVectorSet(eye_position.x, eye_position.y, eye_position.z, 0),
+		XMVectorSet(focus_position.x, focus_position.y, focus_position.z, 0),
 		XMVectorSet(view_up_vec.x, view_up_vec.y, view_up_vec.z, 0));
-	XMStoreFloat4x4(&camera.camera_view_matrix, view_mat);
+	XMStoreFloat4x4(&this->view_mat, view_mat);
 
 	// プロジェクション変換行列の作成
 	XMMATRIX projection_mat = XMMatrixIdentity();
 	if (is_perspective)
 	{
-		projection_mat = XMMatrixPerspectiveFovLH(camera.camera_fov, camera.camera_aspect, camera.camera_near_z, camera.camera_far_z);
-		XMStoreFloat4x4(&camera.camera_projection_matrix, projection_mat);
+		projection_mat = XMMatrixPerspectiveFovLH(fov, aspect, near_z, far_z);
+		XMStoreFloat4x4(&this->projection_mat, projection_mat);
 	}
 	else
 	{
-		projection_mat = XMMatrixOrthographicLH(camera.camera_width, camera.camera_height, camera.camera_near_z, camera.camera_far_z);
-		XMStoreFloat4x4(&camera.camera_projection_matrix, projection_mat);
+		projection_mat = XMMatrixOrthographicLH(width, height, near_z, far_z);
+		XMStoreFloat4x4(&this->projection_mat, projection_mat);
 	}
 
 	const XMMATRIX view_projection_mat = DirectX::XMMatrixMultiply(view_mat, projection_mat);
-	XMStoreFloat4x4(&camera.camera_view_projection_matrix, view_projection_mat);
+	XMStoreFloat4x4(&this->view_projection_mat, view_projection_mat);
+
+	SetCBufferParam();
 }
 
 void View::WriteImGui()
@@ -169,23 +170,20 @@ void View::UnbindCBuffer() const
 
 void View::CalcCameraOrthogonalVector()
 {
-	auto& camera = cb_camera->data;
-
-	if (!std::isfinite(camera.camera_at.x) || !std::isfinite(camera.camera_at.y) || !std::isfinite(camera.camera_at.z))
+	if (!std::isfinite(focus_position.x) || !std::isfinite(focus_position.y) || !std::isfinite(focus_position.z))
 	{
 		assert(!"Camera focus_position val is nan or infinity");
 	}
 
-	camera.camera_front = DirectX::SimpleMath::Vector3{ camera.camera_at.x - camera.camera_position.x,
-														camera.camera_at.y - camera.camera_position.y,
-														camera.camera_at.z - camera.camera_position.z };
-	camera.camera_right = arithmetic::CalcRightVec(camera.camera_up, camera.camera_front);
-	camera.camera_up    = arithmetic::CalcUpVec(camera.camera_front, camera.camera_right);
-	//up_vec	  = DirectX::SimpleMath::Vector3{ 0,1,0 };
+	front_vec = SimpleMath::Vector3{ focus_position.x - eye_position.x,
+									 focus_position.y - eye_position.y,
+									 focus_position.z - eye_position.z };
+	right_vec = arithmetic::CalcRightVec(up_vec, front_vec);
+	up_vec    = arithmetic::CalcUpVec(front_vec, right_vec);
 
-	XMStoreFloat3(&camera.camera_front	, XMVector3Normalize(XMLoadFloat3(&camera.camera_front)));
-	XMStoreFloat3(&camera.camera_up		, XMVector3Normalize(XMLoadFloat3(&camera.camera_up)));
-	XMStoreFloat3(&camera.camera_right	, XMVector3Normalize(XMLoadFloat3(&camera.camera_right)));
+	right_vec.Normalize();
+	up_vec.Normalize();
+	front_vec.Normalize();
 }
 
 void View::UpdateObjectCamera(float dt)
@@ -236,32 +234,29 @@ void View::UpdateDefaultCamera(float dt)
 void View::SetViewInfo(
 	SimpleMath::Vector3 pos,
 	SimpleMath::Vector3 target,
-	SimpleMath::Vector3 up) const
+	SimpleMath::Vector3 camera_up)
 {
-	auto& camera = cb_camera->data;
-	camera.camera_position	= pos;
-	camera.camera_at		= target;
-	camera.camera_up		= up;
+	eye_position	= pos;
+	focus_position  = target;
+	up_vec			= camera_up;
 }
 
 void View::SetProjection(float fov, float aspect, float min, float max)
 {
-	auto& camera			= cb_camera->data;
-	is_perspective			= true;
-	camera.camera_fov		= fov;
-	camera.camera_aspect	= aspect;
-	camera.camera_near_z	= min;
-	camera.camera_far_z		= max;
+	is_perspective	= true;
+	this->fov		= fov;
+	this->aspect	= aspect;
+	near_z			= min;
+	far_z			= max;
 }
 
 void View::SetOrtho(float width, float height, float min, float max)
 {
-	auto& camera			= cb_camera->data;
-	is_perspective			= false;
-	camera.camera_width		= width;
-	camera .camera_height	= height;
-	camera.camera_near_z	= min;
-	camera.camera_far_z		= max;
+	is_perspective	= false;
+	this->width		= width;
+	this->height	= height;
+	near_z			= min;
+	far_z			= max;
 }
 
 void View::SetTargetVec(const DirectX::SimpleMath::Vector3& target)
@@ -272,21 +267,42 @@ void View::SetTargetVec(const DirectX::SimpleMath::Vector3& target)
 	this->focus_position = target;
 }
 
-void View::SetCameraUp(const DirectX::SimpleMath::Vector3& up)
+void View::SetCameraRight(const DirectX::SimpleMath::Vector3& right)
 {
-	// HACK: イコール関数を作ったら変更する
-	if (this->up_vec.x == this->up_vec.y == this->up_vec.z == 0.0f)
+	if (arithmetic::IsEqual(right.x, 0.0f) &&
+		arithmetic::IsEqual(right.y, 0.0f) &&
+		arithmetic::IsEqual(right.z, 0.0f))
 		assert(!"Vector is zero");
 
-	this->up_vec = up;
+	right_vec = right;
+}
+
+void View::SetCameraUp(const DirectX::SimpleMath::Vector3& up)
+{
+	if (arithmetic::IsEqual(up.x,0.0f) &&
+		arithmetic::IsEqual(up.y,0.0f) &&
+		arithmetic::IsEqual(up.z,0.0f))
+		assert(!"Vector is zero");
+
+	up_vec = up;
+}
+
+void View::SetCameraFront(const DirectX::SimpleMath::Vector3& front)
+{
+	if (arithmetic::IsEqual(front.x, 0.0f) &&
+		arithmetic::IsEqual(front.y, 0.0f) &&
+		arithmetic::IsEqual(front.z, 0.0f))
+		assert(!"Vector is zero");
+
+	front_vec = front;
 }
 
 
 void View::CalcCameraDirectionalVector()
 {
-	front_vec = DirectX::SimpleMath::Vector3{ focus_position - eye_position };
+	front_vec	 = DirectX::SimpleMath::Vector3{ focus_position - eye_position };
 	camera_right = arithmetic::CalcRightVec(up_vec, front_vec);
-	up_vec = arithmetic::CalcUpVec(front_vec, camera_right);
+	up_vec		 = arithmetic::CalcUpVec(front_vec, camera_right);
 
 	front_vec.Normalize();
 	camera_right.Normalize();
@@ -300,7 +316,6 @@ void View::CalcCameraAngle()
 	const Vector3 right{ 1,0,0 };
 	const Vector3 up{ 0,1,0 };
 	const Vector3 front{ 0,0,1 };
-
 	camera_angle.x = DirectX::XMConvertToDegrees(acosf(up.Dot(up_vec)));
 	if (up.Cross(up_vec).x < 0)
 		camera_angle.x *= -1;
@@ -311,10 +326,27 @@ void View::CalcCameraAngle()
 	camera_angle.z = arithmetic::CalcAngle_Z(front_vec);
 }
 
-void View::SetCBufferParam()
+void View::SetCBufferParam() const
 {
 	auto& camera_data = cb_camera->data;
-	camera_data.camera_view_matrix = view_mat;
+	camera_data.camera_view_matrix			  = view_mat;
+	camera_data.camera_projection_matrix	  = projection_mat;
+	camera_data.camera_view_projection_matrix = view_projection_mat;
+
+	camera_data.camera_position				= eye_position;
+	camera_data.camera_distance_from_origin = eye_position.Length();
+
+	camera_data.camera_at		= focus_position;
+	camera_data.camera_near_z	= near_z;
+
+	camera_data.camera_up		= up_vec;
+	camera_data.camera_far_z	= far_z;
+
+	camera_data.camera_front	= front_vec;
+	camera_data.camera_aspect	= aspect;
+
+	camera_data.camera_width	= width;
+	camera_data.camera_height	= height;
 }
 
 //-------------------------  デバッグカメラワーク  -------------------------//

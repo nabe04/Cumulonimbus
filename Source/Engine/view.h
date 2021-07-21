@@ -45,49 +45,45 @@ public:
 	void SetViewInfo(
 		DirectX::SimpleMath::Vector3 eye_position,
 		DirectX::SimpleMath::Vector3 target,
-		DirectX::SimpleMath::Vector3 up) const;
+		DirectX::SimpleMath::Vector3 camera_up);
 	void SetProjection(float fov, float aspect, float min, float max);
 	void SetOrtho(float width, float height, float min, float max);
-	void SetFocusPosition(const DirectX::SimpleMath::Vector3& target) const { cb_camera->data.camera_at= target; }
+	void SetFocusPosition(const DirectX::SimpleMath::Vector3& target)  { focus_position = target; }
 
-	void SetEyePosition(const DirectX::SimpleMath::Vector3& pos) const  { cb_camera->data.camera_position = pos; }
+	void SetEyePosition(const DirectX::SimpleMath::Vector3& pos)       { eye_position = pos; }
 	void SetTargetVec(const DirectX::SimpleMath::Vector3& target);
-	void SetCameraUp(const DirectX::SimpleMath::Vector3& up);
 	void SetCameraUpRightFrontVector(
 		const DirectX::SimpleMath::Vector3& up,
 		const DirectX::SimpleMath::Vector3& right,
 		const DirectX::SimpleMath::Vector3& front);
 
 	void SetCameraSpeed(const DirectX::SimpleMath::Vector2& speed) { this->camera_velocity = speed; }
-	
-	[[nodiscard]] DirectX::SimpleMath::Matrix GetView()			const   { return cb_camera->data.camera_view_matrix; }
-	[[nodiscard]] DirectX::SimpleMath::Matrix GetProjection()	const	{ return cb_camera->data.camera_view_projection_matrix; }
 
-	[[nodiscard]] DirectX::SimpleMath::Vector3 GetEyePosition()   const { return cb_camera->data.camera_position; }
-	[[nodiscard]] DirectX::SimpleMath::Vector3 GetFocusPosition() const { return cb_camera->data.camera_at; }
+	[[nodiscard]] DirectX::SimpleMath::Matrix GetViewMat()			const   { return view_mat; }
+	[[nodiscard]] DirectX::SimpleMath::Matrix GetProjectionMat()	const	{ return projection_mat; }
+
+	[[nodiscard]] DirectX::SimpleMath::Vector3 GetEyePosition()   const { return eye_position; }
+	[[nodiscard]] DirectX::SimpleMath::Vector3 GetFocusPosition() const { return focus_position; }
 
 	// カメラの向き取得
-	[[nodiscard]]DirectX::SimpleMath::Vector3 GetCameraRight() const { return cb_camera->data.camera_right; }
-	[[nodiscard]]DirectX::SimpleMath::Vector3 GetCameraUp()    const { return cb_camera->data.camera_up; }
-	[[nodiscard]]DirectX::SimpleMath::Vector3 GetCameraFront() const { return cb_camera->data.camera_front; }
+	[[nodiscard]]DirectX::SimpleMath::Vector3 GetCameraRight() const { return right_vec; }
+	[[nodiscard]]DirectX::SimpleMath::Vector3 GetCameraUp()    const { return up_vec; }
+	[[nodiscard]]DirectX::SimpleMath::Vector3 GetCameraFront() const { return front_vec; }
 
-	void SetCameraRight(const DirectX::SimpleMath::Vector3& right) const { cb_camera->data.camera_right = right; }
-	void SetCameraUp(const DirectX::SimpleMath::Vector3& up)	   const { cb_camera->data.camera_up = up; }
-	void SetCameraFront(const DirectX::SimpleMath::Vector3& front) const { cb_camera->data.camera_front = front; }
+	void SetCameraRight(const DirectX::SimpleMath::Vector3& right);
+	void SetCameraUp(const DirectX::SimpleMath::Vector3& up);
+	void SetCameraFront(const DirectX::SimpleMath::Vector3& front);
 	void SetFov(const float fov) const { cb_camera->data.camera_fov = fov; }
 
-	[[nodiscard]] float GetFov()    const { return cb_camera->data.camera_fov; }
-	[[nodiscard]] float GetAspect() const { return cb_camera->data.camera_aspect; }
-	[[nodiscard]] float GetNearZ()  const { return cb_camera->data.camera_near_z; }
-	[[nodiscard]] float GetFarZ()   const { return cb_camera->data.camera_far_z; }
-
-	//[[nodiscard]] CameraWork* GetCameraWork() const { return camera_work.get(); }
+	[[nodiscard]] float GetFov()    const { return fov; }
+	[[nodiscard]] float GetAspect() const { return aspect; }
+	[[nodiscard]] float GetNearZ()  const { return near_z; }
+	[[nodiscard]] float GetFarZ()   const { return far_z; }
 
 	void IsDebugCamera(const bool flg) { is_debug_camera = flg; }
 	[[nodiscard]] bool IsDebugCamera() const { return is_debug_camera; }
 
 private:
-	//std::unique_ptr<CameraWork> camera_work{};
 	std::unique_ptr<buffer::ConstantBuffer<CameraCB>> cb_camera;
 
 	cumulonimbus::ecs::Registry* registry{ nullptr };
@@ -107,10 +103,18 @@ private:
 	DirectX::SimpleMath::Vector3 current_camera_up{ .0f,1.f,.0f };		// カメラのそれぞれのベクトルが直行になるように補正したベクトル(計算などに使用)
 	DirectX::SimpleMath::Vector3 camera_right{ 1.0f,0.0f,0.0f };
 
-	DirectX::SimpleMath::Matrix view_mat{ DirectX::SimpleMath::Matrix::Identity };
-	DirectX::SimpleMath::Matrix projection_mat{ DirectX::SimpleMath::Matrix::Identity };
+	DirectX::SimpleMath::Matrix view_mat			{ DirectX::SimpleMath::Matrix::Identity };
+	DirectX::SimpleMath::Matrix projection_mat		{ DirectX::SimpleMath::Matrix::Identity };
+	DirectX::SimpleMath::Matrix view_projection_mat	{ DirectX::SimpleMath::Matrix::Identity };
 
 	DirectX::SimpleMath::Vector3 camera_angle{}; // カメラの角度(Degree),左手系の座標軸からの角度
+
+	float near_z;	// カメラの最近値
+	float far_z;	// カメラの最遠地
+	float fov;		// 視野角
+	float aspect;	// アスペクト比
+	float width;	// ビュー行列上の幅
+	float height;	// ビュー行列上の高さ
 
 	//-- for debug --//
 	DirectX::SimpleMath::Vector2 camera_velocity{ 3.f,3.f };
@@ -159,7 +163,7 @@ private:
 	 * @brief : コンスタントバッファパラメータのセット
 	 *			(Update関数の最後で行う)
 	 */
-	void SetCBufferParam();
+	void SetCBufferParam() const;
 
 	/**
 	 * @brief			: カメラワーク時の動作
