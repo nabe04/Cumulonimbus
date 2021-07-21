@@ -38,7 +38,7 @@ void SceneTitle::InitializeScene()
 	light->SetPosition({ -200,100,-100});
 
 	//-- View --//
-	view->SetCameraPos({ 0,60,-800 }, { .0f, .0f, .0f }, XMFLOAT3(.0f, 1.0f, .0f));
+	view->SetViewInfo({ 0,60,-800 }, { .0f, .0f, .0f }, XMFLOAT3(.0f, 1.0f, .0f));
 
 	//const char* uv_chekcer_filename = "uv_checker";
 	//auto* uv_chekcer = AddEntity();

@@ -10,11 +10,14 @@
 #include "framework.h"
 #include "locator.h"
 #include "camera_work.h"
+#include "ecs.h"
+#include "transform_component.h"
 using namespace DirectX;
 
 View::View(cumulonimbus::ecs::Registry* registry)
 {
-	camera_work = std::make_unique<CameraWork>(registry);
+	//camera_work = std::make_unique<CameraWork>(registry);
+	this->registry = registry;
 	cb_camera   = std::make_unique<buffer::ConstantBuffer<CameraCB>>(cumulonimbus::locator::Locator::GetDx11Device()->device.Get());
 
 	// 初期設定
@@ -38,6 +41,118 @@ View::View(cumulonimbus::ecs::Registry* registry)
 View::~View()
 {
 
+}
+
+void View::Update(float dt)
+{
+	//camera_work->SetCameraInfo(*this);
+	//camera_work->Update(dt);
+
+	CalcCameraDirectionalVector();
+	CalcCameraAngle(); //オイラー角で(現在)計算しているので今は使わない
+
+	if (is_use_camera_for_object)
+	{
+		UpdateObjectCamera(dt);
+	}
+	else
+	{
+		UpdateDefaultCamera(dt);
+	}
+
+	SetFocusPosition(focus_position);
+	SetEyePosition(eye_position);
+	CalcCameraOrthogonalVector();
+
+#ifdef _DEBUG
+	if (cumulonimbus::locator::Locator::GetInput()->Keyboard().GetState(Keycode::LeftShift) == ButtonState::Held)
+	{
+		if (cumulonimbus::locator::Locator::GetInput()->Keyboard().GetState(Keycode::F1) == ButtonState::Press)
+		{
+			is_debug_camera = !is_debug_camera;
+		}
+	}
+#endif // _DEBUG
+	auto& camera = cb_camera->data;
+	// ビュー変換行列の作成
+	const XMMATRIX view_mat = XMMatrixLookAtLH(XMVectorSet(camera.camera_position.x, camera.camera_position.y, camera.camera_position.z, 0),
+		XMVectorSet(camera.camera_at.x, camera.camera_at.y, camera.camera_at.z, 0),
+		XMVectorSet(view_up_vec.x, view_up_vec.y, view_up_vec.z, 0));
+	XMStoreFloat4x4(&camera.camera_view_matrix, view_mat);
+
+	// プロジェクション変換行列の作成
+	XMMATRIX projection_mat = XMMatrixIdentity();
+	if (is_perspective)
+	{
+		projection_mat = XMMatrixPerspectiveFovLH(camera.camera_fov, camera.camera_aspect, camera.camera_near_z, camera.camera_far_z);
+		XMStoreFloat4x4(&camera.camera_projection_matrix, projection_mat);
+	}
+	else
+	{
+		projection_mat = XMMatrixOrthographicLH(camera.camera_width, camera.camera_height, camera.camera_near_z, camera.camera_far_z);
+		XMStoreFloat4x4(&camera.camera_projection_matrix, projection_mat);
+	}
+
+	const XMMATRIX view_projection_mat = DirectX::XMMatrixMultiply(view_mat, projection_mat);
+	XMStoreFloat4x4(&camera.camera_view_projection_matrix, view_projection_mat);
+}
+
+void View::WriteImGui()
+{
+	if (ImGui::CollapsingHeader("Camera"))
+	{
+		auto& camera = cb_camera->data;
+
+		ImGui::Checkbox("Debug", &is_debug_camera);
+
+		ImGui::Text("Camera Pos X %f", camera.camera_position.x);
+		ImGui::Text("Camera Pos Y %f", camera.camera_position.y);
+		ImGui::Text("Camera Pos Z %f", camera.camera_position.z);
+		ImGui::Text("Focus X %f", camera.camera_at.x);
+		ImGui::Text("Focus Y %f", camera.camera_at.y);
+		ImGui::Text("Focus Z %f", camera.camera_at.z);
+		ImGui::Text("Camera Front X %f", camera.camera_front.x);
+		ImGui::Text("Camera Front Y %f", camera.camera_front.y);
+		ImGui::Text("Camera Front Z %f", camera.camera_front.z);
+		ImGui::Text("Camera Up X %f", camera.camera_up.x);
+		ImGui::Text("Camera Up Y %f", camera.camera_up.y);
+		ImGui::Text("Camera Up Z %f", camera.camera_up.z);
+		ImGui::Text("Camera Right X %f", camera.camera_right.x);
+		ImGui::Text("Camera Right Y %f", camera.camera_right.y);
+		ImGui::Text("Camera Right Z %f", camera.camera_right.z);
+
+		ImGui::Text("focus_position x : %f\nfocus_position y : %f\nfocus_position z : %f", focus_position.x, focus_position.y, focus_position.z);
+		ImGui::Text("angle x  : %f\nangle y  : %f\nangle z  : %f", camera_angle.x, camera_angle.y, camera_angle.z);
+		ImGui::Text("Pos x  : %f\n Pos y  : %f\n Pos z  : %f", eye_position.x, eye_position.y, eye_position.z);
+
+		ImGui::DragFloat2("CameraSpeed", (float*)&camera_velocity, 0.5f, 1, 10);
+
+		//camera_work->RenderImGui();
+	}
+}
+
+void View::AttachObject(cumulonimbus::mapping::rename_type::Entity ent, bool switch_object_camera)
+{
+	attach_entity = ent;
+	is_use_camera_for_object = switch_object_camera;
+}
+
+void View::InitializeObjectCameraParam(float camera_length)
+{
+	this->camera_length = camera_length;
+	auto& transform_comp = registry->GetComponent<cumulonimbus::component::TransformComponent>(attach_entity);
+	// カメラの位置をエンティティの持つオブジェクトの後方にセット
+	eye_position = transform_comp.GetPosition() + (transform_comp.GetModelFront() * -1 * camera_length);
+	// 注視点をエンティティの位置にセット
+	focus_position = transform_comp.GetPosition();
+}
+
+void View::SetCameraUpRightFrontVector(const DirectX::SimpleMath::Vector3& up,
+	const DirectX::SimpleMath::Vector3& right, const DirectX::SimpleMath::Vector3& front)
+{
+	up_vec = up;
+	right_vec = right;
+	front_vec = front;
 }
 
 void View::BindCBuffer(bool set_in_vs, bool set_in_ps) const
@@ -73,7 +188,55 @@ void View::CalcCameraOrthogonalVector()
 	XMStoreFloat3(&camera.camera_right	, XMVector3Normalize(XMLoadFloat3(&camera.camera_right)));
 }
 
-void View::SetCameraPos(DirectX::SimpleMath::Vector3 pos, DirectX::SimpleMath::Vector3 target, DirectX::SimpleMath::Vector3 up)
+void View::UpdateObjectCamera(float dt)
+{
+}
+
+void View::UpdateDefaultCamera(float dt)
+{
+	const auto& mouse = cumulonimbus::locator::Locator::GetInput()->Mouse();
+	const auto& key = cumulonimbus::locator::Locator::GetInput()->Keyboard();
+
+	if (mouse.GetState(MouseButton::Left) == ButtonState::Held &&
+		mouse.GetState(MouseButton::Right) == ButtonState::Held)
+	{
+		Track(static_cast<float>(mouse.DeltaX()), right_vec);
+		Crane(static_cast<float>(-mouse.DeltaY()), { 0,1,0 });
+	}
+	else if (mouse.GetState(MouseButton::Left) == ButtonState::Held)
+	{
+		DollyInOut(static_cast<float>(mouse.DeltaY()));
+		Pan(static_cast<float>(mouse.DeltaX()));
+
+		if (key.GetState(Keycode::D) == ButtonState::Held)
+			Track(camera_velocity.x, right_vec);
+		if (key.GetState(Keycode::A) == ButtonState::Held)
+			Track(-camera_velocity.x, right_vec);
+		if (key.GetState(Keycode::W) == ButtonState::Held)
+			Crane(camera_velocity.y, up_vec);
+		if (key.GetState(Keycode::S) == ButtonState::Held)
+			Crane(-camera_velocity.y, up_vec);
+	}
+	else if (mouse.GetState(MouseButton::Right) == ButtonState::Held)
+	{
+		Pan(static_cast<float>(mouse.DeltaX()));
+		Tilt(static_cast<float>(mouse.DeltaY()));
+
+		if (key.GetState(Keycode::D) == ButtonState::Held)
+			Track(camera_velocity.x, right_vec);
+		if (key.GetState(Keycode::A) == ButtonState::Held)
+			Track(-camera_velocity.x, right_vec);
+		if (key.GetState(Keycode::W) == ButtonState::Held)
+			Crane(camera_velocity.y, up_vec);
+		if (key.GetState(Keycode::S) == ButtonState::Held)
+			Crane(-camera_velocity.y, up_vec);
+	}
+}
+
+void View::SetViewInfo(
+	SimpleMath::Vector3 pos,
+	SimpleMath::Vector3 target,
+	SimpleMath::Vector3 up) const
 {
 	auto& camera = cb_camera->data;
 	camera.camera_position	= pos;
@@ -101,70 +264,140 @@ void View::SetOrtho(float width, float height, float min, float max)
 	camera.camera_far_z		= max;
 }
 
-void View::Update(float dt)
+void View::SetTargetVec(const DirectX::SimpleMath::Vector3& target)
 {
-	camera_work->SetCameraInfo(*this);
-	camera_work->Update(dt);
-	SetFocusPosition(camera_work->GetFocusPosition());
-	SetEyePosition(camera_work->GetPosition());
-	CalcCameraOrthogonalVector();
+	if (this->focus_position.x == this->focus_position.y == this->focus_position.z == 0.0f)
+		assert(!"Vector is zero");
 
-#ifdef _DEBUG
-	if (cumulonimbus::locator::Locator::GetInput()->Keyboard().GetState(Keycode::LeftShift) == ButtonState::Held)
-	{
-		if (cumulonimbus::locator::Locator::GetInput()->Keyboard().GetState(Keycode::F1) == ButtonState::Press)
-		{
-			is_debug_camera = !is_debug_camera;
-		}
-	}
-#endif
-	auto& camera = cb_camera->data;
-
-	const XMMATRIX view_mat = XMMatrixLookAtLH( XMVectorSet(camera.camera_position.x, camera.camera_position.y, camera.camera_position.z, 0),
-												XMVectorSet(camera.camera_at.x, camera.camera_at.y, camera.camera_at.z, 0),
-												XMVectorSet(view_up_vec.x, view_up_vec.y, view_up_vec.z, 0));
-	XMStoreFloat4x4(&camera.camera_view_matrix, view_mat);
-
-	XMMATRIX projection_mat = XMMatrixIdentity();
-	if (is_perspective)
-	{
-		projection_mat = XMMatrixPerspectiveFovLH(camera.camera_fov, camera.camera_aspect, camera.camera_near_z, camera.camera_far_z);
-		XMStoreFloat4x4(&camera.camera_projection_matrix, projection_mat);
-	}
-	else
-	{
-		projection_mat = XMMatrixOrthographicLH(camera.camera_width, camera.camera_height, camera.camera_near_z, camera.camera_far_z);
-		XMStoreFloat4x4(&camera.camera_projection_matrix, projection_mat);
-	}
-
-	const XMMATRIX view_projection_mat = DirectX::XMMatrixMultiply(view_mat, projection_mat);
-	XMStoreFloat4x4(&camera.camera_view_projection_matrix, view_projection_mat);
+	this->focus_position = target;
 }
 
-void View::WriteImGui()
+void View::SetCameraUp(const DirectX::SimpleMath::Vector3& up)
 {
-	if (ImGui::CollapsingHeader("Camera"))
-	{
-		auto& camera = cb_camera->data;
+	// HACK: イコール関数を作ったら変更する
+	if (this->up_vec.x == this->up_vec.y == this->up_vec.z == 0.0f)
+		assert(!"Vector is zero");
 
-		ImGui::Checkbox("Debug", &is_debug_camera);
+	this->up_vec = up;
+}
 
-		ImGui::Text("Camera Pos X %f"	, camera.camera_position.x);
-		ImGui::Text("Camera Pos Y %f"	, camera.camera_position.y);
-		ImGui::Text("Camera Pos Z %f"	, camera.camera_position.z);
-		ImGui::Text("Focus X %f"		, camera.camera_at.x);
-		ImGui::Text("Focus Y %f"		, camera.camera_at.y);
-		ImGui::Text("Focus Z %f"		, camera.camera_at.z);
-		ImGui::Text("Camera Front X %f"	, camera.camera_front.x);
-		ImGui::Text("Camera Front Y %f"	, camera.camera_front.y);
-		ImGui::Text("Camera Front Z %f"	, camera.camera_front.z);
-		ImGui::Text("Camera Up X %f"	, camera.camera_up.x);
-		ImGui::Text("Camera Up Y %f"	, camera.camera_up.y);
-		ImGui::Text("Camera Up Z %f"	, camera.camera_up.z);
-		ImGui::Text("Camera Right X %f"	, camera.camera_right.x);
-		ImGui::Text("Camera Right Y %f"	, camera.camera_right.y);
-		ImGui::Text("Camera Right Z %f"	, camera.camera_right.z);
 
-		camera_work->RenderImGui();
+void View::CalcCameraDirectionalVector()
+{
+	front_vec = DirectX::SimpleMath::Vector3{ focus_position - eye_position };
+	camera_right = arithmetic::CalcRightVec(up_vec, front_vec);
+	up_vec = arithmetic::CalcUpVec(front_vec, camera_right);
+
+	front_vec.Normalize();
+	camera_right.Normalize();
+	current_camera_up.Normalize();
+}
+
+void View::CalcCameraAngle()
+{
+	using namespace DirectX::SimpleMath;
+
+	const Vector3 right{ 1,0,0 };
+	const Vector3 up{ 0,1,0 };
+	const Vector3 front{ 0,0,1 };
+
+	camera_angle.x = DirectX::XMConvertToDegrees(acosf(up.Dot(up_vec)));
+	if (up.Cross(up_vec).x < 0)
+		camera_angle.x *= -1;
+	camera_angle.y = DirectX::XMConvertToDegrees(acosf(front.Dot(front_vec)));
+	if (front.Cross(front_vec).y < 0)
+		camera_angle.y *= -1;
+
+	camera_angle.z = arithmetic::CalcAngle_Z(front_vec);
+}
+
+void View::Pan(float velocity)
+{
+	// クォータニオン Ver
+	DirectX::SimpleMath::Quaternion q{};
+	q = DirectX::SimpleMath::Quaternion::Identity;
+	q.Normalize();
+	q = q.CreateFromAxisAngle(up_vec, DirectX::XMConvertToRadians(velocity * camera_velocity.x * 0.1f));
+	front_vec = DirectX::SimpleMath::Vector3::Transform(front_vec, q);
+	front_vec.Normalize();
+
+	focus_position = eye_position + front_vec;
+
+	CalcCameraDirectionalVector();
+}
+
+void View::Tilt(float velocity)
+{
+	DirectX::SimpleMath::Quaternion q{};
+	q = DirectX::SimpleMath::Quaternion::Identity;
+	q.Normalize();
+	q = q.CreateFromAxisAngle(right_vec, DirectX::XMConvertToRadians(velocity * camera_velocity.y * 0.1f));
+	front_vec = DirectX::SimpleMath::Vector3::Transform(front_vec, q);
+	front_vec.Normalize();
+	focus_position = eye_position + front_vec;
+	CalcCameraDirectionalVector();
+
+	{//　カメラの角度保持(上下に+-90度まで)
+
+		if (front_vec.y > 0)
+		{
+			// カメラのフロントベクトルとy_up{0,1,0 }との射影ベクトルを算出
+			const DirectX::SimpleMath::Vector3 v = arithmetic::CalcProjectVector(front_vec, { 0.0f,1.0f,0.0f });
+			// カメラのフロントベクトルと平面との射影ベクトルを算出
+			DirectX::SimpleMath::Vector3 project_vec = front_vec - v;
+			project_vec.Normalize();
+
+			const float d = front_vec.Dot(project_vec);
+			const float rad = acosf(d);
+			if (rad > DirectX::XMConvertToRadians(max_camera_angle.x))
+			{// +90度以上回転しているので戻す
+				const float diff = rad - DirectX::XMConvertToRadians(max_camera_angle.x);
+				q = q.CreateFromAxisAngle(right_vec, diff);
+				front_vec = DirectX::SimpleMath::Vector3::Transform(front_vec, q);
+				front_vec.Normalize();
+				focus_position = eye_position + front_vec;
+			}
+		}
+		else
+		{
+			// カメラのフロントベクトルとy_up{0,-1,0 }との射影ベクトルを算出
+			const DirectX::SimpleMath::Vector3 v = arithmetic::CalcProjectVector(front_vec, { 0.0f,-1.0f,0.0f });
+			// カメラのフロントベクトルと平面との射影ベクトルを算出
+			const DirectX::SimpleMath::Vector3 project_vec = front_vec - v;
+
+			const float d = front_vec.Dot(project_vec);
+			const float rad = acosf(d);
+			if (rad > DirectX::XMConvertToRadians(max_camera_angle.x))
+			{// -90度以上回転しているので戻す
+				const float diff = rad - DirectX::XMConvertToRadians(max_camera_angle.x);
+				q = q.CreateFromAxisAngle(right_vec, -diff);
+				front_vec = DirectX::SimpleMath::Vector3::Transform(front_vec, q);
+				front_vec.Normalize();
+				focus_position = eye_position + front_vec;
+			}
+		}
 	}
+	CalcCameraDirectionalVector();
+}
+
+void View::DollyInOut(float velocity)
+{
+	const float v = -velocity * camera_velocity.y;
+
+	focus_position += right_vec * velocity;
+	eye_position += front_vec * v;
+}
+
+void View::Track(float velocity, const DirectX::SimpleMath::Vector3& axis)
+{
+	// カメラの注視点と位置を同じだけ移動
+	focus_position += axis * velocity;
+	eye_position += axis * velocity;
+}
+
+void View::Crane(float velocity, const DirectX::SimpleMath::Vector3& axis)
+{
+	// カメラの注視点と位置を同じだけ移動
+	focus_position += axis * velocity;
+	eye_position += axis * velocity;
 }

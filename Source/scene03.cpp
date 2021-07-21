@@ -27,7 +27,7 @@ using namespace shader;
 void Scene03::InitializeScene()
 {
 	//-- View --//
-	view->SetCameraPos(XMFLOAT3(.0f, 100.0f, -100.0f), XMFLOAT3(.0f, .0f, .0f), XMFLOAT3(.0f, 1.0f, .0f));
+	view->SetViewInfo(XMFLOAT3(.0f, 100.0f, -100.0f), XMFLOAT3(.0f, .0f, .0f), XMFLOAT3(.0f, 1.0f, .0f));
 }
 
 void Scene03::UpdateScene(const float delta_time)

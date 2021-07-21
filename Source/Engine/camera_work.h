@@ -46,7 +46,7 @@ public:
 	[[nodiscard]] const DirectX::SimpleMath::Vector3& GetFocusPosition() const { return focus_position; }
 	[[nodiscard]] const DirectX::SimpleMath::Vector3& GetCameraFront()	 const { return front_vec; }
 
-	//-- オブジェクトアタッチ用関数 --//
+	//-- オブジェアタッチ用関数 --//
 	/**
 	 * @brief						: オブジェクトカメラを使用する際の
 	 *								  対象モデルのエンティティを指定
@@ -64,6 +64,7 @@ public:
 	void InitializeObjectCameraParam(float camera_length = 50.0f);
 
 private:
+	std::unique_ptr<buffer::ConstantBuffer<CameraCB>> cb_camera;
 	cumulonimbus::ecs::Registry* registry{ nullptr };
 
 	// カメラの最大角度(軸基準) (y,zは未定義)
