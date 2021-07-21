@@ -107,8 +107,8 @@ private:
 	DirectX::SimpleMath::Vector3 current_camera_up{ .0f,1.f,.0f };		// カメラのそれぞれのベクトルが直行になるように補正したベクトル(計算などに使用)
 	DirectX::SimpleMath::Vector3 camera_right{ 1.0f,0.0f,0.0f };
 
-	DirectX::SimpleMath::Matrix view_f4x4{ DirectX::SimpleMath::Matrix::Identity };
-	DirectX::SimpleMath::Matrix projection_f4x4{ DirectX::SimpleMath::Matrix::Identity };
+	DirectX::SimpleMath::Matrix view_mat{ DirectX::SimpleMath::Matrix::Identity };
+	DirectX::SimpleMath::Matrix projection_mat{ DirectX::SimpleMath::Matrix::Identity };
 
 	DirectX::SimpleMath::Vector3 camera_angle{}; // カメラの角度(Degree),左手系の座標軸からの角度
 
@@ -154,6 +154,12 @@ private:
 	 * @brief : 左手座標軸を基準にしてのカメラの角度(Degree)計算
 	 */
 	void CalcCameraAngle();
+
+	/**
+	 * @brief : コンスタントバッファパラメータのセット
+	 *			(Update関数の最後で行う)
+	 */
+	void SetCBufferParam();
 
 	/**
 	 * @brief			: カメラワーク時の動作

@@ -311,6 +311,14 @@ void View::CalcCameraAngle()
 	camera_angle.z = arithmetic::CalcAngle_Z(front_vec);
 }
 
+void View::SetCBufferParam()
+{
+	auto& camera_data = cb_camera->data;
+	camera_data.camera_view_matrix = view_mat;
+}
+
+//-------------------------  デバッグカメラワーク  -------------------------//
+
 void View::Pan(float velocity)
 {
 	// クォータニオン Ver
