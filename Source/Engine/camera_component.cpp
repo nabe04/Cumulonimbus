@@ -180,6 +180,21 @@ namespace cumulonimbus::component
 		front_vec		= front;
 	}
 
+	void CameraComponent::ClearFrameBuffer(DirectX::SimpleMath::Vector4 clear_color) const
+	{
+		off_screen->Clear(locator::Locator::GetDx11Device()->immediate_context.Get(), clear_color.x, clear_color.y, clear_color.z, clear_color.z);
+	}
+
+	void CameraComponent::BindFrameBuffer() const
+	{
+		off_screen->Activate(locator::Locator::GetDx11Device()->immediate_context.Get());
+	}
+
+	void CameraComponent::UnbindFrameBuffer() const
+	{
+		off_screen->Deactivate(locator::Locator::GetDx11Device()->immediate_context.Get());
+	}
+
 	void CameraComponent::BindCBuffer(bool set_in_vs, bool set_in_ps) const
 	{
 		cb_camera->Activate(cumulonimbus::locator::Locator::GetDx11Device()->immediate_context.Get(), CBSlot_Camera, set_in_vs, set_in_ps);

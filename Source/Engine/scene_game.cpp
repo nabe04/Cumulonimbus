@@ -95,6 +95,8 @@ void SceneGame::InitializeScene()
 
 	const cum::mapping::rename_type::Entity ent_main_camera = registry->CreateEntity();
 	registry->AddComponent<cum::component::CameraComponent>(ent_main_camera, true);
+	registry->GetComponent<cum::component::CameraComponent>(ent_main_camera).SetViewInfo({ 25,100,-300 }, { .0f, .0f, .0f }, XMFLOAT3(.0f, 1.0f, .0f));
+	registry->GetComponent<cum::component::CameraComponent>(ent_main_camera).SetProjection(XM_PI / 8.0f, static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
 
 	const char* sky_filename = "./Data/Assets/cubemap/skybox";
 	const cum::mapping::rename_type::Entity ent_sky_box = registry->CreateEntity();

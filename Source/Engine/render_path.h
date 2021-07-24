@@ -70,13 +70,14 @@ namespace cumulonimbus::renderer
 		std::unique_ptr<DepthStencil>	depth_stencil;
 		std::array< std::unique_ptr<Sampler>, static_cast<int>(RenderingSampleState::End)> samplers;
 
+		std::shared_ptr<FrameBuffer>							off_screen					{ nullptr };
 		std::unique_ptr<graphics::buffer::GBuffer>				g_buffer					{ nullptr };
 		std::unique_ptr<DummyTexture>							dummy_texture				{ nullptr };
-		std::unique_ptr<FrameBuffer>							off_screen					{ nullptr };
 		std::unique_ptr<DepthMap>								depth_map					{ nullptr };
 		std::unique_ptr<FullscreenQuad>							fullscreen_quad				{ nullptr };
 		std::unique_ptr<shader_asset::LocalShaderAssetManager>	local_shader_asset_manager	{ nullptr };
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>		sky_box_srv					{ nullptr };
+		//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>		
 
 		/*
 		 * brief : "MeshObjectComponent"がもつDirectX stateのセット
@@ -99,6 +100,15 @@ namespace cumulonimbus::renderer
 		 */
 		void Blit(ID3D11DeviceContext* immediate_context) const;
 
+		/**
+		 * @brief : 全体の描画前処理
+		 */
+		void RenderBegin(ID3D11DeviceContext* immediate_context);
+		/**
+		 * @brief : 全体の描画後処理
+		 */
+		void RenderEnd(ID3D11DeviceContext* immediate_context);
+
 		/*
 		 * brief     : 深度テクスチャの作成
 		 *             作成されたテクスチャは
@@ -118,9 +128,9 @@ namespace cumulonimbus::renderer
 				ID3D11DeviceContext*				immediate_context,
 				const component::CameraComponent*	camera_comp);
 		void RenderSkyBox(
-				ID3D11DeviceContext*				immediate_context, 
-				ecs::Registry*					registry, 
-				const component::CameraComponent*	view, 
+				ID3D11DeviceContext*				immediate_context,
+				ecs::Registry*					registry,
+				const component::CameraComponent*	view,
 				const Light*						light);
 		void RenderSkyBox_End(
 				ID3D11DeviceContext* immediate_context,
@@ -150,7 +160,7 @@ namespace cumulonimbus::renderer
 		 *		   (Bloom)
 		 */
 		void RenderPostProcess_Begin(ID3D11DeviceContext* immediate_context);
-		void RenderPostProcess(ID3D11DeviceContext* immediate_context);
+		void RenderPostProcess(ID3D11DeviceContext* immediate_context, ecs::Registry* registry);
 		void RenderPostProcess_End(ID3D11DeviceContext* immediate_context);
 
 		/*
@@ -160,9 +170,9 @@ namespace cumulonimbus::renderer
 		 */
 		void Render3D_Begin(ID3D11DeviceContext* immediate_context);
 		void Render3D(
-				ID3D11DeviceContext* immediate_context, 
-				ecs::Registry* registry, 
-				const component::CameraComponent* view, 
+				ID3D11DeviceContext* immediate_context,
+				ecs::Registry* registry,
+				const component::CameraComponent* view,
 				const Light* light);
 		void Render3D_End(
 				ID3D11DeviceContext* immediate_context,
@@ -217,7 +227,7 @@ namespace cumulonimbus::renderer
 		 * brief : 当たり判定の描画
 		 */
 		void RenderCollision_Begin(
-				ID3D11DeviceContext* immediate_context, 
+				ID3D11DeviceContext* immediate_context,
 				const component::CameraComponent* camera_comp);
 		void RenderCollision(ID3D11DeviceContext* immediate_context, ecs::Registry* registry);
 		void RenderSphereCollisionModel(
@@ -229,7 +239,7 @@ namespace cumulonimbus::renderer
 				ecs::Registry* registry, mapping::rename_type::Entity entity,
 				const FbxModelResource* model_resource);
 		void RenderCollision_End(
-				ID3D11DeviceContext* immediate_context, 
+				ID3D11DeviceContext* immediate_context,
 				const component::CameraComponent* camera_comp);
 
 		/*

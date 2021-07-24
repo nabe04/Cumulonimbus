@@ -5,6 +5,7 @@
 
 #include "component_base.h"
 #include "constant_buffer.h"
+#include "frame_buffer.h"
 #include "shader_interop_renderer.h"
 #include "rename_type_mapping.h"
 #include "locator.h"
@@ -34,9 +35,6 @@ namespace cumulonimbus::component
 		explicit CameraComponent()  = default; // for cereal
  		~CameraComponent() override = default;
 
-		void BindCBuffer(bool set_in_vs = true, bool set_in_ps = true) const;
-		void UnbindCBuffer() const;
-
 		void Update(float dt) override;
 		void RenderImGui() override;
 
@@ -44,6 +42,13 @@ namespace cumulonimbus::component
 		void Load(const std::string& file_path_and_name) override;
 
 		void WriteImGui();
+
+		void ClearFrameBuffer(DirectX::SimpleMath::Vector4 clear_color = { 0.0f,0.0f,0.0f,1.0f }) const;
+		void BindFrameBuffer() const;
+		void UnbindFrameBuffer() const;
+
+		void BindCBuffer(bool set_in_vs = true, bool set_in_ps = true) const;
+		void UnbindCBuffer() const;
 
 		/**
 		 * @brief						: オブジェクトカメラを使用する際の
@@ -111,6 +116,8 @@ namespace cumulonimbus::component
 		[[nodiscard]] bool GetIsActive() const { return is_active; }
 		[[nodiscard]] bool GetIsMainCamera() const { return is_main_camera; }
 
+		[[nodiscard]] ID3D11ShaderResourceView** GetFrameBufferSRV_Address() const { return off_screen->GetRenderTargetSRV(); }
+	
 	private:
 		std::shared_ptr<buffer::ConstantBuffer<CameraCB>>	cb_camera{ nullptr };
 		std::shared_ptr<FrameBuffer>						off_screen{ nullptr };
