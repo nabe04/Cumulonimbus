@@ -9,7 +9,7 @@ namespace shader
 {
 	class VertexShader;
 	class PixelShader;
-}
+} // shader
 class GaussianBlur;
 
 namespace cumulonimbus::renderer

@@ -2,18 +2,18 @@
 
 #include <memory>
 
-
-#include "fbx_model_component.h"
-#include "input_manager.h"
+#include "anim_sprite.h"
+#include "camera_component.h"
+#include "capsule_collison_component.h"
 #include "component_list.h"
+#include "fbx_model_component.h"
 #include "input_device.h"
+#include "input_manager.h"
+#include "mesh_object.h"
+#include "player_component.h"
 #include "scene_title.h"
 #include "sky_box.h"
-#include "mesh_object.h"
-#include "anim_sprite.h"
-#include "player_component.h"
 #include "sphere_collision_component.h"
-#include "capsule_collison_component.h"
 
 #include "transform_component.h"
 
@@ -33,7 +33,7 @@ void SceneGame::InitializeScene()
 	light->SetPosition({ -400, 500, 0 });
 
 	//-- Camera --//
-	main_camera->SetViewInfo({ 25,100,-300 }, { .0f, .0f, .0f }, XMFLOAT3(.0f, 1.0f, .0f));
+	//main_camera->SetViewInfo({ 25,100,-300 }, { .0f, .0f, .0f }, XMFLOAT3(.0f, 1.0f, .0f));
 
 	//auto* test_entity = AddEntity();
 	//test_entity->SetEntityName("Test_Entity");
@@ -92,6 +92,9 @@ void SceneGame::InitializeScene()
 	//ground->GetComponent<TransformComponent>()->SetWorldRotation_X(90);
 	//ground->GetComponent<MeshObject>()->SetSamplerState(RenderingSampleState::Linear_Wrap);
 	//ground->SetEntityName("Ground");
+
+	const cum::mapping::rename_type::Entity ent_main_camera = registry->CreateEntity();
+	registry->AddComponent<cum::component::CameraComponent>(ent_main_camera, true);
 
 	const char* sky_filename = "./Data/Assets/cubemap/skybox";
 	const cum::mapping::rename_type::Entity ent_sky_box = registry->CreateEntity();
@@ -153,8 +156,8 @@ void SceneGame::InitializeScene()
 	registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_player).AddCapsule();
 	registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_player).SetAllRadius(20.0f);
 	registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_player).SetAllLength(40.0f);
-	main_camera->AttachObject(ent_player);
-	main_camera->InitializeObjectCameraParam();
+	//main_camera->AttachObject(ent_player);
+	//main_camera->InitializeObjectCameraParam();
 }
 
 void SceneGame::UpdateScene(const float delta_time)

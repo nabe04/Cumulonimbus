@@ -1,31 +1,26 @@
 
 #pragma once
-#include <deque>
 #include <filesystem>
-#include <fstream>
 #include <memory>
 #include <string>
-#include <vector>
 
 #include <DirectXMath.h>
 
-#include "collision_manager.h"
-#include "camera_work.h"
 #include "collision.h"
+#include "collision_manager.h"
 #include "dx11_configurator.h"
+#include "gaussian_blur.h"
 #include "ecs.h"
 #include "editor_manager.h"
-#include "gaussian_blur.h"
-#include "geometric_primitive_resource.h"
 #include "fbx_model_resource.h"
 #include "framework.h"
+#include "geometric_primitive_resource.h"
 #include "input_manager.h"
 #include "light.h"
 #include "render_path.h"
 #include "resource_manager.h"
 #include "sound_resource.h"
 #include "texture_resource_manager.h"
-#include "camera_component.h"
 
 class GeometricPrimitiveResource;
 namespace cumulonimbus
@@ -69,7 +64,6 @@ protected:
 	std::unique_ptr<GeometricPrimitiveResource>			geom_prim_res		{ nullptr };
 	std::unique_ptr<Light>								light				{ nullptr };
 	std::unique_ptr<SoundResource>						sound_resource		{ nullptr };
-	std::unique_ptr <cumulonimbus::component::CameraComponent> main_camera{ nullptr };
 	std::unique_ptr<cumulonimbus::renderer::RenderPath> render_path			{ nullptr };
 
 	//std::unique_ptr <pad_link::PadLink>			pad_combine			= nullptr;
@@ -89,7 +83,6 @@ public:
 	void SetNextScene(const std::shared_ptr<Scene>& scene) { next_scene = scene; }
 
 	[[nodiscard]] auto* GetFramework() const { return framework; }
-	[[nodiscard]] auto* GetView() const{ return main_camera.get(); }
 	[[nodiscard]] auto* GetLight() const { return light.get(); }
 	[[nodiscard]] auto* GetGeomPrimRes() const { return geom_prim_res.get(); }
 	//auto* GetPadLink()			{ return pad_combine.get(); }

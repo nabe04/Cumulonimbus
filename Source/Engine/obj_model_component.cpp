@@ -29,7 +29,7 @@ namespace cumulonimbus::component
 
 	void ObjModelComponent::Update(const float delta_time)
 	{
-		auto* view = GetRegistry()->GetScene()->GetView();
+		//auto* view = GetRegistry()->GetScene()->GetView();
 
 		SetCenterWorldPos();
 	}

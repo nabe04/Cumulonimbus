@@ -33,7 +33,7 @@ namespace cumulonimbus::component
 
 	void GeomPrimComponent::Update(const float delta_time)
 	{
-		auto* view = GetRegistry()->GetScene()->GetView();
+		//auto* view = GetRegistry()->GetScene()->GetView();
 	}
 
 	void GeomPrimComponent::RenderImGui()

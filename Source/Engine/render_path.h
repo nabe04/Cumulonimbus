@@ -57,7 +57,7 @@ namespace cumulonimbus::renderer
 	public:
 		explicit RenderPath(ID3D11Device* device);
 
-		void Render(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, const component::CameraComponent* view, const Light* light);
+		void Render(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, const Light* light);
 
 	private:
 		// すべてのシェーダーの生成とセット
@@ -82,14 +82,16 @@ namespace cumulonimbus::renderer
 		 * brief : "MeshObjectComponent"がもつDirectX stateのセット
 		 *         (states : rasterizer , sampler , depth_stencil , blend)
 		 */
-		void BindDirectXStates(ID3D11DeviceContext* immediate_context,
-							   const component::MeshObjectComponent* mesh_object,
-							   bool set_rasterizer = true	, bool set_sampler = true,
-							   bool set_depth_stencil = true, bool set_blend = true);
-		void BindDirectXStates(ID3D11DeviceContext* immediate_context,
-							   const component::SpriteObjectComponent* sprite_object,
-							   bool set_rasterizer = true	, bool set_sampler = true,
-							   bool set_depth_stencil = true, bool set_blend = true);
+		void BindDirectXStates(
+				ID3D11DeviceContext* immediate_context,
+				const component::MeshObjectComponent* mesh_object,
+				bool set_rasterizer = true	, bool set_sampler = true,
+				bool set_depth_stencil = true, bool set_blend = true);
+		void BindDirectXStates(
+				ID3D11DeviceContext* immediate_context,
+				const component::SpriteObjectComponent* sprite_object,
+			    bool set_rasterizer = true	, bool set_sampler = true,
+				bool set_depth_stencil = true, bool set_blend = true);
 
 		/*
 		 * brief : "back_buffer"(メンバ変数)に書き込まれているものを
@@ -112,9 +114,17 @@ namespace cumulonimbus::renderer
 		 * brief : SkyBoxの描画
 		 *		   off_screenバッファを使用して書き込む
 		 */
-		void RenderSkyBox_Begin(ID3D11DeviceContext* immediate_context);
-		void RenderSkyBox(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, const component::CameraComponent* view, const Light* light);
-		void RenderSkyBox_End(ID3D11DeviceContext* immediate_context);
+		void RenderSkyBox_Begin(
+				ID3D11DeviceContext*				immediate_context,
+				const component::CameraComponent*	camera_comp);
+		void RenderSkyBox(
+				ID3D11DeviceContext*				immediate_context, 
+				ecs::Registry*					registry, 
+				const component::CameraComponent*	view, 
+				const Light*						light);
+		void RenderSkyBox_End(
+				ID3D11DeviceContext* immediate_context,
+				const component::CameraComponent* camera_comp);
 
 		/*
 		 * brief     : 3DモデルのGBufferへの描画
@@ -149,8 +159,14 @@ namespace cumulonimbus::renderer
 		 *			   を持つエンティティのみ描画される
 		 */
 		void Render3D_Begin(ID3D11DeviceContext* immediate_context);
-		void Render3D(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, const component::CameraComponent* view, const Light* light);
-		void Render3D_End(ID3D11DeviceContext* immediate_context);
+		void Render3D(
+				ID3D11DeviceContext* immediate_context, 
+				ecs::Registry* registry, 
+				const component::CameraComponent* view, 
+				const Light* light);
+		void Render3D_End(
+				ID3D11DeviceContext* immediate_context,
+				const component::CameraComponent* camera_comp);
 
 		void Render2D(ID3D11DeviceContext* immediate_context, ecs::Registry* registry);
 
@@ -159,19 +175,20 @@ namespace cumulonimbus::renderer
 		/*
 		 * brief : "GeomPrimComponent"が持つモデルの描画
 		 */
-		// TODO: RenderGeomPrimを今後当たり判定用のモデルの描画も行う
-		void RenderGeomPrim(ID3D11DeviceContext* immediate_context,
-							ecs::Registry* registry , mapping::rename_type::Entity entity,
-							const component::MeshObjectComponent* mesh_object,
-							const component::CameraComponent* view, const Light* light);
+		void RenderGeomPrim(
+				ID3D11DeviceContext* immediate_context,
+				ecs::Registry* registry , mapping::rename_type::Entity entity,
+				const component::MeshObjectComponent* mesh_object,
+				const component::CameraComponent* view, const Light* light);
 
 		/*
 		 * brief : "ObjModelComponent"が持つモデルの描画
 		 */
-		void RenderOBJ(ID3D11DeviceContext* immediate_context,
-					   ecs::Registry* registry, mapping::rename_type::Entity entity,
-					   const component::MeshObjectComponent* mesh_object,
-					   const component::CameraComponent* view, const Light* light);
+		void RenderOBJ(
+				ID3D11DeviceContext* immediate_context,
+				ecs::Registry* registry, mapping::rename_type::Entity entity,
+				const component::MeshObjectComponent* mesh_object,
+				const component::CameraComponent* view, const Light* light);
 
 		/*
 		 * brief		  : "FbxModelComponent"が持つモデルの描画
@@ -181,31 +198,39 @@ namespace cumulonimbus::renderer
 		 *					trueの場合マテリアルが使用するシェーダー単位での
 		 *					GBufferシェーダーが利用される
 		 */
-		void RenderFBX(ID3D11DeviceContext* immediate_context,
-					   ecs::Registry* registry, mapping::rename_type::Entity entity,
-					   const component::MeshObjectComponent* mesh_object,
-					   const component::CameraComponent* view, const Light* light,
-					   bool is_use_shadow, bool is_use_gbuffer);
+		void RenderFBX(
+				ID3D11DeviceContext* immediate_context,
+				ecs::Registry* registry, mapping::rename_type::Entity entity,
+				const component::MeshObjectComponent* mesh_object,
+				const component::CameraComponent* view, const Light* light,
+				bool is_use_shadow, bool is_use_gbuffer);
 
 		/*
 		 * brief :   "SkyBoxComponent"が持つモデルの描画
 		 */
-		void RenderSkyBox(ID3D11DeviceContext* immediate_context,
-						  ecs::Registry* registry, mapping::rename_type::Entity entity,
-						  const component::CameraComponent* view, const Light* light);
+		void RenderSkyBox(
+				ID3D11DeviceContext* immediate_context,
+				ecs::Registry* registry, mapping::rename_type::Entity entity,
+				const component::CameraComponent* view, const Light* light);
 
 		/*
 		 * brief : 当たり判定の描画
 		 */
-		void RenderCollision_Begin(ID3D11DeviceContext* immediate_context, const component::CameraComponent* view);
+		void RenderCollision_Begin(
+				ID3D11DeviceContext* immediate_context, 
+				const component::CameraComponent* camera_comp);
 		void RenderCollision(ID3D11DeviceContext* immediate_context, ecs::Registry* registry);
-		void RenderSphereCollisionModel(ID3D11DeviceContext* immediate_context,
-									    ecs::Registry* registry, mapping::rename_type::Entity entity,
-										const FbxModelResource* model_resource);
-		void RenderCapsuleCollisionModel(ID3D11DeviceContext* immediate_context,
-										 ecs::Registry* registry, mapping::rename_type::Entity entity,
-										 const FbxModelResource* model_resource);
-		void RenderCollision_End(ID3D11DeviceContext* immediate_context, const component::CameraComponent* view);
+		void RenderSphereCollisionModel(
+				ID3D11DeviceContext* immediate_context,
+				ecs::Registry* registry, mapping::rename_type::Entity entity,
+				const FbxModelResource* model_resource);
+		void RenderCapsuleCollisionModel(
+				ID3D11DeviceContext* immediate_context,
+				ecs::Registry* registry, mapping::rename_type::Entity entity,
+				const FbxModelResource* model_resource);
+		void RenderCollision_End(
+				ID3D11DeviceContext* immediate_context, 
+				const component::CameraComponent* camera_comp);
 
 		/*
 		 * brief        : 2Dスプライトの描画

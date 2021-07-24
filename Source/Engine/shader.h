@@ -138,31 +138,31 @@ namespace shader
 		}
 	};
 
-	// Light (b2)
-	struct CB_Light
-	{
-		DirectX::XMFLOAT4  light_dir = { .0f,.0f,1.f,1.f };
-		DirectX::XMFLOAT4  color     = { 1.f,1.f,1.f,1.f };
-		DirectX::XMFLOAT4  ambient	 = { 1.f,1.f,1.f,1.f };
-		DirectX::XMFLOAT4  eye_pos	 = { .0f,.0f,.0f,1.f };	// Point of view
-		DirectX::XMFLOAT4  position  = {};
-		DirectX::XMFLOAT4X4 light_view_projection{};
+	//// Light (b2)
+	//struct CB_Light
+	//{
+	//	DirectX::XMFLOAT4  light_dir = { .0f,.0f,1.f,1.f };
+	//	DirectX::XMFLOAT4  color     = { 1.f,1.f,1.f,1.f };
+	//	DirectX::XMFLOAT4  ambient	 = { 1.f,1.f,1.f,1.f };
+	//	DirectX::XMFLOAT4  eye_pos	 = { .0f,.0f,.0f,1.f };	// Point of view
+	//	DirectX::XMFLOAT4  position  = {};
+	//	DirectX::XMFLOAT4X4 light_view_projection{};
 
-		void Update(Scene* scene);
+	//	void Update(Scene* scene);
 
-		//-- For Imgui --//
-		void EditParam()
-		{
-			if (ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_None))
-			{
-				ImGui::DragFloat("Direction X", &light_dir.x, 0.01f, -1.0f, 1.0f);
-				ImGui::DragFloat("Direction Y", &light_dir.y, 0.01f, -1.0f, 1.0f);
-				ImGui::DragFloat("Direction Z", &light_dir.z, 0.01f, -1.0f, 1.0f);
-				ImGui::ColorEdit4("Color", (float*)&color);
-				ImGui::ColorEdit3("Ambient", (float*)&ambient);
-			}
-		}
-	};
+	//	//-- For Imgui --//
+	//	void EditParam()
+	//	{
+	//		if (ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_None))
+	//		{
+	//			ImGui::DragFloat("Direction X", &light_dir.x, 0.01f, -1.0f, 1.0f);
+	//			ImGui::DragFloat("Direction Y", &light_dir.y, 0.01f, -1.0f, 1.0f);
+	//			ImGui::DragFloat("Direction Z", &light_dir.z, 0.01f, -1.0f, 1.0f);
+	//			ImGui::ColorEdit4("Color", (float*)&color);
+	//			ImGui::ColorEdit3("Ambient", (float*)&ambient);
+	//		}
+	//	}
+	//};
 
 	class VertexShader
 	{

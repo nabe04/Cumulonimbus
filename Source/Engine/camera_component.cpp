@@ -9,18 +9,24 @@
 #include "arithmetic.h"
 #include "framework.h"
 #include "locator.h"
-#include "camera_work.h"
+#include "frame_buffer.h"
 #include "ecs.h"
 #include "transform_component.h"
 using namespace DirectX;
 
 namespace cumulonimbus::component
 {
-	CameraComponent::CameraComponent(cumulonimbus::ecs::Registry* registry)
+	CameraComponent::CameraComponent(
+		cumulonimbus::ecs::Registry* registry,
+		const mapping::rename_type::Entity ent,
+		bool is_main_camera,
+		float width, float height)
+		:ComponentBase{ registry,ent }
 	{
-		//camera_work = std::make_unique<CameraWork>(registry);
-		this->registry = registry;
-		cb_camera = std::make_unique<buffer::ConstantBuffer<CameraCB>>(cumulonimbus::locator::Locator::GetDx11Device()->device.Get());
+		cb_camera  = std::make_shared<buffer::ConstantBuffer<CameraCB>>(cumulonimbus::locator::Locator::GetDx11Device()->device.Get());
+		off_screen = std::make_shared<FrameBuffer>(
+			locator::Locator::GetDx11Device()->device.Get(),
+			width, height);
 
 		// 初期設定
 		cb_camera->data.camera_position = { .0f,.0f,.0f };
@@ -38,11 +44,9 @@ namespace cumulonimbus::component
 		cb_camera->data.camera_height = cumulonimbus::locator::Locator::GetWindow()->Height();
 		cb_camera->data.camera_view_matrix = { 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
 		cb_camera->data.camera_view_projection_matrix = { 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
-	}
 
-	CameraComponent::~CameraComponent()
-	{
-
+		if (is_main_camera)
+			SwitchMainCamera();
 	}
 
 	void CameraComponent::Update(float dt)
@@ -69,7 +73,7 @@ namespace cumulonimbus::component
 		// ビュー変換行列の作成
 		const XMMATRIX view_mat = XMMatrixLookAtLH(XMVectorSet(eye_position.x, eye_position.y, eye_position.z, 0),
 			XMVectorSet(focus_position.x, focus_position.y, focus_position.z, 0),
-			XMVectorSet(view_up_vec.x, view_up_vec.y, view_up_vec.z, 0));
+			XMVectorSet(up_vec.x, up_vec.y, up_vec.z, 0));
 		XMStoreFloat4x4(&this->view_mat, view_mat);
 
 		// プロジェクション変換行列の作成
@@ -90,6 +94,12 @@ namespace cumulonimbus::component
 
 		SetCBufferParam();
 	}
+
+	void CameraComponent::RenderImGui()
+	{
+
+	}
+
 
 	void CameraComponent::WriteImGui()
 	{
@@ -124,6 +134,16 @@ namespace cumulonimbus::component
 		}
 	}
 
+	void CameraComponent::Save(const std::string& file_path)
+	{
+
+	}
+
+	void CameraComponent::Load(const std::string& file_path_and_name)
+	{
+
+	}
+
 	void CameraComponent::AttachObject(cumulonimbus::mapping::rename_type::Entity ent, bool switch_object_camera)
 	{
 		attach_entity = ent;
@@ -133,19 +153,31 @@ namespace cumulonimbus::component
 	void CameraComponent::InitializeObjectCameraParam(float camera_length)
 	{
 		this->camera_length = camera_length;
-		auto& transform_comp = registry->GetComponent<cumulonimbus::component::TransformComponent>(attach_entity);
+		auto& transform_comp = GetRegistry()->GetComponent<cumulonimbus::component::TransformComponent>(attach_entity);
 		// カメラの位置をエンティティの持つオブジェクトの後方にセット
 		eye_position = transform_comp.GetPosition() + (transform_comp.GetModelFront() * -1 * camera_length);
 		// 注視点をエンティティの位置にセット
 		focus_position = transform_comp.GetPosition();
 	}
 
+	void CameraComponent::SwitchMainCamera()
+	{
+		// 一度全てのCameraComponentのis_main_cameraをfalseに
+		for(auto& camera_comp : GetRegistry()->GetArray<CameraComponent>().GetComponents())
+		{
+			camera_comp.is_main_camera = false;
+		}
+		// 自クラスのis_main_cameraをtrueに
+		is_main_camera = true;
+	}
+
+
 	void CameraComponent::SetCameraUpRightFrontVector(const DirectX::SimpleMath::Vector3& up,
 		const DirectX::SimpleMath::Vector3& right, const DirectX::SimpleMath::Vector3& front)
 	{
-		up_vec = up;
-		right_vec = right;
-		front_vec = front;
+		current_up_vec	= up;
+		right_vec		= right;
+		front_vec		= front;
 	}
 
 	void CameraComponent::BindCBuffer(bool set_in_vs, bool set_in_ps) const
@@ -170,11 +202,11 @@ namespace cumulonimbus::component
 		front_vec = SimpleMath::Vector3{ focus_position.x - eye_position.x,
 										 focus_position.y - eye_position.y,
 										 focus_position.z - eye_position.z };
-		right_vec = arithmetic::CalcRightVec(up_vec, front_vec);
-		up_vec = arithmetic::CalcUpVec(front_vec, right_vec);
+		right_vec = arithmetic::CalcRightVec(current_up_vec, front_vec);
+		current_up_vec = arithmetic::CalcUpVec(front_vec, right_vec);
 
 		right_vec.Normalize();
-		up_vec.Normalize();
+		current_up_vec.Normalize();
 		front_vec.Normalize();
 	}
 
@@ -203,9 +235,9 @@ namespace cumulonimbus::component
 			if (key.GetState(Keycode::A) == ButtonState::Held)
 				Track(-camera_velocity.x, right_vec);
 			if (key.GetState(Keycode::W) == ButtonState::Held)
-				Crane(camera_velocity.y, up_vec);
+				Crane(camera_velocity.y, current_up_vec);
 			if (key.GetState(Keycode::S) == ButtonState::Held)
-				Crane(-camera_velocity.y, up_vec);
+				Crane(-camera_velocity.y, current_up_vec);
 		}
 		else if (mouse.GetState(MouseButton::Right) == ButtonState::Held)
 		{
@@ -217,9 +249,9 @@ namespace cumulonimbus::component
 			if (key.GetState(Keycode::A) == ButtonState::Held)
 				Track(-camera_velocity.x, right_vec);
 			if (key.GetState(Keycode::W) == ButtonState::Held)
-				Crane(camera_velocity.y, up_vec);
+				Crane(camera_velocity.y, current_up_vec);
 			if (key.GetState(Keycode::S) == ButtonState::Held)
-				Crane(-camera_velocity.y, up_vec);
+				Crane(-camera_velocity.y, current_up_vec);
 		}
 	}
 
@@ -228,9 +260,9 @@ namespace cumulonimbus::component
 		SimpleMath::Vector3 target,
 		SimpleMath::Vector3 camera_up)
 	{
-		eye_position = pos;
-		focus_position = target;
-		up_vec = camera_up;
+		eye_position	= pos;
+		focus_position	= target;
+		current_up_vec  = camera_up;
 	}
 
 	void CameraComponent::SetProjection(float fov, float aspect, float min, float max)
@@ -276,7 +308,7 @@ namespace cumulonimbus::component
 			arithmetic::IsEqual(up.z, 0.0f))
 			assert(!"Vector is zero");
 
-		up_vec = up;
+		current_up_vec = up;
 	}
 
 	void CameraComponent::SetCameraFront(const DirectX::SimpleMath::Vector3& front)
@@ -286,15 +318,15 @@ namespace cumulonimbus::component
 			arithmetic::IsEqual(front.z, 0.0f))
 			assert(!"Vector is zero");
 
-		front_vec = front;
+		current_up_vec = front;
 	}
 
 
 	void CameraComponent::CalcCameraDirectionalVector()
 	{
 		front_vec = DirectX::SimpleMath::Vector3{ focus_position - eye_position };
-		camera_right = arithmetic::CalcRightVec(up_vec, front_vec);
-		up_vec = arithmetic::CalcUpVec(front_vec, camera_right);
+		camera_right = arithmetic::CalcRightVec(current_up_vec, front_vec);
+		current_up_vec = arithmetic::CalcUpVec(front_vec, camera_right);
 
 		front_vec.Normalize();
 		camera_right.Normalize();
@@ -308,8 +340,8 @@ namespace cumulonimbus::component
 		const Vector3 right{ 1,0,0 };
 		const Vector3 up{ 0,1,0 };
 		const Vector3 front{ 0,0,1 };
-		camera_angle.x = DirectX::XMConvertToDegrees(acosf(up.Dot(up_vec)));
-		if (up.Cross(up_vec).x < 0)
+		camera_angle.x = DirectX::XMConvertToDegrees(acosf(up.Dot(current_up_vec)));
+		if (up.Cross(current_up_vec).x < 0)
 			camera_angle.x *= -1;
 		camera_angle.y = DirectX::XMConvertToDegrees(acosf(front.Dot(front_vec)));
 		if (front.Cross(front_vec).y < 0)
@@ -331,7 +363,7 @@ namespace cumulonimbus::component
 		camera_data.camera_at = focus_position;
 		camera_data.camera_near_z = near_z;
 
-		camera_data.camera_up = up_vec;
+		camera_data.camera_up = current_up_vec;
 		camera_data.camera_far_z = far_z;
 
 		camera_data.camera_front = front_vec;
@@ -349,7 +381,7 @@ namespace cumulonimbus::component
 		DirectX::SimpleMath::Quaternion q{};
 		q = DirectX::SimpleMath::Quaternion::Identity;
 		q.Normalize();
-		q = q.CreateFromAxisAngle(up_vec, DirectX::XMConvertToRadians(velocity * camera_velocity.x * 0.1f));
+		q = q.CreateFromAxisAngle(current_up_vec, DirectX::XMConvertToRadians(velocity * camera_velocity.x * 0.1f));
 		front_vec = DirectX::SimpleMath::Vector3::Transform(front_vec, q);
 		front_vec.Normalize();
 

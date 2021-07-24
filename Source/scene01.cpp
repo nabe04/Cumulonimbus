@@ -65,7 +65,7 @@ void Scene01::InitializeScene()
 	//fbxCharacter->GetComponent<FbxModelComponent>()->SwitchAnimation(3, true);
 
 	//-- Camera --//
-	main_camera->SetViewInfo(XMFLOAT3(.0f, .0f, -34.0f), XMFLOAT3(.0f, .0f, .0f), XMFLOAT3(.0f, 1.0f, .0f));
+	//main_camera->SetViewInfo(XMFLOAT3(.0f, .0f, -34.0f), XMFLOAT3(.0f, .0f, .0f), XMFLOAT3(.0f, 1.0f, .0f));
 }
 
 void Scene01::UpdateScene(const float delta_time)

@@ -25,7 +25,7 @@ void Scene02::InitializeScene()
 
 
 	//-- Camera --//
-	main_camera->SetViewInfo(XMFLOAT3(.0f, .0f, -5.0f), XMFLOAT3(.0f, .0f, .0f), XMFLOAT3(.0f, 1.0f, .0f));
+	//main_camera->SetViewInfo(XMFLOAT3(.0f, .0f, -5.0f), XMFLOAT3(.0f, .0f, .0f), XMFLOAT3(.0f, 1.0f, .0f));
 }
 
 void Scene02::UpdateScene(const float delta_time)

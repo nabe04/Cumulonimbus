@@ -17,12 +17,12 @@ namespace cumulonimbus::component
 	class TransformComponent :public ComponentBase
 	{
 	public:
-		explicit TransformComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent);
+		explicit TransformComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
 		TransformComponent() = default; // for cereal
 		~TransformComponent() override = default;
 
-		void NewFrame(const float delta_time)override;
-		void Update(const float delta_time) override;
+		void NewFrame(float delta_time)override;
+		void Update(float delta_time) override;
 		void RenderImGui() override;
 
 		void Save(const std::string& file_path) override;
