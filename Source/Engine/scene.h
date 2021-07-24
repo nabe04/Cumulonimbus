@@ -25,7 +25,7 @@
 #include "resource_manager.h"
 #include "sound_resource.h"
 #include "texture_resource_manager.h"
-#include "view.h"
+#include "camera_component.h"
 
 class GeometricPrimitiveResource;
 namespace cumulonimbus
@@ -69,7 +69,7 @@ protected:
 	std::unique_ptr<GeometricPrimitiveResource>			geom_prim_res		{ nullptr };
 	std::unique_ptr<Light>								light				{ nullptr };
 	std::unique_ptr<SoundResource>						sound_resource		{ nullptr };
-	std::unique_ptr<Camera>								main_camera			{ nullptr };
+	std::unique_ptr <cumulonimbus::component::CameraComponent> main_camera{ nullptr };
 	std::unique_ptr<cumulonimbus::renderer::RenderPath> render_path			{ nullptr };
 
 	//std::unique_ptr <pad_link::PadLink>			pad_combine			= nullptr;

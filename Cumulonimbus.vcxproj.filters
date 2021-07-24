@@ -411,9 +411,6 @@
     <ClCompile Include="Source\Engine\transform.cpp">
       <Filter>Source\Engine\System</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\view.cpp">
-      <Filter>Source\Engine\System</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Engine\window.cpp">
       <Filter>Source\Engine\System</Filter>
     </ClCompile>
@@ -505,6 +502,9 @@
       <Filter>Source\Engine\Shader%28.cpp%29\System</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\capsule_collison_component.cpp">
+      <Filter>Source\Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\camera_component.cpp">
       <Filter>Source\Engine\Components</Filter>
     </ClCompile>
   </ItemGroup>
@@ -731,9 +731,6 @@
     <ClInclude Include="Source\Engine\vertex_buffer.h">
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\view.h">
-      <Filter>Header\Engine\System</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Engine\window.h">
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
@@ -898,6 +895,9 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\file_path_helper.h">
       <Filter>Header\Engine\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\camera_component.h">
+      <Filter>Header\Engine\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

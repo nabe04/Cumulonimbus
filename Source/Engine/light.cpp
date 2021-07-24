@@ -5,7 +5,7 @@
 #include "locator.h"
 #include "arithmetic.h"
 #include "constant_buffer.h"
-#include "view.h"
+#include "camera_component.h"
 
 using namespace DirectX;
 
@@ -22,7 +22,7 @@ Light::Light(ID3D11Device* device)
 	cb_light->data.orthographic_far_z		= 1000;
 }
 
-void Light::Update(const Camera* view)
+void Light::Update(const cumulonimbus::component::CameraComponent* camera)
 {
 	// Calculate right,up,front vector
 	const DirectX::SimpleMath::Vector3 l_direction = cb_light->data.light_direction;
@@ -33,12 +33,12 @@ void Light::Update(const Camera* view)
 	view_up    = arithmetic::CalcUpVec(view_front, view_right);
 	view_up.Normalize();
 
-	DirectX::XMFLOAT3 target_pos = view->GetFocusPosition();
+	DirectX::XMFLOAT3 target_pos = camera->GetFocusPosition();
 	DirectX::XMFLOAT3 position   = cb_light->data.light_position;
 	const XMMATRIX view_mat      = XMMatrixLookAtLH(XMLoadFloat3(&position), { 0,0,0 }, XMLoadFloat3(&view_up));
 
-	cb_light->data.light_view_matrix = view->GetViewMat();
-	const XMMATRIX perspective_projection_mat = XMMatrixPerspectiveFovLH(view->GetFov(), view->GetAspect(), view->GetNearZ(), view->GetFarZ());
+	cb_light->data.light_view_matrix = camera->GetViewMat();
+	const XMMATRIX perspective_projection_mat = XMMatrixPerspectiveFovLH(camera->GetFov(), camera->GetAspect(), camera->GetNearZ(), camera->GetFarZ());
 	XMStoreFloat4x4(&cb_light->data.light_perspective_projection_matrix, perspective_projection_mat);
 	XMStoreFloat4x4(&cb_light->data.light_perspective_view_projection_matrix, XMMatrixMultiply(view_mat, perspective_projection_mat));
 	const XMMATRIX orthographic_projection_mat = XMMatrixOrthographicLH(cb_light->data.orthographic_view_width, cb_light->data.orthographic_view_height, cb_light->data.orthographic_near_z, cb_light->data.orthographic_far_z);

@@ -4,7 +4,7 @@
 #include <DirectXMath.h>
 #include <SimpleMath.h>
 
-#include "view.h"
+#include "camera_component.h"
 #include "rename_type_mapping.h"
 
 namespace cumulonimbus::ecs
@@ -31,7 +31,7 @@ public:
 		const DirectX::SimpleMath::Vector3& eye_position /* 位置 */,
 		const DirectX::SimpleMath::Vector3& target       /* 注視点 */,
 		const DirectX::SimpleMath::Vector3& up_vec       /* アップベクトル*/);
-	void SetCameraInfo(const Camera& v);
+	void SetCameraInfo(const cumulonimbus::component::CameraComponent& v);
 
 	void SetPosition(const DirectX::SimpleMath::Vector3& eye_position);
 	void SetTargetVec(const DirectX::SimpleMath::Vector3& target);

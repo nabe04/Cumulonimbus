@@ -143,7 +143,7 @@
     <ClInclude Include="Source\Engine\type_rename.h" />
     <ClInclude Include="Source\Engine\vertex_buffer.h" />
     <ClInclude Include="Source\Engine\vertex_shader.h" />
-    <ClInclude Include="Source\Engine\view.h" />
+    <ClInclude Include="Source\Engine\camera_component.h" />
     <ClInclude Include="Source\Engine\window.h" />
     <ClInclude Include="Source\Game\player_component.h" />
     <ClInclude Include="Source\Game\rotation_sample.h" />
@@ -259,7 +259,7 @@
     <ClCompile Include="Source\Engine\transform.cpp" />
     <ClCompile Include="Source\Engine\transform_component.cpp" />
     <ClCompile Include="Source\Engine\vertex_shader.cpp" />
-    <ClCompile Include="Source\Engine\view.cpp" />
+    <ClCompile Include="Source\Engine\camera_component.cpp" />
     <ClCompile Include="Source\Engine\toon.cpp" />
     <ClCompile Include="Source\Engine\window.cpp" />
     <ClCompile Include="Source\Game\player_component.cpp" />

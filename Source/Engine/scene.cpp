@@ -13,7 +13,7 @@
 
 #include "ecs.h"
 #include "light.h"
-#include "view.h"
+#include "camera_component.h"
 
 // Components
 #include "anim_sprite.h"
@@ -75,7 +75,7 @@ void Scene::Initialize()
 
 	if (!this->main_camera)
 	{// Create Camera
-		main_camera = std::make_unique<Camera>(registry.get());
+		main_camera = std::make_unique<cumulonimbus::component::CameraComponent>(registry.get());
 	}
 
 	if(!this->render_path)

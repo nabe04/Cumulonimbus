@@ -8,12 +8,17 @@
 
 class Camera;
 
+namespace cumulonimbus::component
+{
+	class CameraComponent;
+} // cumulonimbus::component
+
 class Light
 {
 public:
 	explicit Light(ID3D11Device* device);
 
-	void Update(const Camera* view);
+	void Update(const cumulonimbus::component::CameraComponent* view);
 	void BindCBuffer(bool set_in_vs = true, bool set_in_ps = true) const;
 	void UnbindCBuffer() const;
 

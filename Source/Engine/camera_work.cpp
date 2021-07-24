@@ -119,7 +119,7 @@ void CameraWork::SetCameraInfo( const DirectX::SimpleMath::Vector3& eye_position
 	this->up_vec		 = up_vec;
 }
 
-void CameraWork::SetCameraInfo(const Camera& v)
+void CameraWork::SetCameraInfo(const cumulonimbus::component::CameraComponent& v)
 {
 	eye_position   = v.GetEyePosition();
 	focus_position = v.GetFocusPosition();
