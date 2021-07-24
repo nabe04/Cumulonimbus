@@ -71,10 +71,10 @@ void SceneTutorial::InitializeScene()
 	//-- Light --//
 	light->SetLightDir({ .0f,-.6f,1.f});
 
-	//-- View --//
-	view->SetViewInfo(XMFLOAT3(.0f, 30.0, -100.0f), XMFLOAT3(.0f, .0f, .0f), XMFLOAT3(.0f, 1.0f, .0f));
+	//-- Camera --//
+	main_camera->SetViewInfo(XMFLOAT3(.0f, 30.0, -100.0f), XMFLOAT3(.0f, .0f, .0f), XMFLOAT3(.0f, 1.0f, .0f));
 
-	//-- View --//
+	//-- Camera --//
 	//view->SetViewInfo(XMFLOAT3(.0f, 1000.0f, -1000.0f), XMFLOAT3(.0f, .0f, .0f), XMFLOAT3(.0f, 1.0f, .0f));
 }
 

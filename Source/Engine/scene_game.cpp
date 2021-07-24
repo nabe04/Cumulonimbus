@@ -32,8 +32,8 @@ void SceneGame::InitializeScene()
 	light->SetLightDir({ 0.0f,-.6f,1.f });
 	light->SetPosition({ -400, 500, 0 });
 
-	//-- View --//
-	view->SetViewInfo({ 25,100,-300 }, { .0f, .0f, .0f }, XMFLOAT3(.0f, 1.0f, .0f));
+	//-- Camera --//
+	main_camera->SetViewInfo({ 25,100,-300 }, { .0f, .0f, .0f }, XMFLOAT3(.0f, 1.0f, .0f));
 
 	//auto* test_entity = AddEntity();
 	//test_entity->SetEntityName("Test_Entity");
@@ -153,8 +153,8 @@ void SceneGame::InitializeScene()
 	registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_player).AddCapsule();
 	registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_player).SetAllRadius(20.0f);
 	registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_player).SetAllLength(40.0f);
-	view->AttachObject(ent_player);
-	view->InitializeObjectCameraParam();
+	main_camera->AttachObject(ent_player);
+	main_camera->InitializeObjectCameraParam();
 }
 
 void SceneGame::UpdateScene(const float delta_time)

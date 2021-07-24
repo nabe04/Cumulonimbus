@@ -69,7 +69,7 @@ protected:
 	std::unique_ptr<GeometricPrimitiveResource>			geom_prim_res		{ nullptr };
 	std::unique_ptr<Light>								light				{ nullptr };
 	std::unique_ptr<SoundResource>						sound_resource		{ nullptr };
-	std::unique_ptr<View>								view				{ nullptr };
+	std::unique_ptr<Camera>								main_camera			{ nullptr };
 	std::unique_ptr<cumulonimbus::renderer::RenderPath> render_path			{ nullptr };
 
 	//std::unique_ptr <pad_link::PadLink>			pad_combine			= nullptr;
@@ -89,7 +89,7 @@ public:
 	void SetNextScene(const std::shared_ptr<Scene>& scene) { next_scene = scene; }
 
 	[[nodiscard]] auto* GetFramework() const { return framework; }
-	[[nodiscard]] auto* GetView() const{ return view.get(); }
+	[[nodiscard]] auto* GetView() const{ return main_camera.get(); }
 	[[nodiscard]] auto* GetLight() const { return light.get(); }
 	[[nodiscard]] auto* GetGeomPrimRes() const { return geom_prim_res.get(); }
 	//auto* GetPadLink()			{ return pad_combine.get(); }

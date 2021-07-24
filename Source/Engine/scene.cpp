@@ -73,9 +73,9 @@ void Scene::Initialize()
 		registry = std::make_unique<cumulonimbus::ecs::Registry>();
 	}
 
-	if (!this->view)
-	{// Create View
-		view = std::make_unique<View>(registry.get());
+	if (!this->main_camera)
+	{// Create Camera
+		main_camera = std::make_unique<Camera>(registry.get());
 	}
 
 	if(!this->render_path)
@@ -150,13 +150,13 @@ void Scene::Update(const float elapsed_time)
 	registry->Update(elapsed_time);
 	registry->PostUpdate(elapsed_time);
 
-	view->SetProjection(XM_PI / 8.0f, static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
+	main_camera->SetProjection(XM_PI / 8.0f, static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
 
-	// View update
-	view->Update(elapsed_time);
+	// Camera update
+	main_camera->Update(elapsed_time);
 
 	// light update
-	light->Update(view.get());
+	light->Update(main_camera.get());
 
 	UpdateScene(elapsed_time);
 
@@ -175,7 +175,7 @@ void Scene::Render()
 {
 	auto* immediate_context = framework->GetDeviceContext();
 
-	render_path->Render(immediate_context, registry.get(), view.get(), light.get());
+	render_path->Render(immediate_context, registry.get(), main_camera.get(), light.get());
 
 #ifdef _DEBUG
 	// ImGui
@@ -186,7 +186,7 @@ void Scene::Render()
 		ImGui::Begin("Scene");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		this->RenderImGui();
-		view->WriteImGui();
+		main_camera->WriteImGui();
 		light->WriteImGui();
 		if (ImGui::CollapsingHeader("Objects"))
 		{

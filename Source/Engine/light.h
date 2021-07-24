@@ -6,14 +6,14 @@
 #include "constant_buffer.h"
 #include "shader_interop_renderer.h"
 
-class View;
+class Camera;
 
 class Light
 {
 public:
 	explicit Light(ID3D11Device* device);
 
-	void Update(const View* view);
+	void Update(const Camera* view);
 	void BindCBuffer(bool set_in_vs = true, bool set_in_ps = true) const;
 	void UnbindCBuffer() const;
 

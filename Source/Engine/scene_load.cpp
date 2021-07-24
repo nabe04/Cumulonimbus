@@ -15,8 +15,8 @@ SceneLoad::SceneLoad(Scene* scene)
 
 void SceneLoad::InitializeScene()
 {
-	//-- View --//
-	view->SetViewInfo(XMFLOAT3(.0f, 100.0f, -100.0f), XMFLOAT3(.0f, .0f, .0f), XMFLOAT3(.0f, 1.0f, .0f));
+	//-- Camera --//
+	main_camera->SetViewInfo(XMFLOAT3(.0f, 100.0f, -100.0f), XMFLOAT3(.0f, .0f, .0f), XMFLOAT3(.0f, 1.0f, .0f));
 
 	// スレッド開始(thisは引数、static関数以外を呼ぶので必要)
 	std::thread thread(LoadingThread, this);

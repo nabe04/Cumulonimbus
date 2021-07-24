@@ -22,7 +22,7 @@ Light::Light(ID3D11Device* device)
 	cb_light->data.orthographic_far_z		= 1000;
 }
 
-void Light::Update(const View* view)
+void Light::Update(const Camera* view)
 {
 	// Calculate right,up,front vector
 	const DirectX::SimpleMath::Vector3 l_direction = cb_light->data.light_direction;

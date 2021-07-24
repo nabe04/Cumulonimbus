@@ -22,7 +22,7 @@
 //	{
 //		auto* view = GetRegistry()->GetScene()->GetView();
 //		if (!view)
-//			assert(!"Not found View");
+//			assert(!"Not found Camera");
 //
 //		//XMFLOAT3 focus_position = GetEntity()->GetComponent<TransformComponent>()->GetTransform()->GetPosition();
 //		XMFLOAT3 target = GetRegistry()->GetScene()->GetOtherEntity(EntityTag::Enemy)->GetComponent<TransformComponent>()->GetPosition();
@@ -63,7 +63,7 @@
 //	{
 //		auto* view = GetRegistry()->GetScene()->GetView();
 //		if (!view)
-//			assert(!"Not found View");
+//			assert(!"Not found Camera");
 //
 //		if (!std::isfinite(view->GetFocusPosition().x) || !std::isfinite(view->GetFocusPosition().y) || !std::isfinite(view->GetFocusPosition().z))
 //		{
@@ -106,7 +106,7 @@
 //
 //		auto* view = GetRegistry()->GetScene()->GetView();
 //		if (!view)
-//			assert(!"Not found View");
+//			assert(!"Not found Camera");
 //
 //		{// XŽ²‚ÌŠp“xŽZo
 //			SimpleMath::Vector3 vec_x{ 0,view->GetCameraFront().y,view->GetCameraFront().z };
@@ -136,7 +136,7 @@
 //	{
 //		auto* view = GetRegistry()->GetScene()->GetView();
 //		if (!view)
-//			assert(!"Not found View");
+//			assert(!"Not found Camera");
 //
 //		//auto* default_target_transform = GetRegistry()->GetScene()->GetOtherEntity(my_target_tag)->GetComponent<TransformComponent>();
 //	}
@@ -148,7 +148,7 @@
 //
 //	//	auto* view = GetEntity()->GetScene()->GetView();
 //	//	if (!view)
-//	//		assert(!"Not found View");
+//	//		assert(!"Not found Camera");
 //	//
 //	//	auto* target_transform = GetEntity()->GetScene()->GetOtherEntity(my_target_tag)->GetComponent<TransformComponent>()->GetTransform();
 //	//
@@ -244,7 +244,7 @@
 //	{
 //		//	auto* view = GetEntity()->GetScene()->GetView();
 //		//	if (!view)
-//		//		assert(!"Not found View");
+//		//		assert(!"Not found Camera");
 //		//
 //		//	auto* default_target_transform = GetEntity()->GetScene()->GetOtherEntity(my_target_tag)->GetComponent<TransformComponent>()->GetTransform();
 //		//
@@ -319,7 +319,7 @@
 //		// Todo::Input
 //		//auto* view = GetEntity()->GetScene()->GetView();
 //		//if (!view)
-//		//	assert(!"Not found View");
+//		//	assert(!"Not found Camera");
 //
 //		//auto input = GetEntity()->GetScene()->GetPadLink();
 //	}
@@ -329,7 +329,7 @@
 //	{
 //		//auto* view = GetEntity()->GetScene()->GetView();
 //		//if (!view)
-//		//	assert(!"Not found View");
+//		//	assert(!"Not found Camera");
 //
 //		//auto* default_target_transform = GetEntity()->GetScene()->GetOtherEntity(my_target_tag)->GetComponent<TransformComponent>()->GetTransform();
 //		//if (!default_target_transform)
@@ -424,7 +424,7 @@
 //
 //		auto* view = GetRegistry()->GetScene()->GetView();
 //		if (!view)
-//			assert(!"Not found View");
+//			assert(!"Not found Camera");
 //		view->SetCameraFront(-front);
 //		view->SetCameraRight(right);
 //		view->SetCameraUp(up);
@@ -474,7 +474,7 @@
 //	{
 //		auto* view = GetRegistry()->GetScene()->GetView();
 //		if (!view)
-//			assert(!"Not found View");
+//			assert(!"Not found Camera");
 //
 //		const float dis_x = view->GetEyePosition().x - 0;
 //		const float dis_y = view->GetEyePosition().y - 0;

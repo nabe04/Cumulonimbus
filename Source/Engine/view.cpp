@@ -14,7 +14,7 @@
 #include "transform_component.h"
 using namespace DirectX;
 
-View::View(cumulonimbus::ecs::Registry* registry)
+Camera::Camera(cumulonimbus::ecs::Registry* registry)
 {
 	//camera_work = std::make_unique<CameraWork>(registry);
 	this->registry = registry;
@@ -38,12 +38,12 @@ View::View(cumulonimbus::ecs::Registry* registry)
 	cb_camera->data.camera_view_projection_matrix	= { 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
 }
 
-View::~View()
+Camera::~Camera()
 {
 
 }
 
-void View::Update(float dt)
+void Camera::Update(float dt)
 {
 	//camera_work->SetCameraInfo(*this);
 	//camera_work->Update(dt);
@@ -89,7 +89,7 @@ void View::Update(float dt)
 	SetCBufferParam();
 }
 
-void View::WriteImGui()
+void Camera::WriteImGui()
 {
 	if (ImGui::CollapsingHeader("Camera"))
 	{
@@ -122,13 +122,13 @@ void View::WriteImGui()
 	}
 }
 
-void View::AttachObject(cumulonimbus::mapping::rename_type::Entity ent, bool switch_object_camera)
+void Camera::AttachObject(cumulonimbus::mapping::rename_type::Entity ent, bool switch_object_camera)
 {
 	attach_entity = ent;
 	is_use_camera_for_object = switch_object_camera;
 }
 
-void View::InitializeObjectCameraParam(float camera_length)
+void Camera::InitializeObjectCameraParam(float camera_length)
 {
 	this->camera_length = camera_length;
 	auto& transform_comp = registry->GetComponent<cumulonimbus::component::TransformComponent>(attach_entity);
@@ -138,7 +138,7 @@ void View::InitializeObjectCameraParam(float camera_length)
 	focus_position = transform_comp.GetPosition();
 }
 
-void View::SetCameraUpRightFrontVector(const DirectX::SimpleMath::Vector3& up,
+void Camera::SetCameraUpRightFrontVector(const DirectX::SimpleMath::Vector3& up,
 	const DirectX::SimpleMath::Vector3& right, const DirectX::SimpleMath::Vector3& front)
 {
 	up_vec = up;
@@ -146,19 +146,19 @@ void View::SetCameraUpRightFrontVector(const DirectX::SimpleMath::Vector3& up,
 	front_vec = front;
 }
 
-void View::BindCBuffer(bool set_in_vs, bool set_in_ps) const
+void Camera::BindCBuffer(bool set_in_vs, bool set_in_ps) const
 {
 	cb_camera->Activate(cumulonimbus::locator::Locator::GetDx11Device()->immediate_context.Get(), CBSlot_Camera, set_in_vs, set_in_ps);
 }
 
-void View::UnbindCBuffer() const
+void Camera::UnbindCBuffer() const
 {
 	cb_camera->Deactivate(cumulonimbus::locator::Locator::GetDx11Device()->immediate_context.Get());
 }
 
 
 
-void View::CalcCameraOrthogonalVector()
+void Camera::CalcCameraOrthogonalVector()
 {
 	if (!std::isfinite(focus_position.x) || !std::isfinite(focus_position.y) || !std::isfinite(focus_position.z))
 	{
@@ -176,11 +176,11 @@ void View::CalcCameraOrthogonalVector()
 	front_vec.Normalize();
 }
 
-void View::UpdateObjectCamera(float dt)
+void Camera::UpdateObjectCamera(float dt)
 {
 }
 
-void View::UpdateDefaultCamera(float dt)
+void Camera::UpdateDefaultCamera(float dt)
 {
 	const auto& mouse = cumulonimbus::locator::Locator::GetInput()->Mouse();
 	const auto& key = cumulonimbus::locator::Locator::GetInput()->Keyboard();
@@ -221,7 +221,7 @@ void View::UpdateDefaultCamera(float dt)
 	}
 }
 
-void View::SetViewInfo(
+void Camera::SetViewInfo(
 	SimpleMath::Vector3 pos,
 	SimpleMath::Vector3 target,
 	SimpleMath::Vector3 camera_up)
@@ -231,7 +231,7 @@ void View::SetViewInfo(
 	up_vec			= camera_up;
 }
 
-void View::SetProjection(float fov, float aspect, float min, float max)
+void Camera::SetProjection(float fov, float aspect, float min, float max)
 {
 	is_perspective	= true;
 	this->fov		= fov;
@@ -240,7 +240,7 @@ void View::SetProjection(float fov, float aspect, float min, float max)
 	far_z			= max;
 }
 
-void View::SetOrtho(float width, float height, float min, float max)
+void Camera::SetOrtho(float width, float height, float min, float max)
 {
 	is_perspective	= false;
 	this->width		= width;
@@ -249,7 +249,7 @@ void View::SetOrtho(float width, float height, float min, float max)
 	far_z			= max;
 }
 
-void View::SetTargetVec(const DirectX::SimpleMath::Vector3& target)
+void Camera::SetTargetVec(const DirectX::SimpleMath::Vector3& target)
 {
 	if (this->focus_position.x == this->focus_position.y == this->focus_position.z == 0.0f)
 		assert(!"Vector is zero");
@@ -257,7 +257,7 @@ void View::SetTargetVec(const DirectX::SimpleMath::Vector3& target)
 	this->focus_position = target;
 }
 
-void View::SetCameraRight(const DirectX::SimpleMath::Vector3& right)
+void Camera::SetCameraRight(const DirectX::SimpleMath::Vector3& right)
 {
 	if (arithmetic::IsEqual(right.x, 0.0f) &&
 		arithmetic::IsEqual(right.y, 0.0f) &&
@@ -267,7 +267,7 @@ void View::SetCameraRight(const DirectX::SimpleMath::Vector3& right)
 	right_vec = right;
 }
 
-void View::SetCameraUp(const DirectX::SimpleMath::Vector3& up)
+void Camera::SetCameraUp(const DirectX::SimpleMath::Vector3& up)
 {
 	if (arithmetic::IsEqual(up.x,0.0f) &&
 		arithmetic::IsEqual(up.y,0.0f) &&
@@ -277,7 +277,7 @@ void View::SetCameraUp(const DirectX::SimpleMath::Vector3& up)
 	up_vec = up;
 }
 
-void View::SetCameraFront(const DirectX::SimpleMath::Vector3& front)
+void Camera::SetCameraFront(const DirectX::SimpleMath::Vector3& front)
 {
 	if (arithmetic::IsEqual(front.x, 0.0f) &&
 		arithmetic::IsEqual(front.y, 0.0f) &&
@@ -288,7 +288,7 @@ void View::SetCameraFront(const DirectX::SimpleMath::Vector3& front)
 }
 
 
-void View::CalcCameraDirectionalVector()
+void Camera::CalcCameraDirectionalVector()
 {
 	front_vec	 = DirectX::SimpleMath::Vector3{ focus_position - eye_position };
 	camera_right = arithmetic::CalcRightVec(up_vec, front_vec);
@@ -299,7 +299,7 @@ void View::CalcCameraDirectionalVector()
 	current_camera_up.Normalize();
 }
 
-void View::CalcCameraAngle()
+void Camera::CalcCameraAngle()
 {
 	using namespace DirectX::SimpleMath;
 
@@ -316,7 +316,7 @@ void View::CalcCameraAngle()
 	camera_angle.z = arithmetic::CalcAngle_Z(front_vec);
 }
 
-void View::SetCBufferParam() const
+void Camera::SetCBufferParam() const
 {
 	auto& camera_data = cb_camera->data;
 	camera_data.camera_view_matrix			  = view_mat;
@@ -341,7 +341,7 @@ void View::SetCBufferParam() const
 
 //-------------------------  デバッグカメラワーク  -------------------------//
 
-void View::Pan(float velocity)
+void Camera::Pan(float velocity)
 {
 	// クォータニオン Ver
 	DirectX::SimpleMath::Quaternion q{};
@@ -356,7 +356,7 @@ void View::Pan(float velocity)
 	CalcCameraDirectionalVector();
 }
 
-void View::Tilt(float velocity)
+void Camera::Tilt(float velocity)
 {
 	DirectX::SimpleMath::Quaternion q{};
 	q = DirectX::SimpleMath::Quaternion::Identity;
@@ -410,7 +410,7 @@ void View::Tilt(float velocity)
 	CalcCameraDirectionalVector();
 }
 
-void View::DollyInOut(float velocity)
+void Camera::DollyInOut(float velocity)
 {
 	const float v = -velocity * camera_velocity.y;
 
@@ -418,14 +418,14 @@ void View::DollyInOut(float velocity)
 	eye_position += front_vec * v;
 }
 
-void View::Track(float velocity, const DirectX::SimpleMath::Vector3& axis)
+void Camera::Track(float velocity, const DirectX::SimpleMath::Vector3& axis)
 {
 	// カメラの注視点と位置を同じだけ移動
 	focus_position += axis * velocity;
 	eye_position += axis * velocity;
 }
 
-void View::Crane(float velocity, const DirectX::SimpleMath::Vector3& axis)
+void Camera::Crane(float velocity, const DirectX::SimpleMath::Vector3& axis)
 {
 	// カメラの注視点と位置を同じだけ移動
 	focus_position += axis * velocity;

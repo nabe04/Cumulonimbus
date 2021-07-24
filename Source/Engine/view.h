@@ -14,11 +14,11 @@ namespace cumulonimbus::ecs
 	class Registry;
 } // cumulonimbus::ecs
 
-class View final
+class Camera final
 {
 public:
-	explicit View(cumulonimbus::ecs::Registry* registry);
-	~View();
+	explicit Camera(cumulonimbus::ecs::Registry* registry);
+	~Camera();
 
 	void BindCBuffer(bool set_in_vs = true, bool set_in_ps = true) const;
 	void UnbindCBuffer() const;

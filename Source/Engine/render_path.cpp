@@ -82,7 +82,7 @@ namespace cumulonimbus::renderer
 
 	void RenderPath::Render(ID3D11DeviceContext* const immediate_context,
 							ecs::Registry* registry,
-							const View* view, const Light* light)
+							const Camera* view, const Light* light)
 	{
 		// ShadowMap作成
 		RenderShadow_Begin(immediate_context);
@@ -133,7 +133,7 @@ namespace cumulonimbus::renderer
 
 	void RenderPath::RenderShadow(ID3D11DeviceContext* immediate_context,
 								  ecs::Registry* const registry,
-								  const View* view, const Light* light)
+								  const Camera* view, const Light* light)
 	{
 		depth_map->Activate(immediate_context);
 		light->BindCBuffer();
@@ -178,7 +178,7 @@ namespace cumulonimbus::renderer
 		off_screen->Activate(immediate_context);
 	}
 
-	void RenderPath::RenderSkyBox(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, const View* view,
+	void RenderPath::RenderSkyBox(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, const Camera* view,
 		const Light* light)
 	{
 		// ライトパラメータをコンスタントバッファにバインド
@@ -207,7 +207,7 @@ namespace cumulonimbus::renderer
 		g_buffer->BindShaderAndRTV();
 	}
 
-	void RenderPath::Render3DToGBuffer(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, const View* view, const Light* light)
+	void RenderPath::Render3DToGBuffer(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, const Camera* view, const Light* light)
 	{
 		for (auto& mesh_object : registry->GetArray<component::MeshObjectComponent>().GetComponents())
 		{
@@ -278,7 +278,7 @@ namespace cumulonimbus::renderer
 
 	void RenderPath::Render3D(ID3D11DeviceContext* immediate_context,
 							  ecs::Registry* registry,
-							  const View* view, const Light* light)
+							  const Camera* view, const Light* light)
 	{
 		// ライトパラメータをコンスタントバッファにバインド
 		light->BindCBuffer();
@@ -374,7 +374,7 @@ namespace cumulonimbus::renderer
 	void RenderPath::RenderGeomPrim(ID3D11DeviceContext* immediate_context,
 									ecs::Registry* registry, mapping::rename_type::Entity entity,
 									const component::MeshObjectComponent* const mesh_object,
-									const View* view, const Light* light)
+									const Camera* view, const Light* light)
 	{
 		component::GeomPrimComponent& geom_prim = registry->GetComponent<component::GeomPrimComponent>(entity);
 
@@ -427,7 +427,7 @@ namespace cumulonimbus::renderer
 	void RenderPath::RenderOBJ(ID3D11DeviceContext* immediate_context,
 							   ecs::Registry* registry, mapping::rename_type::Entity entity,
 							   const component::MeshObjectComponent* mesh_object,
-							   const View* view, const Light* light)
+							   const Camera* view, const Light* light)
 	{
 		//-- Set of Constant Buffer --//
 		{// Transform
@@ -482,7 +482,7 @@ namespace cumulonimbus::renderer
 	void RenderPath::RenderFBX(ID3D11DeviceContext* immediate_context,
 							   ecs::Registry* registry, mapping::rename_type::Entity entity,
 							   const component::MeshObjectComponent* mesh_object,
-							   const View* view, const Light* light,
+							   const Camera* view, const Light* light,
 							   bool is_use_shadow, bool is_use_gbuffer)
 	{
 		const component::FbxModelComponent&	 model		= registry->GetComponent<component::FbxModelComponent>(entity);
@@ -576,7 +576,7 @@ namespace cumulonimbus::renderer
 
 	void RenderPath::RenderSkyBox(ID3D11DeviceContext* immediate_context,
 								  ecs::Registry* registry, mapping::rename_type::Entity entity,
-								  const View* view, const Light* light)
+								  const Camera* view, const Light* light)
 	{
 		auto& sky_box = registry->GetComponent<component::SkyBoxComponent>(entity);
 		sky_box.ActivateShader(immediate_context);
@@ -616,7 +616,7 @@ namespace cumulonimbus::renderer
 		//Blit(immediate_context);
 	}
 
-	void RenderPath::RenderCollision_Begin(ID3D11DeviceContext* immediate_context, const View* view)
+	void RenderPath::RenderCollision_Begin(ID3D11DeviceContext* immediate_context, const Camera* view)
 	{
 		off_screen->Activate(immediate_context);
 		// DirectX graphics stateのバインド
@@ -725,7 +725,7 @@ namespace cumulonimbus::renderer
 	}
 
 
-	void RenderPath::RenderCollision_End(ID3D11DeviceContext* immediate_context, const View* view)
+	void RenderPath::RenderCollision_End(ID3D11DeviceContext* immediate_context, const Camera* view)
 	{
 		// ビュー行列のバインド
 		view->UnbindCBuffer();
