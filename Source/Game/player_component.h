@@ -187,6 +187,11 @@ namespace cumulonimbus::component
 		 */
 		[[nodiscard]] bool IsNextAnimationLongPressAttack() const;
 
+		/**
+		 * @brief  : 入力がデッドゾーン内にあるかどうか判定
+		 * @return : true : デッドゾーン内にある
+		 */
+		[[nodiscard]] bool IsDeadZone() const;
 
 		/**
 		 * @brief : StateMachineクラスで管理するプレイヤーの状態関数

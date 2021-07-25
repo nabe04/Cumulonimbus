@@ -160,24 +160,19 @@ namespace cumulonimbus::component
 		const SimpleMath::Vector3 z_front{ .0f,.0f,1.f };
 		const float dot = direction.Dot(z_front);
 
-		if(stick_left.x < 0 && stick_left.y <0)
-		{
-			int a;
-			a = 0;
-		}
-
-		float ep = FLT_EPSILON;
-		float val = (dot - 0.0f);
-		bool f = (val <= FLT_EPSILON);
-		bool flg = arithmetic::IsEqual(dot, 0.0f);
-
-		if (arithmetic::IsEqual(dot, 0.0f))
+		if (IsDeadZone())
 			return;
 
-		SimpleMath::Vector3 camera_front = GetRegistry()->GetComponent<CameraComponent>(GetEntity()).GetCameraFront();
+		SimpleMath::Vector3 camera_front_xz = GetRegistry()->GetComponent<CameraComponent>(GetEntity()).GetCameraFront();
+		camera_front_xz.y = 0;
+		camera_front_xz.Normalize();
 		SimpleMath::Matrix rotation_mat = SimpleMath::Matrix::Identity;
-		rotation_mat = rotation_mat.CreateRotationY(dot);
-		SimpleMath::Vector3::Transform(camera_front, rotation_mat, direction);
+		float rad = acosf(dot);
+		if (stick_left.x < 0)
+			rad *= -1;
+		rotation_mat = rotation_mat.CreateRotationY(rad);
+
+		SimpleMath::Vector3::Transform(camera_front_xz, rotation_mat, direction);
 
 		if (player_state.GetState() == PlayerState::Walk_Front ||
 			player_state.GetState() == PlayerState::Walk_Back)
@@ -209,6 +204,18 @@ namespace cumulonimbus::component
 		const float frame_rate	= GetRegistry()->GetScene()->GetFramework()->GetHighResolutionTimer().GetFrameRate();
 		const float fps			= 1 / frame_rate;
 		return long_press_time > (fps * static_cast<float>(long_press_slot)) ? true : false;
+	}
+
+	bool PlayerComponent::IsDeadZone() const
+	{
+		bool ret_flg = true;
+		const XMFLOAT2 stick_left = locator::Locator::GetInput()->GamePad().LeftThumbStick(0);
+
+		if (fabs(stick_left.x) < threshold &&
+			fabs(stick_left.y) < threshold)
+			return true;
+
+		return false;
 	}
 
 
