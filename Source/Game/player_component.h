@@ -139,6 +139,11 @@ namespace cumulonimbus::component
 		// 先行入力(入力なし(リセット) == PlayerState::End)
 		PlayerState precede_input = PlayerState::End;
 
+		// 歩きの速さ
+		float walk_speed = 20;
+		// 走りの速さ
+		float dash_speed = 1;
+
 		// パッド入力のデッドゾーン値
 		float threshold				= 0.05f;
 		// パッド長押し時間
@@ -164,6 +169,16 @@ namespace cumulonimbus::component
 		 * @brief : レイキャストで使用するパラメータのセット
 		 */
 		void SetRayCastParameter(float dt);
+
+		/**
+		 * @brief : 移動管理関数
+		 */
+		void Movement(float dt);
+
+		/**
+		 * @brief : カメラワーク管理関数
+		 */
+		void CameraWork();
 
 		/**
 		 * @brief : 次のアニメーションがPlayerState::Attacking_Normal_Long_Press

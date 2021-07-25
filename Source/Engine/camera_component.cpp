@@ -55,7 +55,7 @@ namespace cumulonimbus::component
 		if (is_use_camera_for_debug)
 		{
 			CalcCameraDirectionalVector();
-		CalcCameraAngle(); //オイラー角で(現在)計算しているので今は使わない
+			CalcCameraAngle(); //オイラー角で(現在)計算しているので今は使わない
 			UpdateDefaultCamera(dt);
 		}
 		else
@@ -63,15 +63,13 @@ namespace cumulonimbus::component
 			UpdateObjectCamera(dt);
 		}
 
-		SetFocusPosition(focus_position);
-		SetEyePosition(eye_position);
 		CalcCameraOrthogonalVector();
 
 		// ビュー変換行列の作成
 		const XMMATRIX view_mat = XMMatrixLookAtLH(XMVectorSet(eye_position.x, eye_position.y, eye_position.z, 0),
 			XMVectorSet(focus_position.x, focus_position.y, focus_position.z, 0),
 			XMVectorSet(up_vec.x, up_vec.y, up_vec.z, 0));
-		XMStoreFloat4x4(&this->view_mat, view_mat);
+			XMStoreFloat4x4(&this->view_mat, view_mat);
 
 		// プロジェクション変換行列の作成
 		XMMATRIX projection_mat = XMMatrixIdentity();
@@ -120,7 +118,7 @@ namespace cumulonimbus::component
 			ImGui::Text("angle x  : %f\nangle y  : %f\nangle z  : %f", camera_angle.x, camera_angle.y, camera_angle.z);
 			ImGui::Text("Pos x  : %f\n Pos y  : %f\n Pos z  : %f", eye_position.x, eye_position.y, eye_position.z);
 
-			ImGui::DragFloat2("CameraSpeed", (float*)&camera_velocity, 0.5f, 1, 10);
+			ImGui::DragFloat2("CameraSpeed", (float*)&camera_speed, 0.5f, 1, 10);
 			ImGui::DragFloat("Camera Length", &camera_length, 0.1f, 0.1f, 1000.0f);
 
 
@@ -212,11 +210,11 @@ namespace cumulonimbus::component
 
 	void CameraComponent::UpdateObjectCamera(float dt)
 	{
-		//CalcCameraDirectionalVector();
 		// camera_lengthとfront_vecからカメラの位置を算出
 		auto& position = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetPosition();
 
 		eye_position = position + (front_vec * -1) * camera_length;
+		CalcCameraDirectionalVector();
 	}
 
 	void CameraComponent::UpdateDefaultCamera(float dt)
@@ -236,13 +234,13 @@ namespace cumulonimbus::component
 			Pan(static_cast<float>(mouse.DeltaX()));
 
 			if (key.GetState(Keycode::D) == ButtonState::Held)
-				Track(camera_velocity.x, right_vec);
+				Track(camera_speed.x, right_vec);
 			if (key.GetState(Keycode::A) == ButtonState::Held)
-				Track(-camera_velocity.x, right_vec);
+				Track(-camera_speed.x, right_vec);
 			if (key.GetState(Keycode::W) == ButtonState::Held)
-				Crane(camera_velocity.y, current_up_vec);
+				Crane(camera_speed.y, current_up_vec);
 			if (key.GetState(Keycode::S) == ButtonState::Held)
-				Crane(-camera_velocity.y, current_up_vec);
+				Crane(-camera_speed.y, current_up_vec);
 		}
 		else if (mouse.GetState(MouseButton::Right) == ButtonState::Held)
 		{
@@ -250,13 +248,13 @@ namespace cumulonimbus::component
 			Tilt(static_cast<float>(mouse.DeltaY()));
 
 			if (key.GetState(Keycode::D) == ButtonState::Held)
-				Track(camera_velocity.x, right_vec);
+				Track(camera_speed.x, right_vec);
 			if (key.GetState(Keycode::A) == ButtonState::Held)
-				Track(-camera_velocity.x, right_vec);
+				Track(-camera_speed.x, right_vec);
 			if (key.GetState(Keycode::W) == ButtonState::Held)
-				Crane(camera_velocity.y, current_up_vec);
+				Crane(camera_speed.y, current_up_vec);
 			if (key.GetState(Keycode::S) == ButtonState::Held)
-				Crane(-camera_velocity.y, current_up_vec);
+				Crane(-camera_speed.y, current_up_vec);
 		}
 	}
 
@@ -336,10 +334,9 @@ namespace cumulonimbus::component
 		current_up_vec = front;
 	}
 
-
 	void CameraComponent::CalcCameraDirectionalVector()
 	{
-		front_vec		= DirectX::SimpleMath::Vector3{ focus_position - eye_position };
+		front_vec		= SimpleMath::Vector3{ focus_position - eye_position };
 		camera_right	= arithmetic::CalcRightVec(current_up_vec, front_vec);
 		current_up_vec	= arithmetic::CalcUpVec(front_vec, camera_right);
 
@@ -372,20 +369,23 @@ namespace cumulonimbus::component
 		camera_data.camera_projection_matrix = projection_mat;
 		camera_data.camera_view_projection_matrix = view_projection_mat;
 
-		camera_data.camera_position = eye_position;
+		camera_data.camera_position				= eye_position;
 		camera_data.camera_distance_from_origin = eye_position.Length();
 
-		camera_data.camera_at = focus_position;
-		camera_data.camera_near_z = near_z;
+		camera_data.camera_at		= focus_position;
+		camera_data.camera_near_z	= near_z;
 
-		camera_data.camera_up = current_up_vec;
-		camera_data.camera_far_z = far_z;
+		camera_data.camera_up		= current_up_vec;
+		camera_data.camera_far_z	= far_z;
 
-		camera_data.camera_front = front_vec;
-		camera_data.camera_aspect = aspect;
+		camera_data.camera_right	= camera_right;
+		camera_data.camera_fov		= fov;
 
-		camera_data.camera_width = width;
-		camera_data.camera_height = height;
+		camera_data.camera_front	= front_vec;
+		camera_data.camera_aspect	= aspect;
+
+		camera_data.camera_width	= width;
+		camera_data.camera_height	= height;
 	}
 
 	//-------------------------  デバッグカメラワーク  -------------------------//
@@ -396,7 +396,7 @@ namespace cumulonimbus::component
 		DirectX::SimpleMath::Quaternion q{};
 		q = DirectX::SimpleMath::Quaternion::Identity;
 		q.Normalize();
-		q = q.CreateFromAxisAngle(current_up_vec, DirectX::XMConvertToRadians(velocity * camera_velocity.x * 0.1f));
+		q = q.CreateFromAxisAngle(current_up_vec, DirectX::XMConvertToRadians(velocity * camera_speed.x * 0.1f));
 		front_vec = DirectX::SimpleMath::Vector3::Transform(front_vec, q);
 		front_vec.Normalize();
 
@@ -410,7 +410,7 @@ namespace cumulonimbus::component
 		DirectX::SimpleMath::Quaternion q{};
 		q = DirectX::SimpleMath::Quaternion::Identity;
 		q.Normalize();
-		q = q.CreateFromAxisAngle(right_vec, DirectX::XMConvertToRadians(velocity * camera_velocity.y * 0.1f));
+		q = q.CreateFromAxisAngle(right_vec, DirectX::XMConvertToRadians(velocity * camera_speed.y * 0.1f));
 		front_vec = DirectX::SimpleMath::Vector3::Transform(front_vec, q);
 		front_vec.Normalize();
 		focus_position = eye_position + front_vec;
@@ -460,24 +460,24 @@ namespace cumulonimbus::component
 
 	void CameraComponent::DollyInOut(float velocity)
 	{
-		const float v = -velocity * camera_velocity.y;
+		const float v = -velocity * camera_speed.y;
 
 		focus_position += right_vec * velocity;
-		eye_position += front_vec * v;
+		eye_position   += front_vec * v;
 	}
 
 	void CameraComponent::Track(float velocity, const DirectX::SimpleMath::Vector3& axis)
 	{
 		// カメラの注視点と位置を同じだけ移動
 		focus_position += axis * velocity;
-		eye_position += axis * velocity;
+		eye_position   += axis * velocity;
 	}
 
 	void CameraComponent::Crane(float velocity, const DirectX::SimpleMath::Vector3& axis)
 	{
 		// カメラの注視点と位置を同じだけ移動
 		focus_position += axis * velocity;
-		eye_position += axis * velocity;
+		eye_position   += axis * velocity;
 	}
 
 } // cumulonimbus::component

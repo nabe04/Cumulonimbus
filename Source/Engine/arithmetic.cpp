@@ -12,7 +12,7 @@ namespace arithmetic
 	 */
 	bool IsEqual(float l_val, float r_val)
 	{
-		return (l_val - r_val) <= FLT_EPSILON ? true : false;
+		return (fabs(l_val - r_val)) <= FLT_EPSILON ? true : false;
 	}
 
 	/**
@@ -377,7 +377,7 @@ namespace arithmetic
 
 		return ClosestPtLineLine(l1, l2, p1, p2);
 	}
-	
+
 	/**
 	 * @brief			: 2’¼ü‚ÌÅ’Z‹——£‚ÌŽZo
 	 * @param l1		: ’¼ü‚ÌÝ’è

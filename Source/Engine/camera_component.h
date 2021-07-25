@@ -120,9 +120,10 @@ namespace cumulonimbus::component
 		 */
 		void SetEyePosition(const DirectX::SimpleMath::Vector3& pos) { eye_position = pos; }
 		/**
-		 * @brief : デバッグ時のカメラ速度の設定
+		 * @brief		: デバッグ時のカメラ速度の設定
+		 * @pram speed	: カメラの速さ
 		 */
-		void SetCameraSpeed(const DirectX::SimpleMath::Vector2& speed) { this->camera_velocity = speed; }
+		void SetCameraSpeed(const DirectX::SimpleMath::Vector2& speed) { this->camera_speed = speed; }
 		/**
 		 * @brief : 視野角(fov)の設定
 		 */
@@ -146,6 +147,8 @@ namespace cumulonimbus::component
 		[[nodiscard]] DirectX::SimpleMath::Vector3 GetCameraRight() const { return right_vec; }
 		[[nodiscard]] DirectX::SimpleMath::Vector3 GetCameraUp()    const { return up_vec; }
 		[[nodiscard]] DirectX::SimpleMath::Vector3 GetCameraFront() const { return front_vec; }
+
+		[[nodiscard]] DirectX::SimpleMath::Vector2 GetCameraSpeed() const { return camera_speed; }
 
 		[[nodiscard]] bool GetIsActive() const { return is_active; }
 		[[nodiscard]] bool GetIsMainCamera() const { return is_main_camera; }
@@ -187,7 +190,7 @@ namespace cumulonimbus::component
 		float height;	// ビュー行列上の高さ
 
 		//-- for debug --//
-		DirectX::SimpleMath::Vector2 camera_velocity{ 3.f,3.f };
+		DirectX::SimpleMath::Vector2 camera_speed{ 3.f,3.f };
 		DirectX::SimpleMath::Vector2 cur_mouse_pos{ 0.0f,0.0f };		// Current mouse eye_position
 		DirectX::SimpleMath::Vector2 prev_mouse_pos{ 0.0f,0.0f };		// Mouse eye_position one frame ago
 

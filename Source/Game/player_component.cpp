@@ -4,6 +4,7 @@
 #include "cum_imgui_helper.h"
 #include "ecs.h"
 
+#include "arithmetic.h"
 #include "camera_component.h"
 #include "fbx_model_component.h"
 #include "raycast_component.h"
@@ -82,7 +83,7 @@ namespace cumulonimbus::component
 		{
 			registry->AddComponent<CameraComponent>(ent, true);
 		}
-		//registry->GetComponent<CameraComponent>(ent).
+		registry->GetComponent<CameraComponent>(ent).SetCameraSpeed({ 0.3f,0.3f });
 	}
 
 	void PlayerComponent::NewFrame(float dt)
@@ -97,12 +98,13 @@ namespace cumulonimbus::component
 
 		// レイキャストに使用するパラメータの設定
 		SetRayCastParameter(dt);
+		// カメラワーク
+		CameraWork();
+		// 移動
+		Movement(dt);
 
-		velocity.y -= dt * 2;
-
-		using namespace locator;
-		const float rad = Locator::GetInput()->GamePad().RightThumbStick(0).x;
-		GetRegistry()->GetComponent<CameraComponent>(GetEntity()).RotationFrontVectorFromUpVector(rad);
+		// テスト
+		//velocity.y -= dt * 2;
 	}
 
 	void PlayerComponent::RenderImGui()
@@ -148,6 +150,59 @@ namespace cumulonimbus::component
 		ray_cast_comp->SetRayStartPos(ray_start);
 		ray_cast_comp->SetRayEndPos(ray_start + DirectX::SimpleMath::Vector3{velocity.x* dt, -1.f, velocity.z* dt});
 	}
+
+	void PlayerComponent::Movement(float dt)
+	{
+		// 移動方向の決定
+		const DirectX::XMFLOAT2 stick_left = locator::Locator::GetInput()->GamePad().LeftThumbStick(0);
+		SimpleMath::Vector3 direction{ stick_left.x ,.0f,stick_left.y };
+		direction.Normalize();
+		const SimpleMath::Vector3 z_front{ .0f,.0f,1.f };
+		const float dot = direction.Dot(z_front);
+
+		if(stick_left.x < 0 && stick_left.y <0)
+		{
+			int a;
+			a = 0;
+		}
+
+		float ep = FLT_EPSILON;
+		float val = (dot - 0.0f);
+		bool f = (val <= FLT_EPSILON);
+		bool flg = arithmetic::IsEqual(dot, 0.0f);
+
+		if (arithmetic::IsEqual(dot, 0.0f))
+			return;
+
+		SimpleMath::Vector3 camera_front = GetRegistry()->GetComponent<CameraComponent>(GetEntity()).GetCameraFront();
+		SimpleMath::Matrix rotation_mat = SimpleMath::Matrix::Identity;
+		rotation_mat = rotation_mat.CreateRotationY(dot);
+		SimpleMath::Vector3::Transform(camera_front, rotation_mat, direction);
+
+		if (player_state.GetState() == PlayerState::Walk_Front ||
+			player_state.GetState() == PlayerState::Walk_Back)
+		{
+			//velocity.x = direction.x * walk_speed;
+			//velocity.z = direction.z * walk_speed;
+		}
+
+		velocity.x = direction.x * walk_speed;
+		velocity.z = direction.z * walk_speed;
+
+		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
+		transform_comp.AdjustPosition(velocity * dt);
+	}
+
+	void PlayerComponent::CameraWork()
+	{
+		using namespace locator;
+		const float rad_x = Locator::GetInput()->GamePad().RightThumbStick(0).x;
+		const float rad_y = Locator::GetInput()->GamePad().RightThumbStick(0).y;
+		auto& camera_comp = GetRegistry()->GetComponent<CameraComponent>(GetEntity());
+		camera_comp.RotationFrontVectorFromUpVector(rad_x * camera_comp.GetCameraSpeed().x);
+		camera_comp.RotationFrontVectorFromRightVector(rad_y * camera_comp.GetCameraSpeed().y);
+	}
+
 
 	bool PlayerComponent::IsNextAnimationLongPressAttack() const
 	{
@@ -209,23 +264,26 @@ namespace cumulonimbus::component
 		// ゲームパッド入力値取得(スティック、トリガー)
 		const DirectX::XMFLOAT2 stick_left	  = Locator::GetInput()->GamePad().LeftThumbStick(0);
 		const float				trigger_right = Locator::GetInput()->GamePad().RightTrigger(0);
-		if(stick_left.x < threshold && stick_left.y < threshold)
-		{// 状態遷移(PlayerState::Idle)
-			player_state.SetState(PlayerState::Idle);
-		}
 
-		if (trigger_right > threshold)
-		{// 状態遷移(PlayerState::Avoid_Dash_Begin)
-			player_state.SetState(PlayerState::Avoid_Dash_Begin);
-		}
+		{// アニメーション遷移
+			if (stick_left.x < threshold && stick_left.y < threshold)
+			{// 状態遷移(PlayerState::Idle)
+				player_state.SetState(PlayerState::Idle);
+			}
 
-		if(ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-		{// 状態遷移(PlayerState::Attack_Normal_01)
-			player_state.SetState(PlayerState::Attacking_Normal_01);
-		}
-		else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
-		{// 状態遷移(PlayerState::Attack_Strong_01)
-			player_state.SetState(PlayerState::Attacking_Strong_01);
+			if (trigger_right > threshold)
+			{// 状態遷移(PlayerState::Avoid_Dash_Begin)
+				player_state.SetState(PlayerState::Avoid_Dash_Begin);
+			}
+
+			if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
+			{// 状態遷移(PlayerState::Attack_Normal_01)
+				player_state.SetState(PlayerState::Attacking_Normal_01);
+			}
+			else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
+			{// 状態遷移(PlayerState::Attack_Strong_01)
+				player_state.SetState(PlayerState::Attacking_Strong_01);
+			}
 		}
 	}
 
