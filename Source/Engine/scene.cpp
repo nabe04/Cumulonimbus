@@ -186,7 +186,6 @@ void Scene::Render()
 		ImGui::Begin("Scene");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		this->RenderImGui();
-		//main_camera->WriteImGui();
 		light->WriteImGui();
 		if (ImGui::CollapsingHeader("Objects"))
 		{

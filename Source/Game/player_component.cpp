@@ -4,6 +4,7 @@
 #include "cum_imgui_helper.h"
 #include "ecs.h"
 
+#include "camera_component.h"
 #include "fbx_model_component.h"
 #include "raycast_component.h"
 #include "scene.h"
@@ -75,6 +76,13 @@ namespace cumulonimbus::component
 			registry->AddComponent<RayCastComponent>(ent, CollisionTag::Player);
 		}
 		registry->GetComponent<RayCastComponent>(ent).SetRayOffset({ 0.0f,0.0f,0.0f });
+
+		// ƒJƒƒ‰‚ÉŠÖ‚·‚éÝ’è
+		if(!registry->TryGetComponent<CameraComponent>(ent))
+		{
+			registry->AddComponent<CameraComponent>(ent, true);
+		}
+		//registry->GetComponent<CameraComponent>(ent).
 	}
 
 	void PlayerComponent::NewFrame(float dt)
@@ -91,6 +99,10 @@ namespace cumulonimbus::component
 		SetRayCastParameter(dt);
 
 		velocity.y -= dt * 2;
+
+		using namespace locator;
+		const float rad = Locator::GetInput()->GamePad().RightThumbStick(0).x;
+		GetRegistry()->GetComponent<CameraComponent>(GetEntity()).RotationFrontVectorFromUpVector(rad);
 	}
 
 	void PlayerComponent::RenderImGui()

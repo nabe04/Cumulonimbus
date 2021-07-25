@@ -7,10 +7,11 @@
 #include <imgui.h>
 
 #include "arithmetic.h"
-#include "framework.h"
-#include "locator.h"
-#include "frame_buffer.h"
+#include "cum_imgui_helper.h"
 #include "ecs.h"
+#include "framework.h"
+#include "frame_buffer.h"
+#include "locator.h"
 #include "transform_component.h"
 using namespace DirectX;
 
@@ -51,19 +52,15 @@ namespace cumulonimbus::component
 
 	void CameraComponent::Update(float dt)
 	{
-		//camera_work->SetCameraInfo(*this);
-		//camera_work->Update(dt);
-
-		CalcCameraDirectionalVector();
-		CalcCameraAngle(); //オイラー角で(現在)計算しているので今は使わない
-
-		if (is_use_camera_for_object)
+		if (is_use_camera_for_debug)
 		{
-			UpdateObjectCamera(dt);
+			CalcCameraDirectionalVector();
+		CalcCameraAngle(); //オイラー角で(現在)計算しているので今は使わない
+			UpdateDefaultCamera(dt);
 		}
 		else
 		{
-			UpdateDefaultCamera(dt);
+			UpdateObjectCamera(dt);
 		}
 
 		SetFocusPosition(focus_position);
@@ -97,17 +94,12 @@ namespace cumulonimbus::component
 
 	void CameraComponent::RenderImGui()
 	{
-
-	}
-
-
-	void CameraComponent::WriteImGui()
-	{
-		if (ImGui::CollapsingHeader("CameraComponent"))
+		if (ImGui::TreeNode("CameraComponent"))
 		{
 			auto& camera = cb_camera->data;
+			helper::imgui::Image(*off_screen->GetRenderTargetSRV(), { 160,100 });
 
-			ImGui::Checkbox("Attach Object", &is_use_camera_for_object);
+			ImGui::Checkbox("Debug Camera", &is_use_camera_for_debug);
 			ImGui::Text("CameraComponent Pos X %f", camera.camera_position.x);
 			ImGui::Text("CameraComponent Pos Y %f", camera.camera_position.y);
 			ImGui::Text("CameraComponent Pos Z %f", camera.camera_position.z);
@@ -129,8 +121,10 @@ namespace cumulonimbus::component
 			ImGui::Text("Pos x  : %f\n Pos y  : %f\n Pos z  : %f", eye_position.x, eye_position.y, eye_position.z);
 
 			ImGui::DragFloat2("CameraSpeed", (float*)&camera_velocity, 0.5f, 1, 10);
+			ImGui::DragFloat("Camera Length", &camera_length, 0.1f, 0.1f, 1000.0f);
 
-			//camera_work->RenderImGui();
+
+			ImGui::TreePop();
 		}
 	}
 
@@ -144,10 +138,10 @@ namespace cumulonimbus::component
 
 	}
 
-	void CameraComponent::AttachObject(cumulonimbus::mapping::rename_type::Entity ent, bool switch_object_camera)
+	void CameraComponent::AttachObject(cumulonimbus::mapping::rename_type::Entity ent)
 	{
 		attach_entity = ent;
-		is_use_camera_for_object = switch_object_camera;
+		is_use_camera_for_debug = false;
 	}
 
 	void CameraComponent::InitializeObjectCameraParam(float camera_length)
@@ -169,15 +163,6 @@ namespace cumulonimbus::component
 		}
 		// 自クラスのis_main_cameraをtrueに
 		is_main_camera = true;
-	}
-
-
-	void CameraComponent::SetCameraUpRightFrontVector(const DirectX::SimpleMath::Vector3& up,
-		const DirectX::SimpleMath::Vector3& right, const DirectX::SimpleMath::Vector3& front)
-	{
-		current_up_vec	= up;
-		right_vec		= right;
-		front_vec		= front;
 	}
 
 	void CameraComponent::ClearFrameBuffer(DirectX::SimpleMath::Vector4 clear_color) const
@@ -227,6 +212,11 @@ namespace cumulonimbus::component
 
 	void CameraComponent::UpdateObjectCamera(float dt)
 	{
+		//CalcCameraDirectionalVector();
+		// camera_lengthとfront_vecからカメラの位置を算出
+		auto& position = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetPosition();
+
+		eye_position = position + (front_vec * -1) * camera_length;
 	}
 
 	void CameraComponent::UpdateDefaultCamera(float dt)
@@ -270,6 +260,24 @@ namespace cumulonimbus::component
 		}
 	}
 
+	void CameraComponent::RotationFrontVectorFromRightVector(const float radian)
+	{
+		SimpleMath::Quaternion q = SimpleMath::Quaternion::Identity;
+		q.Normalize();
+		q = q.CreateFromAxisAngle(right_vec, radian);
+		front_vec = SimpleMath::Vector3::Transform(front_vec, q);
+		front_vec.Normalize();
+	}
+
+	void CameraComponent::RotationFrontVectorFromUpVector(const float radian)
+	{
+		SimpleMath::Quaternion q = SimpleMath::Quaternion::Identity;
+		q.Normalize();
+		q = q.CreateFromAxisAngle(up_vec, radian);
+		front_vec = SimpleMath::Vector3::Transform(front_vec, q);
+		front_vec.Normalize();
+	}
+
 	void CameraComponent::SetViewInfo(
 		SimpleMath::Vector3 pos,
 		SimpleMath::Vector3 target,
@@ -280,13 +288,13 @@ namespace cumulonimbus::component
 		current_up_vec  = camera_up;
 	}
 
-	void CameraComponent::SetProjection(float fov, float aspect, float min, float max)
+	void CameraComponent::SetProjection(const float fov,const float aspect,const float min,const float max)
 	{
-		is_perspective = true;
-		this->fov = fov;
-		this->aspect = aspect;
-		near_z = min;
-		far_z = max;
+		is_perspective	= true;
+		this->fov		= fov;
+		this->aspect	= aspect;
+		this->near_z	= min;
+		this->far_z		= max;
 	}
 
 	void CameraComponent::SetOrtho(float width, float height, float min, float max)
@@ -296,14 +304,6 @@ namespace cumulonimbus::component
 		this->height = height;
 		near_z = min;
 		far_z = max;
-	}
-
-	void CameraComponent::SetTargetVec(const DirectX::SimpleMath::Vector3& target)
-	{
-		if (this->focus_position.x == this->focus_position.y == this->focus_position.z == 0.0f)
-			assert(!"Vector is zero");
-
-		this->focus_position = target;
 	}
 
 	void CameraComponent::SetCameraRight(const DirectX::SimpleMath::Vector3& right)
@@ -339,9 +339,9 @@ namespace cumulonimbus::component
 
 	void CameraComponent::CalcCameraDirectionalVector()
 	{
-		front_vec = DirectX::SimpleMath::Vector3{ focus_position - eye_position };
-		camera_right = arithmetic::CalcRightVec(current_up_vec, front_vec);
-		current_up_vec = arithmetic::CalcUpVec(front_vec, camera_right);
+		front_vec		= DirectX::SimpleMath::Vector3{ focus_position - eye_position };
+		camera_right	= arithmetic::CalcRightVec(current_up_vec, front_vec);
+		current_up_vec	= arithmetic::CalcUpVec(front_vec, camera_right);
 
 		front_vec.Normalize();
 		camera_right.Normalize();
@@ -417,7 +417,6 @@ namespace cumulonimbus::component
 		CalcCameraDirectionalVector();
 
 		{//　カメラの角度保持(上下に+-90度まで)
-
 			if (front_vec.y > 0)
 			{
 				// カメラのフロントベクトルとy_up{0,1,0 }との射影ベクトルを算出

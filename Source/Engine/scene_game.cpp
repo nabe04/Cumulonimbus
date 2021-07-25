@@ -94,7 +94,7 @@ void SceneGame::InitializeScene()
 	//ground->SetEntityName("Ground");
 
 	const cum::mapping::rename_type::Entity ent_main_camera = registry->CreateEntity();
-	registry->AddComponent<cum::component::CameraComponent>(ent_main_camera, true);
+	registry->AddComponent<cum::component::CameraComponent>(ent_main_camera, false);
 	registry->GetComponent<cum::component::CameraComponent>(ent_main_camera).SetViewInfo({ 25,100,-300 }, { .0f, .0f, .0f }, XMFLOAT3(.0f, 1.0f, .0f));
 	registry->GetComponent<cum::component::CameraComponent>(ent_main_camera).SetProjection(XM_PI / 8.0f, static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
 
@@ -151,6 +151,7 @@ void SceneGame::InitializeScene()
 	registry->AddComponent<cum::component::PlayerComponent>(ent_player);
 	registry->AddComponent<cum::component::FbxModelComponent>(ent_player, cum::locator::Locator::GetResourceManager()->FbxModelResouece("Robo"));
 	registry->AddComponent<cum::component::CapsuleCollisionComponent>(ent_player, CollisionTag::Player);
+	registry->AddComponent<cum::component::CameraComponent>(ent_player, true);
 	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetScale(0.3f);
 	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetPosition({ -30, 10, 0 });
 	registry->GetComponent<cum::component::MeshObjectComponent>(ent_player).SetRasterizerState(RasterizeState::Cull_Front_CCW_True);
@@ -158,6 +159,11 @@ void SceneGame::InitializeScene()
 	registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_player).AddCapsule();
 	registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_player).SetAllRadius(20.0f);
 	registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_player).SetAllLength(40.0f);
+	registry->GetComponent<cum::component::CameraComponent>(ent_player).AttachObject(ent_player);
+	registry->GetComponent<cum::component::CameraComponent>(ent_player).InitializeObjectCameraParam();
+	//registry->GetComponent<cum::component::CameraComponent>(ent_player).SetViewInfo({ 25,100,-300 }, { .0f, .0f, .0f }, XMFLOAT3(.0f, 1.0f, .0f));
+	registry->GetComponent<cum::component::CameraComponent>(ent_player).SetProjection(XM_PI / 8.0f, static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
+
 	//main_camera->AttachObject(ent_player);
 	//main_camera->InitializeObjectCameraParam();
 }
