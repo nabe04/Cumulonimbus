@@ -39,20 +39,18 @@ namespace cumulonimbus::component
 		player_state.AddState(PlayerState::Knock_Down_Front_Loop	    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).KnockDownFrontLoop(dt); });
 		player_state.AddState(PlayerState::Knock_Down_Front_Stand_Up    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).KnockDownFrontStandUp(dt); });
 		player_state.AddState(PlayerState::Die						    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).Die(dt); });
-		player_state.AddState(PlayerState::Attacking_Normal_01		    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingNormal01(dt); });
-		player_state.AddState(PlayerState::Attacking_Normal_02		    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingNormal02(dt); });
-		player_state.AddState(PlayerState::Attacking_Normal_03		    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingNormal03(dt); });
+		player_state.AddState(PlayerState::Attack_Normal_01				, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingNormal01(dt); });
+		player_state.AddState(PlayerState::Attack_Normal_02				, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingNormal02(dt); });
+		player_state.AddState(PlayerState::Attack_Normal_03				, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingNormal03(dt); });
 		player_state.AddState(PlayerState::Attacking_Normal_04		    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingNormal04(dt); });
-		player_state.AddState(PlayerState::Attack_Normal_01_End		    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackNormal01End(dt); });
-		player_state.AddState(PlayerState::Attack_Normal_02_End		    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackNormal02End(dt); });
 		player_state.AddState(PlayerState::Attack_Normal_04_Begin	    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackNormal04Begin(dt); });
 		player_state.AddState(PlayerState::Attack_Normal_04_End		    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackNormal04End(dt); });
 		player_state.AddState(PlayerState::Attacking_Normal_Long_Press  , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingNormalLongPress(dt); });
 		player_state.AddState(PlayerState::Attack_Normal_Long_Press_End , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackNormalLongPressEnd(dt); });
-		player_state.AddState(PlayerState::Attacking_Strong_01			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingStrong01(dt); });
-		player_state.AddState(PlayerState::Attacking_Strong_02			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingStrong02(dt); });
-		player_state.AddState(PlayerState::Attacking_Strong_03			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingStrong03(dt); });
-		player_state.AddState(PlayerState::Attacking_Strong_04			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingStrong04(dt); });
+		player_state.AddState(PlayerState::Attack_Strong_01				, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingStrong01(dt); });
+		player_state.AddState(PlayerState::Attack_Strong_02				, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingStrong02(dt); });
+		player_state.AddState(PlayerState::Attack_Strong_03				, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingStrong03(dt); });
+		player_state.AddState(PlayerState::Attack_Strong_04				, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingStrong04(dt); });
 		player_state.AddState(PlayerState::Attack_Round_Up_Begin	    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackRoundUpBegin(dt); });
 		player_state.AddState(PlayerState::Attacking_Round_Up    	    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingRoundUp(dt); });
 		player_state.AddState(PlayerState::Attack_Round_Up_Fall			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackRoundUpFall(dt); });
@@ -70,6 +68,19 @@ namespace cumulonimbus::component
 
 		// 初期stateの設定(Idle)
 		player_state.SetState(PlayerState::Idle);
+
+		// アニメーションの最終キーフレームの設定
+		SetAdjustKeyFrame("attack_normal_01", 40);
+		SetAdjustKeyFrame("attack_normal_02", 36);
+		SetAdjustKeyFrame("attack_strong_01", 27);
+		SetAdjustKeyFrame("attack_strong_02", 22);
+		SetAdjustKeyFrame("attack_strong_03", 22);
+		SetAdjustKeyFrame("attack_strong_04", 22);
+
+		// 先行入力によるアニメーションの中断フレームの設定
+		SetAnimationBreakFrame(AnimationState::Attack_Normal_01, 16);
+		SetAnimationBreakFrame(AnimationState::Attack_Normal_02, 20);
+		SetAnimationBreakFrame(AnimationState::Attack_Normal_03, 37);
 
 		// レイキャストに関する設定
 		if(!registry->TryGetComponent<RayCastComponent>(ent))
@@ -102,9 +113,6 @@ namespace cumulonimbus::component
 		CameraWork();
 		// 移動
 		Movement(dt);
-
-		// テスト
-		//velocity.y -= dt * 2;
 	}
 
 	void PlayerComponent::RenderImGui()
@@ -117,6 +125,8 @@ namespace cumulonimbus::component
 
 		if(ImGui::TreeNode("PlayerComponent"))
 		{
+			ImGui::DragFloat("Walk Speed", &walk_speed, 0.5f, 0.1f, 100000);
+			ImGui::DragFloat("Dash Speed", &dash_speed, 0.5f, 0.1f, 100000);
 			ImGui::DragFloat("Dead zone value of pad input", &threshold, 0.01f, 0.0f, 1.0f);
 
 			ImGui::TreePop();
@@ -153,39 +163,48 @@ namespace cumulonimbus::component
 
 	void PlayerComponent::Movement(float dt)
 	{
-		// 移動方向の決定
-		const DirectX::XMFLOAT2 stick_left = locator::Locator::GetInput()->GamePad().LeftThumbStick(0);
+		const XMFLOAT2 stick_left = locator::Locator::GetInput()->GamePad().LeftThumbStick(0);
+
+		// スティック入力からXZ平面上のベクトルを算出
 		SimpleMath::Vector3 direction{ stick_left.x ,.0f,stick_left.y };
 		direction.Normalize();
 		const SimpleMath::Vector3 z_front{ .0f,.0f,1.f };
+		// Z+(0,0,1)を前方ベクトルと"direction"で角度の差分を算出
 		const float dot = direction.Dot(z_front);
 
 		if (IsDeadZone())
 			return;
 
+		// XZ平面上のカメラの前方ベクトル算出
+		// (前方ベクトル基準の移動に使用)
 		SimpleMath::Vector3 camera_front_xz = GetRegistry()->GetComponent<CameraComponent>(GetEntity()).GetCameraFront();
 		camera_front_xz.y = 0;
 		camera_front_xz.Normalize();
 		SimpleMath::Matrix rotation_mat = SimpleMath::Matrix::Identity;
 		float rad = acosf(dot);
+		// 回転する方向をスティック入力(x値)で補正
 		if (stick_left.x < 0)
 			rad *= -1;
 		rotation_mat = rotation_mat.CreateRotationY(rad);
 
 		SimpleMath::Vector3::Transform(camera_front_xz, rotation_mat, direction);
 
+		//-- プレイヤーの状態に応じての速度の変化 --//
 		if (player_state.GetState() == PlayerState::Walk_Front ||
 			player_state.GetState() == PlayerState::Walk_Back)
 		{
-			//velocity.x = direction.x * walk_speed;
-			//velocity.z = direction.z * walk_speed;
+			velocity.x = direction.x * walk_speed * dt;
+			velocity.z = direction.z * walk_speed * dt;
 		}
-
-		velocity.x = direction.x * walk_speed;
-		velocity.z = direction.z * walk_speed;
-
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 		transform_comp.AdjustPosition(velocity * dt);
+	}
+
+	void PlayerComponent::Rotation(float dt)
+	{
+		//auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
+		//SimpleMath::Vector3 model_front = transform_comp.GetModelFront();
+
 	}
 
 	void PlayerComponent::CameraWork()
@@ -193,11 +212,47 @@ namespace cumulonimbus::component
 		using namespace locator;
 		const float rad_x = Locator::GetInput()->GamePad().RightThumbStick(0).x;
 		const float rad_y = Locator::GetInput()->GamePad().RightThumbStick(0).y;
+		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 		auto& camera_comp = GetRegistry()->GetComponent<CameraComponent>(GetEntity());
 		camera_comp.RotationFrontVectorFromUpVector(rad_x * camera_comp.GetCameraSpeed().x);
 		camera_comp.RotationFrontVectorFromRightVector(rad_y * camera_comp.GetCameraSpeed().y);
+		camera_comp.SetFocusPosition(transform_comp.GetPosition());
 	}
 
+	void PlayerComponent::SetAdjustKeyFrame(const std::string& animation_name, u_int keyframe)
+	{
+		if (adjust_keyframe_map.contains(animation_name))
+		{
+			adjust_keyframe_map.at(animation_name) = keyframe;
+			return;
+		}
+
+		// "animation_name"がモデルのアニメーション名と一致するかの確認
+		for(auto& animation : GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).GetResource()->GetModelData().animations)
+		{
+			if (animation_name == animation.animation_name)
+			{
+				adjust_keyframe_map.insert(std::make_pair(animation_name, keyframe));
+				animation.num_key_frame = keyframe;
+				animation.seconds_length = keyframe * animation.sampling_time;
+
+				return;
+			}
+		}
+		assert(!"No animation names existed(PlayerComponent::SetAdjustKeyFrame)");
+	}
+
+	void PlayerComponent::SetAnimationBreakFrame(AnimationState state, u_int keyframe)
+	{
+		// マップに存在していればキーフレームを上書きする
+		if (animation_break_frame.contains(state))
+		{
+			animation_break_frame.at(state) = keyframe;
+			return;
+		}
+
+		animation_break_frame.insert(std::make_pair(state, keyframe));
+	}
 
 	bool PlayerComponent::IsNextAnimationLongPressAttack() const
 	{
@@ -216,6 +271,15 @@ namespace cumulonimbus::component
 			return true;
 
 		return false;
+	}
+
+	bool PlayerComponent::IsBreakAnimationFrame(AnimationState state) const
+	{
+		if (!animation_break_frame.contains(state))
+			assert((!"Don't have state(PlayerComponent::IsBreakAnimationFrame)"));
+
+		const auto& fbx_model_comp = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
+		return animation_break_frame.at(state) < fbx_model_comp.CurrentKeyframe() ? true : false;
 	}
 
 
@@ -242,17 +306,17 @@ namespace cumulonimbus::component
 		using namespace locator;
 		const DirectX::XMFLOAT2 stick_left = Locator::GetInput()->GamePad().LeftThumbStick(0);
 
-		if (stick_left.x > threshold || stick_left.y > threshold)
+		if (!IsDeadZone())
 		{// 状態遷移(PlayerState::Walk)
 			player_state.SetState(PlayerState::Walk_Front);
 		}
 		else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
 		{// 状態遷移(PlayerState::Attack_Normal_01)
-			player_state.SetState(PlayerState::Attacking_Normal_01);
+			player_state.SetState(PlayerState::Attack_Normal_01);
 		}
 		else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
 		{// 状態遷移(PlayerState::Attack_Strong_01)
-			player_state.SetState(PlayerState::Attacking_Strong_01);
+			player_state.SetState(PlayerState::Attack_Strong_01);
 		}
 		else if(ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::A))
 		{// 状態遷移(PlayerState::Jump_Begin)
@@ -273,7 +337,7 @@ namespace cumulonimbus::component
 		const float				trigger_right = Locator::GetInput()->GamePad().RightTrigger(0);
 
 		{// アニメーション遷移
-			if (stick_left.x < threshold && stick_left.y < threshold)
+			if (IsDeadZone())
 			{// 状態遷移(PlayerState::Idle)
 				player_state.SetState(PlayerState::Idle);
 			}
@@ -285,11 +349,11 @@ namespace cumulonimbus::component
 
 			if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
 			{// 状態遷移(PlayerState::Attack_Normal_01)
-				player_state.SetState(PlayerState::Attacking_Normal_01);
+				player_state.SetState(PlayerState::Attack_Normal_01);
 			}
 			else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
 			{// 状態遷移(PlayerState::Attack_Strong_01)
-				player_state.SetState(PlayerState::Attacking_Strong_01);
+				player_state.SetState(PlayerState::Attack_Strong_01);
 			}
 		}
 	}
@@ -420,38 +484,44 @@ namespace cumulonimbus::component
 		if(player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
-			// アニメーションセット(AnimationState::Attacking_Normal_01)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attacking_Normal_01), false, 0.01f);
+			// アニメーションセット(AnimationState::Attack_Normal_01)
+			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_Normal_01), false, 0.01f);
 		}
 
 		using namespace locator;
-		if(ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-		{// 先行入力セット(PlayerState::Attacking_Normal_02)
-			precede_input = PlayerState::Attacking_Normal_02;
-		}
-		else if(ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
-		{// 先行入力セット(PlayerState::Attacking_Strong_02)
-			precede_input = PlayerState::Attacking_Strong_02;
-		}
+		if (!IsBreakAnimationFrame(AnimationState::Attack_Normal_01))
+		{
+			if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
+			{// 先行入力セット(PlayerState::Attacking_Normal_02)
+				precede_input = PlayerState::Attack_Normal_02;
+			}
+			else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
+			{// 先行入力セット(PlayerState::Attacking_Strong_02)
+				precede_input = PlayerState::Attack_Strong_02;
+			}
 
-		if(ButtonState::Held == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-		{// 通常攻撃(弱長押し)用タイマーの計測
-			long_press_time += dt;
-		}
+			if (ButtonState::Held == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
+			{// 通常攻撃(弱長押し)用タイマーの計測
+				long_press_time += dt;
+			}
 
-		// アニメーション再生中なら処理を中断
-		if (fbx_model_comp.IsPlayAnimation())
+			// アニメーション再生中なら処理を中断
 			return;
-
-		if(precede_input == PlayerState::End)
-		{// 先行入力なし
-			// 状態遷移(PlayerState::Attack_Normal_01_End)
-			player_state.SetState(PlayerState::Attack_Normal_01_End);
 		}
-		else
-		{// 先行入力あり
-			// 状態遷移(先行入力値)
-			player_state.SetState(precede_input);
+
+		if((!fbx_model_comp.IsPlayAnimation()))
+		{// 先行入力なし
+			// 状態遷移(PlayerState::Idle)
+			player_state.SetState(PlayerState::Idle);
+		}
+
+		if ((precede_input != PlayerState::End))
+		{
+			if (IsBreakAnimationFrame(AnimationState::Attack_Normal_01))
+			{// 先行入力あり
+				// 状態遷移(先行入力値)
+				player_state.SetState(precede_input);
+			}
 		}
 
 		if (IsNextAnimationLongPressAttack())
@@ -484,38 +554,44 @@ namespace cumulonimbus::component
 		if (player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
-			// アニメーションセット(AnimationState::Attacking_Normal_02)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attacking_Normal_02), false);
+			// アニメーションセット(AnimationState::Attack_Normal_02)
+			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_Normal_02), false);
 		}
 
-		using namespace locator;
-		if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-		{// 先行入力セット(PlayerState::Attacking_Normal_03)
-			precede_input = PlayerState::Attacking_Normal_03;
-		}
-		else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
-		{// 先行入力セット(PlayerState::Attacking_Strong_03)
-			precede_input = PlayerState::Attacking_Strong_03;
-		}
+		if (!IsBreakAnimationFrame(AnimationState::Attack_Normal_02))
+		{
+			using namespace locator;
+			if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
+			{// 先行入力セット(PlayerState::Attacking_Normal_03)
+				precede_input = PlayerState::Attack_Normal_03;
+			}
+			else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
+			{// 先行入力セット(PlayerState::Attacking_Strong_03)
+				precede_input = PlayerState::Attack_Strong_03;
+			}
 
-		if (ButtonState::Held == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-		{// 通常攻撃(弱長押し)用タイマーの計測
-			long_press_time += dt;
-		}
+			if (ButtonState::Held == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
+			{// 通常攻撃(弱長押し)用タイマーの計測
+				long_press_time += dt;
+			}
 
-		// アニメーション再生中なら処理を中断
-		if (fbx_model_comp.IsPlayAnimation())
+			// アニメーション再生中なら処理を中断
 			return;
-
-		if (precede_input == PlayerState::End)
-		{// 先行入力なし
-			// 状態遷移(PlayerState::Attack_Normal_02_End)
-			player_state.SetState(PlayerState::Attack_Normal_02_End);
 		}
-		else
-		{// 先行入力あり
-			// 状態遷移(先行入力値)
-			player_state.SetState(precede_input);
+
+		if ((!fbx_model_comp.IsPlayAnimation()))
+		{// 先行入力なし
+			// 状態遷移(PlayerState::Idle)
+			player_state.SetState(PlayerState::Idle);
+		}
+
+		if (precede_input != PlayerState::End)
+		{
+			if (IsBreakAnimationFrame(AnimationState::Attack_Normal_02))
+			{// 先行入力あり
+				// 状態遷移(先行入力値)
+				player_state.SetState(precede_input);
+			}
 		}
 
 		if (IsNextAnimationLongPressAttack())
@@ -548,38 +624,44 @@ namespace cumulonimbus::component
 		if (player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
-			// アニメーションセット(AnimationState::Attacking_Normal_03)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attacking_Normal_03), false);
+			// アニメーションセット(AnimationState::Attack_Normal_03)
+			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_Normal_03), false);
 		}
 
-		using namespace locator;
-		if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-		{// 先行入力セット(PlayerState::Attack_Normal_04_Begin)
-			precede_input = PlayerState::Attack_Normal_04_Begin;
-		}
-		else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
-		{// 先行入力セット(PlayerState::Attacking_Strong_04)
-			precede_input = PlayerState::Attacking_Strong_04;
-		}
+		if (!IsBreakAnimationFrame(AnimationState::Attack_Normal_03))
+		{
+			using namespace locator;
+			if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
+			{// 先行入力セット(PlayerState::Attack_Normal_04_Begin)
+				precede_input = PlayerState::Attack_Normal_04_Begin;
+			}
+			else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
+			{// 先行入力セット(PlayerState::Attacking_Strong_04)
+				precede_input = PlayerState::Attack_Strong_04;
+			}
 
-		if (ButtonState::Held == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-		{// 通常攻撃(弱長押し)用タイマーの計測
-			long_press_time += dt;
-		}
+			if (ButtonState::Held == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
+			{// 通常攻撃(弱長押し)用タイマーの計測
+				long_press_time += dt;
+			}
 
-		// アニメーション再生中なら処理を中断
-		if (fbx_model_comp.IsPlayAnimation())
+			// アニメーション再生中なら処理を中断
 			return;
+		}
 
-		if (precede_input == PlayerState::End)
+		if ((!fbx_model_comp.IsPlayAnimation()))
 		{// 先行入力なし
 			// 状態遷移(PlayerState::Idle)
 			player_state.SetState(PlayerState::Idle);
 		}
-		else
-		{// 先行入力あり
-			// 状態遷移(先行入力値)
-			player_state.SetState(precede_input);
+
+		if (precede_input != PlayerState::End)
+		{
+			if (IsBreakAnimationFrame(AnimationState::Attack_Normal_03))
+			{// 先行入力あり
+				// 状態遷移(先行入力値)
+				player_state.SetState(precede_input);
+			}
 		}
 
 		if (IsNextAnimationLongPressAttack())
@@ -656,18 +738,18 @@ namespace cumulonimbus::component
 		if(player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
-			// アニメーションセット(AnimationState::Attacking_Strong_01)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attacking_Strong_01), false);
+			// アニメーションセット(AnimationState::Attack_Strong_01)
+			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_Strong_01), false);
 		}
 
 		using namespace locator;
 		if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
 		{// 先行入力セット(PlayerState::Attacking_Normal_02)
-			precede_input = PlayerState::Attacking_Normal_02;
+			precede_input = PlayerState::Attack_Normal_02;
 		}
 		else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
 		{// 先行入力セット(PlayerState::Attacking_Strong_02)
-			precede_input = PlayerState::Attacking_Strong_02;
+			precede_input = PlayerState::Attack_Strong_02;
 		}
 
 		// アニメーション再生中なら処理を中断
@@ -692,18 +774,18 @@ namespace cumulonimbus::component
 		if (player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
-			// アニメーションセット(AnimationState::Attacking_Strong_02)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attacking_Strong_02), false);
+			// アニメーションセット(AnimationState::Attack_Strong_02)
+			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_Strong_02), false);
 		}
 
 		using namespace locator;
 		if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
 		{// 先行入力セット(PlayerState::Attacking_Normal_03)
-			precede_input = PlayerState::Attacking_Normal_03;
+			precede_input = PlayerState::Attack_Normal_03;
 		}
 		else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
 		{// 先行入力セット(PlayerState::Attacking_Strong_03)
-			precede_input = PlayerState::Attacking_Strong_03;
+			precede_input = PlayerState::Attack_Strong_03;
 		}
 
 		// アニメーション再生中なら処理を中断
@@ -728,8 +810,8 @@ namespace cumulonimbus::component
 		if (player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
-			// アニメーションセット(AnimationState::Attacking_Strong_03)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attacking_Strong_03), false);
+			// アニメーションセット(AnimationState::Attack_Strong_03)
+			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_Strong_03), false);
 		}
 
 		using namespace locator;
@@ -739,7 +821,7 @@ namespace cumulonimbus::component
 		}
 		else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
 		{// 先行入力セット(PlayerState::Attacking_Strong_04)
-			precede_input = PlayerState::Attacking_Strong_04;
+			precede_input = PlayerState::Attack_Strong_04;
 		}
 
 		// アニメーション再生中なら処理を中断
@@ -764,8 +846,8 @@ namespace cumulonimbus::component
 		if (player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
-			// アニメーションセット(AnimationState::Attacking_Strong_03)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attacking_Strong_04), false);
+			// アニメーションセット(AnimationState::Attack_Strong_04)
+			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_Strong_04), false);
 		}
 
 		// アニメーション再生中なら処理を中断

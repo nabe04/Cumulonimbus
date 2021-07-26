@@ -127,6 +127,7 @@ namespace cumulonimbus::component
 		[[nodiscard]] const std::vector<Node>&			 GetNodes()		const	{ return nodes; }
 		[[nodiscard]] std::vector<Node>&				 GetNodes()				{ return nodes; }
 		[[nodiscard]] const FbxModelResource*			 GetResource()	const	{ return resource.get(); }
+		[[nodiscard]]	    FbxModelResource*			 GetResource()			{ return resource.get(); }
 		[[nodiscard]] const DirectX::XMFLOAT4&			 GetColor()		const	{ return color; }
 
 		void UpdateAnimState(const float delta_time) { anim_states.Update(delta_time); }

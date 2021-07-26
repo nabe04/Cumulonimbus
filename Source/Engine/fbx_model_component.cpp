@@ -289,8 +289,8 @@ namespace cumulonimbus::component
 		animation_switch_time	= switch_time;
 		current_keyframe		= 0;
 
-		if (anim_states.GetOldState() == FbxAnimationState::Blending ||
-			anim_states.GetOldState() == FbxAnimationState::Switch)
+		if (anim_states.GetState() == FbxAnimationState::Blending ||
+			anim_states.GetState() == FbxAnimationState::Switch)
 		{
 			prev_key_index = 0;
 		}

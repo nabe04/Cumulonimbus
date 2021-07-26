@@ -1,8 +1,10 @@
 #pragma once
+#include <map>
+#include <string>
+
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <SimpleMath.h>
-
 #include <cereal/cereal.hpp>
 #include <cereal/types/polymorphic.hpp>
 
@@ -31,20 +33,18 @@ namespace cumulonimbus::component
 			Knock_Down_Front_Loop,			// ノックバック
 			Knock_Down_Front_Stand_Up,
 			Die,							// 死亡
-			Attacking_Normal_01,		    // 通常攻撃(弱)
-			Attacking_Normal_02,
-			Attacking_Normal_03,
-			Attack_Normal_01_End,
-			Attack_Normal_02_End,
+			Attack_Normal_01,				// 通常攻撃(弱)
+			Attack_Normal_02,
+			Attack_Normal_03,
 			Attack_Normal_04_Begin,
 			Attacking_Normal_04,
 			Attack_Normal_04_End,
 			Attacking_Normal_Long_Press,	// 通常攻撃(弱長押し)
 			Attack_Normal_Long_Press_End,
-			Attacking_Strong_01,			// 通常攻撃(強)
-			Attacking_Strong_02,
-			Attacking_Strong_03,
-			Attacking_Strong_04,
+			Attack_Strong_01,				// 通常攻撃(強)
+			Attack_Strong_02,
+			Attack_Strong_03,
+			Attack_Strong_04,
 			Attack_Round_Up_Begin,			// 切り上げ攻撃
 			Attacking_Round_Up,
 			Attack_Round_Up_Fall,
@@ -118,6 +118,28 @@ namespace cumulonimbus::component
 			Attack_Jump_02_End,
 			Attack_Jump_03_End,
 			Attack_Jump_04_End,
+			Attack_Normal_01,
+			Attack_Normal_02,
+			Attack_Normal_03,
+			Attack_Normal_All,
+			Attack_Strong_01,
+			Attack_Strong_02,
+			Attack_Strong_03,
+			Attack_Strong_04,
+			Attack_Strong_All,
+
+			End
+		};
+
+		/**
+		 * @brief : アニメーション再生中に次のアニメーションに移行するためのフレーム
+		 *			(攻撃などの先行入力でモーション最中にアニメーションを移行するときなどに使用)
+		 */
+		enum class NextAnimationFrame
+		{
+			Attack_Normal_01,
+			Attack_Normal_02,
+			Attack_Normal_03,
 
 			End
 		};
@@ -138,11 +160,15 @@ namespace cumulonimbus::component
 		StateMachine<PlayerState, void, const float> player_state{};
 		// 先行入力(入力なし(リセット) == PlayerState::End)
 		PlayerState precede_input = PlayerState::End;
+		// アニメーションキーフレームの調整用(終端フレームの調整)
+		std::map<std::string, u_int> adjust_keyframe_map{};
+		// アニメーション中断フレーム(先行入力などで使用)
+		std::map< AnimationState, u_int> animation_break_frame;
 
 		// 歩きの速さ
-		float walk_speed = 20;
+		float walk_speed = 100;
 		// 走りの速さ
-		float dash_speed = 1;
+		float dash_speed = 300;
 
 		// パッド入力のデッドゾーン値
 		float threshold				= 0.05f;
@@ -176,9 +202,29 @@ namespace cumulonimbus::component
 		void Movement(float dt);
 
 		/**
+		 * @brief : 向き管理関数
+		 */
+		void Rotation(float dt);
+
+		/**
 		 * @brief : カメラワーク管理関数
 		 */
 		void CameraWork();
+
+		/**
+		 * @brief					: アニメーションキーフレーム調整値の設定
+		 * @param animation_name	: モデルのアニメーション名
+		 * @param keyframe			: 調整後のモデルの終端キーフレーム
+		 * @attention				: "animation_name"がモデルのアニメーション名に存在しない場合例外を出す
+		 */
+		void SetAdjustKeyFrame(const std::string& animation_name, u_int keyframe);
+
+		/**
+		 * @brief					: 次アニメーション移行フレームの設定
+		 * @param state				: フレームを設定したいAnimationState
+		 * @param keyframe			: 移行フレームの指定
+		 */
+		void SetAnimationBreakFrame(AnimationState state, u_int keyframe);
 
 		/**
 		 * @brief : 次のアニメーションがPlayerState::Attacking_Normal_Long_Press
@@ -192,6 +238,13 @@ namespace cumulonimbus::component
 		 * @return : true : デッドゾーン内にある
 		 */
 		[[nodiscard]] bool IsDeadZone() const;
+
+		/**
+		 * @brief			: 現アニメーションキーフレームが"animation_break_frame"で設定したフレームを超えているか
+		 * @param state		: "animation_break_frame"に登録されているAnimationState
+		 * @return			: true -> 超えている
+		 */
+		[[nodiscard]] bool IsBreakAnimationFrame(AnimationState state) const;
 
 		/**
 		 * @brief : StateMachineクラスで管理するプレイヤーの状態関数

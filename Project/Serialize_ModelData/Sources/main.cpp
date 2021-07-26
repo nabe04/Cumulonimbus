@@ -17,8 +17,8 @@ int main()
 	//build_fbx.Export("../../Data/Assets/Bin/ganfaul.bin");
 
 	// Stanford bunny
-	BulidFBX bunny_fbx("../../Data/Assets/FBX/stanford_bunny.fbx");
-	bunny_fbx.Export("../../Data/Assets/Bin/stanford_bunny.bin");
+	//BulidFBX bunny_fbx("../../Data/Assets/FBX/stanford_bunny.fbx");
+	//bunny_fbx.Export("../../Data/Assets/Bin/stanford_bunny.bin");
 
 	//-- RPG Character --//
 	//BulidFBX build_fbx("../../Data/Assets/FBX/RPG-Character/RPG-Character.FBX");
