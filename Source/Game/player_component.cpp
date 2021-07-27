@@ -113,6 +113,7 @@ namespace cumulonimbus::component
 		CameraWork();
 		// 移動
 		Movement(dt);
+		Rotation(dt);
 	}
 
 	void PlayerComponent::RenderImGui()
@@ -202,9 +203,33 @@ namespace cumulonimbus::component
 
 	void PlayerComponent::Rotation(float dt)
 	{
-		//auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
-		//SimpleMath::Vector3 model_front = transform_comp.GetModelFront();
+		const XMFLOAT2 stick_left = locator::Locator::GetInput()->GamePad().LeftThumbStick(0);
 
+		if (IsDeadZone())
+			return;
+
+		SimpleMath::Vector3 stick_direction = { stick_left.x,0.0f,stick_left.y };
+		stick_direction.Normalize();
+		auto& transform_comp			= GetRegistry()->GetComponent<TransformComponent>(GetEntity());
+		SimpleMath::Vector3 model_front = transform_comp.GetModelFront();
+		model_front.y = 0;
+		model_front.Normalize();
+		SimpleMath::Vector3 old_model_front = model_front;
+
+
+		// モデルの前方ベクトルとスティックの方向間のコサイン角を算出
+		const float dot = stick_direction.Dot(model_front);
+		float rad = acosf(dot);
+		// 回転する方向をスティック入力(x値)で補正
+		if (stick_left.x < 0)
+			rad *= -1;
+
+		SimpleMath::Quaternion q_rotation = SimpleMath::Quaternion::Identity;
+		q_rotation.CreateFromAxisAngle({ 0.0f,1.0f,0.0f }, rad);
+
+		SimpleMath::Vector3::Transform(model_front, q_rotation, model_front);
+		model_front = SimpleMath::Vector3::SmoothStep(old_model_front, model_front, 0.2f);
+		transform_comp.AdjustLocalRotation_Y(XMConvertToDegrees(rad));
 	}
 
 	void PlayerComponent::CameraWork()
@@ -530,24 +555,6 @@ namespace cumulonimbus::component
 		}
 	}
 
-	void PlayerComponent::AttackNormal01End(float dt)
-	{
-		auto& fbx_model_comp = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
-		if (player_state.GetInitialize())
-		{
-			InitializeAnimationVariable();
-			// アニメーションセット(AnimationState::Attack_Normal_01_End)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_Normal_01_End), false);
-		}
-
-		// アニメーション再生中なら処理を中断
-		if (fbx_model_comp.IsPlayAnimation())
-			return;
-
-		// 状態遷移(PlayerState::Idle)
-		player_state.SetState(PlayerState::Idle);
-	}
-
 	void PlayerComponent::AttackingNormal02(float dt)
 	{
 		auto& fbx_model_comp = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
@@ -598,24 +605,6 @@ namespace cumulonimbus::component
 		{// 状態遷移(PlayerState::Attacking_Normal_Long_Press)
 			player_state.SetState(PlayerState::Attacking_Normal_Long_Press);
 		}
-	}
-
-	void PlayerComponent::AttackNormal02End(float dt)
-	{
-		auto& fbx_model_comp = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
-		if (player_state.GetInitialize())
-		{
-			InitializeAnimationVariable();
-			// アニメーションセット(AnimationState::Attack_Normal_02_End)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_Normal_02_End), false);
-		}
-
-		// アニメーション再生中なら処理を中断
-		if (fbx_model_comp.IsPlayAnimation())
-			return;
-
-		// 状態遷移(PlayerState::Idle)
-		player_state.SetState(PlayerState::Idle);
 	}
 
 	void PlayerComponent::AttackingNormal03(float dt)

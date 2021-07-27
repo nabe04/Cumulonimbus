@@ -98,11 +98,11 @@ namespace cumulonimbus::component
 		const auto& GetWorld4x4() const { return world_f4x4; }
 
 		// Billboard
-		void ActiveBillboard() { is_billboard = true; }
+		void ActiveBillboard()  { is_billboard = true; }
 		void PassiveBillboard() { is_billboard = false; }
 
 		// Quaternion
-		void ActiveQuaternion() { is_quaternion = true; }
+		void ActiveQuaternion()  { is_quaternion = true; }
 		void PassiveQuaternion() { is_quaternion = false; }
 		void SetQuaternionAxis(const DirectX::XMFLOAT3& axis) { this->axis = axis; }
 		void AdjustLocalRotation_X(float angle_x);

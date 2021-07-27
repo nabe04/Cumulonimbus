@@ -85,7 +85,6 @@ namespace cumulonimbus::component
 		cb_transform->Deactivate(locator::Locator::GetDx11Device()->immediate_context.Get());
 	}
 
-
 	void TransformComponent::SetAndBindCBuffer(const TransformCB& transform, bool set_in_vs, bool set_in_ps) const
 	{
 		SetTransformCB(transform);
@@ -184,9 +183,8 @@ namespace cumulonimbus::component
 		XMStoreFloat4x4(&world_f4x4, world_matrix);
 
 		model_right = XMFLOAT3{ rotation_matrix._11,rotation_matrix._12,rotation_matrix._13 };
-		model_up = XMFLOAT3{ rotation_matrix._21,rotation_matrix._22,rotation_matrix._23 };
+		model_up	= XMFLOAT3{ rotation_matrix._21,rotation_matrix._22,rotation_matrix._23 };
 		model_front = XMFLOAT3{ rotation_matrix._31,rotation_matrix._32,rotation_matrix._33 };
-
 
 		prev_angle = angle;
 
@@ -270,17 +268,9 @@ namespace cumulonimbus::component
 		XMVECTOR right_vec = XMLoadFloat3(&model_right);
 		XMVECTOR store_vec = XMLoadFloat4(&local_quaternion);
 		XMVECTOR calc_val;
-		//if (set_angle_bit_flg.test(Bit::X))
-		//{
-		//	float rotation_val = angle.x - prev_angle.x;
-		//	XMVECTOR calc_val = XMQuaternionRotationRollPitchYaw(XMConvertToRadians(90),angle.y,angle.z);
-		//	store_vec = XMQuaternionSlerp(store_vec, calc_val, 1.0f);
-		//	//calc_val = XMQuaternionRotationAxis(XMLoadFloat3(&right), XMConvertToRadians(rotation_val));
-		//	set_angle_bit_flg.reset(Bit::X);
-		//}
-		//else
+
 		{
-			calc_val = XMQuaternionRotationAxis(right_vec, XMConvertToRadians(delta_angle.x));
+			calc_val  = XMQuaternionRotationAxis(right_vec, XMConvertToRadians(delta_angle.x));
 			store_vec = XMQuaternionMultiply(store_vec, calc_val);
 		}
 		XMStoreFloat4(&local_quaternion, store_vec);
@@ -291,14 +281,7 @@ namespace cumulonimbus::component
 		XMFLOAT3 delta_angle = GetDeltaAngle();
 		XMVECTOR up_vec = XMLoadFloat3(&model_up);
 		XMVECTOR calc_val;
-		//if (set_angle_bit_flg.test(Bit::Y))
-		//{
-		//	float rotation_val = angle.y - prev_angle.y;
-		//	calc_val = XMQuaternionRotationAxis(up_vec, XMConvertToRadians(rotation_val));
-		//	set_angle_bit_flg.reset(Bit::Y);
-		//}
-		//else
-		//{
+
 		calc_val = XMQuaternionRotationAxis(up_vec, XMConvertToRadians(delta_angle.y));
 		XMVECTOR store_vec = XMLoadFloat4(&local_quaternion);
 		store_vec = XMQuaternionMultiply(store_vec, calc_val);
@@ -329,9 +312,6 @@ namespace cumulonimbus::component
 		XMVECTOR axis_vec = XMLoadFloat3(&axis);
 		XMVECTOR calc_val = XMQuaternionRotationAxis(axis_vec, XMConvertToRadians(angle));
 		XMVECTOR store_vec = XMLoadFloat4(&local_quaternion);
-
-		//store_vec *= calc_val;
-		//XMStoreFloat3(&quaternion_f4, store_vec);
 
 		return store_vec;
 	}
