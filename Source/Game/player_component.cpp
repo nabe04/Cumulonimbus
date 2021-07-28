@@ -208,28 +208,44 @@ namespace cumulonimbus::component
 		if (IsDeadZone())
 			return;
 
+
+		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
+		auto& camera_comp    = GetRegistry()->GetComponent<CameraComponent>(GetEntity());
+
 		SimpleMath::Vector3 stick_direction = { stick_left.x,0.0f,stick_left.y };
 		stick_direction.Normalize();
-		auto& transform_comp			= GetRegistry()->GetComponent<TransformComponent>(GetEntity());
-		SimpleMath::Vector3 model_front = transform_comp.GetModelFront();
-		model_front.y = 0;
-		model_front.Normalize();
-		SimpleMath::Vector3 old_model_front = model_front;
 
+		float rad = 0;
 
-		// モデルの前方ベクトルとスティックの方向間のコサイン角を算出
-		const float dot = stick_direction.Dot(model_front);
-		float rad = acosf(dot);
-		// 回転する方向をスティック入力(x値)で補正
-		if (stick_left.x < 0)
-			rad *= -1;
+		{
+			// モデルの基底前方ベクトル{0,0,1}とスティック入力方向とのベクトルの角度(ラジアン)を算出
+			rad = arithmetic::CalcAngleFromTwoVec(stick_direction, { 0,0,1 });
+			// 回転する方向をスティック入力(x値)で補正
+			if (stick_left.x < 0)
+				rad *= -1;
+			// カメラのフロントベクトルをrad分回転
+			SimpleMath::Vector3 camera_xz_front_vec= camera_comp.GetCameraFront();
+			const SimpleMath::Quaternion q = SimpleMath::Quaternion::CreateFromAxisAngle({ 0,1,0 }, rad);
+			SimpleMath::Vector3::Transform(camera_xz_front_vec, q, camera_xz_front_vec);
+			camera_xz_front_vec.y = 0;
+			camera_xz_front_vec.Normalize();
 
-		SimpleMath::Quaternion q_rotation = SimpleMath::Quaternion::Identity;
-		q_rotation.CreateFromAxisAngle({ 0.0f,1.0f,0.0f }, rad);
+			// モデルの前方ベクトルとfront_vecとの角度(ラジアン)を算出
+			SimpleMath::Vector3 model_xz_front = transform_comp.GetModelFront();
+			model_xz_front.y = 0;
+			model_xz_front.Normalize();
+			if (arithmetic::IsEqual(model_xz_front.x, camera_xz_front_vec.x) &&
+				arithmetic::IsEqual(model_xz_front.y, camera_xz_front_vec.y) &&
+				arithmetic::IsEqual(model_xz_front.z, camera_xz_front_vec.z))
+				return;
 
-		SimpleMath::Vector3::Transform(model_front, q_rotation, model_front);
-		model_front = SimpleMath::Vector3::SmoothStep(old_model_front, model_front, 0.2f);
-		transform_comp.AdjustLocalRotation_Y(XMConvertToDegrees(rad));
+			rad = arithmetic::CalcAngleFromTwoVec(camera_xz_front_vec, model_xz_front);
+			const SimpleMath::Vector3 cross_vec = model_xz_front.Cross(camera_xz_front_vec);
+			if (cross_vec.y < 0)
+				rad *= -1;
+
+			transform_comp.AdjustRotationFromAxis({ 0,1,0 }, rad);
+		}
 	}
 
 	void PlayerComponent::CameraWork()

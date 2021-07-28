@@ -73,13 +73,14 @@ namespace arithmetic
 	float NormalizeAngle(const float angle);
 
 	/**
-	 * @brief     : 二つのベクトルから角度を算出
-	 * @return    : 度数法での角度
+	 * @brief     : 二つのベクトルから角度(ラジアン)を算出
+	 * @attention : 引数に指定するベクトルは正規化済みのベクトルを使用する事
+	 * @return    : 弧度法での角度
 	 */
 	[[nodiscard]]
 	float CalcAngleFromTwoVec(
-		const DirectX::XMFLOAT3& v0,
-		const DirectX::XMFLOAT3& v1);
+		const DirectX::SimpleMath::Vector3& v0,
+		const DirectX::SimpleMath::Vector3& v1);
 
 	/**
 	 * @brief : 左手座標系を基底にした時のそれぞれの角度
@@ -88,6 +89,11 @@ namespace arithmetic
 	[[nodiscard]] float CalcAngle_Y(const DirectX::SimpleMath::Vector3& v);
 	[[nodiscard]] float CalcAngle_Z(const DirectX::SimpleMath::Vector3& v);
 
+	/**
+	 * @brief : クォータニオンからオイラー角の算出
+	 */
+	DirectX::SimpleMath::Vector3 QuaternionToEulerAngle(const DirectX::SimpleMath::Quaternion& q);
+	
 	/**
 	 * @brief				: 正射影ベクトルの算出
 	 *						  project_vec から onto_vecへの正射影ベクトルを算出する

@@ -6,18 +6,11 @@ using namespace DirectX;
 
 namespace arithmetic
 {
-	/**
-	 * @brief  : 丸め誤差を考慮した同値関数
-	 * @return : true -> 同値
-	 */
 	bool IsEqual(float l_val, float r_val)
 	{
 		return (fabs(l_val - r_val)) <= FLT_EPSILON ? true : false;
 	}
 
-	/**
-	 * @brief : [min,max]の範囲までnをクランプ
-	 */
 	float Clamp(float n, float min, float max)
 	{
 		if (n < min) return min;
@@ -25,8 +18,6 @@ namespace arithmetic
 
 		return n;
 	}
-
-
 
 	//-- Create a vector of directions from point2 to point1 (point1 - point2) --//
 	XMFLOAT2 CalcVecFromTwoPositions(XMFLOAT2 point1, XMFLOAT2 point2)
@@ -49,7 +40,7 @@ namespace arithmetic
 		return vec;
 	}
 
-	//
+
 	XMFLOAT3 SphereLinear(const XMVECTOR& v1, const XMVECTOR& v2, float s)
 	{
 		const XMVECTOR start  = XMVector3Normalize(v1);
@@ -71,11 +62,6 @@ namespace arithmetic
 		return out_f3;
 	}
 
-	/**
-	* @brief		: upベクトルの算出
-	* @param front  : front vector(z軸)
-	* @param right  : right vector(x軸)
-	*/
 	XMFLOAT3 CalcUpVec(const XMFLOAT3& front, const XMFLOAT3& right)
 	{
 		const XMVECTOR front_vec = XMLoadFloat3(&front);
@@ -87,11 +73,6 @@ namespace arithmetic
 		return up_f3;
 	}
 
-	/**
-	* @brief		: rightベクトルの算出
-	* @param up     : up vector(y軸)
-	* @param front  : front vector(z軸)
-	*/
 	XMFLOAT3 CalcRightVec(const XMFLOAT3& up, const XMFLOAT3& front)
 	{
 		const XMVECTOR up_vec = XMLoadFloat3(&up);
@@ -103,11 +84,6 @@ namespace arithmetic
 		return right_f3;
 	}
 
-	/**
-	* @brief	   : calculate front vector
-	* @param right : right vector(x軸)
-	* @param up    : up vector(y軸)
-	*/
 	XMFLOAT3 CalcFrontVec(const XMFLOAT3& right, const XMFLOAT3& up)
 	{
 		const XMVECTOR right_vec = XMLoadFloat3(&right);
@@ -119,10 +95,6 @@ namespace arithmetic
 		return front_f3;
 	}
 
-	/**
-	 * @brief	 : 角度を(-180° ～ 180°)に正規化
-	 * @example	 : 190° -> -170°、-200° -> 160°
-	 */
 	float NormalizeAngle(const float angle)
 	{
 		float normalize_angle = angle;
@@ -139,17 +111,16 @@ namespace arithmetic
 		return normalize_angle;
 	}
 
-	/**
-	 * @brief     : 二つのベクトルから角度を算出
-	 * @return    : 度数法での角度
-	 */
-	float CalcAngleFromTwoVec(const DirectX::XMFLOAT3& v0, const DirectX::XMFLOAT3& v1)
+	float CalcAngleFromTwoVec(const DirectX::SimpleMath::Vector3& v0, const DirectX::SimpleMath::Vector3& v1)
 	{
-		XMVECTOR vec0 = XMLoadFloat3(&v0);
-		XMVECTOR vec1 = XMLoadFloat3(&v1);
+		float dot = v0.Dot(v1);
+		if (dot > 1.0f)
+			dot = 1.0f;
 
-		XMVECTOR dot_vec = XMVector3Dot(vec0, vec1);
-		return XMConvertToDegrees(acosf(XMVectorGetX(dot_vec)));
+		if (dot < -1.0f)
+			dot = -1.0f;
+
+		return acosf(dot);
 	}
 
 
@@ -212,12 +183,20 @@ namespace arithmetic
 		return angle;
 	}
 
-	/**
-	 * @brief				: 正射影ベクトルの算出
-	 *						  project_vec から onto_vecへの正射影ベクトルを算出する
-	 * @param project_vec	: 射影元ベクトル
-	 * @param onto_vec		: 射影先ベクトル
-	 */
+	DirectX::SimpleMath::Vector3 QuaternionToEulerAngle(const DirectX::SimpleMath::Quaternion& q)
+	{
+		const float sy = 2 * q.x * q.z + 2 * q.y * q.w;
+		const bool unlocked = std::fabs(sy) < 0.99999f;
+
+		return SimpleMath::Vector3(
+			unlocked ? std::atan2(-(2 * q.y * q.z - 2 * q.x * q.w), 2 * q.w * q.w + 2 * q.z * q.z - 1)
+			: std::atan2(2 * q.y * q.z + 2 * q.x * q.w, 2 * q.w * q.w + 2 * q.y * q.y - 1),
+			std::asin(sy),
+			unlocked ? std::atan2(-(2 * q.x * q.y - 2 * q.z * q.w), 2 * q.w * q.w + 2 * q.x * q.x - 1) : 0
+		);
+	}
+
+
 	DirectX::XMFLOAT3 CalcProjectVector(
 		const DirectX::XMFLOAT3& project_vec,
 		const DirectX::XMFLOAT3& onto_vec)
@@ -242,11 +221,6 @@ namespace arithmetic
 		return onto_vec;
 	}
 
-
-	/**
-	 * @brief  : 乱数生成(int)
-	 * @return : minからmaxの範囲での乱数(int)
-	 */
 	int RandomIntInRange(const int min, const int max)
 	{
 		std::random_device rnd;			// 非決定的な乱数生成器
@@ -256,10 +230,6 @@ namespace arithmetic
 		return rand_range(mt);
 	}
 
-	/**
-	 * @brief  : 乱数生成(float)
-	 * @return : minからmaxの範囲での乱数(float)
-	 */
 	float RandomFloatInRange(const float min, const float max)
 	{
 		std::random_device rnd;			// 非決定的な乱数生成器
@@ -269,10 +239,6 @@ namespace arithmetic
 		return rand_range(mt);
 	}
 
-	/**
-	 * @brief  : 2つのベクトルが平行どうか判定
-	 * @return : true -> 平行、 false -> 平行じゃない
-	 */
 	bool IsParallel(
 		const SimpleMath::Vector3& v1,
 		const SimpleMath::Vector3& v2)
@@ -281,13 +247,6 @@ namespace arithmetic
 		return IsEqual(dot, 0.0f);
 	}
 
-	/**
-	 * @brief			: 直線と点との最近接点を算出
-	 * @param l_start	: 直線の端点(このままだと線分になるので関数内でLineに変換)
-	 * @param l_end		: 直線の端点(このままだと線分になるので関数内でLineに変換)
-	 * @param p			: 任意の点
-	 * @return			: 直線上の最近接点の位置
-	 */
 	SimpleMath::Vector3 ClosestPtPointLine(
 		const SimpleMath::Vector3& l_start,
 		const SimpleMath::Vector3& l_end,
@@ -300,12 +259,6 @@ namespace arithmetic
 		return ClosestPtPointLine(l, p);
 	}
 
-	/**
-	 * @brief	: 直線と点との最近接点を算出
-	 * @param l	: 直線l
-	 * @param p	: 任意の点p
-	 * @return  : 直線上の最近接点の位置
-	 */
 	SimpleMath::Vector3 ClosestPtPointLine(
 		const Line& l,
 		const SimpleMath::Vector3& p)
@@ -322,16 +275,6 @@ namespace arithmetic
 		return l.vec * t;
 	}
 
-	/**
-	 * @brief	  : 与えられた線分abおよび点cに対して、ab上の最近接点dを計算
-	 *			  : d(t) = a + t * (b - a)により表されるdの位置に対するtも返す
-	 * @param a	  : 線分abの端点
-	 * @param b   : 線分abの端点
-	 * @param c	  : 任意の点
-	 * @param d	  : 最近接点
-	 * @param t	  : dの位置に対するt
-	 * @attention : d,tは参照渡しをしているので算出された結果が入ることに注意
-	 */
 	void ClosestPtPointSegment(
 		const SimpleMath::Vector3& a,
 		const SimpleMath::Vector3& b,
@@ -350,16 +293,6 @@ namespace arithmetic
 		d = a + t * ab;
 	}
 
-	/**
-	 * @brief			: 2直線の最短距離の算出
-	 * @param l1_start	: 直線の端点(このままだと線分になるので関数内でLineに変換)
-	 * @param l1_end    : 直線の端点(このままだと線分になるので関数内でLineに変換)
-	 * @param l2_start  : 直線の端点(このままだと線分になるので関数内でLineに変換)
-	 * @param l2_end    : 直線の端点(このままだと線分になるので関数内でLineに変換)
-	 * @param p1		: 直線l1の垂線の位置
-	 * @param p2		: 直線l2の垂線の位置
-	 * @return			: 2直線の最短距離
-	 */
 	float ClosestPtLineLine(
 		const SimpleMath::Vector3& l1_start,
 		const SimpleMath::Vector3& l1_end,
@@ -378,14 +311,6 @@ namespace arithmetic
 		return ClosestPtLineLine(l1, l2, p1, p2);
 	}
 
-	/**
-	 * @brief			: 2直線の最短距離の算出
-	 * @param l1		: 直線の設定
-	 * @param l2		: 直線の設定
-	 * @param p1		: 直線l1の垂線の位置
-	 * @param p2		: 直線l2の垂線の位置
-	 * @return			: 2直線の最短距離
-	 */
 	float ClosestPtLineLine(
 		const Line& l1,
 		const Line& l2,
@@ -422,18 +347,6 @@ namespace arithmetic
 		return SimpleMath::Vector3{ p2 - p1 }.Length();
 	}
 
-	/**
-	 * @brief			: 線分と線分の最近接点と最近接点間の距離の算出
-	 * @param p_start	: 線分pの始点
-	 * @param p_end		: 線分pの終点
-	 * @param q_start	: 線分qの始点
-	 * @param q_end		: 線分qの終点
-	 * @param s			: S1(s) = p_start + s * (p_end - p_start)
-	 * @param t			: S2(t) = q_start + t * (q_end - q_start)
-	 * @param c1		: 点pの最近接点
-	 * @param c2		: 点qの最近接点
-	 * @return			: 最近接点間の距離(最短距離)
-	 */
 	float ClosestPtSegmentSegment(
 		const SimpleMath::Vector3& p_start,
 		const SimpleMath::Vector3& p_end,

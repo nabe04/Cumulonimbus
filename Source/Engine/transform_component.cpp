@@ -109,10 +109,12 @@ namespace cumulonimbus::component
 		}
 		else if (is_quaternion)
 		{
-			CalcLocalRotation_X();
-			CalcLocalRotation_Y();
-			CalcLocalRotation_Z();
-			r = XMMatrixRotationQuaternion(XMLoadFloat4(&local_quaternion));
+			//AdjustRotationFromAxis({ 0,1,0 }, XMConvertToRadians(1));
+			r = XMMatrixRotationQuaternion(XMLoadFloat4(&rotation_quaternion));
+			angle = arithmetic::QuaternionToEulerAngle(rotation_quaternion);
+			angle.x = XMConvertToDegrees(angle.x);
+			angle.y = XMConvertToDegrees(angle.y);
+			angle.z = XMConvertToDegrees(angle.z);
 		}
 		else
 		{
@@ -135,33 +137,6 @@ namespace cumulonimbus::component
 		model_right = XMFLOAT3{ orientation._11,orientation._12,orientation._13 };
 		model_up = XMFLOAT3{ orientation._21,orientation._22,orientation._23 };
 		model_front = XMFLOAT3{ orientation._31,orientation._32,orientation._33 };
-	}
-
-	void TransformComponent::CalcWorldRotationAngle()
-	{
-		{// Caluculate angle x
-			XMFLOAT3 compare_up = arithmetic::CalcUpVec(right, model_right);
-			float angle = arithmetic::CalcAngleFromTwoVec(right, model_right);
-			XMVECTOR dot_val = XMVector3Dot(XMLoadFloat3(&compare_up), XMLoadFloat3(&up));
-
-			this->angle.x = XMVectorGetX(dot_val) >= 0 ? angle : -angle;
-		}
-
-		{// Caluculate angle y
-			XMFLOAT3 compare_up = arithmetic::CalcUpVec(up, model_up);
-			float angle = arithmetic::CalcAngleFromTwoVec(up, model_up);
-			XMVECTOR dot_val = XMVector3Dot(XMLoadFloat3(&compare_up), XMLoadFloat3(&right));
-
-			this->angle.y = XMVectorGetY(dot_val) >= 0 ? angle : -angle;
-		}
-
-		{// Caluculate angle z
-			XMFLOAT3 compare_up = arithmetic::CalcUpVec(front, model_front);
-			float angle = arithmetic::CalcAngleFromTwoVec(front, model_front);
-			XMVECTOR dot_val = XMVector3Dot(XMLoadFloat3(&compare_up), XMLoadFloat3(&up));
-
-			this->angle.z = XMVectorGetZ(dot_val) >= 0 ? angle : -angle;
-		}
 	}
 
 	void TransformComponent::CreateWorldTransformMatrix()
@@ -187,9 +162,6 @@ namespace cumulonimbus::component
 		model_front = XMFLOAT3{ rotation_matrix._31,rotation_matrix._32,rotation_matrix._33 };
 
 		prev_angle = angle;
-
-		//-- Calculate eulerian angle --//
-		//CalcWorldRotationAngle();
 	}
 
 	void TransformComponent::NormalizeAngle()
@@ -247,57 +219,12 @@ namespace cumulonimbus::component
 		//rotation_f4x4._41 = rotation_f4x4._42 = rotation_f4x4._43 = rotation_f4x4._44 = 0;
 	}
 
-	void TransformComponent::AdjustLocalRotation_X(float angle_x)
+	void TransformComponent::AdjustRotationFromAxis(const DirectX::SimpleMath::Vector3& axis, float angle)
 	{
-		angle.x += angle_x;
+		SimpleMath::Quaternion q = SimpleMath::Quaternion::CreateFromAxisAngle(axis, angle);
+		rotation_quaternion *= q;
 	}
 
-	void TransformComponent::AdjustLocalRotation_Y(float angle_y)
-	{
-		angle.y += angle_y;
-	}
-
-	void TransformComponent::AdjustLocalRotation_Z(float angle_z)
-	{
-		angle.z += angle_z;
-	}
-
-	void TransformComponent::CalcLocalRotation_X()
-	{
-		XMFLOAT3 delta_angle = GetDeltaAngle();
-		XMVECTOR right_vec = XMLoadFloat3(&model_right);
-		XMVECTOR store_vec = XMLoadFloat4(&local_quaternion);
-		XMVECTOR calc_val;
-
-		{
-			calc_val  = XMQuaternionRotationAxis(right_vec, XMConvertToRadians(delta_angle.x));
-			store_vec = XMQuaternionMultiply(store_vec, calc_val);
-		}
-		XMStoreFloat4(&local_quaternion, store_vec);
-	}
-
-	void TransformComponent::CalcLocalRotation_Y()
-	{
-		XMFLOAT3 delta_angle = GetDeltaAngle();
-		XMVECTOR up_vec = XMLoadFloat3(&model_up);
-		XMVECTOR calc_val;
-
-		calc_val = XMQuaternionRotationAxis(up_vec, XMConvertToRadians(delta_angle.y));
-		XMVECTOR store_vec = XMLoadFloat4(&local_quaternion);
-		store_vec = XMQuaternionMultiply(store_vec, calc_val);
-		XMStoreFloat4(&local_quaternion, store_vec);
-	}
-
-	void TransformComponent::CalcLocalRotation_Z()
-	{
-		XMFLOAT3 delta_angle = GetDeltaAngle();
-		XMVECTOR front_vec = XMLoadFloat3(&model_front);
-		XMVECTOR calc_val = XMQuaternionRotationAxis(front_vec, XMConvertToRadians(delta_angle.z));
-		XMVECTOR store_vec = XMLoadFloat4(&local_quaternion);
-
-		store_vec = XMQuaternionMultiply(store_vec, calc_val);
-		XMStoreFloat4(&local_quaternion, store_vec);
-	}
 
 	XMMATRIX TransformComponent::GetRotationMatrix(XMFLOAT3 axis, float angle/* degree */)
 	{
@@ -305,15 +232,6 @@ namespace cumulonimbus::component
 		XMVECTOR calc_val = XMQuaternionRotationAxis(axis_vec, XMConvertToRadians(angle));
 
 		return XMMatrixRotationQuaternion(calc_val);
-	}
-
-	XMVECTOR TransformComponent::GetRotationVec(XMFLOAT3 axis, float angle/* degree */)
-	{
-		XMVECTOR axis_vec = XMLoadFloat3(&axis);
-		XMVECTOR calc_val = XMQuaternionRotationAxis(axis_vec, XMConvertToRadians(angle));
-		XMVECTOR store_vec = XMLoadFloat4(&local_quaternion);
-
-		return store_vec;
 	}
 
 	void TransformComponent::Save(const std::string& file_path)

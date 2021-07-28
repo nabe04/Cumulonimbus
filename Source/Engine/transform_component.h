@@ -104,13 +104,13 @@ namespace cumulonimbus::component
 		// Quaternion
 		void ActiveQuaternion()  { is_quaternion = true; }
 		void PassiveQuaternion() { is_quaternion = false; }
-		void SetQuaternionAxis(const DirectX::XMFLOAT3& axis) { this->axis = axis; }
-		void AdjustLocalRotation_X(float angle_x);
-		void AdjustLocalRotation_Y(float angle_y);
-		void AdjustLocalRotation_Z(float angle_z);
-		void CalcLocalRotation_X();
-		void CalcLocalRotation_Y();
-		void CalcLocalRotation_Z();
+
+		/**
+		 * @brief	    : ÉÇÉfÉãÇÃîCà”é≤âÒì]
+		 * @param axis	: âÒì]é≤(ê≥ãKâªçœÇ›)
+		 * @angle		: ÉâÉWÉAÉìäp
+		 */
+		void AdjustRotationFromAxis(const DirectX::SimpleMath::Vector3& axis, float angle);
 
 
 		[[nodiscard]] const DirectX::SimpleMath::Matrix& GetRotationMat()	 const { return rotation_matrix; }
@@ -154,9 +154,7 @@ namespace cumulonimbus::component
 				CEREAL_NVP(orientation),
 
 				// Quaternion
-				CEREAL_NVP(axis),
-				CEREAL_NVP(local_quaternion),
-				CEREAL_NVP(world_quaternion),
+				CEREAL_NVP(rotation_quaternion),
 
 				CEREAL_NVP(set_angle_bit_flg),
 				CEREAL_NVP(is_billboard),
@@ -206,9 +204,7 @@ namespace cumulonimbus::component
 		};
 
 		// Quaternion
-		DirectX::SimpleMath::Vector3 axis{ 0,1,0 };
-		DirectX::SimpleMath::Vector4 local_quaternion{ 0,0,0,1 };
-		DirectX::SimpleMath::Vector4 world_quaternion{ 0,0,0,1 };
+		DirectX::SimpleMath::Quaternion rotation_quaternion{};
 
 		enum Bit
 		{
@@ -225,10 +221,8 @@ namespace cumulonimbus::component
 		void CreateRotation4x4();
 		void CreateTranslation4x4();
 		void CalcModelCoordinateAxis(const DirectX::XMFLOAT4X4& orientation);	// ÉÇÉfÉãÇÃç¿ïWé≤åvéZ
-		void CalcWorldRotationAngle();
 
 		DirectX::XMMATRIX GetRotationMatrix(DirectX::XMFLOAT3 axis, float angle/* degree */);
-		DirectX::XMVECTOR GetRotationVec(DirectX::XMFLOAT3 axis, float angle/* degree */);
 	};
 } // cumulonimbus::component
 

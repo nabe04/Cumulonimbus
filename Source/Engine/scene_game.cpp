@@ -164,7 +164,8 @@ void SceneGame::InitializeScene()
 	registry->GetComponent<cum::component::CameraComponent>(ent_player).SetIsDebugCamera(true);
 	//registry->GetComponent<cum::component::CameraComponent>(ent_player).SetViewInfo({ 25,100,-300 }, { .0f, .0f, .0f }, XMFLOAT3(.0f, 1.0f, .0f));
 	registry->GetComponent<cum::component::CameraComponent>(ent_player).SetProjection(XM_PI / 8.0f, static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
-
+	registry->GetComponent<cum::component::TransformComponent>(ent_player).ActiveQuaternion();
+	
 	//main_camera->AttachObject(ent_player);
 	//main_camera->InitializeObjectCameraParam();
 }
