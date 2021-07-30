@@ -161,7 +161,7 @@ namespace cumulonimbus::component
 
 		//-- カメラの基本パラメータ --//
 		// カメラの最大角度(軸基準) (y,zは未定義)
-		DirectX::SimpleMath::Vector3 max_camera_angle{ 85.0f,0,0 }; // 固定(constにできない)
+		DirectX::SimpleMath::Vector3 max_camera_angle{ 85.0f,-1.f,-1.f }; //	カメラの最大角(xyzそれぞれ+-両方の角度を表す。パラメータが0以下の場合はカメラの角度制限なし)
 
 		DirectX::SimpleMath::Vector3 eye_position{ 0.0f,0.0f,0.0f };
 		DirectX::SimpleMath::Vector3 focus_position{ 0.0f,0.0f,1.0f };
@@ -230,6 +230,12 @@ namespace cumulonimbus::component
 		 */
 		void CalcCameraAngle();
 
+		/**
+		 * @brief : カメラの角度調整
+		 *			カメラの最大角をもとにカメラ前方ベクトル(front_vec)を調整
+		 */
+		void AdjustCameraAngle();
+		
 		/**
 		 * @brief : コンスタントバッファパラメータのセット
 		 *			(Update関数の最後で行う)

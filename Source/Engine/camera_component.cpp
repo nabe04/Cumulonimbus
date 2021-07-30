@@ -221,10 +221,13 @@ namespace cumulonimbus::component
 
 	void CameraComponent::UpdateObjectCamera(float dt)
 	{
+		//AdjustCameraAngle();
+
 		// camera_lengthとfront_vecからカメラの位置を算出
 		auto& position = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetPosition();
 
-		eye_position = position + (front_vec * -1) * camera_length;
+		focus_position = position;
+		eye_position   = position + (front_vec * -1) * camera_length;
 		CalcCameraDirectionalVector();
 	}
 
@@ -371,6 +374,47 @@ namespace cumulonimbus::component
 			camera_angle.y *= -1;
 
 		camera_angle.z = arithmetic::CalcAngle_Z(front_vec);
+	}
+
+	void CameraComponent::AdjustCameraAngle()
+	{
+		{// X軸の回転角算出(ベクトルが{0,0,1}時に0度)
+			if (front_vec.y > 0)
+			{
+				// カメラのフロントベクトルとy_up{0,1,0 }との射影ベクトルを算出
+				const DirectX::SimpleMath::Vector3 v = arithmetic::CalcProjectVector(front_vec, { 0.0f,1.0f,0.0f });
+				// カメラのフロントベクトルと平面との射影ベクトルを算出
+				DirectX::SimpleMath::Vector3 project_vec = front_vec - v;
+				project_vec.Normalize();
+
+				const float d = front_vec.Dot(project_vec);
+				const float rad = acosf(d);
+				if (rad > DirectX::XMConvertToRadians(max_camera_angle.x))
+				{// +90度以上回転しているので戻す
+					const float diff = rad - DirectX::XMConvertToRadians(max_camera_angle.x);
+					SimpleMath::Quaternion q = q.CreateFromAxisAngle(right_vec, diff);
+					front_vec = DirectX::SimpleMath::Vector3::Transform(front_vec, q);
+					front_vec.Normalize();
+				}
+			}
+			else
+			{
+				// カメラのフロントベクトルとy_up{0,-1,0 }との射影ベクトルを算出
+				const DirectX::SimpleMath::Vector3 v = arithmetic::CalcProjectVector(front_vec, { 0.0f,-1.0f,0.0f });
+				// カメラのフロントベクトルと平面との射影ベクトルを算出
+				const DirectX::SimpleMath::Vector3 project_vec = front_vec - v;
+
+				const float d = front_vec.Dot(project_vec);
+				const float rad = acosf(d);
+				if (rad > DirectX::XMConvertToRadians(max_camera_angle.x))
+				{// -90度以上回転しているので戻す
+					const float diff = rad - DirectX::XMConvertToRadians(max_camera_angle.x);
+					SimpleMath::Quaternion q = q.CreateFromAxisAngle(right_vec, -diff);
+					front_vec = DirectX::SimpleMath::Vector3::Transform(front_vec, q);
+					front_vec.Normalize();
+				}
+			}
+		}
 	}
 
 	void CameraComponent::SetCBufferParam() const
