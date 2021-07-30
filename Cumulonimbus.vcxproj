@@ -35,12 +35,9 @@
     <ClInclude Include="Source\Engine\billboard_component.h" />
     <ClInclude Include="Source\Engine\blend.h" />
     <ClInclude Include="Source\Engine\bloom.h" />
-    <ClInclude Include="Source\Engine\camera_operation.h" />
-    <ClInclude Include="Source\Engine\camera_work.h" />
     <ClInclude Include="Source\Engine\capsule_collison_component.h" />
     <ClInclude Include="Source\Engine\cereal_helper.h" />
     <ClInclude Include="Source\Engine\child_actor.h" />
-    <ClInclude Include="Source\Engine\collision.h" />
     <ClInclude Include="Source\Engine\collision_component.h" />
     <ClInclude Include="Source\Engine\collision_manager.h" />
     <ClInclude Include="Source\Engine\component_base.h" />
@@ -140,7 +137,6 @@
     <ClInclude Include="Source\Engine\texture.h" />
     <ClInclude Include="Source\Engine\texture2d_shader.h" />
     <ClInclude Include="Source\Engine\toon.h" />
-    <ClInclude Include="Source\Engine\transform.h" />
     <ClInclude Include="Source\Engine\transform_component.h" />
     <ClInclude Include="Source\Engine\type_rename.h" />
     <ClInclude Include="Source\Engine\vertex_buffer.h" />
@@ -168,16 +164,11 @@
     <ClCompile Include="Source\Engine\billboard_component.cpp" />
     <ClCompile Include="Source\Engine\blend.cpp" />
     <ClCompile Include="Source\Engine\bloom.cpp" />
-    <ClCompile Include="Source\Engine\camera_operation.cpp" />
-    <ClCompile Include="Source\Engine\camera_work.cpp" />
     <ClCompile Include="Source\Engine\capsule_collison_component.cpp" />
     <ClCompile Include="Source\Engine\child_actor.cpp" />
-    <ClCompile Include="Source\Engine\collision.cpp" />
     <ClCompile Include="Source\Engine\collision_component.cpp" />
     <ClCompile Include="Source\Engine\collision_manager.cpp" />
-    <ClCompile Include="Source\Engine\component_base.cpp" />
     <ClCompile Include="Source\Engine\component_list.cpp" />
-    <ClCompile Include="Source\Engine\constant_buffer.cpp" />
     <ClCompile Include="Source\Engine\content_brawser.cpp" />
     <ClCompile Include="Source\Engine\debug_collision.cpp" />
     <ClCompile Include="Source\Engine\depth_map.cpp" />
@@ -198,7 +189,6 @@
     <ClCompile Include="Source\Engine\geometric_primitive_component.cpp" />
     <ClCompile Include="Source\Engine\geometric_primitive_resource.cpp" />
     <ClCompile Include="Source\Engine\imgui_manager.cpp" />
-    <ClCompile Include="Source\Engine\inner_sphere_collision.cpp" />
     <ClCompile Include="Source\Engine\InputManager.cpp" />
     <ClCompile Include="Source\Engine\input_device.cpp" />
     <ClCompile Include="Source\Engine\input_manager.cpp" />
@@ -260,7 +250,6 @@
     <ClCompile Include="Source\Engine\texture.cpp" />
     <ClCompile Include="Source\Engine\texture2d_shader.cpp" />
     <ClCompile Include="Source\Engine\texture_resource_manager.cpp" />
-    <ClCompile Include="Source\Engine\transform.cpp" />
     <ClCompile Include="Source\Engine\transform_component.cpp" />
     <ClCompile Include="Source\Engine\vertex_shader.cpp" />
     <ClCompile Include="Source\Engine\camera_component.cpp" />

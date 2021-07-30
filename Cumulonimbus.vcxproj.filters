@@ -231,13 +231,7 @@
     <ClCompile Include="Source\Engine\anim_sprite.cpp">
       <Filter>Source\Engine\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\camera_operation.cpp">
-      <Filter>Source\Engine\Components</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Engine\child_actor.cpp">
-      <Filter>Source\Engine\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\inner_sphere_collision.cpp">
       <Filter>Source\Engine\Components</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\sprite.cpp">
@@ -315,16 +309,7 @@
     <ClCompile Include="Source\Engine\blend.cpp">
       <Filter>Source\Engine\System</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\camera_work.cpp">
-      <Filter>Source\Engine\System</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\collision.cpp">
-      <Filter>Source\Engine\System</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Engine\component_list.cpp">
-      <Filter>Source\Engine\System</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\constant_buffer.cpp">
       <Filter>Source\Engine\System</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\content_brawser.cpp">
@@ -408,9 +393,6 @@
     <ClCompile Include="Source\Engine\texture.cpp">
       <Filter>Source\Engine\System</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\transform.cpp">
-      <Filter>Source\Engine\System</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Engine\window.cpp">
       <Filter>Source\Engine\System</Filter>
     </ClCompile>
@@ -437,9 +419,6 @@
     </ClCompile>
     <ClCompile Include="Source\Engine\depth_map.cpp">
       <Filter>Source\Engine\System</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\component_base.cpp">
-      <Filter>Source\Engine\Components</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\material_component.cpp">
       <Filter>Source\Engine\Components</Filter>
@@ -540,9 +519,6 @@
       <Filter>Header\Engine\Components</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\billboard_component.h">
-      <Filter>Header\Engine\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\camera_operation.h">
       <Filter>Header\Engine\Components</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\child_actor.h">
@@ -653,12 +629,6 @@
     <ClInclude Include="Source\Engine\arithmetic.h">
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\camera_work.h">
-      <Filter>Header\Engine\System</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\collision.h">
-      <Filter>Header\Engine\System</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Engine\component_list.h">
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
@@ -729,9 +699,6 @@
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\texture.h">
-      <Filter>Header\Engine\System</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\transform.h">
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\vertex_buffer.h">

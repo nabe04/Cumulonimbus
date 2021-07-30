@@ -6,7 +6,6 @@
 
 #include <DirectXMath.h>
 
-#include "collision.h"
 #include "collision_manager.h"
 #include "dx11_configurator.h"
 #include "gaussian_blur.h"
