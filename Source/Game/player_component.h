@@ -95,7 +95,6 @@ namespace cumulonimbus::component
 			Attack_Jump_Strong_End,
 			Jump_Begin,
 			Jump_Landing,
-			Jump_Loop,
 			Attacking_Strong_01,
 			Avoid_Dash_Begin,
 			Avoid_Dash_End,
@@ -106,7 +105,6 @@ namespace cumulonimbus::component
 			Idle,
 			Damage_Small,
 			Damage_Big,
-			Jump_End,
 			Knock_Down_Front_Loop,
 			Knock_Down_Front_Stand_Up,
 			Die,
@@ -127,6 +125,8 @@ namespace cumulonimbus::component
 			Attack_Strong_03,
 			Attack_Strong_04,
 			Attack_Strong_All,
+			Jump_Loop,
+			Jump_End,
 
 			End
 		};
@@ -146,7 +146,7 @@ namespace cumulonimbus::component
 
 	public:
 		explicit PlayerComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent);
-		explicit PlayerComponent()  = default; // for cereal
+		explicit PlayerComponent() = default; // for cereal
 		~PlayerComponent() override = default;
 
 		void NewFrame(float dt) override;
@@ -163,27 +163,35 @@ namespace cumulonimbus::component
 		// アニメーションキーフレームの調整用(終端フレームの調整)
 		std::map<std::string, u_int> adjust_keyframe_map{};
 		// アニメーション中断フレーム(先行入力などで使用)
-		std::map< AnimationState, u_int> animation_break_frame;
+		std::map<AnimationState, u_int> animation_break_frame{};
 
-		// 歩きの速さ
-		float walk_speed = 100;
-		// 走りの速さ
-		float dash_speed = 300;
+		//-- 状態に応じてのスピード設定 --//
+		float walk_speed = 1000;	 // 歩きの速さ
+		float dash_speed = 2000;	 // 走りの速さ
+		float avoid_dash_speed = 3000;  // 回避ダッシュ速度
+		float jump_movement_speed = 1000;
 
 		// パッド入力のデッドゾーン値
-		float threshold				= 0.05f;
+		float threshold = 0.05f;
 		// パッド長押し時間
-		float long_press_time		= 0.0f;
+		float long_press_time = 0.0f;
 		// パッド長押しスロット数(長押し判定に使用)
-		int   long_press_slot		= 60;
+		int   long_press_slot = 60;
+
+		// ジャンプ強度
+		float jump_strength = 5000;
+		// 重力
+		float gravity = 1.0f;
+		//// 現在のジャンプ速度
+		//float current_jump_velocity = 0;
 
 		/**
 		 * @brief : State変更時にアニメーション用のメンバ変数の初期化
 		 */
 		void InitializeAnimationVariable(PlayerState state = PlayerState::End, float long_press_time = 0.0f)
 		{
-			precede_input			= state;
-			this->long_press_time	= long_press_time;
+			precede_input = state;
+			this->long_press_time = long_press_time;
 		}
 
 		/**
@@ -210,6 +218,13 @@ namespace cumulonimbus::component
 		 * @brief : カメラワーク管理関数
 		 */
 		void CameraWork();
+
+		/**
+		 * @brief		: 速度調整関数
+		 * @param dt	: delta time
+		 * @param speed	: xyzそれぞれの方向の速度
+		 */
+		void AdjustVelocity(float dt, const DirectX::SimpleMath::Vector3& speed);
 
 		/**
 		 * @brief					: アニメーションキーフレーム調整値の設定
@@ -269,8 +284,6 @@ namespace cumulonimbus::component
 		void AttackingNormal02(float dt);
 		void AttackingNormal03(float dt);
 		void AttackingNormal04(float dt);
-		void AttackNormal01End(float dt);
-		void AttackNormal02End(float dt);
 		void AttackNormal04Begin(float dt);
 		void AttackNormal04End(float dt);
 		void AttackingNormalLongPress(float dt); // 通常攻撃(弱長押し)

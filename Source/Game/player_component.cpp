@@ -1,12 +1,13 @@
 #include "player_component.h"
 
-#include "locator.h"
 #include "cum_imgui_helper.h"
 #include "ecs.h"
+#include "locator.h"
 
 #include "arithmetic.h"
 #include "camera_component.h"
 #include "fbx_model_component.h"
+#include "movement_component.h"
 #include "raycast_component.h"
 #include "scene.h"
 #include "transform_component.h"
@@ -20,62 +21,69 @@ namespace adjust_key_frame
 namespace cumulonimbus::component
 {
 	PlayerComponent::PlayerComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent)
-		:Actor3DComponent{registry, ent}
+		:Actor3DComponent{ registry, ent }
 	{
 		// stateに応じての処理の登録
-		player_state.AddState(PlayerState::T_Pose					    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).TPose(dt); });
-		player_state.AddState(PlayerState::Idle						    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).Idle(dt); });
-		player_state.AddState(PlayerState::Walk_Front				    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).WalkFront(dt); });
-		player_state.AddState(PlayerState::Walk_Back				    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).WalkBack(dt); });
-		player_state.AddState(PlayerState::Dash						    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).Dash(dt); });
-		player_state.AddState(PlayerState::Avoid_Dash_Begin			    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AvoidDashBegin(dt); });
-		player_state.AddState(PlayerState::Avoid_Dash_End			    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AvoidDashEnd(dt); });
-		player_state.AddState(PlayerState::Damage_Small				    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).DamageSmall(dt); });
-		player_state.AddState(PlayerState::Damage_Big				    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).DamageBig(dt); });
-		player_state.AddState(PlayerState::Jump_Begin				    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).JumpBegin(dt); });
-		player_state.AddState(PlayerState::Jump_Loop			        , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).JumpLoop(dt); });
-		player_state.AddState(PlayerState::Jump_Landing				    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).JumpLanding(dt); });
-		player_state.AddState(PlayerState::Jump_End					    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).JumpEnd(dt); });
-		player_state.AddState(PlayerState::Knock_Down_Front_Loop	    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).KnockDownFrontLoop(dt); });
-		player_state.AddState(PlayerState::Knock_Down_Front_Stand_Up    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).KnockDownFrontStandUp(dt); });
-		player_state.AddState(PlayerState::Die						    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).Die(dt); });
-		player_state.AddState(PlayerState::Attack_Normal_01				, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingNormal01(dt); });
-		player_state.AddState(PlayerState::Attack_Normal_02				, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingNormal02(dt); });
-		player_state.AddState(PlayerState::Attack_Normal_03				, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingNormal03(dt); });
-		player_state.AddState(PlayerState::Attacking_Normal_04		    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingNormal04(dt); });
-		player_state.AddState(PlayerState::Attack_Normal_04_Begin	    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackNormal04Begin(dt); });
-		player_state.AddState(PlayerState::Attack_Normal_04_End		    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackNormal04End(dt); });
-		player_state.AddState(PlayerState::Attacking_Normal_Long_Press  , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingNormalLongPress(dt); });
-		player_state.AddState(PlayerState::Attack_Normal_Long_Press_End , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackNormalLongPressEnd(dt); });
-		player_state.AddState(PlayerState::Attack_Strong_01				, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingStrong01(dt); });
-		player_state.AddState(PlayerState::Attack_Strong_02				, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingStrong02(dt); });
-		player_state.AddState(PlayerState::Attack_Strong_03				, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingStrong03(dt); });
-		player_state.AddState(PlayerState::Attack_Strong_04				, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingStrong04(dt); });
-		player_state.AddState(PlayerState::Attack_Round_Up_Begin	    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackRoundUpBegin(dt); });
-		player_state.AddState(PlayerState::Attacking_Round_Up    	    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingRoundUp(dt); });
-		player_state.AddState(PlayerState::Attack_Round_Up_Fall			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackRoundUpFall(dt); });
-		player_state.AddState(PlayerState::Attack_Round_Up_Fall			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackRoundUpEnd(dt); });
-		player_state.AddState(PlayerState::Attacking_Jump_01			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingJump01(dt); });
-		player_state.AddState(PlayerState::Attacking_Jump_02			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingJump02(dt); });
-		player_state.AddState(PlayerState::Attacking_Jump_03			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingJump03(dt); });
-		player_state.AddState(PlayerState::Attacking_Jump_04			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingJump04(dt); });
-		player_state.AddState(PlayerState::Attack_Jump_01_End			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJump01End(dt); });
-		player_state.AddState(PlayerState::Attack_Jump_01_End			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJump02End(dt); });
-		player_state.AddState(PlayerState::Attack_Jump_01_End			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJump03End(dt); });
-		player_state.AddState(PlayerState::Attack_Jump_01_End			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJump04End(dt); });
-		player_state.AddState(PlayerState::Attacking_Jump_Strong		, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingJumpStrong(dt); });
-		player_state.AddState(PlayerState::Dash_Attack				    , [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).DashAttack(dt); });
+		player_state.AddState(PlayerState::T_Pose, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).TPose(dt); });
+		player_state.AddState(PlayerState::Idle, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).Idle(dt); });
+		player_state.AddState(PlayerState::Walk_Front, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).WalkFront(dt); });
+		player_state.AddState(PlayerState::Walk_Back, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).WalkBack(dt); });
+		player_state.AddState(PlayerState::Dash, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).Dash(dt); });
+		player_state.AddState(PlayerState::Avoid_Dash_Begin, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AvoidDashBegin(dt); });
+		player_state.AddState(PlayerState::Avoid_Dash_End, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AvoidDashEnd(dt); });
+		player_state.AddState(PlayerState::Damage_Small, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).DamageSmall(dt); });
+		player_state.AddState(PlayerState::Damage_Big, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).DamageBig(dt); });
+		player_state.AddState(PlayerState::Jump_Begin, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).JumpBegin(dt); });
+		player_state.AddState(PlayerState::Jump_Loop, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).JumpLoop(dt); });
+		player_state.AddState(PlayerState::Jump_Landing, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).JumpLanding(dt); });
+		player_state.AddState(PlayerState::Jump_End, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).JumpEnd(dt); });
+		player_state.AddState(PlayerState::Knock_Down_Front_Loop, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).KnockDownFrontLoop(dt); });
+		player_state.AddState(PlayerState::Knock_Down_Front_Stand_Up, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).KnockDownFrontStandUp(dt); });
+		player_state.AddState(PlayerState::Die, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).Die(dt); });
+		player_state.AddState(PlayerState::Attack_Normal_01, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingNormal01(dt); });
+		player_state.AddState(PlayerState::Attack_Normal_02, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingNormal02(dt); });
+		player_state.AddState(PlayerState::Attack_Normal_03, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingNormal03(dt); });
+		player_state.AddState(PlayerState::Attacking_Normal_04, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingNormal04(dt); });
+		player_state.AddState(PlayerState::Attack_Normal_04_Begin, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackNormal04Begin(dt); });
+		player_state.AddState(PlayerState::Attack_Normal_04_End, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackNormal04End(dt); });
+		player_state.AddState(PlayerState::Attacking_Normal_Long_Press, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingNormalLongPress(dt); });
+		player_state.AddState(PlayerState::Attack_Normal_Long_Press_End, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackNormalLongPressEnd(dt); });
+		player_state.AddState(PlayerState::Attack_Strong_01, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingStrong01(dt); });
+		player_state.AddState(PlayerState::Attack_Strong_02, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingStrong02(dt); });
+		player_state.AddState(PlayerState::Attack_Strong_03, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingStrong03(dt); });
+		player_state.AddState(PlayerState::Attack_Strong_04, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingStrong04(dt); });
+		player_state.AddState(PlayerState::Attack_Round_Up_Begin, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackRoundUpBegin(dt); });
+		player_state.AddState(PlayerState::Attacking_Round_Up, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingRoundUp(dt); });
+		player_state.AddState(PlayerState::Attack_Round_Up_Fall, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackRoundUpFall(dt); });
+		player_state.AddState(PlayerState::Attack_Round_Up_Fall, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackRoundUpEnd(dt); });
+		player_state.AddState(PlayerState::Attacking_Jump_01, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingJump01(dt); });
+		player_state.AddState(PlayerState::Attacking_Jump_02, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingJump02(dt); });
+		player_state.AddState(PlayerState::Attacking_Jump_03, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingJump03(dt); });
+		player_state.AddState(PlayerState::Attacking_Jump_04, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingJump04(dt); });
+		player_state.AddState(PlayerState::Attack_Jump_01_End, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJump01End(dt); });
+		player_state.AddState(PlayerState::Attack_Jump_01_End, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJump02End(dt); });
+		player_state.AddState(PlayerState::Attack_Jump_01_End, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJump03End(dt); });
+		player_state.AddState(PlayerState::Attack_Jump_01_End, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJump04End(dt); });
+		player_state.AddState(PlayerState::Attacking_Jump_Strong, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingJumpStrong(dt); });
+		player_state.AddState(PlayerState::Dash_Attack, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).DashAttack(dt); });
 
 		// 初期stateの設定(Idle)
 		player_state.SetState(PlayerState::Idle);
 
 		// アニメーションの最終キーフレームの設定
+		SetAdjustKeyFrame("walk_front", 32);
+		SetAdjustKeyFrame("avoid_dash_begin", 24);
+		SetAdjustKeyFrame("avoid_dash_end", 10);
+		SetAdjustKeyFrame("dash", 16);
 		SetAdjustKeyFrame("attack_normal_01", 40);
 		SetAdjustKeyFrame("attack_normal_02", 36);
 		SetAdjustKeyFrame("attack_strong_01", 27);
 		SetAdjustKeyFrame("attack_strong_02", 22);
 		SetAdjustKeyFrame("attack_strong_03", 22);
 		SetAdjustKeyFrame("attack_strong_04", 22);
+		SetAdjustKeyFrame("jump_start", 13);
+		SetAdjustKeyFrame("jump_loop", 46);
+		SetAdjustKeyFrame("jump_end", 17);
 
 		// 先行入力によるアニメーションの中断フレームの設定
 		SetAnimationBreakFrame(AnimationState::Attack_Normal_01, 16);
@@ -83,14 +91,14 @@ namespace cumulonimbus::component
 		SetAnimationBreakFrame(AnimationState::Attack_Normal_03, 37);
 
 		// レイキャストに関する設定
-		if(!registry->TryGetComponent<RayCastComponent>(ent))
+		if (!registry->TryGetComponent<RayCastComponent>(ent))
 		{
 			registry->AddComponent<RayCastComponent>(ent, CollisionTag::Player);
 		}
 		registry->GetComponent<RayCastComponent>(ent).SetRayOffset({ 0.0f,0.0f,0.0f });
 
 		// カメラに関する設定
-		if(!registry->TryGetComponent<CameraComponent>(ent))
+		if (!registry->TryGetComponent<CameraComponent>(ent))
 		{
 			registry->AddComponent<CameraComponent>(ent, true);
 		}
@@ -112,7 +120,7 @@ namespace cumulonimbus::component
 		// カメラワーク
 		CameraWork();
 		// 移動
-		Movement(dt);
+		//Movement(dt);
 		Rotation(dt);
 	}
 
@@ -124,7 +132,7 @@ namespace cumulonimbus::component
 		//ImGui::Text("Stick X : %f", stick.x);
 		//ImGui::Text("Stick Y : %f", stick.y);
 
-		if(ImGui::TreeNode("PlayerComponent"))
+		if (ImGui::TreeNode("PlayerComponent"))
 		{
 			ImGui::DragFloat("Walk Speed", &walk_speed, 0.5f, 0.1f, 100000);
 			ImGui::DragFloat("Dash Speed", &dash_speed, 0.5f, 0.1f, 100000);
@@ -159,46 +167,15 @@ namespace cumulonimbus::component
 
 		const DirectX::SimpleMath::Vector3 ray_start = transform_comp.GetPosition() + ray_cast_comp->GetRayOffset();
 		ray_cast_comp->SetRayStartPos(ray_start);
-		ray_cast_comp->SetRayEndPos(ray_start + DirectX::SimpleMath::Vector3{velocity.x* dt, -1.f, velocity.z* dt});
+		ray_cast_comp->SetRayEndPos(ray_start + DirectX::SimpleMath::Vector3{ velocity.x * dt, -1.f, velocity.z * dt });
 	}
 
 	void PlayerComponent::Movement(float dt)
 	{
-		const XMFLOAT2 stick_left = locator::Locator::GetInput()->GamePad().LeftThumbStick(0);
-
-		// スティック入力からXZ平面上のベクトルを算出
-		SimpleMath::Vector3 direction{ stick_left.x ,.0f,stick_left.y };
-		direction.Normalize();
-		const SimpleMath::Vector3 z_front{ .0f,.0f,1.f };
-		// Z+(0,0,1)を前方ベクトルと"direction"で角度の差分を算出
-		const float dot = direction.Dot(z_front);
-
-		if (IsDeadZone())
-			return;
-
-		// XZ平面上のカメラの前方ベクトル算出
-		// (前方ベクトル基準の移動に使用)
-		SimpleMath::Vector3 camera_front_xz = GetRegistry()->GetComponent<CameraComponent>(GetEntity()).GetCameraFront();
-		camera_front_xz.y = 0;
-		camera_front_xz.Normalize();
-		SimpleMath::Matrix rotation_mat = SimpleMath::Matrix::Identity;
-		float rad = acosf(dot);
-		// 回転する方向をスティック入力(x値)で補正
-		if (stick_left.x < 0)
-			rad *= -1;
-		rotation_mat = rotation_mat.CreateRotationY(rad);
-
-		SimpleMath::Vector3::Transform(camera_front_xz, rotation_mat, direction);
-
-		//-- プレイヤーの状態に応じての速度の変化 --//
-		if (player_state.GetState() == PlayerState::Walk_Front ||
-			player_state.GetState() == PlayerState::Walk_Back)
-		{
-			velocity.x = direction.x * walk_speed * dt;
-			velocity.z = direction.z * walk_speed * dt;
-		}
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 		transform_comp.AdjustPosition(velocity * dt);
+
+		velocity = SimpleMath::Vector3{ 0,0,0 };
 	}
 
 	void PlayerComponent::Rotation(float dt)
@@ -208,44 +185,39 @@ namespace cumulonimbus::component
 		if (IsDeadZone())
 			return;
 
-
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
-		auto& camera_comp    = GetRegistry()->GetComponent<CameraComponent>(GetEntity());
+		auto& camera_comp = GetRegistry()->GetComponent<CameraComponent>(GetEntity());
 
 		SimpleMath::Vector3 stick_direction = { stick_left.x,0.0f,stick_left.y };
 		stick_direction.Normalize();
 
-		float rad = 0;
+		// モデルの基底前方ベクトル{0,0,1}とスティック入力方向とのベクトルの角度(ラジアン)を算出
+		float rad = arithmetic::CalcAngleFromTwoVec(stick_direction, { 0,0,1 });
+		// 回転する方向をスティック入力(x値)で補正
+		if (stick_left.x < 0)
+			rad *= -1;
+		// カメラのフロントベクトルをrad分回転
+		SimpleMath::Vector3 camera_xz_front_vec = camera_comp.GetCameraFront();
+		const SimpleMath::Quaternion q = SimpleMath::Quaternion::CreateFromAxisAngle({ 0,1,0 }, rad);
+		SimpleMath::Vector3::Transform(camera_xz_front_vec, q, camera_xz_front_vec);
+		camera_xz_front_vec.y = 0;
+		camera_xz_front_vec.Normalize();
 
-		{
-			// モデルの基底前方ベクトル{0,0,1}とスティック入力方向とのベクトルの角度(ラジアン)を算出
-			rad = arithmetic::CalcAngleFromTwoVec(stick_direction, { 0,0,1 });
-			// 回転する方向をスティック入力(x値)で補正
-			if (stick_left.x < 0)
-				rad *= -1;
-			// カメラのフロントベクトルをrad分回転
-			SimpleMath::Vector3 camera_xz_front_vec= camera_comp.GetCameraFront();
-			const SimpleMath::Quaternion q = SimpleMath::Quaternion::CreateFromAxisAngle({ 0,1,0 }, rad);
-			SimpleMath::Vector3::Transform(camera_xz_front_vec, q, camera_xz_front_vec);
-			camera_xz_front_vec.y = 0;
-			camera_xz_front_vec.Normalize();
+		// モデルの前方ベクトルとfront_vecとの角度(ラジアン)を算出
+		SimpleMath::Vector3 model_xz_front = transform_comp.GetModelFront();
+		model_xz_front.y = 0;
+		model_xz_front.Normalize();
+		if (arithmetic::IsEqual(model_xz_front.x, camera_xz_front_vec.x) &&
+			arithmetic::IsEqual(model_xz_front.y, camera_xz_front_vec.y) &&
+			arithmetic::IsEqual(model_xz_front.z, camera_xz_front_vec.z))
+			return;
 
-			// モデルの前方ベクトルとfront_vecとの角度(ラジアン)を算出
-			SimpleMath::Vector3 model_xz_front = transform_comp.GetModelFront();
-			model_xz_front.y = 0;
-			model_xz_front.Normalize();
-			if (arithmetic::IsEqual(model_xz_front.x, camera_xz_front_vec.x) &&
-				arithmetic::IsEqual(model_xz_front.y, camera_xz_front_vec.y) &&
-				arithmetic::IsEqual(model_xz_front.z, camera_xz_front_vec.z))
-				return;
+		rad = arithmetic::CalcAngleFromTwoVec(camera_xz_front_vec, model_xz_front);
+		const SimpleMath::Vector3 cross_vec = model_xz_front.Cross(camera_xz_front_vec);
+		if (cross_vec.y < 0)
+			rad *= -1;
 
-			rad = arithmetic::CalcAngleFromTwoVec(camera_xz_front_vec, model_xz_front);
-			const SimpleMath::Vector3 cross_vec = model_xz_front.Cross(camera_xz_front_vec);
-			if (cross_vec.y < 0)
-				rad *= -1;
-
-			transform_comp.AdjustRotationFromAxis({ 0,1,0 }, rad);
-		}
+		transform_comp.AdjustRotationFromAxis({ 0,1,0 }, rad);
 	}
 
 	void PlayerComponent::CameraWork()
@@ -260,6 +232,14 @@ namespace cumulonimbus::component
 		camera_comp.SetFocusPosition(transform_comp.GetPosition());
 	}
 
+	void PlayerComponent::AdjustVelocity(float dt, const DirectX::SimpleMath::Vector3& speed)
+	{
+		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
+		velocity.x += transform_comp.GetModelFront().x * speed.x * dt;
+		velocity.y += 1 * speed.y * dt;
+		velocity.z += transform_comp.GetModelFront().z * speed.z * dt;
+	}
+
 	void PlayerComponent::SetAdjustKeyFrame(const std::string& animation_name, u_int keyframe)
 	{
 		if (adjust_keyframe_map.contains(animation_name))
@@ -269,7 +249,7 @@ namespace cumulonimbus::component
 		}
 
 		// "animation_name"がモデルのアニメーション名と一致するかの確認
-		for(auto& animation : GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).GetResource()->GetModelData().animations)
+		for (auto& animation : GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).GetResource()->GetModelData().animations)
 		{
 			if (animation_name == animation.animation_name)
 			{
@@ -297,8 +277,8 @@ namespace cumulonimbus::component
 
 	bool PlayerComponent::IsNextAnimationLongPressAttack() const
 	{
-		const float frame_rate	= GetRegistry()->GetScene()->GetFramework()->GetHighResolutionTimer().GetFrameRate();
-		const float fps			= 1 / frame_rate;
+		const float frame_rate = GetRegistry()->GetScene()->GetFramework()->GetHighResolutionTimer().GetFrameRate();
+		const float fps = 1 / frame_rate;
 		return long_press_time > (fps * static_cast<float>(long_press_slot)) ? true : false;
 	}
 
@@ -331,7 +311,7 @@ namespace cumulonimbus::component
 			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimStateIndex(AnimationState::T_Pose), true);
 		}
 
-		if(!GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).IsPlayAnimation())
+		if (!GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).IsPlayAnimation())
 		{// 状態遷移(PlayerState::Idle)
 			player_state.SetState(PlayerState::Idle);
 		}
@@ -347,6 +327,10 @@ namespace cumulonimbus::component
 		using namespace locator;
 		const DirectX::XMFLOAT2 stick_left = Locator::GetInput()->GamePad().LeftThumbStick(0);
 
+		{// 移動速度の設定
+			//AdjustVelocity(dt, { .0f,.0f,.0f});
+		}
+
 		if (!IsDeadZone())
 		{// 状態遷移(PlayerState::Walk)
 			player_state.SetState(PlayerState::Walk_Front);
@@ -359,7 +343,7 @@ namespace cumulonimbus::component
 		{// 状態遷移(PlayerState::Attack_Strong_01)
 			player_state.SetState(PlayerState::Attack_Strong_01);
 		}
-		else if(ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::A))
+		else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::A))
 		{// 状態遷移(PlayerState::Jump_Begin)
 			player_state.SetState(PlayerState::Jump_Begin);
 		}
@@ -374,8 +358,16 @@ namespace cumulonimbus::component
 
 		using namespace locator;
 		// ゲームパッド入力値取得(スティック、トリガー)
-		const DirectX::XMFLOAT2 stick_left	  = Locator::GetInput()->GamePad().LeftThumbStick(0);
+		const DirectX::XMFLOAT2 stick_left = Locator::GetInput()->GamePad().LeftThumbStick(0);
 		const float				trigger_right = Locator::GetInput()->GamePad().RightTrigger(0);
+
+		{// 移動速度の設定
+			//auto& physics_comp = GetRegistry()->GetComponent<PhysicsComponent>(GetEntity());
+			//physics_comp.AddForce({ walk_speed,0.0f,walk_speed });
+			auto& movement_comp = GetRegistry()->GetComponent<MovementComponent>(GetEntity());
+			movement_comp.AddForce({ walk_speed,0.0f,walk_speed });
+			//AdjustVelocity(dt, { walk_speed,0.0f,walk_speed });
+		}
 
 		{// アニメーション遷移
 			if (IsDeadZone())
@@ -429,6 +421,12 @@ namespace cumulonimbus::component
 			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Jump_Begin), false);
 		}
 
+		if (fbx_model_comp.CurrentKeyframe() > 4)
+		{
+			auto& movement_comp = GetRegistry()->GetComponent<MovementComponent>(GetEntity());
+			movement_comp.Jump();
+		}
+
 		// アニメーション再生中なら処理を中断
 		if (fbx_model_comp.IsPlayAnimation())
 			return;
@@ -440,28 +438,35 @@ namespace cumulonimbus::component
 	void PlayerComponent::JumpLoop(float dt)
 	{
 		auto& fbx_model_comp = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
+		auto& movement_comp = GetRegistry()->GetComponent<MovementComponent>(GetEntity());
 
 		if (player_state.GetInitialize())
 		{
 			// アニメーションセット(AnimationState::Jump_Loop)
 			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Jump_Loop), true);
-			// ジャンプの速度設定
-			velocity.y = 10;
 		}
 
-		if (velocity.y < 0)
-		{// アニメーション遷移(PlayerState::Jump_Landing)
-			player_state.SetState(PlayerState::Jump_Landing);
+		{// 移動速度の設定
+			const SimpleMath::Vector2 stick_left = locator::Locator::GetInput()->GamePad().LeftThumbStick(0);
+			movement_comp.AddForce({ stick_left.x * jump_movement_speed,0.0f,stick_left.y * jump_movement_speed });
 		}
 
-		using namespace locator;
-		if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-		{// 状態遷移(PlayerState::Attacking_Jump_01)
-			player_state.SetState(PlayerState::Attacking_Jump_01);
-		}
-		else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
-		{// 状態遷移(PlayerState::Attacking_Jump_Strong)
-			player_state.SetState(PlayerState::Attacking_Jump_Strong);
+		{// アニメーション遷移
+
+			if (movement_comp.GetCurrentGravity() < 0)
+			{// アニメーション遷移(PlayerState::Jump_Landing)
+				player_state.SetState(PlayerState::Jump_Landing);
+			}
+
+			using namespace locator;
+			if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
+			{// 状態遷移(PlayerState::Attacking_Jump_01)
+				player_state.SetState(PlayerState::Attacking_Jump_01);
+			}
+			else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
+			{// 状態遷移(PlayerState::Attacking_Jump_Strong)
+				player_state.SetState(PlayerState::Attacking_Jump_Strong);
+			}
 		}
 	}
 
@@ -512,8 +517,6 @@ namespace cumulonimbus::component
 	{
 	}
 
-
-
 	void PlayerComponent::DashAttack(float dt)
 	{
 
@@ -522,7 +525,7 @@ namespace cumulonimbus::component
 	void PlayerComponent::AttackingNormal01(float dt)
 	{
 		auto& fbx_model_comp = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
-		if(player_state.GetInitialize())
+		if (player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
 			// アニメーションセット(AnimationState::Attack_Normal_01)
@@ -550,7 +553,7 @@ namespace cumulonimbus::component
 			return;
 		}
 
-		if((!fbx_model_comp.IsPlayAnimation()))
+		if ((!fbx_model_comp.IsPlayAnimation()))
 		{// 先行入力なし
 			// 状態遷移(PlayerState::Idle)
 			player_state.SetState(PlayerState::Idle);
@@ -696,7 +699,7 @@ namespace cumulonimbus::component
 	void PlayerComponent::AttackingNormal04(float dt)
 	{
 		auto& fbx_model_comp = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
-		if(player_state.GetInitialize())
+		if (player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
 			// アニメーションセット(AnimationState::Attacking_Normal_04)
@@ -740,7 +743,7 @@ namespace cumulonimbus::component
 	void PlayerComponent::AttackingStrong01(float dt)
 	{
 		auto& fbx_model_comp = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
-		if(player_state.GetInitialize())
+		if (player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
 			// アニメーションセット(AnimationState::Attack_Strong_01)
@@ -920,41 +923,49 @@ namespace cumulonimbus::component
 
 	void PlayerComponent::AvoidDashBegin(float dt)
 	{
-		if(player_state.GetInitialize())
+		if (player_state.GetInitialize())
 		{// アニメーションセット(AnimationState::Avoid_Dash_Begin)
 			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimStateIndex(AnimationState::Avoid_Dash_Begin), false);
 		}
 
-		// アニメーション再生中なら処理を中断
-		if (GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).IsPlayAnimation())
-			return;
-
-		using namespace locator;
-		// ゲームパッド入力値取得(スティック、トリガー)
-		const DirectX::XMFLOAT2 stick_left    = Locator::GetInput()->GamePad().LeftThumbStick(0);
-		const float				trigger_right = Locator::GetInput()->GamePad().RightTrigger(0);
-		if(trigger_right < threshold)
-		{//	状態遷移(PlayerState::Avoid_Dash_End)
-			player_state.SetState(PlayerState::Avoid_Dash_End);
+		{// 移動速度の設定
+			auto& movement_comp = GetRegistry()->GetComponent<MovementComponent>(GetEntity());
+			movement_comp.AddForce({ avoid_dash_speed,0.0f,avoid_dash_speed });
+			//AdjustVelocity(dt, { avoid_dash_speed,0.0f,avoid_dash_speed });
 		}
-		else
-		{
-			if (stick_left.x < threshold && stick_left.y < threshold)
-			{// スティック入力なし
-				// 状態遷移(PlayerState::Avoid_Dash_End)
+
+		{// アニメーション遷移
+			// アニメーション再生中なら処理を中断
+			if (GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).IsPlayAnimation())
+				return;
+
+			using namespace locator;
+			// ゲームパッド入力値取得(スティック、トリガー)
+			const DirectX::XMFLOAT2 stick_left = Locator::GetInput()->GamePad().LeftThumbStick(0);
+			const float				trigger_right = Locator::GetInput()->GamePad().RightTrigger(0);
+			if (trigger_right < threshold)
+			{//	状態遷移(PlayerState::Avoid_Dash_End)
 				player_state.SetState(PlayerState::Avoid_Dash_End);
 			}
 			else
-			{// スティック入力あり
-				// 状態遷移(PlayerState::Dash)
-				player_state.SetState(PlayerState::Dash);
+			{
+				if (stick_left.x < threshold && stick_left.y < threshold)
+				{// スティック入力なし
+					// 状態遷移(PlayerState::Avoid_Dash_End)
+					player_state.SetState(PlayerState::Avoid_Dash_End);
+				}
+				else
+				{// スティック入力あり
+					// 状態遷移(PlayerState::Dash)
+					player_state.SetState(PlayerState::Dash);
+				}
 			}
 		}
 	}
 
 	void PlayerComponent::AvoidDashEnd(float dt)
 	{
-		if(player_state.GetInitialize())
+		if (player_state.GetInitialize())
 		{// アニメーションセット(AnimationState::Avoid_Dash_End)
 			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimStateIndex(AnimationState::Avoid_Dash_End), false);
 		}
@@ -978,35 +989,43 @@ namespace cumulonimbus::component
 
 	void PlayerComponent::Dash(float dt)
 	{
-		if(player_state.GetInitialize())
+		if (player_state.GetInitialize())
 		{// アニメーションセット(AnimationState::Dash)
 			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimStateIndex(AnimationState::Dash), true);
 		}
 
-		// ゲームパッド入力値取得(スティック、トリガー)
-		using namespace locator;
-		const DirectX::XMFLOAT2 stick_left    = Locator::GetInput()->GamePad().LeftThumbStick(0);
-		const float				trigger_right = Locator::GetInput()->GamePad().RightTrigger(0);
-		if(trigger_right < threshold)
-		{
-			if (stick_left.x > threshold || stick_left.y > threshold)
-			{// 状態遷移(PlayerState::Walk)
-				player_state.SetState(PlayerState::Walk_Front);
+		{// 移動速度の設定
+			auto& movement_comp = GetRegistry()->GetComponent<MovementComponent>(GetEntity());
+			movement_comp.AddForce({ dash_speed,0.0f,dash_speed });
+			//AdjustVelocity(dt, { dash_speed,0.0f,dash_speed });
+		}
+
+		{// アニメーション遷移
+			// ゲームパッド入力値取得(スティック、トリガー)
+			using namespace locator;
+			const DirectX::XMFLOAT2 stick_left = Locator::GetInput()->GamePad().LeftThumbStick(0);
+			const float				trigger_right = Locator::GetInput()->GamePad().RightTrigger(0);
+			if (trigger_right < threshold)
+			{
+				if (stick_left.x > threshold || stick_left.y > threshold)
+				{// 状態遷移(PlayerState::Walk)
+					player_state.SetState(PlayerState::Walk_Front);
+				}
+				else
+				{// 状態遷移(PlayerState::Idle)
+					player_state.SetState(PlayerState::Idle);
+				}
 			}
 			else
-			{// 状態遷移(PlayerState::Idle)
-				player_state.SetState(PlayerState::Idle);
-			}
-		}
-		else
-		{
-			if(ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-			{// 状態遷移(PlayerState::Dash_Attack)
-				player_state.SetState(PlayerState::Dash_Attack);
-			}
-			if(ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::A))
-			{// 状態遷移(PlayerState::Jump_Begin)
-				player_state.SetState(PlayerState::Jump_Begin);
+			{
+				if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
+				{// 状態遷移(PlayerState::Dash_Attack)
+					player_state.SetState(PlayerState::Dash_Attack);
+				}
+				if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::A))
+				{// 状態遷移(PlayerState::Jump_Begin)
+					player_state.SetState(PlayerState::Jump_Begin);
+				}
 			}
 		}
 	}
