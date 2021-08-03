@@ -19,8 +19,23 @@ namespace cumulonimbus::component
 		void Save(const std::string& file_path) override;
 		void Load(const std::string& file_path_and_name) override;
 
+		/**
+		 * @brief		: モデルの前方ベクトルに力を加える
+		 * @param force	: 力を加える量
+		 */
 		void AddForce(const DirectX::SimpleMath::Vector3& force);
+		/**
+		 * @brief			: ジャンプ処理関数
+		 * @param strength	: ジャンプ強度(0未満の場合はメンバ変数(jump_strength)の値を使用する)
+		 * @attention		: 関数を呼ぶたびにジャンプされる(多段ジャンプのようになる)
+		 */
 		void Jump(float strength = -1);
+		/**
+		 * @brief		: ジャンプを止める
+		 * @param flg	: true  -> 重力を含む位置更新処理を止める(is_gravityとfalseにする)。current_gravityの値を0にリセット
+		 *				  false -> is_gravityをtrueにする
+		 */
+		void JumpStop(bool flg);
 
 		[[nodiscard]] const DirectX::SimpleMath::Vector3& GetVelocity()     const { return velocity; }
 		[[nodiscard]] const DirectX::SimpleMath::Vector3& GetAcceleration() const { return acceleration; }

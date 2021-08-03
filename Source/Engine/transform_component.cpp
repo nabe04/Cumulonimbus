@@ -11,7 +11,6 @@
 #include "cereal_helper.h"
 #include "component_base.h"
 #include "file_path_helper.h"
-#include "transform.h"
 #include "locator.h"
 
 using namespace DirectX;

@@ -80,46 +80,52 @@ namespace cumulonimbus::component
 		void Update(float delta_time) override;
 		void RenderImGui() override;
 
-		/*
-		 * brief			: 指定された要素のマテリアル情報(シェーダー、シェーダーパラメータ、テクスチャ)の取得
-		 * material_index   : メッシュのsubsetが持つmaterial_indexを指定
+		/**
+		 * @brief					: 指定された要素のマテリアル情報(シェーダー、シェーダーパラメータ、テクスチャ)の取得
+		 * @param material_index	: メッシュのsubsetが持つmaterial_indexを指定
 		 */
 		[[nodiscard]] const shader_asset::Material3DManager* GetMaterialsManager(uint material_index) const;
-		/*
-		 * brief			: 指定されて要素のPBRマテリアル情報の取得
-		 * material_index   : メッシュのsubsetが持つmaterial_indexを指定
+		/**
+		 * @brief					: 指定されて要素のPBRマテリアル情報の取得
+		 * @param material_index	: メッシュのsubsetが持つmaterial_indexを指定
 		 */
 		[[nodiscard]] const shader_asset::PBRMaterial* GetPBRMaterial(uint material_index) const;
 
-		/*
-		 * brief			: 指定された要素のPBRマテリアルの持つコンスタントバッファのバインド
-		 * material_index	: メッシュのsubsetが持つmaterial_index
-		 * slot番号			: CBSlot_Material(4)
+		/**
+		 * @brief					: 指定された要素のPBRマテリアルの持つコンスタントバッファのバインド
+		 *							  CBufferスロット番号->CBSlot_Material(4)
+		 * @param  material_index	: メッシュのsubsetが持つmaterial_index
 		 */
 		void BindPBRMaterialCBuff(uint material_index) const;
 		void UnbindPBRMaterialCBuff(uint material_index) const;
-		/*
-		 * brief			: 指定された要素のPBRマテリアルの持つテクスチャのバインド
-		 * material_index	: メッシュのsubsetが持つmaterial_index
-		 * slot番号			: TexSlot_BaseColorMap(20)
-		 *					  TexSlot_NormalMap(21)
-		 *					  TexSlot_PBRMap(32)
-		 *					  TexSlot_RoughnessMap(27)
-		 *					  TexSlot_SpecularMap(28)
-		 *					  TexSlot_AOMap(33)
+		/**
+		 * @brief					: 指定された要素のPBRマテリアルの持つテクスチャのバインド
+		 *							  Textureスロット番号->TexSlot_BaseColorMap(20)
+		 *												   TexSlot_NormalMap(21)
+		 *												   TexSlot_PBRMap(32)
+		 *												   TexSlot_RoughnessMap(27)
+		 *												   TexSlot_SpecularMap(28)
+		 *												   TexSlot_AOMap(33)
+		 * @param material_index	: メッシュのsubsetが持つmaterial_index
 		 */
 		void BindPBRMaterialTexture(uint material_index) const;
 		void UnbindPBRMaterialTexture(uint material_index) const;
-		/*
-		 * brief			:  指定された要素のPBRマテリアルの持つ
-		 *					   コンスタントバッファ、テクスチャのバインド
-		 * material_index	: メッシュのsubsetが持つmaterial_index
+		/**
+		 * @brief					:  指定された要素のPBRマテリアルの持つ
+		 *							   コンスタントバッファ、テクスチャのバインド
+		 * @param material_index	: メッシュのsubsetが持つmaterial_index
 		 */
 		void BindPBRMaterialCBuffAndTexture(uint material_index) const;
 		void UnbindPBRMaterialCBuffAndTexture(uint material_index) const;
 
 		// アニメーション
 		[[nodiscard]] bool IsPlayAnimation() const { return current_animation_index >= 0; }
+		/**
+		 * @brief					: アニメーションの遷移
+		 * @param animation_index	: 格納されているアニメーションの要素番号
+		 * @param loop				: ループ再生をするか
+		 * @param switch_time		: 次のアニメーションに遷移するまでの時間
+		 */
 		void SwitchAnimation(int animation_index, bool loop = false, float switch_time = 0.1f);
 
 		[[nodiscard]] const DirectX::SimpleMath::Matrix& GetNodeMatrix(const char* node_name);

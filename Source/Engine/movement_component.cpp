@@ -22,11 +22,6 @@ namespace cumulonimbus::component
 			current_gravity = 0;
 		}
 
-		if (locator::Locator::GetInput()->Keyboard().GetState(Keycode::Space) == ButtonState::Press)
-		{
-			Jump();
-		}
-
 		if(is_gravity)
 		{
 			current_gravity += gravity;
@@ -69,6 +64,20 @@ namespace cumulonimbus::component
 
 		AddForce({ 0,current_gravity,0 });
 	}
+
+	void MovementComponent::JumpStop(bool flg)
+	{
+		if(flg)
+		{
+			is_gravity = false;
+			current_gravity = 0.0f;
+		}
+		else
+		{
+			is_gravity = true;
+		}
+	}
+
 
 	void MovementComponent::Integrate(float dt)
 	{
