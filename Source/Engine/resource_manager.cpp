@@ -29,6 +29,22 @@ void ResourceManager::Initialize(ID3D11Device* device)
 		std::shared_ptr<FbxModelResource> robo2_resource = std::make_shared<FbxModelResource>(device, robo2_filename, "./Data/Assets/FBX/Robo/");
 		AddFBXData(robo2_resource);
 
+		// Enemies
+		// DeepSeaLizard
+		const char* deep_sea_lizard_filename = "./Data/Assets/Bin/DeepSeaLizard.bin";
+		std::shared_ptr<FbxModelResource> deep_sea_lizard_resource = std::make_shared<FbxModelResource>(device, deep_sea_lizard_filename, "./Data/Assets/FBX/Enemies/E_00_DeepSeaLizard");
+		AddFBXData(deep_sea_lizard_resource);
+
+		// Lich
+		const char* lich_filename = "./Data/Assets/Bin/Lich.bin";
+		std::shared_ptr<FbxModelResource> lich_resource = std::make_shared<FbxModelResource>(device, lich_filename, "./Data/Assets/FBX/Enemies/E_05_Lich");
+		AddFBXData(lich_resource);
+
+		// SkeletonWarrior
+		const char* skeleton_wrrior_filename = "./Data/Assets/Bin/SkeletonWarrior.bin";
+		std::shared_ptr<FbxModelResource>  skeleton_wrrior_resource = std::make_shared<FbxModelResource>(device, skeleton_wrrior_filename, "./Data/Assets/FBX/Enemies/E_09_SkeletonWarrior");
+		AddFBXData(skeleton_wrrior_resource);
+
 		// Cube
 		const char* cube_filename  = "./Data/Assets/Bin/cube.bin";  // "./Data/Assets/FBX/stage/stage.fbm/"
 		std::shared_ptr<FbxModelResource> cube_resource = std::make_shared<FbxModelResource>(device, cube_filename, " ");

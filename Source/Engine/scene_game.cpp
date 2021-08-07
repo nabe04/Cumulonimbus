@@ -85,6 +85,10 @@ void SceneGame::InitializeScene()
 	registry->GetComponent<cum::component::TransformComponent>(ent_sphere2).SetPosition({ 2, 0, 0 });
 	registry->GetComponent<cum::component::TransformComponent>(ent_sphere2).SetWorldRotation_Y(180);
 
+	const cum::mapping::rename_type::Entity ent_ene_00 = registry->CreateEntity();
+	registry->AddComponent<cum::component::MeshObjectComponent>(ent_ene_00);
+	registry->AddComponent<cum::component::FbxModelComponent>(ent_ene_00, cum::locator::Locator::GetResourceManager()->FbxModelResouece("SkeletonWarrior"));
+
 	const cum::mapping::rename_type::Entity ent_player = registry->CreateEntity();
 	registry->AddComponent<cum::component::MeshObjectComponent>(ent_player);
 	registry->AddComponent<cum::component::FbxModelComponent>(ent_player, cum::locator::Locator::GetResourceManager()->FbxModelResouece("Robo"));
@@ -102,7 +106,6 @@ void SceneGame::InitializeScene()
 	registry->GetComponent<cum::component::CameraComponent>(ent_player).AttachObject(ent_player);
 	registry->GetComponent<cum::component::CameraComponent>(ent_player).InitializeObjectCameraParam(300);
 	registry->GetComponent<cum::component::CameraComponent>(ent_player).SetIsDebugCamera(false);
-	//registry->GetComponent<cum::component::CameraComponent>(ent_player).SetViewInfo({ 25,100,-300 }, { .0f, .0f, .0f }, XMFLOAT3(.0f, 1.0f, .0f));
 	registry->GetComponent<cum::component::CameraComponent>(ent_player).SetProjection(XM_PI / 8.0f, static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
 	registry->GetComponent<cum::component::TransformComponent>(ent_player).ActiveQuaternion();
 }
