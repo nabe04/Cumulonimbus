@@ -28,7 +28,7 @@ namespace cumulonimbus::component
 		 * @param height			: ビュー行列時の高さ(デフォルトはスクリーンの高さ)
 		 */
 		explicit CameraComponent(
-			ecs::Registry* registry, const mapping::rename_type::Entity ent,
+			ecs::Registry* registry, mapping::rename_type::Entity ent,
 			bool is_main_camera = true,
 			float width  = locator::Locator::GetWindow()->Width(),
 			float height = locator::Locator::GetWindow()->Height());
@@ -235,7 +235,7 @@ namespace cumulonimbus::component
 		 *			カメラの最大角をもとにカメラ前方ベクトル(front_vec)を調整
 		 */
 		void AdjustCameraAngle();
-		
+
 		/**
 		 * @brief : コンスタントバッファパラメータのセット
 		 *			(Update関数の最後で行う)

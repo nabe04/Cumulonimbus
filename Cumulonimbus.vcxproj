@@ -143,6 +143,8 @@
     <ClInclude Include="Source\Engine\vertex_shader.h" />
     <ClInclude Include="Source\Engine\camera_component.h" />
     <ClInclude Include="Source\Engine\window.h" />
+    <ClInclude Include="Source\Game\enemy_base_component.h" />
+    <ClInclude Include="Source\Game\enemy_slime_component.h" />
     <ClInclude Include="Source\Game\player_component.h" />
     <ClInclude Include="Source\Game\rotation_sample.h" />
     <ClInclude Include="Source\Game\sound_resource.h" />
@@ -255,6 +257,7 @@
     <ClCompile Include="Source\Engine\camera_component.cpp" />
     <ClCompile Include="Source\Engine\toon.cpp" />
     <ClCompile Include="Source\Engine\window.cpp" />
+    <ClCompile Include="Source\Game\enemy_base_component.cpp" />
     <ClCompile Include="Source\Game\player_component.cpp" />
     <ClCompile Include="Source\Game\sound_resource.cpp" />
     <ClCompile Include="Source\scene01.cpp" />

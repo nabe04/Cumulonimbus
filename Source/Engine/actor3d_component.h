@@ -21,10 +21,8 @@ namespace cumulonimbus::component
 		void Update(float dt)   override{}
 		void RenderImGui()		override{}
 
-		void Save(const std::string& file_path)			 override{}
-		void Load(const std::string& file_path_and_name) override{}
-	protected:
-		DirectX::SimpleMath::Vector3 velocity{};
+		void Save(const std::string& file_path)			 override {}
+		void Load(const std::string& file_path_and_name) override {}
 	};
 } // cumulonimbus::component
 

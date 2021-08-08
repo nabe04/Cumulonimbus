@@ -10,14 +10,13 @@
 
 #include "actor3d_component.h"
 #include "state_machine.h"
-#include "enum_state_map.h"
 
 namespace cumulonimbus::component
 {
 	class PlayerComponent final : public Actor3DComponent
 	{
 	private:
-		// プレイヤーの状態を表す
+		// プレイヤーの状態遷移表
 		enum class PlayerState
 		{
 			T_Pose,
@@ -130,22 +129,8 @@ namespace cumulonimbus::component
 
 			End
 		};
-
-		/**
-		 * @brief : アニメーション再生中に次のアニメーションに移行するためのフレーム
-		 *			(攻撃などの先行入力でモーション最中にアニメーションを移行するときなどに使用)
-		 */
-		enum class NextAnimationFrame
-		{
-			Attack_Normal_01,
-			Attack_Normal_02,
-			Attack_Normal_03,
-
-			End
-		};
-
 	public:
-		explicit PlayerComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent);
+		explicit PlayerComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
 		explicit PlayerComponent() = default; // for cereal
 		~PlayerComponent() override = default;
 
@@ -153,10 +138,10 @@ namespace cumulonimbus::component
 		void Update(float dt)	override;
 		void RenderImGui()		override;
 
-		void Save(const std::string& file_path) override;
+		void Save(const std::string& file_path)			 override;
 		void Load(const std::string& file_path_and_name) override;
 	private:
-		// プレイヤーの状態変数
+		// プレイヤーの状態管理変数
 		StateMachine<PlayerState, void, const float> player_state{};
 		// 先行入力(入力なし(リセット) == PlayerState::End)
 		PlayerState precede_input = PlayerState::End;
@@ -218,13 +203,6 @@ namespace cumulonimbus::component
 		 * @brief : カメラワーク管理関数
 		 */
 		void CameraWork();
-
-		/**
-		 * @brief		: 速度調整関数
-		 * @param dt	: delta time
-		 * @param speed	: xyzそれぞれの方向の速度
-		 */
-		void AdjustVelocity(float dt, const DirectX::SimpleMath::Vector3& speed);
 
 		/**
 		 * @brief					: アニメーションキーフレーム調整値の設定

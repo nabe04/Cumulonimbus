@@ -173,18 +173,19 @@ namespace cumulonimbus::component
 			return;
 
 		const auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
+		const auto& movement_comp  = GetRegistry()->GetComponent<MovementComponent>(GetEntity());
 
 		const DirectX::SimpleMath::Vector3 ray_start = transform_comp.GetPosition() + ray_cast_comp->GetRayOffset();
 		ray_cast_comp->SetRayStartPos(ray_start);
-		ray_cast_comp->SetRayEndPos(ray_start + DirectX::SimpleMath::Vector3{ velocity.x * dt, -1.f, velocity.z * dt });
+		ray_cast_comp->SetRayEndPos(ray_start + DirectX::SimpleMath::Vector3{ movement_comp.GetVelocity().x * dt, -1.f, movement_comp.GetVelocity().z * dt });
 	}
 
 	void PlayerComponent::Movement(float dt)
 	{
-		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
-		transform_comp.AdjustPosition(velocity * dt);
+		//auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
+		//transform_comp.AdjustPosition(velocity * dt);
 
-		velocity = SimpleMath::Vector3{ 0,0,0 };
+		//velocity = SimpleMath::Vector3{ 0,0,0 };
 	}
 
 	void PlayerComponent::Rotation(float dt)
@@ -239,14 +240,6 @@ namespace cumulonimbus::component
 		camera_comp.RotationFrontVectorFromUpVector(rad_x * camera_comp.GetCameraSpeed().x);
 		camera_comp.RotationFrontVectorFromRightVector(rad_y * camera_comp.GetCameraSpeed().y);
 		camera_comp.SetFocusPosition(transform_comp.GetPosition());
-	}
-
-	void PlayerComponent::AdjustVelocity(float dt, const DirectX::SimpleMath::Vector3& speed)
-	{
-		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
-		velocity.x += transform_comp.GetModelFront().x * speed.x * dt;
-		velocity.y += 1 * speed.y * dt;
-		velocity.z += transform_comp.GetModelFront().z * speed.z * dt;
 	}
 
 	void PlayerComponent::SetAdjustKeyFrame(const std::string& animation_name, u_int keyframe)
