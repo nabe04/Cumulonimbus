@@ -61,14 +61,21 @@ namespace cumulonimbus::component
 		// 敵(Slime)の状態管理変数
 		StateMachine<SlimeState, void, const float> slime_state{};
 		// 行動(状態)遷移用タイマー
-		std::unordered_map<SlimeState, RangeFloat> timer_range{};
-		// 回転角
-		RangeFloat angle_range{};
+		std::unordered_map<SlimeState, RandomFloat> transition_timer{};
+		// モデルのyaw回転(度数法)のランダム値
+		RandomFloat random_rotation_angle{};
 
 		/**
-		 * @brief : "timer_range"変数の値設定用関数
+		 * @brief : "transition_timer"メンバ変数の値設定用関数
 		 */
-		void AddTimerRange(SlimeState state, const RangeFloat& range);
+		void AddTimerRange(SlimeState state, const RandomFloat& range);
+		/**
+		 * @brief : "random_rotation_angle"メンバ変数の値設定用関数
+		 * @brief : min、maxで指定した範囲内でのランダム値の算出
+		 * @param min : 最小値
+		 * @param max : 最大値
+		 */
+		void SetRandomRotationAngle(float min, float max);
 
 		/**
 		 * @brief : enum class(AnimationData)をint型に変換

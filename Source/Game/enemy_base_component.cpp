@@ -4,7 +4,7 @@
 
 namespace cumulonimbus::component
 {
-	void EnemyBaseComponent::RangeTimerFloat::SetRandomVal()
+	void EnemyBaseComponent::RandomFloat::SetRandomVal()
 	{
 		random_val = arithmetic::RandomFloatInRange(min, max);
 	}

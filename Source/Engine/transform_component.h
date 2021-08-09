@@ -104,6 +104,17 @@ namespace cumulonimbus::component
 		// Quaternion
 		void ActiveQuaternion()  { is_quaternion = true; }
 		void PassiveQuaternion() { is_quaternion = false; }
+		/**
+		 * @brief : 球面線形補間で使用する値の設定
+		 * @param v1 : 補完前のベクトル
+		 * @param v2 : 補完後のベクトル
+		 */
+		void SetQuaternionSlerp(const DirectX::SimpleMath::Vector3& v1, const DirectX::SimpleMath::Vector3& v2);
+		/**
+		 * @brief   : "rotation_prev_quaternion"と"rotation_result_quaternion"間の補完
+		 * @param t : 補間制御係数(t == 0 : rotation_prev_quaternion、 t == 1 : rotation_result_quaternion)
+		 */
+		void QuaternionSlerp(float t);
 		void SetRotationQuaternion(const DirectX::SimpleMath::Quaternion& q)		{ rotation_quaternion = q; }
 		void SetRotationResultQuaternion(const DirectX::SimpleMath::Quaternion& q)	{ rotation_result_quaternion = q; }
 		[[nodiscard]] const auto& GetRotationQuaternion()		const { return rotation_quaternion; }
@@ -209,6 +220,7 @@ namespace cumulonimbus::component
 
 		// Quaternion
 		DirectX::SimpleMath::Quaternion rotation_quaternion{};
+		DirectX::SimpleMath::Quaternion rotation_prev_quaternion{};		// Slerp時の変形前のクォータニオン値
 		DirectX::SimpleMath::Quaternion rotation_result_quaternion{};	// Slerp時の変形後のクォータニオン値
 
 		enum Bit
@@ -219,7 +231,7 @@ namespace cumulonimbus::component
 		};
 		std::bitset<3> set_angle_bit_flg;
 
-		bool is_billboard = false;
+		bool is_billboard  = false;
 		bool is_quaternion = false;
 
 		void CreateScaling4x4();

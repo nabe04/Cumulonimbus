@@ -22,10 +22,10 @@ namespace cumulonimbus::component
 
 	protected:
 		/**
-		 * @brief : ランダムなfloat値を設定する構造体
+		 * @brief : 最小値、最大値からランダムなfloat値を設定する構造体
 		 * @brief : 用途は自由
 		 */
-		struct RangeFloat
+		struct RandomFloat
 		{
 			float min			= 0; // 最小値
 			float max			= 1; // 最大値

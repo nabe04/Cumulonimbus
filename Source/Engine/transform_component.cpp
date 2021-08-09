@@ -110,7 +110,7 @@ namespace cumulonimbus::component
 		{
 			//AdjustRotationFromAxis({ 0,1,0 }, XMConvertToRadians(1));
 			r = XMMatrixRotationQuaternion(XMLoadFloat4(&rotation_quaternion));
-			angle = arithmetic::QuaternionToEulerAngle(rotation_quaternion);
+			angle   = arithmetic::QuaternionToEulerAngle(rotation_quaternion);
 			angle.x = XMConvertToDegrees(angle.x);
 			angle.y = XMConvertToDegrees(angle.y);
 			angle.z = XMConvertToDegrees(angle.z);
@@ -216,6 +216,17 @@ namespace cumulonimbus::component
 
 		XMStoreFloat4x4(&rotation_matrix, rotatin_matrix);
 		//rotation_f4x4._41 = rotation_f4x4._42 = rotation_f4x4._43 = rotation_f4x4._44 = 0;
+	}
+
+	void TransformComponent::SetQuaternionSlerp(const DirectX::SimpleMath::Vector3& v1, const DirectX::SimpleMath::Vector3& v2)
+	{
+		rotation_prev_quaternion   = Quaternion{ v1.x,v1.y,v1.z,0.0f };
+		rotation_result_quaternion = Quaternion{ v2.x,v2.y,v2.z,0.0f };
+	}
+
+	void TransformComponent::QuaternionSlerp(const float t)
+	{
+		rotation_quaternion = Quaternion::Slerp(rotation_prev_quaternion, rotation_result_quaternion, t);
 	}
 
 	void TransformComponent::AdjustRotationFromAxis(const DirectX::SimpleMath::Vector3& axis, float angle)

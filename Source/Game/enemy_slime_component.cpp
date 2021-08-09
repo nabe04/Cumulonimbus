@@ -26,8 +26,11 @@ namespace cumulonimbus::component
 		// 初期stateの設定(Idle)
 		slime_state.SetState(SlimeState::Idle);
 
-		// timer_rangeの設定
+		// transition_timerの設定
 		AddTimerRange(SlimeState::Idle, { 3.f,7.f });
+
+		// yaw回転でのランダム値設定
+		SetRandomRotationAngle(-180.f, 180.f);
 	}
 
 	void EnemySlimeComponent::Update(float dt)
@@ -46,18 +49,26 @@ namespace cumulonimbus::component
 	{
 	}
 
-	void EnemySlimeComponent::AddTimerRange(SlimeState state, const RangeTimerFloat& range)
+	void EnemySlimeComponent::AddTimerRange(SlimeState state, const RandomFloat& range)
 	{
-		if(timer_range.contains(state))
+		if(transition_timer.contains(state))
 		{
-			timer_range.at(state) = range;
-			timer_range.at(state).SetRandomVal();
+			transition_timer.at(state) = range;
+			transition_timer.at(state).SetRandomVal();
 			return;
 		}
 
-		timer_range.insert(std::make_pair(state, range));
-		timer_range.at(state).SetRandomVal();
+		transition_timer.insert(std::make_pair(state, range));
+		transition_timer.at(state).SetRandomVal();
 	}
+
+	void EnemySlimeComponent::SetRandomRotationAngle(const float min, const float max)
+	{
+		random_rotation_angle.min = min;
+		random_rotation_angle.max = max;
+		random_rotation_angle.SetRandomVal();
+	}
+
 
 	int EnemySlimeComponent::GetAnimDataIndex(const AnimationData anim_data) const
 	{
@@ -72,7 +83,7 @@ namespace cumulonimbus::component
 
 	void EnemySlimeComponent::Idle(float dt)
 	{
-		auto& timer = timer_range.at(SlimeState::Idle);
+		auto& timer = transition_timer.at(SlimeState::Idle);
 
 		if(slime_state.GetInitialize())
 		{
@@ -93,13 +104,26 @@ namespace cumulonimbus::component
 
 	void EnemySlimeComponent::Walk(float dt)
 	{
+		auto& fbx_model_comp = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
 		auto& movement_comp  = GetRegistry()->GetComponent<MovementComponent>(GetEntity());
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 		if(slime_state.GetInitialize())
 		{
+			// アニメーションセット(AnimationData::Walk)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Walk), true);
 
+			{// モデル回転の初期設定
+				random_rotation_angle.SetRandomVal();
+				const DirectX::SimpleMath::Quaternion rotation_result_q = DirectX::SimpleMath::Quaternion::CreateFromAxisAngle({ 0,1,0 }, DirectX::XMConvertToRadians(random_rotation_angle.random_val));
+				const DirectX::SimpleMath::Vector3 result_model_front = DirectX::SimpleMath::Vector3::Transform(transform_comp.GetModelFront(), rotation_result_q);
+				const DirectX::SimpleMath::Quaternion q1{ transform_comp.GetModelFront().x,transform_comp.GetModelFront().y,transform_comp.GetModelFront().z,0.0f };
+				const DirectX::SimpleMath::Quaternion q2{ result_model_front.x,result_model_front.y,result_model_front.z,0.0f };
+
+				transform_comp.SetRotationQuaternion(DirectX::SimpleMath::Quaternion::Slerp(q1, q2, 0.0f));
+			}
 		}
 
+		//DirectX::SimpleMath::Quaternion::Slerp();
 	}
 
 
