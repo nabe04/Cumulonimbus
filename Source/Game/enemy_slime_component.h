@@ -1,4 +1,6 @@
 #pragma once
+#include <unordered_map>
+
 #include "enemy_base_component.h"
 #include "state_machine.h"
 
@@ -7,7 +9,10 @@ namespace cumulonimbus::component
 	class EnemySlimeComponent final : public EnemyBaseComponent
 	{
 	private:
-		// 敵(Slime)の状態遷移表
+
+		/**
+		 * @brief : 敵(Slime)の状態遷移表
+		 */
 		enum class SlimeState
 		{
 			T_Pose,
@@ -23,7 +28,9 @@ namespace cumulonimbus::component
 			End
 		};
 
-		// FBXが持つアニメーションデータ
+		/**
+		 * @brief : FBXが持つアニメーションデータ
+		 */
 		enum class AnimationData
 		{
 			Idle_00,
@@ -52,5 +59,33 @@ namespace cumulonimbus::component
 
 	private:
 		// 敵(Slime)の状態管理変数
+		StateMachine<SlimeState, void, const float> slime_state{};
+		// 行動(状態)遷移用タイマー
+		std::unordered_map<SlimeState, RangeFloat> timer_range{};
+		// 回転角
+		RangeFloat angle_range{};
+
+		/**
+		 * @brief : "timer_range"変数の値設定用関数
+		 */
+		void AddTimerRange(SlimeState state, const RangeFloat& range);
+
+		/**
+		 * @brief : enum class(AnimationData)をint型に変換
+		 */
+		[[nodiscard]] int GetAnimDataIndex(AnimationData anim_data) const;
+
+		/**
+		 * @brief : StateMachineクラスで管理する敵の状態関数
+		 */
+		void TPose(float dt);
+		void Idle(float dt);
+		void Walk(float dt);
+		void Birth(float dt);
+		void Death(float dt);
+		void Hit(float dt);
+		void Stun(float dt);
+		void AttackBite(float dt);
+		void AttackCharge(float dt);
 	};
 } // cumulonimbus::component

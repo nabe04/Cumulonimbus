@@ -220,15 +220,14 @@ namespace cumulonimbus::component
 
 	void TransformComponent::AdjustRotationFromAxis(const DirectX::SimpleMath::Vector3& axis, float angle)
 	{
-		SimpleMath::Quaternion q = SimpleMath::Quaternion::CreateFromAxisAngle(axis, angle);
+		const SimpleMath::Quaternion q = SimpleMath::Quaternion::CreateFromAxisAngle(axis, angle);
 		rotation_quaternion *= q;
 	}
 
-
 	XMMATRIX TransformComponent::GetRotationMatrix(XMFLOAT3 axis, float angle/* degree */)
 	{
-		XMVECTOR axis_vec = XMLoadFloat3(&axis);
-		XMVECTOR calc_val = XMQuaternionRotationAxis(axis_vec, XMConvertToRadians(angle));
+		const XMVECTOR axis_vec = XMLoadFloat3(&axis);
+		const XMVECTOR calc_val = XMQuaternionRotationAxis(axis_vec, XMConvertToRadians(angle));
 
 		return XMMatrixRotationQuaternion(calc_val);
 	}

@@ -104,6 +104,10 @@ namespace cumulonimbus::component
 		// Quaternion
 		void ActiveQuaternion()  { is_quaternion = true; }
 		void PassiveQuaternion() { is_quaternion = false; }
+		void SetRotationQuaternion(const DirectX::SimpleMath::Quaternion& q)		{ rotation_quaternion = q; }
+		void SetRotationResultQuaternion(const DirectX::SimpleMath::Quaternion& q)	{ rotation_result_quaternion = q; }
+		[[nodiscard]] const auto& GetRotationQuaternion()		const { return rotation_quaternion; }
+		[[nodiscard]] const auto& GetRotationResultQuaternion() const { return rotation_result_quaternion; }
 
 		/**
 		 * @brief	    : モデルの任意軸回転
@@ -205,6 +209,7 @@ namespace cumulonimbus::component
 
 		// Quaternion
 		DirectX::SimpleMath::Quaternion rotation_quaternion{};
+		DirectX::SimpleMath::Quaternion rotation_result_quaternion{};	// Slerp時の変形後のクォータニオン値
 
 		enum Bit
 		{
