@@ -13,8 +13,6 @@
 #include "file_path_helper.h"
 #include "locator.h"
 
-using namespace DirectX;
-
 namespace cumulonimbus::component
 {
 	using namespace DirectX::SimpleMath;
@@ -93,7 +91,7 @@ namespace cumulonimbus::component
 	void TransformComponent::CreateScaling4x4()
 	{
 		// Scaling
-		XMMATRIX s = XMMatrixScaling(scale.x, scale.y, scale.z);
+		DirectX::XMMATRIX s = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z);
 
 		XMStoreFloat4x4(&scaling_matrix, s);
 	}
@@ -101,7 +99,7 @@ namespace cumulonimbus::component
 	void TransformComponent::CreateRotation4x4()
 	{
 		// Rotation
-		XMMATRIX r = XMMatrixIdentity();
+		DirectX::XMMATRIX r = DirectX::XMMatrixIdentity();
 		if (is_billboard)
 		{
 			return;
@@ -109,15 +107,15 @@ namespace cumulonimbus::component
 		else if (is_quaternion)
 		{
 			//AdjustRotationFromAxis({ 0,1,0 }, XMConvertToRadians(1));
-			r = XMMatrixRotationQuaternion(XMLoadFloat4(&rotation_quaternion));
+			r = DirectX::XMMatrixRotationQuaternion(XMLoadFloat4(&rotation_quaternion));
 			angle   = arithmetic::QuaternionToEulerAngle(rotation_quaternion);
-			angle.x = XMConvertToDegrees(angle.x);
-			angle.y = XMConvertToDegrees(angle.y);
-			angle.z = XMConvertToDegrees(angle.z);
+			angle.x = DirectX::XMConvertToDegrees(angle.x);
+			angle.y = DirectX::XMConvertToDegrees(angle.y);
+			angle.z = DirectX::XMConvertToDegrees(angle.z);
 		}
 		else
 		{
-			r = XMMatrixRotationRollPitchYaw(XMConvertToRadians(angle.x), XMConvertToRadians(angle.y), XMConvertToRadians(angle.z));
+			r = DirectX::XMMatrixRotationRollPitchYaw(DirectX::XMConvertToRadians(angle.x), DirectX::XMConvertToRadians(angle.y), DirectX::XMConvertToRadians(angle.z));
 		}
 
 		XMStoreFloat4x4(&rotation_matrix, r);
@@ -126,16 +124,16 @@ namespace cumulonimbus::component
 	void TransformComponent::CreateTranslation4x4()
 	{
 		// Parallel movement
-		XMMATRIX t = XMMatrixTranslation(position.x, position.y, position.z);
+		DirectX::XMMATRIX t = DirectX::XMMatrixTranslation(position.x, position.y, position.z);
 
 		XMStoreFloat4x4(&translation_matrix, t);
 	}
 
-	void TransformComponent::CalcModelCoordinateAxis(const XMFLOAT4X4& orientation)
+	void TransformComponent::CalcModelCoordinateAxis(const DirectX::XMFLOAT4X4& orientation)
 	{
-		model_right = XMFLOAT3{ orientation._11,orientation._12,orientation._13 };
-		model_up = XMFLOAT3{ orientation._21,orientation._22,orientation._23 };
-		model_front = XMFLOAT3{ orientation._31,orientation._32,orientation._33 };
+		model_right = DirectX::XMFLOAT3{ orientation._11,orientation._12,orientation._13 };
+		model_up	= DirectX::XMFLOAT3{ orientation._21,orientation._22,orientation._23 };
+		model_front = DirectX::XMFLOAT3{ orientation._31,orientation._32,orientation._33 };
 	}
 
 	void TransformComponent::CreateWorldTransformMatrix()
@@ -146,19 +144,19 @@ namespace cumulonimbus::component
 
 		//-- Create world transform matrix --//
 		// Scaling
-		XMMATRIX s = XMLoadFloat4x4(&scaling_matrix);
+		DirectX::XMMATRIX s = XMLoadFloat4x4(&scaling_matrix);
 		// Rotation
-		XMMATRIX r = XMLoadFloat4x4(&rotation_matrix);
+		DirectX::XMMATRIX r = XMLoadFloat4x4(&rotation_matrix);
 		// Parallel movement
-		XMMATRIX t = XMLoadFloat4x4(&translation_matrix);
+		DirectX::XMMATRIX t = XMLoadFloat4x4(&translation_matrix);
 
 		// Matrix synthesis
-		XMMATRIX world_matrix = s * r * t;
+		DirectX::XMMATRIX world_matrix = s * r * t;
 		XMStoreFloat4x4(&world_f4x4, world_matrix);
 
-		model_right = XMFLOAT3{ rotation_matrix._11,rotation_matrix._12,rotation_matrix._13 };
-		model_up	= XMFLOAT3{ rotation_matrix._21,rotation_matrix._22,rotation_matrix._23 };
-		model_front = XMFLOAT3{ rotation_matrix._31,rotation_matrix._32,rotation_matrix._33 };
+		model_right = DirectX::XMFLOAT3{ rotation_matrix._11,rotation_matrix._12,rotation_matrix._13 };
+		model_up	= DirectX::XMFLOAT3{ rotation_matrix._21,rotation_matrix._22,rotation_matrix._23 };
+		model_front = DirectX::XMFLOAT3{ rotation_matrix._31,rotation_matrix._32,rotation_matrix._33 };
 
 		prev_angle = angle;
 	}
@@ -196,32 +194,32 @@ namespace cumulonimbus::component
 		}
 	}
 
-	void TransformComponent::CreateIdentity4x4(XMFLOAT4X4* convert)
+	void TransformComponent::CreateIdentity4x4(DirectX::XMFLOAT4X4* convert)
 	{
-		XMMATRIX convert_matrix = XMMatrixIdentity();
+		DirectX::XMMATRIX convert_matrix = DirectX::XMMatrixIdentity();
 
 		XMStoreFloat4x4(convert, convert_matrix);
 	}
 
-	void TransformComponent::GetBillboardRotation(const XMFLOAT3 billPos, const XMFLOAT3 targetPos)
+	void TransformComponent::GetBillboardRotation(const DirectX::XMFLOAT3 billPos, const DirectX::XMFLOAT3 targetPos)
 	{
 		if (!is_billboard)
 			assert(!"Billboard passive !!");
 
-		XMMATRIX rotatin_matrix = XMMatrixIdentity();
-		FXMVECTOR bill_vec = XMVectorSet(billPos.x, billPos.y, billPos.z, 1);
-		FXMVECTOR target_vec = XMVectorSet(targetPos.x, targetPos.y, targetPos.z, 1);
-		rotatin_matrix = XMMatrixLookAtLH(bill_vec, target_vec, FXMVECTOR{ 0,1,0 });
+		DirectX::XMMATRIX rotatin_matrix = DirectX::XMMatrixIdentity();
+		DirectX::FXMVECTOR bill_vec = DirectX::XMVectorSet(billPos.x, billPos.y, billPos.z, 1);
+		DirectX::FXMVECTOR target_vec = DirectX::XMVectorSet(targetPos.x, targetPos.y, targetPos.z, 1);
+		rotatin_matrix = DirectX::XMMatrixLookAtLH(bill_vec, target_vec, DirectX::FXMVECTOR{ 0,1,0 });
 		rotatin_matrix = XMMatrixInverse(nullptr, rotatin_matrix);
 
 		XMStoreFloat4x4(&rotation_matrix, rotatin_matrix);
 		//rotation_f4x4._41 = rotation_f4x4._42 = rotation_f4x4._43 = rotation_f4x4._44 = 0;
 	}
 
-	void TransformComponent::SetQuaternionSlerp(const DirectX::SimpleMath::Vector3& v1, const DirectX::SimpleMath::Vector3& v2)
+	void TransformComponent::SetQuaternionSlerp(const DirectX::SimpleMath::Quaternion& q1, const DirectX::SimpleMath::Quaternion& q2)
 	{
-		rotation_prev_quaternion   = Quaternion{ v1.x,v1.y,v1.z,0.0f };
-		rotation_result_quaternion = Quaternion{ v2.x,v2.y,v2.z,0.0f };
+		rotation_prev_quaternion	= q1;
+		rotation_result_quaternion	= q2;
 	}
 
 	void TransformComponent::QuaternionSlerp(const float t)
@@ -229,18 +227,18 @@ namespace cumulonimbus::component
 		rotation_quaternion = Quaternion::Slerp(rotation_prev_quaternion, rotation_result_quaternion, t);
 	}
 
-	void TransformComponent::AdjustRotationFromAxis(const DirectX::SimpleMath::Vector3& axis, float angle)
+	void TransformComponent::AdjustRotationFromAxis(const DirectX::SimpleMath::Vector3& axis, const float angle)
 	{
-		const SimpleMath::Quaternion q = SimpleMath::Quaternion::CreateFromAxisAngle(axis, angle);
+		const Quaternion q = Quaternion::CreateFromAxisAngle(axis, angle);
 		rotation_quaternion *= q;
 	}
 
-	XMMATRIX TransformComponent::GetRotationMatrix(XMFLOAT3 axis, float angle/* degree */)
+	DirectX::XMMATRIX TransformComponent::GetRotationMatrix(DirectX::XMFLOAT3 axis, float angle/* degree */)
 	{
-		const XMVECTOR axis_vec = XMLoadFloat3(&axis);
-		const XMVECTOR calc_val = XMQuaternionRotationAxis(axis_vec, XMConvertToRadians(angle));
+		const DirectX::XMVECTOR axis_vec = XMLoadFloat3(&axis);
+		const DirectX::XMVECTOR calc_val = DirectX::XMQuaternionRotationAxis(axis_vec, DirectX::XMConvertToRadians(angle));
 
-		return XMMatrixRotationQuaternion(calc_val);
+		return DirectX::XMMatrixRotationQuaternion(calc_val);
 	}
 
 	void TransformComponent::Save(const std::string& file_path)

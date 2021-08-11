@@ -190,7 +190,7 @@ namespace cumulonimbus::component
 		float height;	// ƒrƒ…[s—ñã‚Ì‚‚³
 
 		//-- for debug --//
-		DirectX::SimpleMath::Vector2 camera_speed{ 3.f,3.f };
+		DirectX::SimpleMath::Vector2 camera_speed{ 1.f,1.f };
 		DirectX::SimpleMath::Vector2 cur_mouse_pos{ 0.0f,0.0f };		// Current mouse eye_position
 		DirectX::SimpleMath::Vector2 prev_mouse_pos{ 0.0f,0.0f };		// Mouse eye_position one frame ago
 

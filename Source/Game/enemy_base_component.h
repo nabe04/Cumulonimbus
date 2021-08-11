@@ -38,5 +38,19 @@ namespace cumulonimbus::component
 			void SetRandomVal();
 		};
 
+		/**
+		 * @brief : 自身の位置と前方ベクトルから索敵範囲内(rad)、索敵距離内(length)に
+		 *			ターゲット(target_pos)がいるか判定
+		 * @param target_pos    : 索敵対象位置
+		 * @param search_range  : 索敵範囲(度数法)
+		 * @param search_length : 索敵距離
+		 * @return : true -> 索敵範囲内
+		 */
+		bool Search(const DirectX::SimpleMath::Vector3& target_pos, float search_range, float search_length) const;
+
+		/**
+		 * @brief : プレイヤーの方向への回転処理
+		 */
+		void RotateToPlayerDirection() const ;
 	};
 } // cumulonimbus::component

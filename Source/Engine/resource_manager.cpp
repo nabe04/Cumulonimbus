@@ -40,6 +40,10 @@ void ResourceManager::Initialize(ID3D11Device* device)
 		std::shared_ptr<FbxModelResource> lich_resource = std::make_shared<FbxModelResource>(device, lich_filename, "./Data/Assets/FBX/Enemies/E_05_Lich");
 		AddFBXData(lich_resource);
 
+		const char* slime_filename = "./Data/Assets/Bin/Slime.bin";
+		std::shared_ptr<FbxModelResource> slime_resource = std::make_shared<FbxModelResource>(device, slime_filename, "./Data/Assets/FBX/Enemies/E_11_Slime");
+		AddFBXData(slime_resource);
+
 		// SkeletonWarrior
 		const char* skeleton_wrrior_filename = "./Data/Assets/Bin/SkeletonWarrior.bin";
 		std::shared_ptr<FbxModelResource>  skeleton_wrrior_resource = std::make_shared<FbxModelResource>(device, skeleton_wrrior_filename, "./Data/Assets/FBX/Enemies/E_09_SkeletonWarrior");

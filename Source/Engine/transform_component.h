@@ -106,10 +106,10 @@ namespace cumulonimbus::component
 		void PassiveQuaternion() { is_quaternion = false; }
 		/**
 		 * @brief : 球面線形補間で使用する値の設定
-		 * @param v1 : 補完前のベクトル
-		 * @param v2 : 補完後のベクトル
+		 * @param q1 : 補完前のベクトル
+		 * @param q2 : 補完後のベクトル
 		 */
-		void SetQuaternionSlerp(const DirectX::SimpleMath::Vector3& v1, const DirectX::SimpleMath::Vector3& v2);
+		void SetQuaternionSlerp(const DirectX::SimpleMath::Quaternion& q1, const DirectX::SimpleMath::Quaternion& q2);
 		/**
 		 * @brief   : "rotation_prev_quaternion"と"rotation_result_quaternion"間の補完
 		 * @param t : 補間制御係数(t == 0 : rotation_prev_quaternion、 t == 1 : rotation_result_quaternion)
@@ -121,13 +121,12 @@ namespace cumulonimbus::component
 		[[nodiscard]] const auto& GetRotationResultQuaternion() const { return rotation_result_quaternion; }
 
 		/**
-		 * @brief	    : モデルの任意軸回転
+		 * @brief	    : モデルの任意軸回転(クォータニオン)
 		 * @param axis	: 回転軸(正規化済み)
-		 * @angle		: ラジアン角
+		 * @param angle : ラジアン角
 		 */
 		void AdjustRotationFromAxis(const DirectX::SimpleMath::Vector3& axis, float angle);
-
-
+		
 		[[nodiscard]] const DirectX::SimpleMath::Matrix& GetRotationMat()	 const { return rotation_matrix; }
 		[[nodiscard]] const DirectX::SimpleMath::Matrix& GetScalingMat()	 const { return scaling_matrix; }
 		[[nodiscard]] const DirectX::SimpleMath::Matrix& GetTransformMat()   const { return translation_matrix; }

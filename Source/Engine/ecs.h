@@ -73,7 +73,7 @@ namespace cumulonimbus::ecs
 	class ComponentArray final : public ComponentArrayBase
 	{
 	public:
-		ComponentArray() = default;
+		explicit ComponentArray() = default;
 
 		size_t GetHashCode() override
 		{
@@ -297,7 +297,7 @@ namespace cumulonimbus::ecs
 	{
 
 	public:
-		Registry()
+		explicit Registry()
 		{
 			RegisterComponentName();
 		}

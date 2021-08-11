@@ -11,6 +11,7 @@
 #include "input_manager.h"
 #include "mesh_object.h"
 #include "player_component.h"
+#include "enemy_slime_component.h"
 #include "scene_title.h"
 #include "sky_box.h"
 #include "sphere_collision_component.h"
@@ -87,7 +88,12 @@ void SceneGame::InitializeScene()
 
 	const cum::mapping::rename_type::Entity ent_ene_00 = registry->CreateEntity();
 	registry->AddComponent<cum::component::MeshObjectComponent>(ent_ene_00);
-	registry->AddComponent<cum::component::FbxModelComponent>(ent_ene_00, cum::locator::Locator::GetResourceManager()->FbxModelResouece("SkeletonWarrior"));
+	registry->AddComponent<cum::component::FbxModelComponent>(ent_ene_00, cum::locator::Locator::GetResourceManager()->FbxModelResouece("Slime"));
+	registry->AddComponent<cum::component::MovementComponent>(ent_ene_00);
+	registry->AddComponent<cum::component::EnemySlimeComponent>(ent_ene_00);
+	registry->GetComponent<cum::component::TransformComponent>(ent_ene_00).SetScale(0.1f);
+	registry->GetComponent<cum::component::TransformComponent>(ent_ene_00).SetPosition({100,0,0});
+	registry->GetComponent<cum::component::TransformComponent>(ent_ene_00).ActiveQuaternion();
 
 	const cum::mapping::rename_type::Entity ent_player = registry->CreateEntity();
 	registry->AddComponent<cum::component::MeshObjectComponent>(ent_player);
