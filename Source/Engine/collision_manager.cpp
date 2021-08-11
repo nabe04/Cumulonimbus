@@ -34,7 +34,7 @@ namespace cumulonimbus::collision
 			}
 		}
 
-		// 球同士の当たり判定
+		// 球同士の判定
 		auto& sphere_collisions = registry->GetArray<component::SphereCollisionComponent>();
 		for(int s1 = 0; s1 < sphere_collisions.GetComponents().size(); ++s1)
 		{
@@ -54,7 +54,14 @@ namespace cumulonimbus::collision
 			}
 		}
 
-		
+		// 球とカプセルの判定
+		for(int s = 0;s<sphere_collisions.GetComponents().size();++s)
+		{
+			for(int c = 0;c<capsule_collisions.GetComponents().size();++c)
+			{
+				IntersectSphereVsCapsule(sphere_collisions.GetComponents().at(s), capsule_collisions.GetComponents().at(c));
+			}
+		}
 	}
 
 	void CollisionManager::RegistryRayCastModel(mapping::rename_type::Entity ent)
@@ -246,6 +253,30 @@ namespace cumulonimbus::collision
 		}
 		return false;
 	}
+
+	bool CollisionManager::IntersectSphereVsCapsule(
+		component::SphereCollisionComponent&  sphere,
+		component::CapsuleCollisionComponent& capsule)
+	{
+		// 同じエンティティ同士なら判定処理を行わない
+		if (sphere.GetEntity() == capsule.GetEntity())
+			return false;
+
+		for (const auto& s : sphere.GetSpheres())
+		{
+			for (const auto& c : capsule.GetCapsules())
+			{
+				// 球の中心とカプセルの線分の間の(平方した)距離の算出
+				const float dist = arithmetic::SqDistPointSegment(c.second.start, c.second.end, s.second.world_transform_matrix.Translation());
+				// (平方した)距離が(平方した)半径の総和よりも小さい場合は衝突
+				const float radius = s.second.radius + c.second.radius;
+				return dist <= radius * radius;
+			}
+		}
+
+		return false;
+	}
+
 
 
 } // cumulonimbus::collision

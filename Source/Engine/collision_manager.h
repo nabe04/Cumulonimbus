@@ -62,7 +62,7 @@ namespace cumulonimbus::collision
 
 		/**
 		 * @brief : 球と球の当たり判定
-		 *	      : SphereCollisionComponentが持つSphere分処理を回す
+		 *	        SphereCollisionComponentが持つSphere分処理を回す
 		 */
 		bool IntersectSphereVsSphere(
 			const component::SphereCollisionComponent& sphere_1,
@@ -75,6 +75,15 @@ namespace cumulonimbus::collision
 		bool IntersectCapsuleVsCapsule(
 			component::CapsuleCollisionComponent& capsule_1,
 			component::CapsuleCollisionComponent& capsule_2
+		);
+
+		/**
+		 * @brief     : 球とカプセルの当たり判定
+		 * @attention : 同じエンティティ内での球とカプセルの判定は行わない
+		 */
+		bool IntersectSphereVsCapsule(
+			component::SphereCollisionComponent&  sphere,
+			component::CapsuleCollisionComponent& capsule
 		);
 	};
 

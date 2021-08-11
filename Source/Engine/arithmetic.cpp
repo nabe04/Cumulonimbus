@@ -275,6 +275,26 @@ namespace arithmetic
 		return l.vec * t;
 	}
 
+	float SqDistPointSegment(
+		const SimpleMath::Vector3& a,
+		const SimpleMath::Vector3& b,
+		const SimpleMath::Vector3& c)
+	{
+		const SimpleMath::Vector3 ab = b - a;
+		const SimpleMath::Vector3 ac = c - a;
+		const SimpleMath::Vector3 bc = c - b;
+		const float e = ac.Dot(ab);
+		// c‚ªab‚ÌŠO‘¤‚É‘‰e‚³‚ê‚éê‡‚ğˆµ‚¤
+		if (e <= 0.0f)
+			return ac.Dot(ac);
+		const float f = ab.Dot(ab);
+		if (e >= f)
+			return bc.Dot(bc);
+		// c‚ªabã‚ÉË‰e‚³‚ê‚Ä‚¢‚éê‡‚ğˆµ‚¤
+		return ac.Dot(ac) - (e * e) / f;
+	}
+
+
 	void ClosestPtPointSegment(
 		const SimpleMath::Vector3& a,
 		const SimpleMath::Vector3& b,

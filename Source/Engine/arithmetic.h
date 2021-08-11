@@ -152,6 +152,19 @@ namespace arithmetic
 	);
 
 	/**
+	 * @brief   : 点cと線分abの最短距離の平方の算出
+	 * @param a : 線分abの端点a
+	 * @param b : 線分abの端点b
+	 * @param c : 点c
+	 * @return  : 最短距離の平方の値
+	 */
+	float SqDistPointSegment(
+		const DirectX::SimpleMath::Vector3& a,
+		const DirectX::SimpleMath::Vector3& b,
+		const DirectX::SimpleMath::Vector3& c
+	);
+
+	/**
 	 * @brief	  : 与えられた線分abおよび点cに対して、ab上の最近接点dを計算
 	 *			  : d(t) = a + t * (b - a)により表されるdの位置に対するtも返す
 	 * @param a	  : 線分abの端点

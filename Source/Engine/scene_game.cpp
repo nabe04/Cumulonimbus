@@ -91,6 +91,10 @@ void SceneGame::InitializeScene()
 	registry->AddComponent<cum::component::FbxModelComponent>(ent_ene_00, cum::locator::Locator::GetResourceManager()->FbxModelResouece("Slime"));
 	registry->AddComponent<cum::component::MovementComponent>(ent_ene_00);
 	registry->AddComponent<cum::component::EnemySlimeComponent>(ent_ene_00);
+	registry->AddComponent<cum::component::SphereCollisionComponent>(ent_ene_00, CollisionTag::Enemy);
+	registry->GetComponent<cum::component::SphereCollisionComponent>(ent_ene_00).AddSphere();
+	registry->GetComponent<cum::component::SphereCollisionComponent>(ent_ene_00).SetAllRadius(20);
+	registry->GetComponent<cum::component::SphereCollisionComponent>(ent_ene_00).SetAllOffset({0,30,0});
 	registry->GetComponent<cum::component::TransformComponent>(ent_ene_00).SetScale(0.1f);
 	registry->GetComponent<cum::component::TransformComponent>(ent_ene_00).SetPosition({100,0,0});
 	registry->GetComponent<cum::component::TransformComponent>(ent_ene_00).ActiveQuaternion();

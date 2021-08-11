@@ -39,7 +39,7 @@ namespace cumulonimbus::component
 
 	void EnemySlimeComponent::Update(float dt)
 	{
-		slime_state.Update(dt);
+		//slime_state.Update(dt);
 	}
 
 	void EnemySlimeComponent::RenderImGui()
