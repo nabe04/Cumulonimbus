@@ -71,9 +71,9 @@ namespace cumulonimbus::collision
 
 	bool CollisionManager::IntersectRayVsModel(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, const component::FbxModelComponent& model, HitResult& result)
 	{
-		DirectX::XMVECTOR WorldStart = DirectX::XMLoadFloat3(&start);
-		DirectX::XMVECTOR WorldEnd = DirectX::XMLoadFloat3(&end);
-		DirectX::XMVECTOR WorldRayVec = DirectX::XMVectorSubtract(WorldEnd, WorldStart);
+		DirectX::XMVECTOR WorldStart	 = DirectX::XMLoadFloat3(&start);
+		DirectX::XMVECTOR WorldEnd		 = DirectX::XMLoadFloat3(&end);
+		DirectX::XMVECTOR WorldRayVec	 = DirectX::XMVectorSubtract(WorldEnd, WorldStart);
 		DirectX::XMVECTOR WorldRayLength = DirectX::XMVector3Length(WorldRayVec);
 
 		// ÉèÅ[ÉãÉhãÛä‘ÇÃÉåÉCÇÃí∑Ç≥
@@ -192,7 +192,7 @@ namespace cumulonimbus::collision
 				{
 					DirectX::XMVECTOR WorldNormal = DirectX::XMVector3Transform(HitNormal, WorldTransform);
 					result.distance = distance;
-					result.materialIndex = materialIndex;
+					result.material_index = materialIndex;
 					DirectX::XMStoreFloat3(&result.position, WorldPosition);
 					DirectX::XMStoreFloat3(&result.normal, DirectX::XMVector3Normalize(WorldNormal));
 					hit = true;
@@ -203,12 +203,13 @@ namespace cumulonimbus::collision
 	}
 
 	bool CollisionManager::IntersectSphereVsSphere(
-		const component::SphereCollisionComponent& sphere_1,
-		const component::SphereCollisionComponent& sphere_2)
+		component::SphereCollisionComponent& sphere_1,
+		component::SphereCollisionComponent& sphere_2)
 	{
-		for(const auto& s1 : sphere_1.GetSpheres())
+		bool hit = false;
+		for(auto& s1 : sphere_1.GetSpheres())
 		{
-			for(const auto& s2 : sphere_2.GetSpheres())
+			for(auto& s2 : sphere_2.GetSpheres())
 			{
 				const DirectX::SimpleMath::Vector3 s1_translation = s1.second.world_transform_matrix.Translation();
 				const DirectX::SimpleMath::Vector3 s2_translation = s2.second.world_transform_matrix.Translation();
@@ -217,16 +218,28 @@ namespace cumulonimbus::collision
 				const float l = v.Length();
 
 				if (l <= s1.second.radius + s2.second.radius)
-					return true;
+				{
+					hit = true;
+					s1.second.hit_result.is_hit = true;
+					s2.second.hit_result.is_hit = true;
+				}
+				else
+				{
+					s1.second.hit_result.is_hit = false;
+					s2.second.hit_result.is_hit = false;
+				}
+
 			}
 		}
-		return false;
+		return hit;
 	}
 
 	bool CollisionManager::IntersectCapsuleVsCapsule(
 		component::CapsuleCollisionComponent& capsule_1,
 		component::CapsuleCollisionComponent& capsule_2)
 	{
+		bool hit = false;
+
 		for(auto& c1 : capsule_1.GetCapsules())
 		{
 			for(auto& c2 : capsule_2.GetCapsules())
@@ -244,14 +257,16 @@ namespace cumulonimbus::collision
 
 				if(len <c1.second.radius + c2.second.radius)
 				{
-					c1.second.is_hit = c2.second.is_hit = true;
-					return true;
+					c1.second.hit_result.is_hit = c2.second.hit_result.is_hit = true;
+					hit = true;
 				}
-
-				c1.second.is_hit = c2.second.is_hit = false;
+				else
+				{
+					c1.second.hit_result.is_hit = c2.second.hit_result.is_hit = false;
+				}
 			}
 		}
-		return false;
+		return hit;
 	}
 
 	bool CollisionManager::IntersectSphereVsCapsule(

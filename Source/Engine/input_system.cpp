@@ -172,7 +172,8 @@ void InputSystem::UpdateStates() {
     {
         keyboard->old_key_values = keyboard->key_values;
         keyboard->key_values = 0;
-        if (keyboard->keyboard->IsConnected()) {
+        if (keyboard->keyboard->IsConnected()) 
+        {
             const auto s = keyboard->keyboard->GetState();
             auto& v = keyboard->key_values;
 

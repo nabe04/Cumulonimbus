@@ -39,14 +39,32 @@ enum class CollisionTag
 
 namespace cumulonimbus::collision
 {
-	// ヒット結果
+	/**
+	 * @brief : コリジョンに発生するヒットイベント
+	 */
+	enum class HitEvent
+	{
+		OnCollisionEnter,	// 他のCollisionに触れたとき
+		OnCollisionExit,	// 他のCollisionに触れるのをやめたとき
+		OnCollisionStay,	// 他のCollisionに触れている間
+		None,				// 他のどのCollisionにも触れていない間
+
+		End
+	};
+
+
+	/**
+	 * @brief : ヒット結果
+	 */
 	struct HitResult
 	{
-		DirectX::XMFLOAT3	position		= { 0.0f,0.0f,0.0f };
-		DirectX::XMFLOAT3	normal			= { 0.0f,0.0f,0.0f };
+		DirectX::XMFLOAT3	position		= { 0.0f,0.0f,0.0f };	// ヒット位置
+		DirectX::XMFLOAT3	normal			= { 0.0f,0.0f,0.0f };	// ヒット位置の法線
 		float				distance		= 0.0f;
-		int					materialIndex	= -1;
-		bool				is_hit			= false;
+		int					material_index	= -1;
+		bool				is_hit			= false;				// ヒット状態
+		bool				is_old_hit		= false;				// 1フレーム前の"is_hit"値
+		HitEvent			hit_event;								// ヒットイベント
 	};
 } // cumulonimbus::collision
 

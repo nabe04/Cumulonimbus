@@ -18,6 +18,7 @@ namespace cumulonimbus
 			DirectX::SimpleMath::Vector3 offset{};		 // 球の位置調節値
 			std::string bone_name{""};					 // FBXモデルのボーンの位置名
 			float		radius{ 1.f };					 // 半径
+			HitResult	hit_result{};					 // ヒット結果
 		};
 	} // collision
 
@@ -84,7 +85,7 @@ namespace cumulonimbus
 			/**
 			 * @brief : mapに登録されているcollision::Sphereの取得
 			 */
-			[[nodiscard]] const std::unordered_map<std::string, collision::Sphere>& GetSpheres() const;
+			[[nodiscard]] std::unordered_map<std::string, collision::Sphere>& GetSpheres();
 		private:
 			// 判定用データ群
 			std::unordered_map<std::string, collision::Sphere> spheres;

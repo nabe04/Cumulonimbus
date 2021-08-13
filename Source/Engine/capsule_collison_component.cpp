@@ -73,7 +73,7 @@ namespace cumulonimbus::component
 				ImGui::PushID(id);
 				if (ImGui::TreeNode(capsule.first.c_str()))
 				{
-					ImGui::Text("Is Hit : %d", capsule.second.is_hit);
+					ImGui::Text("Is Hit : %d", capsule.second.hit_result.is_hit);
 					ImGui::Text("Fetch Bone Name : %s", capsule.second.bone_name.c_str());
 					ImGui::Text("Segment Start.x : %f", capsule.second.start.x);
 					ImGui::Text("Segment Start.y : %f", capsule.second.start.y);

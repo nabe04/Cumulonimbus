@@ -694,7 +694,7 @@ namespace cumulonimbus::renderer
 										  ecs::Registry* registry, mapping::rename_type::Entity entity,
 										  const FbxModelResource* model_resource)
 	{
-		const auto& sphere_collision = registry->GetComponent<component::SphereCollisionComponent>(entity);
+		auto& sphere_collision = registry->GetComponent<component::SphereCollisionComponent>(entity);
 		for (const auto& sphere : sphere_collision.GetSpheres())
 		{
 			for (const auto& mesh : model_resource->GetModelData().meshes)

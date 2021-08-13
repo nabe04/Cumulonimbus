@@ -22,7 +22,7 @@ namespace cumulonimbus
 			std::string bone_name{ "" };							 // FBXモデルのボーンの位置名
 			float		length = 2;									 // カプセルの端点間の長さ
 			float		radius = 1;									 // カプセルの半径
-			bool		is_hit = false;								 // 判定フラグ
+			HitResult   hit_result;									 // ヒット結果
 		};
 	} // collision
 

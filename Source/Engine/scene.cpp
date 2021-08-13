@@ -140,10 +140,10 @@ void Scene::UnInitialize()
 void Scene::Update(const float elapsed_time)
 {
 	//if(!is_paused)
-	collision_manager->Update(registry.get());
 
 	registry->PreUpdate(elapsed_time);
 	registry->Update(elapsed_time);
+	collision_manager->Update(registry.get());
 	registry->PostUpdate(elapsed_time);
 
 	//main_camera->SetProjection(XM_PI / 8.0f, static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
