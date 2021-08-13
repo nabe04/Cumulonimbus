@@ -7,12 +7,12 @@
 
 namespace cumulonimbus::component
 {
-	class MovementComponent final : public ComponentBase
+	class RigidBodyComponent final : public ComponentBase
 	{
 	public:
-		explicit MovementComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent);
-		explicit MovementComponent()  = default; // for cereal
-		~MovementComponent() override = default;
+		explicit RigidBodyComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent);
+		explicit RigidBodyComponent()  = default; // for cereal
+		~RigidBodyComponent() override = default;
 
 		void NewFrame(float dt) override;
 		void Update(float dt) override;

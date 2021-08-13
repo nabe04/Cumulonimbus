@@ -7,7 +7,7 @@
 #include "arithmetic.h"
 #include "camera_component.h"
 #include "fbx_model_component.h"
-#include "movement_component.h"
+#include "rigid_body_component.h"
 #include "raycast_component.h"
 #include "scene.h"
 #include "transform_component.h"
@@ -173,7 +173,7 @@ namespace cumulonimbus::component
 			return;
 
 		const auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
-		const auto& movement_comp  = GetRegistry()->GetComponent<MovementComponent>(GetEntity());
+		const auto& movement_comp  = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
 
 		const DirectX::SimpleMath::Vector3 ray_start = transform_comp.GetPosition() + ray_cast_comp->GetRayOffset();
 		ray_cast_comp->SetRayStartPos(ray_start);
@@ -366,7 +366,7 @@ namespace cumulonimbus::component
 		{// ˆÚ“®‘¬“x‚ÌÝ’è
 			//auto& physics_comp = GetRegistry()->GetComponent<PhysicsComponent>(GetEntity());
 			//physics_comp.AddForce({ walk_speed,0.0f,walk_speed });
-			auto& movement_comp = GetRegistry()->GetComponent<MovementComponent>(GetEntity());
+			auto& movement_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
 			movement_comp.AddForce({ walk_speed,0.0f,walk_speed });
 			//AdjustVelocity(dt, { walk_speed,0.0f,walk_speed });
 		}
@@ -429,7 +429,7 @@ namespace cumulonimbus::component
 
 		if (fbx_model_comp.CurrentKeyframe() > 4)
 		{
-			auto& movement_comp = GetRegistry()->GetComponent<MovementComponent>(GetEntity());
+			auto& movement_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
 			movement_comp.Jump();
 		}
 
@@ -444,7 +444,7 @@ namespace cumulonimbus::component
 	void PlayerComponent::JumpLoop(float dt)
 	{
 		auto& fbx_model_comp = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
-		auto& movement_comp = GetRegistry()->GetComponent<MovementComponent>(GetEntity());
+		auto& movement_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
 
 		if (player_state.GetInitialize())
 		{
@@ -891,7 +891,7 @@ namespace cumulonimbus::component
 	void PlayerComponent::AttackingJump01(float dt)
 	{
 		auto& fbx_model_comp = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
-		auto& movement_comp  = GetRegistry()->GetComponent<MovementComponent>(GetEntity());
+		auto& movement_comp  = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
 		if(player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
@@ -946,7 +946,7 @@ namespace cumulonimbus::component
 			IsBreakAnimationFrame(AnimationState::Attack_Jump_01_End))
 		{
 			// d—Íˆ— On
-			GetRegistry()->GetComponent<MovementComponent>(GetEntity()).JumpStop(false);
+			GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity()).JumpStop(false);
 			// ó‘Ô‘JˆÚ(PlayerState::Jump_Landing)
 			player_state.SetState(PlayerState::Jump_Landing);
 		}
@@ -1007,7 +1007,7 @@ namespace cumulonimbus::component
 			IsBreakAnimationFrame(AnimationState::Attack_Jump_02_End))
 		{
 			// d—Íˆ— On
-			GetRegistry()->GetComponent<MovementComponent>(GetEntity()).JumpStop(false);
+			GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity()).JumpStop(false);
 			// ó‘Ô‘JˆÚ(PlayerState::Jump_Landing)
 			player_state.SetState(PlayerState::Jump_Landing);
 		}
@@ -1067,7 +1067,7 @@ namespace cumulonimbus::component
 			IsBreakAnimationFrame(AnimationState::Attack_Jump_03_End))
 		{
 			// d—Íˆ— On
-			GetRegistry()->GetComponent<MovementComponent>(GetEntity()).JumpStop(false);
+			GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity()).JumpStop(false);
 			// ó‘Ô‘JˆÚ(PlayerState::Jump_Landing)
 			player_state.SetState(PlayerState::Jump_Landing);
 		}
@@ -1111,7 +1111,7 @@ namespace cumulonimbus::component
 			IsBreakAnimationFrame(AnimationState::Attack_Jump_04_End))
 		{
 			// d—Íˆ— On
-			GetRegistry()->GetComponent<MovementComponent>(GetEntity()).JumpStop(false);
+			GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity()).JumpStop(false);
 			// ó‘Ô‘JˆÚ(PlayerState::Jump_Landing)
 			player_state.SetState(PlayerState::Jump_Landing);
 		}
@@ -1133,7 +1133,7 @@ namespace cumulonimbus::component
 		}
 
 		{// ˆÚ“®‘¬“x‚ÌÝ’è
-			auto& movement_comp = GetRegistry()->GetComponent<MovementComponent>(GetEntity());
+			auto& movement_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
 			movement_comp.AddForce({ avoid_dash_speed,0.0f,avoid_dash_speed });
 			//AdjustVelocity(dt, { avoid_dash_speed,0.0f,avoid_dash_speed });
 		}
@@ -1199,7 +1199,7 @@ namespace cumulonimbus::component
 		}
 
 		{// ˆÚ“®‘¬“x‚ÌÝ’è
-			auto& movement_comp = GetRegistry()->GetComponent<MovementComponent>(GetEntity());
+			auto& movement_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
 			movement_comp.AddForce({ dash_speed,0.0f,dash_speed });
 			//AdjustVelocity(dt, { dash_speed,0.0f,dash_speed });
 		}

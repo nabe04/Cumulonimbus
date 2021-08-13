@@ -5,7 +5,7 @@
 #include "anim_sprite.h"
 #include "camera_component.h"
 #include "capsule_collison_component.h"
-#include "movement_component.h"
+#include "rigid_body_component.h"
 #include "fbx_model_component.h"
 #include "input_device.h"
 #include "input_manager.h"
@@ -89,7 +89,7 @@ void SceneGame::InitializeScene()
 	const cum::mapping::rename_type::Entity ent_ene_00 = registry->CreateEntity();
 	registry->AddComponent<cum::component::MeshObjectComponent>(ent_ene_00);
 	registry->AddComponent<cum::component::FbxModelComponent>(ent_ene_00, cum::locator::Locator::GetResourceManager()->FbxModelResouece("Slime"));
-	registry->AddComponent<cum::component::MovementComponent>(ent_ene_00);
+	registry->AddComponent<cum::component::RigidBodyComponent>(ent_ene_00);
 	registry->AddComponent<cum::component::EnemySlimeComponent>(ent_ene_00);
 	registry->AddComponent<cum::component::SphereCollisionComponent>(ent_ene_00, CollisionTag::Enemy);
 	registry->GetComponent<cum::component::SphereCollisionComponent>(ent_ene_00).AddSphere();
@@ -105,7 +105,7 @@ void SceneGame::InitializeScene()
 	registry->AddComponent<cum::component::PlayerComponent>(ent_player);
 	registry->AddComponent<cum::component::CapsuleCollisionComponent>(ent_player, CollisionTag::Player);
 	registry->AddComponent<cum::component::CameraComponent>(ent_player, true);
-	registry->AddComponent<cum::component::MovementComponent>(ent_player);
+	registry->AddComponent<cum::component::RigidBodyComponent>(ent_player);
 	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetScale(0.3f);
 	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetPosition({ -30, 10, 0 });
 	registry->GetComponent<cum::component::MeshObjectComponent>(ent_player).SetRasterizerState(RasterizeState::Cull_Front_CCW_True);

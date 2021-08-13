@@ -5,7 +5,7 @@
 #include "fbx_model_resource.h"
 // components
 #include "fbx_model_component.h"
-#include "movement_component.h"
+#include "rigid_body_component.h"
 #include "transform_component.h"
 #include "player_component.h"
 
@@ -115,7 +115,7 @@ namespace cumulonimbus::component
 	void EnemySlimeComponent::Walk(const float dt)
 	{
 		auto& fbx_model_comp = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
-		auto& movement_comp  = GetRegistry()->GetComponent<MovementComponent>(GetEntity());
+		auto& movement_comp  = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 		auto& timer			 = transition_timer.at(SlimeState::Walk);
 		if(slime_state.GetInitialize())
@@ -161,7 +161,7 @@ namespace cumulonimbus::component
 	void EnemySlimeComponent::Tracking(const float dt)
 	{
 		auto& fbx_model_comp = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
-		auto& movement_comp  = GetRegistry()->GetComponent<MovementComponent>(GetEntity());
+		auto& movement_comp  = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 		float distance = 0; // 自身とプレイヤーとの距離
 		if(slime_state.GetInitialize())
@@ -231,7 +231,7 @@ namespace cumulonimbus::component
 	void EnemySlimeComponent::AttackBite(float dt)
 	{
 		auto& fbx_model_comp = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
-		auto& movement_comp  = GetRegistry()->GetComponent<MovementComponent>(GetEntity());
+		auto& movement_comp  = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
 		if(slime_state.GetInitialize())
 		{
 			// アニメーションセット(AnimationData::Attack_Bite)

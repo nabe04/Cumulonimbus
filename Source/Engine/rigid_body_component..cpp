@@ -1,4 +1,4 @@
-#include "movement_component.h"
+#include "rigid_body_component.h"
 
 #include "ecs.h"
 #include "transform_component.h"
@@ -7,23 +7,23 @@
 
 namespace cumulonimbus::component
 {
-	MovementComponent::MovementComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent)
+	RigidBodyComponent::RigidBodyComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent)
 		:ComponentBase{ registry ,ent }
 	{
 
 	}
 
-	void MovementComponent::NewFrame(float dt)
+	void RigidBodyComponent::NewFrame(float dt)
 	{
 		velocity = DirectX::SimpleMath::Vector3{ 0,0,0 };
 	}
 
-	void MovementComponent::Update(float dt)
+	void RigidBodyComponent::Update(float dt)
 	{
 
 	}
 
-	void MovementComponent::PostUpdate(float dt)
+	void RigidBodyComponent::PostUpdate(float dt)
 	{
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 		if (transform_comp.GetPosition().y < 0)
@@ -41,20 +41,20 @@ namespace cumulonimbus::component
 		Integrate(dt);
 	}
 
-	void MovementComponent::RenderImGui()
+	void RigidBodyComponent::RenderImGui()
 	{
 
 	}
 
-	void MovementComponent::Save(const std::string& file_path)
+	void RigidBodyComponent::Save(const std::string& file_path)
 	{
 	}
 
-	void MovementComponent::Load(const std::string& file_path_and_name)
+	void RigidBodyComponent::Load(const std::string& file_path_and_name)
 	{
 	}
 
-	void MovementComponent::AddForce(const DirectX::SimpleMath::Vector3& force)
+	void RigidBodyComponent::AddForce(const DirectX::SimpleMath::Vector3& force)
 	{
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 		velocity.x += transform_comp.GetModelFront().x * force.x;
@@ -62,7 +62,7 @@ namespace cumulonimbus::component
 		velocity.z += transform_comp.GetModelFront().z * force.z;
 	}
 
-	void MovementComponent::Jump(const float strength)
+	void RigidBodyComponent::Jump(const float strength)
 	{
 		if (strength < 0)
 		{
@@ -76,7 +76,7 @@ namespace cumulonimbus::component
 		AddForce({ 0,current_gravity,0 });
 	}
 
-	void MovementComponent::JumpStop(bool flg)
+	void RigidBodyComponent::JumpStop(bool flg)
 	{
 		if(flg)
 		{
@@ -90,7 +90,7 @@ namespace cumulonimbus::component
 	}
 
 
-	void MovementComponent::Integrate(float dt)
+	void RigidBodyComponent::Integrate(float dt)
 	{
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 		transform_comp.AdjustPosition(velocity * dt);

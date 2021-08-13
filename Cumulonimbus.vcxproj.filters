@@ -486,7 +486,7 @@
     <ClCompile Include="Source\Engine\camera_component.cpp">
       <Filter>Source\Engine\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\movement_component.cpp">
+    <ClCompile Include="Source\Engine\rigid_body_component..cpp">
       <Filter>Source\Engine\Components</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\physics_component.cpp">
@@ -881,7 +881,7 @@
     <ClInclude Include="Source\Engine\physics_component.h">
       <Filter>Header\Engine\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\movement_component.h">
+    <ClInclude Include="Source\Engine\rigid_body_component.h">
       <Filter>Header\Engine\Components</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\enemy_base_component.h">
