@@ -136,8 +136,6 @@ namespace cumulonimbus::component
 		}
 	}
 
-
-
 	const std::unordered_map<std::string, collision::Sphere>& SphereCollisionComponent::GetSpheres() const
 	{
 		return spheres;

@@ -14,7 +14,9 @@ namespace cumulonimbus::component
 		explicit MovementComponent()  = default; // for cereal
 		~MovementComponent() override = default;
 
+		void NewFrame(float dt) override;
 		void Update(float dt) override;
+		void PostUpdate(float dt) override;
 		void RenderImGui() override;
 		void Save(const std::string& file_path) override;
 		void Load(const std::string& file_path_and_name) override;

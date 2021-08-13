@@ -13,7 +13,17 @@ namespace cumulonimbus::component
 
 	}
 
+	void MovementComponent::NewFrame(float dt)
+	{
+		velocity = DirectX::SimpleMath::Vector3{ 0,0,0 };
+	}
+
 	void MovementComponent::Update(float dt)
+	{
+
+	}
+
+	void MovementComponent::PostUpdate(float dt)
 	{
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 		if (transform_comp.GetPosition().y < 0)
@@ -22,7 +32,7 @@ namespace cumulonimbus::component
 			current_gravity = 0;
 		}
 
-		if(is_gravity)
+		if (is_gravity)
 		{
 			current_gravity += gravity;
 			AddForce({ 0,current_gravity,0 });
@@ -33,6 +43,7 @@ namespace cumulonimbus::component
 
 	void MovementComponent::RenderImGui()
 	{
+
 	}
 
 	void MovementComponent::Save(const std::string& file_path)
@@ -83,7 +94,5 @@ namespace cumulonimbus::component
 	{
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 		transform_comp.AdjustPosition(velocity * dt);
-
-		velocity = DirectX::SimpleMath::Vector3{ 0,0,0 };
 	}
 } // cumulonimbus::component
