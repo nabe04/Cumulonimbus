@@ -191,6 +191,22 @@ namespace cumulonimbus::component
 		}
 	}
 
+	void CapsuleCollisionComponent::SetCollisionPreset(const std::string& capsule_name, collision::CollisionPreset preset)
+	{
+		if (!capsules.contains(capsule_name))
+			assert(!"Name is not registered(CapsuleCollisionComponent::SetCollisionPreset)");
+		capsules.at(capsule_name).collision_preset = preset;
+	}
+
+	void CapsuleCollisionComponent::SetAllCollisionPreset(collision::CollisionPreset preset)
+	{
+		for(auto& capsule : capsules)
+		{
+			capsule.second.collision_preset = preset;
+		}
+	}
+
+
 	std::unordered_map<std::string, collision::Capsule>& CapsuleCollisionComponent::GetCapsules()
 	{
 		return capsules;

@@ -61,7 +61,7 @@ namespace cumulonimbus::collision
 		float CalculateRestitution(
 			const component::PhysicMaterialComponent* physic_material_comp_1,
 			const component::PhysicMaterialComponent* physic_material_comp_2);
-		
+
 		/**
 		 * @brief						: 押出し処理
 		 * @param registry				: コンポーネントの取得に使用
@@ -107,6 +107,7 @@ namespace cumulonimbus::collision
 		 * @brief : カプセルとカプセルの当たり判定
 		 */
 		bool IntersectCapsuleVsCapsule(
+			ecs::Registry* registry,
 			component::CapsuleCollisionComponent& capsule_1,
 			component::CapsuleCollisionComponent& capsule_2
 		);
@@ -116,6 +117,7 @@ namespace cumulonimbus::collision
 		 * @attention : 同じエンティティ内での球とカプセルの判定は行わない
 		 */
 		bool IntersectSphereVsCapsule(
+			ecs::Registry* registry,
 			component::SphereCollisionComponent&  sphere,
 			component::CapsuleCollisionComponent& capsule
 		);

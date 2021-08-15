@@ -15,14 +15,15 @@ namespace cumulonimbus
 		struct Capsule
 		{
 			DirectX::SimpleMath::Matrix  world_transform_matrix{ DirectX::SimpleMath::Matrix::Identity }; // ワールド変換行列
-			DirectX::SimpleMath::Vector3 offset{};					 // カプセルの位置調節値
-			DirectX::SimpleMath::Vector3 rotation{};				 // カプセルの回転調節値(度数法)
-			DirectX::SimpleMath::Vector3 start{ 0,-1,0 };			 // カプセルの始点(デフォルト値 : { 0, 1, 0})
-			DirectX::SimpleMath::Vector3 end  { 0, 1,0 };			 // カプセルの終点(デフォルト値 : { 0,-1, 0})
-			std::string bone_name{ "" };							 // FBXモデルのボーンの位置名
-			float		length = 2;									 // カプセルの端点間の長さ
-			float		radius = 1;									 // カプセルの半径
-			HitResult   hit_result;									 // ヒット結果
+			DirectX::SimpleMath::Vector3 offset{};			// カプセルの位置調節値
+			DirectX::SimpleMath::Vector3 rotation{};		// カプセルの回転調節値(度数法)
+			DirectX::SimpleMath::Vector3 start{ 0,-1,0 };	// カプセルの始点(デフォルト値 : { 0, 1, 0})
+			DirectX::SimpleMath::Vector3 end  { 0, 1,0 };	// カプセルの終点(デフォルト値 : { 0,-1, 0})
+			std::string					 bone_name{ "" };	// FBXモデルのボーンの位置名
+			float						 length{ 2 };		// カプセルの端点間の長さ
+			float						 radius{ 1 };		// カプセルの半径
+			HitResult					 hit_result{};		// ヒット結果
+			CollisionPreset				 collision_preset{ CollisionPreset::OverlapAll };	// コリジョンのプロファイル
 		};
 	} // collision
 
@@ -77,30 +78,39 @@ namespace cumulonimbus
 			void SetAllOffset(const DirectX::SimpleMath::Vector3& offset);
 
 			/**
-			 * @brief				: 個々の"カプセルのradius"のセット
+			 * @brief				: 個々のcapsuleの"radius"のセット
 			 * @param capsule_name	: capsuleに登録されているキー値
 			 * @param radius		: 半径
 			 */
 			void SetRadius(const std::string& capsule_name, float radius);
-
 			/**
-			 * @brief		  : 全てのカプセルの"offset"のセット
+			 * @brief		  : 全てのcapsuleの"offset"のセット
 			 * @param radius  : 半径
 			 */
 			void SetAllRadius(float radius);
 
 			/**
-			 * @brief				: 個々のカプセルの"length"のセット
+			 * @brief				: 個々のcapsuleの"length"のセット
 			 * @param capsule_name	: capsuleに登録されているキー値
 			 * @param length		: カプセル内の線分の長さ
 			 */
 			void SetLength(const std::string& capsule_name, float length);
-
 			/**
-			 * @brief		  : 全てのカプセルの"length"のセット
+			 * @brief		  : 全てのcapsuleの"length"のセット
 			 * @param length  : カプセル内の線分の長さ
 			 */
 			void SetAllLength(float length);
+
+			/**
+			 * @brief				: 個々のcapsuleの"collision_preset"のセット
+			 * @param capsule_name	: capsulesに登録されているキー値
+			 * @param preset		: コリジョンのプロファイル
+			 */
+			void SetCollisionPreset(const std::string& capsule_name, collision::CollisionPreset preset);
+			/**
+			 * @brief : capsules全ての"collision_preset"のセット
+			 */
+			void SetAllCollisionPreset(collision::CollisionPreset preset);
 
 			/**
 			* @brief : mapに登録されているcollision::Capsuleの取得

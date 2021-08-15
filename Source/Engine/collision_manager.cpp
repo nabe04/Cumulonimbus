@@ -57,7 +57,10 @@ namespace cumulonimbus::collision
 		{
 			for(int c2 = c1 + 1; c2 < capsule_collisions.GetComponents().size(); ++c2)
 			{
-				IntersectCapsuleVsCapsule(capsule_collisions.GetComponents().at(c1), capsule_collisions.GetComponents().at(c2));
+				IntersectCapsuleVsCapsule(
+					registry,
+					capsule_collisions.GetComponents().at(c1),
+					capsule_collisions.GetComponents().at(c2));
 			}
 		}
 
@@ -66,7 +69,10 @@ namespace cumulonimbus::collision
 		{
 			for(int c = 0;c<capsule_collisions.GetComponents().size();++c)
 			{
-				IntersectSphereVsCapsule(sphere_collisions.GetComponents().at(s), capsule_collisions.GetComponents().at(c));
+				IntersectSphereVsCapsule(
+					registry,
+					sphere_collisions.GetComponents().at(s),
+					capsule_collisions.GetComponents().at(c));
 			}
 		}
 	}
@@ -121,7 +127,7 @@ namespace cumulonimbus::collision
 			if((combine_setting_1 == component::PhysicMaterialComponent::CombineSetting::Average) ||
 			   (combine_setting_2 == component::PhysicMaterialComponent::CombineSetting::Average))
 			{
-				return (restitution_1 + restitution_2) * 0.5;
+				return (restitution_1 + restitution_2) * 0.5f;
 			}
 		}
 		// physic_material_comp_1のみ存在する場合
@@ -143,7 +149,7 @@ namespace cumulonimbus::collision
 			}
 			if((combine_setting_1 == component::PhysicMaterialComponent::CombineSetting::Average))
 			{
-				return (restitution_1 + restitution_2) * 0.5;
+				return (restitution_1 + restitution_2) * 0.5f;
 			}
 		}
 		// physic_material_comp_2のみ存在する場合
@@ -165,7 +171,7 @@ namespace cumulonimbus::collision
 			}
 			if ((combine_setting_2 == component::PhysicMaterialComponent::CombineSetting::Average))
 			{
-				return (restitution_1 + restitution_2) * 0.5;
+				return (restitution_1 + restitution_2) * 0.5f;
 			}
 		}
 
@@ -368,21 +374,20 @@ namespace cumulonimbus::collision
 				const DirectX::SimpleMath::Vector3 s2_translation = s2.second.world_transform_matrix.Translation();
 
 				const DirectX::SimpleMath::Vector3 v = { s1_translation - s2_translation };
-				const float l = v.Length();
+				const float len = v.Length();
 
-				if (l <= s1.second.radius + s2.second.radius)
+				if (len <= s1.second.radius + s2.second.radius)
 				{
 					hit = true;
 					s1.second.hit_result.is_hit = true;
 					s2.second.hit_result.is_hit = true;
-
 					// 押出し処理
 					Extrude(
 						registry,
 						sphere_1.GetEntity(), sphere_2.GetEntity(),
 						s1_translation, s2_translation,
 						s1.second.collision_preset, s2.second.collision_preset,
-						(s1.second.radius + s2.second.radius) - l);
+						(s1.second.radius + s2.second.radius) - len);
 				}
 				else
 				{
@@ -396,6 +401,7 @@ namespace cumulonimbus::collision
 	}
 
 	bool CollisionManager::IntersectCapsuleVsCapsule(
+		ecs::Registry* registry,
 		component::CapsuleCollisionComponent& capsule_1,
 		component::CapsuleCollisionComponent& capsule_2)
 	{
@@ -410,16 +416,25 @@ namespace cumulonimbus::collision
 				DirectX::SimpleMath::Vector3 c1_p, c2_p;
 
 				// 線分の最近距離
-				float len = arithmetic::ClosestPtSegmentSegment(
-								c1.second.start, c1.second.end,
-								c2.second.start, c2.second.end,
-								c1_t, c2_t,
-								c1_p, c2_p);
+				const float len = arithmetic::ClosestPtSegmentSegment(
+									c1.second.start, c1.second.end,
+									c2.second.start, c2.second.end,
+									c1_t, c2_t,
+									c1_p, c2_p);
 
 				if(len <c1.second.radius + c2.second.radius)
 				{
-					c1.second.hit_result.is_hit = c2.second.hit_result.is_hit = true;
+					c1.second.hit_result.is_hit = true;
+					c2.second.hit_result.is_hit = true;
 					hit = true;
+					// 押出し処理
+					Extrude(
+						registry,
+						capsule_1.GetEntity(), capsule_2.GetEntity(),
+						c1_p, c2_p,
+						c1.second.collision_preset,
+						c2.second.collision_preset,
+						(c1.second.radius + c2.second.radius) - len);
 				}
 				else
 				{
@@ -431,26 +446,44 @@ namespace cumulonimbus::collision
 	}
 
 	bool CollisionManager::IntersectSphereVsCapsule(
+		ecs::Registry* registry,
 		component::SphereCollisionComponent&  sphere,
 		component::CapsuleCollisionComponent& capsule)
 	{
+		bool hit = false;
+
 		// 同じエンティティ同士なら判定処理を行わない
 		if (sphere.GetEntity() == capsule.GetEntity())
-			return false;
+			return hit;
 
-		for (const auto& s : sphere.GetSpheres())
+		for (auto& s : sphere.GetSpheres())
 		{
-			for (const auto& c : capsule.GetCapsules())
+			for (auto& c : capsule.GetCapsules())
 			{
 				// 球の中心とカプセルの線分の間の(平方した)距離の算出
 				const float dist = arithmetic::SqDistPointSegment(c.second.start, c.second.end, s.second.world_transform_matrix.Translation());
 				// (平方した)距離が(平方した)半径の総和よりも小さい場合は衝突
 				const float radius = s.second.radius + c.second.radius;
-				return dist <= radius * radius;
+				if(dist <= radius * radius)
+				{
+					c.second.hit_result.is_hit = true;
+					s.second.hit_result.is_hit = true;
+					hit = true;
+					float t = 0; //	最近接点までの距離(線分の割合)
+					DirectX::SimpleMath::Vector3 p{}; // カプセルの最近接点
+					arithmetic::ClosestPtPointSegment(c.second.start, c.second.end, s.second.world_transform_matrix.Translation(), p, t);
+					// 押出し処理
+					Extrude(
+						registry,
+						sphere.GetEntity(), capsule.GetEntity(),
+						s.second.world_transform_matrix.Translation(), p,
+						s.second.collision_preset, c.second.collision_preset,
+						(s.second.radius + c.second.radius) - std::sqrtf(dist));
+				}
 			}
 		}
 
-		return false;
+		return hit;
 	}
 
 
