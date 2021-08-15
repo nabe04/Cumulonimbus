@@ -167,6 +167,23 @@ namespace cumulonimbus::component
 		}
 	}
 
+
+	void SphereCollisionComponent::SetCollisionPreset(const std::string& sphere_name, collision::CollisionPreset preset)
+	{
+		if (!spheres.contains(sphere_name))
+			assert(!"Name is not registered(SphereCollisionComponent::SetCollisionPreset)");
+		spheres.at(sphere_name).collision_preset = preset;
+	}
+
+	void SphereCollisionComponent::SetAllCollisionPreset(collision::CollisionPreset preset)
+	{
+		for (auto& sphere : spheres)
+		{
+			sphere.second.collision_preset = preset;
+		}
+	}
+
+
 	std::unordered_map<std::string, collision::Sphere>& SphereCollisionComponent::GetSpheres()
 	{
 		return spheres;

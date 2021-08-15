@@ -15,10 +15,11 @@ namespace cumulonimbus
 		struct Sphere
 		{
 			DirectX::SimpleMath::Matrix  world_transform_matrix{ DirectX::SimpleMath::Matrix::Identity }; // ワールド変換行列
-			DirectX::SimpleMath::Vector3 offset{};		 // 球の位置調節値
-			std::string bone_name{""};					 // FBXモデルのボーンの位置名
-			float		radius{ 1.f };					 // 半径
-			HitResult	hit_result{};					 // ヒット結果
+			DirectX::SimpleMath::Vector3 offset{};		// 球の位置調節値
+			std::string					 bone_name{""};	// FBXモデルのボーンの位置名
+			float						 radius{ 1.f };	// 半径
+			HitResult				     hit_result{};	// ヒット結果
+			CollisionPreset				 collision_preset{CollisionPreset::OverlapAll};	// コリジョンのプロファイル
 		};
 	} // collision
 
@@ -60,7 +61,7 @@ namespace cumulonimbus
 					const collision::Sphere& sphere = {});
 
 			/**
-			 * @brief				: 個々の"offset"のセット
+			 * @brief				: 個々のsphereの"offset"のセット
 			 * @param sphere_name	: spheresに登録されているキー値
 			 */
 			void SetOffset(const std::string& sphere_name, const DirectX::SimpleMath::Vector3& offset);
@@ -70,17 +71,28 @@ namespace cumulonimbus
 			void SetAllOffset(const DirectX::SimpleMath::Vector3& offset);
 
 			/**
-			 * @brief				: 個々の"radius"のセット
+			 * @brief				: 個々のsphere1の"radius"のセット
 			 * @param sphere_name	: spheresに登録されているキー値
 			 * @param radius		: 半径
 			 */
 			void SetRadius(const std::string& sphere_name, float radius);
-
 			/**
 			 * @brief				: spheres全ての"offset"のセット
 			 * @param radius		: 半径
 			 */
 			void SetAllRadius(float radius);
+
+			/**
+			 * @brief				: 個々のsphereの"collision_preset"のセット
+			 * @param sphere_name	: spheresに登録されているキー値
+			 * @param preset		: コリジョンのプロファイル
+			 */
+			void SetCollisionPreset(const std::string& sphere_name, collision::CollisionPreset preset);
+			/**
+			 * @brief		 : spheres全ての"collision_preset"のセット
+			 * @param preset : コリジョンのプロファイル
+			 */
+			void SetAllCollisionPreset(collision::CollisionPreset preset);
 
 			/**
 			 * @brief : mapに登録されているcollision::Sphereの取得

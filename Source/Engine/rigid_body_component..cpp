@@ -54,6 +54,11 @@ namespace cumulonimbus::component
 	{
 	}
 
+	void RigidBodyComponent::AddVelocity(const DirectX::SimpleMath::Vector3& v)
+	{
+		velocity += v;
+	}
+
 	void RigidBodyComponent::AddForce(const DirectX::SimpleMath::Vector3& force)
 	{
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());

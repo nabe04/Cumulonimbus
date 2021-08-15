@@ -40,6 +40,18 @@ enum class CollisionTag
 namespace cumulonimbus::collision
 {
 	/**
+	 * @brief : コリジョンのプロファイル
+	 */
+	enum class CollisionPreset
+	{
+		BlockAll,		// すべてのアクタをブロックする(お互いのコリジョンがBlockAll時に限る)(RigidBodyComponentを持つものに限る)
+		OverlapAll,		// すべてのアクトをオーバーラップする
+		NoCollision,	// コリジョンなし
+
+		End
+	};
+
+	/**
 	 * @brief : コリジョンに発生するヒットイベント
 	 */
 	enum class HitEvent
@@ -51,7 +63,6 @@ namespace cumulonimbus::collision
 
 		End
 	};
-
 
 	/**
 	 * @brief : ヒット結果

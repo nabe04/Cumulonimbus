@@ -10,7 +10,7 @@ namespace cumulonimbus::component
 	class RigidBodyComponent final : public ComponentBase
 	{
 	public:
-		explicit RigidBodyComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent);
+		explicit RigidBodyComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
 		explicit RigidBodyComponent()  = default; // for cereal
 		~RigidBodyComponent() override = default;
 
@@ -21,6 +21,12 @@ namespace cumulonimbus::component
 		void Save(const std::string& file_path) override;
 		void Load(const std::string& file_path_and_name) override;
 
+		/**
+		 * @brief   : 速度の加算
+		 * @param v : 加算する速度
+		 */
+		void AddVelocity(const DirectX::SimpleMath::Vector3& v);
+		
 		/**
 		 * @brief		: モデルの前方ベクトルに力を加える
 		 * @param force	: 力を加える量
@@ -44,12 +50,16 @@ namespace cumulonimbus::component
 		[[nodiscard]] float GetJumpStrength()								const { return jump_strength; }
 		[[nodiscard]] float GetGravity()									const { return gravity; }
 		[[nodiscard]] float GetCurrentGravity()								const { return current_gravity; }
+		[[nodiscard]] float GetMass()										const { return mass; }
+		
+		void SetMass(const float mass) { this->mass = mass; }
 	private:
 		DirectX::SimpleMath::Vector3 velocity{};
 		DirectX::SimpleMath::Vector3 acceleration{};
 
-		float jump_strength   = 500; // ジャンプ強度
-		float gravity		  = -20; // 重力
+		float mass			  = 1.0f; // 質量
+		float jump_strength   = 500;  // ジャンプ強度
+		float gravity		  = -20;  // 重力
 		float current_gravity = 0;
 
 		bool is_gravity = true;	// 重力フラグ

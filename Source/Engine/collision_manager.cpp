@@ -2,13 +2,17 @@
 
 #include "arithmetic.h"
 #include "ecs.h"
-#include "model_data.h"
 #include "fbx_model_resource.h"
-#include "fbx_model_component.h"
-#include "raycast_component.h"
-#include "sphere_collision_component.h"
-#include "capsule_collison_component.h"
+#include "model_data.h"
 #include "rename_type_mapping.h"
+// Components
+#include "transform_component.h"
+#include "capsule_collison_component.h"
+#include "fbx_model_component.h"
+#include "physic_material_component.h"
+#include "raycast_component.h"
+#include "rigid_body_component.h"
+#include "sphere_collision_component.h"
 
 namespace cumulonimbus::collision
 {
@@ -40,7 +44,10 @@ namespace cumulonimbus::collision
 		{
 			for (int s2 = s1 + 1; s2 < sphere_collisions.GetComponents().size(); ++s2)
 			{
-				IntersectSphereVsSphere(sphere_collisions.GetComponents().at(s1), sphere_collisions.GetComponents().at(s2));
+				IntersectSphereVsSphere(
+					registry,
+					sphere_collisions.GetComponents().at(s1),
+					sphere_collisions.GetComponents().at(s2));
 			}
 		}
 
@@ -68,6 +75,151 @@ namespace cumulonimbus::collision
 	{
 		ent_terrains.emplace_back(ent);
 	}
+
+	float CollisionManager::CalculateRestitution(
+		const component::PhysicMaterialComponent* physic_material_comp_1,
+		const component::PhysicMaterialComponent* physic_material_comp_2)
+	{
+		float restitution_1 = 0;
+		float restitution_2 = 0;
+
+		// PhysicMaterialComponentがnullptrの場合は反発係数を0に設定
+		if (physic_material_comp_1)
+			restitution_1 = physic_material_comp_1->GetBounciness();
+		if (physic_material_comp_2)
+			restitution_2 = physic_material_comp_2->GetBounciness();
+
+		/*
+		 * CombineSettingをもとに反発係数を算出
+		 * 接触している 2 つのコライダーに異なる combine モードが設定されているときは特別で最も高い優先度をもつ機能が使用される。
+		 * Average < Minimum < Multiply < Maximum
+		 * 例)
+		 *  あるマテリアルが Average モードを持ち、他が Maximum モードを持つとき、 combine 機能は Maximum で使用される。
+		 */
+
+		// どちらもPhysicMaterialComponentが存在する場合
+		if(physic_material_comp_1 && physic_material_comp_2)
+		{
+			const component::PhysicMaterialComponent::CombineSetting combine_setting_1 = physic_material_comp_1->GetBounceCombine();
+			const component::PhysicMaterialComponent::CombineSetting combine_setting_2 = physic_material_comp_2->GetBounceCombine();
+
+			if((combine_setting_1 == component::PhysicMaterialComponent::CombineSetting::Maximum) ||
+			   (combine_setting_2 == component::PhysicMaterialComponent::CombineSetting::Maximum))
+			{
+				return restitution_1 > restitution_2 ? restitution_1 : restitution_2;
+			}
+			if((combine_setting_1 == component::PhysicMaterialComponent::CombineSetting::Multiply) ||
+			   (combine_setting_2 == component::PhysicMaterialComponent::CombineSetting::Multiply))
+			{
+				return restitution_1 * restitution_2;
+			}
+			if((combine_setting_1 == component::PhysicMaterialComponent::CombineSetting::Minimum) ||
+			   (combine_setting_2 == component::PhysicMaterialComponent::CombineSetting::Minimum))
+			{
+				return restitution_1 < restitution_2 ? restitution_1 : restitution_2;
+			}
+			if((combine_setting_1 == component::PhysicMaterialComponent::CombineSetting::Average) ||
+			   (combine_setting_2 == component::PhysicMaterialComponent::CombineSetting::Average))
+			{
+				return (restitution_1 + restitution_2) * 0.5;
+			}
+		}
+		// physic_material_comp_1のみ存在する場合
+		if(physic_material_comp_1)
+		{
+			const component::PhysicMaterialComponent::CombineSetting combine_setting_1 = physic_material_comp_1->GetBounceCombine();
+
+			if(combine_setting_1 == component::PhysicMaterialComponent::CombineSetting::Maximum)
+			{
+				return restitution_1 > restitution_2 ? restitution_1 : restitution_2;
+			}
+			if((combine_setting_1 == component::PhysicMaterialComponent::CombineSetting::Multiply))
+			{
+				return restitution_1 * restitution_2;
+			}
+			if((combine_setting_1 == component::PhysicMaterialComponent::CombineSetting::Minimum))
+			{
+				return restitution_1 < restitution_2 ? restitution_1 : restitution_2;
+			}
+			if((combine_setting_1 == component::PhysicMaterialComponent::CombineSetting::Average))
+			{
+				return (restitution_1 + restitution_2) * 0.5;
+			}
+		}
+		// physic_material_comp_2のみ存在する場合
+		if(physic_material_comp_2)
+		{
+			const component::PhysicMaterialComponent::CombineSetting combine_setting_2 = physic_material_comp_2->GetBounceCombine();
+
+			if (combine_setting_2 == component::PhysicMaterialComponent::CombineSetting::Maximum)
+			{
+				return restitution_1 > restitution_2 ? restitution_1 : restitution_2;
+			}
+			if ((combine_setting_2 == component::PhysicMaterialComponent::CombineSetting::Multiply))
+			{
+				return restitution_1 * restitution_2;
+			}
+			if ((combine_setting_2 == component::PhysicMaterialComponent::CombineSetting::Minimum))
+			{
+				return restitution_1 < restitution_2 ? restitution_1 : restitution_2;
+			}
+			if ((combine_setting_2 == component::PhysicMaterialComponent::CombineSetting::Average))
+			{
+				return (restitution_1 + restitution_2) * 0.5;
+			}
+		}
+
+		// どちらのPhysicMaterialComponentもnullptrの場合
+		return 0;
+	}
+
+
+	void CollisionManager::Extrude(
+		ecs::Registry* registry,
+		mapping::rename_type::Entity ent_1,
+		mapping::rename_type::Entity ent_2,
+		const DirectX::SimpleMath::Vector3& mass_point_1,
+		const DirectX::SimpleMath::Vector3& mass_point_2,
+		const CollisionPreset collision_preset_1,
+		const CollisionPreset collision_preset_2,
+		const float penetration)
+	{
+		// 条件 1 : お互いRigidBodyComponentを持っていること
+		// 条件 2 : お互いのCollisionPresetがBlockAllであること
+		if (!registry->TryGetComponent<component::RigidBodyComponent>(ent_1)) return;
+		if (!registry->TryGetComponent<component::RigidBodyComponent>(ent_2)) return;
+		if (collision_preset_1 != CollisionPreset::BlockAll) return;
+		if (collision_preset_2 != CollisionPreset::BlockAll) return;
+
+		auto& rigid_body_comp_1 = registry->GetComponent<component::RigidBodyComponent>(ent_1);
+		auto& rigid_body_comp_2 = registry->GetComponent<component::RigidBodyComponent>(ent_2);
+
+		DirectX::SimpleMath::Vector3 n{ mass_point_2 - mass_point_1 };
+		n.Normalize();
+
+		const float m1 = rigid_body_comp_1.GetMass();
+		const float m2 = rigid_body_comp_2.GetMass();
+
+		// 衝突前の速度
+		const float pre_v1 = rigid_body_comp_1.GetVelocity().Dot(n);
+		const float pre_v2 = rigid_body_comp_2.GetVelocity().Dot(n);
+		if(pre_v1 - pre_v2 > 0)
+		{
+			// 反発係数の取得
+			const float restitution = CalculateRestitution(registry->TryGetComponent<component::PhysicMaterialComponent>(ent_1), registry->TryGetComponent<component::PhysicMaterialComponent>(ent_2));
+
+			// 衝突後の速度
+			const float post_v1 = (m1 * pre_v1 + m2 * pre_v2 + restitution * m2 * (pre_v2 - pre_v1)) / (m1 + m2);
+			const float post_v2 = (m1 * pre_v1 + m2 * pre_v2 + restitution * m1 * (pre_v1 - pre_v2)) / (m1 + m2);
+
+			rigid_body_comp_1.AddVelocity((post_v1 - pre_v1) * n);
+			rigid_body_comp_2.AddVelocity((post_v2 - pre_v2) * n);
+		}
+
+		registry->GetComponent<component::TransformComponent>(ent_1).AdjustPosition(-(m2 / (m1 + m2) * penetration * n));
+		registry->GetComponent<component::TransformComponent>(ent_2).AdjustPosition(m1 / (m1 + m2) * penetration * n);
+	}
+
 
 	bool CollisionManager::IntersectRayVsModel(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, const component::FbxModelComponent& model, HitResult& result)
 	{
@@ -203,6 +355,7 @@ namespace cumulonimbus::collision
 	}
 
 	bool CollisionManager::IntersectSphereVsSphere(
+		ecs::Registry* registry,
 		component::SphereCollisionComponent& sphere_1,
 		component::SphereCollisionComponent& sphere_2)
 	{
@@ -222,6 +375,14 @@ namespace cumulonimbus::collision
 					hit = true;
 					s1.second.hit_result.is_hit = true;
 					s2.second.hit_result.is_hit = true;
+
+					// 押出し処理
+					Extrude(
+						registry,
+						sphere_1.GetEntity(), sphere_2.GetEntity(),
+						s1_translation, s2_translation,
+						s1.second.collision_preset, s2.second.collision_preset,
+						(s1.second.radius + s2.second.radius) - l);
 				}
 				else
 				{

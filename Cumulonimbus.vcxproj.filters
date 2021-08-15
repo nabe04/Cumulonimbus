@@ -498,6 +498,9 @@
     <ClCompile Include="Source\Game\enemy_slime_component.cpp">
       <Filter>Source\Game\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\physic_material_component.cpp">
+      <Filter>Source\Engine\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -889,6 +892,9 @@
     </ClInclude>
     <ClInclude Include="Source\Game\enemy_slime_component.h">
       <Filter>Header\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\physic_material_component.h">
+      <Filter>Header\Engine\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

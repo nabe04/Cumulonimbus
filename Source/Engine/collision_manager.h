@@ -1,5 +1,7 @@
 #pragma once
+#include <d3d11.h>
 #include <DirectXMath.h>
+#include <SimpleMath.h>
 
 #include "rename_type_mapping.h"
 
@@ -17,12 +19,14 @@ namespace cumulonimbus
 		class FbxModelComponent;
 		class SphereCollisionComponent;
 		class CapsuleCollisionComponent;
+		class PhysicMaterialComponent;
 	} // component
 
 	namespace collision
 	{
 		struct HitResult;
 		struct Sphere;
+		enum class CollisionPreset;
 	} // collision
 } // cumulonimbus
 
@@ -51,6 +55,35 @@ namespace cumulonimbus::collision
 		std::vector<mapping::rename_type::Entity> ent_terrains{};
 
 		/**
+		 * @brief : 反発係数の算出
+		 * @return : 反発係数(0～1)
+		 */
+		float CalculateRestitution(
+			const component::PhysicMaterialComponent* physic_material_comp_1,
+			const component::PhysicMaterialComponent* physic_material_comp_2);
+		
+		/**
+		 * @brief						: 押出し処理
+		 * @param registry				: コンポーネントの取得に使用
+		 * @param ent_1					: 押出し対象エンティティ(1)
+		 * @param ent_2					: 押出し対象エンティティ(2)
+		 * @param mass_point_1			: 質点(1)
+		 * @param mass_point_2			: 質点(2)
+		 * @param collision_preset_1	: コリジョンプリセット(1)
+		 * @param collision_preset_2	: コリジョンプリセット(2)
+		 * @param penetration			: めり込み具合
+		 */
+		void Extrude(
+			ecs::Registry* registry,
+			mapping::rename_type::Entity ent_1,
+			mapping::rename_type::Entity ent_2,
+			const DirectX::SimpleMath::Vector3& mass_point_1,
+			const DirectX::SimpleMath::Vector3& mass_point_2,
+			CollisionPreset collision_preset_1,
+			CollisionPreset collision_preset_2,
+			float penetration);
+
+		/**
 		 * @brief : レイとモデルの衝突判定
 		 */
 		bool IntersectRayVsModel(
@@ -65,6 +98,7 @@ namespace cumulonimbus::collision
 		 *	        SphereCollisionComponentが持つSphere分処理を回す
 		 */
 		bool IntersectSphereVsSphere(
+			ecs::Registry* registry,
 			component::SphereCollisionComponent& sphere_1,
 			component::SphereCollisionComponent& sphere_2
 		);
