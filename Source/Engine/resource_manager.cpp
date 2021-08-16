@@ -35,6 +35,11 @@ void ResourceManager::Initialize(ID3D11Device* device)
 		std::shared_ptr<FbxModelResource> deep_sea_lizard_resource = std::make_shared<FbxModelResource>(device, deep_sea_lizard_filename, "./Data/Assets/FBX/Enemies/E_00_DeepSeaLizard");
 		AddFBXData(deep_sea_lizard_resource);
 
+		// ForestDemon
+		const char* forest_demon_filename = "./Data/Assets/Bin/ForestDemon.bin";
+		std::shared_ptr<FbxModelResource> forest_demon_resource = std::make_shared<FbxModelResource>(device, forest_demon_filename, "./Data/Assets/FBX/Enemies/E_02ForestDemon");
+		AddFBXData(forest_demon_resource);
+
 		// Lich
 		const char* lich_filename = "./Data/Assets/Bin/Lich.bin";
 		std::shared_ptr<FbxModelResource> lich_resource = std::make_shared<FbxModelResource>(device, lich_filename, "./Data/Assets/FBX/Enemies/E_05_Lich");

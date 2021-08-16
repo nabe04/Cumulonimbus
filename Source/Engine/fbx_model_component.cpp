@@ -314,7 +314,7 @@ namespace cumulonimbus::component
 
 		float rate = changer_timer / animation_switch_time;
 
-		const ModelData::Keyframe& prev_keyframe = prev_animation.keyframes.at(prev_key_index);
+		const ModelData::Keyframe& prev_keyframe	= prev_animation.keyframes.at(prev_key_index);
 		const ModelData::Keyframe& current_keyframe = resource->GetModelData().animations.at(current_animation_index).keyframes.at(0);
 
 		int nodeCount = static_cast<int>(nodes.size());
