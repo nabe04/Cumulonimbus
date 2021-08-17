@@ -1,5 +1,7 @@
 #include "enemy_slime_component.h"
 
+#include <string>
+
 #include "arithmetic.h"
 #include "ecs.h"
 #include "fbx_model_resource.h"
@@ -8,6 +10,14 @@
 #include "rigid_body_component.h"
 #include "transform_component.h"
 #include "player_component.h"
+
+// std::unordered_map<std::string, RandomFloat> transition_timerのキー値用変数
+namespace
+{
+	const std::string transition_idle_to_walk{ "idle_to_walk" };
+	const std::string transition_walk_to_idle{ "walk_to_idle" };
+	
+}
 
 namespace cumulonimbus::component
 {
@@ -21,17 +31,18 @@ namespace cumulonimbus::component
 		slime_state.AddState(SlimeState::Tracking		, [ent, registry](const float dt) { registry->GetComponent<EnemySlimeComponent>(ent).Tracking(dt); });
 		slime_state.AddState(SlimeState::Birth			, [ent, registry](const float dt) { registry->GetComponent<EnemySlimeComponent>(ent).Birth(dt); });
 		slime_state.AddState(SlimeState::Death			, [ent, registry](const float dt) { registry->GetComponent<EnemySlimeComponent>(ent).Death(dt); });
-		slime_state.AddState(SlimeState::Hit			, [ent, registry](const float dt) { registry->GetComponent<EnemySlimeComponent>(ent).Hit(dt); });
+		slime_state.AddState(SlimeState::Damage			, [ent, registry](const float dt) { registry->GetComponent<EnemySlimeComponent>(ent).Damage(dt); });
 		slime_state.AddState(SlimeState::Stun			, [ent, registry](const float dt) { registry->GetComponent<EnemySlimeComponent>(ent).Stun(dt); });
 		slime_state.AddState(SlimeState::Attack_Bite	, [ent, registry](const float dt) { registry->GetComponent<EnemySlimeComponent>(ent).AttackBite(dt); });
 		slime_state.AddState(SlimeState::Attack_Charge	, [ent, registry](const float dt) { registry->GetComponent<EnemySlimeComponent>(ent).AttackCharge(dt); });
 
-		// 初期stateの設定(Idle)
+		// 初期stateの設定(SlimeState::Idle)
 		slime_state.SetState(SlimeState::Idle);
 
 		// transition_timerの設定
-		AddTimerRange(SlimeState::Idle, { 3.f,7.f });
-		AddTimerRange(SlimeState::Walk, { 3.f,5.f });
+		RegisterTransitionTimer(transition_idle_to_walk, 3.f, 7.f);
+		RegisterTransitionTimer(transition_walk_to_idle, 3.f, 5.f);
+
 
 		// yaw回転でのランダム値設定
 		SetRandomRotationAngle(-180.f, 180.f);
@@ -39,7 +50,7 @@ namespace cumulonimbus::component
 
 	void EnemySlimeComponent::Update(float dt)
 	{
-		//slime_state.Update(dt);
+		slime_state.Update(dt);
 	}
 
 	void EnemySlimeComponent::RenderImGui()
@@ -52,19 +63,6 @@ namespace cumulonimbus::component
 
 	void EnemySlimeComponent::Load(const std::string& file_path_and_name)
 	{
-	}
-
-	void EnemySlimeComponent::AddTimerRange(SlimeState state, const RandomFloat& range)
-	{
-		if(transition_timer.contains(state))
-		{
-			transition_timer.at(state) = range;
-			transition_timer.at(state).SetRandomVal();
-			return;
-		}
-
-		transition_timer.insert(std::make_pair(state, range));
-		transition_timer.at(state).SetRandomVal();
 	}
 
 	void EnemySlimeComponent::SetRandomRotationAngle(const float min, const float max)
@@ -86,7 +84,7 @@ namespace cumulonimbus::component
 
 	void EnemySlimeComponent::Idle(const float dt)
 	{
-		auto& timer = transition_timer.at(SlimeState::Idle);
+		auto& timer = transition_timer.at(transition_idle_to_walk);
 
 		if(slime_state.GetInitialize())
 		{
@@ -117,7 +115,7 @@ namespace cumulonimbus::component
 		auto& fbx_model_comp = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
 		auto& movement_comp  = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
-		auto& timer			 = transition_timer.at(SlimeState::Walk);
+		auto& timer			 = transition_timer.at(transition_walk_to_idle);
 		if(slime_state.GetInitialize())
 		{
 			// アニメーションセット(AnimationData::Walk)
@@ -220,7 +218,7 @@ namespace cumulonimbus::component
 	{
 	}
 
-	void EnemySlimeComponent::Hit(float dt)
+	void EnemySlimeComponent::Damage(float dt)
 	{
 	}
 

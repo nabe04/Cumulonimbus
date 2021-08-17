@@ -1,4 +1,7 @@
 #pragma once
+#include <unordered_map>
+#include <string>
+
 #include "actor3d_component.h"
 
 namespace cumulonimbus::ecs
@@ -27,16 +30,27 @@ namespace cumulonimbus::component
 		 */
 		struct RandomFloat
 		{
-			float min			= 0; // 最小値
-			float max			= 1; // 最大値
-			float random_val	= 0; // minからmaxまでのランダム値
-			float current_time	= 0; // 計測時間
+			float min = 0; // 最小値
+			float max = 1; // 最大値
+			float random_val = 0; // minからmaxまでのランダム値
+			float current_time = 0; // 計測時間
 
 			/**
 			 * @brief : min,maxの値をもとにrandom_valの値を設定
 			 */
 			void SetRandomVal();
 		};
+
+		std::unordered_map<std::string, RandomFloat> transition_timer{};
+
+		/**
+		 * @brief			: "transition_timer"の登録
+		 *					  すでに登録されていた場合値の上書きをする
+		 * @param key_value	: "transition_timer"で使用するキー値
+		 * @param min		: "transition_timer"内のランダム値(最小値)
+		 * @param max		: "transition_timer"内のランダム値(最大値)
+		 */
+		void RegisterTransitionTimer(const std::string& key_value,float min,float max);
 
 		/**
 		 * @brief : 自身の位置と前方ベクトルから索敵範囲内(rad)、索敵距離内(length)に
@@ -46,7 +60,7 @@ namespace cumulonimbus::component
 		 * @param search_length : 索敵距離
 		 * @return : true -> 索敵範囲内
 		 */
-		bool Search(const DirectX::SimpleMath::Vector3& target_pos, float search_range, float search_length) const;
+		[[nodiscard]] bool Search(const DirectX::SimpleMath::Vector3& target_pos, float search_range, float search_length) const;
 
 		/**
 		 * @brief : プレイヤーの方向への回転処理

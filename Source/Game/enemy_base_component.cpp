@@ -19,6 +19,23 @@ namespace cumulonimbus::component
 	{
 	}
 
+	void EnemyBaseComponent::RegisterTransitionTimer(
+		const std::string& key_value,
+		const float min, const float max)
+	{
+		if(transition_timer.contains(key_value))
+		{
+			transition_timer.at(key_value).min = min;
+			transition_timer.at(key_value).max = max;
+			transition_timer.at(key_value).SetRandomVal();
+		}
+
+		const RandomFloat range{ min,max };
+		transition_timer.insert(std::make_pair(key_value, range));
+		transition_timer.at(key_value).SetRandomVal();
+	}
+
+
 	bool EnemyBaseComponent::Search(
 		const DirectX::SimpleMath::Vector3& target_pos,
 		const float search_range, const float search_length) const
