@@ -71,21 +71,21 @@ void SceneGame::InitializeScene()
 	//registry->GetComponent<cum::component::MeshObjectComponent>(ent_ganfaul).SetRasterizerState(RasterizeState::Cull_Front_CCW_True);
 	//registry->GetComponent<cum::component::FbxModelComponent>(ent_ganfaul).SwitchAnimation(2, true);
 
-	const cum::mapping::rename_type::Entity ent_sphere = registry->CreateEntity();
-	registry->AddComponent<cum::component::MeshObjectComponent>(ent_sphere);
-	registry->AddComponent<cum::component::FbxModelComponent>(ent_sphere, cum::locator::Locator::GetResourceManager()->FbxModelResouece("sphere"));
-	registry->GetComponent<cum::component::TransformComponent>(ent_sphere).SetPosition({ 50, 0, 0 });
-	registry->GetComponent<cum::component::TransformComponent>(ent_sphere).SetWorldRotation_Y(180);
-	registry->AddComponent<cum::component::CapsuleCollisionComponent>(ent_sphere, CollisionTag::Player);
-	registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_sphere).AddCapsule();
-	registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_sphere).SetAllRadius(10.0f);
-	registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_sphere).SetAllLength(20.0f);
+	//const cum::mapping::rename_type::Entity ent_sphere = registry->CreateEntity();
+	//registry->AddComponent<cum::component::MeshObjectComponent>(ent_sphere);
+	//registry->AddComponent<cum::component::FbxModelComponent>(ent_sphere, cum::locator::Locator::GetResourceManager()->FbxModelResouece("sphere"));
+	//registry->GetComponent<cum::component::TransformComponent>(ent_sphere).SetPosition({ 50, 0, 0 });
+	//registry->GetComponent<cum::component::TransformComponent>(ent_sphere).SetWorldRotation_Y(180);
+	//registry->AddComponent<cum::component::CapsuleCollisionComponent>(ent_sphere, CollisionTag::Player);
+	//registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_sphere).AddCapsule();
+	//registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_sphere).SetAllRadius(10.0f);
+	//registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_sphere).SetAllLength(20.0f);
 
-	const cum::mapping::rename_type::Entity ent_sphere2 = registry->CreateEntity();
-	registry->AddComponent<cum::component::MeshObjectComponent>(ent_sphere2);
-	registry->AddComponent<cum::component::FbxModelComponent>(ent_sphere2, cum::locator::Locator::GetResourceManager()->FbxModelResouece("sphere"));
-	registry->GetComponent<cum::component::TransformComponent>(ent_sphere2).SetPosition({ 2, 0, 0 });
-	registry->GetComponent<cum::component::TransformComponent>(ent_sphere2).SetWorldRotation_Y(180);
+	//const cum::mapping::rename_type::Entity ent_sphere2 = registry->CreateEntity();
+	//registry->AddComponent<cum::component::MeshObjectComponent>(ent_sphere2);
+	//registry->AddComponent<cum::component::FbxModelComponent>(ent_sphere2, cum::locator::Locator::GetResourceManager()->FbxModelResouece("sphere"));
+	//registry->GetComponent<cum::component::TransformComponent>(ent_sphere2).SetPosition({ 2, 0, 0 });
+	//registry->GetComponent<cum::component::TransformComponent>(ent_sphere2).SetWorldRotation_Y(180);
 
 	//const cum::mapping::rename_type::Entity ent_ene_00 = registry->CreateEntity();
 	//registry->AddComponent<cum::component::MeshObjectComponent>(ent_ene_00);
@@ -106,14 +106,14 @@ void SceneGame::InitializeScene()
 	//registry->GetComponent<cum::component::TransformComponent>(ent_ene_00).SetPosition({100,0,0});
 	//registry->GetComponent<cum::component::TransformComponent>(ent_ene_00).ActiveQuaternion();
 
-	const cum::mapping::rename_type::Entity ent_ene_01 = registry->CreateEntity();
-	registry->AddComponent<cum::component::MeshObjectComponent>(ent_ene_01);
-	registry->AddComponent<cum::component::FbxModelComponent>(ent_ene_01, cum::locator::Locator::GetResourceManager()->FbxModelResouece("ForestDemon"));
-	registry->GetComponent<cum::component::TransformComponent>(ent_ene_01).SetScale(0.1f);
-	registry->GetComponent<cum::component::TransformComponent>(ent_ene_01).SetPosition({100,0,0});
-	registry->GetComponent<cum::component::TransformComponent>(ent_ene_01).ActiveQuaternion();
-	registry->AddComponent<cum::component::RigidBodyComponent>(ent_ene_01);
-	registry->AddComponent<cum::component::EnemyForestDemonComponent>(ent_ene_01);
+	//const cum::mapping::rename_type::Entity ent_ene_01 = registry->CreateEntity();
+	//registry->AddComponent<cum::component::MeshObjectComponent>(ent_ene_01);
+	//registry->AddComponent<cum::component::FbxModelComponent>(ent_ene_01, cum::locator::Locator::GetResourceManager()->FbxModelResouece("ForestDemon"));
+	//registry->GetComponent<cum::component::TransformComponent>(ent_ene_01).SetScale(0.1f);
+	//registry->GetComponent<cum::component::TransformComponent>(ent_ene_01).SetPosition({100,0,0});
+	//registry->GetComponent<cum::component::TransformComponent>(ent_ene_01).ActiveQuaternion();
+	//registry->AddComponent<cum::component::RigidBodyComponent>(ent_ene_01);
+	//registry->AddComponent<cum::component::EnemyForestDemonComponent>(ent_ene_01);
 
 	const cum::mapping::rename_type::Entity ent_player = registry->CreateEntity();
 	registry->AddComponent<cum::component::MeshObjectComponent>(ent_player);
