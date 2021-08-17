@@ -63,6 +63,14 @@ namespace cumulonimbus::component
 		[[nodiscard]] bool Search(const DirectX::SimpleMath::Vector3& target_pos, float search_range, float search_length) const;
 
 		/**
+		 * @brief				: 指定した位置への追跡処理(モデルの回転処理も含む)
+		 * @param target_pos	: 追跡先の位置
+		 * @param velocity		: 追跡速度
+		 * @param distance		: 自身と追跡対象の長さを返す
+		 */
+		void Tracking(DirectX::SimpleMath::Vector3 target_pos, const DirectX::SimpleMath::Vector3& velocity, float& distance);
+
+		/**
 		 * @brief : プレイヤーの方向への回転処理
 		 */
 		void RotateToPlayerDirection() const ;

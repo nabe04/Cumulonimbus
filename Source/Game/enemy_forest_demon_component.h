@@ -67,6 +67,8 @@ namespace cumulonimbus::component
 		float rotation_time_rate{ 1.0f };
 		// •às‚Ì‘¬‚³
 		float walk_speed{ 100 };
+		// ’ÇÕ’†‚Ì‘¬‚³
+		float tracking_speed{ 150 };
 		// ’ÇÕ’†’f‚Ì’·‚³
 		float tracking_interruption_distance{ 200 };
 		// ’ÇÕ‚©‚çUŒ‚‚ÉˆÚ‚é‹——£

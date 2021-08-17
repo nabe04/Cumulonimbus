@@ -4,8 +4,9 @@
 #include "ecs.h"
 #include "rename_type_mapping.h"
 // components
-#include "transform_component.h"
 #include "player_component.h"
+#include "rigid_body_component.h"
+#include "transform_component.h"
 
 namespace cumulonimbus::component
 {
@@ -54,6 +55,41 @@ namespace cumulonimbus::component
 
 		return true;
 	}
+
+	void EnemyBaseComponent::Tracking(
+		DirectX::SimpleMath::Vector3 target_pos,
+		const DirectX::SimpleMath::Vector3& velocity,
+		float& distance)
+	{
+		auto& transform_comp  = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
+		auto& rigid_body_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
+
+		target_pos.y = 0;
+		DirectX::SimpleMath::Vector3 self_pos = transform_comp.GetPosition();
+		self_pos.y = 0;
+		// 自身からターゲットへのベクトルを作成
+		DirectX::SimpleMath::Vector3 self_to_target_vec{ target_pos - self_pos };
+		distance = self_to_target_vec.Length();
+		self_to_target_vec.Normalize();
+
+		DirectX::SimpleMath::Vector3 self_front_vec = transform_comp.GetModelFront();
+		self_front_vec.y = 0;
+		self_front_vec.Normalize();
+
+		float rad = arithmetic::CalcAngleFromTwoVec(self_to_target_vec, self_front_vec);
+
+		if (!arithmetic::IsEqual(rad, 0.0f))
+		{
+			if (self_front_vec.Cross(self_to_target_vec).y < 0)
+				rad *= -1;
+			// モデルの回転処理
+			transform_comp.AdjustRotationFromAxis({ 0,1,0 }, rad);
+		}
+
+		// 力(速度)の加算
+		rigid_body_comp.AddForce({ velocity.x, velocity.y, velocity.z});
+	}
+
 
 	void EnemyBaseComponent::RotateToPlayerDirection() const
 	{

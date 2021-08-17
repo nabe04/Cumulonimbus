@@ -11,7 +11,8 @@
 #include "input_manager.h"
 #include "mesh_object.h"
 #include "player_component.h"
-#include "enemy_slime_component.h"
+#include "enemy_slime_component.h"]
+#include "enemy_forest_demon_component.h"
 #include "scene_title.h"
 #include "sky_box.h"
 #include "sphere_collision_component.h"
@@ -111,6 +112,8 @@ void SceneGame::InitializeScene()
 	registry->GetComponent<cum::component::TransformComponent>(ent_ene_01).SetScale(0.1f);
 	registry->GetComponent<cum::component::TransformComponent>(ent_ene_01).SetPosition({100,0,0});
 	registry->GetComponent<cum::component::TransformComponent>(ent_ene_01).ActiveQuaternion();
+	registry->AddComponent<cum::component::RigidBodyComponent>(ent_ene_01);
+	registry->AddComponent<cum::component::EnemyForestDemonComponent>(ent_ene_01);
 
 	const cum::mapping::rename_type::Entity ent_player = registry->CreateEntity();
 	registry->AddComponent<cum::component::MeshObjectComponent>(ent_player);

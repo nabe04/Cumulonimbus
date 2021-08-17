@@ -23,7 +23,7 @@ private:
 
 	std::shared_ptr<Window>		 window{};
 	std::shared_ptr<InputSystem> input_system{};
-	std::shared_ptr<Dx11Device> dx11_configurator{};
+	std::shared_ptr<Dx11Device>  dx11_configurator{};
 
 	const float frame_fate = 60.0f;
 	HighResolutionTimer hr_timer;

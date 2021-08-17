@@ -1,6 +1,12 @@
 #include "enemy_forest_demon_component.h"
 
 #include "ecs.h"
+#include "fbx_model_resource.h"
+// components
+#include "fbx_model_component.h"
+#include "player_component.h"
+#include "rigid_body_component.h"
+#include "transform_component.h"
 
 // std::unordered_map<std::string, RandomFloat> transition_timerのキー値用変数
 namespace
@@ -65,24 +71,124 @@ namespace cumulonimbus::component
 		return static_cast<int>(anim_data);
 	}
 
-	void EnemyForestDemonComponent::TPose(float dt)
+	void EnemyForestDemonComponent::TPose(const float dt)
 	{
 	}
 
-	void EnemyForestDemonComponent::Idle(float dt)
+	void EnemyForestDemonComponent::Idle(const float dt)
+	{
+		auto& timer = transition_timer.at(transition_idle_to_walk);
+
+		if(forest_demon_state.GetInitialize())
+		{
+			// アニメーションセット
+			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimDataIndex(AnimationData::Idle_00));
+			// 遷移時間のランダム値の再設定
+			timer.SetRandomVal();
+		}
+
+		timer.current_time += dt;
+
+		const mapping::rename_type::Entity ent_player = GetRegistry()->GetArray<PlayerComponent>().GetComponents().at(0).GetEntity();
+		if(Search(GetRegistry()->GetComponent<TransformComponent>(ent_player).GetPosition(),tracking_transition_angle,tracking_transition_distance))
+		{
+			// 索敵範囲内にプレイヤーがいれば状態遷移(ForestDemonState::Tracking)
+			forest_demon_state.SetState(ForestDemonState::Tracking);
+			timer.current_time = 0.0f;
+			return;
+		}
+
+		if (timer.current_time < timer.random_val)
+			return;
+
+		// 状態遷移(ForestDemonState::Walk)
+		forest_demon_state.SetState(ForestDemonState::Walk);
+		timer.current_time = 0.0f;
+	}
+
+	void EnemyForestDemonComponent::Ready(const float dt)
 	{
 	}
 
-	void EnemyForestDemonComponent::Ready(float dt)
+	void EnemyForestDemonComponent::Walk(const float dt)
 	{
+		auto& fbx_model_comp	= GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
+		auto& rigid_body_comp	= GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
+		auto& transform_comp	= GetRegistry()->GetComponent<TransformComponent>(GetEntity());
+		auto& timer				= transition_timer.at(transition_walk_to_idle);
+		if(forest_demon_state.GetInitialize())
+		{
+			// アニメーションセット(AnimationData::Walk)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Walk));
+			transform_comp.ActiveQuaternion();
+			{// モデル回転の初期設定
+				random_rotation_angle.SetRandomVal();
+				random_rotation_angle.current_time = 0;
+				const DirectX::SimpleMath::Quaternion rotation_result_q = DirectX::SimpleMath::Quaternion::CreateFromAxisAngle({ 0,1,0 }, DirectX::XMConvertToRadians(random_rotation_angle.random_val));
+				transform_comp.SetQuaternionSlerp(DirectX::SimpleMath::Quaternion::Identity, rotation_result_q);
+			}
+			{// 状態遷移タイマーの初期設定
+				timer.current_time = 0;
+				timer.SetRandomVal();
+			}
+		}
+
+		random_rotation_angle.current_time += dt * rotation_time_rate;
+		transform_comp.QuaternionSlerp(random_rotation_angle.current_time);
+
+		if (random_rotation_angle.current_time > 1)
+		{
+			random_rotation_angle.current_time = 1;
+		}
+		rigid_body_comp.AddForce({ walk_speed,0.0f,walk_speed });
+
+		const mapping::rename_type::Entity ent_player = GetRegistry()->GetArray<PlayerComponent>().GetComponents().at(0).GetEntity();
+		if (Search(GetRegistry()->GetComponent<TransformComponent>(ent_player).GetPosition(), tracking_transition_angle, tracking_transition_distance))
+		{// 索敵範囲内にプレイヤーがいれば状態遷移(ForestDemonState::Tracking)
+			forest_demon_state.SetState(ForestDemonState::Tracking);
+			timer.current_time = 0;
+		}
+
+		timer.current_time += dt;
+		if (timer.current_time < timer.random_val)
+			return;
+
+		forest_demon_state.SetState(ForestDemonState::Idle);
+		timer.current_time = 0;
 	}
 
-	void EnemyForestDemonComponent::Walk(float dt)
+	void EnemyForestDemonComponent::Tracking(const float dt)
 	{
-	}
+		auto& fbx_model_comp	= GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
+		auto& rigid_body_comp	= GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
+		auto& transform_comp	= GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 
-	void EnemyForestDemonComponent::Tracking(float dt)
-	{
+		if(forest_demon_state.GetInitialize())
+		{
+			// アニメーションセット(AnimationData::Run)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Run), true);
+		}
+
+		float distance = 0; // 自身とプレイヤーとの距離
+		{// 追跡処理
+			const mapping::rename_type::Entity ent_player = GetRegistry()->GetArray<PlayerComponent>().GetComponents().at(0).GetEntity();
+			EnemyBaseComponent::Tracking(
+				GetRegistry()->GetComponent<TransformComponent>(ent_player).GetPosition(),
+				{ tracking_speed,.0f,tracking_speed },
+				distance);
+		}
+
+		{// 状態の切り替え
+			if(distance > tracking_interruption_distance)
+			{// 索敵範囲外なら待機状態に遷移
+				forest_demon_state.SetState(ForestDemonState::Idle);
+			}
+
+			if(distance < attack_transition_distance)
+			{// プレイヤーと自身の距離範囲内なら攻撃状態に遷移
+				forest_demon_state.SetState(ForestDemonState::Attack_Normal);
+			}
+		}
 	}
 
 	void EnemyForestDemonComponent::Death(float dt)
@@ -95,6 +201,19 @@ namespace cumulonimbus::component
 
 	void EnemyForestDemonComponent::AttackNormal(float dt)
 	{
+		auto& fbx_model_comp = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
+		if (forest_demon_state.GetInitialize())
+		{
+			// アニメーションセット(AnimationData::Attack_Normal)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Normal), false);
+			//プレイヤーの方向に向きを変える
+			RotateToPlayerDirection();
+		}
+
+		if (fbx_model_comp.IsPlayAnimation())
+			return;
+
+		forest_demon_state.SetState(ForestDemonState::Idle);
 	}
 
 	void EnemyForestDemonComponent::AttackMowDown(float dt)

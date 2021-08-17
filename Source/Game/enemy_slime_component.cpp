@@ -16,7 +16,7 @@ namespace
 {
 	const std::string transition_idle_to_walk{ "idle_to_walk" };
 	const std::string transition_walk_to_idle{ "walk_to_idle" };
-	
+
 }
 
 namespace cumulonimbus::component
@@ -90,16 +90,19 @@ namespace cumulonimbus::component
 		{
 			// アニメーションセット(AnimationData::Idle_00)
 			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimDataIndex(AnimationData::Idle_00), true);
+			// 遷移時間のランダム値の再設定
 			timer.SetRandomVal();
 		}
 
 		timer.current_time += dt;
 
-		const mapping::rename_type::Entity ent_player =GetRegistry()->GetArray<PlayerComponent>().GetComponents().at(0).GetEntity();
+		const mapping::rename_type::Entity ent_player = GetRegistry()->GetArray<PlayerComponent>().GetComponents().at(0).GetEntity();
 		if(Search(GetRegistry()->GetComponent<TransformComponent>(ent_player).GetPosition(), tracking_transition_angle, tracking_transition_distance))
-		{// 索敵範囲内にプレイヤーがいれば状態遷移(SlimeState::Tracking)
+		{
+			// 索敵範囲内にプレイヤーがいれば状態遷移(SlimeState::Tracking)
 			slime_state.SetState(SlimeState::Tracking);
 			timer.current_time = 0.0f;
+			return;
 		}
 
 		if (timer.current_time < timer.random_val)
@@ -112,10 +115,10 @@ namespace cumulonimbus::component
 
 	void EnemySlimeComponent::Walk(const float dt)
 	{
-		auto& fbx_model_comp = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
-		auto& movement_comp  = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
-		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
-		auto& timer			 = transition_timer.at(transition_walk_to_idle);
+		auto& fbx_model_comp	= GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
+		auto& rigid_body_comp	= GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
+		auto& transform_comp	= GetRegistry()->GetComponent<TransformComponent>(GetEntity());
+		auto& timer				= transition_timer.at(transition_walk_to_idle);
 		if(slime_state.GetInitialize())
 		{
 			// アニメーションセット(AnimationData::Walk)
@@ -140,12 +143,13 @@ namespace cumulonimbus::component
 		{
 			random_rotation_angle.current_time = 1;
 		}
-		movement_comp.AddForce({ walk_speed,0.0f,walk_speed });
+		rigid_body_comp.AddForce({ walk_speed,0.0f,walk_speed });
 
 		const mapping::rename_type::Entity ent_player = GetRegistry()->GetArray<PlayerComponent>().GetComponents().at(0).GetEntity();
 		if (Search(GetRegistry()->GetComponent<TransformComponent>(ent_player).GetPosition(), tracking_transition_angle, tracking_transition_distance))
 		{// 索敵範囲内にプレイヤーがいれば状態遷移(SlimeState::Tracking)
 			slime_state.SetState(SlimeState::Tracking);
+			timer.current_time = 0;
 		}
 
 		timer.current_time += dt;
@@ -158,9 +162,9 @@ namespace cumulonimbus::component
 
 	void EnemySlimeComponent::Tracking(const float dt)
 	{
-		auto& fbx_model_comp = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
-		auto& movement_comp  = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
-		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
+		auto& fbx_model_comp	= GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
+		auto& rigid_body_comp	= GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
+		auto& transform_comp	= GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 		float distance = 0; // 自身とプレイヤーとの距離
 		if(slime_state.GetInitialize())
 		{
@@ -194,7 +198,7 @@ namespace cumulonimbus::component
 
 				transform_comp.AdjustRotationFromAxis({ 0,1,0 }, rad);
 			}
-			movement_comp.AddForce({ walk_speed, 0.0f, walk_speed });
+			rigid_body_comp.AddForce({ walk_speed, 0.0f, walk_speed });
 		}
 
 		{// 状態の切り替え
@@ -229,7 +233,6 @@ namespace cumulonimbus::component
 	void EnemySlimeComponent::AttackBite(float dt)
 	{
 		auto& fbx_model_comp = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
-		auto& movement_comp  = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
 		if(slime_state.GetInitialize())
 		{
 			// アニメーションセット(AnimationData::Attack_Bite)
