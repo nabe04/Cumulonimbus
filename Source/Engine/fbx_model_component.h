@@ -13,6 +13,7 @@
 #include "component_base.h"
 #include "model_data.h"
 #include "rename_type_mapping.h"
+#include "shader_asset_mapping.h"
 #include "shader_interop_renderer.h"
 #include "state_machine.h"
 
@@ -72,13 +73,19 @@ namespace cumulonimbus::component
 			}
 		};
 
-		explicit FbxModelComponent() = default; // for cereal
 		explicit FbxModelComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const std::shared_ptr<FbxModelResource>& resource);
+		explicit FbxModelComponent()  = default; // for cereal
 		~FbxModelComponent() override = default;
 
 		void NewFrame(float delta_time) override;
 		void Update(float delta_time) override;
 		void RenderImGui() override;
+
+		/**
+		 * @brief		: モデルのマテリアル全てのシェーダーのセット
+		 * @param asset	: 使用するシェーダーの種類１
+		 */
+		void SetAllShader(mapping::shader_assets::ShaderAsset3D asset);
 
 		/**
 		 * @brief					: 指定された要素のマテリアル情報(シェーダー、シェーダーパラメータ、テクスチャ)の取得
@@ -141,13 +148,6 @@ namespace cumulonimbus::component
 		// 現在のキーフレーム
 		[[nodiscard]] int CurrentKeyframe() const { return current_keyframe; }
 
-		/*
-		 * brief : アニメーションを再生させるか
-		 * true  : アニメーションなし
-		 * false : アニメーションあり
-		 */
-		void SetIsStatic(const bool flg) { is_static = flg; }
-
 		void Save(const std::string& file_path) override;
 		void Load(const std::string& file_path_and_name) override;
 
@@ -196,7 +196,6 @@ namespace cumulonimbus::component
 		float animation_switch_time = 0;
 		float changer_timer			= 0;
 
-		bool is_static				= true;  // アニメーションの再生をさせるか(true : アニメーションなし、 false : アニメーションあり)
 		bool loop_animation			= false; // アニメーションのループ再生
 		bool end_animation			= false;
 

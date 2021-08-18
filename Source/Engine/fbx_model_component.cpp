@@ -199,6 +199,15 @@ namespace cumulonimbus::component
 		}
 	}
 
+	void FbxModelComponent::SetAllShader(const mapping::shader_assets::ShaderAsset3D asset)
+	{
+		for(auto& material_manager : materials_manager)
+		{
+			material_manager->SetShaderAsset(asset);
+		}
+	}
+
+
 	const shader_asset::Material3DManager* FbxModelComponent::GetMaterialsManager(uint material_index) const
 	{
 		return materials_manager.at(material_index).get();
@@ -310,7 +319,7 @@ namespace cumulonimbus::component
 		{
 			// 前のアニメーションの切り替わった時点のキーフレームを算出
 			const size_t key_frame = resource->GetModelData().animations.size();
-			if(prev_animation_index >= key_frame)
+			if(prev_key_index >= key_frame)
 			{
 				prev_animation = resource->GetModelData().animations.at(key_frame - 1);
 			}

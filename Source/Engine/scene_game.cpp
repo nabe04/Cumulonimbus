@@ -87,6 +87,12 @@ void SceneGame::InitializeScene()
 	//registry->GetComponent<cum::component::TransformComponent>(ent_sphere2).SetPosition({ 2, 0, 0 });
 	//registry->GetComponent<cum::component::TransformComponent>(ent_sphere2).SetWorldRotation_Y(180);
 
+	const cum::mapping::rename_type::Entity ent_stage_01 = registry->CreateEntity();
+	registry->AddComponent<cum::component::MeshObjectComponent>(ent_stage_01);
+	registry->AddComponent<cum::component::FbxModelComponent>(ent_stage_01, cum::locator::Locator::GetResourceManager()->FbxModelResouece("Stage_01"));
+	registry->GetComponent<cum::component::FbxModelComponent>(ent_stage_01).SetAllShader(cumulonimbus::mapping::shader_assets::ShaderAsset3D::SampleShader);
+	registry->GetComponent<cum::component::TransformComponent>(ent_stage_01).SetPosition({ 0,230,0 });
+
 	//const cum::mapping::rename_type::Entity ent_ene_00 = registry->CreateEntity();
 	//registry->AddComponent<cum::component::MeshObjectComponent>(ent_ene_00);
 	//registry->AddComponent<cum::component::FbxModelComponent>(ent_ene_00, cum::locator::Locator::GetResourceManager()->FbxModelResouece("Slime"));
@@ -123,7 +129,7 @@ void SceneGame::InitializeScene()
 	registry->AddComponent<cum::component::CameraComponent>(ent_player, true);
 	registry->AddComponent<cum::component::RigidBodyComponent>(ent_player);
 	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetScale(0.3f);
-	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetPosition({ -30, 10, 0 });
+	registry->GetComponent<cum::component::TransformComponent>(ent_player).SetPosition({ 100, 10, -1600 });
 	registry->GetComponent<cum::component::MeshObjectComponent>(ent_player).SetRasterizerState(RasterizeState::Cull_Front_CCW_True);
 	registry->GetComponent<cum::component::FbxModelComponent>(ent_player).SwitchAnimation(4, true);
 	registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_player).AddCapsule();

@@ -179,11 +179,10 @@ namespace cumulonimbus::collision
 		return 0;
 	}
 
-
 	void CollisionManager::Extrude(
 		ecs::Registry* registry,
-		mapping::rename_type::Entity ent_1,
-		mapping::rename_type::Entity ent_2,
+		const mapping::rename_type::Entity ent_1,
+		const mapping::rename_type::Entity ent_2,
 		const DirectX::SimpleMath::Vector3& mass_point_1,
 		const DirectX::SimpleMath::Vector3& mass_point_2,
 		const CollisionPreset collision_preset_1,

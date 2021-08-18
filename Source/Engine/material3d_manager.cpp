@@ -53,7 +53,7 @@ namespace cumulonimbus::shader_asset
 		{
 			for (auto& name : shader_assets.GetStateNames())
 			{
-				bool is_selected = (shader_assets.GetCurrentState() == shader_assets.GetStateMap().at(name));
+				const bool is_selected = (shader_assets.GetCurrentState() == shader_assets.GetStateMap().at(name));
 
 				if (ImGui::Selectable(name.c_str(), is_selected))
 				{
@@ -82,12 +82,12 @@ namespace cumulonimbus::shader_asset
 		}
 	}
 
-	void Material3DManager::SetShaderAsset(mapping::shader_assets::ShaderAsset3D asset)
+	void Material3DManager::SetShaderAsset(const mapping::shader_assets::ShaderAsset3D asset)
 	{
 		shader_assets.SetState(asset);
 	}
 
-	void Material3DManager::SetMaterialPath(mapping::shader_assets::ShaderAsset3D asset,
+	void Material3DManager::SetMaterialPath(const mapping::shader_assets::ShaderAsset3D asset,
 	                                        const shader_asset::MaterialPath& material_path)
 	{
 		shader_asset_map.at(asset)->SetMaterialPath(material_path);

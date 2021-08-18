@@ -56,7 +56,7 @@ namespace cumulonimbus::shader_asset
 		 * 使用するシェーダーのセット
 		 */
 		void SetShaderAsset(mapping::shader_assets::ShaderAsset3D asset);
-		
+
 		/*
 		 * brief : assetで指定されたShaderAsset3Dの
 		 *         material_pathのセット
