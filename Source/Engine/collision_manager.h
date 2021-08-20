@@ -41,7 +41,7 @@ namespace cumulonimbus::collision
 		/**
 		 * @brief : CollisionComponentを持つエンティティ全体の当たり判定処理
 		 */
-		void Update(ecs::Registry* registry);
+		void Update(float dt, ecs::Registry* registry);
 
 		/**
 		 * @brief : 地形として判定させたい物の登録
@@ -74,6 +74,7 @@ namespace cumulonimbus::collision
 		 * @param penetration			: めり込み具合
 		 */
 		void Extrude(
+			float dt,
 			ecs::Registry* registry,
 			mapping::rename_type::Entity ent_1,
 			mapping::rename_type::Entity ent_2,
@@ -87,6 +88,7 @@ namespace cumulonimbus::collision
 		 * @brief : レイとモデルの衝突判定
 		 */
 		bool IntersectRayVsModel(
+			float dt,
 			const DirectX::XMFLOAT3& start,
 			const DirectX::XMFLOAT3& end,
 			const component::FbxModelComponent& model,
@@ -98,6 +100,7 @@ namespace cumulonimbus::collision
 		 *	        SphereCollisionComponentが持つSphere分処理を回す
 		 */
 		bool IntersectSphereVsSphere(
+			float dt,
 			ecs::Registry* registry,
 			component::SphereCollisionComponent& sphere_1,
 			component::SphereCollisionComponent& sphere_2
@@ -107,6 +110,7 @@ namespace cumulonimbus::collision
 		 * @brief : カプセルとカプセルの当たり判定
 		 */
 		bool IntersectCapsuleVsCapsule(
+			float dt,
 			ecs::Registry* registry,
 			component::CapsuleCollisionComponent& capsule_1,
 			component::CapsuleCollisionComponent& capsule_2
@@ -117,6 +121,7 @@ namespace cumulonimbus::collision
 		 * @attention : 同じエンティティ内での球とカプセルの判定は行わない
 		 */
 		bool IntersectSphereVsCapsule(
+			float dt,
 			ecs::Registry* registry,
 			component::SphereCollisionComponent&  sphere,
 			component::CapsuleCollisionComponent& capsule

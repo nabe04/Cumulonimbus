@@ -168,6 +168,9 @@ namespace cumulonimbus::renderer
 
 		for(auto& mesh_object : registry->GetArray<component::MeshObjectComponent>().GetComponents())
 		{
+			if (!mesh_object.GetIsVisible())
+				continue;;
+
 			const mapping::rename_type::Entity ent = mesh_object.GetEntity();
 
 			// MeshObjectComponent‚ª‚Âstate—Ş‚ÌÀs
@@ -333,6 +336,9 @@ namespace cumulonimbus::renderer
 
 		for (auto& mesh_object : registry->GetArray<component::MeshObjectComponent>().GetComponents())
 		{
+			if (!mesh_object.GetIsVisible())
+				continue;;
+
 			const mapping::rename_type::Entity ent = mesh_object.GetEntity();
 
 			// MeshObjectComponent‚ª‚Âstate—Ş‚ÌÀs

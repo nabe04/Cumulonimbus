@@ -59,6 +59,9 @@ void ResourceManager::Initialize(ID3D11Device* device)
 		std::shared_ptr<FbxModelResource>  stage_01_resource = std::make_shared<FbxModelResource>(device, stage_01_filename, "./Data/Assets/FBX/Stages/Stage_01/Textures");
 		AddFBXData(stage_01_resource);
 
+		const char* stage_01_collisionn_filename = "./Data/Assets/Bin/Stage_01_Collision.bin";
+		std::shared_ptr<FbxModelResource>  stage_01_collision_resource = std::make_shared<FbxModelResource>(device, stage_01_collisionn_filename, "./Data/Assets/FBX/Stages/Stage_01/Stage_01_For_Collision.fbm");
+		AddFBXData(stage_01_collision_resource);
 
 		// Cube
 		const char* cube_filename  = "./Data/Assets/Bin/cube.bin";  // "./Data/Assets/FBX/stage/stage.fbm/"

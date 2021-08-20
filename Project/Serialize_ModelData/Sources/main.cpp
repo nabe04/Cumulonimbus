@@ -131,9 +131,13 @@ int main()
 	//e_15.Export("../../Data/Assets/Bin/ZombieHound.bin");
 
 
+	//// Stage_01
+	//BulidFBX stage_01("../../Data/Assets/FBX/Stages/Stage_01/Stage_01_3.fbx");
+	//stage_01.Export("../../Data/Assets/Bin/Stage_01.bin");
+
 	// Stage_01
-	BulidFBX stage_01("../../Data/Assets/FBX/Stages/Stage_01/Stage_01_3.fbx");
-	stage_01.Export("../../Data/Assets/Bin/Stage_01.bin");
+	BulidFBX stage_01("../../Data/Assets/FBX/Stages/Stage_01/Stage_01_For_Collision.fbx");
+	stage_01.Export("../../Data/Assets/Bin/Stage_01_Collision.bin");
 
 	return 0;
 }

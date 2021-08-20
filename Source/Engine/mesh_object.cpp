@@ -31,6 +31,8 @@ namespace cumulonimbus::component
 	{
 		if (ImGui::TreeNode("Mesh States"))
 		{
+			ImGui::Checkbox("Visible", &is_visible);
+
 			shader_state.RenderImGui();
 
 #pragma region blend state

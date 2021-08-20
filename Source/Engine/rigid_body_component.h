@@ -21,12 +21,14 @@ namespace cumulonimbus::component
 		void Save(const std::string& file_path) override;
 		void Load(const std::string& file_path_and_name) override;
 
+		void Integrate(float dt);
+		
 		/**
 		 * @brief   : 速度の加算
 		 * @param v : 加算する速度
 		 */
 		void AddVelocity(const DirectX::SimpleMath::Vector3& v);
-		
+
 		/**
 		 * @brief		: モデルの前方ベクトルに力を加える
 		 * @param force	: 力を加える量
@@ -51,7 +53,8 @@ namespace cumulonimbus::component
 		[[nodiscard]] float GetGravity()									const { return gravity; }
 		[[nodiscard]] float GetCurrentGravity()								const { return current_gravity; }
 		[[nodiscard]] float GetMass()										const { return mass; }
-		
+		[[nodiscard]] bool GetIsGravity()									const { return is_gravity; }
+
 		void SetMass(const float mass) { this->mass = mass; }
 	private:
 		DirectX::SimpleMath::Vector3 velocity{};
@@ -63,9 +66,7 @@ namespace cumulonimbus::component
 		float current_gravity = 0;
 
 		bool is_gravity = true;	// 重力フラグ
-		bool is_landing;	// 地面フラグ
-		bool is_jumping;	// ジャンプフラグ
-
-		void Integrate(float dt);
+		bool is_landing;		// 地面フラグ
+		bool is_jumping;		// ジャンプフラグ
 	};
 } // cumulonimbus::component

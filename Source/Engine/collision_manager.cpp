@@ -16,35 +16,16 @@
 
 namespace cumulonimbus::collision
 {
-	void CollisionManager::Update(ecs::Registry* registry)
+	void CollisionManager::Update(const float dt, ecs::Registry* registry)
 	{
-		//registry->GetEntities().size();
-		// レイキャスト
-		auto& ray_cast_array = registry->GetArray<component::RayCastComponent>();
-
-		for(auto& ray_comp : ray_cast_array.GetComponents())
-		{
-			mapping::rename_type::Entity ent = ray_comp.GetEntity();
-
-			// ent_terrainsとRayCastComponentを持つモデルでレイキャストの判定を行う
-			for(const auto& ent_trrain : ent_terrains)
-			{
-				const auto& model = registry->GetComponent<component::FbxModelComponent>(ent_trrain);
-				if(IntersectRayVsModel(ray_comp.GetRayStartPos(), ray_comp.GetRayEndPos(), model, ray_comp.GetHitResult()))
-				{
-					int a;
-					a = 0;
-				}
-			}
-		}
-
 		// 球同士の判定
 		auto& sphere_collisions = registry->GetArray<component::SphereCollisionComponent>();
-		for(int s1 = 0; s1 < sphere_collisions.GetComponents().size(); ++s1)
+		for (int s1 = 0; s1 < sphere_collisions.GetComponents().size(); ++s1)
 		{
 			for (int s2 = s1 + 1; s2 < sphere_collisions.GetComponents().size(); ++s2)
 			{
 				IntersectSphereVsSphere(
+					dt,
 					registry,
 					sphere_collisions.GetComponents().at(s1),
 					sphere_collisions.GetComponents().at(s2));
@@ -53,11 +34,12 @@ namespace cumulonimbus::collision
 
 		// カプセル同士の判定
 		auto& capsule_collisions = registry->GetArray<component::CapsuleCollisionComponent>();
-		for(int c1 = 0;c1 < capsule_collisions.GetComponents().size(); ++c1)
+		for (int c1 = 0; c1 < capsule_collisions.GetComponents().size(); ++c1)
 		{
-			for(int c2 = c1 + 1; c2 < capsule_collisions.GetComponents().size(); ++c2)
+			for (int c2 = c1 + 1; c2 < capsule_collisions.GetComponents().size(); ++c2)
 			{
 				IntersectCapsuleVsCapsule(
+					dt,
 					registry,
 					capsule_collisions.GetComponents().at(c1),
 					capsule_collisions.GetComponents().at(c2));
@@ -65,14 +47,37 @@ namespace cumulonimbus::collision
 		}
 
 		// 球とカプセルの判定
-		for(int s = 0;s<sphere_collisions.GetComponents().size();++s)
+		for (int s = 0; s < sphere_collisions.GetComponents().size(); ++s)
 		{
-			for(int c = 0;c<capsule_collisions.GetComponents().size();++c)
+			for (int c = 0; c < capsule_collisions.GetComponents().size(); ++c)
 			{
 				IntersectSphereVsCapsule(
+					dt,
 					registry,
 					sphere_collisions.GetComponents().at(s),
 					capsule_collisions.GetComponents().at(c));
+			}
+		}
+
+		// 地形とモデルとの判定(レイキャスト)
+		auto& ray_cast_array = registry->GetArray<component::RayCastComponent>();
+
+		for (auto& ray_comp : ray_cast_array.GetComponents())
+		{
+			mapping::rename_type::Entity ent = ray_comp.GetEntity();
+
+			// ent_terrainsとRayCastComponentを持つモデルでレイキャストの判定を行う
+			for (const auto& ent_trrain : ent_terrains)
+			{
+				const auto& model = registry->GetComponent<component::FbxModelComponent>(ent_trrain);
+				if (IntersectRayVsModel(dt, ray_comp.GetRayStartPos(), ray_comp.GetRayEndPos(), model, ray_comp.GetHitResult()))
+				{
+					ray_comp.GetHitResult().is_hit = true;
+				}
+				else
+				{
+					ray_comp.GetHitResult().is_hit = false;
+				}
 			}
 		}
 	}
@@ -180,6 +185,7 @@ namespace cumulonimbus::collision
 	}
 
 	void CollisionManager::Extrude(
+		const float dt,
 		ecs::Registry* registry,
 		const mapping::rename_type::Entity ent_1,
 		const mapping::rename_type::Entity ent_2,
@@ -218,7 +224,9 @@ namespace cumulonimbus::collision
 			const float post_v2 = (m1 * pre_v1 + m2 * pre_v2 + restitution * m1 * (pre_v1 - pre_v2)) / (m1 + m2);
 
 			rigid_body_comp_1.AddVelocity((post_v1 - pre_v1) * n);
+			rigid_body_comp_1.Integrate(dt);
 			rigid_body_comp_2.AddVelocity((post_v2 - pre_v2) * n);
+			rigid_body_comp_2.Integrate(dt);
 		}
 
 		registry->GetComponent<component::TransformComponent>(ent_1).AdjustPosition(-(m2 / (m1 + m2) * penetration * n));
@@ -226,7 +234,7 @@ namespace cumulonimbus::collision
 	}
 
 
-	bool CollisionManager::IntersectRayVsModel(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, const component::FbxModelComponent& model, HitResult& result)
+	bool CollisionManager::IntersectRayVsModel(const float dt, const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, const component::FbxModelComponent& model, HitResult& result)
 	{
 		DirectX::XMVECTOR WorldStart	 = DirectX::XMLoadFloat3(&start);
 		DirectX::XMVECTOR WorldEnd		 = DirectX::XMLoadFloat3(&end);
@@ -347,12 +355,13 @@ namespace cumulonimbus::collision
 				// ヒット情報保存
 				if (result.distance > distance)
 				{
-					DirectX::XMVECTOR WorldNormal = DirectX::XMVector3Transform(HitNormal, WorldTransform);
-					result.distance = distance;
-					result.material_index = materialIndex;
+					DirectX::XMVECTOR WorldNormal	= DirectX::XMVector3Transform(HitNormal, WorldTransform);
+					result.distance					= distance;
+					result.material_index			= materialIndex;
 					DirectX::XMStoreFloat3(&result.position, WorldPosition);
 					DirectX::XMStoreFloat3(&result.normal, DirectX::XMVector3Normalize(WorldNormal));
 					hit = true;
+					return hit;
 				}
 			}
 		}
@@ -360,6 +369,7 @@ namespace cumulonimbus::collision
 	}
 
 	bool CollisionManager::IntersectSphereVsSphere(
+		const float dt,
 		ecs::Registry* registry,
 		component::SphereCollisionComponent& sphere_1,
 		component::SphereCollisionComponent& sphere_2)
@@ -382,6 +392,7 @@ namespace cumulonimbus::collision
 					s2.second.hit_result.is_hit = true;
 					// 押出し処理
 					Extrude(
+						dt,
 						registry,
 						sphere_1.GetEntity(), sphere_2.GetEntity(),
 						s1_translation, s2_translation,
@@ -400,6 +411,7 @@ namespace cumulonimbus::collision
 	}
 
 	bool CollisionManager::IntersectCapsuleVsCapsule(
+		const float dt,
 		ecs::Registry* registry,
 		component::CapsuleCollisionComponent& capsule_1,
 		component::CapsuleCollisionComponent& capsule_2)
@@ -428,6 +440,7 @@ namespace cumulonimbus::collision
 					hit = true;
 					// 押出し処理
 					Extrude(
+						dt,
 						registry,
 						capsule_1.GetEntity(), capsule_2.GetEntity(),
 						c1_p, c2_p,
@@ -445,6 +458,7 @@ namespace cumulonimbus::collision
 	}
 
 	bool CollisionManager::IntersectSphereVsCapsule(
+		const float dt,
 		ecs::Registry* registry,
 		component::SphereCollisionComponent&  sphere,
 		component::CapsuleCollisionComponent& capsule)
@@ -473,6 +487,7 @@ namespace cumulonimbus::collision
 					arithmetic::ClosestPtPointSegment(c.second.start, c.second.end, s.second.world_transform_matrix.Translation(), p, t);
 					// 押出し処理
 					Extrude(
+						dt,
 						registry,
 						sphere.GetEntity(), capsule.GetEntity(),
 						s.second.world_transform_matrix.Translation(), p,

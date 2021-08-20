@@ -10,10 +10,20 @@ namespace cumulonimbus::component
 
 	void RayCastComponent::RenderImGui()
 	{
-		if (ImGui::TreeNode("PlayerComponent"))
+		if (ImGui::TreeNode("RayCastComponent"))
 		{
 			ImGui::DragFloat3("RayCast Offset", (float*)&ray_offset, 0.01f, -50.0f, 50.0f);
-			
+			ImGui::Text("Is Hit %d", hit_result.is_hit);
+			ImGui::Text("/---Hit Pos---/");
+			ImGui::Text("X : %f", hit_result.position.x);
+			ImGui::Text("Y : %f", hit_result.position.y);
+			ImGui::Text("Z : %f", hit_result.position.z);
+			ImGui::Text("/---Hit Normal---/");
+			ImGui::Text("X : %f", hit_result.position.x);
+			ImGui::Text("Y : %f", hit_result.position.y);
+			ImGui::Text("Z : %f", hit_result.position.z);
+			ImGui::Text("----------------");
+			ImGui::Text("Distance : %f", hit_result.distance);
 			ImGui::TreePop();
 		}
 	}

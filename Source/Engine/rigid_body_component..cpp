@@ -15,7 +15,11 @@ namespace cumulonimbus::component
 
 	void RigidBodyComponent::NewFrame(float dt)
 	{
-		velocity = DirectX::SimpleMath::Vector3{ 0,0,0 };
+		if (is_gravity)
+		{
+			current_gravity += gravity;
+			AddForce({ 0,current_gravity,0 });
+		}
 	}
 
 	void RigidBodyComponent::Update(float dt)
@@ -28,22 +32,26 @@ namespace cumulonimbus::component
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 		if (transform_comp.GetPosition().y < 0)
 		{
-			transform_comp.SetPositionY(0);
-			current_gravity = 0;
+			//transform_comp.SetPositionY(0);
+			//current_gravity = 0;
 		}
-
-		if (is_gravity)
-		{
-			current_gravity += gravity;
-			AddForce({ 0,current_gravity,0 });
-		}
+		//if (is_gravity)
+		//{
+		//	current_gravity += gravity;
+		//	AddForce({ 0,current_gravity,0 });
+		//}
 
 		Integrate(dt);
 	}
 
 	void RigidBodyComponent::RenderImGui()
 	{
+		if (ImGui::TreeNode("RigidBodyComponent"))
+		{
+			ImGui::Checkbox("Use Gravity", &is_gravity);
 
+			ImGui::TreePop();
+		}
 	}
 
 	void RigidBodyComponent::Save(const std::string& file_path)
@@ -95,9 +103,10 @@ namespace cumulonimbus::component
 	}
 
 
-	void RigidBodyComponent::Integrate(float dt)
+	void RigidBodyComponent::Integrate(const float dt)
 	{
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 		transform_comp.AdjustPosition(velocity * dt);
+		velocity = DirectX::SimpleMath::Vector3{ 0,0,0 };
 	}
 } // cumulonimbus::component

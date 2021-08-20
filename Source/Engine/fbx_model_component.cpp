@@ -318,10 +318,11 @@ namespace cumulonimbus::component
 		if (anim_states.GetInitialize())
 		{
 			// 前のアニメーションの切り替わった時点のキーフレームを算出
-			const size_t key_frame = resource->GetModelData().animations.size();
+			const size_t key_frame = resource->GetModelData().animations.at(prev_animation_index).num_key_frame;
 			if(prev_key_index >= key_frame)
 			{
-				prev_animation = resource->GetModelData().animations.at(key_frame - 1);
+				prev_key_index = key_frame;
+				//prev_animation = resource->GetModelData().animations.at(key_frame - 1);
 			}
 			else
 			{
