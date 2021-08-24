@@ -11,6 +11,7 @@
 #include "raycast_component.h"
 #include "scene.h"
 #include "transform_component.h"
+#include "collision_name_mapping.h"
 
 // プレイヤーアニメーションのキーフレーム調整値
 namespace adjust_key_frame
@@ -104,7 +105,8 @@ namespace cumulonimbus::component
 		{
 			registry->AddComponent<RayCastComponent>(ent, CollisionTag::Player);
 		}
-		registry->GetComponent<RayCastComponent>(ent).SetRayOffset({ 0.0f,10.0f,0.0f });
+		registry->GetComponent<RayCastComponent>(ent).AddRay(mapping::collision_name::ray::ForFloor(), {});
+		registry->GetComponent<RayCastComponent>(ent).SetRayOffset(mapping::collision_name::ray::ForFloor(), { 0.0f,10.0f,0.0f });
 
 		// カメラに関する設定
 		if (!registry->TryGetComponent<CameraComponent>(ent))
@@ -175,15 +177,15 @@ namespace cumulonimbus::component
 		const auto& transform_comp   = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 		const auto& rigid_body_comp  = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
 
-		const DirectX::SimpleMath::Vector3 ray_start = transform_comp.GetPosition() + ray_cast_comp->GetRayOffset();
-		ray_cast_comp->SetRayStartPos(ray_start);
+		const DirectX::SimpleMath::Vector3 ray_start = transform_comp.GetPosition() + ray_cast_comp->GetRayOffset(mapping::collision_name::ray::ForFloor());
+		ray_cast_comp->SetRayStartPos(mapping::collision_name::ray::ForFloor(),ray_start);
 		if(rigid_body_comp.GetIsGravity())
 		{
-			ray_cast_comp->SetRayEndPos(ray_start + DirectX::SimpleMath::Vector3{ rigid_body_comp.GetVelocity() * 50});
+			ray_cast_comp->SetRayEndPos(mapping::collision_name::ray::ForFloor(),ray_start + DirectX::SimpleMath::Vector3{ rigid_body_comp.GetVelocity() * 50});
 		}
 		else
 		{
-			ray_cast_comp->SetRayEndPos(ray_start + DirectX::SimpleMath::Vector3{ 0,-50,0 });
+			ray_cast_comp->SetRayEndPos(mapping::collision_name::ray::ForFloor(),ray_start + DirectX::SimpleMath::Vector3{ 0,-50,0 });
 		}
 	}
 

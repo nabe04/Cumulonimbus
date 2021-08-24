@@ -12,62 +12,100 @@ namespace cumulonimbus::component
 	{
 		if (ImGui::TreeNode("RayCastComponent"))
 		{
-			ImGui::DragFloat3("RayCast Offset", (float*)&ray_offset, 0.01f, -50.0f, 50.0f);
-			ImGui::Text("Is Hit %d", hit_result.is_hit);
-			ImGui::Text("/---Hit Pos---/");
-			ImGui::Text("X : %f", hit_result.position.x);
-			ImGui::Text("Y : %f", hit_result.position.y);
-			ImGui::Text("Z : %f", hit_result.position.z);
-			ImGui::Text("/---Hit Normal---/");
-			ImGui::Text("X : %f", hit_result.position.x);
-			ImGui::Text("Y : %f", hit_result.position.y);
-			ImGui::Text("Z : %f", hit_result.position.z);
-			ImGui::Text("----------------");
-			ImGui::Text("Distance : %f", hit_result.distance);
-			ImGui::Text("Terrain Attribute : %d", terrain_attribute);
+			for (auto& ray : rays)
+			{
+				if (ImGui::TreeNode(ray.first.c_str()))
+				{
+					ImGui::DragFloat3("RayCast Offset", (float*)&ray.second.ray_offset, 0.01f, -50.0f, 50.0f);
+					ImGui::Text("Is Hit %d", ray.second.hit_result.is_hit);
+					ImGui::Text("/---Hit Pos---/");
+					ImGui::Text("X : %f", ray.second.hit_result.position.x);
+					ImGui::Text("Y : %f", ray.second.hit_result.position.y);
+					ImGui::Text("Z : %f", ray.second.hit_result.position.z);
+					ImGui::Text("/---Hit Normal---/");
+					ImGui::Text("X : %f", ray.second.hit_result.position.x);
+					ImGui::Text("Y : %f", ray.second.hit_result.position.y);
+					ImGui::Text("Z : %f", ray.second.hit_result.position.z);
+					ImGui::Text("----------------");
+					ImGui::Text("Distance : %f", ray.second.hit_result.distance);
+					ImGui::Text("Terrain Attribute : %d", ray.second.terrain_attribute);
+					ImGui::TreePop();
+				}
+			}
 			ImGui::TreePop();
 		}
 	}
 
-
-	const DirectX::SimpleMath::Vector3& RayCastComponent::GetRayStartPos() const
+	void RayCastComponent::AddRay(const std::string& ray_name, const collision::Ray& ray)
 	{
-		return ray_start;
+		if(rays.contains(ray_name))
+		{
+			rays.at(ray_name) = ray;
+		}
+
+		rays.insert(std::make_pair(ray_name, ray));
 	}
 
-	const DirectX::SimpleMath::Vector3& RayCastComponent::GetRayEndPos() const
+	const DirectX::SimpleMath::Vector3& RayCastComponent::GetRayStartPos(const std::string& ray_name) const
 	{
-		return ray_end;
+		if(!rays.contains(ray_name))
+			assert(!"Name is not registered(RayCastComponent::GetRayStartPos)");
+		return rays.at(ray_name).ray_start;
 	}
 
-	const DirectX::SimpleMath::Vector3& RayCastComponent::GetRayOffset() const
+	const DirectX::SimpleMath::Vector3& RayCastComponent::GetRayEndPos(const std::string& ray_name) const
 	{
-		return ray_offset;
+		if (!rays.contains(ray_name))
+			assert(!"Name is not registered(RayCastComponent::GetRayEndPos)");
+		return rays.at(ray_name).ray_end;
 	}
 
-	utility::TerrainAttribute RayCastComponent::GetTerrainAttribute() const
+	const DirectX::SimpleMath::Vector3& RayCastComponent::GetRayOffset(const std::string& ray_name) const
 	{
-		return terrain_attribute;
+		if (!rays.contains(ray_name))
+			assert(!"Name is not registered(RayCastComponent::GetRayOffset)");
+		return rays.at(ray_name).ray_offset;
 	}
 
-	void RayCastComponent::SetRayStartPos(const DirectX::SimpleMath::Vector3& pos)
+	utility::TerrainAttribute RayCastComponent::GetTerrainAttribute(const std::string& ray_name) const
 	{
-		ray_start = pos;
+		if (!rays.contains(ray_name))
+			assert(!"Name is not registered(RayCastComponent::GetTerrainAttribute)");
+		return rays.at(ray_name).terrain_attribute;
 	}
 
-	void RayCastComponent::SetRayEndPos(const DirectX::SimpleMath::Vector3& pos)
+	std::unordered_map<std::string, collision::Ray>& RayCastComponent::GetRays()
 	{
-		ray_end   = pos;
+		return rays;
 	}
 
-	void RayCastComponent::SetRayOffset(const DirectX::SimpleMath::Vector3& offset)
+
+	void RayCastComponent::SetRayStartPos(const std::string& ray_name, const DirectX::SimpleMath::Vector3& pos)
 	{
-		ray_offset = offset;
+		if (!rays.contains(ray_name))
+			assert(!"Name is not registered(RayCastComponent::SetRayStartPos)");
+		rays.at(ray_name).ray_start = pos;
 	}
 
-	void RayCastComponent::SetTerrainAttribute(const utility::TerrainAttribute attribute)
+	void RayCastComponent::SetRayEndPos(const std::string& ray_name, const DirectX::SimpleMath::Vector3& pos)
 	{
-		terrain_attribute = attribute;
+		if (!rays.contains(ray_name))
+			assert(!"Name is not registered(RayCastComponent::SetRayEndPos)");
+		rays.at(ray_name).ray_end = pos;
+	}
+
+	void RayCastComponent::SetRayOffset(const std::string& ray_name, const DirectX::SimpleMath::Vector3& offset)
+	{
+		if (!rays.contains(ray_name))
+			assert(!"Name is not registered(RayCastComponent::SetRayOffset)");
+		rays.at(ray_name).ray_offset = offset;
+	}
+
+	void RayCastComponent::SetTerrainAttribute(const std::string& ray_name, const utility::TerrainAttribute attribute)
+	{
+		if (!rays.contains(ray_name))
+			assert(!"Name is not registered(RayCastComponent::SetTerrainAttribute)");
+		rays.at(ray_name).terrain_attribute = attribute;
 	}
 
 } // cumulonimbus::component

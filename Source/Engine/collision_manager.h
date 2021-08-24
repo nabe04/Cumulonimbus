@@ -92,10 +92,7 @@ namespace cumulonimbus::collision
 		 */
 		bool IntersectRayVsModel(
 			float dt,
-			const DirectX::XMFLOAT3& start,
-			const DirectX::XMFLOAT3& end,
 			const component::FbxModelComponent& model,
-			HitResult& result,
 			component::RayCastComponent& ray_cast_comp
 		);
 

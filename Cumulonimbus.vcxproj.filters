@@ -911,6 +911,9 @@
     <ClInclude Include="Source\Engine\terrain_filename_mapping.h">
       <Filter>Header\Engine\System\Mapping</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\collision_name_mapping.h">
+      <Filter>Header\Engine\System\Mapping</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Cumulonimbus.rc" />
