@@ -504,6 +504,9 @@
     <ClCompile Include="Source\Game\enemy_forest_demon_component.cpp">
       <Filter>Source\Game\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\material_discrimination.cpp">
+      <Filter>Source\Engine\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -827,9 +830,6 @@
     <ClInclude Include="Source\Engine\pbr_material.h">
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\player_component.h">
-      <Filter>Header\Game</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Engine\raycast_component.h">
       <Filter>Header\Engine\Components</Filter>
     </ClInclude>
@@ -890,17 +890,26 @@
     <ClInclude Include="Source\Engine\rigid_body_component.h">
       <Filter>Header\Engine\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\enemy_base_component.h">
-      <Filter>Header\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Game\enemy_slime_component.h">
-      <Filter>Header\Game</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Engine\physic_material_component.h">
       <Filter>Header\Engine\Components</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\material_discrimination.h">
+      <Filter>Header\Engine\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\enemy_base_component.h">
+      <Filter>Header\Game\Components</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Game\enemy_forest_demon_component.h">
-      <Filter>Header\Game</Filter>
+      <Filter>Header\Game\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\enemy_slime_component.h">
+      <Filter>Header\Game\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\player_component.h">
+      <Filter>Header\Game\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\terrain_filename_mapping.h">
+      <Filter>Header\Engine\System\Mapping</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1056,6 +1065,9 @@
     </Filter>
     <Filter Include="Header\Engine\Manager">
       <UniqueIdentifier>{81860592-f47f-4ddb-9485-408911fe663e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Game\Components">
+      <UniqueIdentifier>{97f20554-620d-46b4-8ef2-51d339dda384}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

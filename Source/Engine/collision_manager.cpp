@@ -70,7 +70,7 @@ namespace cumulonimbus::collision
 			for (const auto& ent_trrain : ent_terrains)
 			{
 				const auto& model = registry->GetComponent<component::FbxModelComponent>(ent_trrain);
-				if (IntersectRayVsModel(dt, ray_comp.GetRayStartPos(), ray_comp.GetRayEndPos(), model, ray_comp.GetHitResult()))
+				if (IntersectRayVsModel(dt, ray_comp.GetRayStartPos(), ray_comp.GetRayEndPos(), model, ray_comp.GetHitResult(),ray_comp))
 				{
 					ray_comp.GetHitResult().is_hit = true;
 				}
@@ -234,7 +234,13 @@ namespace cumulonimbus::collision
 	}
 
 
-	bool CollisionManager::IntersectRayVsModel(const float dt, const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, const component::FbxModelComponent& model, HitResult& result)
+	bool CollisionManager::IntersectRayVsModel(
+		const float dt,
+		const DirectX::XMFLOAT3& start,
+		const DirectX::XMFLOAT3& end,
+		const component::FbxModelComponent& model,
+		HitResult& result,
+		component::RayCastComponent& ray_cast_comp)
 	{
 		DirectX::XMVECTOR WorldStart	 = DirectX::XMLoadFloat3(&start);
 		DirectX::XMVECTOR WorldEnd		 = DirectX::XMLoadFloat3(&end);
@@ -338,19 +344,20 @@ namespace cumulonimbus::collision
 					neart = t;
 
 					// 交点と法線を更新
-					HitPosition = Position;
-					HitNormal = Normal;
-					materialIndex = subset.material_index;
+					HitPosition		= Position;
+					HitNormal		= Normal;
+					materialIndex	= subset.material_index;
 				}
 			}
 			if (materialIndex >= 0)
 			{
 				// ローカル空間からワールド空間へ変換
-				DirectX::XMVECTOR WorldPosition = DirectX::XMVector3TransformCoord(HitPosition, WorldTransform);
-				DirectX::XMVECTOR WorldCrossVec = DirectX::XMVectorSubtract(WorldPosition, WorldStart);
-				DirectX::XMVECTOR WorldCrossLength = DirectX::XMVector3Length(WorldCrossVec);
+				DirectX::XMVECTOR WorldPosition		= DirectX::XMVector3TransformCoord(HitPosition, WorldTransform);
+				DirectX::XMVECTOR WorldCrossVec		= DirectX::XMVectorSubtract(WorldPosition, WorldStart);
+				DirectX::XMVECTOR WorldCrossLength	= DirectX::XMVector3Length(WorldCrossVec);
 				float distance;
 				DirectX::XMStoreFloat(&distance, WorldCrossLength);
+				utility::MaterialDiscrimination material_discrimination{};
 
 				// ヒット情報保存
 				if (result.distance > distance)
@@ -360,6 +367,7 @@ namespace cumulonimbus::collision
 					result.material_index			= materialIndex;
 					DirectX::XMStoreFloat3(&result.position, WorldPosition);
 					DirectX::XMStoreFloat3(&result.normal, DirectX::XMVector3Normalize(WorldNormal));
+					ray_cast_comp.SetTerrainAttribute(material_discrimination.GetTerrainAttribute(model.GetResource()->GetModelData().GetMaterials().at(materialIndex).texture_name)); // マテリアルのテクスチャ名からマテリアルの属性を取
 					hit = true;
 					return hit;
 				}

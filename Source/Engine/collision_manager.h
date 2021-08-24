@@ -19,15 +19,17 @@ namespace cumulonimbus
 		class FbxModelComponent;
 		class SphereCollisionComponent;
 		class CapsuleCollisionComponent;
+		class RayCastComponent;
 		class PhysicMaterialComponent;
 	} // component
 
 	namespace collision
 	{
-		struct HitResult;
-		struct Sphere;
-		enum class CollisionPreset;
+		struct		HitResult;
+		struct		Sphere;
+		enum class	CollisionPreset;
 	} // collision
+
 } // cumulonimbus
 
 namespace cumulonimbus::collision
@@ -53,6 +55,7 @@ namespace cumulonimbus::collision
 	private:
 		// レイキャストの判定を行う際の判定が行われる(地形)データ群
 		std::vector<mapping::rename_type::Entity> ent_terrains{};
+		
 
 		/**
 		 * @brief : 反発係数の算出
@@ -92,7 +95,8 @@ namespace cumulonimbus::collision
 			const DirectX::XMFLOAT3& start,
 			const DirectX::XMFLOAT3& end,
 			const component::FbxModelComponent& model,
-			HitResult& result
+			HitResult& result,
+			component::RayCastComponent& ray_cast_comp
 		);
 
 		/**

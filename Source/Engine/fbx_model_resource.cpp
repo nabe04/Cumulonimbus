@@ -40,7 +40,8 @@ FbxModelResource::FbxModelResource(ID3D11Device* device, const char* import_file
 
 		// モデルに使われているテクスチャのファイル名から
 		// ShaderResourceViewを作成
-		material.shader_resource_view = cumulonimbus::locator::Locator::GetTextureResourceManager()->CreateTexture(device, path_buffer)->GetTextureData()->texture_view;
+		material.shader_resource_view	= cumulonimbus::locator::Locator::GetTextureResourceManager()->CreateTexture(device, path_buffer)->GetTextureData()->texture_view;
+		material.texture_name			= fname;
 	}
 
 	for (auto& mesh : model_data.meshes)
@@ -55,14 +56,14 @@ FbxModelResource::FbxModelResource(ID3D11Device* device, const char* import_file
 			D3D11_BUFFER_DESC buffer_desc = {};
 			D3D11_SUBRESOURCE_DATA subresource_data = {};
 
-			buffer_desc.ByteWidth = static_cast<UINT>(sizeof(ModelData::Vertex) * mesh.vertices.size());
+			buffer_desc.ByteWidth		=	static_cast<UINT>(sizeof(ModelData::Vertex) * mesh.vertices.size());
 			//buffer_desc.Usage = D3D11_USAGE_DEFAULT;
-			buffer_desc.Usage = D3D11_USAGE_IMMUTABLE;
-			buffer_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-			buffer_desc.CPUAccessFlags = 0;
-			buffer_desc.MiscFlags = 0;
+			buffer_desc.Usage			= D3D11_USAGE_IMMUTABLE;
+			buffer_desc.BindFlags		= D3D11_BIND_VERTEX_BUFFER;
+			buffer_desc.CPUAccessFlags	= 0;
+			buffer_desc.MiscFlags		= 0;
 			buffer_desc.StructureByteStride = 0;
-			subresource_data.pSysMem = mesh.vertices.data();
+			subresource_data.pSysMem	= mesh.vertices.data();
 			subresource_data.SysMemPitch = 0;
 			subresource_data.SysMemSlicePitch = 0;
 

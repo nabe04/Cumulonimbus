@@ -40,8 +40,9 @@ public:
 	{
 		DirectX::XMFLOAT4									color = { 0.8f, 0.8f, 0.8f, 1.0f };
 
-		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	shader_resource_view = nullptr;	// シリアライズの対象外
-		std::string											texture_filename{};		// モデルを読み込んだ時にテクスチャを作成する
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	shader_resource_view = nullptr;	// モデルを読み込んだ時にテクスチャを作成する(シリアライズの対象外)
+		std::string											texture_filename{};				// テクスチャ名を含むファイルパス
+		std::string											texture_name{};					// テクスチャ名
 
 		template<class Archive>
 		void serialize(Archive& archive, int version)
@@ -55,9 +56,9 @@ public:
 
 	struct Subset
 	{
-		unsigned int		start_index = 0;
-		unsigned int		index_count = 0;
-		unsigned int		material_index = 0;
+		unsigned int		start_index		= 0;
+		unsigned int		index_count		= 0;
+		unsigned int		material_index	= 0;
 		Material*			material = nullptr;		// モデルを読み込んだ時にマテリアルを関連ずける
 
 		template<class Archive>

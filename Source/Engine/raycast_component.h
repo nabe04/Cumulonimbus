@@ -4,6 +4,7 @@
 #include <SimpleMath.h>
 
 #include "collision_component.h"
+#include "material_discrimination.h"
 
 namespace cumulonimbus::component
 {
@@ -24,10 +25,12 @@ namespace cumulonimbus::component
 		[[nodiscard]] const DirectX::SimpleMath::Vector3& GetRayStartPos()	const;
 		[[nodiscard]] const DirectX::SimpleMath::Vector3& GetRayEndPos()	const;
 		[[nodiscard]] const DirectX::SimpleMath::Vector3& GetRayOffset()	const;
+		[[nodiscard]] utility::TerrainAttribute GetTerrainAttribute() const;
 
 		void SetRayStartPos(const DirectX::SimpleMath::Vector3& pos);
 		void SetRayEndPos(const DirectX::SimpleMath::Vector3& pos);
 		void SetRayOffset(const DirectX::SimpleMath::Vector3& offset);
+		void SetTerrainAttribute(utility::TerrainAttribute attribute);
 
 	private:
 		// レイキャストを行う際のレイの始点と終点
@@ -36,5 +39,7 @@ namespace cumulonimbus::component
 		// レイキャストを行う位置のオフセット値
 		// (TransformComponentと合わせて使用する)
 		DirectX::SimpleMath::Vector3 ray_offset;
+		// 判定した地形の属性判別
+		utility::TerrainAttribute terrain_attribute{};
 	};
 } // cumulonimbus::component

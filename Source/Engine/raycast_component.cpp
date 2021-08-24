@@ -24,6 +24,7 @@ namespace cumulonimbus::component
 			ImGui::Text("Z : %f", hit_result.position.z);
 			ImGui::Text("----------------");
 			ImGui::Text("Distance : %f", hit_result.distance);
+			ImGui::Text("Terrain Attribute : %d", terrain_attribute);
 			ImGui::TreePop();
 		}
 	}
@@ -44,6 +45,11 @@ namespace cumulonimbus::component
 		return ray_offset;
 	}
 
+	utility::TerrainAttribute RayCastComponent::GetTerrainAttribute() const
+	{
+		return terrain_attribute;
+	}
+
 	void RayCastComponent::SetRayStartPos(const DirectX::SimpleMath::Vector3& pos)
 	{
 		ray_start = pos;
@@ -58,4 +64,10 @@ namespace cumulonimbus::component
 	{
 		ray_offset = offset;
 	}
+
+	void RayCastComponent::SetTerrainAttribute(const utility::TerrainAttribute attribute)
+	{
+		terrain_attribute = attribute;
+	}
+
 } // cumulonimbus::component

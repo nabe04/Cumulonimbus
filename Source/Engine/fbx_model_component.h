@@ -142,6 +142,7 @@ namespace cumulonimbus::component
 		[[nodiscard]] const FbxModelResource*			 GetResource()	const	{ return resource.get(); }
 		[[nodiscard]]	    FbxModelResource*			 GetResource()			{ return resource.get(); }
 		[[nodiscard]] const DirectX::XMFLOAT4&			 GetColor()		const	{ return color; }
+		//[[nodiscard]] const ModelData::Material
 
 		void UpdateAnimState(const float delta_time) { anim_states.Update(delta_time); }
 

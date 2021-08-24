@@ -80,6 +80,7 @@
     <ClInclude Include="Source\Engine\locator.h" />
     <ClInclude Include="Source\Engine\Logger.h" />
     <ClInclude Include="Source\Engine\material_component.h" />
+    <ClInclude Include="Source\Engine\material_discrimination.h" />
     <ClInclude Include="Source\Engine\mesh_object.h" />
     <ClInclude Include="Source\Engine\mesh_particle.h" />
     <ClInclude Include="Source\Engine\physic_material_component.h" />
@@ -111,6 +112,7 @@
     <ClInclude Include="Source\Engine\shader_filename_mapping.h" />
     <ClInclude Include="Source\Engine\shader_interop.h" />
     <ClInclude Include="Source\Engine\shader_interop_renderer.h" />
+    <ClInclude Include="Source\Engine\terrain_filename_mapping.h" />
     <ClInclude Include="Source\Engine\texture_filename_mapping.h" />
     <ClInclude Include="Source\Engine\texture_resource_manager.h" />
     <ClInclude Include="Source\Engine\texture_resource_mapping.h" />
@@ -202,6 +204,7 @@
     <ClCompile Include="Source\Engine\Logger.cpp" />
     <ClCompile Include="Source\Engine\main.cpp" />
     <ClCompile Include="Source\Engine\material_component.cpp" />
+    <ClCompile Include="Source\Engine\material_discrimination.cpp" />
     <ClCompile Include="Source\Engine\mesh_object.cpp" />
     <ClCompile Include="Source\Engine\mesh_particle.cpp" />
     <ClCompile Include="Source\Engine\physic_material_component.cpp" />
