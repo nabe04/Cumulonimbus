@@ -57,8 +57,8 @@ namespace cumulonimbus::component
 			ImGui::Text("Front Y %f", model_front.y);
 			ImGui::Text("Front Z %f", model_front.z);
 
-			ImGui::DragFloat3("Position", (float*)&position, 0.01f, -100.0f, 100.0f);
-			ImGui::DragFloat3("Scale", (float*)&scale, 0.01f, -100.0f, 100.0f);
+			ImGui::DragFloat3("Position", (float*)&position, 0.01f, -10000.0f, 10000.0f);
+			ImGui::DragFloat3("Scale", (float*)&scale, 0.01f, -1000.0f, 1000.0f);
 			ImGui::SliderFloat("Rotation X", &angle.x, -180.0f, 180.0f, "%.3f");
 			ImGui::SliderFloat("Rotation Y", &angle.y, -180.0f, 180.0f, "%.3f");
 			ImGui::SliderFloat("Rotation Z", &angle.z, -180.0f, 180.0f, "%.3f");

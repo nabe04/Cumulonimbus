@@ -16,7 +16,8 @@ namespace cumulonimbus::component
 			{
 				if (ImGui::TreeNode(ray.first.c_str()))
 				{
-					ImGui::DragFloat3("RayCast Offset", (float*)&ray.second.ray_offset, 0.01f, -50.0f, 50.0f);
+					ImGui::Checkbox("Is Block", &ray.second.is_block);
+					ImGui::DragFloat3("RayCast Offset", (float*)&ray.second.ray_offset, 0.01f, -500.0f, 500.0f);
 					ImGui::Text("Is Hit %d", ray.second.hit_result.is_hit);
 					ImGui::Text("/---Hit Pos---/");
 					ImGui::Text("X : %f", ray.second.hit_result.position.x);
@@ -67,6 +68,13 @@ namespace cumulonimbus::component
 		return rays.at(ray_name).ray_offset;
 	}
 
+	const DirectX::SimpleMath::Vector3& RayCastComponent::GetBlockPos(const std::string& ray_name) const
+	{
+		if (!rays.contains(ray_name))
+			assert(!"Name is not registered(RayCastComponent::GetBlockPos)");
+		return rays.at(ray_name).block_pos;
+	}
+
 	utility::TerrainAttribute RayCastComponent::GetTerrainAttribute(const std::string& ray_name) const
 	{
 		if (!rays.contains(ray_name))
@@ -100,6 +108,14 @@ namespace cumulonimbus::component
 			assert(!"Name is not registered(RayCastComponent::SetRayOffset)");
 		rays.at(ray_name).ray_offset = offset;
 	}
+
+	void RayCastComponent::SetBlockPos(const std::string& ray_name, const DirectX::SimpleMath::Vector3& pos)
+	{
+		if (!rays.contains(ray_name))
+			assert(!"Name is not registered(RayCastComponent::SetBlockPos)");
+		rays.at(ray_name).block_pos = pos;
+	}
+
 
 	void RayCastComponent::SetTerrainAttribute(const std::string& ray_name, const utility::TerrainAttribute attribute)
 	{

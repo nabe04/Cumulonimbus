@@ -55,11 +55,11 @@ namespace cumulonimbus::collision
 	private:
 		// レイキャストの判定を行う際の判定が行われる(地形)データ群
 		std::vector<mapping::rename_type::Entity> ent_terrains{};
-		
+
 
 		/**
-		 * @brief : 反発係数の算出
-		 * @return : 反発係数(0～1)
+		 * @brief	: 反発係数の算出
+		 * @return	: 反発係数(0～1)
 		 */
 		float CalculateRestitution(
 			const component::PhysicMaterialComponent* physic_material_comp_1,
@@ -67,6 +67,7 @@ namespace cumulonimbus::collision
 
 		/**
 		 * @brief						: 押出し処理
+		 * @param dt					: delta time
 		 * @param registry				: コンポーネントの取得に使用
 		 * @param ent_1					: 押出し対象エンティティ(1)
 		 * @param ent_2					: 押出し対象エンティティ(2)
@@ -92,6 +93,7 @@ namespace cumulonimbus::collision
 		 */
 		bool IntersectRayVsModel(
 			float dt,
+			ecs::Registry* registry,
 			const component::FbxModelComponent& model,
 			component::RayCastComponent& ray_cast_comp
 		);

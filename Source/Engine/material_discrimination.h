@@ -13,6 +13,7 @@ namespace cumulonimbus::utility
 	{
 		Floor,
 		Wall,
+		NotAttribute,
 
 		End
 	};

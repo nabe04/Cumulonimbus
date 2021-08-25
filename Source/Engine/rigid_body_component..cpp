@@ -49,6 +49,7 @@ namespace cumulonimbus::component
 		if (ImGui::TreeNode("RigidBodyComponent"))
 		{
 			ImGui::Checkbox("Use Gravity", &is_gravity);
+			ImGui::Text("Current Gravity : %f", current_gravity);
 
 			ImGui::TreePop();
 		}

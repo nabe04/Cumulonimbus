@@ -106,7 +106,7 @@ namespace cumulonimbus::component
 			registry->AddComponent<RayCastComponent>(ent, CollisionTag::Player);
 		}
 		registry->GetComponent<RayCastComponent>(ent).AddRay(mapping::collision_name::ray::ForFloor(), {});
-		registry->GetComponent<RayCastComponent>(ent).SetRayOffset(mapping::collision_name::ray::ForFloor(), { 0.0f,10.0f,0.0f });
+		registry->GetComponent<RayCastComponent>(ent).SetRayOffset(mapping::collision_name::ray::ForFloor(), { 0.0f,20.0f,0.0f });
 
 		// ƒJƒƒ‰‚ÉŠÖ‚·‚éÝ’è
 		if (!registry->TryGetComponent<CameraComponent>(ent))
@@ -179,6 +179,7 @@ namespace cumulonimbus::component
 
 		const DirectX::SimpleMath::Vector3 ray_start = transform_comp.GetPosition() + ray_cast_comp->GetRayOffset(mapping::collision_name::ray::ForFloor());
 		ray_cast_comp->SetRayStartPos(mapping::collision_name::ray::ForFloor(),ray_start);
+		ray_cast_comp->SetBlockPos(mapping::collision_name::ray::ForFloor(), transform_comp.GetPosition());
 		if(rigid_body_comp.GetIsGravity())
 		{
 			ray_cast_comp->SetRayEndPos(mapping::collision_name::ray::ForFloor(),ray_start + DirectX::SimpleMath::Vector3{ rigid_body_comp.GetVelocity() * 50});
@@ -205,7 +206,7 @@ namespace cumulonimbus::component
 			return;
 
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
-		auto& camera_comp = GetRegistry()->GetComponent<CameraComponent>(GetEntity());
+		auto& camera_comp	 = GetRegistry()->GetComponent<CameraComponent>(GetEntity());
 
 		SimpleMath::Vector3 stick_direction = { stick_left.x,0.0f,stick_left.y };
 		stick_direction.Normalize();

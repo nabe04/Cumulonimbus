@@ -67,17 +67,10 @@ namespace cumulonimbus::collision
 			mapping::rename_type::Entity ent = ray_comp.GetEntity();
 
 			// ent_terrainsとRayCastComponentを持つモデルでレイキャストの判定を行う
-			for (const auto& ent_trrain : ent_terrains)
+			for (const auto& ent_terrain : ent_terrains)
 			{
-				const auto& model = registry->GetComponent<component::FbxModelComponent>(ent_trrain);
-				if (IntersectRayVsModel(dt, model,ray_comp))
-				{
-					ray_comp.GetHitResult().is_hit = true;
-				}
-				else
-				{
-					ray_comp.GetHitResult().is_hit = false;
-				}
+				const auto& model = registry->GetComponent<component::FbxModelComponent>(ent_terrain);
+				IntersectRayVsModel(dt, registry, model, ray_comp);
 			}
 		}
 	}
@@ -236,6 +229,7 @@ namespace cumulonimbus::collision
 
 	bool CollisionManager::IntersectRayVsModel(
 		const float dt,
+		ecs::Registry* registry,
 		const component::FbxModelComponent& model,
 		component::RayCastComponent& ray_cast_comp)
 	{
@@ -248,6 +242,7 @@ namespace cumulonimbus::collision
 			DirectX::XMVECTOR WorldRayVec = DirectX::XMVectorSubtract(WorldEnd, WorldStart);
 			DirectX::XMVECTOR WorldRayLength = DirectX::XMVector3Length(WorldRayVec);
 			ray.second.hit_result.is_hit = false;
+			ray.second.terrain_attribute = utility::TerrainAttribute::NotAttribute;
 
 			// ワールド空間のレイの長さ
 			DirectX::XMStoreFloat(&ray.second.hit_result.distance, WorldRayLength);
@@ -344,9 +339,10 @@ namespace cumulonimbus::collision
 						neart = t;
 
 						// 交点と法線を更新
-						HitPosition = Position;
-						HitNormal = Normal;
-						materialIndex = subset.material_index;
+						HitPosition		= Position;
+						HitNormal		= Normal;
+						materialIndex	= subset.material_index;
+						break;
 					}
 				}
 				if (materialIndex >= 0)
@@ -362,14 +358,42 @@ namespace cumulonimbus::collision
 					// ヒット情報保存
 					if (ray.second.hit_result.distance > distance)
 					{
-						DirectX::XMVECTOR WorldNormal = DirectX::XMVector3Transform(HitNormal, WorldTransform);
-						ray.second.hit_result.distance = distance;
-						ray.second.hit_result.material_index = materialIndex;
-						ray.second.hit_result.is_hit = true;
+						DirectX::XMVECTOR WorldNormal			= DirectX::XMVector3Transform(HitNormal, WorldTransform);
+						ray.second.hit_result.distance			= distance;
+						ray.second.hit_result.material_index	= materialIndex;
+						ray.second.hit_result.is_hit			= true;
 						DirectX::XMStoreFloat3(&ray.second.hit_result.position, WorldPosition);
 						DirectX::XMStoreFloat3(&ray.second.hit_result.normal, DirectX::XMVector3Normalize(WorldNormal));
 						ray_cast_comp.SetTerrainAttribute(ray.first,material_discrimination.GetTerrainAttribute(model.GetResource()->GetModelData().GetMaterials().at(materialIndex).texture_name)); // マテリアルのテクスチャ名からマテリアルの属性を取
 						hit = true;
+					}
+
+					{// 押出し処理
+						// 押出し処理を行わない場合は処理を抜ける(次のレイとの処理に移る)
+						if(!ray.second.is_block)
+							break;
+
+						//-- 押出し方法 --//
+						/*
+						 * Rayのブロック位置から地形の位置までのベクトルを作成しrayベクトル
+						 * と方向が逆(角度が90度以上)なら押し出し処理を行う
+						 */
+
+						// Rayの始点から地形の位置までのベクトル
+						const DirectX::SimpleMath::Vector3 v1{ ray.second.hit_result.position - ray.second.block_pos };
+						DirectX::SimpleMath::Vector3 v1_n = v1;
+						v1_n.Normalize();
+						// Rayベクトル
+						const DirectX::SimpleMath::Vector3 v2{ ray.second.ray_end - ray.second.ray_start };
+						DirectX::SimpleMath::Vector3 v2_n = v2;
+						v2_n.Normalize();
+						float dot = v1.Dot(v2);
+						// ベクトル間の角度が90度未満なら処理を抜ける(次のレイとの処理に移る)
+						if (v1_n.Dot(v2_n) > 0)
+							break;
+
+						auto& transform_comp = registry->GetComponent<component::TransformComponent>(ray_cast_comp.GetEntity());
+						transform_comp.AdjustPosition(v1);
 						break;
 					}
 				}
