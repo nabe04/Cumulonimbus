@@ -45,7 +45,7 @@ namespace cumulonimbus::component
 		 * @param flg	: true  -> 重力を含む位置更新処理を止める(is_gravityとfalseにする)。current_gravityの値を0にリセット
 		 *				  false -> is_gravityをtrueにする
 		 */
-		void JumpStop(bool flg);
+		void GravityStop(bool flg);
 
 		[[nodiscard]] const DirectX::SimpleMath::Vector3& GetVelocity()     const { return velocity; }
 		[[nodiscard]] const DirectX::SimpleMath::Vector3& GetAcceleration() const { return acceleration; }
@@ -53,7 +53,9 @@ namespace cumulonimbus::component
 		[[nodiscard]] float GetGravity()									const { return gravity; }
 		[[nodiscard]] float GetCurrentGravity()								const { return current_gravity; }
 		[[nodiscard]] float GetMass()										const { return mass; }
-		[[nodiscard]] bool GetIsGravity()									const { return is_gravity; }
+		[[nodiscard]] bool  GetIsGravity()									const { return is_gravity; }
+
+		void SetCurrentGravity(const float gravity)	{ current_gravity = gravity; }
 
 		void SetMass(const float mass) { this->mass = mass; }
 	private:

@@ -133,6 +133,7 @@ namespace cumulonimbus::component
 		// 移動
 		//Movement(dt);
 		Rotation(dt);
+		Collision();
 	}
 
 	void PlayerComponent::RenderImGui()
@@ -182,7 +183,7 @@ namespace cumulonimbus::component
 		ray_cast_comp->SetBlockPos(mapping::collision_name::ray::ForFloor(), transform_comp.GetPosition());
 		if(rigid_body_comp.GetIsGravity())
 		{
-			ray_cast_comp->SetRayEndPos(mapping::collision_name::ray::ForFloor(),ray_start + DirectX::SimpleMath::Vector3{ rigid_body_comp.GetVelocity() * 50});
+			ray_cast_comp->SetRayEndPos(mapping::collision_name::ray::ForFloor(), ray_start + DirectX::SimpleMath::Vector3{ 0,rigid_body_comp.GetVelocity().y * 50,0 });
 		}
 		else
 		{
@@ -238,6 +239,27 @@ namespace cumulonimbus::component
 			rad *= -1;
 
 		transform_comp.AdjustRotationFromAxis({ 0,1,0 }, rad);
+	}
+
+	void PlayerComponent::Collision() const
+	{
+		auto* ray_cast_comp = GetRegistry()->TryGetComponent<RayCastComponent>(GetEntity());
+		if (!ray_cast_comp)
+			return;
+
+		auto* rigid_body_comp = GetRegistry()->TryGetComponent<RigidBodyComponent>(GetEntity());
+		if (!rigid_body_comp)
+			return;
+
+		if(ray_cast_comp->GetIsBlockHit(mapping::collision_name::ray::ForFloor()))
+		{
+			rigid_body_comp->SetCurrentGravity(0);
+		}
+		else
+		{
+			int a;
+			a = 0;
+		}
 	}
 
 	void PlayerComponent::CameraWork()
@@ -908,7 +930,7 @@ namespace cumulonimbus::component
 			// アニメーションセット(AnimationState::Attacking_Jump_01)
 			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attacking_Jump_01), false);
 			// 重力処理 Off(空中で止める)
-			movement_comp.JumpStop(true);
+			movement_comp.GravityStop(true);
 		}
 
 		using namespace locator;
@@ -956,7 +978,7 @@ namespace cumulonimbus::component
 			IsBreakAnimationFrame(AnimationState::Attack_Jump_01_End))
 		{
 			// 重力処理 On
-			GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity()).JumpStop(false);
+			GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity()).GravityStop(false);
 			// 状態遷移(PlayerState::Jump_Landing)
 			player_state.SetState(PlayerState::Jump_Landing);
 		}
@@ -1017,7 +1039,7 @@ namespace cumulonimbus::component
 			IsBreakAnimationFrame(AnimationState::Attack_Jump_02_End))
 		{
 			// 重力処理 On
-			GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity()).JumpStop(false);
+			GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity()).GravityStop(false);
 			// 状態遷移(PlayerState::Jump_Landing)
 			player_state.SetState(PlayerState::Jump_Landing);
 		}
@@ -1077,7 +1099,7 @@ namespace cumulonimbus::component
 			IsBreakAnimationFrame(AnimationState::Attack_Jump_03_End))
 		{
 			// 重力処理 On
-			GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity()).JumpStop(false);
+			GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity()).GravityStop(false);
 			// 状態遷移(PlayerState::Jump_Landing)
 			player_state.SetState(PlayerState::Jump_Landing);
 		}
@@ -1121,7 +1143,7 @@ namespace cumulonimbus::component
 			IsBreakAnimationFrame(AnimationState::Attack_Jump_04_End))
 		{
 			// 重力処理 On
-			GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity()).JumpStop(false);
+			GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity()).GravityStop(false);
 			// 状態遷移(PlayerState::Jump_Landing)
 			player_state.SetState(PlayerState::Jump_Landing);
 		}

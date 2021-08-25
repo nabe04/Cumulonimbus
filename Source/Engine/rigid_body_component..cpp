@@ -90,7 +90,7 @@ namespace cumulonimbus::component
 		AddForce({ 0,current_gravity,0 });
 	}
 
-	void RigidBodyComponent::JumpStop(bool flg)
+	void RigidBodyComponent::GravityStop(const bool flg)
 	{
 		if(flg)
 		{

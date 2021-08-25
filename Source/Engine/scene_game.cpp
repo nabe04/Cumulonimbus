@@ -112,7 +112,7 @@ void SceneGame::InitializeScene()
 	//registry->GetComponent<cum::component::TransformComponent>(ent_ene_00).SetScale(0.1f);
 	//registry->GetComponent<cum::component::TransformComponent>(ent_ene_00).SetPosition({100,0,0});
 	//registry->GetComponent<cum::component::TransformComponent>(ent_ene_00).ActiveQuaternion();
-	//registry->GetComponent<cum::component::RigidBodyComponent>(ent_ene_00).JumpStop(true);
+	//registry->GetComponent<cum::component::RigidBodyComponent>(ent_ene_00).GravityStop(true);
 
 	//const cum::mapping::rename_type::Entity ent_ene_01 = registry->CreateEntity();
 	//registry->AddComponent<cum::component::MeshObjectComponent>(ent_ene_01);
@@ -127,7 +127,7 @@ void SceneGame::InitializeScene()
 	//registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_ene_01).SetAllRadius(20.0f);
 	//registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_ene_01).SetAllLength(40.0f);
 	//registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_ene_01).SetAllCollisionPreset(cumulonimbus::collision::CollisionPreset::BlockAll);
-	//registry->GetComponent<cum::component::RigidBodyComponent>(ent_ene_01).JumpStop(true);
+	//registry->GetComponent<cum::component::RigidBodyComponent>(ent_ene_01).GravityStop(true);
 
 	const cum::mapping::rename_type::Entity ent_player = registry->CreateEntity();
 	registry->AddComponent<cum::component::MeshObjectComponent>(ent_player);
@@ -150,7 +150,7 @@ void SceneGame::InitializeScene()
 	registry->GetComponent<cum::component::CameraComponent>(ent_player).SetProjection(XM_PI / 8.0f, static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
 	registry->GetComponent<cum::component::TransformComponent>(ent_player).ActiveQuaternion();
 	{// ƒeƒXƒg
-		registry->GetComponent<cum::component::RigidBodyComponent>(ent_player).JumpStop(true);
+		registry->GetComponent<cum::component::RigidBodyComponent>(ent_player).GravityStop(true);
 	}
 }
 

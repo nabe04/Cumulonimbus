@@ -242,6 +242,7 @@ namespace cumulonimbus::collision
 			DirectX::XMVECTOR WorldRayVec = DirectX::XMVectorSubtract(WorldEnd, WorldStart);
 			DirectX::XMVECTOR WorldRayLength = DirectX::XMVector3Length(WorldRayVec);
 			ray.second.hit_result.is_hit = false;
+			ray.second.is_block_hit		 = false;
 			ray.second.terrain_attribute = utility::TerrainAttribute::NotAttribute;
 
 			// ƒ[ƒ‹ƒh‹óŠÔ‚ÌƒŒƒC‚Ì’·‚³
@@ -394,6 +395,7 @@ namespace cumulonimbus::collision
 
 						auto& transform_comp = registry->GetComponent<component::TransformComponent>(ray_cast_comp.GetEntity());
 						transform_comp.AdjustPosition(v1);
+						ray.second.is_block_hit = true;
 						break;
 					}
 				}

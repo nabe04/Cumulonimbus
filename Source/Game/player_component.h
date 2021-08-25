@@ -200,6 +200,13 @@ namespace cumulonimbus::component
 		void Rotation(float dt);
 
 		/**
+		 * @brief	: 当たり判定が行われてた時の処理
+		 * @details	: 当たり判定の処理自体はCollisionManagerで行い
+		 *			  処理が行われた後の動きの処理をする
+		 */
+		void Collision() const;
+		
+		/**
 		 * @brief : カメラワーク管理関数
 		 */
 		void CameraWork();

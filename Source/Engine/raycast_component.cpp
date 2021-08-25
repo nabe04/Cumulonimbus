@@ -82,11 +82,24 @@ namespace cumulonimbus::component
 		return rays.at(ray_name).terrain_attribute;
 	}
 
+	bool RayCastComponent::GetIsBlock(const std::string& ray_name) const
+	{
+		if (!rays.contains(ray_name))
+			assert(!"Name is not registered(RayCastComponent::GetIsBlock)");
+		return rays.at(ray_name).is_block;
+	}
+
+	bool RayCastComponent::GetIsBlockHit(const std::string& ray_name) const
+	{
+		if (!rays.contains(ray_name))
+			assert(!"Name is not registered(RayCastComponent::GetIsBlockHit)");
+		return rays.at(ray_name).is_block_hit;
+	}
+
 	std::unordered_map<std::string, collision::Ray>& RayCastComponent::GetRays()
 	{
 		return rays;
 	}
-
 
 	void RayCastComponent::SetRayStartPos(const std::string& ray_name, const DirectX::SimpleMath::Vector3& pos)
 	{
@@ -124,4 +137,17 @@ namespace cumulonimbus::component
 		rays.at(ray_name).terrain_attribute = attribute;
 	}
 
+	void RayCastComponent::SetIsBlock(const std::string& ray_name, const bool flg)
+	{
+		if (!rays.contains(ray_name))
+			assert(!"Name is not registered(RayCastComponent::SetIsBlock)");
+		rays.at(ray_name).is_block = flg;
+	}
+
+	void RayCastComponent::SetIsBlockHit(const std::string& ray_name, const bool flg)
+	{
+		if (!rays.contains(ray_name))
+			assert(!"Name is not registered(RayCastComponent::SetIsBlockHit)");
+		rays.at(ray_name).is_block_hit = flg;
+	}
 } // cumulonimbus::component
