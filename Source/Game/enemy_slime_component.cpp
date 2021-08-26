@@ -65,14 +65,6 @@ namespace cumulonimbus::component
 	{
 	}
 
-	void EnemySlimeComponent::SetRandomRotationAngle(const float min, const float max)
-	{
-		random_rotation_angle.min = min;
-		random_rotation_angle.max = max;
-		random_rotation_angle.SetRandomVal();
-	}
-
-
 	int EnemySlimeComponent::GetAnimDataIndex(const AnimationData anim_data) const
 	{
 		return  static_cast<int>(anim_data);

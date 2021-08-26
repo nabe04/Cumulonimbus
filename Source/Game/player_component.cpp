@@ -281,12 +281,12 @@ namespace cumulonimbus::component
 	void PlayerComponent::CameraWork()
 	{
 		using namespace locator;
-		const float rad_x = Locator::GetInput()->GamePad().RightThumbStick(0).x;
-		const float rad_y = Locator::GetInput()->GamePad().RightThumbStick(0).y;
-		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
-		auto& camera_comp = GetRegistry()->GetComponent<CameraComponent>(GetEntity());
-		camera_comp.RotationFrontVectorFromUpVector(rad_x * camera_comp.GetCameraSpeed().x);
-		camera_comp.RotationFrontVectorFromRightVector(rad_y * camera_comp.GetCameraSpeed().y);
+		const float rad_x		= Locator::GetInput()->GamePad().RightThumbStick(0).x;
+		const float rad_y		= Locator::GetInput()->GamePad().RightThumbStick(0).y;
+		auto& transform_comp	= GetRegistry()->GetComponent<TransformComponent>(GetEntity());
+		auto& camera_comp		= GetRegistry()->GetComponent<CameraComponent>(GetEntity());
+		camera_comp.RotationTPSYaw(rad_x * camera_comp.GetCameraSpeed().x);
+		camera_comp.RotationTPSPitch(rad_y * camera_comp.GetCameraSpeed().y);
 		camera_comp.SetFocusPosition(transform_comp.GetPosition());
 	}
 

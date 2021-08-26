@@ -290,6 +290,26 @@ namespace cumulonimbus::component
 		front_vec.Normalize();
 	}
 
+	void CameraComponent::RotationTPSPitch(const float radian)
+	{
+		SimpleMath::Vector3 v = SimpleMath::Vector3{ 0,1,0 }.Cross(front_vec);
+		v.Normalize();
+		SimpleMath::Quaternion q = SimpleMath::Quaternion::Identity;
+		q.Normalize();
+		q = q.CreateFromAxisAngle(v, radian);
+		front_vec = SimpleMath::Vector3::Transform(front_vec, q);
+		front_vec.Normalize();
+	}
+
+	void CameraComponent::RotationTPSYaw(float radian)
+	{
+		SimpleMath::Quaternion q = SimpleMath::Quaternion::Identity;
+		q.Normalize();
+		q = q.CreateFromAxisAngle({ 0,1,0 }, radian);
+		front_vec = SimpleMath::Vector3::Transform(front_vec, q);
+		front_vec.Normalize();
+	}
+
 	void CameraComponent::SetViewInfo(
 		SimpleMath::Vector3 pos,
 		SimpleMath::Vector3 target,

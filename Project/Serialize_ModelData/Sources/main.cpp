@@ -135,11 +135,11 @@ int main()
 	//e_16.AddAnimation("../../Data/Assets/FBX/Enemies/E_16_GalaxyRobot/Galaxy_Robot_v1_Anim.fbx");
 	//e_16.Export("../../Data/Assets/Bin/GalaxyRobot.bin");
 
-	//BulidFBX e_16("../../Data/Assets/FBX/Enemies/E_16_Soldier/Soldier.fbx");
-	//e_16.Export("../../Data/Assets/Bin/Soldier.bin");
+	BulidFBX e_16("../../Data/Assets/FBX/Enemies/E_16_Soldier/Soldier.fbx");
+	e_16.Export("../../Data/Assets/Bin/Soldier.bin");
 
-	BulidFBX e_17("../../Data/Assets/FBX/Enemies/E_17_GalaxyRobot/Galaxy_Robot_v1.fbx");
-	e_17.Export("../../Data/Assets/Bin/GalaxyRobot.bin");
+	//BulidFBX e_17("../../Data/Assets/FBX/Enemies/E_17_GalaxyRobot/Galaxy_Robot_v1.fbx");
+	//e_17.Export("../../Data/Assets/Bin/GalaxyRobot.bin");
 
 
 	//// Stage_01

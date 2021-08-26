@@ -268,6 +268,7 @@
     <ClCompile Include="Source\Game\enemy_base_component.cpp" />
     <ClCompile Include="Source\Game\enemy_forest_demon_component.cpp" />
     <ClCompile Include="Source\Game\enemy_slime_component.cpp" />
+    <ClCompile Include="Source\Game\enemy_soldier_component.cpp" />
     <ClCompile Include="Source\Game\player_component.cpp" />
     <ClCompile Include="Source\Game\sound_resource.cpp" />
     <ClCompile Include="Source\scene01.cpp" />

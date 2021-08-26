@@ -36,6 +36,12 @@ namespace cumulonimbus::component
 		transition_timer.at(key_value).SetRandomVal();
 	}
 
+	void EnemyBaseComponent::SetRandomRotationAngle(const float min, const float max)
+	{
+		random_rotation_angle.min = min;
+		random_rotation_angle.max = max;
+		random_rotation_angle.SetRandomVal();
+	}
 
 	bool EnemyBaseComponent::Search(
 		const DirectX::SimpleMath::Vector3& target_pos,

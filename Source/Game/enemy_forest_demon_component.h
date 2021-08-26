@@ -1,6 +1,4 @@
 #pragma once
-#include <unordered_map>
-
 #include "enemy_base_component.h"
 #include "state_machine.h"
 
@@ -59,8 +57,6 @@ namespace cumulonimbus::component
 	private:
 		// 敵(ForestDemon)の状態管理変数
 		StateMachine<ForestDemonState, void, const float> forest_demon_state{};
-		// モデルのyaw回転(度数法)のランダム値
-		RandomFloat random_rotation_angle{};
 
 		//-- パラメータ --//
 		// Quaternion::Slerpの回転時間倍率
@@ -82,13 +78,6 @@ namespace cumulonimbus::component
 
 		//-- その他 --//
 
-		/**
-		 * @brief		: "random_rotation_angle"メンバ変数の値設定用関数
-		 * @brief		: min、maxで指定した範囲内でのランダム値の算出
-		 * @param min	: 最小値
-		 * @param max	: 最大値
-		 */
-		void SetRandomRotationAngle(float min, float max);
 
 		/**
 		 * @brief : enum class(AnimationData)をint型に変換

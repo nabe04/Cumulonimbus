@@ -85,6 +85,18 @@ namespace cumulonimbus::component
 		void RotationFrontVectorFromUpVector(float radian);
 
 		/**
+		 * @brief			: TPSカメラを想定してのカメラのピッチ(X軸)回転
+		 * @param radian	: 回転分の角度(ラジアン角)
+		 */
+		void RotationTPSPitch(float radian);
+
+		/**
+		 * @brief			: TPSカメラを想定してのカメラのYaw(Y軸)回転
+		 * @param radian	: 回転分の角度(ラジアン角)
+		 */
+		void RotationTPSYaw(float radian);
+
+		/**
 		 * @brief				: カメラパラメータの設定(位置、注視点、カメラアップベクトル)
 		 * @param eye_position	: カメラ位置
 		 * @param target		: カメラ注視点

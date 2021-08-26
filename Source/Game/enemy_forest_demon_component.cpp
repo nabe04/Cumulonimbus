@@ -38,7 +38,7 @@ namespace cumulonimbus::component
 		RegisterTransitionTimer(transition_idle_to_walk, 3.f, 7.f);
 		RegisterTransitionTimer(transition_walk_to_idle, 3.f, 5.f);
 
-		// yaw‰ñ“]‚Å‚Ì‚¨ƒ‰ƒ“ƒ_ƒ€’lÝ’è
+		// yaw‰ñ“]‚Å‚Ìƒ‰ƒ“ƒ_ƒ€’lÝ’è
 		SetRandomRotationAngle(-180.f, 180.f);
 	}
 
@@ -57,13 +57,6 @@ namespace cumulonimbus::component
 
 	void EnemyForestDemonComponent::Load(const std::string& file_path_and_name)
 	{
-	}
-
-	void EnemyForestDemonComponent::SetRandomRotationAngle(float min, float max)
-	{
-		random_rotation_angle.min = min;
-		random_rotation_angle.max = max;
-		random_rotation_angle.SetRandomVal();
 	}
 
 	int EnemyForestDemonComponent::GetAnimDataIndex(AnimationData anim_data) const
@@ -160,8 +153,6 @@ namespace cumulonimbus::component
 	void EnemyForestDemonComponent::Tracking(const float dt)
 	{
 		auto& fbx_model_comp	= GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
-		auto& rigid_body_comp	= GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
-		auto& transform_comp	= GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 
 		if(forest_demon_state.GetInitialize())
 		{

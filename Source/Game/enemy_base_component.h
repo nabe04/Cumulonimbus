@@ -41,7 +41,10 @@ namespace cumulonimbus::component
 			void SetRandomVal();
 		};
 
+		
 		std::unordered_map<std::string, RandomFloat> transition_timer{};
+		// モデルのyaw回転(度数法)のランダム値
+		RandomFloat random_rotation_angle{};
 
 		/**
 		 * @brief			: "transition_timer"の登録
@@ -52,6 +55,14 @@ namespace cumulonimbus::component
 		 */
 		void RegisterTransitionTimer(const std::string& key_value,float min,float max);
 
+		/**
+		* @brief		: "random_rotation_angle"メンバ変数の値設定用関数
+		* @brief		: min、maxで指定した範囲内でのランダム値の算出
+		* @param min	: 最小値
+		* @param max	: 最大値
+		*/
+		void SetRandomRotationAngle(float min, float max);
+		
 		/**
 		 * @brief : 自身の位置と前方ベクトルから索敵範囲内(rad)、索敵距離内(length)に
 		 *			ターゲット(target_pos)がいるか判定
