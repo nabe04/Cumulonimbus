@@ -29,8 +29,8 @@ namespace cumulonimbus::component
 		{
 			pbr_materials.emplace_back(std::make_shared<shader_asset::PBRMaterial>());
 			materials_manager.emplace_back(std::make_shared<shader_asset::Material3DManager>());
-			// デフォルトでDiffuseシェーダーをセット
-			materials_manager.back()->SetShaderAsset(mapping::shader_assets::ShaderAsset3D::Diffuse);
+			// デフォルトでSampleShaderをセット
+			materials_manager.back()->SetShaderAsset(mapping::shader_assets::ShaderAsset3D::SampleShader);
 		}
 
 		registry->AddComponent<component::MeshObjectComponent>(ent);
@@ -120,31 +120,31 @@ namespace cumulonimbus::component
 				{// モデルが持つメッシュ数分
 					if (ImGui::TreeNode(mesh.mesh_name.c_str()))
 					{
-						for (int material_index = 0; material_index < mesh.material_count; ++material_index)
-						{// そのメッシュが持つマテリアル数分
+						for(const ModelData::Subset& subset : mesh.subsets)
+						{
 							// Shaderの種類を変えるためのImGui
-							ImGui::PushID(material_index);
-							materials_manager.at(material_index)->RenderImGuiComboShader();
+							ImGui::PushID(subset.material_index);
+							materials_manager.at(subset.material_index)->RenderImGuiComboShader();
 
 							ImGui::Spacing();
 							ImGui::Text("Albedo Texture");
-							helper::imgui::Image(resource->GetModelData().materials.at(material_index).shader_resource_view.Get());
+							helper::imgui::Image(resource->GetModelData().materials.at(subset.material_index).shader_resource_view.Get());
 							ImGui::SameLine();
 
-							auto* my_texture   = resource->GetModelData().materials.at(material_index).shader_resource_view.Get();
-							auto  tex_filename = resource->GetModelData().materials.at(material_index).texture_filename;
+							auto* my_texture = resource->GetModelData().materials.at(subset.material_index).shader_resource_view.Get();
+							auto  tex_filename = resource->GetModelData().materials.at(subset.material_index).texture_filename;
 							const std::string combo_label = "Textures";
-							if(ImGui::BeginCombo(combo_label.c_str(),tex_filename.c_str()))
+							if (ImGui::BeginCombo(combo_label.c_str(), tex_filename.c_str()))
 							{
 								for (const auto& tex : locator::Locator::GetTextureResourceManager()->GetTextureResources())
 								{
 									helper::imgui::Image(tex.second->GetTextureData()->texture_view.Get(), { 50,50 });
 									ImGui::SameLine();
 									const bool is_selected = (my_texture == tex.second->GetTextureData()->texture_view.Get());
-									if (ImGui::Selectable(tex.first.c_str(), is_selected,0,{ 500,50}))
+									if (ImGui::Selectable(tex.first.c_str(), is_selected, 0, { 500,50 }))
 									{
-										resource->SetMaterialTexture(material_index, tex.second->GetTextureData()->texture_view.Get());
-										resource->SetMaterialFilename(material_index, tex.first);
+										resource->SetMaterialTexture(subset.material_index, tex.second->GetTextureData()->texture_view.Get());
+										resource->SetMaterialFilename(subset.material_index, tex.first);
 									}
 									if (is_selected)
 									{
@@ -156,7 +156,7 @@ namespace cumulonimbus::component
 							}
 
 							// 現在適応されているShaderのパラメータを編集するためのImGui
-							materials_manager.at(material_index)->RenderImGuiShaderParameter();
+							materials_manager.at(subset.material_index)->RenderImGuiShaderParameter();
 							ImGui::PopID();
 						}
 						ImGui::TreePop();

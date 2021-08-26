@@ -130,14 +130,25 @@ int main()
 	//BulidFBX e_15("../../Data/Assets/FBX/Enemies/E_15_ZombieHound/ZombieHound.fbx");
 	//e_15.Export("../../Data/Assets/Bin/ZombieHound.bin");
 
+	// E_16_GalaxyRobot
+	//BulidFBX e_16("../../Data/Assets/FBX/Enemies/E_16_GalaxyRobot/Galaxy_Robot_v1_Model.fbx");
+	//e_16.AddAnimation("../../Data/Assets/FBX/Enemies/E_16_GalaxyRobot/Galaxy_Robot_v1_Anim.fbx");
+	//e_16.Export("../../Data/Assets/Bin/GalaxyRobot.bin");
+
+	//BulidFBX e_16("../../Data/Assets/FBX/Enemies/E_16_Soldier/Soldier.fbx");
+	//e_16.Export("../../Data/Assets/Bin/Soldier.bin");
+
+	BulidFBX e_17("../../Data/Assets/FBX/Enemies/E_17_GalaxyRobot/Galaxy_Robot_v1.fbx");
+	e_17.Export("../../Data/Assets/Bin/GalaxyRobot.bin");
+
 
 	//// Stage_01
 	//BulidFBX stage_01("../../Data/Assets/FBX/Stages/Stage_01/Stage_01_3.fbx");
 	//stage_01.Export("../../Data/Assets/Bin/Stage_01.bin");
 
-	// Stage_01
-	BulidFBX stage_01("../../Data/Assets/FBX/Stages/Stage_01/Stage_01_For_Collision.fbx");
-	stage_01.Export("../../Data/Assets/Bin/Stage_01_Collision.bin");
+	// Stage_01 Collision
+	//BulidFBX stage_01("../../Data/Assets/FBX/Stages/Stage_01/Stage_01_For_Collision.fbx");
+	//stage_01.Export("../../Data/Assets/Bin/Stage_01_Collision.bin");
 
 	return 0;
 }

@@ -350,6 +350,7 @@ namespace cumulonimbus::shader_system
 	void ShaderManager::BindShader(mapping::shader_assets::ShaderAsset3D asset)
 	{
 		shader3d_map.at(asset)->BindShader();
+		//shader3d_map.at(mapping::shader_assets::ShaderAsset3D::SampleShader)->BindShader();
 	}
 
 	void ShaderManager::UnbindShader(mapping::shader_assets::ShaderAsset3D asset)

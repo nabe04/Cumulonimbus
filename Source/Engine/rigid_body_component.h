@@ -22,7 +22,7 @@ namespace cumulonimbus::component
 		void Load(const std::string& file_path_and_name) override;
 
 		void Integrate(float dt);
-		
+
 		/**
 		 * @brief   : ‘¬“x‚Ì‰ÁŽZ
 		 * @param v : ‰ÁŽZ‚·‚é‘¬“x

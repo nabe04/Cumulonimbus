@@ -105,8 +105,12 @@ namespace cumulonimbus::component
 		{
 			registry->AddComponent<RayCastComponent>(ent, CollisionTag::Player);
 		}
+		// 床(floor)用rayの追加 & 設定
 		registry->GetComponent<RayCastComponent>(ent).AddRay(mapping::collision_name::ray::ForFloor(), {});
 		registry->GetComponent<RayCastComponent>(ent).SetRayOffset(mapping::collision_name::ray::ForFloor(), { 0.0f,20.0f,0.0f });
+		// 壁(wall)用rayの追加 & 設定
+		registry->GetComponent<RayCastComponent>(ent).AddRay(mapping::collision_name::ray::ForWall(), {});
+		registry->GetComponent<RayCastComponent>(ent).SetRayOffset(mapping::collision_name::ray::ForWall(), { 0.0f,20.0f,0.0f });
 
 		// カメラに関する設定
 		if (!registry->TryGetComponent<CameraComponent>(ent))
@@ -178,16 +182,28 @@ namespace cumulonimbus::component
 		const auto& transform_comp   = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 		const auto& rigid_body_comp  = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
 
-		const DirectX::SimpleMath::Vector3 ray_start = transform_comp.GetPosition() + ray_cast_comp->GetRayOffset(mapping::collision_name::ray::ForFloor());
-		ray_cast_comp->SetRayStartPos(mapping::collision_name::ray::ForFloor(),ray_start);
-		ray_cast_comp->SetBlockPos(mapping::collision_name::ray::ForFloor(), transform_comp.GetPosition());
-		if(rigid_body_comp.GetIsGravity())
-		{
-			ray_cast_comp->SetRayEndPos(mapping::collision_name::ray::ForFloor(), ray_start + DirectX::SimpleMath::Vector3{ 0,rigid_body_comp.GetVelocity().y * 50,0 });
+		{// 床(floor)用rayの設定
+			const SimpleMath::Vector3 ray_start = transform_comp.GetPosition() + ray_cast_comp->GetRayOffset(mapping::collision_name::ray::ForFloor());
+			ray_cast_comp->SetRayStartPos(mapping::collision_name::ray::ForFloor(), ray_start);
+			ray_cast_comp->SetBlockPos(mapping::collision_name::ray::ForFloor(), transform_comp.GetPosition());
+			if (rigid_body_comp.GetIsGravity())
+			{
+				ray_cast_comp->SetRayEndPos(mapping::collision_name::ray::ForFloor(), ray_start + DirectX::SimpleMath::Vector3{ 0,rigid_body_comp.GetVelocity().y * 50,0 });
+			}
+			else
+			{
+				ray_cast_comp->SetRayEndPos(mapping::collision_name::ray::ForFloor(), ray_start + DirectX::SimpleMath::Vector3{ 0,-50,0 });
+			}
 		}
-		else
-		{
-			ray_cast_comp->SetRayEndPos(mapping::collision_name::ray::ForFloor(),ray_start + DirectX::SimpleMath::Vector3{ 0,-50,0 });
+
+		{// 壁(wall)用rayの設定
+			const SimpleMath::Vector3 ray_start	= transform_comp.GetPosition() + ray_cast_comp->GetRayOffset(mapping::collision_name::ray::ForWall());
+			const SimpleMath::Vector3 ray_end = ray_start + SimpleMath::Vector3{ transform_comp.GetModelFront().x * 70,0,transform_comp.GetModelFront().z * 70 };
+			SimpleMath::Vector3 ray_vec{ ray_end - ray_start };
+			ray_vec.Normalize();
+			ray_cast_comp->SetRayStartPos(mapping::collision_name::ray::ForWall(), ray_start);
+			ray_cast_comp->SetRayEndPos(mapping::collision_name::ray::ForWall(), ray_end);
+			ray_cast_comp->SetBlockPos(mapping::collision_name::ray::ForWall(), ray_start + ray_vec * 30);
 		}
 	}
 

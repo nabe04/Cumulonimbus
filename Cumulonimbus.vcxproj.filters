@@ -914,6 +914,9 @@
     <ClInclude Include="Source\Engine\collision_name_mapping.h">
       <Filter>Header\Engine\System\Mapping</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Game\enemy_soldier_component.h">
+      <Filter>Header\Game\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Cumulonimbus.rc" />

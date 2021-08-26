@@ -312,7 +312,7 @@ void BulidFBX::BuildMesh(FbxNode* fbx_node, FbxMesh* fbx_mesh)
 
 	model_data.meshes.emplace_back(ModelData::Mesh());
 	ModelData::Mesh& mesh	= model_data.meshes.back();
-	mesh.mesh_name			= fbx_mesh->GetName();		// mesh–¼Žæ“¾
+	mesh.mesh_name			= fbx_node->GetName();		// mesh–¼Žæ“¾
 	mesh.material_count		= fbx_material_count;
 	mesh.subsets.resize(fbx_material_count > 0 ? fbx_material_count : 1);
 	mesh.node_index			= FindNodeIndex(fbx_node->GetName());
