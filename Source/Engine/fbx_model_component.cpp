@@ -167,6 +167,9 @@ namespace cumulonimbus::component
 			// モデルの持つアニメーション情報
 			if (ImGui::CollapsingHeader("Animations"))
 			{
+				ImGui::Text("Current Keyframe : %d", current_keyframe);
+				ImGui::Text("Current Anim Index %d", current_animation_index);
+
 				for (int animation_index = 0; animation_index < resource->GetModelData().GetAnimations().size(); ++animation_index)
 				{
 					ImGui::PushID(animation_index);
@@ -192,8 +195,6 @@ namespace cumulonimbus::component
 					ImGui::PopID();
 				}
 			}
-
-			ImGui::Text("Current Keyframe : %d", current_keyframe);
 
 			ImGui::TreePop();
 		}
@@ -286,6 +287,15 @@ namespace cumulonimbus::component
 		SwitchAnimation(0, false, 0.0f);
 	}
 
+	bool FbxModelComponent::IsPlayAnimation() const
+	{
+		const ModelData::Animation& animation = resource->GetModelData().animations.at(current_animation_index);
+		//const std::vector<ModelData::Keyframe>& keyframes = animation.keyframes;
+		//bool flg = current_keyframe <= animation.num_key_frame;
+
+		return current_keyframe < (animation.num_key_frame - 1);
+	}
+
 	// アニメーション再生
 	void FbxModelComponent::SwitchAnimation(int animation_index, bool loop, float switch_time)
 	{
@@ -326,8 +336,9 @@ namespace cumulonimbus::component
 			}
 			else
 			{
-				prev_animation = resource->GetModelData().animations.at(prev_animation_index);
+				//prev_animation = resource->GetModelData().animations.at(prev_animation_index);
 			}
+			prev_animation = resource->GetModelData().animations.at(prev_animation_index);
 		}
 
 		float rate = changer_timer / animation_switch_time;
@@ -372,21 +383,17 @@ namespace cumulonimbus::component
 	void FbxModelComponent::UpdateAnimation(float elapsedTime)
 	{
 		if (current_animation_index < 0)
-		{
 			return;
-		}
 
 		if (resource->GetModelData().animations.empty())
-		{
 			return;
-		}
 
 		const ModelData::Animation& animation = resource->GetModelData().animations.at(current_animation_index);
 
 		const std::vector<ModelData::Keyframe>& keyframes = animation.keyframes;
 
 		size_t key_count = static_cast<size_t>(keyframes.size());
-		for (size_t key_index = 0; key_index < animation.num_key_frame - 1; ++key_index)
+		for (size_t key_index = 0; key_index < animation.num_key_frame; ++key_index)
 		{
 			// 現在の時間がどのキーフレームの間にいるか判定する
 			const ModelData::Keyframe& keyframe0 = keyframes.at(key_index);
@@ -432,8 +439,8 @@ namespace cumulonimbus::component
 		if (end_animation)
 		{
 			end_animation			= false;
-			current_animation_index = -1;
-			prev_key_index			= 0;
+			//current_animation_index = -1;
+			prev_key_index			= animation.num_key_frame - 1;
 			return;
 		}
 

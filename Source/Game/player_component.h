@@ -151,10 +151,10 @@ namespace cumulonimbus::component
 		std::map<AnimationState, u_int> animation_break_frame{};
 
 		//-- 状態に応じてのスピード設定 --//
-		float walk_speed = 1000;	 // 歩きの速さ
-		float dash_speed = 2000;	 // 走りの速さ
-		float avoid_dash_speed = 3000;  // 回避ダッシュ速度
-		float jump_movement_speed = 1000;
+		float walk_speed = 300;	 // 歩きの速さ
+		float dash_speed = 700;	 // 走りの速さ
+		float avoid_dash_speed = 900;  // 回避ダッシュ速度
+		float jump_movement_speed = 300;
 
 		// パッド入力のデッドゾーン値
 		float threshold = 0.05f;

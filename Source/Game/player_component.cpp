@@ -117,7 +117,8 @@ namespace cumulonimbus::component
 		{
 			registry->AddComponent<CameraComponent>(ent, true);
 		}
-		registry->GetComponent<CameraComponent>(ent).SetCameraSpeed({ 0.3f,0.3f });
+		registry->GetComponent<CameraComponent>(ent).SetCameraSpeed({ 0.05f,0.05f });
+		registry->GetComponent<CameraComponent>(ent).SetFocusOffset({ 0.0f,50.0f,0.0f });
 	}
 
 	void PlayerComponent::NewFrame(float dt)
@@ -150,8 +151,9 @@ namespace cumulonimbus::component
 
 		if (ImGui::TreeNode("PlayerComponent"))
 		{
-			ImGui::DragFloat("Walk Speed", &walk_speed, 0.5f, 0.1f, 100000);
-			ImGui::DragFloat("Dash Speed", &dash_speed, 0.5f, 0.1f, 100000);
+			ImGui::DragFloat("Walk Speed"		, &walk_speed		, 0.5f, 0.1f, 100000);
+			ImGui::DragFloat("Dash Speed"		, &dash_speed		, 0.5f, 0.1f, 100000);
+			ImGui::DragFloat("Avoid Dash  Speed", &avoid_dash_speed	, 0.5f, 0.1f, 100000);
 			ImGui::DragFloat("Dead zone value of pad input", &threshold, 0.01f, 0.0f, 1.0f);
 
 			ImGui::TreePop();
@@ -358,7 +360,7 @@ namespace cumulonimbus::component
 	{
 		if (player_state.GetInitialize())
 		{// アニメーションセット(AnimationState::Idle)
-			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimStateIndex(AnimationState::T_Pose), true);
+			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimStateIndex(AnimationState::T_Pose), true,1.f);
 		}
 
 		if (!GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).IsPlayAnimation())

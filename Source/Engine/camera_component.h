@@ -124,13 +124,18 @@ namespace cumulonimbus::component
 		void SetOrtho(float width, float height, float min, float max);
 
 		/**
+		* @brief : カメラ位置の設定
+		*/
+		void SetEyePosition(const DirectX::SimpleMath::Vector3 & pos) { eye_position = pos; }
+		/**
 		 * @brief : カメラ注視点の設定
 		 */
 		void SetFocusPosition(const DirectX::SimpleMath::Vector3& target) { focus_position = target; }
 		/**
-		 * @brief : カメラ位置の設定
+		 * @brief : カメラ位置オフセット値の設定
 		 */
-		void SetEyePosition(const DirectX::SimpleMath::Vector3& pos) { eye_position = pos; }
+		void SetFocusOffset(const DirectX::SimpleMath::Vector3& offset) { focus_offset = offset; }
+
 		/**
 		 * @brief		: デバッグ時のカメラ速度の設定
 		 * @pram speed	: カメラの速さ
@@ -152,8 +157,9 @@ namespace cumulonimbus::component
 		[[nodiscard]] DirectX::SimpleMath::Matrix GetViewMat()			const { return view_mat; }
 		[[nodiscard]] DirectX::SimpleMath::Matrix GetProjectionMat()	const { return projection_mat; }
 
-		[[nodiscard]] DirectX::SimpleMath::Vector3 GetEyePosition()   const { return eye_position; }
-		[[nodiscard]] DirectX::SimpleMath::Vector3 GetFocusPosition() const { return focus_position; }
+		[[nodiscard]] const DirectX::SimpleMath::Vector3& GetEyePosition()   const { return eye_position; }
+		[[nodiscard]] const DirectX::SimpleMath::Vector3& GetFocusPosition() const { return focus_position; }
+		[[nodiscard]] const DirectX::SimpleMath::Vector3& GetFocusOffset()	 const { return focus_offset; }
 
 		// カメラの向き取得
 		[[nodiscard]] DirectX::SimpleMath::Vector3 GetCameraRight() const { return right_vec; }
@@ -175,8 +181,9 @@ namespace cumulonimbus::component
 		// カメラの最大角度(軸基準) (y,zは未定義)
 		DirectX::SimpleMath::Vector3 max_camera_angle{ 85.0f,-1.f,-1.f }; //	カメラの最大角(xyzそれぞれ+-両方の角度を表す。パラメータが0以下の場合はカメラの角度制限なし)
 
-		DirectX::SimpleMath::Vector3 eye_position{ 0.0f,0.0f,0.0f };
-		DirectX::SimpleMath::Vector3 focus_position{ 0.0f,0.0f,1.0f };
+		DirectX::SimpleMath::Vector3 eye_position{ 0.0f,0.0f,0.0f };	// カメラ位置
+		DirectX::SimpleMath::Vector3 focus_position{ 0.0f,0.0f,1.0f };	// カメラ焦点位置
+		DirectX::SimpleMath::Vector3 focus_offset{ 0.0f,0.0f,0.0f };	// カメラ焦点位置のオフセット値
 
 		DirectX::SimpleMath::Vector3 up_vec{ 0.0f,1.0f,0.0f };			// view変換行列に渡すときに使用するupベクトル(固定)
 		DirectX::SimpleMath::Vector3 current_up_vec{ 0.0f,1.0f,0.0f };	// カメラの現在のupベクトル

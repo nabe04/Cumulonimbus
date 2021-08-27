@@ -126,7 +126,7 @@ namespace cumulonimbus::component
 		void UnbindPBRMaterialCBuffAndTexture(uint material_index) const;
 
 		// アニメーション
-		[[nodiscard]] bool IsPlayAnimation() const { return current_animation_index >= 0; }
+		[[nodiscard]] bool IsPlayAnimation() const;
 		/**
 		 * @brief					: アニメーションの遷移
 		 * @param animation_index	: 格納されているアニメーションの要素番号

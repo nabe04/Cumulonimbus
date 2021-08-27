@@ -109,29 +109,34 @@ namespace cumulonimbus::component
 			helper::imgui::Image(*off_screen->GetRenderTargetSRV(), { 160,100 });
 
 			ImGui::Checkbox("Debug Camera", &is_use_camera_for_debug);
-			ImGui::Text("CameraComponent Pos X %f", camera.camera_position.x);
-			ImGui::Text("CameraComponent Pos Y %f", camera.camera_position.y);
-			ImGui::Text("CameraComponent Pos Z %f", camera.camera_position.z);
+			ImGui::Text("-----------------------");
+			ImGui::Text("Camera Pos X %f", camera.camera_position.x);
+			ImGui::Text("Camera Pos Y %f", camera.camera_position.y);
+			ImGui::Text("Camera Pos Z %f", camera.camera_position.z);
+			ImGui::Text("-----------------------");
 			ImGui::Text("Focus X %f", camera.camera_at.x);
 			ImGui::Text("Focus Y %f", camera.camera_at.y);
 			ImGui::Text("Focus Z %f", camera.camera_at.z);
-			ImGui::Text("CameraComponent Front X %f", camera.camera_front.x);
-			ImGui::Text("CameraComponent Front Y %f", camera.camera_front.y);
-			ImGui::Text("CameraComponent Front Z %f", camera.camera_front.z);
-			ImGui::Text("CameraComponent Up X %f", camera.camera_up.x);
-			ImGui::Text("CameraComponent Up Y %f", camera.camera_up.y);
-			ImGui::Text("CameraComponent Up Z %f", camera.camera_up.z);
-			ImGui::Text("CameraComponent Right X %f", camera.camera_right.x);
-			ImGui::Text("CameraComponent Right Y %f", camera.camera_right.y);
-			ImGui::Text("CameraComponent Right Z %f", camera.camera_right.z);
+			ImGui::Text("-----------------------");
+			ImGui::Text("Camera Front X %f", camera.camera_front.x);
+			ImGui::Text("Camera Front Y %f", camera.camera_front.y);
+			ImGui::Text("Camera Front Z %f", camera.camera_front.z);
+			ImGui::Text("-----------------------");
+			ImGui::Text("Camera Up X %f", camera.camera_up.x);
+			ImGui::Text("Camera Up Y %f", camera.camera_up.y);
+			ImGui::Text("Camera Up Z %f", camera.camera_up.z);
+			ImGui::Text("-----------------------");
+			ImGui::Text("Camera Right X %f", camera.camera_right.x);
+			ImGui::Text("Camera Right Y %f", camera.camera_right.y);
+			ImGui::Text("Camera Right Z %f", camera.camera_right.z);
 
 			ImGui::Text("focus_position x : %f\nfocus_position y : %f\nfocus_position z : %f", focus_position.x, focus_position.y, focus_position.z);
 			ImGui::Text("angle x  : %f\nangle y  : %f\nangle z  : %f", camera_angle.x, camera_angle.y, camera_angle.z);
 			ImGui::Text("Pos x  : %f\n Pos y  : %f\n Pos z  : %f", eye_position.x, eye_position.y, eye_position.z);
 
+			ImGui::DragFloat3("Camera Focus Offset", (float*)&focus_offset, 0.5f, 0.0f, 100000.0f);
 			ImGui::DragFloat2("CameraSpeed", (float*)&camera_speed, 0.5f, 1, 10);
 			ImGui::DragFloat("Camera Length", &camera_length, 0.1f, 0.1f, 1000.0f);
-
 
 			ImGui::TreePop();
 		}
@@ -221,13 +226,11 @@ namespace cumulonimbus::component
 
 	void CameraComponent::UpdateObjectCamera(float dt)
 	{
-		//AdjustCameraAngle();
-
 		// camera_length‚Æfront_vec‚©‚çƒJƒƒ‰‚ÌˆÊ’u‚ðŽZo
 		auto& position = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetPosition();
 
-		focus_position = position;
-		eye_position   = position + (front_vec * -1) * camera_length;
+		focus_position = position + focus_offset;
+		eye_position   = focus_position + (front_vec * -1) * camera_length;
 		CalcCameraDirectionalVector();
 	}
 
