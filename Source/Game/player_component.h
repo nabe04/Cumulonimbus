@@ -68,7 +68,7 @@ namespace cumulonimbus::component
 		};
 
 		// FBXが持つアニメーションデータ
-		enum class AnimationState
+		enum class AnimationData
 		{
 			T_Pose,
 			Attacking_Normal_01,
@@ -150,7 +150,7 @@ namespace cumulonimbus::component
 		// アニメーションキーフレームの調整用(終端フレームの調整)
 		std::map<std::string, u_int> adjust_keyframe_map{};
 		// アニメーション中断フレーム(先行入力などで使用)
-		std::map<AnimationState, u_int> animation_break_frame{};
+		std::map<AnimationData, u_int> animation_break_frame{};
 
 		//-- 状態に応じてのスピード設定 --//
 		float walk_speed = 300;	 // 歩きの速さ
@@ -181,7 +181,7 @@ namespace cumulonimbus::component
 		/**
 		 * @brief : enum class(AnimationState)をint型に変換
 		 */
-		[[nodiscard]] int GetAnimStateIndex(AnimationState anim_state) const;
+		[[nodiscard]] int GetAnimDataIndex(AnimationData anim_state) const;
 
 		/**
 		 * @brief : レイキャストで使用するパラメータのセット
@@ -223,7 +223,7 @@ namespace cumulonimbus::component
 		 * @param state				: フレームを設定したいAnimationState
 		 * @param keyframe			: 移行フレームの指定
 		 */
-		void SetAnimationBreakFrame(AnimationState state, u_int keyframe);
+		void SetAnimationBreakFrame(AnimationData state, u_int keyframe);
 
 		/**
 		 * @brief : 次のアニメーションがPlayerState::Attacking_Normal_Long_Press
@@ -243,7 +243,7 @@ namespace cumulonimbus::component
 		 * @param state		: "animation_break_frame"に登録されているAnimationState
 		 * @return			: true -> 超えている
 		 */
-		[[nodiscard]] bool IsBreakAnimationFrame(AnimationState state) const;
+		[[nodiscard]] bool IsBreakAnimationFrame(AnimationData state) const;
 
 		/**
 		 * @brief : StateMachineクラスで管理するプレイヤーの状態関数
@@ -288,7 +288,8 @@ namespace cumulonimbus::component
 		void AttackJump02End(float dt);
 		void AttackJump03End(float dt);
 		void AttackJump04End(float dt);
-		void AttackingJumpStrong(float dt);		// ジャンプ攻撃(強)
+		void AttackJumpStrongBegin(float dt);	// ジャンプ攻撃(強)
+		void AttackingJumpStrong(float dt);
 		void AttackJumpStrongEnd(float dt);
 		void DashAttack(float dt);				// ダッシュ攻撃
 	};

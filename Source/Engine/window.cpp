@@ -11,8 +11,10 @@ LRESULT CALLBACK fnWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	return f ? f->HandleMessage(hwnd, msg, wparam, lparam) : DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
-void Window::Create(u_int width, u_int height, u_int pos_x, u_int pos_y)
+void Window::Create(const u_int width, const u_int height, const u_int pos_x, const u_int pos_y)
 {
+	//SetProcessDPIAware();
+
 	WNDCLASSEX wcex{};
 	wcex.cbSize			= sizeof(WNDCLASSEX);
 	wcex.style			= CS_HREDRAW | CS_VREDRAW;
@@ -29,10 +31,15 @@ void Window::Create(u_int width, u_int height, u_int pos_x, u_int pos_y)
 	RegisterClassEx(&wcex);
 
 	RECT rc = { 0, 0, static_cast<long>(width), static_cast<long>(height) };
-	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
-	hwnd = CreateWindow(_T("Cumlonimbus"), _T("Cumlonimbus"), WS_OVERLAPPEDWINDOW ^ WS_MAXIMIZEBOX ^ WS_THICKFRAME | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, instance, NULL);
+	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW ^ WS_MAXIMIZEBOX ^ WS_THICKFRAME | WS_VISIBLE, FALSE);
+	hwnd = CreateWindow(
+			_T("Cumlonimbus"),
+			_T("Cumlonimbus"), WS_OVERLAPPEDWINDOW ^ WS_MAXIMIZEBOX ^ WS_THICKFRAME | WS_VISIBLE,
+			rc.left, rc.top,
+			rc.right - rc.left, rc.bottom - rc.top,
+			NULL, NULL, instance, NULL);
 	ShowWindow(hwnd, cmd_show);
-	SetWindowPos(hwnd, HWND_TOP, pos_x, pos_y, rc.right, rc.bottom, SWP_SHOWWINDOW);
+	SetWindowPos(hwnd, HWND_TOP, pos_x, pos_y, rc.right - rc.left, rc.bottom - rc.top, SWP_SHOWWINDOW);
 
 	window_class_name = wcex.lpszClassName;
 	window_width	  = width;

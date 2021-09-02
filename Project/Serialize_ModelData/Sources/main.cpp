@@ -129,5 +129,9 @@ int main()
 	//BulidFBX stage_01("../../Data/Assets/FBX/Stages/Stage_01/Stage_01_For_Collision.fbx");
 	//stage_01.Export("../../Data/Assets/Bin/Stage_01_Collision.bin");
 
+	// Stage_01 Collision
+	BulidFBX stage_01("../../Data/Lantern.fbx");
+	stage_01.Export("../../Data/Assets/Bin/Lantern.bin");
+
 	return 0;
 }

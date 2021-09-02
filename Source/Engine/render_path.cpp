@@ -137,7 +137,8 @@ namespace cumulonimbus::renderer
 			{
 				ImGui::Text("True");
 			}
-			helper::imgui::Image(*camera_comp.GetFrameBufferSRV_Address(), { 920,540 });
+			auto size = ImGui::GetWindowSize();
+			helper::imgui::Image(*camera_comp.GetFrameBufferSRV_Address(), { size.x,size.y});
 			ImGui::End();
 		}
 	}

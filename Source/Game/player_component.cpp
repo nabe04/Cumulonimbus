@@ -66,7 +66,9 @@ namespace cumulonimbus::component
 		player_state.AddState(PlayerState::Attack_Jump_02_End			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJump02End(dt); });
 		player_state.AddState(PlayerState::Attack_Jump_03_End			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJump03End(dt); });
 		player_state.AddState(PlayerState::Attack_Jump_04_End			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJump04End(dt); });
+		player_state.AddState(PlayerState::Attack_Jumping_Strong_Begin	, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJumpStrongBegin(dt); });
 		player_state.AddState(PlayerState::Attacking_Jump_Strong		, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingJumpStrong(dt); });
+		player_state.AddState(PlayerState::Attack_Jump_Strong_End		, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJumpStrongEnd(dt); });
 		player_state.AddState(PlayerState::Dash_Attack					, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).DashAttack(dt); });
 
 		// 初期stateの設定(Idle)
@@ -98,12 +100,12 @@ namespace cumulonimbus::component
 		SetAdjustKeyFrame("attack_jump_04_end"		, 32);
 
 		// 先行入力によるアニメーションの中断フレームの設定
-		SetAnimationBreakFrame(AnimationState::Attack_Normal_01 , 16);
-		SetAnimationBreakFrame(AnimationState::Attack_Normal_02 , 20);
-		SetAnimationBreakFrame(AnimationState::Attack_Normal_03 , 37);
-		SetAnimationBreakFrame(AnimationState::Attacking_Jump_01, 15);
-		SetAnimationBreakFrame(AnimationState::Attacking_Jump_02, 14);
-		SetAnimationBreakFrame(AnimationState::Attacking_Jump_03, 16);
+		SetAnimationBreakFrame(AnimationData::Attack_Normal_01 , 16);
+		SetAnimationBreakFrame(AnimationData::Attack_Normal_02 , 20);
+		SetAnimationBreakFrame(AnimationData::Attack_Normal_03 , 37);
+		SetAnimationBreakFrame(AnimationData::Attacking_Jump_01, 15);
+		SetAnimationBreakFrame(AnimationData::Attacking_Jump_02, 14);
+		SetAnimationBreakFrame(AnimationData::Attacking_Jump_03, 16);
 
 		// レイキャストに関する設定
 		if (!registry->TryGetComponent<RayCastComponent>(ent))
@@ -176,7 +178,7 @@ namespace cumulonimbus::component
 
 	}
 
-	int PlayerComponent::GetAnimStateIndex(AnimationState anim_state) const
+	int PlayerComponent::GetAnimDataIndex(AnimationData anim_state) const
 	{
 		return static_cast<int>(anim_state);
 	}
@@ -321,7 +323,7 @@ namespace cumulonimbus::component
 		assert(!"No animation names existed(PlayerComponent::SetAdjustKeyFrame)");
 	}
 
-	void PlayerComponent::SetAnimationBreakFrame(AnimationState state, u_int keyframe)
+	void PlayerComponent::SetAnimationBreakFrame(AnimationData state, u_int keyframe)
 	{
 		// マップに存在していればキーフレームを上書きする
 		if (animation_break_frame.contains(state))
@@ -352,7 +354,7 @@ namespace cumulonimbus::component
 		return false;
 	}
 
-	bool PlayerComponent::IsBreakAnimationFrame(AnimationState state) const
+	bool PlayerComponent::IsBreakAnimationFrame(AnimationData state) const
 	{
 		if (!animation_break_frame.contains(state))
 			assert((!"Don't have state(PlayerComponent::IsBreakAnimationFrame)"));
@@ -365,8 +367,8 @@ namespace cumulonimbus::component
 	void PlayerComponent::TPose(const float dt)
 	{
 		if (player_state.GetInitialize())
-		{// アニメーションセット(AnimationState::Idle)
-			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimStateIndex(AnimationState::T_Pose), true,1.f);
+		{// アニメーションセット(AnimationData::Idle)
+			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimDataIndex(AnimationData::T_Pose), true,1.f);
 		}
 
 		if (!GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).IsPlayAnimation())
@@ -378,8 +380,8 @@ namespace cumulonimbus::component
 	void PlayerComponent::Idle(float dt)
 	{
 		if (player_state.GetInitialize())
-		{// アニメーションセット(AnimationState::Idle)
-			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimStateIndex(AnimationState::Idle), true);
+		{// アニメーションセット(AnimationData::Idle)
+			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimDataIndex(AnimationData::Idle), true);
 		}
 
 		using namespace locator;
@@ -410,8 +412,8 @@ namespace cumulonimbus::component
 	void PlayerComponent::WalkFront(float dt)
 	{
 		if (player_state.GetInitialize())
-		{// アニメーションセット(AnimationState::Walk)
-			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimStateIndex(AnimationState::Walk_Front), true);
+		{// アニメーションセット(AnimationData::Walk)
+			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimDataIndex(AnimationData::Walk_Front), true);
 		}
 
 		using namespace locator;
@@ -479,8 +481,8 @@ namespace cumulonimbus::component
 		auto& fbx_model_comp = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
 
 		if (player_state.GetInitialize())
-		{// アニメーションセット(AnimationState::Jump_Begin)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Jump_Begin), false);
+		{// アニメーションセット(AnimationData::Jump_Begin)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Jump_Begin), false);
 		}
 
 		if (fbx_model_comp.CurrentKeyframe() > 4)
@@ -504,8 +506,8 @@ namespace cumulonimbus::component
 
 		if (player_state.GetInitialize())
 		{
-			// アニメーションセット(AnimationState::Jump_Loop)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Jump_Loop), true);
+			// アニメーションセット(AnimationData::Jump_Loop)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Jump_Loop), true);
 		}
 
 		{// 移動速度の設定
@@ -535,8 +537,8 @@ namespace cumulonimbus::component
 	void PlayerComponent::JumpLanding(float dt)
 	{
 		if (player_state.GetInitialize())
-		{// アニメーションセット(AnimationState::Jump_Landing)
-			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimStateIndex(AnimationState::Jump_Landing), false);
+		{// アニメーションセット(AnimationData::Jump_Landing)
+			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimDataIndex(AnimationData::Jump_Landing), false);
 		}
 
 		auto& ray_cast_comp = GetRegistry()->GetComponent<RayCastComponent>(GetEntity());
@@ -561,8 +563,8 @@ namespace cumulonimbus::component
 	{
 		auto& fbx_model_comp = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
 		if (player_state.GetInitialize())
-		{// アニメーションセット(AnimationState::Jump_End)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Jump_End), false);
+		{// アニメーションセット(AnimationData::Jump_End)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Jump_End), false);
 		}
 
 		// アニメーション再生中なら処理を中断
@@ -588,12 +590,12 @@ namespace cumulonimbus::component
 		if (player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
-			// アニメーションセット(AnimationState::Attack_Normal_01)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_Normal_01), false, 0.01f);
+			// アニメーションセット(AnimationData::Attack_Normal_01)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Normal_01), false, 0.01f);
 		}
 
 		using namespace locator;
-		if (!IsBreakAnimationFrame(AnimationState::Attack_Normal_01))
+		if (!IsBreakAnimationFrame(AnimationData::Attack_Normal_01))
 		{
 			if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
 			{// 先行入力セット(PlayerState::Attacking_Normal_02)
@@ -621,7 +623,7 @@ namespace cumulonimbus::component
 
 		if ((precede_input != PlayerState::End))
 		{
-			if (IsBreakAnimationFrame(AnimationState::Attack_Normal_01))
+			if (IsBreakAnimationFrame(AnimationData::Attack_Normal_01))
 			{// 先行入力あり
 				// 状態遷移(先行入力値)
 				player_state.SetState(precede_input);
@@ -640,11 +642,11 @@ namespace cumulonimbus::component
 		if (player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
-			// アニメーションセット(AnimationState::Attack_Normal_02)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_Normal_02), false);
+			// アニメーションセット(AnimationData::Attack_Normal_02)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Normal_02), false);
 		}
 
-		if (!IsBreakAnimationFrame(AnimationState::Attack_Normal_02))
+		if (!IsBreakAnimationFrame(AnimationData::Attack_Normal_02))
 		{
 			using namespace locator;
 			if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
@@ -673,7 +675,7 @@ namespace cumulonimbus::component
 
 		if (precede_input != PlayerState::End)
 		{
-			if (IsBreakAnimationFrame(AnimationState::Attack_Normal_02))
+			if (IsBreakAnimationFrame(AnimationData::Attack_Normal_02))
 			{// 先行入力あり
 				// 状態遷移(先行入力値)
 				player_state.SetState(precede_input);
@@ -692,11 +694,11 @@ namespace cumulonimbus::component
 		if (player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
-			// アニメーションセット(AnimationState::Attack_Normal_03)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_Normal_03), false);
+			// アニメーションセット(AnimationData::Attack_Normal_03)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Normal_03), false);
 		}
 
-		if (!IsBreakAnimationFrame(AnimationState::Attack_Normal_03))
+		if (!IsBreakAnimationFrame(AnimationData::Attack_Normal_03))
 		{
 			using namespace locator;
 			if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
@@ -725,7 +727,7 @@ namespace cumulonimbus::component
 
 		if (precede_input != PlayerState::End)
 		{
-			if (IsBreakAnimationFrame(AnimationState::Attack_Normal_03))
+			if (IsBreakAnimationFrame(AnimationData::Attack_Normal_03))
 			{// 先行入力あり
 				// 状態遷移(先行入力値)
 				player_state.SetState(precede_input);
@@ -744,8 +746,8 @@ namespace cumulonimbus::component
 		if (player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
-			// アニメーションセット(AnimationState::Attack_Normal_04_Begin)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_Normal_04_Begin), false);
+			// アニメーションセット(AnimationData::Attack_Normal_04_Begin)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Normal_04_Begin), false);
 		}
 
 		// アニメーション再生中なら処理を中断
@@ -767,8 +769,8 @@ namespace cumulonimbus::component
 		if (player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
-			// アニメーションセット(AnimationState::Attacking_Normal_04)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attacking_Normal_04), true);
+			// アニメーションセット(AnimationData::Attacking_Normal_04)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attacking_Normal_04), true);
 		}
 
 		rigid_body_comp.AddForce({ attack_04_speed,0,attack_04_speed });
@@ -787,8 +789,8 @@ namespace cumulonimbus::component
 		if (player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
-			// アニメーションセット(AnimationState::Attack_Normal_04_End)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_Normal_04_End), false);
+			// アニメーションセット(AnimationData::Attack_Normal_04_End)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Normal_04_End), false);
 		}
 
 		// アニメーション再生中なら処理を中断
@@ -813,8 +815,8 @@ namespace cumulonimbus::component
 		if (player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
-			// アニメーションセット(AnimationState::Attack_Strong_01)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_Strong_01), false);
+			// アニメーションセット(AnimationData::Attack_Strong_01)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Strong_01), false);
 		}
 
 		using namespace locator;
@@ -849,8 +851,8 @@ namespace cumulonimbus::component
 		if (player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
-			// アニメーションセット(AnimationState::Attack_Strong_02)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_Strong_02), false);
+			// アニメーションセット(AnimationData::Attack_Strong_02)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Strong_02), false);
 		}
 
 		using namespace locator;
@@ -885,8 +887,8 @@ namespace cumulonimbus::component
 		if (player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
-			// アニメーションセット(AnimationState::Attack_Strong_03)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_Strong_03), false);
+			// アニメーションセット(AnimationData::Attack_Strong_03)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Strong_03), false);
 		}
 
 		using namespace locator;
@@ -921,8 +923,8 @@ namespace cumulonimbus::component
 		if (player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
-			// アニメーションセット(AnimationState::Attack_Strong_04)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_Strong_04), false);
+			// アニメーションセット(AnimationData::Attack_Strong_04)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Strong_04), false);
 		}
 
 		// アニメーション再生中なら処理を中断
@@ -956,14 +958,14 @@ namespace cumulonimbus::component
 		if(player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
-			// アニメーションセット(AnimationState::Attacking_Jump_01)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attacking_Jump_01), false);
+			// アニメーションセット(AnimationData::Attacking_Jump_01)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attacking_Jump_01), false);
 			// 重力処理 Off(空中で止める)
 			movement_comp.GravityStop(true);
 		}
 
 		using namespace locator;
-		if (!IsBreakAnimationFrame(AnimationState::Attacking_Jump_01))
+		if (!IsBreakAnimationFrame(AnimationData::Attacking_Jump_01))
 		{
 			if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
 			{// 先行入力セット(PlayerState::Attacking_Jump_02)
@@ -985,7 +987,7 @@ namespace cumulonimbus::component
 
 		if (precede_input != PlayerState::End)
 		{
-			if (IsBreakAnimationFrame(AnimationState::Attacking_Jump_01))
+			if (IsBreakAnimationFrame(AnimationData::Attacking_Jump_01))
 			{// 先行入力あり
 				// 状態遷移(先行入力値)
 				player_state.SetState(precede_input);
@@ -999,8 +1001,8 @@ namespace cumulonimbus::component
 		if (player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
-			// アニメーションセット(AnimationState::Attack_Jump_01_End)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_Jump_01_End), false);
+			// アニメーションセット(AnimationData::Attack_Jump_01_End)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Jump_01_End), false);
 		}
 
 		if(!fbx_model_comp.IsPlayAnimation())
@@ -1018,12 +1020,12 @@ namespace cumulonimbus::component
 		if(player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
-			// アニメーションセット(AnimationState::Attacking_Jump_02)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attacking_Jump_02), false);
+			// アニメーションセット(AnimationData::Attacking_Jump_02)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attacking_Jump_02), false);
 		}
 
 		using namespace locator;
-		if (!IsBreakAnimationFrame(AnimationState::Attacking_Jump_02))
+		if (!IsBreakAnimationFrame(AnimationData::Attacking_Jump_02))
 		{
 			if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
 			{// 先行入力セット(PlayerState::Attacking_Jump_03)
@@ -1045,7 +1047,7 @@ namespace cumulonimbus::component
 
 		if (precede_input != PlayerState::End)
 		{
-			if (IsBreakAnimationFrame(AnimationState::Attacking_Jump_02))
+			if (IsBreakAnimationFrame(AnimationData::Attacking_Jump_02))
 			{// 先行入力あり
 				// 状態遷移(先行入力値)
 				player_state.SetState(precede_input);
@@ -1059,8 +1061,8 @@ namespace cumulonimbus::component
 		if (player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
-			// アニメーションセット(AnimationState::Attack_Jump_02_End)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_Jump_02_End), false);
+			// アニメーションセット(AnimationData::Attack_Jump_02_End)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Jump_02_End), false);
 		}
 
 		if (!fbx_model_comp.IsPlayAnimation())
@@ -1078,12 +1080,12 @@ namespace cumulonimbus::component
 		if(player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
-			// アニメーションセット(AnimationState::Attacking_Jump_03)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attacking_Jump_03), false);
+			// アニメーションセット(AnimationData::Attacking_Jump_03)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attacking_Jump_03), false);
 		}
 
 		using namespace locator;
-		if(!IsBreakAnimationFrame(AnimationState::Attacking_Jump_03))
+		if(!IsBreakAnimationFrame(AnimationData::Attacking_Jump_03))
 		{
 			if(ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
 			{// 先行入力セット(PlayerState::Attacking_Jump_04)
@@ -1104,7 +1106,7 @@ namespace cumulonimbus::component
 
 		if (precede_input != PlayerState::End)
 		{
-			if (IsBreakAnimationFrame(AnimationState::Attacking_Jump_03))
+			if (IsBreakAnimationFrame(AnimationData::Attacking_Jump_03))
 			{// 先行入力あり
 				// 状態遷移(先行入力値)
 				player_state.SetState(precede_input);
@@ -1118,12 +1120,12 @@ namespace cumulonimbus::component
 		if (player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
-			// アニメーションセット(AnimationState::Attack_Jump_03_End)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_Jump_03_End), false);
+			// アニメーションセット(AnimationData::Attack_Jump_03_End)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Jump_03_End), false);
 		}
 
 		if (!fbx_model_comp.IsPlayAnimation() ||
-			IsBreakAnimationFrame(AnimationState::Attack_Jump_03_End))
+			IsBreakAnimationFrame(AnimationData::Attack_Jump_03_End))
 		{
 			// 重力処理 On
 			GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity()).GravityStop(false);
@@ -1138,8 +1140,8 @@ namespace cumulonimbus::component
 		if (player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
-			// アニメーションセット(AnimationState::Attacking_Jump_04)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attacking_Jump_04), false);
+			// アニメーションセット(AnimationData::Attacking_Jump_04)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attacking_Jump_04), false);
 		}
 
 		if ((!fbx_model_comp.IsPlayAnimation()))
@@ -1156,8 +1158,8 @@ namespace cumulonimbus::component
 		if (player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
-			// アニメーションセット(AnimationState::Attack_Jump_04_End)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_Jump_04_End), false);
+			// アニメーションセット(AnimationData::Attack_Jump_04_End)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Jump_04_End), false);
 		}
 
 		if (!fbx_model_comp.IsPlayAnimation())
@@ -1169,19 +1171,68 @@ namespace cumulonimbus::component
 		}
 	}
 
+	void PlayerComponent::AttackJumpStrongBegin(const float dt)
+	{
+		auto& fbx_model_comp = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
+		if(player_state.GetInitialize())
+		{
+			InitializeAnimationVariable();
+			// アニメーションセット(AnimationData::Attack_Jumping_Strong_Begin)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Jumping_Strong_Begin), false);
+		}
+
+		// アニメーション再生中は処理を中断
+		if (fbx_model_comp.IsPlayAnimation())
+			return;
+
+		// 状態遷移(PlayerState::Attacking_Jump_Strong)
+		player_state.SetState(PlayerState::Attacking_Jump_Strong);
+		// 重力処理On
+		GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity()).GravityStop(false);
+	}
+
 	void PlayerComponent::AttackingJumpStrong(float dt)
 	{
+		auto& fbx_model_comp = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
+		auto& ray_cast_comp  = GetRegistry()->GetComponent<RayCastComponent>(GetEntity());
+		if (player_state.GetInitialize())
+		{
+			InitializeAnimationVariable();
+			// アニメーションセット(AnimationData::Attacking_Jump_Strong)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attacking_Jump_Strong), false);
+		}
+
+		// 地面についていなければ処理を中断
+		if (!ray_cast_comp.GetIsBlockHit(mapping::collision_name::ray::ForFloor()))
+			return;
+
+		// 状態遷移(PlayerState::Attack_Jump_Strong_End)
+		player_state.SetState(PlayerState::Attack_Jump_Strong_End);
 	}
 
 	void PlayerComponent::AttackJumpStrongEnd(float dt)
 	{
+		auto& fbx_model_comp = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
+		if (player_state.GetInitialize())
+		{
+			InitializeAnimationVariable();
+			// アニメーションセット(AnimationData::Attack_Jump_Strong_End)
+			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Jump_Strong_End), false);
+		}
+
+		// アニメーション再生中は処理を中断
+		if (fbx_model_comp.IsPlayAnimation())
+			return;
+
+		// 状態遷移(PlayerState::Idle)
+		player_state.SetState(PlayerState::Idle);
 	}
 
 	void PlayerComponent::AvoidDashBegin(float dt)
 	{
 		if (player_state.GetInitialize())
-		{// アニメーションセット(AnimationState::Avoid_Dash_Begin)
-			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimStateIndex(AnimationState::Avoid_Dash_Begin), false);
+		{// アニメーションセット(AnimationData::Avoid_Dash_Begin)
+			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimDataIndex(AnimationData::Avoid_Dash_Begin), false);
 		}
 
 		{// 移動速度の設定
@@ -1222,8 +1273,8 @@ namespace cumulonimbus::component
 	void PlayerComponent::AvoidDashEnd(float dt)
 	{
 		if (player_state.GetInitialize())
-		{// アニメーションセット(AnimationState::Avoid_Dash_End)
-			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimStateIndex(AnimationState::Avoid_Dash_End), false);
+		{// アニメーションセット(AnimationData::Avoid_Dash_End)
+			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimDataIndex(AnimationData::Avoid_Dash_End), false);
 		}
 
 		// アニメーション再生中なら処理を中断
@@ -1246,8 +1297,8 @@ namespace cumulonimbus::component
 	void PlayerComponent::Dash(float dt)
 	{
 		if (player_state.GetInitialize())
-		{// アニメーションセット(AnimationState::Dash)
-			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimStateIndex(AnimationState::Dash), true);
+		{// アニメーションセット(AnimationData::Dash)
+			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimDataIndex(AnimationData::Dash), true);
 		}
 
 		{// 移動速度の設定

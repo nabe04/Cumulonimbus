@@ -15,12 +15,13 @@
 
 INT WINAPI wWinMain(HINSTANCE instance, HINSTANCE prev_instance, LPWSTR cmd_line, INT cmd_show)
 {
+	SetProcessDPIAware();
 #if defined(DEBUG) | defined(_DEBUG)
 	// ÉÅÉÇÉäÉäÅ[ÉOåüèo
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 	std::shared_ptr<Window> window = std::make_shared<Window>(instance, prev_instance, cmd_line, cmd_show);
-	window->Create(960, 540, 270, 50);
+	window->Create(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), 0, 0);
 
 	Microsoft::WRL::ComPtr<ID3D11Debug> debugInterface;
 	INT ret;
