@@ -3,6 +3,7 @@
 #include "cum_imgui_helper.h"
 #include "ecs.h"
 #include "locator.h"
+#include "collision_name_mapping.h"
 
 #include "arithmetic.h"
 #include "camera_component.h"
@@ -62,9 +63,9 @@ namespace cumulonimbus::component
 		player_state.AddState(PlayerState::Attacking_Jump_03			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingJump03(dt); });
 		player_state.AddState(PlayerState::Attacking_Jump_04			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingJump04(dt); });
 		player_state.AddState(PlayerState::Attack_Jump_01_End			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJump01End(dt); });
-		player_state.AddState(PlayerState::Attack_Jump_01_End			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJump02End(dt); });
-		player_state.AddState(PlayerState::Attack_Jump_01_End			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJump03End(dt); });
-		player_state.AddState(PlayerState::Attack_Jump_01_End			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJump04End(dt); });
+		player_state.AddState(PlayerState::Attack_Jump_02_End			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJump02End(dt); });
+		player_state.AddState(PlayerState::Attack_Jump_03_End			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJump03End(dt); });
+		player_state.AddState(PlayerState::Attack_Jump_04_End			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJump04End(dt); });
 		player_state.AddState(PlayerState::Attacking_Jump_Strong		, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingJumpStrong(dt); });
 		player_state.AddState(PlayerState::Dash_Attack					, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).DashAttack(dt); });
 
@@ -72,33 +73,37 @@ namespace cumulonimbus::component
 		player_state.SetState(PlayerState::Idle);
 
 		// アニメーションの最終キーフレームの設定
-		SetAdjustKeyFrame("walk_front"			, 32);
-		SetAdjustKeyFrame("avoid_dash_begin"	, 24);
-		SetAdjustKeyFrame("avoid_dash_end"		, 10);
-		SetAdjustKeyFrame("dash"				, 16);
-		SetAdjustKeyFrame("attack_normal_01"	, 40);
-		SetAdjustKeyFrame("attack_normal_02"	, 36);
-		SetAdjustKeyFrame("attack_strong_01"	, 27);
-		SetAdjustKeyFrame("attack_strong_02"	, 22);
-		SetAdjustKeyFrame("attack_strong_03"	, 22);
-		SetAdjustKeyFrame("attack_strong_04"	, 22);
-		SetAdjustKeyFrame("jump_start"			, 13);
-		SetAdjustKeyFrame("jump_loop"			, 46);
-		SetAdjustKeyFrame("jump_end"			, 17);
-		SetAdjustKeyFrame("attacking_jump_01"	, 16);
-		SetAdjustKeyFrame("attacking_jump_02"	, 16);
-		SetAdjustKeyFrame("attacking_jump_03"	, 18);
-		SetAdjustKeyFrame("attacking_jump_04"	, 18);
-		SetAdjustKeyFrame("attack_jump_01_end"	, 36);
-		SetAdjustKeyFrame("attack_jump_02_end"	, 36);
-		SetAdjustKeyFrame("attack_jump_03_end"	, 34);
-		SetAdjustKeyFrame("attack_jump_04_end"	, 32);
+		SetAdjustKeyFrame("walk_front"				, 32);
+		SetAdjustKeyFrame("avoid_dash_begin"		, 24);
+		SetAdjustKeyFrame("avoid_dash_end"			, 10);
+		SetAdjustKeyFrame("dash"					, 16);
+		SetAdjustKeyFrame("attack_normal_01"		, 40);
+		SetAdjustKeyFrame("attack_normal_02"		, 36);
+		SetAdjustKeyFrame("attack_normal_04_begin"	, 4);
+		SetAdjustKeyFrame("attacking_normal_04"		, 4);
+		SetAdjustKeyFrame("attack_strong_01"		, 27);
+		SetAdjustKeyFrame("attack_strong_02"		, 22);
+		SetAdjustKeyFrame("attack_strong_03"		, 22);
+		SetAdjustKeyFrame("attack_strong_04"		, 22);
+		SetAdjustKeyFrame("jump_start"				, 13);
+		SetAdjustKeyFrame("jump_loop"				, 46);
+		SetAdjustKeyFrame("jump_end"				, 17);
+		SetAdjustKeyFrame("attacking_jump_01"		, 18);
+		SetAdjustKeyFrame("attacking_jump_02"		, 16);
+		SetAdjustKeyFrame("attacking_jump_03"		, 18);
+		SetAdjustKeyFrame("attacking_jump_04"		, 18);
+		SetAdjustKeyFrame("attack_jump_01_end"		, 36);
+		SetAdjustKeyFrame("attack_jump_02_end"		, 36);
+		SetAdjustKeyFrame("attack_jump_03_end"		, 34);
+		SetAdjustKeyFrame("attack_jump_04_end"		, 32);
 
 		// 先行入力によるアニメーションの中断フレームの設定
 		SetAnimationBreakFrame(AnimationState::Attack_Normal_01 , 16);
 		SetAnimationBreakFrame(AnimationState::Attack_Normal_02 , 20);
 		SetAnimationBreakFrame(AnimationState::Attack_Normal_03 , 37);
-		SetAnimationBreakFrame(AnimationState::Attacking_Jump_01, 17);
+		SetAnimationBreakFrame(AnimationState::Attacking_Jump_01, 15);
+		SetAnimationBreakFrame(AnimationState::Attacking_Jump_02, 14);
+		SetAnimationBreakFrame(AnimationState::Attacking_Jump_03, 16);
 
 		// レイキャストに関する設定
 		if (!registry->TryGetComponent<RayCastComponent>(ent))
@@ -128,6 +133,8 @@ namespace cumulonimbus::component
 
 	void PlayerComponent::Update(float dt)
 	{
+		Collision();
+
 		// 現プレイヤーのstate処理を実行
 		player_state.Update(dt);
 
@@ -138,7 +145,6 @@ namespace cumulonimbus::component
 		// 移動
 		//Movement(dt);
 		Rotation(dt);
-		Collision();
 	}
 
 	void PlayerComponent::RenderImGui()
@@ -533,11 +539,9 @@ namespace cumulonimbus::component
 			GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).SwitchAnimation(GetAnimStateIndex(AnimationState::Jump_Landing), false);
 		}
 
-		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
-		if (transform_comp.GetPosition().y <= 0)
+		auto& ray_cast_comp = GetRegistry()->GetComponent<RayCastComponent>(GetEntity());
+		if (ray_cast_comp.GetIsBlockHit(mapping::collision_name::ray::ForFloor()))
 		{
-			transform_comp.SetPositionY(0);
-
 			// 状態遷移(PlayerState::Jump_End)
 			player_state.SetState(PlayerState::Jump_End);
 		}
@@ -630,7 +634,7 @@ namespace cumulonimbus::component
 		}
 	}
 
-	void PlayerComponent::AttackingNormal02(float dt)
+	void PlayerComponent::AttackingNormal02(const float dt)
 	{
 		auto& fbx_model_comp = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
 		if (player_state.GetInitialize())
@@ -750,20 +754,27 @@ namespace cumulonimbus::component
 
 		// 状態遷移(PlayerState::Attacking_Normal_04)
 		player_state.SetState(PlayerState::Attacking_Normal_04);
+		auto& rigid_body_component = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
+		// ジャンプ処理
+		rigid_body_component.Jump(attack_04_jump_strength);
 	}
 
 	void PlayerComponent::AttackingNormal04(float dt)
 	{
-		auto& fbx_model_comp = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
+		auto& fbx_model_comp  = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
+		auto& ray_cast_comp   = GetRegistry()->GetComponent<RayCastComponent>(GetEntity());
+		auto& rigid_body_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
 		if (player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
 			// アニメーションセット(AnimationState::Attacking_Normal_04)
-			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attacking_Normal_04), false);
+			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attacking_Normal_04), true);
 		}
 
-		// アニメーション再生中なら処理を中断
-		if (fbx_model_comp.IsPlayAnimation())
+		rigid_body_comp.AddForce({ attack_04_speed,0,attack_04_speed });
+
+		// 地面についていなければ処理を中断
+		if (!ray_cast_comp.GetIsBlockHit(mapping::collision_name::ray::ForFloor()))
 			return;
 
 		// 状態遷移(PlayerState::Attack_Normal_04_End)
@@ -992,8 +1003,7 @@ namespace cumulonimbus::component
 			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_Jump_01_End), false);
 		}
 
-		if(!fbx_model_comp.IsPlayAnimation() ||
-			IsBreakAnimationFrame(AnimationState::Attack_Jump_01_End))
+		if(!fbx_model_comp.IsPlayAnimation())
 		{
 			// 重力処理 On
 			GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity()).GravityStop(false);
@@ -1053,8 +1063,7 @@ namespace cumulonimbus::component
 			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_Jump_02_End), false);
 		}
 
-		if (!fbx_model_comp.IsPlayAnimation() ||
-			IsBreakAnimationFrame(AnimationState::Attack_Jump_02_End))
+		if (!fbx_model_comp.IsPlayAnimation())
 		{
 			// 重力処理 On
 			GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity()).GravityStop(false);
@@ -1139,12 +1148,6 @@ namespace cumulonimbus::component
 			// 状態遷移(PlayerState::Attack_Jump_04_End)
 			player_state.SetState(PlayerState::Attack_Jump_04_End);
 		}
-
-		if (IsBreakAnimationFrame(AnimationState::Attacking_Jump_04))
-		{// 先行入力あり
-			// 状態遷移(先行入力値)
-			player_state.SetState(PlayerState::Attack_Jump_04_End);
-		}
 	}
 
 	void PlayerComponent::AttackJump04End(float dt)
@@ -1157,8 +1160,7 @@ namespace cumulonimbus::component
 			fbx_model_comp.SwitchAnimation(GetAnimStateIndex(AnimationState::Attack_Jump_04_End), false);
 		}
 
-		if (!fbx_model_comp.IsPlayAnimation() ||
-			IsBreakAnimationFrame(AnimationState::Attack_Jump_04_End))
+		if (!fbx_model_comp.IsPlayAnimation())
 		{
 			// 重力処理 On
 			GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity()).GravityStop(false);

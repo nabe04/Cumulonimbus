@@ -24,9 +24,9 @@ void ResourceManager::Initialize(ID3D11Device* device)
 		//std::shared_ptr<FbxModelResource> robo_resource = std::make_shared<FbxModelResource>(device, robo_filename, "./Data/Assets/FBX/Robot/");
 		//AddFBXData(robo_resource);
 
-		// Robo
-		const char* robo2_filename = "./Data/Assets/Bin/Robo.bin";
-		std::shared_ptr<FbxModelResource> robo2_resource = std::make_shared<FbxModelResource>(device, robo2_filename, "./Data/Assets/FBX/Robo/");
+		// Robot
+		const char* robo2_filename = "./Data/Assets/Bin/Robot.bin";
+		std::shared_ptr<FbxModelResource> robo2_resource = std::make_shared<FbxModelResource>(device, robo2_filename, "./Data/Assets/FBX/Robot/");
 		AddFBXData(robo2_resource);
 
 		//// Enemies

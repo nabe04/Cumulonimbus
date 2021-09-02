@@ -126,6 +126,8 @@ namespace cumulonimbus::component
 			Attack_Strong_All,
 			Jump_Loop,
 			Jump_End,
+			Attack_Jump_Strong_All,
+			Attack_Normal_04_All,
 
 			End
 		};
@@ -153,6 +155,7 @@ namespace cumulonimbus::component
 		//-- 状態に応じてのスピード設定 --//
 		float walk_speed = 300;	 // 歩きの速さ
 		float dash_speed = 700;	 // 走りの速さ
+		float attack_04_speed = 700; // 通常攻撃04(ジャンプ攻撃)時の速さ
 		float avoid_dash_speed = 900;  // 回避ダッシュ速度
 		float jump_movement_speed = 300;
 
@@ -163,12 +166,8 @@ namespace cumulonimbus::component
 		// パッド長押しスロット数(長押し判定に使用)
 		int   long_press_slot = 60;
 
-		// ジャンプ強度
-		float jump_strength = 5000;
-		// 重力
-		float gravity = 1.0f;
-		//// 現在のジャンプ速度
-		//float current_jump_velocity = 0;
+		// 通常攻撃04(ジャンプで斬りつけ)時のジャンプ強度
+		float attack_04_jump_strength = 500;
 
 		/**
 		 * @brief : State変更時にアニメーション用のメンバ変数の初期化
@@ -205,7 +204,7 @@ namespace cumulonimbus::component
 		 *			  処理が行われた後の動きの処理をする
 		 */
 		void Collision() const;
-		
+
 		/**
 		 * @brief : カメラワーク管理関数
 		 */

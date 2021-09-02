@@ -29,27 +29,6 @@ int main()
 	//build_fbx.AddAnimation("../../Data/TestData/RPG-Character/Unarmed/RPG-Character@Unarmed-Stunned.FBX");
 	//build_fbx.Export("../../Data/TestData/RPG-Character/RPG-Character.bin");
 
-	////-- Robot --//
-	//BulidFBX robot_fbx("../../Data/Assets/FBX/Robot/Robo_L.fbx");
-	//robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Idle_ver_B.fbx");
-	//robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Walk_ver_B_Front.fbx");
-	//robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Walk_ver_B_Back.fbx");
-	//robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Attack_3Combo_1.fbx");
-	//robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Attack_3Combo_2.fbx");
-	//robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Attack_3Combo_3.fbx");
-	//robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Run_ver_B.fbx");
-	//robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Dash_Attack_ver_B.fbx");
-	//robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Damage_Front_Big_ver_A.fbx");
-	//robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Damage_Die.fbx");
-	//robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Damage_Die_Loop.fbx");
-	//robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Revenge_Guard_Start.fbx");
-	//robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Revenge_Guard_Loop.fbx");
-	//robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Revenge_Guard_End.fbx");
-	//robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Evade_Front.fbx");
-	//robot_fbx.AddAnimation("../../Data/Assets/FBX/Robot/Animations/Evade_Back.fbx");
-
-	//robot_fbx.Export("../../Data/Assets/Bin/Robo_L.bin");
-
 	//////-- Cube --//
 	//BulidFBX cube("../../Data/Assets/FBX/Geometric_Primitive/cube_maya.fbx");
 	//cube.Export("../../Data/Assets/Bin/cube.bin");
@@ -62,9 +41,9 @@ int main()
 	//BulidFBX capsule("../../Data/Assets/FBX/Geometric_Primitive/capsule_maya.fbx");
 	//capsule.Export("../../Data/Assets/Bin/capsule.bin");
 
-	// Robo
-	//BulidFBX robot2_fbx("../../Data/Assets/FBX/Robo/Robo_L.fbx");
-	//robot2_fbx.Export("../../Data/Assets/Bin/Robo.bin");
+	// Robot
+	BulidFBX robot_fbx("../../Data/Assets/FBX/Robot/Robo_L.fbx");
+	robot_fbx.Export("../../Data/Assets/Bin/Robot.bin");
 
 	// E_00_DeepSeaLizard
 	//BulidFBX e_00("../../Data/Assets/FBX/Enemies/E_00_DeepSeaLizard/DeepSeaLizard.fbx");
@@ -135,8 +114,8 @@ int main()
 	//e_16.AddAnimation("../../Data/Assets/FBX/Enemies/E_16_GalaxyRobot/Galaxy_Robot_v1_Anim.fbx");
 	//e_16.Export("../../Data/Assets/Bin/GalaxyRobot.bin");
 
-	BulidFBX e_16("../../Data/Assets/FBX/Enemies/E_16_Soldier/Soldier.fbx");
-	e_16.Export("../../Data/Assets/Bin/Soldier.bin");
+	//BulidFBX e_16("../../Data/Assets/FBX/Enemies/E_16_Soldier/Soldier.fbx");
+	//e_16.Export("../../Data/Assets/Bin/Soldier.bin");
 
 	//BulidFBX e_17("../../Data/Assets/FBX/Enemies/E_17_GalaxyRobot/Galaxy_Robot_v1.fbx");
 	//e_17.Export("../../Data/Assets/Bin/GalaxyRobot.bin");

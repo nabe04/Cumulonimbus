@@ -87,18 +87,25 @@ void SceneGame::InitializeScene()
 	//registry->GetComponent<cum::component::TransformComponent>(ent_sphere2).SetPosition({ 2, 0, 0 });
 	//registry->GetComponent<cum::component::TransformComponent>(ent_sphere2).SetWorldRotation_Y(180);
 
-	//const cum::mapping::rename_type::Entity ent_stage_01 = registry->CreateEntity();
-	//registry->AddComponent<cum::component::MeshObjectComponent>(ent_stage_01);
-	//registry->AddComponent<cum::component::FbxModelComponent>(ent_stage_01, cum::locator::Locator::GetResourceManager()->FbxModelResouece("Stage_01_Collision"));
-	//registry->GetComponent<cum::component::FbxModelComponent>(ent_stage_01).SetAllShader(cumulonimbus::mapping::shader_assets::ShaderAsset3D::SampleShader);
-	//registry->GetComponent<cum::component::TransformComponent>(ent_stage_01).SetPosition({ 0,220,0 });
-	//collision_manager->RegistryRayCastModel(ent_stage_01);
+	const cum::mapping::rename_type::Entity ent_stage_01 = registry->CreateEntity();
+	registry->AddComponent<cum::component::MeshObjectComponent>(ent_stage_01);
+	registry->AddComponent<cum::component::FbxModelComponent>(ent_stage_01, cum::locator::Locator::GetResourceManager()->FbxModelResouece("Stage_01_Collision"));
+	registry->GetComponent<cum::component::FbxModelComponent>(ent_stage_01).SetAllShader(cumulonimbus::mapping::shader_assets::ShaderAsset3D::SampleShader);
+	registry->GetComponent<cum::component::TransformComponent>(ent_stage_01).SetPosition({ 0,220,0 });
+	collision_manager->RegistryRayCastModel(ent_stage_01);
 
 	//const cum::mapping::rename_type::Entity ent_ene_00 = registry->CreateEntity();
 	//registry->AddComponent<cum::component::MeshObjectComponent>(ent_ene_00);
 	//registry->AddComponent<cum::component::FbxModelComponent>(ent_ene_00, cum::locator::Locator::GetResourceManager()->FbxModelResouece("Soldier"));
 	//registry->GetComponent<cum::component::TransformComponent>(ent_ene_00).SetScale(0.3f);
-	//registry->GetComponent<cum::component::TransformComponent>(ent_ene_00).SetPosition({ 100, 200, -1800 });
+	//registry->GetComponent<cum::component::TransformComponent>(ent_ene_00).SetPosition({ 100, 300, -1800 });
+	//registry->AddComponent<cum::component::CapsuleCollisionComponent>(ent_ene_00, CollisionTag::Enemy);
+	//registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_ene_00).AddCapsule();
+	//registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_ene_00).SetAllRadius(20.0f);
+	//registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_ene_00).SetAllLength(40.0f);
+	//registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_ene_00).SetAllCollisionPreset(cumulonimbus::collision::CollisionPreset::BlockAll);
+	//registry->AddComponent<cum::component::RigidBodyComponent>(ent_ene_00);
+	//registry->GetComponent<cum::component::RigidBodyComponent>(ent_ene_00).GravityStop(true);
 
 	//const cum::mapping::rename_type::Entity ent_ene_00 = registry->CreateEntity();
 	//registry->AddComponent<cum::component::MeshObjectComponent>(ent_ene_00);
@@ -137,7 +144,7 @@ void SceneGame::InitializeScene()
 
 	const cum::mapping::rename_type::Entity ent_player = registry->CreateEntity();
 	registry->AddComponent<cum::component::MeshObjectComponent>(ent_player);
-	registry->AddComponent<cum::component::FbxModelComponent>(ent_player, cum::locator::Locator::GetResourceManager()->FbxModelResouece("Robo"));
+	registry->AddComponent<cum::component::FbxModelComponent>(ent_player, cum::locator::Locator::GetResourceManager()->FbxModelResouece("Robot"));
 	registry->AddComponent<cum::component::PlayerComponent>(ent_player);
 	registry->AddComponent<cum::component::CapsuleCollisionComponent>(ent_player, CollisionTag::Player);
 	registry->AddComponent<cum::component::CameraComponent>(ent_player, true);
