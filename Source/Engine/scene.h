@@ -59,7 +59,7 @@ protected:
 	std::shared_ptr<cumulonimbus::manager::texture::TextureResourceManager> texture_resource_manager{ nullptr };
 	std::unique_ptr<cumulonimbus::ecs::Registry>		registry			{ nullptr };
 	std::unique_ptr<cumulonimbus::collision::CollisionManager> collision_manager{ nullptr };
-	std::unique_ptr<EditorManager>						editor_manager		{ nullptr };
+	std::unique_ptr<cumulonimbus::editor::EditorManager>						editor_manager		{ nullptr };
 	std::unique_ptr<GeometricPrimitiveResource>			geom_prim_res		{ nullptr };
 	std::unique_ptr<Light>								light				{ nullptr };
 	std::unique_ptr<SoundResource>						sound_resource		{ nullptr };

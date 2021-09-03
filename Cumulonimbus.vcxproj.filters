@@ -510,6 +510,9 @@
     <ClCompile Include="Source\Game\enemy_soldier_component.cpp">
       <Filter>Source\Game\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\hierarchy.cpp">
+      <Filter>Source\Engine\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -919,6 +922,9 @@
     </ClInclude>
     <ClInclude Include="Source\Game\enemy_soldier_component.h">
       <Filter>Header\Game\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\hierarchy.h">
+      <Filter>Header\Engine\System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

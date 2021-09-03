@@ -1,19 +1,24 @@
 #pragma once
-
 #include <memory>
 
 #include "content_browser.h"
+#include "hierarchy.h"
+#include "rename_type_mapping.h"
 
 class Scene;
 
-class EditorManager
+namespace cumulonimbus::editor
 {
-private:
-	std::unique_ptr<ContentBrawser> content_brawser{};
+	class EditorManager final
+	{
+	private:
+		std::unique_ptr<ContentBrowser> content_browser{};
+		std::unique_ptr<Hierarchy> hierarchy{};
 
-public:
-	explicit EditorManager();
-	~EditorManager() = default;
+	public:
+		explicit EditorManager();
+		~EditorManager() = default;
 
-	void RenderEditor(Scene* scene);
-};
+		void RenderEditor(Scene* scene, ecs::Registry* registry) const;
+	};
+} // cumulonimbus::editor

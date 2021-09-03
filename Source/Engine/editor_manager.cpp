@@ -3,13 +3,18 @@
 #include "scene.h"
 #include "gaussian_blur.h"
 
-EditorManager::EditorManager()
+namespace cumulonimbus::editor
 {
-	content_brawser = std::make_unique<ContentBrawser>();
-}
+	EditorManager::EditorManager()
+	{
+		content_browser = std::make_unique<ContentBrowser>();
+		hierarchy		= std::make_unique<Hierarchy>();
+	}
 
-void EditorManager::RenderEditor(Scene* scene)
-{
+	void EditorManager::RenderEditor(Scene* scene, ecs::Registry* registry) const
+	{
+		content_browser->Render(scene);
+		hierarchy->Render(registry);
+	}
+} // cumulonimbus::editor
 
-	content_brawser->Render(scene);
-}

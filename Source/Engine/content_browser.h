@@ -8,7 +8,7 @@
 
 class Scene;
 
-class ContentBrawser final
+class ContentBrowser final
 {
 	enum Contents
 	{
@@ -23,11 +23,11 @@ private:
 	std::bitset<contents.size()> is_selected{};
 
 public:
-	explicit ContentBrawser() = default;
-	~ContentBrawser() = default;
+	explicit ContentBrowser() = default;
+	~ContentBrowser() = default;
 
 	void Render(Scene* scene);
 
 private:
 	void SelectedContent(Scene* scene);
- };
+};

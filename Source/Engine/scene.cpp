@@ -96,7 +96,7 @@ void Scene::Initialize()
 #ifdef _DEBUG
 	if (!this->editor_manager)
 	{
-		editor_manager = std::make_unique<EditorManager>();
+		editor_manager = std::make_unique<cumulonimbus::editor::EditorManager>();
 	}
 #endif
 
@@ -183,7 +183,6 @@ void Scene::Render()
 	{
 		const RECT window_rect = cumulonimbus::locator::Locator::GetWindow()->GetThisWindowRect();
 
-		//ImGui::SetNextWindowPos(ImVec2{ static_cast<float>(window_rect.right), static_cast<float>(window_rect.top)});
 		ImGui::Begin("Scene");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		this->RenderImGui();
@@ -209,9 +208,9 @@ void Scene::Render()
 
 		ImGui::End();
 
-		editor_manager->RenderEditor(this);
+		editor_manager->RenderEditor(this, registry.get());
 	}
-#endif
+#endif // _DEBUG
 }
 
 void Scene::WriteImGui() const
