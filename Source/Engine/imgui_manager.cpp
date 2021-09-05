@@ -7,12 +7,17 @@ namespace imgui
 	{
 		IMGUI_CHECKVERSION();
 		ImGui::SetCurrentContext( ImGui::CreateContext());
-		//ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
-		io.Fonts->AddFontFromFileTTF("./Data/Assets/Fonts/NotoMono-Regular.ttf", 25.0f, NULL);
 		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
 		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
 		ImGui::StyleColorsDark();
+
+		{// ƒtƒHƒ“ƒg‚Ì’Ç‰Á
+			io.Fonts->AddFontFromFileTTF("./Data/Assets/Fonts/NotoMono-Regular.ttf", 25.0f, NULL);
+			static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
+			ImFontConfig icons_config; icons_config.MergeMode = true; icons_config.PixelSnapH = true;
+			io.Fonts->AddFontFromFileTTF("./Data/Assets/Fonts/fa-solid-900.ttf", 16.0f, &icons_config, icons_ranges);
+		}
 
 		if (!(ImGui_ImplWin32_Init(hwnd))) return false;
 		if (!(ImGui_ImplDX11_Init(device, immediate_context))) return false;

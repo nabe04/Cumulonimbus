@@ -4,8 +4,6 @@
 #include <bitset>
 #include <string>
 
-#include <imgui.h>
-
 class Scene;
 
 class ContentBrowser final

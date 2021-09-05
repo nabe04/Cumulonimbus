@@ -6,7 +6,6 @@
 
 #include "mesh_object.h"
 #include "fbx_model_component.h"
-#include "component_list.h"
 
 void ContentBrowser::Render(Scene* scene)
 {

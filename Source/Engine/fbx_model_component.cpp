@@ -76,7 +76,7 @@ namespace cumulonimbus::component
 
 	void FbxModelComponent::RenderImGui()
 	{
-		if (ImGui::TreeNode("FBX Model Paramater"))
+		if (ImGui::CollapsingHeader("FBX Model Parameter", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			// —v‘f‚ÌˆÊ’uŽæ“¾
 			// std::distance https://cpprefjp.github.io/reference/iterator/distance.html
@@ -195,8 +195,6 @@ namespace cumulonimbus::component
 					ImGui::PopID();
 				}
 			}
-
-			ImGui::TreePop();
 		}
 	}
 

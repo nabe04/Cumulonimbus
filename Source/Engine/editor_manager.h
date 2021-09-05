@@ -3,7 +3,7 @@
 
 #include "content_browser.h"
 #include "hierarchy.h"
-#include "rename_type_mapping.h"
+#include "inspector.h"
 
 class Scene;
 
@@ -14,6 +14,7 @@ namespace cumulonimbus::editor
 	private:
 		std::unique_ptr<ContentBrowser> content_browser{};
 		std::unique_ptr<Hierarchy> hierarchy{};
+		std::unique_ptr<Inspector> inspector{};
 
 	public:
 		explicit EditorManager();

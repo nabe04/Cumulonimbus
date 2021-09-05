@@ -445,6 +445,11 @@ namespace cumulonimbus::ecs
 			return entities;
 		}
 
+		[[nodiscard]] const std::unordered_map<mapping::rename_type::ComponentName, std::unique_ptr<ComponentArrayBase>>& GetComponentArrays()
+		{
+			return component_arrays;
+		}
+
 		/*
 		 * brief : Entity�̍쐬
 		 */

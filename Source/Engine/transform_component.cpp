@@ -12,6 +12,7 @@
 #include "component_base.h"
 #include "file_path_helper.h"
 #include "locator.h"
+#include "cum_imgui_helper.h"
 
 namespace cumulonimbus::component
 {
@@ -43,8 +44,12 @@ namespace cumulonimbus::component
 
 	void TransformComponent::RenderImGui()
 	{
-		if (ImGui::TreeNode("TransformComponent"))
+		if (ImGui::CollapsingHeader("TransformComponent", ImGuiTreeNodeFlags_DefaultOpen))
 		{
+			IMGUI_LEFT_LABEL(ImGui::DragFloat3, "Position", (float*)&position, 0.01f, -10000.0f, 10000.0f);
+			IMGUI_LEFT_LABEL(ImGui::DragFloat3, "Scale   ", (float*)&scale	 , 0.01f, -10000.0f, 10000.0f);
+			IMGUI_LEFT_LABEL(ImGui::DragFloat3, "Rotation", (float*)&angle	 , 0.01f, -180.0f  , 180.0f);
+
 			ImGui::Text("Right X %f", model_right.x);
 			ImGui::Text("Right Y %f", model_right.y);
 			ImGui::Text("Right Z %f", model_right.z);
@@ -56,14 +61,6 @@ namespace cumulonimbus::component
 			ImGui::Text("Front X %f", model_front.x);
 			ImGui::Text("Front Y %f", model_front.y);
 			ImGui::Text("Front Z %f", model_front.z);
-
-			ImGui::DragFloat3("Position", (float*)&position, 0.01f, -10000.0f, 10000.0f);
-			ImGui::DragFloat3("Scale", (float*)&scale, 0.01f, -1000.0f, 1000.0f);
-			ImGui::SliderFloat("Rotation X", &angle.x, -180.0f, 180.0f, "%.3f");
-			ImGui::SliderFloat("Rotation Y", &angle.y, -180.0f, 180.0f, "%.3f");
-			ImGui::SliderFloat("Rotation Z", &angle.z, -180.0f, 180.0f, "%.3f");
-
-			ImGui::TreePop();
 		}
 	}
 
