@@ -440,12 +440,12 @@ namespace cumulonimbus::ecs
 
 		}
 
-		[[nodiscard]] const std::unordered_map<mapping::rename_type::Entity, std::pair<mapping::rename_type::Entity, mapping::rename_type::EntityName>>& GetEntities()
+		[[nodiscard]] std::unordered_map<mapping::rename_type::Entity, std::pair<mapping::rename_type::Entity, mapping::rename_type::EntityName>>& GetEntities()
 		{
 			return entities;
 		}
 
-		[[nodiscard]] const std::unordered_map<mapping::rename_type::ComponentName, std::unique_ptr<ComponentArrayBase>>& GetComponentArrays()
+		[[nodiscard]] std::unordered_map<mapping::rename_type::ComponentName, std::unique_ptr<ComponentArrayBase>>& GetComponentArrays()
 		{
 			return component_arrays;
 		}
