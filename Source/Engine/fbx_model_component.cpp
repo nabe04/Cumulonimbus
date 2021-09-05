@@ -105,16 +105,21 @@ namespace cumulonimbus::component
 			}
 
 			int no = 0;
-			for (const auto& material : resource->GetModelData().materials)
+			if (ImGui::TreeNode("Material Color"))
 			{
-				std::string str = "Color" + no;
-				ImGui::ColorEdit4(str.c_str(), (float*)&material.color);
-				++no;
+				for (const auto& material : resource->GetModelData().materials)
+				{
+					ImGui::PushID(no);
+					IMGUI_LEFT_LABEL(ImGui::ColorEdit4, "Color", (float*)&material.color);
+					ImGui::PopID();
+					++no;
+				}
+				ImGui::TreePop();
 			}
 
 			// メッシュに適応するシェーダー、シェーダーのパラメータ、テクスチャの決定
 			// (モデルのマテリアルの決定)
-			if (ImGui::CollapsingHeader("Meshes"))
+			if (ImGui::TreeNode("Meshes"))
 			{
 				for (auto& mesh : resource->GetModelData().meshes)
 				{// モデルが持つメッシュ数分
@@ -162,10 +167,11 @@ namespace cumulonimbus::component
 						ImGui::TreePop();
 					}
 				}
+				ImGui::TreePop();
 			}
 
 			// モデルの持つアニメーション情報
-			if (ImGui::CollapsingHeader("Animations"))
+			if (ImGui::TreeNode("Animations"))
 			{
 				ImGui::Text("Current Keyframe : %d", current_keyframe);
 				ImGui::Text("Current Anim Index %d", current_animation_index);
@@ -194,6 +200,7 @@ namespace cumulonimbus::component
 
 					ImGui::PopID();
 				}
+				ImGui::TreePop();
 			}
 		}
 	}

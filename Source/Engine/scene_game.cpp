@@ -94,18 +94,18 @@ void SceneGame::InitializeScene()
 	registry->GetComponent<cum::component::TransformComponent>(ent_stage_01).SetPosition({ 0,220,0 });
 	collision_manager->RegistryRayCastModel(ent_stage_01);
 
-	//const cum::mapping::rename_type::Entity ent_ene_00 = registry->CreateEntity();
-	//registry->AddComponent<cum::component::MeshObjectComponent>(ent_ene_00);
-	//registry->AddComponent<cum::component::FbxModelComponent>(ent_ene_00, cum::locator::Locator::GetResourceManager()->FbxModelResouece("Soldier"));
-	//registry->GetComponent<cum::component::TransformComponent>(ent_ene_00).SetScale(0.3f);
-	//registry->GetComponent<cum::component::TransformComponent>(ent_ene_00).SetPosition({ 100, 300, -1800 });
-	//registry->AddComponent<cum::component::CapsuleCollisionComponent>(ent_ene_00, CollisionTag::Enemy);
-	//registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_ene_00).AddCapsule();
-	//registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_ene_00).SetAllRadius(20.0f);
-	//registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_ene_00).SetAllLength(40.0f);
-	//registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_ene_00).SetAllCollisionPreset(cumulonimbus::collision::CollisionPreset::BlockAll);
-	//registry->AddComponent<cum::component::RigidBodyComponent>(ent_ene_00);
-	//registry->GetComponent<cum::component::RigidBodyComponent>(ent_ene_00).GravityStop(true);
+	const cum::mapping::rename_type::Entity ent_ene_00 = registry->CreateEntity();
+	registry->AddComponent<cum::component::MeshObjectComponent>(ent_ene_00);
+	registry->AddComponent<cum::component::FbxModelComponent>(ent_ene_00, cum::locator::Locator::GetResourceManager()->FbxModelResouece("Soldier"));
+	registry->GetComponent<cum::component::TransformComponent>(ent_ene_00).SetScale(0.3f);
+	registry->GetComponent<cum::component::TransformComponent>(ent_ene_00).SetPosition({ 100, 300, -1800 });
+	registry->AddComponent<cum::component::CapsuleCollisionComponent>(ent_ene_00, CollisionTag::Enemy);
+	registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_ene_00).AddCapsule();
+	registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_ene_00).SetAllRadius(20.0f);
+	registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_ene_00).SetAllLength(40.0f);
+	registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_ene_00).SetAllCollisionPreset(cumulonimbus::collision::CollisionPreset::BlockAll);
+	registry->AddComponent<cum::component::RigidBodyComponent>(ent_ene_00);
+	registry->GetComponent<cum::component::RigidBodyComponent>(ent_ene_00).GravityStop(true);
 
 	//const cum::mapping::rename_type::Entity ent_ene_00 = registry->CreateEntity();
 	//registry->AddComponent<cum::component::MeshObjectComponent>(ent_ene_00);
