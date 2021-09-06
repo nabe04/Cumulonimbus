@@ -9,6 +9,7 @@
 #include "collision_component.h"
 #include "material_discrimination.h"
 
+
 namespace cumulonimbus
 {
 	namespace collision
@@ -31,6 +32,7 @@ namespace cumulonimbus
 		class RayCastComponent final : public CollisionComponent
 		{
 		public:
+			using CollisionComponent::CollisionComponent;
 			explicit RayCastComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, CollisionTag tag);
 			explicit RayCastComponent() = default; // for cereal
 			~RayCastComponent() override = default;

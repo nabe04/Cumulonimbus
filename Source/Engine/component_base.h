@@ -4,11 +4,12 @@
 #include <cereal/cereal.hpp>
 
 #include "rename_type_mapping.h"
+#include "component_tag_mapping.h"
 
 namespace cumulonimbus::ecs
 {
 	class Registry;
-}
+} // cumulonimbus::ecs
 
 namespace cumulonimbus::component
 {
@@ -16,6 +17,7 @@ namespace cumulonimbus::component
 	{
 	public:
 		explicit ComponentBase() = default;
+		explicit ComponentBase(const mapping::component_tag::ComponentTag tag) { component_tag = tag; }	// インスペクタービュー用
 		explicit ComponentBase(ecs::Registry* registry, mapping::rename_type::Entity ent)
 			: registry{ registry }
 			, entity{ ent }
@@ -39,10 +41,17 @@ namespace cumulonimbus::component
 		}
 
 		[[nodiscard]] ecs::Registry* GetRegistry() const { return registry; }
-		[[nodiscard]] mapping::rename_type::Entity    GetEntity()   const { return entity; }
+		[[nodiscard]] mapping::rename_type::Entity GetEntity() const { return entity; }
+		[[nodiscard]] mapping::component_tag::ComponentTag GetComponentTag() const { return component_tag; }
+
+		void SetRegistry(ecs::Registry* registry) { this->registry = registry; }
+		void SetEntity(const mapping::rename_type::Entity ent) { entity = ent; }
+
+	protected:
+		mapping::component_tag::ComponentTag component_tag{ mapping::component_tag::ComponentTag::NoTag };
 
 	private:
 		ecs::Registry* registry{};
-		mapping::rename_type::Entity entity;
+		mapping::rename_type::Entity entity{};
 	};
-}
+} // cumulonimbus::component

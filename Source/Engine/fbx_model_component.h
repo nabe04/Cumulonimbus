@@ -72,7 +72,7 @@ namespace cumulonimbus::component
 				);
 			}
 		};
-
+		using ComponentBase::ComponentBase;
 		explicit FbxModelComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const std::shared_ptr<FbxModelResource>& resource);
 		explicit FbxModelComponent()  = default; // for cereal
 		~FbxModelComponent() override = default;

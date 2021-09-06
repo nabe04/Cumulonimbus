@@ -32,6 +32,7 @@ namespace cumulonimbus
 		class CapsuleCollisionComponent final : public CollisionComponent
 		{
 		public:
+			using CollisionComponent::CollisionComponent;
 			explicit CapsuleCollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, CollisionTag tag);
 			explicit CapsuleCollisionComponent()  = default; // for cereal
 			~CapsuleCollisionComponent() override = default;

@@ -84,6 +84,7 @@ namespace cumulonimbus::component
 	class CollisionComponent : public ComponentBase
 	{
 	public:
+		using ComponentBase::ComponentBase;
 		explicit CollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, CollisionTag tag);
 		explicit CollisionComponent()  = default;
 		~CollisionComponent() override = default;

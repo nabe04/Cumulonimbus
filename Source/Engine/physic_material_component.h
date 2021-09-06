@@ -22,6 +22,7 @@ namespace cumulonimbus::component
 		};
 
 	public:
+		using ComponentBase::ComponentBase;
 		explicit PhysicMaterialComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
 		explicit PhysicMaterialComponent()  = default;
 		~PhysicMaterialComponent() override = default;

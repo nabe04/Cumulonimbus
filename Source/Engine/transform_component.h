@@ -18,7 +18,11 @@ namespace cumulonimbus::component
 	{
 	public:
 		explicit TransformComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
-		TransformComponent() = default; // for cereal
+		TransformComponent()
+			:ComponentBase{}
+		{
+			component_tag = mapping::component_tag::ComponentTag::Mesh;
+		}; // for cereal
 		~TransformComponent() override = default;
 
 		void NewFrame(float delta_time)override;
@@ -126,7 +130,7 @@ namespace cumulonimbus::component
 		 * @param angle : ƒ‰ƒWƒAƒ“Šp
 		 */
 		void AdjustRotationFromAxis(const DirectX::SimpleMath::Vector3& axis, float angle);
-		
+
 		[[nodiscard]] const DirectX::SimpleMath::Matrix& GetRotationMat()	 const { return rotation_matrix; }
 		[[nodiscard]] const DirectX::SimpleMath::Matrix& GetScalingMat()	 const { return scaling_matrix; }
 		[[nodiscard]] const DirectX::SimpleMath::Matrix& GetTransformMat()   const { return translation_matrix; }

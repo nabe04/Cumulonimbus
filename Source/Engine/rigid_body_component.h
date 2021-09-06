@@ -10,6 +10,7 @@ namespace cumulonimbus::component
 	class RigidBodyComponent final : public ComponentBase
 	{
 	public:
+		using ComponentBase::ComponentBase;
 		explicit RigidBodyComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
 		explicit RigidBodyComponent()  = default; // for cereal
 		~RigidBodyComponent() override = default;

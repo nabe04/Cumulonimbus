@@ -28,6 +28,7 @@ namespace cumulonimbus
 		class SphereCollisionComponent final : public CollisionComponent
 		{
 		public:
+			using CollisionComponent::CollisionComponent;
 			explicit SphereCollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, CollisionTag tag);
 			explicit SphereCollisionComponent()  = default; // for cereal
 			~SphereCollisionComponent() override = default;

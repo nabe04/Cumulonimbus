@@ -935,6 +935,9 @@
     <ClInclude Include="Source\Engine\inspector.h">
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\component_tag_mapping.h">
+      <Filter>Header\Engine\System\Mapping</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Cumulonimbus.rc" />

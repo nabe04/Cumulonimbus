@@ -43,6 +43,7 @@
     <ClInclude Include="Source\Engine\collision_name_mapping.h" />
     <ClInclude Include="Source\Engine\component_base.h" />
     <ClInclude Include="Source\Engine\component_list.h" />
+    <ClInclude Include="Source\Engine\component_tag_mapping.h" />
     <ClInclude Include="Source\Engine\constant_buffer.h" />
     <ClInclude Include="Source\Engine\constant_buffer_mapping.h" />
     <ClInclude Include="Source\Engine\content_browser.h" />

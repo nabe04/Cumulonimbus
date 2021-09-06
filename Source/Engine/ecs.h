@@ -16,9 +16,14 @@
 
 #include "file_path_helper.h"
 #include "rename_type_mapping.h"
+#include "component_tag_mapping.h"
 
 class Scene;
 
+namespace cumulonimbus::component
+{
+	class ComponentBase;
+}
 
 // Entity Update Order (The smaller number is updated first)
 enum class UpdateOrder
@@ -67,6 +72,9 @@ namespace cumulonimbus::ecs
 		virtual void Save(const std::string& filename) = 0;
 		virtual void Load(const std::string& filename) = 0;
 		virtual size_t GetHashCode() = 0;
+		virtual component::ComponentBase* AddComponentFromInspector(mapping::rename_type::Entity entity) = 0;
+
+		//component::ComponentBase* base;
 	};
 
 	template <typename T>
@@ -131,6 +139,21 @@ namespace cumulonimbus::ecs
 			const size_t index = static_cast<size_t>(entity_id.emplace(entity, components.size() - 1).first->second);
 
 			return  components.at(index);
+		}
+
+		component::ComponentBase* AddComponentFromInspector(const mapping::rename_type::Entity entity) override
+		{
+			if (entity_id.contains(entity))
+			{
+				const size_t index = static_cast<size_t>(entity_id.at(entity));
+				return &components.at(index);
+			}
+
+			components.emplace_back(T{});
+
+			const size_t index = static_cast<size_t>(entity_id.emplace(entity, components.size() - 1).first->second);
+
+			return  &components.at(index);
 		}
 
 		void RemoveComponent(mapping::rename_type::Entity entity)
