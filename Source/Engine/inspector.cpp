@@ -47,7 +47,7 @@ namespace cumulonimbus::editor
 			comp_data->RenderImGui(ent);
 		}
 
-		//
+		// 「Add Component」のボタン
 		AddComponentButton(registry, ent);
 
 		ImGui::End();
@@ -67,64 +67,39 @@ namespace cumulonimbus::editor
 		if (!ImGui::BeginPopup("my_file_popup"))
 			return;
 
-		bool is_used_mesh    = false;
-		bool is_used_physics = false;
-
 		ImGui::MenuItem("Component", nullptr, false, false);
-		//for(auto& [key,value] : registry->GetComponentArrays())
-		//{
-		//	if (value.get()->GetComponentTag() == component::ComponentTag::Mesh)
-		//	{
-		//		if (!ImGui::BeginMenu("Mesh"))
-		//			continue;
-		//		if (!is_used_mesh)
-		//			ImGui::MenuItem("Mesh", nullptr, false, false);
-		//		if (ImGui::MenuItem(key.c_str()))
-		//		{
 
-		//		}
-		//		is_used_mesh = true;
-		//		ImGui::EndMenu();
-		//	}
-		//}
+		ComponentMenu(registry, ent, "Mesn", mapping::component_tag::ComponentTag::Mesh);
+		ComponentMenu(registry, ent, "Physics", mapping::component_tag::ComponentTag::Physics);
 
-		for(auto& [key,value] : component_map)
+		ImGui::EndPopup(); // "my_file_popup"
+	}
+
+	void Inspector::ComponentMenu(ecs::Registry* registry, const mapping::rename_type::Entity ent, const std::string& menu_name, const mapping::component_tag::ComponentTag tag)
+	{
+		bool is_used = false;
+
+		for (auto& [key, value] : component_map)
 		{
-			if(value.second.get()->GetComponentTag() == mapping::component_tag::ComponentTag::Mesh)
+			if (value.second.get()->GetComponentTag() == tag)
 			{
-				if (!ImGui::BeginMenu("Mesh"))
+				if (!ImGui::BeginMenu(menu_name.c_str()))
 					continue;
-				if(!is_used_mesh)
-					ImGui::MenuItem("Mesh", nullptr, false, false);
-				if(ImGui::MenuItem(key.c_str()))
-				{
-
-				}
-				is_used_mesh = true;
-				ImGui::EndMenu();
-			}
-
-			if(value.second.get()->GetComponentTag() == mapping::component_tag::ComponentTag::Physics)
-			{
-				if (!ImGui::BeginMenu("Physics"))
-					continue;
-
-				if(!is_used_physics)
-					ImGui::MenuItem("Physics", nullptr, false, false);
+				if(!is_used)
+					ImGui::MenuItem(menu_name.c_str(), nullptr, false, false);
 				if (ImGui::MenuItem(key.c_str()))
 				{
-					//registry->AddComponent<component::PhysicMaterialComponent>(ent);
 					auto* comp = registry->GetComponentArrays().at(value.first)->AddComponentFromInspector(ent);
 					comp->SetRegistry(registry);
 					comp->SetEntity(ent);
 				}
-				is_used_physics = true;
+				is_used = true;
 				ImGui::EndMenu();
 			}
-		}
 
-		ImGui::EndPopup(); // "my_file_popup"
+		}
 	}
+
 
 	template <typename T>
 	void Inspector::RegisterComponent(const std::string& comp_name, const mapping::component_tag::ComponentTag tag)

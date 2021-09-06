@@ -40,8 +40,9 @@ public:
 		states.at(current_state)(args...);
 	}
 
-	Key GetState() { return current_state; }
-	Key GetOldState() { return old_state; }
+	int GetNumState() const { return states.size(); }
+	Key GetState()		{ return current_state; }
+	Key GetOldState()	{ return old_state; }
 
 	/*
 	 * brief : State‚ªØ‚è‘Ö‚í‚Á‚½‚Ì‰‚ß‚ÌƒtƒŒ[ƒ€‚Ì‚İ“ü‚éˆ—

@@ -55,7 +55,7 @@ public:
 		texture_resources.insert(std::make_pair(resource->GetTextureData()->filename, resource));
 	}
 
-	[[nodiscard]] const std::map<std::string, std::shared_ptr<FbxModelResource>>& FbxModelResources() { return fbx_model_resources; }
+	[[nodiscard]] const std::map<std::string, std::shared_ptr<FbxModelResource>>& FbxModelResources() const { return fbx_model_resources; }
 
 	[[nodiscard]] const std::shared_ptr<FbxModelResource>& FbxModelResouece(std::string filename)
 	{
@@ -67,7 +67,7 @@ public:
 		return p;
 	}
 
-	[[nodiscard]] const std::map<std::string, std::shared_ptr<TextureResource>>& GetTextureResources() { return texture_resources; }
+	[[nodiscard]] const std::map<std::string, std::shared_ptr<TextureResource>>& GetTextureResources() const { return texture_resources; }
 
 	[[nodiscard]] const std::shared_ptr<TextureResource>& GetTextureResource(std::string filename)
 	{
@@ -81,7 +81,7 @@ public:
 
 
 	// For ImGui
-	[[nodiscard]] std::vector<std::string> FbxModelNames() { return fbx_model_names; }
+	[[nodiscard]] std::vector<std::string> FbxModelNames() const { return fbx_model_names; }
 
 private:
 	// FBX

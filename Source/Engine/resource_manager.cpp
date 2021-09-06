@@ -6,6 +6,8 @@
 void ResourceManager::Initialize(ID3D11Device* device)
 {
 	{// FBXƒ‚ƒfƒ‹“Ç‚İ
+
+
 		//// Bunny
 		//const char* bunny = "./Data/Assets/Bin/stanford_bunny.bin";
 		//std::shared_ptr<FbxModelResource> bunny_resource = std::make_shared<FbxModelResource>(device, bunny, " ");

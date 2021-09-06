@@ -7,7 +7,7 @@
 #include "scene.h"
 #include "shader_interop_renderer.h"
 #include "texture_resource_mapping.h"
-
+#include "cum_imgui_helper.h"
 // Components
 #include "anim_sprite.h"
 #include "camera_component.h"
@@ -23,7 +23,6 @@
 #include "sprite_object.h"
 #include "transform_component.h"
 
-#include "cum_imgui_helper.h"
 
 namespace cumulonimbus::renderer
 {
@@ -535,6 +534,9 @@ namespace cumulonimbus::renderer
 	{
 		const component::FbxModelComponent&	 model		= registry->GetComponent<component::FbxModelComponent>(entity);
 		const FbxModelResource*				 resource	= model.GetResource();
+
+		if (!resource)
+			return;
 
 		for(const auto& mesh : resource->GetModelData().meshes)
 		{

@@ -40,6 +40,17 @@ namespace cumulonimbus::editor
 		void AddComponentButton(ecs::Registry* registry, mapping::rename_type::Entity ent);
 
 		/**
+		 * @brief : 「Add Component」内のメニューカテゴリの実装
+		 * @param registry	: レジストリー
+		 * @param ent		: 現在選択中のエンティティ
+		 * @param menu_name	: メニュー名
+		 * @param tag		: 比較用タグ
+		 */
+		void ComponentMenu(
+			ecs::Registry* registry		, mapping::rename_type::Entity ent,
+			const std::string& menu_name, mapping::component_tag::ComponentTag tag);
+
+		/**
 		 * @brief			: 「Add Component」ボタン内のコンポーネントの登録
 		 * @details			: 登録されたコンポーネントは「Add Component」ボタン内で実装され追加できるようになる
 		 * @details			: キー値が重複した場合例外処理が起きる

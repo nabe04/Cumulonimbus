@@ -22,41 +22,43 @@ namespace cumulonimbus::component
 	FbxModelComponent::FbxModelComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const std::shared_ptr<FbxModelResource>& resource)
 		:ComponentBase{ registry , ent }
 	{
-		this->resource = resource;
+		Initialize(resource, registry, ent);
 
-		// モデルのマテリアル数分作成
-		for (int i = 0; i < resource->GetModelData().materials.size(); ++i)
-		{
-			pbr_materials.emplace_back(std::make_shared<shader_asset::PBRMaterial>());
-			materials_manager.emplace_back(std::make_shared<shader_asset::Material3DManager>());
-			// デフォルトでSampleShaderをセット
-			materials_manager.back()->SetShaderAsset(mapping::shader_assets::ShaderAsset3D::SampleShader);
-		}
+		//this->resource = resource;
 
-		registry->AddComponent<component::MeshObjectComponent>(ent);
+		//// モデルのマテリアル数分作成
+		//for (int i = 0; i < resource->GetModelData().materials.size(); ++i)
+		//{
+		//	pbr_materials.emplace_back(std::make_shared<shader_asset::PBRMaterial>());
+		//	materials_manager.emplace_back(std::make_shared<shader_asset::Material3DManager>());
+		//	// デフォルトでSampleShaderをセット
+		//	materials_manager.back()->SetShaderAsset(mapping::shader_assets::ShaderAsset3D::SampleShader);
+		//}
 
-		// ノード
-		const std::vector<ModelData::Node>& res_nodes = resource->GetModelData().nodes;
+		//registry->AddComponent<component::MeshObjectComponent>(ent);
 
-		nodes.resize(res_nodes.size());
-		for (size_t node_index = 0; node_index < nodes.size(); ++node_index)
-		{// ModelResource::Node と Model::Nodeを結び付ける
-			auto&& src = res_nodes.at(node_index);
-			auto&& dst = nodes.at(node_index);
+		//// ノード
+		//const std::vector<ModelData::Node>& res_nodes = resource->GetModelData().nodes;
 
-			dst.name	  = src.name;
-			dst.parent_index = src.parent_index >= 0 ? src.parent_index : -1;
-			//dst.parent		 = src.parent_index >= 0 ? &nodes.at(src.parent_index) : nullptr;
-			dst.scale	  = src.scale;
-			dst.rotate	  = src.rotate;
-			dst.translate = src.translate;
-		}
+		//nodes.resize(res_nodes.size());
+		//for (size_t node_index = 0; node_index < nodes.size(); ++node_index)
+		//{// ModelResource::Node と Model::Nodeを結び付ける
+		//	auto&& src = res_nodes.at(node_index);
+		//	auto&& dst = nodes.at(node_index);
 
-		anim_states.AddState(FbxAnimationState::Switch, [ent, registry](const float dt) { registry->GetComponent<FbxModelComponent>(ent).BlendNextAnimation(dt); });
-		anim_states.AddState(FbxAnimationState::Update, [ent, registry](const float dt) { registry->GetComponent<FbxModelComponent>(ent).UpdateAnimation(dt); });
+		//	dst.name	  = src.name;
+		//	dst.parent_index = src.parent_index >= 0 ? src.parent_index : -1;
+		//	//dst.parent		 = src.parent_index >= 0 ? &nodes.at(src.parent_index) : nullptr;
+		//	dst.scale	  = src.scale;
+		//	dst.rotate	  = src.rotate;
+		//	dst.translate = src.translate;
+		//}
 
-		// アニメーションの初期値をセット
-		SwitchAnimation(0, false, 0.0f);
+		//anim_states.AddState(FbxAnimationState::Switch, [ent, registry](const float dt) { registry->GetComponent<FbxModelComponent>(ent).BlendNextAnimation(dt); });
+		//anim_states.AddState(FbxAnimationState::Update, [ent, registry](const float dt) { registry->GetComponent<FbxModelComponent>(ent).UpdateAnimation(dt); });
+
+		//// アニメーションの初期値をセット
+		//SwitchAnimation(0, false, 0.0f);
 	}
 
 	void FbxModelComponent::NewFrame(const float delta_time)
@@ -80,10 +82,21 @@ namespace cumulonimbus::component
 		{
 			// 要素の位置取得
 			// std::distance https://cpprefjp.github.io/reference/iterator/distance.html
-			auto v = locator::Locator::GetResourceManager()->FbxModelNames();
-			auto f = std::find(v.begin(), v.end(), resource->GetModelName());
-			int item_current_idx = static_cast<int>(std::distance(v.begin(), f));
-			const std::string combo_label = locator::Locator::GetResourceManager()->FbxModelNames().at(item_current_idx).c_str();
+			int item_current_idx = -1;
+			std::string combo_label = "None";
+			if(resource)
+			{
+				auto v = locator::Locator::GetResourceManager()->FbxModelNames();
+				auto f = std::find(v.begin(), v.end(), resource->GetModelName());
+				item_current_idx = static_cast<int>(std::distance(v.begin(), f));
+				combo_label = locator::Locator::GetResourceManager()->FbxModelNames().at(item_current_idx).c_str();
+			}
+			else
+			{
+				int a;
+				a = 0;
+			}
+
 			if (ImGui::BeginCombo("Resources", combo_label.c_str()))
 			{
 				for (int n = 0; n < locator::Locator::GetResourceManager()->FbxModelNames().size(); n++)
@@ -94,7 +107,7 @@ namespace cumulonimbus::component
 						if (item_current_idx != n)
 						{
 							item_current_idx = n;
-							Initialize(locator::Locator::GetResourceManager()->FbxModelResouece(locator::Locator::GetResourceManager()->FbxModelNames().at(n)));
+							Initialize(locator::Locator::GetResourceManager()->FbxModelResouece(locator::Locator::GetResourceManager()->FbxModelNames().at(n)),GetRegistry(),GetEntity());
 						}
 					}
 					//Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
@@ -103,6 +116,9 @@ namespace cumulonimbus::component
 				}
 				ImGui::EndCombo();
 			}
+
+			if (!resource)
+				return;
 
 			int no = 0;
 			if (ImGui::TreeNode("Material Color"))
@@ -205,6 +221,14 @@ namespace cumulonimbus::component
 		}
 	}
 
+	void FbxModelComponent::UpdateAnimState(const float delta_time)
+	{
+		if (anim_states.GetNumState() <= 0)
+			return;
+		anim_states.Update(delta_time);
+	}
+
+
 	void FbxModelComponent::SetAllShader(const mapping::shader_assets::ShaderAsset3D asset)
 	{
 		for(auto& material_manager : materials_manager)
@@ -254,9 +278,41 @@ namespace cumulonimbus::component
 		pbr_materials.at(material_index)->UnbindCBufferAndTexture();
 	}
 
-	void FbxModelComponent::Initialize(const std::shared_ptr<FbxModelResource>& resource)
+	void FbxModelComponent::InitializeParameter()
 	{
+		nodes.clear();
+		pbr_materials.clear();
+		materials_manager.clear();
+
+		current_animation_index = -1;
+		prev_animation_index = -1;
+		current_keyframe = 0;
+		prev_key_index = 0;
+
+		current_seconds = 0.0f;
+		prev_seconds = 0.0f;
+		animation_switch_time = 0;
+		changer_timer = 0;
+
+		loop_animation = false;
+		end_animation = false;
+	}
+
+	void FbxModelComponent::Initialize(const std::shared_ptr<FbxModelResource>& resource, ecs::Registry* registry, mapping::rename_type::Entity ent)
+	{
+		InitializeParameter();
 		this->resource = resource;
+
+		// モデルのマテリアル数分作成
+		for (int i = 0; i < resource->GetModelData().materials.size(); ++i)
+		{
+			pbr_materials.emplace_back(std::make_shared<shader_asset::PBRMaterial>());
+			materials_manager.emplace_back(std::make_shared<shader_asset::Material3DManager>());
+			// デフォルトでSampleShaderをセット
+			materials_manager.back()->SetShaderAsset(mapping::shader_assets::ShaderAsset3D::SampleShader);
+		}
+
+		registry->AddComponent<component::MeshObjectComponent>(ent);
 
 		// ノード
 		const std::vector<ModelData::Node>& res_nodes = resource->GetModelData().nodes;
@@ -267,26 +323,16 @@ namespace cumulonimbus::component
 			auto&& src = res_nodes.at(node_index);
 			auto&& dst = nodes.at(node_index);
 
-			dst.name			= src.name;
-			dst.parent_index	= src.parent_index >= 0 ? src.parent_index : -1;
-			//dst.parent = src.parent_index >= 0 ? &nodes.at(src.parent_index) : nullptr;
-			dst.scale			= src.scale;
-			dst.rotate			= src.rotate;
-			dst.translate		= src.translate;
+			dst.name = src.name;
+			dst.parent_index = src.parent_index >= 0 ? src.parent_index : -1;
+			//dst.parent		 = src.parent_index >= 0 ? &nodes.at(src.parent_index) : nullptr;
+			dst.scale = src.scale;
+			dst.rotate = src.rotate;
+			dst.translate = src.translate;
 		}
 
-		{// メンバ変数の初期化
-			current_animation_index = -1;
-			prev_animation_index	= -1;
-			current_seconds			= 0;
-			prev_seconds			= 0;
-			current_keyframe		= 0;
-
-			prev_key_index = 0;
-		}
-
-		//anim_states.AddState(FbxAnimationState::Switch, [this](const float delta_time) {BlendNextAnimation(delta_time); });
-		//anim_states.AddState(FbxAnimationState::Update, [this](const float delta_time) {UpdateAnimation(delta_time); });
+		anim_states.AddState(FbxAnimationState::Switch, [ent, registry](const float dt) { registry->GetComponent<FbxModelComponent>(ent).BlendNextAnimation(dt); });
+		anim_states.AddState(FbxAnimationState::Update, [ent, registry](const float dt) { registry->GetComponent<FbxModelComponent>(ent).UpdateAnimation(dt); });
 
 		// アニメーションの初期値をセット
 		SwitchAnimation(0, false, 0.0f);

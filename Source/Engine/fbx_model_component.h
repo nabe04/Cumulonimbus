@@ -144,7 +144,7 @@ namespace cumulonimbus::component
 		[[nodiscard]] const DirectX::XMFLOAT4&			 GetColor()		const	{ return color; }
 		//[[nodiscard]] const ModelData::Material
 
-		void UpdateAnimState(const float delta_time) { anim_states.Update(delta_time); }
+		void UpdateAnimState(const float delta_time);
 
 		// 現在のキーフレーム
 		[[nodiscard]] int CurrentKeyframe() const { return current_keyframe; }
@@ -206,7 +206,8 @@ namespace cumulonimbus::component
 
 		DirectX::XMFLOAT4 color = { 0.8f, 0.8f, 0.8f, 1.0f };
 
-		void Initialize(const std::shared_ptr<FbxModelResource>& resource);
+		void InitializeParameter();
+		void Initialize(const std::shared_ptr<FbxModelResource>& resource, ecs::Registry* registry, mapping::rename_type::Entity ent);
 
 		// 前のアニメーションのキーフレームを算出
 		// brief : アニメーションが切り替わる時に使用
