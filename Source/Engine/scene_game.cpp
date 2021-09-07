@@ -162,6 +162,8 @@ void SceneGame::InitializeScene()
 	registry->GetComponent<cum::component::CameraComponent>(ent_player).SetIsDebugCamera(false);
 	registry->GetComponent<cum::component::CameraComponent>(ent_player).SetProjection(XM_PI / 8.0f, static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
 	registry->GetComponent<cum::component::TransformComponent>(ent_player).ActiveQuaternion();
+
+	registry->Save("./Data/Test");
 }
 
 void SceneGame::UpdateScene(const float delta_time)

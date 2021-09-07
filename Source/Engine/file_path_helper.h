@@ -3,17 +3,23 @@
 
 namespace cumulonimbus::file_path_helper
 {
-	/*
-	 * brief  : 「.bin」を返す
-	 * return : .bin
+	/**
+	 * @brief  : 「.bin」を返す
+	 * @return : .bin
 	 */
 	[[nodiscard]] std::string GetBinExtension();
 
-	/*
-	 * brief  : 「.json」を返す
-	 * return : .json
+	/**
+	 * @brief  : 「.json」を返す
+	 * @return : .json
 	 */
 	[[nodiscard]] std::string GetJsonExtension();
+
+	/**
+	 * @brief  : 「.scene」を返す
+	 * @return : .scene
+	 */
+	[[nodiscard]] std::string GetSceneExtension();
 
 	/*
 	 * brief  : 「Contents」を返す
@@ -65,7 +71,7 @@ namespace cumulonimbus::file_path_helper
 	  */
 	[[nodiscard]] std::string AttachComponentsDirectory(const std::string& filename);
 
-	
+
 	/*
 	 * brief : T型のComponentNameをcomponent_arraysのキー値に登録する際の名前の導出
 	 */

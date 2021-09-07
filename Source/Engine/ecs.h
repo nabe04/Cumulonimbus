@@ -11,8 +11,6 @@
 #include <filesystem>
 
 #include <cereal/cereal.hpp>
-#include <cereal/archives/json.hpp>
-#include <cereal/archives/binary.hpp>
 
 #include "file_path_helper.h"
 #include "rename_type_mapping.h"
@@ -202,11 +200,11 @@ namespace cumulonimbus::ecs
 			RemoveComponent(entity);
 		}
 
-		/*
-		 *   brief	 : Entityが持つComponentを返す
-		 * ※caution : EntityがComponentを持っていない場合、
-		 *			　 新しくComponentを作るが、引数なしの
-		 *			   コンストラクタがあるクラス限定
+		/**
+		 * @brief	: Entityが持つComponentを返す
+		 * @details	: EntityがComponentを持っていない場合、 \n
+		 *			  新しくComponentを作るが、引数なしの \n
+		 *			  コンストラクタがあるクラス限定 \n
 		 */
 		T& GetComponent(const mapping::rename_type::Entity entity)
 		{
@@ -217,10 +215,10 @@ namespace cumulonimbus::ecs
 			return components.at(index);
 		}
 
-		/*
-		 *  brief : EntityがComponentを持っているか
-		*/
-		[[nodiscard]] bool Content(const mapping::rename_type::Entity entity)
+		/**
+		 * @brief : EntityがComponentを持っているか
+		 */
+		[[nodiscard]] bool Content(const mapping::rename_type::Entity entity) const
 		{
 			if (entity_id.contains(entity))
 				return true;
@@ -233,9 +231,9 @@ namespace cumulonimbus::ecs
 			return components;
 		}
 
-		/*
-		 * brief : EntityのEntityID(componentsのインデックス番号)を返す
-		 *		 : EntityがComponentを持ってない場合は"-1"を返す
+		/**
+		 * @brief : EntityのEntityID(componentsのインデックス番号)を返す \n
+		 *			EntityがComponentを持ってない場合は"-1"を返す
 		 */
 		mapping::rename_type::EntityId GetEntityID(mapping::rename_type::Entity entity)
 		{
@@ -245,9 +243,9 @@ namespace cumulonimbus::ecs
 			return entity_id.at(entity);
 		}
 
-		/*
-		 * brief    : componentsとentity_idの保存
-		 * filename : 保存するファイル名(パス、拡張子などなし)
+		/**
+		 * @brief			: componentsとentity_idの保存
+		 * @param filename	: 保存するファイル名(パス、拡張子などなし)
 		 */
 		void Save(const std::string& filename) override
 		{
@@ -283,7 +281,7 @@ namespace cumulonimbus::ecs
 		 */
 		void Load(const std::string& filename) override
 		{
-			// ./Contents/Scenes/filename(引数)//Components/「T型のファイル名」/「T型のファイル名」
+			// ./Contents/Scenes/filename(引数)/Components/「T型のファイル名」/「T型のファイル名」
 			const std::string load_file_path_and_name{ file_path_helper::AttachComponentsDirectory(filename) + "/" +
 													   file_path_helper::GetTypeName<T>() + "/" +
 													   file_path_helper::GetTypeName<T>() };
@@ -298,8 +296,6 @@ namespace cumulonimbus::ecs
 					CEREAL_NVP(entity_id)
 				);
 			}
-
-
 		}
 
 		template<typename Archive>
@@ -495,17 +491,14 @@ namespace cumulonimbus::ecs
 			component_arrays.emplace(component_name, std::make_unique<ComponentArray<T>>());
 		}
 
-		/*
-		 * brief        : entitiesとcomponent_arraysのファイルSave用関数
-		 *                「.json」と「.bin」で書き出される
-		 *				  ./Contents/「ファイル名」に出力される
-		 * ※caution(1) : ファイル名のみで良い(ファイルパスなどの記述の必要なし)
-		 *				  例) OK : 「ファイル名」
-		 *				      NG :  ./Contents/「ファイル名」
-		 * ※caution(2) : 拡張などの指定は必要ない
-		 * ※caution(3) : 同じファイル名の場合上書きされてしまうため注意
+		/**
+		 * @brief			: entitiesとcomponent_arraysのファイルSave用関数
+		 * @param file_path	: 保存する場所までのファイルパス
+		 * @details	※caution(1) :「.json」と「.bin」で書き出される\n
+		 *			※caution(2) : 拡張子の指定は必要なし \n
+		 *			※caution(3) : ファイルパスは最後「/」の必要はなし
 		 */
-		void Save(const std::string& filename);
+		void Save(const std::string& file_path);
 
 		/*
 		 * brief		: entitiesとcomponent_arraysのファイルLoad用関数

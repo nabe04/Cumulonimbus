@@ -3,22 +3,31 @@
 
 namespace cumulonimbus::file_path_helper
 {
-	/*
-	 * brief  : 「.bin」を返す
-	 * return : .bin
+	/**
+	 * @brief  : 「.bin」を返す
+	 * @return : .bin
 	 */
 	std::string GetBinExtension()
 	{
 		return { ".bin" };
 	}
 
-	/*
-	 * brief  : 「.json」を返す
- 	 * return : .json
+	/**
+	 * @brief  : 「.json」を返す
+ 	 * @return : .json
 	 */
 	std::string GetJsonExtension()
 	{
 		return { ".json" };
+	}
+
+	/**
+	 * @brief  : 「.scene」を返す
+	 * @return : .scene
+	 */
+	std::string GetSceneExtension()
+	{
+		return { ".scene" };
 	}
 
 	/*

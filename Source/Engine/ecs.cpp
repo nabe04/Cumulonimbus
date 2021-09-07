@@ -118,30 +118,30 @@ namespace cumulonimbus::ecs
 		RegistryComponent<component::PlayerComponent>();
 	}
 
-	void Registry::Save(const std::string& filename)
+	void Registry::Save(const std::string& file_path)
 	{
-		// ファイルを作成
-			// ./Contents/「ファイル名」までの取得(拡張子はなし)
-		const std::string save_file_path = file_path_helper::AttachSceneDirectory(filename);
-		std::filesystem::create_directories(save_file_path);
-		// 保存する先のファイルを指定
-		const std::string save_file_path_and_name{ save_file_path + "/" + filename };
+		//// ファイルを作成
+		//// ./Contents/「ファイル名」までの取得(拡張子はなし)
+		//const std::string save_file_path = file_path_helper::AttachSceneDirectory(filename);
+		//std::filesystem::create_directories(save_file_path);
+		//// 保存する先のファイルを指定
+		//const std::string save_file_path_and_name{ save_file_path + "/" + filename };
 
 		{
-			std::ofstream ofs(save_file_path_and_name + file_path_helper::GetJsonExtension());
+			std::ofstream ofs(file_path + file_path_helper::GetJsonExtension());
 			cereal::JSONOutputArchive output_archive(ofs);
 			output_archive(*this);
 		}
 
 		{
-			std::ofstream ofs(save_file_path_and_name + file_path_helper::GetBinExtension(), std::ios_base::binary);
+			std::ofstream ofs(file_path + file_path_helper::GetSceneExtension(), std::ios_base::binary);
 			cereal::BinaryOutputArchive output_archive(ofs);
 			output_archive(*this);
 		}
 
 		for (auto&& [component_name, component_array] : component_arrays)
 		{
-			component_array->Save(filename);
+			component_array->Save(file_path);
 		}
 	}
 
@@ -174,7 +174,7 @@ namespace cumulonimbus::ecs
 		}
 	}
 
-}
+} // cumulonimbus::ecs
 
 
 
