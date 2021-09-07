@@ -36,8 +36,7 @@ namespace cumulonimbus::component
 		void Update(const float delta_time)override;
 		void RenderImGui() override;
 
-		void Save(const std::string& file_path) override{}
-		void Load(const std::string& file_path_and_name) override{}
+		void Load(ecs::Registry* registry) override{}
 
 		geometric_primitive_resource::Mesh GetMesh() const { return mesh; }
 		shader::CB_Material GetMaterial() const { return material; }

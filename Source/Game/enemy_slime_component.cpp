@@ -57,11 +57,7 @@ namespace cumulonimbus::component
 	{
 	}
 
-	void EnemySlimeComponent::Save(const std::string& file_path)
-	{
-	}
-
-	void EnemySlimeComponent::Load(const std::string& file_path_and_name)
+	void EnemySlimeComponent::Load(ecs::Registry* registry)
 	{
 	}
 

@@ -649,7 +649,7 @@ namespace cumulonimbus::renderer
 		locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
 													 sky_box.GetShaderResoueceViewAddress(),
 													 TexSlot_SkyMap);
-
+		view->BindCBuffer();
 		// Set of Vertex Buffers
 		UINT stride = sizeof(shader::Vertex);
 		UINT offset = 0;
@@ -660,7 +660,8 @@ namespace cumulonimbus::renderer
 
 		sky_box_srv = sky_box.GetShaderResoueceView();
 		sky_box.DeactivateShader(immediate_context);
-		locator::Locator::GetDx11Device()->UnbindShaderResource(mapping::graphics::ShaderStage::PS, TexSlot_SkyMap);;
+		locator::Locator::GetDx11Device()->UnbindShaderResource(mapping::graphics::ShaderStage::PS, TexSlot_SkyMap);
+		view->UnbindCBuffer();
 		//off_screen->Deactivate(immediate_context);
 
 		//Blit(immediate_context);

@@ -15,11 +15,7 @@ namespace cumulonimbus::component
 	{
 	}
 
-	void PhysicMaterialComponent::Save(const std::string& file_path)
-	{
-	}
-
-	void PhysicMaterialComponent::Load(const std::string& file_path_and_name)
+	void PhysicMaterialComponent::Load(ecs::Registry* registry)
 	{
 	}
 } // cumulonimbus::component

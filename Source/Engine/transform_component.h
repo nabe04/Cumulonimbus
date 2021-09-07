@@ -4,8 +4,6 @@
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <SimpleMath.h>
-#include <cereal/cereal.hpp>
-#include <cereal/types/polymorphic.hpp>
 
 #include "component_base.h"
 #include "constant_buffer.h"
@@ -14,11 +12,11 @@
 
 namespace cumulonimbus::component
 {
-	class TransformComponent :public ComponentBase
+	class TransformComponent final :public ComponentBase
 	{
 	public:
 		explicit TransformComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
-		TransformComponent()
+		explicit TransformComponent()
 			:ComponentBase{}
 		{
 			component_tag = mapping::component_tag::ComponentTag::Mesh;
@@ -29,8 +27,7 @@ namespace cumulonimbus::component
 		void Update(float delta_time) override;
 		void RenderImGui() override;
 
-		void Save(const std::string& file_path) override;
-		void Load(const std::string& file_path_and_name) override;
+		void Load(ecs::Registry* registry) override;
 
 		void SetTransformCB(const TransformCB transform) const;
 		void BindCBuffer(bool set_in_vs = true, bool set_in_ps = true) const;
@@ -151,35 +148,7 @@ namespace cumulonimbus::component
 		 *         é¿ëïÇ"transform_component.cpp"Ç≈èëÇ¢ÇƒÇ¢ÇÈ
 		 */
 		template<class  Archive>
-		void serialize(Archive&& archive)
-		{
-			archive(
-				cereal::base_class<ComponentBase>(this),
-				CEREAL_NVP(position),
-				CEREAL_NVP(prev_pos),
-				CEREAL_NVP(scale),
-				CEREAL_NVP(angle),
-				CEREAL_NVP(prev_angle),
-
-				CEREAL_NVP(world_f4x4),
-				CEREAL_NVP(scaling_matrix),
-				CEREAL_NVP(rotation_matrix),
-				CEREAL_NVP(translation_matrix),
-
-				CEREAL_NVP(model_right),
-				CEREAL_NVP(model_front),
-				CEREAL_NVP(model_up),
-				CEREAL_NVP(orientation),
-
-				// Quaternion
-				CEREAL_NVP(rotation_quaternion),
-
-				CEREAL_NVP(set_angle_bit_flg),
-				CEREAL_NVP(is_billboard),
-				CEREAL_NVP(is_quaternion)
-
-			);
-		}
+		void serialize(Archive&& archive);
 
 	private:
 		std::shared_ptr<buffer::ConstantBuffer<TransformCB>> cb_transform;
@@ -245,7 +214,3 @@ namespace cumulonimbus::component
 		DirectX::XMMATRIX GetRotationMatrix(DirectX::XMFLOAT3 axis, float angle/* degree */);
 	};
 } // cumulonimbus::component
-
-CEREAL_REGISTER_TYPE(cumulonimbus::component::TransformComponent)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::TransformComponent)
-

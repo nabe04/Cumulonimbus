@@ -38,8 +38,10 @@ namespace cumulonimbus::component
 		void Update(float dt) override;
 		void RenderImGui() override;
 
-		void Save(const std::string& file_path) override;
-		void Load(const std::string& file_path_and_name) override;
+		void Load(ecs::Registry* registry) override;
+
+		template<class Archive>
+		void serialize(Archive&& archive);
 
 		void ClearFrameBuffer(DirectX::SimpleMath::Vector4 clear_color = { 0.0f,0.0f,0.0f,1.0f }) const;
 		void BindFrameBuffer() const;

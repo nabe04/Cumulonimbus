@@ -41,8 +41,7 @@ namespace cumulonimbus::component
 		void Update(const float delta_time) override;
 		void RenderImGui() override;
 
-		void Save(const std::string& file_path) override;
-		void Load(const std::string& file_path_and_name) override;
+		void Load(ecs::Registry* registry) override;
 
 
 		[[nodiscard]] int VariableWidth()  const { return variable_width; }

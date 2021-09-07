@@ -37,8 +37,8 @@ namespace cumulonimbus::component
 		void Update(float delta_time) override {};
 		void RenderImGui() override {};
 
-		void Save(const std::string& file_path) override;
-		void Load(const std::string& file_path_and_name) override;
+		//void Save(const std::string& file_path) override;
+		void Load(ecs::Registry* registry) override;
 
 		/*
 		* brief : アニメーション指定

@@ -598,15 +598,9 @@ namespace cumulonimbus::component
 	}
 
 
-	void FbxModelComponent::Save(const std::string& file_path)
+	void FbxModelComponent::Load(ecs::Registry* registry)
 	{
-
-	}
-
-
-	void FbxModelComponent::Load(const std::string& file_path_and_name)
-	{
-
+		SetRegistry(registry);
 	}
 
 } // cumulonimbus::component

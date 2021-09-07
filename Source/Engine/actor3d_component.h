@@ -21,8 +21,8 @@ namespace cumulonimbus::component
 		void Update(float dt)   override{}
 		void RenderImGui()		override{}
 
-		void Save(const std::string& file_path)			 override {}
-		void Load(const std::string& file_path_and_name) override {}
+		//void Save(const std::string& file_path)			 override {}
+		void Load(ecs::Registry* registry) override {}
 	};
 } // cumulonimbus::component
 

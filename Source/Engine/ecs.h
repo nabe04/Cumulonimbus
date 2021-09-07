@@ -10,18 +10,15 @@
 #include <fstream>
 #include <filesystem>
 
-#include <cereal/cereal.hpp>
-
 #include "file_path_helper.h"
 #include "rename_type_mapping.h"
-#include "component_tag_mapping.h"
 
 class Scene;
 
 namespace cumulonimbus::component
 {
 	class ComponentBase;
-}
+} // cumulonimbus::component
 
 // Entity Update Order (The smaller number is updated first)
 enum class UpdateOrder
@@ -49,6 +46,7 @@ enum class EntityTag
 
 namespace cumulonimbus::ecs
 {
+	class Registry;
 	//enum class Entity : uint64_t {};
 	//using EntityId		= uint64_t;	// Entityの識別子
 	//using EntityName	= std::string;
@@ -68,7 +66,7 @@ namespace cumulonimbus::ecs
 		virtual void Destroy(mapping::rename_type::Entity entity)	  = 0;
 		virtual void RenderImGui(mapping::rename_type::Entity entity) = 0;
 		virtual void Save(const std::string& filename) = 0;
-		virtual void Load(const std::string& filename) = 0;
+		virtual void Load(const std::string& filename, ecs::Registry* registry) = 0;
 		virtual size_t GetHashCode() = 0;
 		virtual component::ComponentBase* AddComponentFromInspector(mapping::rename_type::Entity entity) = 0;
 
@@ -245,12 +243,14 @@ namespace cumulonimbus::ecs
 
 		/**
 		 * @brief			: componentsとentity_idの保存
-		 * @param filename	: 保存するファイル名(パス、拡張子などなし)
+		 * @param file_path	: 保存するファイルパス
+		 * @details caution(1) : 引数には「"Components"」までのファイルパスが入ってくる \n
+		 *						 「./パス/"Components"」
 		 */
-		void Save(const std::string& filename) override
+		void Save(const std::string& file_path) override
 		{
 			// ./Contents/Scenes/filename(引数)/Components/「T型のファイル名」までを取得(拡張子はなし) & フォルダ作成
-			const std::string save_file_path{ file_path_helper::AttachComponentsDirectory(filename) + "/" + file_path_helper::GetTypeName<T>() };
+			const std::string save_file_path{ file_path + "/" + file_path_helper::GetTypeName<T>() };
 			std::filesystem::create_directories(save_file_path);
 
 			// 保存する先のフォルダ指定 & 作成
@@ -274,15 +274,14 @@ namespace cumulonimbus::ecs
 				);
 			}
 		}
-
-		/*
-		 * brief : componentとentity_idのロード
-		 *
+		/**
+		 * @brief : componentとentity_idのロード
 		 */
-		void Load(const std::string& filename) override
+		void Load(const std::string& filename, ecs::Registry* registry) override
 		{
 			// ./Contents/Scenes/filename(引数)/Components/「T型のファイル名」/「T型のファイル名」
-			const std::string load_file_path_and_name{ file_path_helper::AttachComponentsDirectory(filename) + "/" +
+			const std::string load_file_path_and_name{ filename + "/" +
+													   file_path_helper::GetComponentsFilename() + "/" +
 													   file_path_helper::GetTypeName<T>() + "/" +
 													   file_path_helper::GetTypeName<T>() };
 
@@ -296,16 +295,15 @@ namespace cumulonimbus::ecs
 					CEREAL_NVP(entity_id)
 				);
 			}
+
+			for(auto& component : components)
+			{
+				component.Load(registry);
+			}
 		}
 
 		template<typename Archive>
-		void serialize(Archive&& archive)
-		{
-			archive(
-				CEREAL_NVP(components),
-				CEREAL_NVP(entity_id)
-			);
-		}
+		void serialize(Archive&& archive);
 
 	private:
 		std::vector<T> components;
@@ -492,38 +490,35 @@ namespace cumulonimbus::ecs
 		}
 
 		/**
-		 * @brief			: entitiesとcomponent_arraysのファイルSave用関数
-		 * @param file_path	: 保存する場所までのファイルパス
+		 * @brief				: entitiesとcomponent_arraysのファイルSave用関数
+		 * @param file_path		: 保存する場所までのファイルパス
+		 * @param scene_name	: 保存するシーン名
 		 * @details	※caution(1) :「.json」と「.bin」で書き出される\n
 		 *			※caution(2) : 拡張子の指定は必要なし \n
 		 *			※caution(3) : ファイルパスは最後「/」の必要はなし
 		 */
-		void Save(const std::string& file_path);
+		void Save(const std::string& file_path,const std::string& scene_name);
 
-		/*
-		 * brief		: entitiesとcomponent_arraysのファイルLoad用関数
-		 * ※caution(1) : ファイル名のみで良い(ファイルパスなどの記述の必要なし)
-		 *				  例) OK : 「ファイル名」
-		 *				      NG :  ./Contents/「ファイル名」
-		 * ※caution(2) : 現在のentitiesとcomponent_arraysは消去される
-		 * ※caution(3) : component_arraysのキー値に型の名前が登録されていない場合
-		 *				  assertionが発生するためResisterComponentName関数を呼ぶか、
-		 *			      RegisterComponent関数で型を登録する必要あり
-		 *			      (ResisterComponentName関数は内部で行っているので、
-		 *			      assertionが発生した場合はRegisterComponentName関数を確認すれば良い)
+		/**
+		 * @brief					: entitiesとcomponent_arraysのファイルLoad用関数
+		 * @param file_path			: 「./Assets/Scenes/任意のシーン名」までのパス
+		 * @details ※caution(1)	: ファイル名のみで良い(ファイルパスなどの記述の必要なし) \n
+		 *					例) OK	: 「ファイル名 \n
+		 *						NG	:  ./Contents/「ファイル名」\n
+		 * @details ※caution(2)	:	現在のentitiesとcomponent_arraysは消去される
+		 * @details ※caution(3)	:	component_arraysのキー値に型の名前が登録されていない場合 \n
+		 *								assertionが発生するためResisterComponentName関数を呼ぶか、 \n
+		 *								RegisterComponent関数で型を登録する必要あり \n
+		 *								(ResisterComponentName関数は内部で行っているので、 \n
+		 *								assertionが発生した場合はRegisterComponentName関数を確認すれば良い)
 		 */
-		void Load(const std::string& filename);
+		void Load(const std::string& file_path);
 
 		void SetScene(Scene* scene)		  { this->scene = scene; }
 		[[nodiscard]] Scene*   GetScene()   const { return scene; }
 
 		template<typename Archive>
-		void serialize(Archive&& archive)
-		{
-			archive(
-				CEREAL_NVP(entities)
-			);
-		}
+		void serialize(Archive&& archive);
 
 	private:
 		//---------- functions ----------//
@@ -551,4 +546,4 @@ namespace cumulonimbus::ecs
 		std::unordered_map<mapping::rename_type::Entity, std::pair<mapping::rename_type::Entity, mapping::rename_type::EntityName>> entities;
 		Scene* scene;
 	};
-}
+} // cumulonimbus::ecs

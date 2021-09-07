@@ -113,31 +113,9 @@ namespace cumulonimbus::component
 		anim_texcoord.at(TexSide::RightBottom) = clip_texcoord.at(TexSide::RightBottom).at(h + clip_w);
 	}
 
-	void AnimSpriteComponent::Save(const std::string& file_path)
+	void AnimSpriteComponent::Load(ecs::Registry* registry)
 	{
-		const std::string file_path_and_name = file_path + file_path_helper::GetTypeName<AnimSpriteComponent>() + file_path_helper::GetJsonExtension();
-		std::ofstream ofs(file_path_and_name);
-		cereal::JSONOutputArchive o_archive(ofs);
-		o_archive(*this);
-	}
 
-	void AnimSpriteComponent::Load(const std::string& file_path_and_name)
-	{
-		{
-			std::ifstream ifs(file_path_and_name);
-			cereal::JSONInputArchive i_archive(ifs);
-			i_archive(*this);
-
-			texture = locator::Locator::GetResourceManager()->GetTextureResource(texture->GetTextureData()->filename);
-
-			variable_texcoords.at(0) = { .0f,.0f };
-			variable_texcoords.at(1) = { 1.f,.0f };
-			variable_texcoords.at(2) = { .0f,1.f };
-			variable_texcoords.at(3) = { 1.f,1.f };
-
-			AdjustSrcTexturePivot(pivot_type, 0, 0, src_width, src_height);
-			CreateVertexBuffer(GetRegistry()->GetScene()->GetFramework()->GetDevice());
-		}
 	}
 
 }

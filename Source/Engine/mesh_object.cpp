@@ -155,19 +155,9 @@ namespace cumulonimbus::component
 		}
 	};
 
-	void MeshObjectComponent::Save(const std::string& file_path)
+	void MeshObjectComponent::Load(ecs::Registry* registry)
 	{
-		const std::string file_path_and_name = file_path + file_path_helper::GetTypeName<MeshObjectComponent>() + file_path_helper::GetJsonExtension();
-		std::ofstream ofs(file_path_and_name);
-		cereal::JSONOutputArchive o_archive(ofs);
-		o_archive(*this);
-	}
-
-	void MeshObjectComponent::Load(const std::string& file_path_and_name)
-	{
-		std::ifstream ifs(file_path_and_name);
-		cereal::JSONInputArchive i_archive(ifs);
-		i_archive(*this);
+		SetRegistry(registry);
 	}
 
 }

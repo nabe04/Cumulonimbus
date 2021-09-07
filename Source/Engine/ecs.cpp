@@ -7,6 +7,7 @@
 #include "actor3d_component.h"
 #include "actor_component.h"
 #include "anim_sprite.h"
+#include "camera_component.h"
 #include "child_actor.h"
 #include "fbx_model_component.h"
 #include "geometric_primitive_component.h"
@@ -25,6 +26,16 @@
 namespace cumulonimbus::ecs
 {
 	using namespace mapping::rename_type;
+
+	template <typename T>
+	template <typename Archive>
+	void ComponentArray<T>::serialize(Archive&& archive)
+	{
+		archive(
+			CEREAL_NVP(components),
+			CEREAL_NVP(entity_id)
+		);
+	}
 
 	Entity Registry::CreateEntity()
 	{
@@ -101,51 +112,67 @@ namespace cumulonimbus::ecs
 	 */
 	void Registry::RegisterComponentName()
 	{
-		// engine
-		RegistryComponent<component::ActorComponent>();
-		RegistryComponent<component::ChildActorComponent>();
+		//// engine
+		//RegistryComponent<component::ActorComponent>();
+		//RegistryComponent<component::ChildActorComponent>();
 		RegistryComponent<component::TransformComponent>();
-		RegistryComponent<component::SpriteComponent>();
-		RegistryComponent<component::AnimSpriteComponent>();
-		RegistryComponent<component::SpriteObjectComponent>();
-		RegistryComponent<component::MeshObjectComponent>();
-		RegistryComponent<component::FbxModelComponent>();
-		RegistryComponent<component::GeomPrimComponent>();
-		RegistryComponent<component::ObjModelComponent>();
+		//RegistryComponent<component::SpriteComponent>();
+		//RegistryComponent<component::AnimSpriteComponent>();
+		//RegistryComponent<component::SpriteObjectComponent>();
+		//RegistryComponent<component::MeshObjectComponent>();
+		//RegistryComponent<component::FbxModelComponent>();
+		//RegistryComponent<component::GeomPrimComponent>();
+		//RegistryComponent<component::ObjModelComponent>();
 		RegistryComponent<component::SkyBoxComponent>();
-		RegistryComponent<component::MaterialComponent>();
+		RegistryComponent<component::CameraComponent>();
+		//RegistryComponent<component::MaterialComponent>();
 		// game
-		RegistryComponent<component::PlayerComponent>();
+		//RegistryComponent<component::PlayerComponent>();
 	}
 
-	void Registry::Save(const std::string& file_path)
+	void Registry::Save(const std::string& file_path, const std::string& scene_name)
 	{
-		//// ファイルを作成
-		//// ./Contents/「ファイル名」までの取得(拡張子はなし)
-		//const std::string save_file_path = file_path_helper::AttachSceneDirectory(filename);
-		//std::filesystem::create_directories(save_file_path);
-		//// 保存する先のファイルを指定
-		//const std::string save_file_path_and_name{ save_file_path + "/" + filename };
+		// ./file_path/scene_name
+		const std::string scene_dir = file_path + "/" + scene_name;
+		// 「scene_name」フォルダの作成
+		std::filesystem::create_directories(scene_dir);
 
 		{
-			std::ofstream ofs(file_path + file_path_helper::GetJsonExtension());
-			cereal::JSONOutputArchive output_archive(ofs);
-			output_archive(*this);
+			// ./file_path/"Entities"
+			const std::string dir_path = scene_dir + "/" + file_path_helper::GetEntitiesFilename();
+			// 「Entities」フォルダの作成
+			std::filesystem::create_directories(dir_path);
+			// 保存する先のファイルを指定(./file_path/"Entities"/"Entities")
+			const std::string save_file_path_and_name{
+				dir_path + "/" +
+				file_path_helper::GetEntitiesFilename()};
+
+			{
+				std::ofstream ofs(save_file_path_and_name + file_path_helper::GetJsonExtension());
+				cereal::JSONOutputArchive output_archive(ofs);
+				output_archive(*this);
+			}
+
+			{
+				std::ofstream ofs(save_file_path_and_name + file_path_helper::GetBinExtension(), std::ios_base::binary);
+				cereal::BinaryOutputArchive output_archive(ofs);
+				output_archive(*this);
+			}
 		}
 
 		{
-			std::ofstream ofs(file_path + file_path_helper::GetSceneExtension(), std::ios_base::binary);
-			cereal::BinaryOutputArchive output_archive(ofs);
-			output_archive(*this);
-		}
-
-		for (auto&& [component_name, component_array] : component_arrays)
-		{
-			component_array->Save(file_path);
+			// ./file_path/"Components"
+			const std::string dir_path = scene_dir + "/" + file_path_helper::GetComponentsFilename();
+			// 「Components」フォルダの作成
+			std::filesystem::create_directories(dir_path);
+			for (auto&& [component_name, component_array] : component_arrays)
+			{
+				component_array->Save(dir_path);
+			}
 		}
 	}
 
-	void Registry::Load(const std::string& filename)
+	void Registry::Load(const std::string& file_path)
 	{
 		// entitiesの削除
 		if (!entities.empty())
@@ -154,11 +181,19 @@ namespace cumulonimbus::ecs
 		}
 		component_arrays.clear();
 
+		const std::string n = file_path + "/" +
+			file_path_helper::GetEntitiesFilename() + "/" +
+			file_path_helper::GetEntitiesFilename() + "/" +
+			file_path_helper::GetBinExtension();
 
-		{
-			// ロードする先のファイルを指定
-			// ./Contents/Scenes/「ファイル名」/「ファイル名」.bin
-			std::ifstream ifs(file_path_helper::AttachSceneDirectory(filename) + "/" + filename + file_path_helper::GetBinExtension(), std::ios_base::binary);
+		{// エンティティの読み込み
+			// ./file_path/「Entities」.bin
+			std::ifstream ifs(
+				file_path + "/" +
+				file_path_helper::GetEntitiesFilename() + "/" +
+				file_path_helper::GetEntitiesFilename() +
+				file_path_helper::GetBinExtension()
+				, std::ios_base::binary);
 			if (!ifs)
 				assert(!"Not open file");
 			cereal::BinaryInputArchive input_archive(ifs);
@@ -170,9 +205,18 @@ namespace cumulonimbus::ecs
 		// component_arrayのロード
 		for (auto& it : component_arrays)
 		{
-			it.second->Load(filename);
+			it.second->Load(file_path, this);
 		}
 	}
+
+	template <typename Archive>
+	void Registry::serialize(Archive&& archive)
+	{
+		archive(
+			CEREAL_NVP(entities)
+		);
+	}
+
 
 } // cumulonimbus::ecs
 

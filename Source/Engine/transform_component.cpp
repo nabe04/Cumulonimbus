@@ -4,15 +4,15 @@
 #include <imgui.h>
 #include <string>
 
-#include <cereal/archives/json.hpp>
-#include <cereal/types/bitset.hpp>
-
 #include "arithmetic.h"
 #include "cereal_helper.h"
 #include "component_base.h"
 #include "file_path_helper.h"
 #include "locator.h"
 #include "cum_imgui_helper.h"
+
+CEREAL_REGISTER_TYPE(cumulonimbus::component::TransformComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::TransformComponent)
 
 namespace cumulonimbus::component
 {
@@ -63,6 +63,52 @@ namespace cumulonimbus::component
 			ImGui::Text("Front Z %f", model_front.z);
 		}
 	}
+
+	void TransformComponent::Load(ecs::Registry* registry)
+	{
+		SetRegistry(registry);
+
+		cb_transform = std::make_shared<buffer::ConstantBuffer<TransformCB>>(locator::Locator::GetDx11Device()->device.Get());
+
+		// Initialize XMFLOAT4x4
+		CreateIdentity4x4(&scaling_matrix);
+		CreateIdentity4x4(&rotation_matrix);
+		CreateIdentity4x4(&translation_matrix);
+
+		set_angle_bit_flg.reset();
+	}
+
+	template <class Archive>
+	void TransformComponent::serialize(Archive&& archive)
+	{
+		archive(
+			cereal::base_class<ComponentBase>(this),
+			CEREAL_NVP(position),
+			CEREAL_NVP(prev_pos),
+			CEREAL_NVP(scale),
+			CEREAL_NVP(angle),
+			CEREAL_NVP(prev_angle),
+
+			CEREAL_NVP(world_f4x4),
+			CEREAL_NVP(scaling_matrix),
+			CEREAL_NVP(rotation_matrix),
+			CEREAL_NVP(translation_matrix),
+
+			CEREAL_NVP(model_right),
+			CEREAL_NVP(model_front),
+			CEREAL_NVP(model_up),
+			CEREAL_NVP(orientation),
+
+			// Quaternion
+			CEREAL_NVP(rotation_quaternion),
+
+			CEREAL_NVP(set_angle_bit_flg),
+			CEREAL_NVP(is_billboard),
+			CEREAL_NVP(is_quaternion)
+
+		);
+	}
+
 
 	void TransformComponent::SetTransformCB(const TransformCB transform) const
 	{
@@ -237,21 +283,4 @@ namespace cumulonimbus::component
 
 		return DirectX::XMMatrixRotationQuaternion(calc_val);
 	}
-
-	void TransformComponent::Save(const std::string& file_path)
-	{
-		const std::string file_path_and_name = file_path + file_path_helper::GetTypeName<TransformComponent>() + file_path_helper::GetJsonExtension();
-		std::ofstream ofs(file_path_and_name);
-		cereal::JSONOutputArchive o_archive(ofs);
-		o_archive(*this);
-	}
-
-	void TransformComponent::Load(const std::string& file_path_and_name)
-	{
-		{
-			std::ifstream ifs(file_path_and_name);
-			cereal::JSONInputArchive i_archive(ifs);
-			i_archive(*this);
-		}
-	}
-}
+} // cumulonimbus::component

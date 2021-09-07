@@ -55,12 +55,9 @@ namespace cumulonimbus::component
 		}
 	}
 
-	void RigidBodyComponent::Save(const std::string& file_path)
+	void RigidBodyComponent::Load(ecs::Registry* registry)
 	{
-	}
-
-	void RigidBodyComponent::Load(const std::string& file_path_and_name)
-	{
+		SetRegistry(registry);
 	}
 
 	void RigidBodyComponent::AddVelocity(const DirectX::SimpleMath::Vector3& v)

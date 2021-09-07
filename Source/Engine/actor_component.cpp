@@ -26,20 +26,8 @@ namespace cumulonimbus::component
 		}
 	};
 
-	void ActorComponent::Save(const std::string& file_path)
+	void ActorComponent::Load(ecs::Registry* registry)
 	{
-		const std::string file_path_and_name = file_path + file_path_helper::GetTypeName<ActorComponent>() + file_path_helper::GetJsonExtension();
-		std::ofstream ofs(file_path_and_name);
-		cereal::JSONOutputArchive o_archive(ofs);
-		o_archive(*this);
-	}
 
-	void ActorComponent::Load(const std::string& file_path_and_name)
-	{
-		{
-			std::ifstream ifs(file_path_and_name);
-			cereal::JSONInputArchive i_archive(ifs);
-			i_archive(*this);
-		}
 	}
 }

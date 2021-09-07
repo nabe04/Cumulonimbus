@@ -89,12 +89,9 @@ namespace cumulonimbus::component
 
 	}
 
-	void SphereCollisionComponent::Save(const std::string& file_path)
+	void SphereCollisionComponent::Load(ecs::Registry* registry)
 	{
-	}
-
-	void SphereCollisionComponent::Load(const std::string& file_path_and_name)
-	{
+		SetRegistry(registry);
 	}
 
 	std::string SphereCollisionComponent::AddSphere(const std::string& name, const collision::Sphere& sphere)

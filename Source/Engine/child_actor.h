@@ -27,8 +27,7 @@ namespace cumulonimbus::component
 
 		void Link(std::string node_name);
 
-		void Save(const std::string& file_path) override;
-		void Load(const std::string& file_path_and_name) override;
+		void Load(ecs::Registry* registry) override;
 
 		template<typename Archive>
 		void serialize(Archive&& archive)

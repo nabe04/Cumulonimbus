@@ -21,12 +21,9 @@ namespace cumulonimbus::component
 	{
 	}
 
-	void PhysicsComponent::Save(const std::string& file_path)
+	void PhysicsComponent::Load(ecs::Registry* registry)
 	{
-	}
-
-	void PhysicsComponent::Load(const std::string& file_path_and_name)
-	{
+		SetRegistry(registry);
 	}
 
 	void PhysicsComponent::AddForce(const DirectX::SimpleMath::Vector3& force)

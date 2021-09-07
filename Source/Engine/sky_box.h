@@ -60,19 +60,10 @@ namespace cumulonimbus::component
 		void Update(float dt)	override {}
 		void RenderImGui()		override;;
 
-		void Save(const std::string& file_path) override;
-		void Load(const std::string& file_path_and_name) override;
+		void Load(ecs::Registry* registry) override;
 
 		template <class Archive>
-		void serialize(Archive&& archive)
-		{
-			archive(
-				cereal::base_class<ComponentBase>(this),
-				CEREAL_NVP(cube_texture),
-				CEREAL_NVP(vs_name),
-				CEREAL_NVP(ps_name)
-			);
-		}
+		void serialize(Archive&& archive);
 
 	private:
 		std::array<std::shared_ptr<TextureResource>, 6> cube_texture{};
@@ -89,7 +80,4 @@ namespace cumulonimbus::component
 		void CreateVertexBufferAndIndexBuffer(ID3D11Device* device);
 		void CreateTextures(ID3D11Device* device, const char* filename);
 	};
-}
-
-CEREAL_REGISTER_TYPE(cumulonimbus::component::SkyBoxComponent)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::SkyBoxComponent)
+} // cumulonimbus::component

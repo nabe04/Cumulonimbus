@@ -150,26 +150,10 @@ namespace cumulonimbus::component
 		}
 	}
 
-
-	void SpriteComponent::Save(const std::string& file_path)
+	void SpriteComponent::Load(ecs::Registry* registry)
 	{
-		{
-			const std::string file_path_and_name = file_path + file_path_helper::GetTypeName<SpriteComponent>() + file_path_helper::GetJsonExtension();
-			std::ofstream ofs(file_path_and_name);
-			cereal::JSONOutputArchive o_archive(ofs);
-			o_archive(*this);
-		}
-	}
-
-	void SpriteComponent::Load(const std::string& file_path_and_name)
-	{
-		{
-			std::ifstream ifs(file_path_and_name);
-			cereal::JSONInputArchive i_archive(ifs);
-			i_archive(*this);
-
-		}
-
+		SetRegistry(registry);
+		
 		texture = locator::Locator::GetResourceManager()->GetTextureResource(texture->GetTextureData()->filename);
 
 		variable_texcoords.at(0) = { .0f,.0f };

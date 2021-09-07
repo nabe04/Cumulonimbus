@@ -56,11 +56,7 @@ namespace cumulonimbus::component
 	{
 	}
 
-	void EnemySoldierComponent::Save(const std::string& file_path)
-	{
-	}
-
-	void EnemySoldierComponent::Load(const std::string& file_path_and_name)
+	void EnemySoldierComponent::Load(ecs::Registry* registry)
 	{
 	}
 

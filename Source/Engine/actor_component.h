@@ -36,8 +36,8 @@ namespace cumulonimbus::component
 		void Update(const float delta_time)override {}
 		void RenderImGui() override;
 
-		void Save(const std::string& file_path) override;
-		void Load(const std::string& file_path_and_name) override;
+		//void Save(const std::string& file_path) override;
+		void Load(ecs::Registry* registry) override;
 
 		[[nodiscard]] const BlendState&					GetBlendState()			const { return blend_state.GetCurrentState(); }
 		[[nodiscard]] const RasterizeState&				GetRasterizeState()		const { return rasterizer_state.GetCurrentState(); }

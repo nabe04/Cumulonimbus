@@ -14,19 +14,8 @@ namespace cumulonimbus::component
 	{
 
 	}
-
-	void SpriteObjectComponent::Save(const std::string& file_path)
+	void SpriteObjectComponent::Load(ecs::Registry* registry)
 	{
-		const std::string file_path_and_name = file_path + file_path_helper::GetTypeName<SpriteObjectComponent>() + file_path_helper::GetJsonExtension();
-		std::ofstream ofs(file_path_and_name);
-		cereal::JSONOutputArchive o_archive(ofs);
-		o_archive(*this);
-	}
-
-	void SpriteObjectComponent::Load(const std::string& file_path_and_name)
-	{
-		std::ifstream ifs(file_path_and_name);
-		cereal::JSONInputArchive i_archive(ifs);
-		i_archive(*this);
+		SetRegistry(registry);
 	}
 }

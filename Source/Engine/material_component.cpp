@@ -51,18 +51,9 @@ namespace cumulonimbus::component
 		//}
 	}
 
-	void MaterialComponent::Save(const std::string& file_path)
+	void MaterialComponent::Load(ecs::Registry* registry)
 	{
-		std::ofstream ofs(file_path);
-		cereal::JSONOutputArchive output_archive(ofs);
-		output_archive(*this);
-	}
-
-	void MaterialComponent::Load(const std::string& file_path_and_name)
-	{
-		std::ifstream ifs(file_path_and_name);
-		cereal::JSONInputArchive input_archive(ifs);
-		input_archive(*this);
+		SetRegistry(registry);
 	}
 
 	void MaterialComponent::SetMaterialCB(const MaterialCB& material) const

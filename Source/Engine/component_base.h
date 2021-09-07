@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-#include <cereal/cereal.hpp>
+//#include <cereal/cereal.hpp>
 
 #include "rename_type_mapping.h"
 #include "component_tag_mapping.h"
@@ -29,8 +29,8 @@ namespace cumulonimbus::component
 		virtual void Update(float dt)	  {}
 		virtual void PostUpdate(float dt) {}
 		virtual void RenderImGui()		  {}
-		virtual void Save(const std::string& file_path)			 = 0;
-		virtual void Load(const std::string& file_path_and_name) = 0;
+		//virtual void Save(const std::string& file_path)			 = 0;
+		virtual void Load(ecs::Registry* registry) = 0;
 
 		template<typename Archive>
 		void serialize(Archive&& archive)

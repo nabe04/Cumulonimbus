@@ -51,11 +51,7 @@ namespace cumulonimbus::component
 	{
 	}
 
-	void EnemyForestDemonComponent::Save(const std::string& file_path)
-	{
-	}
-
-	void EnemyForestDemonComponent::Load(const std::string& file_path_and_name)
+	void EnemyForestDemonComponent::Load(ecs::Registry* registry)
 	{
 	}
 

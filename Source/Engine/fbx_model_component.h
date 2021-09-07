@@ -149,8 +149,7 @@ namespace cumulonimbus::component
 		// 現在のキーフレーム
 		[[nodiscard]] int CurrentKeyframe() const { return current_keyframe; }
 
-		void Save(const std::string& file_path) override;
-		void Load(const std::string& file_path_and_name) override;
+		void Load(ecs::Registry* registry) override;
 
 		// For cereal
 		template<typename Archive>

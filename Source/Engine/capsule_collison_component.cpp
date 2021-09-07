@@ -96,13 +96,11 @@ namespace cumulonimbus::component
 		}
 	}
 
-	void CapsuleCollisionComponent::Load(const std::string& file_path_and_name)
+	void CapsuleCollisionComponent::Load(ecs::Registry* registry)
 	{
+		SetRegistry(registry);
 	}
 
-	void CapsuleCollisionComponent::Save(const std::string& file_path)
-	{
-	}
 
 	std::string CapsuleCollisionComponent::AddCapsule(const std::string& name, const collision::Capsule& capsule)
 	{

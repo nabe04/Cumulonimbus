@@ -21,21 +21,27 @@ namespace cumulonimbus::file_path_helper
 	 */
 	[[nodiscard]] std::string GetSceneExtension();
 
-	/*
-	 * brief  : 「Contents」を返す
-	 * return : Contents
+	/**
+	 * @brief  : 「Contents」を返す
+	 * @return :  Contents
 	 */
 	[[nodiscard]] std::string GetContentsFilename();
 
-	/*
-	* brief  : 「Components」を返す
-	* return : Components
+	/**
+	 * @brief  : 「Entities」を返す
+	 * @return :  Entities
+	 */
+	[[nodiscard]] std::string GetEntitiesFilename();
+
+	/**
+	 * @brief  : 「Components」を返す
+	 * @return :  Components
 	*/
 	[[nodiscard]] std::string GetComponentsFilename();
 
-	/*
-	 * brief  : 「Scenes」を返す
-	 * return : Scene
+	/**
+	 * @brief  : 「Scenes」を返す
+	 * @return :  Scene
 	 */
 	[[nodiscard]] std::string GetScenesFilename();
 
@@ -45,35 +51,35 @@ namespace cumulonimbus::file_path_helper
 	 */
 	[[nodiscard]] constexpr std::string GetContentsDirectory();
 
-	/*
-	 * brief  : Sceneフォルダまでの相対パスを取得
-	 * return : ./Contents/Scene/
+	/**
+	 * @brief  : Sceneフォルダまでの相対パスを取得
+	 * @return : ./Contents/Scene/
 	 */
 	[[nodiscard]] constexpr std::string GetSceneDirectory();
 
-	/*
-	 * brief    : Contentsフォルダまでの相対パスとfilenameを足したものを返す
-	 * filename : 「/」などは必要なくファイル名のみで良い
-	 * return   : .Contents/「ファイル名」
+	/**
+	 * @brief			: Contentsフォルダまでの相対パスとfilenameを足したものを返す
+	 * @param  filename	: 「/」などは必要なくファイル名のみで良い
+	 * @return			: .Contents/「ファイル名」
 	 */
 	[[nodiscard]] std::string AttachContentsDirectory(const std::string& filename);
 
-	/*
-	 * brief    : Sceneフォルダまでの相対パスとfilenameを足したものを返す
-	 * filename : 「/」などは必要なくファイル名のみで良い
-	 * return   : ./Contents/Scene/「ファイル名」
+	/**
+	 * @brief			: Sceneフォルダまでの相対パスとfilenameを足したものを返す
+	 * @param filename	: 「/」などは必要なくファイル名のみで良い
+	 * @return			: ./Contents/Scene/「ファイル名」
 	 */
 	[[nodiscard]] std::string AttachSceneDirectory(const std::string& filename);
 
-	 /*
-	  * brief  : Componentsフォルダまでの相対パスを取得
-	  * return : ./Contents/Scenes/「ファイル名」/Components
+	 /**
+	  * @brief  : Componentsフォルダまでの相対パスを取得
+	  * @return : ./Contents/Scenes/「ファイル名」/Components
 	  */
 	[[nodiscard]] std::string AttachComponentsDirectory(const std::string& filename);
 
 
-	/*
-	 * brief : T型のComponentNameをcomponent_arraysのキー値に登録する際の名前の導出
+	/**
+	 * @brief : T型のComponentNameをcomponent_arraysのキー値に登録する際の名前の導出
 	 */
 	template<typename T>
 	[[nodiscard]] std::string GetTypeName()

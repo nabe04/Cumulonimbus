@@ -13,6 +13,9 @@
 #include "shader.h"
 #include "ecs.h"
 
+CEREAL_REGISTER_TYPE(cumulonimbus::component::SkyBoxComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::SkyBoxComponent)
+
 namespace cumulonimbus::component
 {
 	SkyBoxComponent::SkyBoxComponent(ecs::Registry* registry, mapping::rename_type::Entity ent,
@@ -157,27 +160,32 @@ namespace cumulonimbus::component
 		}
 	}
 
-	void SkyBoxComponent::Save(const std::string& file_path)
+	void SkyBoxComponent::Load(ecs::Registry* registry)
 	{
-		const std::string file_path_and_name = file_path + file_path_helper::GetTypeName<SkyBoxComponent>() + file_path_helper::GetJsonExtension();
-		std::ofstream ofs(file_path_and_name);
-		cereal::JSONOutputArchive o_archive(ofs);
-		o_archive(*this);
-	}
-
-	void SkyBoxComponent::Load(const std::string& file_path_and_name)
-	{
-		{
-			std::ifstream ifs(file_path_and_name);
-			cereal::JSONInputArchive i_archive(ifs);
-			i_archive(*this);
-		}
+		SetRegistry(registry);
+		//{
+		//	std::ifstream ifs(file_path_and_name);
+		//	cereal::JSONInputArchive i_archive(ifs);
+		//	i_archive(*this);
+		//}
 
 		CreateVertexBufferAndIndexBuffer(GetRegistry()->GetScene()->GetFramework()->GetDevice());
-		CreateTextures(GetRegistry()->GetScene()->GetFramework()->GetDevice(), ""); // Todo : SkyBox‚ÌTextureLoad•û–@‚ª–¢’è
+		CreateTextures(GetRegistry()->GetScene()->GetFramework()->GetDevice(), "./Data/Assets/cubemap/skybox"); // Todo : SkyBox‚ÌTextureLoad•û–@‚ª–¢’è
 
 		vertex_shader = std::make_unique<shader::VertexShader>(GetRegistry()->GetScene()->GetFramework()->GetDevice(), vs_name.c_str());
 		pixel_shader  = std::make_unique<shader::PixelShader>(GetRegistry()->GetScene()->GetFramework()->GetDevice(), ps_name.c_str());
 	}
-}
+
+	template <class Archive>
+	void SkyBoxComponent::serialize(Archive&& archive)
+	{
+		archive(
+			cereal::base_class<ComponentBase>(this),
+			CEREAL_NVP(cube_texture),
+			CEREAL_NVP(vs_name),
+			CEREAL_NVP(ps_name)
+		);
+	}
+
+} //  cumulonimbus::component
 

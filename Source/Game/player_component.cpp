@@ -168,12 +168,7 @@ namespace cumulonimbus::component
 		}
 	}
 
-	void PlayerComponent::Save(const std::string& file_path)
-	{
-
-	}
-
-	void PlayerComponent::Load(const std::string& file_path_and_name)
+	void PlayerComponent::Load(ecs::Registry* registry)
 	{
 
 	}
