@@ -36,6 +36,17 @@ public:
 	{
 		float ajust_filter_carnel = 1;	// フィルターの調整値
 		float padding[3] = {};
+
+#ifdef __cplusplus
+		template<typename Archive>
+		void serialize(Archive&& archive)
+		{
+			archive(
+				CEREAL_NVP(ajust_filter_carnel)
+			);
+		}
+
+#endif // __cplusplus
 	};
 
 private:

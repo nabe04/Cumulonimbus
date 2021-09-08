@@ -85,6 +85,7 @@
     <ClInclude Include="Source\Engine\Logger.h" />
     <ClInclude Include="Source\Engine\material_component.h" />
     <ClInclude Include="Source\Engine\material_discrimination.h" />
+    <ClInclude Include="Source\Engine\menu_bar.h" />
     <ClInclude Include="Source\Engine\mesh_object.h" />
     <ClInclude Include="Source\Engine\mesh_particle.h" />
     <ClInclude Include="Source\Engine\physic_material_component.h" />
@@ -213,6 +214,7 @@
     <ClCompile Include="Source\Engine\main.cpp" />
     <ClCompile Include="Source\Engine\material_component.cpp" />
     <ClCompile Include="Source\Engine\material_discrimination.cpp" />
+    <ClCompile Include="Source\Engine\menu_bar.cpp" />
     <ClCompile Include="Source\Engine\mesh_object.cpp" />
     <ClCompile Include="Source\Engine\mesh_particle.cpp" />
     <ClCompile Include="Source\Engine\physic_material_component.cpp" />
@@ -830,7 +832,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>.\Libraries\imgui;.\Libraries\FBX\FBX SDK\2019.0\include;.\Libraries\DirectXTK-master\Inc;.\Libraries\cereal-master\include;.\Source\Engine;%(AdditionalIncludeDirectories);.\Source\Game;.\Libraries\DirectXTex-master\DDSTextureLoader;.\Libraries\DirectXTex-master\DirectXTex;.\Libraries\nameof</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Libraries\portable-file-dialogs;.\Libraries\imgui;.\Libraries\FBX\FBX SDK\2019.0\include;.\Libraries\DirectXTK-master\Inc;.\Libraries\cereal-master\include;.\Source\Engine;%(AdditionalIncludeDirectories);.\Source\Game;.\Libraries\DirectXTex-master\DDSTextureLoader;.\Libraries\DirectXTex-master\DirectXTex;.\Libraries\nameof</AdditionalIncludeDirectories>
       <AdditionalOptions>-DNOMINMAX /bigobj %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -896,7 +898,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>.\Libraries\imgui;.\Source\Engine;.\Libraries\FBX\FBX SDK\2019.0\include;.\Libraries\cereal-master\include;.\Source\Game;.\Libraries\DirectXTex-master\DDSTextureLoader;.\Libraries\DirectXTex-master\DirectXTex;.\Libraries\nameof;.\Libraries\DirectXTK-master\Inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Libraries\portable-file-dialogs;.\Libraries\imgui;.\Source\Engine;.\Libraries\FBX\FBX SDK\2019.0\include;.\Libraries\cereal-master\include;.\Source\Game;.\Libraries\DirectXTex-master\DDSTextureLoader;.\Libraries\DirectXTex-master\DirectXTex;.\Libraries\nameof;.\Libraries\DirectXTK-master\Inc</AdditionalIncludeDirectories>
       <AdditionalOptions>-DNOMINMAX %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>

@@ -59,6 +59,19 @@ CBUFFER(FrameCB, CBSlot_Renderer_Frame)
 	float	screen_width;
 	float	screen_height;
 	float2	renderer_frame_padding;
+
+#ifdef __cplusplus
+	template<typename Archive>
+	void serialize(Archive && archive)
+	{
+		archive(
+			CEREAL_NVP(screen_width),
+			CEREAL_NVP(screen_height),
+			CEREAL_NVP(renderer_frame_padding)
+		);
+	}
+
+#endif // __cplusplus
 };
 
 // slot1 (b1)
@@ -86,6 +99,37 @@ CBUFFER(CameraCB, CBSlot_Camera)
 	float	 camera_width;
 	float	 camera_height;
 	float2	 camera_padding;
+
+#ifdef __cplusplus
+	template<typename Archive>
+	void serialize(Archive && archive)
+	{
+		archive(
+			CEREAL_NVP(camera_view_projection_matrix),
+			CEREAL_NVP(camera_projection_matrix),
+			CEREAL_NVP(camera_view_projection_matrix),
+
+			CEREAL_NVP(camera_position),
+			CEREAL_NVP(camera_distance_from_origin),
+
+			CEREAL_NVP(camera_at),
+			CEREAL_NVP(camera_near_z),
+
+			CEREAL_NVP(camera_up),
+			CEREAL_NVP(camera_far_z),
+
+			CEREAL_NVP(camera_right),
+			CEREAL_NVP(camera_fov),
+
+			CEREAL_NVP(camera_front),
+			CEREAL_NVP(camera_aspect),
+
+			CEREAL_NVP(camera_width),
+			CEREAL_NVP(camera_height)
+		);
+	}
+
+#endif // __cplusplus
 };
 
 // slot2 (b2)
@@ -110,6 +154,34 @@ CBUFFER(LightCB, CBSlot_Light)
 
 	float4x4 light_orthographic_projection_matrix;		// プロジェクション行列(平行投影)
 	float4x4 light_orthographic_view_projection_matrix;	// ビュー・プロジェクション行列(平行投影)
+
+#ifdef __cplusplus
+	template<typename Archive>
+	void serialize(Archive && archive)
+	{
+		archive(
+			CEREAL_NVP(light_position),
+			CEREAL_NVP(orthographic_view_width),
+
+			CEREAL_NVP(light_direction),
+			CEREAL_NVP(orthographic_view_width),
+
+			CEREAL_NVP(light_color),
+			CEREAL_NVP(orthographic_near_z),
+
+			CEREAL_NVP(orthographic_far_z),
+
+			CEREAL_NVP(light_view_matrix),
+
+			CEREAL_NVP(light_perspective_projection_matrix),
+			CEREAL_NVP(light_perspective_view_projection_matrix),
+
+			CEREAL_NVP(light_orthographic_projection_matrix),
+			CEREAL_NVP(light_orthographic_view_projection_matrix)
+		);
+	}
+
+#endif // __cplusplus
 };
 
 // slot3 (b3)
@@ -117,6 +189,18 @@ CBUFFER(TransformCB, CBSlot_Transform)
 {
 	float4x4 bone_transforms[MaxBones];
 	float4x4 transform_matrix;
+
+#ifdef __cplusplus
+	template<typename Archive>
+	void serialize(Archive && archive)
+	{
+		archive(
+			CEREAL_NVP(bone_transforms),
+			CEREAL_NVP(transform_matrix)
+		);
+	}
+
+#endif // __cplusplus
 };
 
 // slot4 (b4)

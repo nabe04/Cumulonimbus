@@ -40,6 +40,12 @@ namespace cumulonimbus::collision
 		explicit CollisionManager() = default;
 		~CollisionManager()			= default;
 
+		template<class Archive>
+		void serialize(Archive&& archive)
+		{
+			archive(CEREAL_NVP(ent_terrains));
+		}
+
 		/**
 		 * @brief : CollisionComponentを持つエンティティ全体の当たり判定処理
 		 */
@@ -51,7 +57,6 @@ namespace cumulonimbus::collision
 		 *		   に登録する
 		 */
 		void RegistryRayCastModel(mapping::rename_type::Entity ent);
-
 	private:
 		// レイキャストの判定を行う際の判定が行われる(地形)データ群
 		std::vector<mapping::rename_type::Entity> ent_terrains{};

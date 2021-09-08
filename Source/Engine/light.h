@@ -17,8 +17,20 @@ class Light
 {
 public:
 	explicit Light(ID3D11Device* device);
+	explicit Light() = default;
 
-	void Update(const cumulonimbus::component::CameraComponent* view);
+	template<class Archive>
+	void serialize(Archive&& archive)
+	{
+		archive(
+			CEREAL_NVP(cb_light),
+			CEREAL_NVP(view_right),
+			CEREAL_NVP(view_up),
+			CEREAL_NVP(view_front)
+		);
+	}
+
+	void Update(const cumulonimbus::component::CameraComponent* camera);
 	void BindCBuffer(bool set_in_vs = true, bool set_in_ps = true) const;
 	void UnbindCBuffer() const;
 
@@ -43,6 +55,7 @@ public:
 	[[nodiscard]] const LightCB& GetData()  const { return cb_light->data; }
 	void SetData(const LightCB& light_data) const { cb_light->data = light_data; }
 
+	void Load() const;
 	void WriteImGui() const;
 
 private:

@@ -16,6 +16,26 @@ namespace buffer
 
 		explicit ConstantBuffer(ID3D11Device* const device)
 		{
+			CreateCBuffer(device);
+		}
+
+		explicit ConstantBuffer() = default; // for cereal
+		virtual ~ConstantBuffer() = default;
+		//ConstantBuffer(ConstantBuffer&) = delete;
+		//ConstantBuffer(ConstantBuffer&&) = delete;
+		//ConstantBuffer(const ConstantBuffer&) = delete;
+		//ConstantBuffer(const ConstantBuffer&&) = delete;
+		//ConstantBuffer& operator= (ConstantBuffer&&) = delete;
+		//ConstantBuffer& operator= (ConstantBuffer&) = delete;
+		//ConstantBuffer& operator= (const ConstantBuffer&) = delete;
+		//ConstantBuffer& operator= (const ConstantBuffer&&) = delete;
+
+		void Load(ID3D11Device* const device)
+		{
+			CreateCBuffer(device);
+		}
+		void CreateCBuffer(ID3D11Device* const device)
+		{
 			int size = sizeof(T);
 			if (sizeof(T) % 16 != 0)
 				assert(!"constant buffer's need to be 16 byte aligned");
@@ -31,17 +51,6 @@ namespace buffer
 			if (FAILED(hr))
 				assert(!"CreateBuffer error(Constant buffer)");
 		}
-
-		explicit ConstantBuffer() = default; // for cereal
-		virtual ~ConstantBuffer() = default;
-		//ConstantBuffer(ConstantBuffer&) = delete;
-		//ConstantBuffer(ConstantBuffer&&) = delete;
-		//ConstantBuffer(const ConstantBuffer&) = delete;
-		//ConstantBuffer(const ConstantBuffer&&) = delete;
-		//ConstantBuffer& operator= (ConstantBuffer&&) = delete;
-		//ConstantBuffer& operator= (ConstantBuffer&) = delete;
-		//ConstantBuffer& operator= (const ConstantBuffer&) = delete;
-		//ConstantBuffer& operator= (const ConstantBuffer&&) = delete;
 
 		void Activate(ID3D11DeviceContext* const immediate_context, int slot, bool set_in_vs = true, bool set_in_ps = true)
 		{
@@ -66,7 +75,9 @@ namespace buffer
 		template<typename Archive>
 		void serialize(Archive&& archive)
 		{
-			archive(CEREAL_NVP(data));
+			archive(
+				CEREAL_NVP(data),
+				CEREAL_NVP(using_slot));
 		}
 	private:
 		unsigned int using_slot{};

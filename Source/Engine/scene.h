@@ -59,7 +59,7 @@ protected:
 	std::shared_ptr<cumulonimbus::manager::texture::TextureResourceManager> texture_resource_manager{ nullptr };
 	std::unique_ptr<cumulonimbus::ecs::Registry>		registry			{ nullptr };
 	std::unique_ptr<cumulonimbus::collision::CollisionManager> collision_manager{ nullptr };
-	std::unique_ptr<cumulonimbus::editor::EditorManager>						editor_manager		{ nullptr };
+	std::unique_ptr<cumulonimbus::editor::EditorManager>	   editor_manager		{ nullptr };
 	std::unique_ptr<GeometricPrimitiveResource>			geom_prim_res		{ nullptr };
 	std::unique_ptr<Light>								light				{ nullptr };
 	std::unique_ptr<SoundResource>						sound_resource		{ nullptr };
@@ -100,72 +100,16 @@ public:
 	* brief    : シリアライズされた際に保存するファイル
 	* filename  : ファイル名()
 	*/
-	void SaveScene(std::string filename)
-	{
-		//const std::string file_path_and_name = "./Content/Scene/" + filename;
-		//std::filesystem::create_directories(file_path_and_name);
-
-		//const std::string exe = ".json";
-		//const std::string scene_file_path_and_name = file_path_and_name + exe;
-
-		//{ // save scene
-		//	std::ofstream ofs(scene_file_path_and_name);
-		//	cereal::JSONOutputArchive o_archive(ofs);
-		//	o_archive(
-		//		CEREAL_NVP(scene_name),
-		//		CEREAL_NVP(entities)
-		//	);
-		//}
-
-		//{// save entity
-		//	if (this->entities.empty())
-		//		return;
-
-		//	const std::string entity_file_path = file_path_and_name + "/Entity";
-		//	std::filesystem::create_directories(entity_file_path);
-
-		//	for(const auto& ent : entities)
-		//	{
-		//		ent->Save(entity_file_path);
-		//	}
-		//}
-	}
+	void SaveScene(const std::string& filename);
 
 	/*
 	 * brief : シーンのロード
-	 * file_path_and_name : 拡張子を除く、ファイルの相対パス
+	 * filename : 拡張子を除く、ファイルの相対パス
 	 */
-	void LoadScene(std::string file_path_and_name)
-	{
-		//const std::string exe = ".json";
-
-		//{// load entities
-		//	const std::string input_filename = file_path_and_name + exe;
-
-		//	std::ifstream ifs(input_filename);
-		//	cereal::JSONInputArchive i_archive(ifs);
-		//	i_archive(
-		//		CEREAL_NVP(scene_name),
-		//		CEREAL_NVP(entities)
-		//	);
-		//}
-
-		//for(auto& ent:entities)
-		//{
-		//	ent->SetScene(this);
-
-		//	const std::string entity_file_path_and_name = file_path_and_name + "/Entity";
-		//	ent->Load(entity_file_path_and_name);
-		//}
-	}
+	void LoadScene(std::string filename);
 
 	template <class Archive>
-	void serialize(Archive&& archive)
-	{
-		archive(
-			CEREAL_NVP(scene_name)
-		);
-	}
+	void serialize(Archive&& archive);
 
 private:
 	void			Initialize();

@@ -519,6 +519,9 @@
     <ClCompile Include="Source\Engine\cum_imgui_helper.cpp">
       <Filter>Source\Engine\System</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\menu_bar.cpp">
+      <Filter>Source\Engine\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -937,6 +940,9 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\component_tag_mapping.h">
       <Filter>Header\Engine\System\Mapping</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\menu_bar.h">
+      <Filter>Header\Engine\System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

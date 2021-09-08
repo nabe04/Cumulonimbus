@@ -119,8 +119,8 @@ namespace cumulonimbus::ecs
 		//RegistryComponent<component::SpriteComponent>();
 		//RegistryComponent<component::AnimSpriteComponent>();
 		//RegistryComponent<component::SpriteObjectComponent>();
-		//RegistryComponent<component::MeshObjectComponent>();
-		//RegistryComponent<component::FbxModelComponent>();
+		RegistryComponent<component::MeshObjectComponent>();
+		RegistryComponent<component::FbxModelComponent>();
 		//RegistryComponent<component::GeomPrimComponent>();
 		//RegistryComponent<component::ObjModelComponent>();
 		RegistryComponent<component::SkyBoxComponent>();

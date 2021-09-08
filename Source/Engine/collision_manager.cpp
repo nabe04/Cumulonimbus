@@ -16,6 +16,13 @@
 
 namespace cumulonimbus::collision
 {
+	//template <class Archive>
+	//void CollisionManager::serialize(Archive&& archive)
+	//{
+	//	archive(CEREAL_NVP(ent_terrains));
+	//}
+
+
 	void CollisionManager::Update(const float dt, ecs::Registry* registry)
 	{
 		// ‹…“¯Žm‚Ì”»’è

@@ -27,6 +27,17 @@
 //	(Apply to all scenes)
 //
 //*************************************
+template <class Archive>
+void Scene::serialize(Archive&& archive)
+{
+	archive(
+		CEREAL_NVP(scene_name),
+		CEREAL_NVP(collision_manager),
+		CEREAL_NVP(light)
+	);
+}
+
+
 const std::shared_ptr<Scene>& Scene::Execute(Framework* framework)
 {
 	if (!this->framework)
@@ -212,6 +223,28 @@ void Scene::Render()
 	}
 #endif // _DEBUG
 }
+
+void Scene::SaveScene(const std::string& filename)
+{
+	std::ofstream ofs(filename);
+	cereal::JSONOutputArchive output_archive(ofs);
+	output_archive(*this);
+}
+
+void Scene::LoadScene(std::string filename)
+{
+	auto l_pos = light->GetPosition();
+	//light.reset();
+	//collision_manager.reset();
+	std::ifstream ifs(filename);
+	cereal::JSONInputArchive i_archive(ifs);
+	i_archive(*this);
+
+	light->Load();
+	l_pos = light->GetPosition();
+	auto col = collision_manager.get();
+}
+
 
 void Scene::WriteImGui() const
 {

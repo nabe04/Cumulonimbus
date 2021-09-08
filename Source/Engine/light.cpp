@@ -22,6 +22,17 @@ Light::Light(ID3D11Device* device)
 	cb_light->data.orthographic_far_z		= 1000;
 }
 
+//template <class Archive>
+//void Light::serialize(Archive&& archive)
+//{
+//	archive(
+//		CEREAL_NVP(view_right),
+//		CEREAL_NVP(view_up),
+//		CEREAL_NVP(view_front)
+//	);
+//}
+
+
 void Light::Update(const cumulonimbus::component::CameraComponent* camera)
 {
 	// Calculate right,up,front vector
@@ -55,6 +66,17 @@ void Light::UnbindCBuffer() const
 {
 	cb_light->Deactivate(cumulonimbus::locator::Locator::GetDx11Device()->immediate_context.Get());
 }
+
+void Light::Load() const
+{
+	//if (cb_light.get())
+	//	cb_light.reset();
+
+	cb_light->Load(cumulonimbus::locator::Locator::GetDx11Device()->device.Get());
+	
+	//cb_light = std::make_unique<buffer::ConstantBuffer<LightCB>>(cumulonimbus::locator::Locator::GetDx11Device()->device.Get());
+}
+
 
 void Light::WriteImGui() const
 {

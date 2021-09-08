@@ -32,6 +32,19 @@ public:
 		float glow_extraction_threshold  = 0.010f;
 		float blur_convolution_intensity = 0.500f;
 		float options[2]{};
+
+#ifdef __cplusplus
+		template<typename Archive>
+		void serialize(Archive&& archive)
+		{
+			archive(
+				CEREAL_NVP(glow_extraction_threshold),
+				CEREAL_NVP(blur_convolution_intensity),
+				CEREAL_NVP(options)
+			);
+		}
+
+#endif // __cplusplus
 	};
 
 	std::unique_ptr<buffer::ConstantBuffer<M_Bloom>> constant_buffer;

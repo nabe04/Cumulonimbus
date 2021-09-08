@@ -4,6 +4,7 @@
 #include "content_browser.h"
 #include "hierarchy.h"
 #include "inspector.h"
+#include "menu_bar.h"
 
 class Scene;
 
@@ -13,8 +14,9 @@ namespace cumulonimbus::editor
 	{
 	private:
 		std::unique_ptr<ContentBrowser> content_browser{};
-		std::unique_ptr<Hierarchy> hierarchy{};
-		std::unique_ptr<Inspector> inspector{};
+		std::unique_ptr<Hierarchy>		hierarchy{};
+		std::unique_ptr<Inspector>		inspector{};
+		std::unique_ptr<MenuBar>		menu_bar{};
 
 	public:
 		explicit EditorManager();

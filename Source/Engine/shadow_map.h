@@ -32,6 +32,18 @@ public:
 	{
 		DirectX::XMFLOAT4X4 light_view_matrix;
 		DirectX::XMFLOAT4X4 light_projection_matrix;
+
+#ifdef __cplusplus
+		template<typename Archive>
+		void serialize(Archive&& archive)
+		{
+			archive(
+				CEREAL_NVP(light_view_matrix),
+				CEREAL_NVP(light_projection_matrix)
+			);
+		}
+
+#endif // __cplusplus
 	};
 
 	enum class RenderProcess
