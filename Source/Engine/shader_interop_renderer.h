@@ -164,7 +164,7 @@ CBUFFER(LightCB, CBSlot_Light)
 			CEREAL_NVP(orthographic_view_width),
 
 			CEREAL_NVP(light_direction),
-			CEREAL_NVP(orthographic_view_width),
+			CEREAL_NVP(orthographic_view_height),
 
 			CEREAL_NVP(light_color),
 			CEREAL_NVP(orthographic_near_z),

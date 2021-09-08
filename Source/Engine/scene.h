@@ -98,15 +98,15 @@ public:
 	//-- Serialize --//
 	/*
 	* brief    : シリアライズされた際に保存するファイル
-	* filename  : ファイル名()
+	* file_dir  : 保存するファイルまでのディレクトリ
 	*/
-	void SaveScene(const std::string& filename);
+	void SaveScene(const std::string& file_dir, const std::string& scene_name);
 
 	/*
 	 * brief : シーンのロード
 	 * filename : 拡張子を除く、ファイルの相対パス
 	 */
-	void LoadScene(std::string filename);
+	void LoadScene(const std::string& file_dir, const std::string& scene_name);
 
 	template <class Archive>
 	void serialize(Archive&& archive);

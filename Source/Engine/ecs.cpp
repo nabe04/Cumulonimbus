@@ -130,10 +130,10 @@ namespace cumulonimbus::ecs
 		//RegistryComponent<component::PlayerComponent>();
 	}
 
-	void Registry::Save(const std::string& file_path, const std::string& scene_name)
+	void Registry::Save(const std::string& filename, const std::string& scene_name)
 	{
 		// ./file_path/scene_name
-		const std::string scene_dir = file_path + "/" + scene_name;
+		const std::string scene_dir = filename;
 		// 「scene_name」フォルダの作成
 		std::filesystem::create_directories(scene_dir);
 

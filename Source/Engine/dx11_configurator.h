@@ -50,7 +50,7 @@ public:
 								Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& ds_srv,
 								u_int width, u_int height,
 								DXGI_FORMAT depth_stencil_texture_format = DXGI_FORMAT_R24G8_TYPELESS);
-	
+
 	void SetViewPort(int width, int height) const;
 	void BindPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology) const;
 	void BindShaderResource(	cumulonimbus::mapping::graphics::ShaderStage state, ID3D11ShaderResourceView** srv, uint32_t slot) const;

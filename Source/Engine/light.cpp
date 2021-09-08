@@ -18,7 +18,7 @@ Light::Light(ID3D11Device* device)
 	cb_light->data.light_color				= { 1.0f,1.0f,1.0f };
 	cb_light->data.orthographic_view_width	= 2560;
 	cb_light->data.orthographic_view_height = 2560;
-	cb_light->data.orthographic_near_z		= 0;
+	cb_light->data.orthographic_near_z		= 0.1f;
 	cb_light->data.orthographic_far_z		= 1000;
 }
 
@@ -73,7 +73,7 @@ void Light::Load() const
 	//	cb_light.reset();
 
 	cb_light->Load(cumulonimbus::locator::Locator::GetDx11Device()->device.Get());
-	
+
 	//cb_light = std::make_unique<buffer::ConstantBuffer<LightCB>>(cumulonimbus::locator::Locator::GetDx11Device()->device.Get());
 }
 

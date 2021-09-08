@@ -491,13 +491,13 @@ namespace cumulonimbus::ecs
 
 		/**
 		 * @brief				: entitiesとcomponent_arraysのファイルSave用関数
-		 * @param file_path		: 保存する場所までのファイルパス
+		 * @param filename		: 保存する場所までのファイルパス
 		 * @param scene_name	: 保存するシーン名
 		 * @details	※caution(1) :「.json」と「.bin」で書き出される\n
 		 *			※caution(2) : 拡張子の指定は必要なし \n
 		 *			※caution(3) : ファイルパスは最後「/」の必要はなし
 		 */
-		void Save(const std::string& file_path,const std::string& scene_name);
+		void Save(const std::string& filename,const std::string& scene_name);
 
 		/**
 		 * @brief					: entitiesとcomponent_arraysのファイルLoad用関数

@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 namespace cumulonimbus
 {
@@ -8,13 +9,12 @@ namespace cumulonimbus
 	} // ecs
 } // cumulonimbus
 
-
 namespace cumulonimbus::editor
 {
 	class MenuBar final
 	{
 	public:
-		MenuBar()  = default;
+		explicit MenuBar()  = default;
 		~MenuBar() = default;
 
 		void Render(ecs::Registry* registry);
@@ -24,10 +24,12 @@ namespace cumulonimbus::editor
 		bool no_titlebar	= true;
 		bool no_move		= true;
 
+		std::string name;
+
 		/**
 		 * @brief : 「File」内項目と詳細
 		 */
-		void FileMenu();
+		void FileMenu(ecs::Registry* registry);
 
 		/**
 		 * @brief : 「Window」内のメニューバー設定

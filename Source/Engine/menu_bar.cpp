@@ -1,6 +1,12 @@
 #include "menu_bar.h"
 
+#include <filesystem>
+
+#include "scene.h"
 #include <portable-file-dialogs.h>
+#include "ecs.h"
+
+class Scene;
 
 namespace cumulonimbus::editor
 {
@@ -20,7 +26,7 @@ namespace cumulonimbus::editor
 		{
 			if(ImGui::BeginMenu("File"))
 			{
-				FileMenu();
+				FileMenu(registry);
 				ImGui::EndMenu();
 			}
 
@@ -46,7 +52,7 @@ namespace cumulonimbus::editor
 			MenuSetting();
 	}
 
-	void MenuBar::FileMenu()
+	void MenuBar::FileMenu(ecs::Registry* registry)
 	{
 		if(ImGui::MenuItem("New Scene","Ctrl+Shift"))
 		{
@@ -54,13 +60,17 @@ namespace cumulonimbus::editor
 		}
 		if(ImGui::MenuItem("Open Scene","Ctrl+O"))
 		{
-			auto selection = pfd::open_file(
+			const auto selection = pfd::open_file(
 				"Open Scene",
 				"",
 				{ "Scene Files","*.scene" },
 				pfd::opt::none).result();
 
+			if (selection.empty())
+				return;
+			const std::filesystem::path p = selection.at(0);
 
+			registry->GetScene()->LoadScene(p.parent_path().string(), p.filename().string());
 
 		}
 		ImGui::Separator();
@@ -70,7 +80,13 @@ namespace cumulonimbus::editor
 		}
 		if(ImGui::MenuItem("Save As...","Ctrl+Shift+S"))
 		{
-			auto destination = pfd::save_file("Save");
+			const auto destination = pfd::save_file("Save", "", {}, pfd::opt::none).result();
+			if (destination.empty())
+				return;
+
+			const std::filesystem::path p = destination;
+			std::filesystem::create_directory(p);
+			registry->GetScene()->SaveScene(p.string(), p.filename().string());
 		}
 	}
 

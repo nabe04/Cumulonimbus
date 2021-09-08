@@ -8,6 +8,7 @@
 #include "render_path.h"
 #include "resource_manager.h"
 #include "window.h"
+#include "file_path_helper.h"
 
 #include "scene_game.h"
 #include "scene_title.h"
@@ -224,25 +225,34 @@ void Scene::Render()
 #endif // _DEBUG
 }
 
-void Scene::SaveScene(const std::string& filename)
+void Scene::SaveScene(const std::string& file_dir, const std::string& scene_name)
 {
-	std::ofstream ofs(filename);
-	cereal::JSONOutputArchive output_archive(ofs);
-	output_archive(*this);
+	registry->Save(file_dir, scene_name);
+
+	// Scenesまでのパス/シーン名
+	const std::string filename = file_dir + "/" + scene_name;
+	{// 「.scene」形式(バイナリ)での保存
+		std::ofstream ofs(filename + cumulonimbus::file_path_helper::GetSceneExtension());
+		cereal::BinaryOutputArchive output_archive(ofs);
+		output_archive(*this);
+	}
+	{// 「.json」形式での保存
+
+		std::ofstream ofs(filename + cumulonimbus::file_path_helper::GetJsonExtension());
+		cereal::JSONOutputArchive output_archive(ofs);
+		output_archive(*this);
+	}
 }
 
-void Scene::LoadScene(std::string filename)
+void Scene::LoadScene(const std::string& file_dir, const std::string& scene_name)
 {
-	auto l_pos = light->GetPosition();
-	//light.reset();
-	//collision_manager.reset();
-	std::ifstream ifs(filename);
-	cereal::JSONInputArchive i_archive(ifs);
+	std::ifstream ifs(file_dir + "/" + scene_name);
+	cereal::BinaryInputArchive i_archive(ifs);
 	i_archive(*this);
 
 	light->Load();
-	l_pos = light->GetPosition();
-	auto col = collision_manager.get();
+
+	registry->Load(file_dir);
 }
 
 

@@ -47,7 +47,7 @@ void SceneGame::InitializeScene()
 	registry->GetComponent<cum::component::TransformComponent>(ent_sky_box).SetScale(3.f);
 
 	//SaveScene("./Data/Assets/Scene.json");
-	LoadScene("./Data/Assets/Scene.json");
+	//LoadScene("./Data/Assets/Scene.json");
 
 	////registry->CreateEntity();
 	////registry->CreateEntity();
