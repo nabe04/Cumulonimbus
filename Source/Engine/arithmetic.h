@@ -29,12 +29,6 @@ namespace arithmetic
 	[[nodiscard]]
 	float Clamp(float n, float min, float max);
 
-	/**
-	 * @brief  : UUIDÇÃçÏê¨
-	 * @return : çÏê¨Ç≥ÇÍÇΩUUIDÇ‡ï∂éöóÒ
-	 */
-	[[nodiscard]]
-	std::string GenerateUUID();
 
 	[[nodiscard]] DirectX::XMFLOAT2 CalcVecFromTwoPositions(DirectX::XMFLOAT2 vec1, DirectX::XMFLOAT2 vec2);
 	[[nodiscard]] DirectX::XMFLOAT3 CalcVecFromTwoPositions(DirectX::XMFLOAT3 vec1, DirectX::XMFLOAT3 vec2);

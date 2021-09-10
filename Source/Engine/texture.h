@@ -19,9 +19,6 @@ namespace cumulonimbus::asset
 		explicit Texture() = default; // for cereal
 		explicit Texture(ID3D11Device* device, const char* tex_filename);
 
-		template<class Archive>
-		void serialize(Archive&& archive);
-
 	private:
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texture_view{};
 		std::string file_path{};	// テクスチャまでのファイルパス(相対参照)
@@ -31,6 +28,8 @@ namespace cumulonimbus::asset
 		u_int		height{};
 		DirectX::TexMetadata metadata{};
 		DirectX::ScratchImage scratch{};
+
+		void CreateTexture(ID3D11Device* device, const char* tex_filename);
 	};
 } // cumulonimbus::asset
 

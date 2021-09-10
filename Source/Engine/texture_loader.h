@@ -11,7 +11,7 @@ namespace cumulonimbus::asset
 	class TextureLoader final : public Loader
 	{
 	public:
-		~TextureLoader() override;
+		~TextureLoader() override = default;
 		/**
 		 * @brief : テクスチャのロード
 		 *
@@ -36,6 +36,6 @@ namespace cumulonimbus::asset
 		 * @param path : ファイル選択時のパスとファイル名(拡張子含む)
 		 * @return : ファイルパスのUUID
 		 */
-		mapping::rename_type::UUID Convert(const std::filesystem::path& path) override;
+		//mapping::rename_type::UUID Convert(const std::filesystem::path& path) override;
 	};
 } // cumulonimbus::asset

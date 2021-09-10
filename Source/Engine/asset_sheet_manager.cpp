@@ -1,5 +1,7 @@
 #include "asset_sheet_manager.h"
 
+#include "texture.h"
+
 namespace cumulonimbus::asset
 {
 	template <class Archive>
@@ -8,6 +10,11 @@ namespace cumulonimbus::asset
 		archive(
 			CEREAL_NVP(sheet)
 		);
+	}
+
+	AssetSheetManager::AssetSheetManager()
+	{
+		Register<Texture>();
 	}
 
 	template <class Archive>
@@ -25,9 +32,14 @@ namespace cumulonimbus::asset
 
 	}
 
-	void AssetSheetManager::Register(std::map<mapping::rename_type::Hash, std::string>& sheet)
+	template<typename T>
+	void AssetSheetManager::Register()
 	{
+		const auto id = utility::GetHash<T>();
+		if (sheets.contains(id))
+			return;
 
+		sheets.insert(std::make_pair(id, AssetSheet{}));
 	}
 
 

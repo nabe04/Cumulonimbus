@@ -1,5 +1,8 @@
 #include "scene.h"
 
+#include "asset_manager.h"
+#include "asset_sheet_manager.h"
+#include "loader.h"
 #include "camera_component.h"
 #include "geometric_primitive_resource.h"
 #include "input_manager.h"
@@ -124,6 +127,12 @@ void Scene::Initialize()
 		resource_manager = std::make_shared<ResourceManager>();
 		resource_manager->Initialize(GetFramework()->GetDevice());
 		cumulonimbus::locator::Locator::Provide<ResourceManager>(resource_manager);
+	}
+
+	if(!this->asset_manager)
+	{
+		asset_manager = std::make_shared<cumulonimbus::asset::AssetManager>();
+		cumulonimbus::locator::Locator::Provide<cumulonimbus::asset::AssetManager>(asset_manager);
 	}
 
 	//pad_combine = std::make_unique<pad_link::PadLink>();

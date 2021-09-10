@@ -7,6 +7,51 @@
 
 #include "string_helper.h"
 
+namespace cumulonimbus::asset
+{
+	Texture::Texture(ID3D11Device* device, const char* tex_filename)
+	{
+		CreateTexture(device, tex_filename);
+	}
+
+	void Texture::CreateTexture(ID3D11Device* device, const char* tex_filename)
+	{
+		char name[MAX_PATH]{};
+		char exe[MAX_PATH]{};
+		_splitpath_s(tex_filename, nullptr, NULL, nullptr, NULL, name, sizeof(name), exe, sizeof(exe));
+
+		//-- Newly loaded --//
+		HRESULT hr = E_FAIL;
+		if (strcmp(exe, ".dds") == 0)
+		{// Loading DDS file
+			hr = DirectX::LoadFromDDSFile(string_helper::stringToWString(tex_filename).c_str(), DirectX::DDS_FLAGS::DDS_FLAGS_NONE, &metadata, scratch);
+		}
+		else if (strcmp(exe, ".tga") == 0 || strcmp(exe, ".TGA") == 0)
+		{// Loading TGA file
+			hr = DirectX::LoadFromTGAFile(string_helper::stringToWString(tex_filename).c_str(), &metadata, scratch);
+		}
+		else
+		{// Loading WIC file
+			hr = DirectX::LoadFromWICFile(string_helper::stringToWString(tex_filename).c_str(), DirectX::WIC_FLAGS::WIC_FLAGS_NONE, &metadata, scratch);
+		}
+
+		if (FAILED(hr))
+			assert(!"Load texture error");
+
+		hr = DirectX::CreateShaderResourceView(device, scratch.GetImages(), scratch.GetImageCount(), metadata, texture_view.GetAddressOf());
+		if (FAILED(hr))
+			assert(!"Create shader resource view error");
+
+		format = metadata.format;
+		width = static_cast<u_int>(metadata.width);
+		height = static_cast<u_int>(metadata.height);
+		file_path = tex_filename;
+		filename = name;
+	}
+
+} // cumulonimbus::asset
+
+// アセットシートができ次第消す
 TextureResource::TextureResource(ID3D11Device* device, const char* tex_filename)
 {
 	CreateTexture(device, tex_filename);

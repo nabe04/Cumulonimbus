@@ -24,6 +24,11 @@
 class GeometricPrimitiveResource;
 namespace cumulonimbus
 {
+	namespace asset
+	{
+		class AssetManager;
+	} // asset
+	
 	namespace renderer
 	{
 		class RenderPath;
@@ -55,6 +60,7 @@ protected:
 
 	SceneType current_scene = SceneType::End;
 
+	std::shared_ptr<cumulonimbus::asset::AssetManager>  asset_manager		{ nullptr };
 	std::shared_ptr<ResourceManager>					resource_manager	{ nullptr };
 	std::shared_ptr<cumulonimbus::manager::texture::TextureResourceManager> texture_resource_manager{ nullptr };
 	std::unique_ptr<cumulonimbus::ecs::Registry>		registry			{ nullptr };

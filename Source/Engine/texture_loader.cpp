@@ -5,15 +5,17 @@
 #include "texture.h"
 #include "locator.h"
 
+namespace
+{
+	// テクスチャを保存するまでのパス
+	const std::filesystem::path copy_dir = "./Data/Assets/Textures";
+}
+
 namespace cumulonimbus::asset
 {
-	TextureLoader::~TextureLoader()
-	{
-	}
-
 	void TextureLoader::Load(AssetSheetManager& sheet_manager, const std::filesystem::path& path)
 	{
-		const mapping::rename_type::UUID id = Convert(path);
+		auto id = Convert<Texture>(sheet_manager, path, copy_dir);
 
 		// すでにテクスチャが存在する場合は処理を抜ける
 		if (textures.contains(id))
@@ -23,13 +25,8 @@ namespace cumulonimbus::asset
 		textures.insert(std::make_pair(
 			id,
 			std::make_unique<Texture>(locator::Locator::GetDx11Device()->device.Get(),
-									  sheet_manager.GetAssetFilename<Texture>(Convert(path)).c_str()))
+									  sheet_manager.GetAssetFilename<Texture>(id).c_str()))
 		);
-	}
-
-	mapping::rename_type::UUID TextureLoader::Convert(const std::filesystem::path& path)
-	{
-		return "";
 	}
 
 	bool TextureLoader::Supported(const std::filesystem::path extension)

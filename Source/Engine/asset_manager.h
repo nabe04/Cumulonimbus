@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <filesystem>
 
 #include "rename_type_mapping.h"
 #include "generic.h"
@@ -16,6 +17,8 @@ namespace cumulonimbus::asset
 	{
 	public:
 		AssetManager();
+
+		void AddAsset(const std::filesystem::path& path);
 
 		/**
 		 * @brief : TŒ^‚ÌLoader‚ÌŽæ“¾

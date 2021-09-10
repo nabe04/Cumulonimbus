@@ -8,9 +8,16 @@ namespace cumulonimbus::asset
 {
 	AssetManager::AssetManager()
 	{
+		sheet_manager = std::make_unique<AssetSheetManager>();
 		RegisterLoader<TextureLoader>();
 	}
 
-	
-
+	void AssetManager::AddAsset(const std::filesystem::path& path)
+	{
+		for (auto&& [key, value] : loaders)
+		{
+			if (value->Supported(path.extension()))
+				value->Load(*(sheet_manager.get()), path);
+		}
+	}
 } // cumulonimbus::asset

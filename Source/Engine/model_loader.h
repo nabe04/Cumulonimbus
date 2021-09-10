@@ -11,6 +11,6 @@ namespace cumulonimbus::asset
 		void Load(AssetSheetManager& sheet_manager, const std::filesystem::path& path) override;
 		bool Supported(std::filesystem::path extension) override;
 	private:
-		mapping::rename_type::UUID Convert(const std::filesystem::path& path) override;
+		//mapping::rename_type::UUID Convert(const std::filesystem::path& path) override;
 	};
 } // cumulonimbus::asset

@@ -9,10 +9,10 @@ namespace cumulonimbus::asset
 
 	}
 
-	mapping::rename_type::UUID ModelLoader::Convert(const std::filesystem::path& path)
-	{
-		return "";
-	}
+	//mapping::rename_type::UUID ModelLoader::Convert(const std::filesystem::path& path)
+	//{
+	//	return "";
+	//}
 
 	bool ModelLoader::Supported(std::filesystem::path extension)
 	{

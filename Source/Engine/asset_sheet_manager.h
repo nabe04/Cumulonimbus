@@ -1,6 +1,7 @@
 #pragma once
 #include <map>
 #include <string>
+#include <filesystem>
 #include <cassert>
 
 #include "rename_type_mapping.h"
@@ -16,11 +17,11 @@ namespace cumulonimbus::asset
 	struct AssetSheet
 	{
 		/**
-		 * @brief			: アセットのファイルパスシート
-		 * @details key    : アセットID
-		 * @details value : アセットまでのファイルパス
+		 * @brief : アセットのファイルパスシート
+		 * @remark key : アセットID
+		 * @remark value : アセットまでのファイルパス
 		 */
-		std::map<mapping::rename_type::UUID, std::string> sheet;
+		std::map<mapping::rename_type::UUID, std::filesystem::path> sheet{};
 
 		template<class Archive>
 		void serialize(Archive&& archive);
@@ -29,8 +30,8 @@ namespace cumulonimbus::asset
 	class AssetSheetManager final
 	{
 	public:
-		explicit AssetSheetManager()	= default;
-		~AssetSheetManager()			= default;
+		explicit AssetSheetManager();
+		~AssetSheetManager() = default;
 
 		template<class Archive>
 		void serialize(Archive&& archive);
@@ -43,7 +44,7 @@ namespace cumulonimbus::asset
 		 */
 		template<class T>
 		[[nodiscard]]
-		const AssetSheet& GetSheet() const
+		AssetSheet& GetSheet()
 		{
 			const auto hash = utility::GetHash<T>();
 			if (!sheets.contains(hash))
@@ -62,13 +63,13 @@ namespace cumulonimbus::asset
 		 */
 		template<class T>
 		[[nodiscard]]
-		const std::string& GetAssetFilename(const mapping::rename_type::UUID id)
+		std::string GetAssetFilename(const mapping::rename_type::UUID id) const
 		{
 			const auto hash = utility::GetHash<T>();
 			if (!sheets.contains(hash))
 				assert(!"Not registered sheet(AssetSheet::GetAssetFilename)");
 
-			return sheets.at(hash).sheet.at(id);
+			return sheets.at(hash).sheet.at(id).string();
 		}
 
 	private:
@@ -79,6 +80,7 @@ namespace cumulonimbus::asset
 		 */
 		std::map<mapping::rename_type::Hash, AssetSheet> sheets{};
 
-		void Register(std::map<mapping::rename_type::Hash, std::string>& sheet);
+		template<typename  T>
+		void Register();
 	};
 } // cumulonimbus::asset
