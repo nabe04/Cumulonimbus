@@ -2,8 +2,10 @@
 
 #include <filesystem>
 
-#include "scene.h"
+#include <Windows.h>
+
 #include <portable-file-dialogs.h>
+#include "scene.h"
 #include "ecs.h"
 
 class Scene;

@@ -8,4 +8,6 @@ namespace cumulonimbus::mapping::rename_type
 	using EntityName	= std::string;
 	using ComponentId	= uint64_t;	// Component‚ÌŽ¯•ÊŽq
 	using ComponentName = std::string;
+	using UUID			= std::string;
+	using Hash			= size_t;
 } // cumulonimbus::mapping::rename_type

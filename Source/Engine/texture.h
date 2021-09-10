@@ -11,7 +11,31 @@
 #include <DirectXTex.h>
 #include <cereal/cereal.hpp>
 
+namespace cumulonimbus::asset
+{
+	class Texture final
+	{
+	public:
+		explicit Texture() = default; // for cereal
+		explicit Texture(ID3D11Device* device, const char* tex_filename);
 
+		template<class Archive>
+		void serialize(Archive&& archive);
+
+	private:
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texture_view{};
+		std::string file_path{};	// テクスチャまでのファイルパス(相対参照)
+		std::string filename{};	// テクスチャ名のみ(ファイルパスや拡張子などを取り除いたもの)
+		DXGI_FORMAT format{};
+		u_int		width{};
+		u_int		height{};
+		DirectX::TexMetadata metadata{};
+		DirectX::ScratchImage scratch{};
+	};
+} // cumulonimbus::asset
+
+
+//Todo : アセットシートが完成したら消す
 class TextureResource final
 {
 private:

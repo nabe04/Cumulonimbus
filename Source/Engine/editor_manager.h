@@ -5,8 +5,7 @@
 #include "hierarchy.h"
 #include "inspector.h"
 #include "menu_bar.h"
-
-class Scene;
+#include "project_view.h"
 
 namespace cumulonimbus::editor
 {
@@ -17,6 +16,7 @@ namespace cumulonimbus::editor
 		std::unique_ptr<Hierarchy>		hierarchy{};
 		std::unique_ptr<Inspector>		inspector{};
 		std::unique_ptr<MenuBar>		menu_bar{};
+		std::unique_ptr<ProjectView>	project_view{};
 
 	public:
 		explicit EditorManager();

@@ -1,5 +1,4 @@
 #pragma once
-#include <string>
 
 namespace cumulonimbus
 {
@@ -23,8 +22,6 @@ namespace cumulonimbus::editor
 		bool is_menu_open	= false;
 		bool no_titlebar	= true;
 		bool no_move		= true;
-
-		std::string name;
 
 		/**
 		 * @brief : uFilev“à€–Ú‚ÆÚ×

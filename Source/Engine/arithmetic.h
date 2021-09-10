@@ -1,4 +1,6 @@
 #pragma once
+#include <string>
+
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <SimpleMath.h>
@@ -26,6 +28,13 @@ namespace arithmetic
 	 */
 	[[nodiscard]]
 	float Clamp(float n, float min, float max);
+
+	/**
+	 * @brief  : UUIDの作成
+	 * @return : 作成されたUUIDも文字列
+	 */
+	[[nodiscard]]
+	std::string GenerateUUID();
 
 	[[nodiscard]] DirectX::XMFLOAT2 CalcVecFromTwoPositions(DirectX::XMFLOAT2 vec1, DirectX::XMFLOAT2 vec2);
 	[[nodiscard]] DirectX::XMFLOAT3 CalcVecFromTwoPositions(DirectX::XMFLOAT3 vec1, DirectX::XMFLOAT3 vec2);
@@ -93,7 +102,7 @@ namespace arithmetic
 	 * @brief : クォータニオンからオイラー角の算出
 	 */
 	DirectX::SimpleMath::Vector3 QuaternionToEulerAngle(const DirectX::SimpleMath::Quaternion& q);
-	
+
 	/**
 	 * @brief				: 正射影ベクトルの算出
 	 *						  project_vec から onto_vecへの正射影ベクトルを算出する

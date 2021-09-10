@@ -16,15 +16,6 @@ TextureResource::TextureResource(ID3D11Device* device, const char* tex_filename)
 
 void TextureResource::CreateTexture(ID3D11Device* device, const char* tex_filename)
 {
-	////const auto find = texture_resources.find(texture_filename);
-	//const auto find = texture_resources.find(tex_filename);
-
-	//if (find != texture_resources.end())
-	//{// Allready loaded
-	//	this->texture_data = find->second;
-	//	return;
-	//}
-
 	texture_data = std::make_shared<TextureData>();
 	char name[MAX_PATH]{};
 	char exe[MAX_PATH]{};
