@@ -74,7 +74,7 @@ public:
 	 * @attention				: animation_nameの名前が一致しない場合アサーションで処理が落ちる
 	 */
 	void SetAnimationPlaybackSpeed(const std::string& animation_name, float playback_speed);
-	
+
 	template<typename Archive>
 	void serialize(Archive&& archive)
 	{

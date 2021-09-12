@@ -38,7 +38,7 @@ namespace cumulonimbus::utility
 
 		/**
 		 * @brief			: 地形の追加
-		 * @details 		: key_nameが重複する場合上書きする
+		 * @remark 			: key_nameが重複する場合上書きする
 		 * @param key_name	: 地形名(terrain_mapのキー値になる)
 		 * @param attribute	: 地形属性
 		 */

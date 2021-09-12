@@ -41,9 +41,9 @@ int main()
 	//BulidFBX capsule("../../Data/Assets/FBX/Geometric_Primitive/capsule_maya.fbx");
 	//capsule.Export("../../Data/Assets/Bin/capsule.bin");
 
-	// Robot
-	BulidFBX robot_fbx("../../Data/Assets/FBX/Robot/Robo_L.fbx");
-	robot_fbx.Export("../../Data/Assets/Bin/Robot.bin");
+	//// Robot
+	//BulidFBX robot_fbx("../../Data/Assets/FBX/Robot/Robo_L.fbx");
+	//robot_fbx.Export("../../Data/Assets/Bin/Robot.bin");
 
 	// E_00_DeepSeaLizard
 	//BulidFBX e_00("../../Data/Assets/FBX/Enemies/E_00_DeepSeaLizard/DeepSeaLizard.fbx");
@@ -121,17 +121,17 @@ int main()
 	//e_17.Export("../../Data/Assets/Bin/GalaxyRobot.bin");
 
 
-	//// Stage_01
-	//BulidFBX stage_01("../../Data/Assets/FBX/Stages/Stage_01/Stage_01_3.fbx");
-	//stage_01.Export("../../Data/Assets/Bin/Stage_01.bin");
+	// Stage_01
+	BulidFBX stage_01("../../Data/Assets/FBX/Stages/Stage_01/Stage_01_3.fbx");
+	stage_01.Export("../../Data/Assets/Bin/Stage_01.bin");
 
 	// Stage_01 Collision
 	//BulidFBX stage_01("../../Data/Assets/FBX/Stages/Stage_01/Stage_01_For_Collision.fbx");
 	//stage_01.Export("../../Data/Assets/Bin/Stage_01_Collision.bin");
 
-	// Stage_01 Collision
-	BulidFBX stage_01("../../Data/Lantern.fbx");
-	stage_01.Export("../../Data/Assets/Bin/Lantern.bin");
+	//// Stage_01 Collision
+	//BulidFBX stage_01("../../Data/Lantern.fbx");
+	//stage_01.Export("../../Data/Assets/Bin/Lantern.bin");
 
 	return 0;
 }

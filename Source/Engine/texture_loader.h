@@ -13,10 +13,18 @@ namespace cumulonimbus::asset
 	public:
 		~TextureLoader() override = default;
 		/**
-		 * @brief : テクスチャのロード
-		 *
+		 * @brief : アセットのロード
+		 * @param : sheet_manager : AssetSheetManagerクラスの参照
+		 * @param path : ロードされたモデルのファイルパス
 		 */
 		void Load(AssetSheetManager& sheet_manager, const std::filesystem::path& path) override;
+		/**
+		 * @brief : アセットのロード
+		 * @param : sheet_manager : AssetSheetManagerクラスの参照
+		 * @param from: ロードされたモデルのファイルパス
+		 * @param to : コピー先のファイルパス
+		 */
+		void Load(AssetSheetManager& sheet_manager, const std::filesystem::path& from, const std::filesystem::path& to) override;
 
 		/**
 		 * @brief : 指定された拡張子はロード可能か
@@ -25,17 +33,12 @@ namespace cumulonimbus::asset
 		 * @return  : false -> サポートしていない
 		 */
 		bool Supported(std::filesystem::path extension) override;
-
 	private:
-		std::map<mapping::rename_type::UUID, std::unique_ptr<Texture>> textures;
+		std::map<mapping::rename_type::UUID, std::unique_ptr<Texture>> textures{};
 
 		/**
-		 * @brief : 任意のフォルダから指定された画像ファイル(「.png」,「.jpeg」,「.tga」,「.dds」)を
-		 *			自分の管理するテクスチャフォルダにコピー
-		 * @remark : 戻り地のUUID地がtexturesのキー値になる
-		 * @param path : ファイル選択時のパスとファイル名(拡張子含む)
-		 * @return : ファイルパスのUUID
+		 * @brief : オーバーロードされているLoad関数の共通処理記述部
 		 */
-		//mapping::rename_type::UUID Convert(const std::filesystem::path& path) override;
+		void Load(AssetSheetManager& sheet_manager, const mapping::rename_type::UUID& id) override;
 	};
 } // cumulonimbus::asset

@@ -15,8 +15,18 @@ namespace cumulonimbus::asset
 {
 	void TextureLoader::Load(AssetSheetManager& sheet_manager, const std::filesystem::path& path)
 	{
-		auto id = Convert<Texture>(sheet_manager, path, copy_dir);
+		const auto id = Convert<Texture>(sheet_manager, path, copy_dir);
+		Load(sheet_manager, id);
+	}
 
+	void TextureLoader::Load(AssetSheetManager& sheet_manager, const std::filesystem::path& from, const std::filesystem::path& to)
+	{
+		const auto id = Convert<Texture>(sheet_manager, from, to);
+		Load(sheet_manager, id);
+	}
+
+	void TextureLoader::Load(AssetSheetManager& sheet_manager, const mapping::rename_type::UUID& id)
+	{
 		// すでにテクスチャが存在する場合は処理を抜ける
 		if (textures.contains(id))
 			return;
@@ -25,9 +35,10 @@ namespace cumulonimbus::asset
 		textures.insert(std::make_pair(
 			id,
 			std::make_unique<Texture>(locator::Locator::GetDx11Device()->device.Get(),
-									  sheet_manager.GetAssetFilename<Texture>(id).c_str()))
+				sheet_manager.GetAssetFilename<Texture>(id).c_str()))
 		);
 	}
+
 
 	bool TextureLoader::Supported(const std::filesystem::path extension)
 	{

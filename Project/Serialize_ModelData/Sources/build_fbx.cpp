@@ -130,7 +130,7 @@ BulidFBX::BulidFBX(const char* fbx_filename, const char* ignore_root_motion_node
 	FbxIOSettings* fbxIOS = FbxIOSettings::Create(fbx_manager, IOSROOT);	// 特別な理由がない限りIOSROOTを指定
 	fbx_manager->SetIOSettings(fbxIOS);
 
-	// インポータを生成
+	// インポータを生成(「.fbm」ファイルの作成)
 	FbxImporter* fbx_importer = FbxImporter::Create(fbx_manager, "");
 	bool result = fbx_importer->Initialize(fbx_filename, -1, fbx_manager->GetIOSettings());	// -1でファイルフォーマット自動判定
 	if (!result)

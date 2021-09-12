@@ -14,7 +14,20 @@ namespace cumulonimbus::asset
 	public:
 		explicit Loader() = default;
 		virtual ~Loader() = default;
+		/**
+		 * @brief : アセットのロード
+		 * @param : sheet_manager : AssetSheetManagerクラスの参照
+		 * @param path : ロードされたモデルのファイルパス
+		 */
 		virtual void Load(AssetSheetManager& sheet_manager, const std::filesystem::path& path) = 0;
+		/**
+		 * @brief : アセットのロード
+		 * @param : sheet_manager : AssetSheetManagerクラスの参照
+		 * @param from: ロードされたモデルのファイルパス
+		 * @param to : コピー先のファイルパス
+		 */
+		virtual void Load(AssetSheetManager& sheet_manager, const std::filesystem::path& from, const std::filesystem::path& to) = 0;
+		
 		/**
 		 * @brief : 指定された拡張子はロード可能か
 		 * @param extension : ファイルの拡張子
@@ -30,6 +43,11 @@ namespace cumulonimbus::asset
 		 * @remark value : ファイルまでのパス
 		 */
 		std::map<mapping::rename_type::UUID, std::string> loader{};
+
+		/**
+		 * @brief : オーバーロードされているLoad関数の共通処理記述部
+		 */
+		virtual void Load(AssetSheetManager& sheet_manager, const mapping::rename_type::UUID& id) = 0;
 
 		/**
 		 * @param from : コピー対象のファイル名またはフォルダまでのパス

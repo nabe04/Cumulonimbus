@@ -537,6 +537,12 @@
     <ClCompile Include="Source\Engine\asset_manager.cpp">
       <Filter>Source\Engine\Loader</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\material.cpp">
+      <Filter>Source\Engine\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\model.cpp">
+      <Filter>Source\Engine\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -976,6 +982,12 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\asset_manager.h">
       <Filter>Header\Engine\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\material.h">
+      <Filter>Header\Engine\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\model.h">
+      <Filter>Header\Engine\System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

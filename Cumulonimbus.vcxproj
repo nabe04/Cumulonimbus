@@ -86,11 +86,13 @@
     <ClInclude Include="Source\Engine\local_shader_manager.h" />
     <ClInclude Include="Source\Engine\locator.h" />
     <ClInclude Include="Source\Engine\Logger.h" />
+    <ClInclude Include="Source\Engine\material.h" />
     <ClInclude Include="Source\Engine\material_component.h" />
     <ClInclude Include="Source\Engine\material_discrimination.h" />
     <ClInclude Include="Source\Engine\menu_bar.h" />
     <ClInclude Include="Source\Engine\mesh_object.h" />
     <ClInclude Include="Source\Engine\mesh_particle.h" />
+    <ClInclude Include="Source\Engine\model.h" />
     <ClInclude Include="Source\Engine\model_loader.h" />
     <ClInclude Include="Source\Engine\physic_material_component.h" />
     <ClInclude Include="Source\Engine\project_view.h" />
@@ -220,11 +222,13 @@
     <ClCompile Include="Source\Engine\local_shader_manager.cpp" />
     <ClCompile Include="Source\Engine\Logger.cpp" />
     <ClCompile Include="Source\Engine\main.cpp" />
+    <ClCompile Include="Source\Engine\material.cpp" />
     <ClCompile Include="Source\Engine\material_component.cpp" />
     <ClCompile Include="Source\Engine\material_discrimination.cpp" />
     <ClCompile Include="Source\Engine\menu_bar.cpp" />
     <ClCompile Include="Source\Engine\mesh_object.cpp" />
     <ClCompile Include="Source\Engine\mesh_particle.cpp" />
+    <ClCompile Include="Source\Engine\model.cpp" />
     <ClCompile Include="Source\Engine\model_loader.cpp" />
     <ClCompile Include="Source\Engine\physic_material_component.cpp" />
     <ClCompile Include="Source\Engine\project_view.cpp" />

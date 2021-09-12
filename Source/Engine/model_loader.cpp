@@ -2,17 +2,31 @@
 
 #include <set>
 
+namespace
+{
+	// テクスチャを保存するまでのパス
+	const std::filesystem::path copy_dir = "./Data/Assets/Models";
+}
+
+
 namespace cumulonimbus::asset
 {
-	void ModelLoader::Load(AssetSheetManager& sheet, const std::filesystem::path& path)
+	void ModelLoader::Load(AssetSheetManager& sheet_manager, const std::filesystem::path& path)
+	{
+		const auto id = Convert<Model>(sheet_manager, path, copy_dir);
+		Load(sheet_manager, id);
+	}
+
+	void ModelLoader::Load(AssetSheetManager& sheet_manager, const std::filesystem::path& from, const std::filesystem::path& to)
+	{
+		const auto id = Convert<Model>(sheet_manager, from, to);
+		Load(sheet_manager, id);
+	}
+
+	void ModelLoader::Load(AssetSheetManager& sheet_manager, const mapping::rename_type::UUID& id)
 	{
 
 	}
-
-	//mapping::rename_type::UUID ModelLoader::Convert(const std::filesystem::path& path)
-	//{
-	//	return "";
-	//}
 
 	bool ModelLoader::Supported(std::filesystem::path extension)
 	{
