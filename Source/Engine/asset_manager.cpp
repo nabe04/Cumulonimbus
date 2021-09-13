@@ -17,7 +17,7 @@ namespace cumulonimbus::asset
 		for (auto&& [key, value] : loaders)
 		{
 			if (value->Supported(path.extension()))
-				value->Load(*(sheet_manager.get()), path);
+				value->Load(*this, path);
 		}
 	}
 } // cumulonimbus::asset

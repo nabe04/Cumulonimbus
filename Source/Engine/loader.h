@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 
+#include "asset_manager.h"
 #include "asset_sheet_manager.h"
 #include "rename_type_mapping.h"
 #include "generic.h"
@@ -16,18 +17,18 @@ namespace cumulonimbus::asset
 		virtual ~Loader() = default;
 		/**
 		 * @brief : アセットのロード
-		 * @param : sheet_manager : AssetSheetManagerクラスの参照
+		 * @param : asset_manager : AssetManagerクラスの参照
 		 * @param path : ロードされたモデルのファイルパス
 		 */
-		virtual void Load(AssetSheetManager& sheet_manager, const std::filesystem::path& path) = 0;
+		virtual void Load(AssetManager& asset_manager, const std::filesystem::path& path) = 0;
 		/**
 		 * @brief : アセットのロード
-		 * @param : sheet_manager : AssetSheetManagerクラスの参照
+		 * @param : asset_manager : AssetManagerクラスの参照
 		 * @param from: ロードされたモデルのファイルパス
 		 * @param to : コピー先のファイルパス
 		 */
-		virtual void Load(AssetSheetManager& sheet_manager, const std::filesystem::path& from, const std::filesystem::path& to) = 0;
-		
+		virtual void Load(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to) = 0;
+
 		/**
 		 * @brief : 指定された拡張子はロード可能か
 		 * @param extension : ファイルの拡張子
@@ -35,7 +36,6 @@ namespace cumulonimbus::asset
 		 * @return  : false -> サポートしていない
 		 */
 		virtual bool Supported(std::filesystem::path extension) = 0;
-
 	protected:
 		/**
 		 * @brief : アセットを管理する
@@ -47,47 +47,52 @@ namespace cumulonimbus::asset
 		/**
 		 * @brief : オーバーロードされているLoad関数の共通処理記述部
 		 */
-		virtual void Load(AssetSheetManager& sheet_manager, const mapping::rename_type::UUID& id) = 0;
+		virtual void Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id) = 0;
 
 		/**
+		 * @param asset_manager :  AssetManagerクラスの参照
 		 * @param from : コピー対象のファイル名またはフォルダまでのパス
 		 * @param to   : コピー先のフォルダまでのパス
 		 *					 (例 : ./Data/Assets/Texture/sample.png(実際に保存されるパスとファイル名)
 		 *						  -> ./Data/Assets/Texture(コピー先のフォルダまでのパス))
 		 */
+		virtual mapping::rename_type::UUID Convert(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to) const = 0;
+
+		/**
+		 * @brief : 同じフォルダ階層のファイル名を取得し
+		 *			名前が重複していた場合「重複名(番号).拡張子」
+		 *			という形にする
+		 * @param asset_manager :  AssetManagerクラスの参照
+		 * @param path : ファイルパス(拡張子を含む)
+		 */
 		template<class T>
-		mapping::rename_type::UUID Convert(AssetSheetManager& sheet_manager, const std::filesystem::path& from,const std::filesystem::path& to) const
+		std::filesystem::path CompareAndReName(const AssetManager& asset_manager, std::filesystem::path path) const
 		{
-			// コピー先のフォルダ作成&コピー
-			std::filesystem::copy(
-				from, to,
-				std::filesystem::copy_options::recursive |
-				std::filesystem::copy_options::overwrite_existing);
-
-			const std::string copy_str = to.string() + "/" + from.filename().string();
-			const std::filesystem::path copy_path{ copy_str };
-
-			auto sheet = sheet_manager.GetSheet<T>().sheet;
-
-			for (const auto& [key, value] : sheet_manager.GetSheet<T>().sheet)
+			int no = 0;
+			bool is_loop = true;
+			const std::string exe = path.extension().string();
+			std::string filename = path.replace_extension().string();
+			while(is_loop)
 			{
-				if (copy_path.compare(value) == 0)
-					return key;
+				for(const auto&[key,value] : asset_manager.GetAssetSheetManager().GetSheet<T>().sheet)
+				{
+					if(value.compare(filename) != 0)
+					{
+						is_loop = false;
+					}
+					else
+					{
+						is_loop = true;
+						filename = path.string();
+						filename += "(" + std::to_string(++no) + ")" + exe;
+						break;
+					}
+				}
 			}
 
-			mapping::rename_type::UUID id;
-			while (true)
-			{
-				id = utility::GenerateUUID();
-				if (sheet_manager.GetSheet<T>().sheet.contains(id))
-					continue;
-				break;
-			}
-
-			// アセットシートの登録
-			sheet_manager.GetSheet<T>().sheet.insert(std::make_pair(id, copy_path));
-			return id;
+			return filename;
 		}
+
 	};
 } // cumulonimbus::asset
 

@@ -543,6 +543,9 @@
     <ClCompile Include="Source\Engine\model.cpp">
       <Filter>Source\Engine\System</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\material_loader.cpp">
+      <Filter>Source\Engine\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -987,6 +990,9 @@
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\model.h">
+      <Filter>Header\Engine\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\material_loader.h">
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
   </ItemGroup>

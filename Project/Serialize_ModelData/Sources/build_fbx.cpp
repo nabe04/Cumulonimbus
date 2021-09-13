@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <fstream>
+#include <filesystem>
 
 // シリアライズ
 namespace DirectX	// namespaceをそろえる
@@ -588,7 +589,7 @@ void BulidFBX::BuildMaterial(const char* dirname, FbxSurfaceMaterial* fbx_surfac
 		if (fbx_texture_count > 0)
 		{
 			FbxFileTexture* fbx_texture = fbx_diffuse_property.GetSrcObject<FbxFileTexture>();
-
+			const std::filesystem::path texture_path = fbx_texture->GetFileName();
 			// 相対パスの解決
 			char filename[256];
 			::_makepath_s(filename, 256, nullptr, dirname, fbx_texture->GetRelativeFileName(), nullptr);

@@ -7,82 +7,102 @@ namespace cumulonimbus::file_path_helper
 	 * @brief  : 「.bin」を返す
 	 * @return : .bin
 	 */
-	[[nodiscard]] std::string GetBinExtension();
+	[[nodiscard]]
+	std::string GetBinExtension();
 
 	/**
 	 * @brief  : 「.json」を返す
 	 * @return : .json
 	 */
-	[[nodiscard]] std::string GetJsonExtension();
+	[[nodiscard]]
+	std::string GetJsonExtension();
 
 	/**
 	 * @brief  : 「.scene」を返す
 	 * @return : .scene
 	 */
-	[[nodiscard]] std::string GetSceneExtension();
+	[[nodiscard]]
+	std::string GetSceneExtension();
+
+	/**
+	 * @brief : 「.mat」を返す
+	 * @return : .mat
+	 */
+	[[nodiscard]]
+	std::string GetMaterialExtension();
 
 	/**
 	 * @brief  : 「Contents」を返す
 	 * @return :  Contents
 	 */
-	[[nodiscard]] std::string GetContentsFilename();
+	[[nodiscard]]
+	std::string GetContentsFilename();
 
 	/**
 	 * @brief  : 「Entities」を返す
 	 * @return :  Entities
 	 */
-	[[nodiscard]] std::string GetEntitiesFilename();
+	[[nodiscard]]
+	std::string GetEntitiesFilename();
 
 	/**
 	 * @brief  : 「Components」を返す
 	 * @return :  Components
 	*/
-	[[nodiscard]] std::string GetComponentsFilename();
+	[[nodiscard]]
+	std::string GetComponentsFilename();
 
 	/**
 	 * @brief  : 「Scenes」を返す
 	 * @return :  Scene
 	 */
-	[[nodiscard]] std::string GetScenesFilename();
+	[[nodiscard]]
+	std::string GetScenesFilename();
 
 	/*
 	 * brief  : Contentsフォルダまでの相対パスを取得
 	 * return : ./Contents/
 	 */
-	[[nodiscard]] constexpr std::string GetContentsDirectory();
+	[[nodiscard]]
+	constexpr std::string GetContentsDirectory();
 
 	/**
 	 * @brief  : Sceneフォルダまでの相対パスを取得
 	 * @return : ./Contents/Scene/
 	 */
-	[[nodiscard]] constexpr std::string GetSceneDirectory();
+	[[nodiscard]]
+	constexpr std::string GetSceneDirectory();
 
 	/**
 	 * @brief			: Contentsフォルダまでの相対パスとfilenameを足したものを返す
 	 * @param  filename	: 「/」などは必要なくファイル名のみで良い
 	 * @return			: .Contents/「ファイル名」
 	 */
-	[[nodiscard]] std::string AttachContentsDirectory(const std::string& filename);
+	[[nodiscard]]
+	std::string AttachContentsDirectory(const std::string& filename);
 
 	/**
 	 * @brief			: Sceneフォルダまでの相対パスとfilenameを足したものを返す
 	 * @param filename	: 「/」などは必要なくファイル名のみで良い
 	 * @return			: ./Contents/Scene/「ファイル名」
 	 */
-	[[nodiscard]] std::string AttachSceneDirectory(const std::string& filename);
+	[[nodiscard]]
+	std::string AttachSceneDirectory(const std::string& filename);
 
 	 /**
 	  * @brief  : Componentsフォルダまでの相対パスを取得
 	  * @return : ./Contents/Scenes/「ファイル名」/Components
 	  */
-	[[nodiscard]] std::string AttachComponentsDirectory(const std::string& filename);
+	[[nodiscard]]
+	std::string AttachComponentsDirectory(const std::string& filename);
 
 
 	/**
 	 * @brief : T型のComponentNameをcomponent_arraysのキー値に登録する際の名前の導出
 	 */
 	template<typename T>
-	[[nodiscard]] std::string GetTypeName()
+	[[nodiscard]]
+	std::string GetTypeName()
 	{
 		std::string_view type_name(typeid(T).name());
 
@@ -107,4 +127,4 @@ namespace cumulonimbus::file_path_helper
 		// 上記以外
 		return type_name.data();
 	}
-}
+} // cumulonimbus::file_path_helper

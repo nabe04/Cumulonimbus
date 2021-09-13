@@ -31,6 +31,9 @@ namespace cumulonimbus::asset
 			return static_cast<T*>(loaders.at(typeid(T).hash_code()).get());
 		}
 
+		[[nodiscard]]
+		AssetSheetManager& GetAssetSheetManager() const { return *sheet_manager.get(); }
+
 		/**
 		 * @brief : Loader‚Ì“o˜^
 		 */

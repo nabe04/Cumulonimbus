@@ -72,6 +72,27 @@ namespace cumulonimbus::asset
 			return sheets.at(hash).sheet.at(id).string();
 		}
 
+		/**
+		 * @brief : アセットシートに登録しているパスからIDを検索
+		 * @remark : パスがヒットしなかった場合でも例外処理は出ない
+		 * @remark : パスがヒットしなかった場合「""」が変える
+		 * @param path : 検索したいファイルパス
+		 * @return : 検索でヒットしたパスのID
+		 */
+		template<class T>
+		[[nodiscard]]
+		mapping::rename_type::UUID Search(const std::filesystem::path& path) const
+		{
+			for (const auto& [key, value] : sheets.at(utility::GetHash<T>()).sheet)
+			{
+				// パスが存在すればパスの持つIDを返す
+				if (path.compare(value) == 0)
+					return key;
+			}
+
+			return "";
+		}
+
 	private:
 		/**
 		 * @brief : (管理させたい)型ごとのシート

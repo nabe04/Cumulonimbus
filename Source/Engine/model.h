@@ -170,7 +170,7 @@ namespace cumulonimbus::asset
 		{
 			archive(
 				CEREAL_NVP(nodes),
-				CEREAL_NVP(materials),
+				CEREAL_NVP(materials_id),
 				CEREAL_NVP(meshes),
 				CEREAL_NVP(animations),
 				CEREAL_NVP(root_motion_node_index)
@@ -179,16 +179,16 @@ namespace cumulonimbus::asset
 
 		std::vector<Node>		nodes{};
 		std::vector<Mesh>		meshes{};
-		std::vector<Material>	materials{};
 		std::vector<Animation>  animations{};
-		int						root_motion_node_index{-1};
+		std::vector<mapping::rename_type::UUID>	materials_id{}; // ‚±‚ÌID‚ðŒ³‚ÉMaterialLoader‚Ìmaterials‚ðŽæ“¾
+		int	root_motion_node_index{-1};
 
 		[[nodiscard]]
 		const std::vector<Node>& GetNodes()	 const { return nodes; }
 		[[nodiscard]]
 		const std::vector<Mesh>& GetMeshes() const { return meshes; }
 		[[nodiscard]]
-		const std::vector<Material>& GetMaterials()	  const { return materials; }
+		const std::vector<mapping::rename_type::UUID>& GetMaterialsID()	  const { return materials_id; }
 		[[nodiscard]]
 		const std::vector<Animation>& GetAnimations() const { return animations; }
 	};
@@ -202,6 +202,9 @@ namespace cumulonimbus::asset
 		explicit Model() = default; // for cereal
 		explicit Model(const std::filesystem::path& path);
 		~Model() = default;
+
+		[[nodiscard]]
+		ModelData& GetModelData() { return model_data; }
 
 	private:
 		ModelData model_data{};

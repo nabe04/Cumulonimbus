@@ -18,6 +18,11 @@ namespace cumulonimbus::file_path_helper
 		return { ".scene" };
 	}
 
+	std::string GetMaterialExtension()
+	{
+		return { ".mat" };
+	}
+
 	std::string GetContentsFilename()
 	{
 		return { "Contents" };
