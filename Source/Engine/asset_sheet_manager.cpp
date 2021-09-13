@@ -1,5 +1,7 @@
 #include "asset_sheet_manager.h"
 
+#include "material.h"
+#include "model.h"
 #include "texture.h"
 
 namespace cumulonimbus::asset
@@ -14,6 +16,8 @@ namespace cumulonimbus::asset
 
 	AssetSheetManager::AssetSheetManager()
 	{
+		Register<Material>();
+		Register<Model>();
 		Register<Texture>();
 	}
 
@@ -23,13 +27,6 @@ namespace cumulonimbus::asset
 		archive(
 			CEREAL_NVP(sheets)
 		);
-	}
-
-
-	void AssetSheetManager::AddAsset(const std::string& filename)
-	{
-		//asset_type.insert(std::make_pair(AssetType::Model, std::bind(&AssetSheet::Register, this, model_sheet)));
-
 	}
 
 	template<typename T>

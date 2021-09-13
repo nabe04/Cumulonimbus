@@ -18,6 +18,11 @@ namespace cumulonimbus::file_path_helper
 		return { ".scene" };
 	}
 
+	std::string GetModelExtension()
+	{
+		return { ".model" };
+	}
+
 	std::string GetMaterialExtension()
 	{
 		return { ".mat" };

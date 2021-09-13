@@ -36,8 +36,6 @@ namespace cumulonimbus::asset
 		template<class Archive>
 		void serialize(Archive&& archive);
 
-		void AddAsset(const std::string& filename);
-
 		/**
 		 * @brief  : 任意のクラスのアセットシートの取得
 		 * @remark : T型が存在しない場合処理を中断する

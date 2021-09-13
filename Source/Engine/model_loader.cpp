@@ -3,6 +3,8 @@
 #include <set>
 
 #include "asset_sheet_manager.h"
+#include "cereal_helper.h"
+#include "file_path_helper.h"
 #include "material_loader.h"
 #include "texture.h"
 #include "texture_loader.h"
@@ -11,62 +13,6 @@ namespace
 {
 	// テクスチャを保存するまでのパス
 	const std::filesystem::path copy_dir = "./Data/Assets/Models";
-}
-
-// シリアライズ
-namespace DirectX	// namespaceをそろえる
-{
-	template<class Archive>
-	void serialize(Archive& archive, XMUINT4& v)
-	{
-		archive(
-			cereal::make_nvp("x", v.x),
-			cereal::make_nvp("y", v.y),
-			cereal::make_nvp("z", v.z),
-			cereal::make_nvp("w", v.w)
-		);
-	}
-
-	template<class Archive>
-	void serialize(Archive& archive, XMFLOAT2& v)
-	{
-		archive(
-			cereal::make_nvp("x", v.x),
-			cereal::make_nvp("y", v.y)
-		);
-	}
-
-	template<class Archive>
-	void serialize(Archive& archive, XMFLOAT3& v)
-	{
-		archive(
-			cereal::make_nvp("x", v.x),
-			cereal::make_nvp("y", v.y),
-			cereal::make_nvp("z", v.z)
-		);
-	}
-
-	template<class Archive>
-	void serialize(Archive& archive, XMFLOAT4& v)
-	{
-		archive(
-			cereal::make_nvp("x", v.x),
-			cereal::make_nvp("y", v.y),
-			cereal::make_nvp("z", v.z),
-			cereal::make_nvp("w", v.w)
-		);
-	}
-
-	template<class Archive>
-	void serialize(Archive& archive, XMFLOAT4X4& m)
-	{
-		archive(
-			cereal::make_nvp("_11", m._11), cereal::make_nvp("_12", m._12), cereal::make_nvp("_13", m._13), cereal::make_nvp("_14", m._14),
-			cereal::make_nvp("_21", m._21), cereal::make_nvp("_22", m._22), cereal::make_nvp("_23", m._23), cereal::make_nvp("_24", m._24),
-			cereal::make_nvp("_31", m._31), cereal::make_nvp("_32", m._32), cereal::make_nvp("_33", m._33), cereal::make_nvp("_34", m._34),
-			cereal::make_nvp("_41", m._41), cereal::make_nvp("_42", m._42), cereal::make_nvp("_43", m._43), cereal::make_nvp("_44", m._44)
-		);
-	}
 }
 
 // FbxDouble2 → XMFLOAT2
@@ -134,7 +80,7 @@ inline DirectX::XMFLOAT4X4 FbxAMatrixToFloat4x4(const FbxAMatrix& fbx_value)
 
 namespace cumulonimbus::asset
 {
-	mapping::rename_type::UUID ModelLoader::Convert(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to) const
+	mapping::rename_type::UUID ModelLoader::Convert(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to)
 	{
 		// コピー先のフォルダ作成&コピー
 		std::filesystem::copy(
@@ -142,40 +88,71 @@ namespace cumulonimbus::asset
 			std::filesystem::copy_options::recursive |
 			std::filesystem::copy_options::overwrite_existing);
 
+		std::filesystem::path load_path{};
 		if(std::set<std::filesystem::path>{".fbx",".FBX"}.contains(from.extension()))
-		{
-
+		{// 「.model」形式に変換
+			const std::string model_path = to.string() + "/" + from.filename().string();
+			load_path = BuildModel(asset_manager, model_path);
+		}
+		else
+		{// 拡張子が「.model」形式の場合
+			load_path = to.string() + "/" + from.filename().string();
 		}
 
-		return "";
+		for (const auto& [key, value] : asset_manager.GetAssetSheetManager().GetSheet<Model>().sheet)
+		{
+			if (load_path.compare(value) == 0)
+				return key;
+		}
+
+		mapping::rename_type::UUID id;
+		while (true)
+		{
+			id = utility::GenerateUUID();
+			if (asset_manager.GetAssetSheetManager().GetSheet<Model>().sheet.contains(id))
+				continue;
+			break;
+		}
+
+		// アセットシートの登録
+		asset_manager.GetAssetSheetManager().GetSheet<Model>().sheet.insert(std::make_pair(id, load_path));
+		return id;
 	}
 
 	void ModelLoader::Load(AssetManager& asset_manager, const std::filesystem::path& path)
 	{
-		//const auto id = Convert<Model>(sheet_manager, path, copy_dir);
-		//Load(sheet_manager, id);
+		const auto id = Convert(asset_manager, path, copy_dir);
+		Load(asset_manager, id);
 	}
 
 	void ModelLoader::Load(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to)
 	{
-		//const auto id = Convert<Model>(sheet_manager, from, to);
-		//Load(sheet_manager, id);
+		const auto id = Convert(asset_manager, from, to);
+		Load(asset_manager, id);
 	}
 
 	void ModelLoader::Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id)
 	{
+		// すでにモデルが存在する場合は処理を抜ける
+		if (models.contains(id))
+			return;
 
+		// モデルの作成
+		models.insert(std::make_pair(
+			id,
+			std::make_unique<Model>(asset_manager.GetAssetSheetManager().GetAssetFilename<Model>(id))));
 	}
 
-	bool ModelLoader::Supported(std::filesystem::path extension)
+	bool ModelLoader::Supported(const std::filesystem::path extension)
 	{
-		static const std::set<std::filesystem::path> extentions
+		static const std::set<std::filesystem::path> extensions
 		{
 			".fbx",
 			".FBX"
+			".model"
 		};
 
-		return extentions.contains(extension);
+		return extensions.contains(extension);
 	}
 
 	std::filesystem::path ModelLoader::BuildModel(AssetManager& asset_manager, const std::filesystem::path& path)
@@ -218,7 +195,23 @@ namespace cumulonimbus::asset
 		}
 #endif
 
-		return "";
+		// モデル構築
+		Model model{};
+		FbxNode* fbx_root_node = fbx_scene->GetRootNode();
+		BuildMaterials(asset_manager, model, path.parent_path(), fbx_scene);
+		BuildNodes(model,fbx_root_node, -1);
+		BuildMeshes(model, fbx_root_node);
+		// アニメーション構築
+		BuildAnimations(model, fbx_scene);
+		// モデルの保存
+		std::filesystem::path model_path{ path };
+		model_path.replace_extension();
+		model.Save(model_path);
+
+		// マネージャ解放
+		fbx_manager->Destroy();
+
+		return model_path.string() + file_path_helper::GetModelExtension();
 	}
 
 	void ModelLoader::BuildNodes(Model& model, FbxNode* fbx_node, int parent_node_index)
@@ -522,7 +515,7 @@ namespace cumulonimbus::asset
 
 	void ModelLoader::BuildMaterials(AssetManager& asset_manager, Model& model, const std::filesystem::path& parent_path, FbxScene* fbx_scene)
 	{
-		int fbx_material_count = fbx_scene->GetMaterialCount();
+		const int fbx_material_count = fbx_scene->GetMaterialCount();
 
 		if (fbx_material_count > 0)
 		{
@@ -567,11 +560,11 @@ namespace cumulonimbus::asset
 			if (fbx_texture_count > 0)
 			{
 				FbxFileTexture* fbx_texture = fbx_diffuse_property.GetSrcObject<FbxFileTexture>();
-				const std::filesystem::path texture_path = fbx_texture->GetFileName();
-				const std::string my_texture_path = parent_path.string() + "/" + texture_path.filename().string();
+				const std::string texture_filename = std::filesystem::path{ fbx_texture->GetFileName() }.filename().string();
+				const std::string texture_path = parent_path.string() + "/" + texture_filename;
 				// テクスチャロード
-				asset_manager.GetLoader<TextureLoader>()->Load(asset_manager, my_texture_path, parent_path);
-				const mapping::rename_type::UUID id = asset_manager.GetAssetSheetManager().Search<Texture>(my_texture_path);
+				asset_manager.GetLoader<TextureLoader>()->Load(asset_manager, texture_path, parent_path);
+				const mapping::rename_type::UUID id = asset_manager.GetAssetSheetManager().Search<Texture>(texture_path);
 				material.albedo_id = id;
 				// マテリアルの作成&登録
 				asset_manager.GetLoader<MaterialLoader>()->CreateMaterial(asset_manager, parent_path, material, texture_path.filename().string());
@@ -601,17 +594,17 @@ namespace cumulonimbus::asset
 			animation.sampling_rate = sampling_rate;
 			animation.sampling_time = sampling_time;
 
-			FbxString* fbx_anim_stack_name = fbx_anim_stack_names.GetAt(fbx_animation_index);
-			animation.animation_name = fbx_anim_stack_name->Buffer();
-			FbxAnimStack* fbx_anim_stack = fbx_scene->FindMember<FbxAnimStack>(fbx_anim_stack_name->Buffer());
+			FbxString* fbx_anim_stack_name	= fbx_anim_stack_names.GetAt(fbx_animation_index);
+			animation.animation_name		= fbx_anim_stack_name->Buffer();
+			FbxAnimStack* fbx_anim_stack	= fbx_scene->FindMember<FbxAnimStack>(fbx_anim_stack_name->Buffer());
 
 			// 再生するアニメーションを指定する。
 			fbx_scene->SetCurrentAnimationStack(fbx_anim_stack);
 
 			// アニメーションの再生開始時間と再生終了時間を取得する
-			FbxTakeInfo* fbx_take_info = fbx_scene->GetTakeInfo(fbx_anim_stack_name->Buffer());
-			FbxTime fbx_start_time = fbx_take_info->mLocalTimeSpan.GetStart();
-			FbxTime fbx_end_time = fbx_take_info->mLocalTimeSpan.GetStop();
+			FbxTakeInfo* fbx_take_info	= fbx_scene->GetTakeInfo(fbx_anim_stack_name->Buffer());
+			FbxTime fbx_start_time		= fbx_take_info->mLocalTimeSpan.GetStart();
+			FbxTime fbx_end_time		= fbx_take_info->mLocalTimeSpan.GetStop();
 
 			// 抽出するデータは60フレーム基準でサンプリングする
 			FbxTime fbx_sampling_step;

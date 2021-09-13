@@ -41,6 +41,6 @@ namespace cumulonimbus::asset
 		 */
 		void Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id) override;
 
-		mapping::rename_type::UUID Convert(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to) const override;
+		mapping::rename_type::UUID Convert(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to) override;
 	};
 } // cumulonimbus::asset

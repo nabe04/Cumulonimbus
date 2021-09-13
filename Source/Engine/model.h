@@ -203,8 +203,18 @@ namespace cumulonimbus::asset
 		explicit Model(const std::filesystem::path& path);
 		~Model() = default;
 
+		template<class Archive>
+		void serialize(Archive&& archive);
+
 		[[nodiscard]]
 		ModelData& GetModelData() { return model_data; }
+
+		/**
+		 * @brief : 「.model」形式としての保存(シリアライズ)
+		 * @remark : 「.json」形式でも保存しておく(確認用)
+		 * @param path : 保存したいファイルまでのパス(拡張子を含まない)
+		 */
+		void Save(const std::filesystem::path& path);
 
 	private:
 		ModelData model_data{};

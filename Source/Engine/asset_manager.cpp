@@ -2,6 +2,9 @@
 
 #include "asset_sheet_manager.h"
 #include "texture.h"
+// Loaders
+#include "material_loader.h"
+#include "model_loader.h"
 #include "texture_loader.h"
 
 namespace cumulonimbus::asset
@@ -9,6 +12,8 @@ namespace cumulonimbus::asset
 	AssetManager::AssetManager()
 	{
 		sheet_manager = std::make_unique<AssetSheetManager>();
+		RegisterLoader<MaterialLoader>();
+		RegisterLoader<ModelLoader>();
 		RegisterLoader<TextureLoader>();
 	}
 

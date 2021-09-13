@@ -14,7 +14,7 @@ namespace
 
 namespace cumulonimbus::asset
 {
-	mapping::rename_type::UUID TextureLoader::Convert(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to) const
+	mapping::rename_type::UUID TextureLoader::Convert(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to)
 	{
 		// コピー先のフォルダ作成&コピー
 		std::filesystem::copy(
@@ -24,8 +24,6 @@ namespace cumulonimbus::asset
 
 		const std::string copy_str = to.string() + "/" + from.filename().string();
 		const std::filesystem::path copy_path{ copy_str };
-
-		auto sheet = asset_manager.GetAssetSheetManager().GetSheet<Texture>().sheet;
 
 		for (const auto& [key, value] : asset_manager.GetAssetSheetManager().GetSheet<Texture>().sheet)
 		{

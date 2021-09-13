@@ -56,7 +56,7 @@ namespace cumulonimbus::asset
 		 *					 (例 : ./Data/Assets/Texture/sample.png(実際に保存されるパスとファイル名)
 		 *						  -> ./Data/Assets/Texture(コピー先のフォルダまでのパス))
 		 */
-		virtual mapping::rename_type::UUID Convert(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to) const = 0;
+		virtual mapping::rename_type::UUID Convert(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to) = 0;
 
 		/**
 		 * @brief : 同じフォルダ階層のファイル名を取得し

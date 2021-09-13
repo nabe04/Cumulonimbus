@@ -82,7 +82,7 @@ namespace cumulonimbus::asset
 	}
 
 	mapping::rename_type::UUID MaterialLoader::Convert(AssetManager& asset_manager,
-		const std::filesystem::path& from, const std::filesystem::path& to) const
+		const std::filesystem::path& from, const std::filesystem::path& to)
 	{
 		// コピー先のフォルダ作成&コピー
 		std::filesystem::copy(

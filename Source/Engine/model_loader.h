@@ -30,10 +30,11 @@ namespace cumulonimbus::asset
 
 		/**
 		 * @brief : フォルダのコピーとモデル読み込み
+		 * @remark : 「.fbx」形式の場合選択されたモデルを含むフォルダごとコピーする
 		 * @param from : 選択されたモデルまでのパス(拡張子を含む)
 		 * @param to : コピー先のフォルダまでのパス
 		 */
-		mapping::rename_type::UUID Convert(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to) const override;
+		mapping::rename_type::UUID Convert(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to) override;
 
 		/**
 		 * @brief : オーバーロードされているLoad関数の共通処理記述部
