@@ -549,6 +549,9 @@
     <ClCompile Include="Source\Engine\model_component.cpp">
       <Filter>Source\Engine\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\graphics_statte.cpp">
+      <Filter>Source\Engine\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -1000,6 +1003,9 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\model_component.h">
       <Filter>Header\Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\graphics_state.h">
+      <Filter>Header\Engine\System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

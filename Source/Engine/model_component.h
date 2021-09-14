@@ -10,6 +10,7 @@
 #include "model.h"
 #include "state_machine.h"
 #include "rename_type_mapping.h"
+#include "graphics_state.h"
 
 enum class FbxAnimationState
 {
@@ -54,12 +55,14 @@ namespace cumulonimbus::component
 		explicit ModelComponent() = default; // for cereal
 		~ModelComponent() override = default;
 
+		template<class Archive>
+		void serialize(Archive&& archive);
+
 		void NewFrame(float delta_time) override;
 		void Update(float delta_time) override;
 		void RenderImGui() override;
 
-		template<class Archive>
-		void serialize(Archive&& archive);
+		void Load(ecs::Registry* registry) override;
 
 		// アニメーション
 		[[nodiscard]] bool IsPlayAnimation() const;
@@ -84,26 +87,30 @@ namespace cumulonimbus::component
 		// 現在のキーフレーム
 		[[nodiscard]] int CurrentKeyframe() const { return current_keyframe; }
 
-		void Load(ecs::Registry* registry) override;
+		[[nodiscard]]
+		bool GetIsVisible() const { return is_visible; }
+		void SetIsVisible(const bool result) { is_visible = result; }
 	private:
 		mapping::rename_type::UUID model_id{};
 		std::vector<Node> nodes{};
 
-		int	prev_key_index{0};
-		int	current_keyframe{0};	// 現在のキーフレーム
-		int	prev_animation_index{-1};	// 前のアニメーションのインデックス番号(ブレンドで使用)
-		int	current_animation_index{-1};
+		int	prev_key_index{ 0 };
+		int	current_keyframe{ 0 };	// 現在のキーフレーム
+		int	prev_animation_index{ -1 };	// 前のアニメーションのインデックス番号(ブレンドで使用)
+		int	current_animation_index{ -1 };
 
-		float prev_seconds{.0f}; // アニメーションが切り替わった時点の前のアニメーションのキーフレーム(ブレンドで使用)
-		float changer_timer{.0f};
-		float current_seconds{.0f};
-		float animation_switch_time{.0f};
+		float prev_seconds{ .0f }; // アニメーションが切り替わった時点の前のアニメーションのキーフレーム(ブレンドで使用)
+		float changer_timer{ .0f };
+		float current_seconds{ .0f };
+		float animation_switch_time{ .0f };
 
-		bool end_animation{false};
-		bool loop_animation{false}; // アニメーションのループ再生
+		bool is_visible		{ true };	// 描画するか
+		bool end_animation	{ false };
+		bool loop_animation	{ false };// アニメーションのループ再生
 
 		asset::ModelData::Animation prev_animation{};
 		StateMachine<FbxAnimationState, void, const float>	anim_states{};
+		graphics::GraphicsState graphics_state{};
 
 		void InitializeParameter();
 		// ModelのIDから情報を取得

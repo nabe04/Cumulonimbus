@@ -5,6 +5,9 @@
 #include "model_loader.h"
 #include "transform_component.h"
 
+CEREAL_REGISTER_TYPE(cumulonimbus::component::ModelComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::ModelComponent)
+
 namespace cumulonimbus::component
 {
 	template <class Archive>
@@ -30,12 +33,13 @@ namespace cumulonimbus::component
 			CEREAL_NVP(end_animation),
 
 			CEREAL_NVP(prev_animation),
-			CEREAL_NVP(anim_states)
+			CEREAL_NVP(anim_states),
+			CEREAL_NVP(graphics_state)
 		);
 	}
 
 	ModelComponent::ModelComponent(
-		ecs::Registry* registry, mapping::rename_type::Entity ent,
+		ecs::Registry* registry, const mapping::rename_type::Entity ent,
 		const mapping::rename_type::UUID& model_id)
 	{
 		Initialize(registry, ent, model_id);

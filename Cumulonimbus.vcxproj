@@ -71,6 +71,7 @@
     <ClInclude Include="Source\Engine\geometric_primitive_component.h" />
     <ClInclude Include="Source\Engine\geometric_primitive_resource.h" />
     <ClInclude Include="Source\Engine\graphics_mapping.h" />
+    <ClInclude Include="Source\Engine\graphics_state.h" />
     <ClInclude Include="Source\Engine\hierarchy.h" />
     <ClInclude Include="Source\Engine\high_resolution_timer.h" />
     <ClInclude Include="Source\Engine\imgui_helper.h" />
@@ -213,6 +214,7 @@
     <ClCompile Include="Source\Engine\gbuffer.cpp" />
     <ClCompile Include="Source\Engine\geometric_primitive_component.cpp" />
     <ClCompile Include="Source\Engine\geometric_primitive_resource.cpp" />
+    <ClCompile Include="Source\Engine\graphics_statte.cpp" />
     <ClCompile Include="Source\Engine\hierarchy.cpp" />
     <ClCompile Include="Source\Engine\imgui_manager.cpp" />
     <ClCompile Include="Source\Engine\InputManager.cpp" />
