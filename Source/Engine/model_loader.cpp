@@ -172,6 +172,14 @@ namespace cumulonimbus::asset
 		return extensions.contains(extension);
 	}
 
+	Model& ModelLoader::GetModel(const mapping::rename_type::UUID& model_id)
+	{
+		if (!models.contains(model_id))
+			assert(!"Not found model(ModelLoader::GetModel)");
+
+		return *models.at(model_id).get();
+	}
+
 	std::filesystem::path ModelLoader::SearchTextureFilePath(
 		const std::filesystem::path& parent_path, const std::filesystem::path& filename) const
 	{
@@ -270,7 +278,9 @@ namespace cumulonimbus::asset
 		return model_path.string() + file_path_helper::GetModelExtension();
 	}
 
-	void ModelLoader::BuildNodes(Model& model, FbxNode* fbx_node, int parent_node_index)
+	void ModelLoader::BuildNodes(
+		Model& model, FbxNode* fbx_node,
+		int parent_node_index)
 	{
 		FbxNodeAttribute* fbx_node_attribute = fbx_node->GetNodeAttribute();
 		FbxNodeAttribute::EType fbx_node_attribute_type = FbxNodeAttribute::EType::eUnknown;
@@ -299,7 +309,9 @@ namespace cumulonimbus::asset
 		}
 	}
 
-	void ModelLoader::BuildNode(Model& model, FbxNode* fbx_node, int parent_node_index)
+	void ModelLoader::BuildNode(
+		Model& model, FbxNode* fbx_node,
+		const int parent_node_index)
 	{
 		FbxAMatrix reverse_x;
 		reverse_x.SetIdentity();

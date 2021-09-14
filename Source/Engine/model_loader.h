@@ -28,6 +28,14 @@ namespace cumulonimbus::asset
 			const std::filesystem::path& from,
 			const std::filesystem::path& to) override;
 		bool Supported(std::filesystem::path extension) override;
+
+		/**
+		 * @brief : 登録されたIDを元にModelアセットを返す
+		 * @remark : モデルIDが存在しない場合、例外処理を出す
+		 * @param model_id : モデルシートに登録されているID(UUID)
+		 * @return : models(std::map)にあるモデルクラス
+		 */
+		Model& GetModel(const mapping::rename_type::UUID& model_id);
 	private:
 		std::map<mapping::rename_type::UUID, std::unique_ptr<Model>> models{};
 

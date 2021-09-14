@@ -210,14 +210,15 @@ namespace cumulonimbus::component
 
 		// 前のアニメーションのキーフレームを算出
 		// brief : アニメーションが切り替わる時に使用
-		[[nodiscard]] int CalcPrevKeyframe(int key_index);
+		[[nodiscard]]
+		int CalcPrevKeyframe(int key_index);
 
 		// 行列計算
 		void CalculateLocalTransform();
 		void CalculateWorldTransform(const DirectX::XMFLOAT4X4& world_transform);
 
-		void BlendNextAnimation(float elapsedTime);
-		void UpdateAnimation(float elapsedTime);
+		void BlendNextAnimation(float dt);
+		void UpdateAnimation(float dt);
 	};
 } // cumulonimbus::component
 

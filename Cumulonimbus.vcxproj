@@ -94,6 +94,7 @@
     <ClInclude Include="Source\Engine\mesh_object.h" />
     <ClInclude Include="Source\Engine\mesh_particle.h" />
     <ClInclude Include="Source\Engine\model.h" />
+    <ClInclude Include="Source\Engine\model_component.h" />
     <ClInclude Include="Source\Engine\model_loader.h" />
     <ClInclude Include="Source\Engine\physic_material_component.h" />
     <ClInclude Include="Source\Engine\project_view.h" />
@@ -231,6 +232,7 @@
     <ClCompile Include="Source\Engine\mesh_object.cpp" />
     <ClCompile Include="Source\Engine\mesh_particle.cpp" />
     <ClCompile Include="Source\Engine\model.cpp" />
+    <ClCompile Include="Source\Engine\model_component.cpp" />
     <ClCompile Include="Source\Engine\model_loader.cpp" />
     <ClCompile Include="Source\Engine\physic_material_component.cpp" />
     <ClCompile Include="Source\Engine\project_view.cpp" />

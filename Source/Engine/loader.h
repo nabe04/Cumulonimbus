@@ -66,6 +66,7 @@ namespace cumulonimbus::asset
 		 * @param path : ファイルパス(拡張子を含む)
 		 */
 		template<class T>
+		[[nodiscard]]
 		std::filesystem::path CompareAndReName(const AssetManager& asset_manager, std::filesystem::path path) const
 		{
 			int no = 0;
@@ -97,7 +98,6 @@ namespace cumulonimbus::asset
 
 			return filename;
 		}
-
 	};
 } // cumulonimbus::asset
 
