@@ -1,6 +1,7 @@
 #include "model_loader.h"
 
 #include <set>
+#include <filesystem>
 
 #include "asset_sheet_manager.h"
 #include "cereal_helper.h"
@@ -80,23 +81,32 @@ inline DirectX::XMFLOAT4X4 FbxAMatrixToFloat4x4(const FbxAMatrix& fbx_value)
 
 namespace cumulonimbus::asset
 {
-	mapping::rename_type::UUID ModelLoader::Convert(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to)
+	mapping::rename_type::UUID ModelLoader::Convert(
+		AssetManager& asset_manager,
+		const std::filesystem::path& from,
+		const std::filesystem::path& to)
 	{
-		// コピー先のフォルダ作成&コピー
-		std::filesystem::copy(
-			from.parent_path(), to,
-			std::filesystem::copy_options::recursive |
-			std::filesystem::copy_options::overwrite_existing);
+		const auto filename = std::filesystem::path{ from }.filename().replace_extension().string();
+		std::filesystem::create_directory(to.string() + "/" + filename);
+		const auto to_path = to.string() + "/" + filename;
+		if (!equivalent(from.parent_path(), to_path))
+		{
+			// コピー先のフォルダ作成&コピー
+			std::filesystem::copy(
+				from.parent_path(), to_path,
+				std::filesystem::copy_options::recursive |
+				std::filesystem::copy_options::overwrite_existing);
+		}
 
 		std::filesystem::path load_path{};
 		if(std::set<std::filesystem::path>{".fbx",".FBX"}.contains(from.extension()))
 		{// 「.model」形式に変換
-			const std::string model_path = to.string() + "/" + from.filename().string();
+			const std::string model_path = to.string() + "/" + filename + "/" + from.filename().string();
 			load_path = BuildModel(asset_manager, model_path);
 		}
 		else
 		{// 拡張子が「.model」形式の場合
-			load_path = to.string() + "/" + from.filename().string();
+			load_path = to_path + "/" + from.filename().string();
 		}
 
 		for (const auto& [key, value] : asset_manager.GetAssetSheetManager().GetSheet<Model>().sheet)
@@ -119,19 +129,26 @@ namespace cumulonimbus::asset
 		return id;
 	}
 
-	void ModelLoader::Load(AssetManager& asset_manager, const std::filesystem::path& path)
+	void ModelLoader::Load(
+		AssetManager& asset_manager,
+		const std::filesystem::path& path)
 	{
 		const auto id = Convert(asset_manager, path, copy_dir);
 		Load(asset_manager, id);
 	}
 
-	void ModelLoader::Load(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to)
+	void ModelLoader::Load(
+		AssetManager& asset_manager,
+		const std::filesystem::path& from,
+		const std::filesystem::path& to)
 	{
 		const auto id = Convert(asset_manager, from, to);
 		Load(asset_manager, id);
 	}
 
-	void ModelLoader::Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id)
+	void ModelLoader::Load(
+		AssetManager& asset_manager,
+		const mapping::rename_type::UUID& id)
 	{
 		// すでにモデルが存在する場合は処理を抜ける
 		if (models.contains(id))
@@ -148,14 +165,53 @@ namespace cumulonimbus::asset
 		static const std::set<std::filesystem::path> extensions
 		{
 			".fbx",
-			".FBX"
+			".FBX",
 			".model"
 		};
 
 		return extensions.contains(extension);
 	}
 
-	std::filesystem::path ModelLoader::BuildModel(AssetManager& asset_manager, const std::filesystem::path& path)
+	std::filesystem::path ModelLoader::SearchTextureFilePath(
+		const std::filesystem::path& parent_path, const std::filesystem::path& filename) const
+	{
+		// ファイル拡張子
+		const std::string exe		= filename.extension().string();
+		// ファイル名(拡張子除く)
+		const std::string name_only = std::filesystem::path{ filename }.replace_extension().string();
+		std::error_code ec{};
+
+		std::filesystem::path result{};
+		if(std::filesystem::exists(
+			result = std::filesystem::path{ parent_path.string() + "/" + "Textures" + "/" + filename.string()},
+			ec))
+		{
+			return result;
+		}
+		if (std::filesystem::exists(
+			result = std::filesystem::path{
+						parent_path.string() + "/" +
+						name_only + file_path_helper::GetFbmExtension() + "/" +
+						filename.string() },
+			ec))
+		{
+			return result;
+		}
+		if (std::filesystem::exists(
+			result = std::filesystem::path{
+				parent_path.string() + "/" + filename.string() },
+			ec))
+		{
+			return result;
+		}
+
+		assert(!"Not found file path(ModelLoader::GetTextureFilePath)");
+		return {};
+	}
+
+	std::filesystem::path ModelLoader::BuildModel(
+		AssetManager& asset_manager,
+		const std::filesystem::path& path)
 	{
 		FbxManager* fbx_manager = FbxManager::Create();
 
@@ -513,7 +569,10 @@ namespace cumulonimbus::asset
 		}
 	}
 
-	void ModelLoader::BuildMaterials(AssetManager& asset_manager, Model& model, const std::filesystem::path& parent_path, FbxScene* fbx_scene)
+	void ModelLoader::BuildMaterials(
+		AssetManager& asset_manager,
+		Model& model,
+		const std::filesystem::path& parent_path, FbxScene* fbx_scene)
 	{
 		const int fbx_material_count = fbx_scene->GetMaterialCount();
 
@@ -533,7 +592,11 @@ namespace cumulonimbus::asset
 		}
 	}
 
-	void ModelLoader::BuildMaterial(AssetManager& asset_manager, Model& model, const std::filesystem::path& parent_path, FbxSurfaceMaterial* fbx_surface_material)
+	void ModelLoader::BuildMaterial(
+		AssetManager& asset_manager,
+		Model& model,
+		const std::filesystem::path& parent_path,
+		FbxSurfaceMaterial* fbx_surface_material)
 	{
 		bool ret = false;
 		MaterialData material{};
@@ -553,6 +616,7 @@ namespace cumulonimbus::asset
 				1.0f };
 		}
 
+		std::filesystem::path texture_path{""};
 		// ディフューズテクスチャ
 		if (fbx_diffuse_property.IsValid())
 		{
@@ -561,15 +625,18 @@ namespace cumulonimbus::asset
 			{
 				FbxFileTexture* fbx_texture = fbx_diffuse_property.GetSrcObject<FbxFileTexture>();
 				const std::string texture_filename = std::filesystem::path{ fbx_texture->GetFileName() }.filename().string();
-				const std::string texture_path = parent_path.string() + "/" + texture_filename;
+				texture_path = SearchTextureFilePath(parent_path, texture_filename);
 				// テクスチャロード
-				asset_manager.GetLoader<TextureLoader>()->Load(asset_manager, texture_path, parent_path);
+				asset_manager.GetLoader<TextureLoader>()->CreateTexture(asset_manager, texture_path);
 				const mapping::rename_type::UUID id = asset_manager.GetAssetSheetManager().Search<Texture>(texture_path);
 				material.albedo_id = id;
-				// マテリアルの作成&登録
-				asset_manager.GetLoader<MaterialLoader>()->CreateMaterial(asset_manager, parent_path, material, texture_path.filename().string());
 			}
 		}
+
+		// マテリアルの作成&登録
+		asset_manager.GetLoader<MaterialLoader>()->CreateMaterial(
+			asset_manager, parent_path,
+			material, std::filesystem::path{ texture_path }.filename().replace_extension().string());
 	}
 
 	void ModelLoader::BuildAnimations(Model& model, FbxScene* fbx_scene)
@@ -690,7 +757,10 @@ namespace cumulonimbus::asset
 		return -1;
 	}
 
-	int ModelLoader::FindMaterialIndex(Model& model, FbxScene* fbx_scene, const FbxSurfaceMaterial* fbx_surface_material)
+	int ModelLoader::FindMaterialIndex(
+		Model& model,
+		FbxScene* fbx_scene,
+		const FbxSurfaceMaterial* fbx_surface_material)
 	{
 		const int fbx_material_count = fbx_scene->GetMaterialCount();
 

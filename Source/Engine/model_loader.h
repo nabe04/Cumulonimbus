@@ -23,7 +23,10 @@ namespace cumulonimbus::asset
 		 * @param from: ロードされたモデルのファイルパス
 		 * @param to : コピー先のファイルパス
 		 */
-		void Load(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to) override;
+		void Load(
+			AssetManager& asset_manager,
+			const std::filesystem::path& from,
+			const std::filesystem::path& to) override;
 		bool Supported(std::filesystem::path extension) override;
 	private:
 		std::map<mapping::rename_type::UUID, std::unique_ptr<Model>> models{};
@@ -34,7 +37,10 @@ namespace cumulonimbus::asset
 		 * @param from : 選択されたモデルまでのパス(拡張子を含む)
 		 * @param to : コピー先のフォルダまでのパス
 		 */
-		mapping::rename_type::UUID Convert(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to) override;
+		mapping::rename_type::UUID Convert(
+			AssetManager& asset_manager,
+			const std::filesystem::path& from,
+			const std::filesystem::path& to) override;
 
 		/**
 		 * @brief : オーバーロードされているLoad関数の共通処理記述部
@@ -42,10 +48,26 @@ namespace cumulonimbus::asset
 		void Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id) override;
 
 		/**
+		 * @brief : フォルダ内にテクスチャパスの取得
+		 * @remark : フォルダ内にテクスチャが含まれていない場合例外処理が走る
+		 * @param parent_path : 「.model」ファイルの親階層
+		 * @param filename : テクスチャ名(拡張子含む)
+		 * @return : テクスチャ(拡張子含む)までのパス
+		 */
+		[[nodiscard]]
+		std::filesystem::path SearchTextureFilePath(
+			const std::filesystem::path& parent_path,
+			const std::filesystem::path& filename) const;
+
+		/***************************
+		 *	モデルの読み込み関数群
+		 ***************************/
+		/**
 		 * @brief : 「.fbx」ファイルを「.model」形式に変換
 		 * @return : 「.model」ファイルまでの相対パス
 		 */
-		std::filesystem::path BuildModel(AssetManager& asset_manager, const std::filesystem::path& path);
+		std::filesystem::path BuildModel(
+			AssetManager& asset_manager, const std::filesystem::path& path);
 
 		/**
 		 * @brief : Node Dataの作成
@@ -62,8 +84,15 @@ namespace cumulonimbus::asset
 		/**
 		 * Material Dataの作成
 		 */
-		void BuildMaterials(AssetManager& asset_manager, Model& model, const std::filesystem::path& parent_path, FbxScene* fbx_scene);
-		void BuildMaterial(AssetManager& asset_manager, Model& model, const std::filesystem::path& parent_path, FbxSurfaceMaterial* fbx_surface_material);
+		void BuildMaterials(
+			AssetManager& asset_manager,
+			Model& model,
+			const std::filesystem::path& parent_path, FbxScene* fbx_scene);
+		void BuildMaterial(
+			AssetManager& asset_manager,
+			Model& model,
+			const std::filesystem::path& parent_path,
+			FbxSurfaceMaterial* fbx_surface_material);
 
 		/**
 		 * @brief : Animation Dataの作成
@@ -74,6 +103,8 @@ namespace cumulonimbus::asset
 		 * @brief : インデックスの検索
 		 */
 		int FindNodeIndex(Model& model, const char* name);
-		int FindMaterialIndex(Model& model, FbxScene* fbx_scene, const FbxSurfaceMaterial* fbx_surface_material);
+		int FindMaterialIndex(
+			Model& model, FbxScene* fbx_scene,
+			const FbxSurfaceMaterial* fbx_surface_material);
 	};
 } // cumulonimbus::asset

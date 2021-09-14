@@ -33,6 +33,16 @@ namespace cumulonimbus::asset
 		 * @return  : false -> サポートしていない
 		 */
 		bool Supported(std::filesystem::path extension) override;
+
+		/**
+		 * @brief : ファイルパスからテクスチャの作成
+		 * @remark : ※Load関数との違い
+		 * @remark : フォルダのコピーを行わずpathに指定された
+		 *			 ファイルパスを元にテクスチャを作成する
+		 * @param : asset_manager : AssetManagerクラスの参照
+		 * @param path : テクスチャまでのファイルパス(※拡張子含む)
+		 */
+		void CreateTexture(AssetManager& asset_manager, const std::filesystem::path& path);
 	private:
 		std::map<mapping::rename_type::UUID, std::unique_ptr<Texture>> textures{};
 

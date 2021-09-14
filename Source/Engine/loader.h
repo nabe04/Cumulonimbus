@@ -72,11 +72,16 @@ namespace cumulonimbus::asset
 			bool is_loop = true;
 			const std::string exe = path.extension().string();
 			std::string filename = path.replace_extension().string();
+			if(asset_manager.GetAssetSheetManager().GetSheet<T>().sheet.size() == 0)
+			{
+				return filename;
+			}
+
 			while(is_loop)
 			{
 				for(const auto&[key,value] : asset_manager.GetAssetSheetManager().GetSheet<T>().sheet)
 				{
-					if(value.compare(filename) != 0)
+					if (std::filesystem::path{ value }.parent_path().replace_extension().compare(filename) != 0)
 					{
 						is_loop = false;
 					}

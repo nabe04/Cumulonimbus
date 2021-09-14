@@ -37,7 +37,7 @@ namespace cumulonimbus::asset
 	void Material::Save(const std::filesystem::path& path)
 	{
 		if (path.extension().compare(file_path_helper::GetMaterialExtension()) != 0)
-			assert(!"The file extension is not 「.model」");
+			assert(!"The file extension is not 「.mat」");
 		std::filesystem::create_directory(path.parent_path());
 		{
 			std::ofstream ofs(path, std::ios_base::binary);
@@ -45,7 +45,9 @@ namespace cumulonimbus::asset
 			output_archive(*this);
 		}
 		{
-			std::ofstream ofs(path);
+			std::filesystem::path json_path = path;
+
+			std::ofstream ofs(json_path.replace_extension().string() + file_path_helper::GetJsonExtension());
 			cereal::JSONOutputArchive output_archive(ofs);
 			output_archive(*this);
 		}

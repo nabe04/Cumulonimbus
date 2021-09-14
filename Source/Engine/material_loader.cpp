@@ -27,7 +27,11 @@ namespace cumulonimbus::asset
 
 	bool MaterialLoader::Supported(std::filesystem::path extension)
 	{
-		return true;
+		static const std::set<std::filesystem::path> extensions
+		{
+			".mat"
+		};
+		return extensions.contains(extension);
 	}
 
 	void MaterialLoader::CreateMaterial(
@@ -37,11 +41,12 @@ namespace cumulonimbus::asset
 		// マテリアル名が無名の場合「New Material」に名前を設定
 		if(material_name == "")
 		{
-			const std::string path = parent_path.string() + "/New Name" + file_path_helper::GetMaterialExtension();
+			const std::string path = parent_path.string() + "/Materials" + "/New Name" + file_path_helper::GetMaterialExtension();
 			material_name = CompareAndReName<Material>(asset_manager, path).filename().replace_extension().string();
 		}
 		const std::string save_path{
 			parent_path.string() + "/"
+			+ "Materials" + "/"
 			+ material_name + file_path_helper::GetMaterialExtension() };
 
 		// 作成したマテリアルを「.mat」形式で保存

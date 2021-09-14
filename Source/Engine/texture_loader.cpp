@@ -83,4 +83,37 @@ namespace cumulonimbus::asset
 		};
 		return extensions.contains(extension);
 	}
+
+	void TextureLoader::CreateTexture(AssetManager& asset_manager, const std::filesystem::path& path)
+	{
+		for (const auto& [key, value] : asset_manager.GetAssetSheetManager().GetSheet<Texture>().sheet)
+		{
+			if (path.compare(value) == 0)
+				return;
+		}
+
+		mapping::rename_type::UUID id;
+		while (true)
+		{
+			id = utility::GenerateUUID();
+			if (asset_manager.GetAssetSheetManager().GetSheet<Texture>().sheet.contains(id))
+				continue;
+			break;
+		}
+
+		// アセットシートの登録
+		asset_manager.GetAssetSheetManager().GetSheet<Texture>().sheet.insert(std::make_pair(id, path));
+
+		// すでにテクスチャが存在する場合は処理を抜ける
+		if (textures.contains(id))
+			return;
+
+		// テクスチャの作成
+		textures.insert(std::make_pair(
+			id,
+			std::make_unique<Texture>(locator::Locator::GetDx11Device()->device.Get(),
+				asset_manager.GetAssetSheetManager().GetAssetFilename<Texture>(id).c_str()))
+		);
+	}
+
 } // cumulonimbus::asset

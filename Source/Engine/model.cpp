@@ -18,30 +18,36 @@ namespace cumulonimbus::asset
 
 	Model::Model(const std::filesystem::path& path)
 	{
-		// pathの拡張子が「.fbx」または「.FBX」の場合
-		if (std::set<std::filesystem::path>{".fbx", ".FBX"}.contains(path.extension()))
-		{
-			Convert(path);
-		}
-		//if(path.extension() == ".fbx")
+		Load(path);
+
+		int a;
+		a = 0;
 	}
 
 	void Model::Save(const std::filesystem::path& path)
 	{
 		{
-			std::ofstream ofs(path.string() + file_path_helper::GetModelExtension());
+			std::ofstream ofs(path.string() + file_path_helper::GetModelExtension(), std::ios_base::binary);
 			cereal::BinaryOutputArchive output_archive(ofs);
 			output_archive(*this);
 		}
-		{
-			std::ofstream ofs(path.string() + file_path_helper::GetJsonExtension());
-			cereal::JSONOutputArchive output_archive(ofs);
-			output_archive(*this);
-		}
 	}
 
-	void Model::Convert(const std::filesystem::path& path)
+	void Model::Load(const std::filesystem::path& path)
 	{
+		// pathの拡張子が「.model」の場合
+		if (!std::set<std::filesystem::path>{".model"}.contains(path.extension()))
+			assert(!"The extension is different(Model::Model)");
 
+		std::ifstream ifs(path, std::ios_base::binary);
+		if (!ifs)
+			assert(!"Not open file");
+		cereal::BinaryInputArchive input_archive(ifs);
+		input_archive(*this);
+
+		auto m = GetModelData();
+		int a;
+		a = 0;
 	}
+
 } // cumulonimbus::asset

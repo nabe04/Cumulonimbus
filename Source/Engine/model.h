@@ -211,7 +211,6 @@ namespace cumulonimbus::asset
 
 		/**
 		 * @brief : 「.model」形式としての保存(シリアライズ)
-		 * @remark : 「.json」形式でも保存しておく(確認用)
 		 * @param path : 保存したいファイルまでのパス(拡張子を含まない)
 		 */
 		void Save(const std::filesystem::path& path);
@@ -219,9 +218,6 @@ namespace cumulonimbus::asset
 	private:
 		ModelData model_data{};
 
-		/**
-		 * @brief : 「.fbx」ファイルを「.model」形式に変換
-		 */
-		void Convert(const std::filesystem::path& path);
+		void Load(const std::filesystem::path& path);
 	};
 } // cumulonimbus::asset

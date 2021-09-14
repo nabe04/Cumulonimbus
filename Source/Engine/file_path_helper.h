@@ -18,6 +18,13 @@ namespace cumulonimbus::file_path_helper
 	std::string GetJsonExtension();
 
 	/**
+	 * @brief: : 「.fbm」を返す
+	 * @return : .fbx
+	 */
+	[[nodiscard]]
+	std::string GetFbmExtension();
+
+	/**
 	 * @brief  : 「.scene」を返す
 	 * @return : .scene
 	 */
