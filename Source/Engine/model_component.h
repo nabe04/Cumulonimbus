@@ -74,10 +74,20 @@ namespace cumulonimbus::component
 		 */
 		void SwitchAnimation(int animation_index, bool loop = false, float switch_time = 0.1f);
 
-		[[nodiscard]] const DirectX::SimpleMath::Matrix& GetNodeMatrix(const char* node_name);
-		[[nodiscard]] const DirectX::SimpleMath::Matrix& GetNodeParentMatrix(const char* node_name);
-		[[nodiscard]] const std::vector<Node>& GetNodes()		const { return nodes; }
-		[[nodiscard]] std::vector<Node>& GetNodes() { return nodes; }
+		[[nodiscard]]
+		const DirectX::SimpleMath::Matrix& GetNodeMatrix(const char* node_name);
+		[[nodiscard]]
+		const DirectX::SimpleMath::Matrix& GetNodeParentMatrix(const char* node_name);
+		[[nodiscard]]
+		const std::vector<Node>& GetNodes()	const { return nodes; }
+		[[nodiscard]]
+		std::vector<Node>& GetNodes() { return nodes; }
+		/**
+		 * @brief : アセットの持つマテリアルを取得
+		 * @param material_index : Subsetのもつmaterial_indexを指定
+		 */
+		[[nodiscard]]
+		const mapping::rename_type::UUID& GetMaterialID(u_int material_index) const;
 		// Resource部を現IDが持つモデルの参照を返すようにする
 		//[[nodiscard]] const FbxModelResource* GetResource()	const { return resource.get(); }
 		//[[nodiscard]] Model* GetResource() { return resource.get(); }
@@ -95,6 +105,7 @@ namespace cumulonimbus::component
 		void SetIsVisible(const bool result) { is_visible = result; }
 	private:
 		mapping::rename_type::UUID model_id{};
+		std::vector<mapping::rename_type::UUID> material_ids{};	// マテリアルコピー用
 		std::vector<Node> nodes{};
 
 		int	prev_key_index{ 0 };

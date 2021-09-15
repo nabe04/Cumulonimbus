@@ -6,6 +6,7 @@
 #include <WICTextureLoader.h>
 
 #include "string_helper.h"
+#include "locator.h"
 
 namespace cumulonimbus::asset
 {
@@ -47,6 +48,23 @@ namespace cumulonimbus::asset
 		height = static_cast<u_int>(metadata.height);
 		file_path = tex_filename;
 		filename = name;
+	}
+
+	void Texture::BindTexture(
+		const mapping::graphics::ShaderStage shader_stage,
+		const u_int tex_slot)
+	{
+		// shader_resource_viewのバインド
+		using namespace mapping::graphics;
+		locator::Locator::GetDx11Device()->BindShaderResource(shader_stage, texture_view.GetAddressOf(), tex_slot);
+	}
+	void Texture::UnbindTexture(
+		const mapping::graphics::ShaderStage shader_stage,
+		const u_int tex_slot)
+	{
+		// shader_resource_viewのアンバインド
+		using namespace mapping::graphics;
+		locator::Locator::GetDx11Device()->UnbindShaderResource(shader_stage, tex_slot);
 	}
 
 } // cumulonimbus::asset

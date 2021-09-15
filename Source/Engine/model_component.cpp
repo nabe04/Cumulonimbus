@@ -94,6 +94,13 @@ namespace cumulonimbus::component
 		anim_states.SetState(AnimationState::Switch);
 	}
 
+	const mapping::rename_type::UUID& ModelComponent::GetMaterialID(const u_int material_index)
+	{
+		if (material_ids.size() <= material_index)
+			assert(!"You are trying to access more than the number of elements(ModelComponent::GetMaterialID)");
+		return material_ids.at(material_index);
+	}
+
 	const DirectX::SimpleMath::Matrix& ModelComponent::GetNodeMatrix(const char* node_name)
 	{
 		for (const auto& node : nodes)
@@ -177,6 +184,10 @@ namespace cumulonimbus::component
 			dst.rotate = src.rotate;
 			dst.translate = src.translate;
 		}
+
+		// マテリアルIDのコピー
+		const auto& mat_vec = model.GetModelData().GetMaterialsID();
+		std::copy(mat_vec.begin(), mat_vec.end(), material_ids);
 
 		anim_states.AddState(AnimationState::Switch, [ent, registry](const float dt) { registry->GetComponent<ModelComponent>(ent).BlendNextAnimation(dt); });
 		anim_states.AddState(AnimationState::Update, [ent, registry](const float dt) { registry->GetComponent<ModelComponent>(ent).UpdateAnimation(dt); });

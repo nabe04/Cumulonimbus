@@ -6,6 +6,7 @@
 #include <filesystem>
 
 #include "rename_type_mapping.h"
+#include "graphics_mapping.h"
 
 namespace cumulonimbus::asset
 {
@@ -46,6 +47,15 @@ namespace cumulonimbus::asset
 		 * @brief : 「.mat」ファイルのロード(デシリアライズ)
 		 */
 		void Load(const std::filesystem::path& path);
+
+		/**
+		 * マテリアルの持つテクスチャ、パラメータをシェーダーにバインド
+		 */
+		void BindMaterial(mapping::graphics::ShaderStage shader_stage) const;
+		/**
+		 * マテリアルの持つテクスチャ、パラメータのアンバインド
+		 */
+		void UnbindMaterial(mapping::graphics::ShaderStage shader_stage) const;
 
 		/**
 		 * @return : モデル本来の色の取得

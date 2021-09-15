@@ -124,4 +124,12 @@ namespace cumulonimbus::asset
 		asset_manager.Save();
 	}
 
+	Texture& TextureLoader::GetTexture(const mapping::rename_type::UUID& id)
+	{
+		// Todo : idが存在しない場合ダミーテクスチャを返すようにする
+		if (!textures.contains(id))
+			assert(!"Not found texture id(TextureLoader::GetTexture)");
+
+		return *textures.at(id).get();
+	}
 } // cumulonimbus::asset

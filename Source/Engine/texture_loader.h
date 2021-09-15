@@ -51,6 +51,13 @@ namespace cumulonimbus::asset
 		 * @param path : テクスチャまでのファイルパス(※拡張子含む)
 		 */
 		void CreateTexture(AssetManager& asset_manager, const std::filesystem::path& path);
+
+		/**
+		 * @brief : 取得したいテクスチャのID(UUID)を元にテクスチャを取得
+		 * @param id : 取得したいテクスチャのID(UUID)
+		 * @return : 取得したテクスチャの参照
+		 */
+		Texture& GetTexture(const mapping::rename_type::UUID& id);
 	private:
 		std::map<mapping::rename_type::UUID, std::unique_ptr<Texture>> textures{};
 

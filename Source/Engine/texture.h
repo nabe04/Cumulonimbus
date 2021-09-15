@@ -11,6 +11,8 @@
 #include <DirectXTex.h>
 #include <cereal/cereal.hpp>
 
+#include "graphics_mapping.h"
+
 namespace cumulonimbus::asset
 {
 	class Texture final
@@ -19,6 +21,18 @@ namespace cumulonimbus::asset
 		explicit Texture() = default; // for cereal
 		explicit Texture(ID3D11Device* device, const char* tex_filename);
 
+		/**
+		 * @brief : テクスチャのバインド(ShaderResourceViewのセット)
+		 * @param shader_stage : セットする先のシェーダー
+		 * @param tex_slot : テクスチャースロット番号
+		 */
+		void BindTexture(mapping::graphics::ShaderStage shader_stage, u_int tex_slot);
+		/**
+		 * @brief : テクスチャのアンバインド
+		 * @param shader_stage : セットする先のシェーダー
+		 * @param tex_slot : テクスチャースロット番号
+		 */
+		void UnbindTexture(mapping::graphics::ShaderStage shader_stage, u_int tex_slot);
 	private:
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texture_view{};
 		std::string file_path{};	// テクスチャまでのファイルパス(相対参照)

@@ -5,6 +5,9 @@
 
 #include "cereal_helper.h"
 #include "file_path_helper.h"
+#include "texture.h"
+#include "texture_loader.h"
+#include "locator.h"
 
 namespace cumulonimbus::asset
 {
@@ -60,6 +63,24 @@ namespace cumulonimbus::asset
 			assert(!"Not open file(Material::Load)");
 		cereal::BinaryInputArchive input_archive(ifs);
 		input_archive(*this);
+	}
+
+	void Material::BindMaterial(const mapping::graphics::ShaderStage shader_stage) const
+	{
+		TextureLoader* loader = locator::Locator::GetAssetManager()->GetLoader<TextureLoader>();
+		// Albedoテクスチャのバインド
+		loader->GetTexture(material_data.albedo_id).BindTexture(shader_stage, TexSlot_BaseColorMap);
+		// Normal マップのバインド
+		loader->GetTexture(material_data.normal_id).BindTexture(shader_stage, TexSlot_NormalMap);
+	}
+
+	void Material::UnbindMaterial(const mapping::graphics::ShaderStage shader_stage) const
+	{
+		TextureLoader* loader = locator::Locator::GetAssetManager()->GetLoader<TextureLoader>();
+		// Albedoテクスチャのアンバインド
+		loader->GetTexture(material_data.albedo_id).UnbindTexture(shader_stage, TexSlot_BaseColorMap);
+		// Normal マップのアンバインド
+		loader->GetTexture(material_data.normal_id).UnbindTexture(shader_stage, TexSlot_NormalMap);
 	}
 
 

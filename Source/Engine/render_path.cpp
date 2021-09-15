@@ -9,6 +9,7 @@
 #include "texture_resource_mapping.h"
 #include "cum_imgui_helper.h"
 #include "model_loader.h"
+#include "material_loader.h"
 // Components
 #include "anim_sprite.h"
 #include "camera_component.h"
@@ -676,6 +677,10 @@ namespace cumulonimbus::renderer
 
 			for (const asset::ModelData::Subset& subset : mesh.subsets)
 			{
+				const auto material_id = model_comp->GetMaterialID(subset.material_index);
+				// マテリアルのバインド
+				locator::Locator::GetAssetManager()->GetLoader<asset::MaterialLoader>()->GetMaterial(material_id).BindMaterial(mapping::graphics::ShaderStage::PS);
+
 				// ここから
 				//MaterialCB cb_material;
 				//cb_material.material.base_color = subset.material != nullptr ? subset.material->color : XMFLOAT4{ 0.8f, 0.8f, 0.8f, 1.0f };
@@ -713,7 +718,10 @@ namespace cumulonimbus::renderer
 				//}
 				immediate_context->DrawIndexed(subset.index_count, subset.start_index, 0);
 
-				registry->GetComponent<component::MaterialComponent>(entity).UnbindCBuffer();
+				// マテリアルのアンバインド
+				locator::Locator::GetAssetManager()->GetLoader<asset::MaterialLoader>()->GetMaterial(material_id).UnbindMaterial(mapping::graphics::ShaderStage::PS);
+
+				//registry->GetComponent<component::MaterialComponent>(entity).UnbindCBuffer();
 
 				//if (is_use_gbuffer)
 				//{

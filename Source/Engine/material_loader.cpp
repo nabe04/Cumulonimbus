@@ -123,4 +123,12 @@ namespace cumulonimbus::asset
 		asset_manager.GetAssetSheetManager().GetSheet<Material>().sheet.insert(std::make_pair(id, copy_path.string()));
 		return id;
 	}
+
+	Material& MaterialLoader::GetMaterial(const mapping::rename_type::UUID& id)
+	{
+		// Todo : ダミーマテリアルを返すようにする
+		if (!materials.contains(id))
+			assert(!"Not found material id(MaterialLoader::GetMaterial)");
+		return *materials.at(id).get();
+	}
 } // cumulonimbus::asset

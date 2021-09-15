@@ -48,6 +48,13 @@ namespace cumulonimbus::asset
 		void CreateMaterial(
 			AssetManager& asset_manager, const std::filesystem::path& parent_path,
 			const MaterialData& material_data, std::string material_name);
+
+		/**
+		 * @brief : 取得したいマテリアルのID(UUID)を元にマテリアルを取得
+		 * @param id : 取得したいマテリアルのID(UUID)
+		 * @return : 取得したマテリアルの参照
+		 */
+		Material& GetMaterial(const mapping::rename_type::UUID& id);
 	private:
 		std::map<mapping::rename_type::UUID, std::unique_ptr<Material>> materials{};
 
