@@ -22,6 +22,12 @@ namespace cumulonimbus::asset
 		 * @param to : コピー先のファイルパス
 		 */
 		void Load(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to) override;
+		/**
+		 * @brief : オーバーロードされているLoad関数の共通処理記述部
+		 */
+		void Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id) override;
+
+		//void LoadMaterials();
 
 		/**
 		 * @brief : 指定された拡張子はロード可能か
@@ -39,15 +45,11 @@ namespace cumulonimbus::asset
 		 * @param material_data : Material構造体のパラメータ
 		 * @param material_name : マテリアル名(※拡張子不要)
 		 */
-		void CreateMaterial(AssetManager& asset_manager, const std::filesystem::path& parent_path,
-							const MaterialData& material_data, std::string material_name);
+		void CreateMaterial(
+			AssetManager& asset_manager, const std::filesystem::path& parent_path,
+			const MaterialData& material_data, std::string material_name);
 	private:
 		std::map<mapping::rename_type::UUID, std::unique_ptr<Material>> materials{};
-
-		/**
-		 * @brief : オーバーロードされているLoad関数の共通処理記述部
-		 */
-		void Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id) override;
 
 		mapping::rename_type::UUID Convert(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to) override;
 	};

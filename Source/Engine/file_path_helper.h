@@ -32,6 +32,13 @@ namespace cumulonimbus::file_path_helper
 	std::string GetSceneExtension();
 
 	/**
+	 * @brief : 「.sheet」を返す
+	 * @return : .sheet
+	 */
+	[[nodiscard]]
+	std::string GetSheetExtension();
+
+	/**
 	 * @brief : 「.model」を返す
 	 * @return : .model
 	 */

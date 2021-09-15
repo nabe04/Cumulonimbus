@@ -12,6 +12,7 @@ namespace cumulonimbus::asset
 	{
 	public:
 		~TextureLoader() override = default;
+
 		/**
 		 * @brief : アセットのロード
 		 * @param : asset_manager : AssetManagerクラスの参照
@@ -25,6 +26,13 @@ namespace cumulonimbus::asset
 		 * @param to : コピー先のファイルパス
 		 */
 		void Load(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to) override;
+
+		/**
+		 * @brief : オーバーロードされているLoad関数の共通処理記述部
+		 * @remark : idに登録されているアセットの作成のみを行う
+		 *			 ※フォルダのコピー、作成などは行わない
+		 */
+		void Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id) override;
 
 		/**
 		 * @brief : 指定された拡張子はロード可能か
@@ -45,11 +53,6 @@ namespace cumulonimbus::asset
 		void CreateTexture(AssetManager& asset_manager, const std::filesystem::path& path);
 	private:
 		std::map<mapping::rename_type::UUID, std::unique_ptr<Texture>> textures{};
-
-		/**
-		 * @brief : オーバーロードされているLoad関数の共通処理記述部
-		 */
-		void Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id) override;
 
 		mapping::rename_type::UUID Convert(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to) override;
 	};

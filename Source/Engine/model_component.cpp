@@ -1,6 +1,7 @@
 #include "model_component.h"
 
 #include "ecs.h"
+#include "fbx_model_component.h"
 #include "locator.h"
 #include "model_loader.h"
 #include "transform_component.h"
@@ -84,13 +85,13 @@ namespace cumulonimbus::component
 		current_seconds			= 0.0f;
 		animation_switch_time	= switch_time;
 
-		if (anim_states.GetState() == FbxAnimationState::Blending ||
-			anim_states.GetState() == FbxAnimationState::Switch)
+		if (anim_states.GetState() == AnimationState::Blending ||
+			anim_states.GetState() == AnimationState::Switch)
 		{
 			prev_key_index = 0;
 		}
 
-		anim_states.SetState(FbxAnimationState::Switch);
+		anim_states.SetState(AnimationState::Switch);
 	}
 
 	const DirectX::SimpleMath::Matrix& ModelComponent::GetNodeMatrix(const char* node_name)
@@ -177,8 +178,8 @@ namespace cumulonimbus::component
 			dst.translate = src.translate;
 		}
 
-		anim_states.AddState(FbxAnimationState::Switch, [ent, registry](const float dt) { registry->GetComponent<ModelComponent>(ent).BlendNextAnimation(dt); });
-		anim_states.AddState(FbxAnimationState::Update, [ent, registry](const float dt) { registry->GetComponent<ModelComponent>(ent).UpdateAnimation(dt); });
+		anim_states.AddState(AnimationState::Switch, [ent, registry](const float dt) { registry->GetComponent<ModelComponent>(ent).BlendNextAnimation(dt); });
+		anim_states.AddState(AnimationState::Update, [ent, registry](const float dt) { registry->GetComponent<ModelComponent>(ent).UpdateAnimation(dt); });
 
 		// アニメーションの初期値をセット
 		SwitchAnimation(0, false, 0.0f);
@@ -248,7 +249,7 @@ namespace cumulonimbus::component
 
 		if (prev_animation_index < 0)
 		{
-			anim_states.SetState(FbxAnimationState::Update);
+			anim_states.SetState(AnimationState::Update);
 			return;
 		}
 
@@ -297,7 +298,7 @@ namespace cumulonimbus::component
 		if (animation_switch_time <= changer_timer)
 		{
 			changer_timer = 0;
-			anim_states.SetState(FbxAnimationState::Update);
+			anim_states.SetState(AnimationState::Update);
 		}
 	}
 

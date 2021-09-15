@@ -16,15 +16,21 @@ namespace cumulonimbus::asset
 {
 	struct AssetSheet
 	{
+		AssetSheet() = default;
 		/**
 		 * @brief : アセットのファイルパスシート
 		 * @remark key : アセットID
 		 * @remark value : アセットまでのファイルパス
 		 */
-		std::map<mapping::rename_type::UUID, std::filesystem::path> sheet{};
+		std::map<mapping::rename_type::UUID, std::string> sheet{};
 
 		template<class Archive>
-		void serialize(Archive&& archive);
+		void serialize(Archive&& archive)
+		{
+			archive(
+				CEREAL_NVP(sheet)
+			);
+		}
 	};
 
 	class AssetSheetManager final
@@ -34,7 +40,12 @@ namespace cumulonimbus::asset
 		~AssetSheetManager() = default;
 
 		template<class Archive>
-		void serialize(Archive&& archive);
+		void serialize(Archive&& archive)
+		{
+			archive(
+				CEREAL_NVP(sheets)
+			);
+		}
 
 		/**
 		 * @brief  : 任意のクラスのアセットシートの取得
@@ -49,6 +60,12 @@ namespace cumulonimbus::asset
 				assert(!"Not registered sheet(AssetSheet::GetSheet)");
 
 			return sheets.at(hash);
+		}
+
+		[[nodiscard]]
+		std::map<mapping::rename_type::Hash, AssetSheet> & GetSheets()
+		{
+			return sheets;
 		}
 
 		/**
@@ -67,7 +84,7 @@ namespace cumulonimbus::asset
 			if (!sheets.contains(hash))
 				assert(!"Not registered sheet(AssetSheet::GetAssetFilename)");
 
-			return sheets.at(hash).sheet.at(id).string();
+			return sheets.at(hash).sheet.at(id);
 		}
 
 		/**
@@ -94,12 +111,16 @@ namespace cumulonimbus::asset
 	private:
 		/**
 		 * @brief : (管理させたい)型ごとのシート
-		 * @details key    : 型のハッシュ値
-		 * @details	value : AssetSheet構造体
+		 * @remark key : 登録するアセットクラス(Texture,Modelなど)のハッシュ値
+		 * @remark value : AssetSheet構造体
 		 */
 		std::map<mapping::rename_type::Hash, AssetSheet> sheets{};
 
-		template<typename  T>
+		/**
+		 * @breif : sheetsの登録
+		 * @remark : T : 登録するアセットクラス(Texture,Modelなど)
+		 */
+		template<class T>
 		void Register();
 	};
 } // cumulonimbus::asset

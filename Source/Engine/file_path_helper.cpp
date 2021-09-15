@@ -23,6 +23,11 @@ namespace cumulonimbus::file_path_helper
 		return { ".scene" };
 	}
 
+	std::string GetSheetExtension()
+	{
+		return { ".sheet" };
+	}
+
 	std::string GetModelExtension()
 	{
 		return { ".model" };

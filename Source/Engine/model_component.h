@@ -12,7 +12,7 @@
 #include "rename_type_mapping.h"
 #include "graphics_state.h"
 
-enum class FbxAnimationState
+enum class AnimationState
 {
 	Switch,
 	Blending,
@@ -88,7 +88,10 @@ namespace cumulonimbus::component
 		[[nodiscard]] int CurrentKeyframe() const { return current_keyframe; }
 
 		[[nodiscard]]
+		const mapping::rename_type::UUID& GetModelID() const { return model_id; }
+		[[nodiscard]]
 		bool GetIsVisible() const { return is_visible; }
+
 		void SetIsVisible(const bool result) { is_visible = result; }
 	private:
 		mapping::rename_type::UUID model_id{};
@@ -109,7 +112,7 @@ namespace cumulonimbus::component
 		bool loop_animation	{ false };// アニメーションのループ再生
 
 		asset::ModelData::Animation prev_animation{};
-		StateMachine<FbxAnimationState, void, const float>	anim_states{};
+		StateMachine<AnimationState, void, const float>	anim_states{};
 		graphics::GraphicsState graphics_state{};
 
 		void InitializeParameter();

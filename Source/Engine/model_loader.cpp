@@ -125,7 +125,7 @@ namespace cumulonimbus::asset
 		}
 
 		// アセットシートの登録
-		asset_manager.GetAssetSheetManager().GetSheet<Model>().sheet.insert(std::make_pair(id, load_path));
+		asset_manager.GetAssetSheetManager().GetSheet<Model>().sheet.insert(std::make_pair(id, load_path.string()));
 		return id;
 	}
 
@@ -158,6 +158,8 @@ namespace cumulonimbus::asset
 		models.insert(std::make_pair(
 			id,
 			std::make_unique<Model>(asset_manager.GetAssetSheetManager().GetAssetFilename<Model>(id))));
+		// アセットシート(更新後)の保存
+		asset_manager.Save();
 	}
 
 	bool ModelLoader::Supported(const std::filesystem::path extension)
@@ -645,7 +647,7 @@ namespace cumulonimbus::asset
 			}
 		}
 
-		// マテリアルの作成&登録
+		// マテリアルの作成&アセットシート(更新後)の保存
 		asset_manager.GetLoader<MaterialLoader>()->CreateMaterial(
 			asset_manager, parent_path,
 			material, std::filesystem::path{ texture_path }.filename().replace_extension().string());

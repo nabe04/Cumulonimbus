@@ -70,6 +70,8 @@ namespace cumulonimbus::asset
 			id,
 			std::move(mat))
 		);
+		// アセットシート(更新後)の保存
+		asset_manager.Save();
 	}
 
 	void MaterialLoader::Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id)
@@ -84,6 +86,8 @@ namespace cumulonimbus::asset
 			id,
 			std::make_unique<Material>(m))
 		);
+		// アセットシート(更新後)の保存
+		asset_manager.Save();
 	}
 
 	mapping::rename_type::UUID MaterialLoader::Convert(AssetManager& asset_manager,
@@ -116,7 +120,7 @@ namespace cumulonimbus::asset
 		}
 
 		// アセットシートの登録
-		asset_manager.GetAssetSheetManager().GetSheet<Material>().sheet.insert(std::make_pair(id, copy_path));
+		asset_manager.GetAssetSheetManager().GetSheet<Material>().sheet.insert(std::make_pair(id, copy_path.string()));
 		return id;
 	}
 } // cumulonimbus::asset

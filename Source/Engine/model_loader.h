@@ -11,6 +11,7 @@ namespace cumulonimbus::asset
 	public:
 		explicit ModelLoader() = default;
 		~ModelLoader() override = default;
+
 		/**
 		 * @brief : アセットのロード
 		 * @param : asset_manager : AssetManagerクラスの参照
@@ -27,6 +28,11 @@ namespace cumulonimbus::asset
 			AssetManager& asset_manager,
 			const std::filesystem::path& from,
 			const std::filesystem::path& to) override;
+		/**
+		 * @brief : オーバーロードされているLoad関数の共通処理記述部
+		 */
+		void Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id) override;
+		
 		bool Supported(std::filesystem::path extension) override;
 
 		/**
@@ -49,11 +55,6 @@ namespace cumulonimbus::asset
 			AssetManager& asset_manager,
 			const std::filesystem::path& from,
 			const std::filesystem::path& to) override;
-
-		/**
-		 * @brief : オーバーロードされているLoad関数の共通処理記述部
-		 */
-		void Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id) override;
 
 		/**
 		 * @brief : フォルダ内にテクスチャパスの取得

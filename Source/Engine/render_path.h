@@ -41,6 +41,7 @@ namespace cumulonimbus
 		class MeshObjectComponent;
 		class SpriteObjectComponent;
 		class GeomPrimComponent;
+		class ModelComponent;
 	} // component
 
 	namespace graphics::buffer
@@ -77,7 +78,7 @@ namespace cumulonimbus::renderer
 		std::unique_ptr<FullscreenQuad>							fullscreen_quad				{ nullptr };
 		std::unique_ptr<shader_asset::LocalShaderAssetManager>	local_shader_asset_manager	{ nullptr };
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>		sky_box_srv					{ nullptr };
-		//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>		
+		//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>
 
 		/*
 		 * brief : "MeshObjectComponent"がもつDirectX stateのセット
@@ -129,7 +130,7 @@ namespace cumulonimbus::renderer
 				const component::CameraComponent*	camera_comp);
 		void RenderSkyBox(
 				ID3D11DeviceContext*				immediate_context,
-				ecs::Registry*					registry,
+				ecs::Registry*						registry,
 				const component::CameraComponent*	view,
 				const Light*						light);
 		void RenderSkyBox_End(
@@ -153,7 +154,7 @@ namespace cumulonimbus::renderer
 		 * brier     : 各々のシェーダーに応じて作成したGBufferをoff_screenにまとめる
 		 * ※caution : Render3DToGBuffer_Begin関数でセットしたGBuffer用のシェーダアンバインドする
 		 */
-		void Render3DToGBuffer_End(ID3D11DeviceContext* immediate_context) const;
+		void Render3DToGBuffer_End(ID3D11DeviceContext* immediate_context, const component::CameraComponent* camera_comp) const;
 
 		/*
 		 * brief : ポストプロセス処理
@@ -181,6 +182,7 @@ namespace cumulonimbus::renderer
 		void Render2D(ID3D11DeviceContext* immediate_context, ecs::Registry* registry);
 
 		//--------< モデルの種類に応じての描画 >--------//
+		// Todo : RenderGeomPrim , RenderOBJ , RenderFBXを消去してRenderModel(FBX専用)に変更する
 
 		/*
 		 * brief : "GeomPrimComponent"が持つモデルの描画
@@ -215,8 +217,17 @@ namespace cumulonimbus::renderer
 				const component::CameraComponent* view, const Light* light,
 				bool is_use_shadow, bool is_use_gbuffer);
 
-		/*
-		 * brief :   "SkyBoxComponent"が持つモデルの描画
+		/**
+		 * @brief : "ModelComponent"の持つモデルの描画
+		 */
+		void RenderModel(
+			ID3D11DeviceContext* immediate_context,
+			ecs::Registry* registry, mapping::rename_type::Entity entity,
+			const component::ModelComponent* model_comp,
+			const component::CameraComponent* view, const Light* light);
+
+		/**
+		 * @brief :   "SkyBoxComponent"が持つモデルの描画
 		 */
 		void RenderSkyBox(
 				ID3D11DeviceContext* immediate_context,

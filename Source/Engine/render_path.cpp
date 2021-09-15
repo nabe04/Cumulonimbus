@@ -8,6 +8,7 @@
 #include "shader_interop_renderer.h"
 #include "texture_resource_mapping.h"
 #include "cum_imgui_helper.h"
+#include "model_loader.h"
 // Components
 #include "anim_sprite.h"
 #include "camera_component.h"
@@ -22,6 +23,7 @@
 #include "sprite.h"
 #include "sprite_object.h"
 #include "transform_component.h"
+#include "model_component.h"
 
 
 namespace cumulonimbus::renderer
@@ -101,14 +103,14 @@ namespace cumulonimbus::renderer
 			RenderSkyBox_End(immediate_context, &camera_comp);
 
 			// GBufferへの描画処理
-			//Render3DToGBuffer_Begin(immediate_context);
-			//Render3DToGBuffer(immediate_context, registry, view, light);
-			//Render3DToGBuffer_End(immediate_context);
+			Render3DToGBuffer_Begin(immediate_context);
+			Render3DToGBuffer(immediate_context, registry, &camera_comp, light);
+			Render3DToGBuffer_End(immediate_context, &camera_comp);
 
-			// モデルの描画
-			Render3D_Begin(immediate_context);
-			Render3D(immediate_context, registry, &camera_comp, light);
-			Render3D_End(immediate_context, &camera_comp);
+			//// モデルの描画
+			//Render3D_Begin(immediate_context);
+			//Render3D(immediate_context, registry, &camera_comp, light);
+			//Render3D_End(immediate_context, &camera_comp);
 
 			// 当たり判定の描画
 			RenderCollision_Begin(immediate_context, &camera_comp);
@@ -271,18 +273,25 @@ namespace cumulonimbus::renderer
 		}
 	}
 
-	void RenderPath::Render3DToGBuffer_End(ID3D11DeviceContext* immediate_context) const
+	void RenderPath::Render3DToGBuffer_End(ID3D11DeviceContext* immediate_context, const component::CameraComponent* camera_comp) const
 	{
 		g_buffer->UnbindShaderAndRTV();
 
-		off_screen->Activate(immediate_context);
+		camera_comp->BindFrameBuffer();
 		// GBufferに書き出したテクスチャのセット
 		g_buffer->BindGBufferTextures();
 		// GBufferライティング用シェーダー(PS)のセット
 		g_buffer->BindGBuffLightingShader();
 		fullscreen_quad->Blit(immediate_context);
 
-		off_screen->Deactivate(immediate_context);
+		camera_comp->UnbindFrameBuffer();
+
+		locator::Locator::GetDx11Device()->UnbindShaderResource(mapping::graphics::ShaderStage::PS, 0);
+		locator::Locator::GetDx11Device()->UnbindShaderResource(mapping::graphics::ShaderStage::PS, 1);
+		locator::Locator::GetDx11Device()->UnbindShaderResource(mapping::graphics::ShaderStage::PS, 2);
+
+		immediate_context->VSSetShader(nullptr, nullptr, 0);
+		immediate_context->PSSetShader(nullptr, nullptr, 0);
 	}
 
 	void RenderPath::RenderPostProcess_Begin(ID3D11DeviceContext* immediate_context)
@@ -624,6 +633,105 @@ namespace cumulonimbus::renderer
 		}
 	}
 
+	void RenderPath::RenderModel(
+		ID3D11DeviceContext* immediate_context,
+		ecs::Registry* registry, mapping::rename_type::Entity entity,
+		const component::ModelComponent* model_comp,
+		const component::CameraComponent* view, const Light* light)
+	{
+		const asset::ModelData& model_data =
+			locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>()->GetModel(model_comp->GetModelID()).GetModelData();
+
+		for (const auto& mesh : model_data.meshes)
+		{
+			// メッシュ単位コンスタントバッファ更新
+			TransformCB transform{};
+
+			if (mesh.node_indices.size() > 0)
+			{
+				for (size_t i = 0; i < mesh.node_indices.size(); ++i)
+				{
+					DirectX::SimpleMath::Matrix reverse;
+					reverse.Right(DirectX::SimpleMath::Vector3(-1, 0, 0));
+
+					DirectX::SimpleMath::Matrix world_transform = DirectX::XMLoadFloat4x4(&model_comp->GetNodes().at(mesh.node_indices.at(i)).world_transform);
+					DirectX::SimpleMath::Matrix inverse_transform = DirectX::XMLoadFloat4x4(&mesh.inverse_transforms.at(i));
+					DirectX::SimpleMath::Matrix bone_transform = inverse_transform * world_transform;
+					XMStoreFloat4x4(&transform.bone_transforms[i], bone_transform);
+				}
+			}
+			else
+			{
+				transform.bone_transforms[0] = registry->GetComponent<component::TransformComponent>(entity).GetWorld4x4();
+			}
+
+			registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
+			view->BindCBuffer();
+
+			UINT stride = sizeof(shader::Vertex);
+			UINT offset = 0;
+			immediate_context->IASetVertexBuffers(0, 1, mesh.vertex_buffer.GetAddressOf(), &stride, &offset);
+			immediate_context->IASetIndexBuffer(mesh.index_buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+			locator::Locator::GetDx11Device()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleList);
+
+			for (const asset::ModelData::Subset& subset : mesh.subsets)
+			{
+				// ここから
+				//MaterialCB cb_material;
+				//cb_material.material.base_color = subset.material != nullptr ? subset.material->color : XMFLOAT4{ 0.8f, 0.8f, 0.8f, 1.0f };
+				//cb_material.material.base_color.w = model.GetColor().w;
+				//registry->GetComponent<component::MaterialComponent>(entity).SetAndBindCBuffer(cb_material);
+
+				//if (is_use_gbuffer)
+				//{
+				//	// GBuffer用shader_slot(ライティングの変更)のセット
+				//	//model.GetMaterialsManager(subset.material_index)->BindGBuffShaderSlot();
+				//	// シェーダーが持つテクスチャのセット
+				//	// model.GetMaterialsManager(subset.material_index)->BindTexture();
+				//	model.BindPBRMaterialCBuffAndTexture(subset.material_index);
+				//}
+				//else if (!is_use_shadow)
+				//{// メッシュ単位でのマテリアル適応
+				//	shader_manager->BindShader(model.GetMaterialsManager(subset.material_index)->GetCurrentAsset());
+				//	model.GetMaterialsManager(subset.material_index)->BindCBuffer();
+				//	model.GetMaterialsManager(subset.material_index)->BindTexture();
+				//}
+				// ここまで消す予定
+
+				// Todo : マテリアルの適応方法を考える
+				//if (subset.material && subset.material->shader_resource_view)
+				//{
+				//	locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
+				//		subset.material->shader_resource_view.GetAddressOf(),
+				//		TexSlot_BaseColorMap);
+				//}
+				//else
+				//{
+				//	locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
+				//		dummy_texture->dummy_texture.GetAddressOf(),
+				//		TexSlot_BaseColorMap);
+				//}
+				immediate_context->DrawIndexed(subset.index_count, subset.start_index, 0);
+
+				registry->GetComponent<component::MaterialComponent>(entity).UnbindCBuffer();
+
+				//if (is_use_gbuffer)
+				//{
+				//	//model.GetMaterialsManager(subset.material_index)->UnbindGBuffShaderSlot();
+				//	//model.GetMaterialsManager(subset.material_index)->UnbindCBuffer();
+				//	model.UnbindPBRMaterialCBuffAndTexture(subset.material_index);
+				//}
+				//else if (!is_use_shadow)
+				//{
+				//	model.GetMaterialsManager(subset.material_index)->UnbindCBuffer();
+				//	model.GetMaterialsManager(subset.material_index)->UnbindTexture();
+				//	shader_manager->UnbindShader(model.GetMaterialsManager(subset.material_index)->GetCurrentAsset());
+				//}
+			}
+		}
+	}
+
+
 	void RenderPath::RenderSkyBox(ID3D11DeviceContext* immediate_context,
 								  ecs::Registry* registry, mapping::rename_type::Entity entity,
 								  const component::CameraComponent* view, const Light* light)
@@ -669,7 +777,7 @@ namespace cumulonimbus::renderer
 
 	void RenderPath::RenderCollision_Begin(ID3D11DeviceContext* immediate_context, const component::CameraComponent* camera_comp)
 	{
-		//off_screen->Activate(immediate_context);
+		// off_screen->Activate(immediate_context);
 		camera_comp->BindFrameBuffer();
 		// DirectX graphics stateのバインド
 		rasterizer->Activate(immediate_context, RasterizeState::Wireframe);

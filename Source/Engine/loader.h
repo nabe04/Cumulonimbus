@@ -15,6 +15,7 @@ namespace cumulonimbus::asset
 	public:
 		explicit Loader() = default;
 		virtual ~Loader() = default;
+
 		/**
 		 * @brief : アセットのロード
 		 * @param : asset_manager : AssetManagerクラスの参照
@@ -30,6 +31,11 @@ namespace cumulonimbus::asset
 		virtual void Load(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to) = 0;
 
 		/**
+		 * @brief : オーバーロードされているLoad関数の共通処理記述部
+		 */
+		virtual void Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id) = 0;
+		
+		/**
 		 * @brief : 指定された拡張子はロード可能か
 		 * @param extension : ファイルの拡張子
 		 * @return	: true -> サポートしている
@@ -37,18 +43,6 @@ namespace cumulonimbus::asset
 		 */
 		virtual bool Supported(std::filesystem::path extension) = 0;
 	protected:
-		/**
-		 * @brief : アセットを管理する
-		 * @remark key : UUIDを文字列に変換したも
-		 * @remark value : ファイルまでのパス
-		 */
-		std::map<mapping::rename_type::UUID, std::string> loader{};
-
-		/**
-		 * @brief : オーバーロードされているLoad関数の共通処理記述部
-		 */
-		virtual void Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id) = 0;
-
 		/**
 		 * @param asset_manager :  AssetManagerクラスの参照
 		 * @param from : コピー対象のファイル名またはフォルダまでのパス

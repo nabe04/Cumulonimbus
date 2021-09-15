@@ -1,10 +1,15 @@
 #include "texture_loader.h"
 
 #include <set>
+#include <filesystem>
 
 #include "asset_sheet_manager.h"
 #include "texture.h"
 #include "locator.h"
+//
+//CEREAL_REGISTER_TYPE(cumulonimbus::asset::TextureLoader)
+//CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::asset::Loader, cumulonimbus::asset::TextureLoader)
+
 
 namespace
 {
@@ -41,7 +46,7 @@ namespace cumulonimbus::asset
 		}
 
 		// アセットシートの登録
-		asset_manager.GetAssetSheetManager().GetSheet<Texture>().sheet.insert(std::make_pair(id, copy_path));
+		asset_manager.GetAssetSheetManager().GetSheet<Texture>().sheet.insert(std::make_pair(id, copy_path.string()));
 		return id;
 	}
 
@@ -69,8 +74,9 @@ namespace cumulonimbus::asset
 			std::make_unique<Texture>(locator::Locator::GetDx11Device()->device.Get(),
 				asset_manager.GetAssetSheetManager().GetAssetFilename<Texture>(id).c_str()))
 		);
+		// アセットシート(更新後)の保存
+		asset_manager.Save();
 	}
-
 
 	bool TextureLoader::Supported(const std::filesystem::path extension)
 	{
@@ -102,7 +108,7 @@ namespace cumulonimbus::asset
 		}
 
 		// アセットシートの登録
-		asset_manager.GetAssetSheetManager().GetSheet<Texture>().sheet.insert(std::make_pair(id, path));
+		asset_manager.GetAssetSheetManager().GetSheet<Texture>().sheet.insert(std::make_pair(id, path.string()));
 
 		// すでにテクスチャが存在する場合は処理を抜ける
 		if (textures.contains(id))
@@ -114,6 +120,8 @@ namespace cumulonimbus::asset
 			std::make_unique<Texture>(locator::Locator::GetDx11Device()->device.Get(),
 				asset_manager.GetAssetSheetManager().GetAssetFilename<Texture>(id).c_str()))
 		);
+		// アセットシート(更新後)の保存
+		asset_manager.Save();
 	}
 
 } // cumulonimbus::asset
