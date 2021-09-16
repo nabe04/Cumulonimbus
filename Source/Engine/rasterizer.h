@@ -25,6 +25,7 @@ enum class RasterizeState
 class Rasterizer final
 {
 public:
+	explicit Rasterizer() = default;
 	explicit Rasterizer(ID3D11Device* device);
 	~Rasterizer() = default;
 

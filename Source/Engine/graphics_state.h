@@ -1,8 +1,5 @@
 #pragma once
-#include <wrl.h>
-
 #include "blend.h"
-#include "component_base.h"
 #include "depth_stencil.h"
 #include "enum_state_map.h"
 #include "rasterizer.h"
@@ -41,13 +38,13 @@ namespace cumulonimbus::graphics
 		void SetBlendState(const BlendState& state)					{ blend_state.SetState(state); }
 		void SetRasterizerState(const RasterizeState& state)		{ rasterizer_state.SetState(state); }
 		void SetDepthStencilState(const DepthStencilState& state)	{ depth_stencil_state.SetState(state); }
-		void SetSamplerState(const RenderingSampleState& state)		{ sampler_state.SetState(state); }
+		void SetSamplerState(const SamplerState& state)		{ sampler_state.SetState(state); }
 	private:
 		//-- States of DirectX --//
 		EnumStateMap<BlendState>			blend_state{BlendState::Alpha};
 		EnumStateMap<RasterizeState>		rasterizer_state{ RasterizeState::Cull_Back };
 		EnumStateMap<DepthStencilState>		depth_stencil_state{ DepthStencilState::DepthTest_True_Write_True };
-		EnumStateMap<RenderingSampleState>	sampler_state{ RenderingSampleState::Linear_Border };
+		EnumStateMap<SamplerState>			sampler_state{ SamplerState::Linear_Border };
 	};
 } // cumulonimbus::graphics
 

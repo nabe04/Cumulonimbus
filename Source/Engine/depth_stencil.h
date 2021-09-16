@@ -23,7 +23,8 @@ private:
 	std::array<Microsoft::WRL::ComPtr<ID3D11DepthStencilState>, static_cast<u_int>(DepthStencilState::End)>	depth_stencil_states = {};
 
 public:
-	DepthStencil(ID3D11Device* device);
+	explicit DepthStencil() = default;
+	explicit DepthStencil(ID3D11Device* device);
 	~DepthStencil() = default;
 
 	void Activate(ID3D11DeviceContext* immediate_context, const DepthStencilState& state);

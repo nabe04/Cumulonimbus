@@ -2,20 +2,9 @@
 
 namespace cumulonimbus::graphics
 {
-	//template <class Archive>
-	//void GraphicsState::serialize(Archive&& archive)
-	//{
-	//	archive(
-	//		CEREAL_NVP(blend_state),
-	//		CEREAL_NVP(rasterizer_state),
-	//		CEREAL_NVP(depth_stencil_state),
-	//		CEREAL_NVP(sampler_state)
-	//	);
-	//}
-
 	void GraphicsState::RenderImGui()
 	{
-		if (ImGui::TreeNode("Mesh States"))
+		if (ImGui::TreeNode("Graphics State"))
 		{
 			if (ImGui::TreeNode("Blend state"))
 			{
@@ -86,7 +75,7 @@ namespace cumulonimbus::graphics
 						{
 							if (static_cast<int>(sampler_state.GetCurrentState()) != n)
 							{
-								sampler_state.SetState(static_cast<RenderingSampleState>(n));
+								sampler_state.SetState(static_cast<SamplerState>(n));
 							}
 						}
 						//Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
@@ -127,4 +116,5 @@ namespace cumulonimbus::graphics
 			ImGui::TreePop();
 		}
 	}
+
 } // cumulonimbus::graphics

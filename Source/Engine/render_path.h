@@ -5,20 +5,20 @@
 #include <DirectXMath.h>
 #include <SimpleMath.h>
 
-#include "constant_buffer.h"
-#include "sampler.h"
-#include "rename_type_mapping.h"
-
 #include "blend.h"
+#include "constant_buffer.h"
 #include "depth_map.h"
 #include "depth_stencil.h"
 #include "frame_buffer.h"
 #include "fullscreen_quad.h"
+#include "graphics_state.h"
 #include "light.h"
+#include "local_shader_manager.h"
 #include "rasterizer.h"
+#include "rename_type_mapping.h"
+#include "sampler.h"
 #include "shader_manager.h"
 #include "texture.h"
-#include "local_shader_manager.h"
 
 enum class CollisionType;
 class FbxModelResource;
@@ -69,6 +69,7 @@ namespace cumulonimbus::renderer
 		std::unique_ptr<Blend>			blend;
 		std::unique_ptr<Rasterizer>		rasterizer;
 		std::unique_ptr<DepthStencil>	depth_stencil;
+		std::unique_ptr<Sampler>		sampler;
 		std::array< std::unique_ptr<Sampler>, static_cast<int>(RenderingSampleState::End)> samplers;
 
 		std::shared_ptr<FrameBuffer>							off_screen					{ nullptr };
@@ -80,6 +81,7 @@ namespace cumulonimbus::renderer
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>		sky_box_srv					{ nullptr };
 		//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>
 
+		// Todo : BindDirectXStates関数は消す
 		/*
 		 * brief : "MeshObjectComponent"がもつDirectX stateのセット
 		 *         (states : rasterizer , sampler , depth_stencil , blend)
@@ -94,6 +96,9 @@ namespace cumulonimbus::renderer
 				const component::SpriteObjectComponent* sprite_object,
 			    bool set_rasterizer = true	, bool set_sampler = true,
 				bool set_depth_stencil = true, bool set_blend = true);
+		void BindGraphicsState(
+				ID3D11DeviceContext* immediate_context,
+				const cumulonimbus::graphics::GraphicsState& graphics_state);
 
 		/*
 		 * brief : "back_buffer"(メンバ変数)に書き込まれているものを
@@ -180,42 +185,6 @@ namespace cumulonimbus::renderer
 				const component::CameraComponent* camera_comp);
 
 		void Render2D(ID3D11DeviceContext* immediate_context, ecs::Registry* registry);
-
-		//--------< モデルの種類に応じての描画 >--------//
-		// Todo : RenderGeomPrim , RenderOBJ , RenderFBXを消去してRenderModel(FBX専用)に変更する
-
-		/*
-		 * brief : "GeomPrimComponent"が持つモデルの描画
-		 */
-		void RenderGeomPrim(
-				ID3D11DeviceContext* immediate_context,
-				ecs::Registry* registry , mapping::rename_type::Entity entity,
-				const component::MeshObjectComponent* mesh_object,
-				const component::CameraComponent* view, const Light* light);
-
-		/*
-		 * brief : "ObjModelComponent"が持つモデルの描画
-		 */
-		void RenderOBJ(
-				ID3D11DeviceContext* immediate_context,
-				ecs::Registry* registry, mapping::rename_type::Entity entity,
-				const component::MeshObjectComponent* mesh_object,
-				const component::CameraComponent* view, const Light* light);
-
-		/*
-		 * brief		  : "FbxModelComponent"が持つモデルの描画
-		 * is_use_shadow  : 現在の描画目的が影の生成用か
-		 *					trueの場合マテリアル単位のシェーダーが利用されない
-		 * is_use_gbuffer : 現在の描画目的がGBufferの生成用か
-		 *					trueの場合マテリアルが使用するシェーダー単位での
-		 *					GBufferシェーダーが利用される
-		 */
-		void RenderFBX(
-				ID3D11DeviceContext* immediate_context,
-				ecs::Registry* registry, mapping::rename_type::Entity entity,
-				const component::MeshObjectComponent* mesh_object,
-				const component::CameraComponent* view, const Light* light,
-				bool is_use_shadow, bool is_use_gbuffer);
 
 		/**
 		 * @brief : "ModelComponent"の持つモデルの描画

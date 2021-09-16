@@ -26,6 +26,7 @@ enum class BlendState
 class Blend final
 {
 public:
+	explicit Blend() = default; // for cereal
 	 explicit Blend(ID3D11Device* device);
 	~Blend() = default;
 

@@ -176,7 +176,7 @@ namespace cumulonimbus::graphics::buffer
 	void GBuffer::UnbindRTV()
 	{
 		ID3D11DeviceContext* immediate_context = locator::Locator::GetDx11Device()->immediate_context.Get();
-		ID3D11RenderTargetView* null_rtv[num_rtv] = { nullptr };
+		ID3D11RenderTargetView* null_rtv[num_rtv] = { nullptr ,nullptr,nullptr };
 
 		immediate_context->OMSetRenderTargets(num_rtv, null_rtv, nullptr);
 		immediate_context->OMSetRenderTargets(1, default_render_target_view.GetAddressOf(), default_depth_stencil_view.Get());

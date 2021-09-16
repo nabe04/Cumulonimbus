@@ -103,6 +103,8 @@ namespace cumulonimbus::component
 				}
 			}
 		}
+
+		graphics_state.RenderImGui();
 	}
 
 	bool ModelComponent::IsPlayAnimation() const

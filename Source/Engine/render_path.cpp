@@ -16,9 +16,7 @@
 #include "capsule_collison_component.h"
 #include "fbx_model_component.h"
 #include "geometric_primitive_component.h"
-#include "material_component.h"
 #include "mesh_object.h"
-#include "obj_model_component.h"
 #include "sky_box.h"
 #include "sphere_collision_component.h"
 #include "sprite.h"
@@ -43,6 +41,7 @@ namespace cumulonimbus::renderer
 		blend				= std::make_unique<Blend>(device);
 		depth_stencil		= std::make_unique<DepthStencil>(device);
 		rasterizer			= std::make_unique<Rasterizer>(device);
+		sampler				= std::make_unique<Sampler>(device);
 
 		samplers.at(Linear_Border)	= std::make_unique<Sampler>(device, D3D11_FILTER_MIN_MAG_MIP_LINEAR	, D3D11_TEXTURE_ADDRESS_BORDER	, D3D11_COMPARISON_ALWAYS, 0.0f, 0.0f, 0.0f, 1.0f);
 		samplers.at(Point_Wrap)		= std::make_unique<Sampler>(device, D3D11_FILTER_MIN_MAG_MIP_POINT	, D3D11_TEXTURE_ADDRESS_WRAP	, D3D11_COMPARISON_ALWAYS, 0.0f, 0.0f, 0.0f, 1.0f);
@@ -52,10 +51,11 @@ namespace cumulonimbus::renderer
 		dummy_texture = std::make_unique<cumulonimbus::asset::DummyTexture>( device, DirectX::XMFLOAT4{ 1.f,1.f,1.f,1.f } );
 	}
 
-	void RenderPath::BindDirectXStates(ID3D11DeviceContext* immediate_context,
-										   const component::MeshObjectComponent* const mesh_object,
-										   bool set_rasterizer   , bool set_sampler,
-										   bool set_depth_stencil, bool set_blend)
+	void RenderPath::BindDirectXStates(
+		ID3D11DeviceContext* immediate_context,
+		const component::MeshObjectComponent* const mesh_object,
+		bool set_rasterizer   , bool set_sampler,
+		bool set_depth_stencil, bool set_blend)
 	{
 		if(set_rasterizer)
 			rasterizer->Activate(immediate_context, mesh_object->GetRasterizerState());
@@ -67,10 +67,11 @@ namespace cumulonimbus::renderer
 			blend->Activate(immediate_context, mesh_object->GetBlendState());
 	}
 
-	void RenderPath::BindDirectXStates(ID3D11DeviceContext* immediate_context,
-									   const component::SpriteObjectComponent* sprite_object,
-									   const bool set_rasterizer   , const bool set_sampler,
-									   const bool set_depth_stencil, const bool set_blend)
+	void RenderPath::BindDirectXStates(
+		ID3D11DeviceContext* immediate_context,
+		const component::SpriteObjectComponent* sprite_object,
+		const bool set_rasterizer   , const bool set_sampler,
+		const bool set_depth_stencil, const bool set_blend)
 	{
 		if (set_rasterizer)
 			rasterizer->Activate(immediate_context, sprite_object->GetRasterizerState());
@@ -80,6 +81,16 @@ namespace cumulonimbus::renderer
 			depth_stencil->Activate(immediate_context, sprite_object->GetDepthStencilState());
 		if (set_blend)
 			blend->Activate(immediate_context, sprite_object->GetBlendState());
+	}
+
+	void RenderPath::BindGraphicsState(
+			ID3D11DeviceContext* immediate_context,
+			const cumulonimbus::graphics::GraphicsState& graphics_state)
+	{
+		rasterizer->Activate(immediate_context, graphics_state.GetRasterizerState());
+		sampler->Activate(immediate_context, graphics_state.GetSamplerState(), SSlot_OnDemand0);
+		depth_stencil->Activate(immediate_context, graphics_state.GetDepthStencilState());
+		blend->Activate(immediate_context, graphics_state.GetBlendState());
 	}
 
 	void RenderPath::Render(ID3D11DeviceContext* const immediate_context,
@@ -92,37 +103,39 @@ namespace cumulonimbus::renderer
 		{
 			if (!camera_comp.GetIsActive())
 				continue;
+			camera_comp.ClearFrameBuffer();
 
-			// ShadowMap作成
-			RenderShadow_Begin(immediate_context);
-			RenderShadow(immediate_context, registry, &camera_comp, light);
-			RenderShadow_End(immediate_context);
+			if(registry->GetArray<component::ModelComponent>().GetComponents().size() > 0)
+			{
+				// ShadowMap作成
+				RenderShadow_Begin(immediate_context);
+				RenderShadow(immediate_context, registry, &camera_comp, light);
+				RenderShadow_End(immediate_context);
+			}
 
 			// SkyBoxの描画
 			RenderSkyBox_Begin(immediate_context, &camera_comp);
 			RenderSkyBox(immediate_context, registry, &camera_comp, light);
 			RenderSkyBox_End(immediate_context, &camera_comp);
 
-			// GBufferへの描画処理
-			Render3DToGBuffer_Begin(immediate_context);
-			Render3DToGBuffer(immediate_context, registry, &camera_comp, light);
-			Render3DToGBuffer_End(immediate_context, &camera_comp);
+			if (registry->GetArray<component::ModelComponent>().GetComponents().size() > 0)
+			{
+				// GBufferへの描画処理
+				Render3DToGBuffer_Begin(immediate_context);
+				Render3DToGBuffer(immediate_context, registry, &camera_comp, light);
+				Render3DToGBuffer_End(immediate_context, &camera_comp);
 
-			//// モデルの描画
-			//Render3D_Begin(immediate_context);
-			//Render3D(immediate_context, registry, &camera_comp, light);
-			//Render3D_End(immediate_context, &camera_comp);
-
-			// 当たり判定の描画
-			RenderCollision_Begin(immediate_context, &camera_comp);
-			RenderCollision(immediate_context, registry);
-			RenderCollision_End(immediate_context, &camera_comp);
+				// 当たり判定の描画
+				RenderCollision_Begin(immediate_context, &camera_comp);
+				RenderCollision(immediate_context, registry);
+				RenderCollision_End(immediate_context, &camera_comp);
+			}
 		}
 
-		// ポストプロセス処理
-		RenderPostProcess_Begin(immediate_context);
-		RenderPostProcess(immediate_context, registry);
-		RenderPostProcess_End(immediate_context);
+		//// ポストプロセス処理
+		//RenderPostProcess_Begin(immediate_context);
+		//RenderPostProcess(immediate_context, registry);
+		//RenderPostProcess_End(immediate_context);
 
 		// 2Dスプライトの描画
 		Render2D(immediate_context, registry);
@@ -164,38 +177,32 @@ namespace cumulonimbus::renderer
 
 	void RenderPath::RenderShadow(ID3D11DeviceContext* immediate_context,
 								  ecs::Registry* const registry,
-								  const component::CameraComponent* view, const Light* light)
+								  const component::CameraComponent* camera, const Light* light)
 	{
 		depth_map->Activate(immediate_context);
 		light->BindCBuffer();
 
-		for(auto& mesh_object : registry->GetArray<component::MeshObjectComponent>().GetComponents())
+		for (auto& model_comp : registry->GetArray<component::ModelComponent>().GetComponents())
 		{
-			if (!mesh_object.GetIsVisible())
-				continue;;
+			const mapping::rename_type::Entity ent = model_comp.GetEntity();
 
-			const mapping::rename_type::Entity ent = mesh_object.GetEntity();
-
-			// MeshObjectComponentが持つstate類の実行
-			// sampler stateはメッシュに関係なくLinearBorderを使用
-			BindDirectXStates(immediate_context, &mesh_object,
-									/*rasterizer*/   true, /*sampler*/false,
-									/*depth stencil*/true, /*blend*/  true);
-			samplers.at(RenderingSampleState::Linear_Border)->Activate(immediate_context, 0);
-
-			if(auto* geom = registry->TryGetComponent<component::GeomPrimComponent>(ent))
-			{
-				RenderGeomPrim(immediate_context, registry, ent, &mesh_object, view, light);
-			}
-			else if(auto* obj_model = registry->TryGetComponent<component::ObjModelComponent>(ent))
-			{
-				RenderOBJ(immediate_context, registry, ent, &mesh_object, view, light);
-			}
-			else if(auto* fbx_model = registry->TryGetComponent<component::FbxModelComponent>(ent))
-			{
-				RenderFBX(immediate_context, registry, ent, &mesh_object, view, light, true, false);
-			}
+			RenderModel(immediate_context, registry, ent, &model_comp, camera, light);
 		}
+
+		//for(auto& mesh_object : registry->GetArray<component::MeshObjectComponent>().GetComponents())
+		//{
+		//	if (!mesh_object.GetIsVisible())
+		//		continue;;
+
+		//	const mapping::rename_type::Entity ent = mesh_object.GetEntity();
+
+		//	// MeshObjectComponentが持つstate類の実行
+		//	// sampler stateはメッシュに関係なくLinearBorderを使用
+		//	BindDirectXStates(immediate_context, &mesh_object,
+		//							/*rasterizer*/   true, /*sampler*/false,
+		//							/*depth stencil*/true, /*blend*/  true);
+		//	samplers.at(RenderingSampleState::Linear_Border)->Activate(immediate_context, 0);
+		//}
 
 		light->UnbindCBuffer();
 		depth_map->Deactivate(immediate_context);
@@ -209,7 +216,6 @@ namespace cumulonimbus::renderer
 	void RenderPath::RenderSkyBox_Begin(ID3D11DeviceContext* immediate_context,
 										const component::CameraComponent* camera_comp)
 	{
-		camera_comp->ClearFrameBuffer();
 		camera_comp->BindFrameBuffer();
 		//off_screen->Clear(immediate_context);
 		//off_screen->Activate(immediate_context);
@@ -254,31 +260,6 @@ namespace cumulonimbus::renderer
 
 			RenderModel(immediate_context, registry, ent, &model_comp, camera, light);
 		}
-
-		//for (auto& mesh_object : registry->GetArray<component::MeshObjectComponent>().GetComponents())
-		//{
-		//	const mapping::rename_type::Entity ent = mesh_object.GetEntity();
-
-		//	// MeshObjectComponentが持つstate類の実行
-		//	// sampler stateはメッシュに関係なくLinearBorderを使用
-		//	BindDirectXStates(immediate_context, &mesh_object,
-		//		/*rasterizer*/   true, /*sampler*/false,
-		//		/*depth stencil*/true, /*blend*/  true);
-		//	samplers.at(RenderingSampleState::Linear_Border)->Activate(immediate_context, 0);
-
-		//	if (auto* geom = registry->TryGetComponent<component::GeomPrimComponent>(ent))
-		//	{
-		//		RenderGeomPrim(immediate_context, registry, ent, &mesh_object, view, light);
-		//	}
-		//	else if (auto* obj_model = registry->TryGetComponent<component::ObjModelComponent>(ent))
-		//	{
-		//		RenderOBJ(immediate_context, registry, ent, &mesh_object, view, light);
-		//	}
-		//	else if (auto* fbx_model = registry->TryGetComponent<component::FbxModelComponent>(ent))
-		//	{
-		//		RenderFBX(immediate_context, registry, ent, &mesh_object, view, light, false, true);
-		//	}
-		//}
 	}
 
 	void RenderPath::Render3DToGBuffer_End(ID3D11DeviceContext* immediate_context, const component::CameraComponent* camera_comp) const
@@ -291,6 +272,8 @@ namespace cumulonimbus::renderer
 		// GBufferライティング用シェーダー(PS)のセット
 		g_buffer->BindGBuffLightingShader();
 		fullscreen_quad->Blit(immediate_context);
+
+		g_buffer->UnbindGBufferTextures();
 
 		camera_comp->UnbindFrameBuffer();
 
@@ -351,33 +334,6 @@ namespace cumulonimbus::renderer
 		// Skyマップをpixel shaderのshader resource viewにバインド
 		locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, sky_box_srv.GetAddressOf(), TexSlot_SkyMap);
 
-		for (auto& mesh_object : registry->GetArray<component::MeshObjectComponent>().GetComponents())
-		{
-			if (!mesh_object.GetIsVisible())
-				continue;;
-
-			const mapping::rename_type::Entity ent = mesh_object.GetEntity();
-
-			// MeshObjectComponentが持つstate類の実行
-			// sampler stateはメッシュに関係なくLinearBorderを使用
-			BindDirectXStates(immediate_context, &mesh_object);
-
-			locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, depth_map->GetDepthExtractionSRV(), TexSlot_Depth);
-
-			if (auto* geom = registry->TryGetComponent<component::GeomPrimComponent>(ent))
-			{
-				RenderGeomPrim(immediate_context, registry, ent, &mesh_object, view, light);
-			}
-			else if (auto* obj_model = registry->TryGetComponent<component::ObjModelComponent>(ent))
-			{
-				RenderOBJ(immediate_context, registry, ent, &mesh_object, view, light);
-			}
-			else if (auto* fbx_model = registry->TryGetComponent<component::FbxModelComponent>(ent))
-			{
-				RenderFBX(immediate_context, registry, ent, &mesh_object, view, light, false, false);
-			}
-		}
-
 		light->UnbindCBuffer();
 	}
 
@@ -435,212 +391,6 @@ namespace cumulonimbus::renderer
 		ID3D11ShaderResourceView* const pSRV[1] = { nullptr };
 	}
 
-	void RenderPath::RenderGeomPrim(ID3D11DeviceContext* immediate_context,
-									ecs::Registry* registry, mapping::rename_type::Entity entity,
-									const component::MeshObjectComponent* const mesh_object,
-									const component::CameraComponent* view, const Light* light)
-	{
-		component::GeomPrimComponent& geom_prim = registry->GetComponent<component::GeomPrimComponent>(entity);
-
-		BindDirectXStates(immediate_context, &registry->GetComponent<component::MeshObjectComponent>(entity));
-		locator::Locator::GetDx11Device()->BindPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-		// テクスチャのセット
-		if(auto* texture = registry->TryGetComponent<component::SpriteComponent>(entity))
-		{// テクスチャを保持している場合、そのテクスチャをセット
-			locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
-														 texture->GetTexture(),
-														 TexSlot_BaseColorMap);
-		}
-		else
-		{
-			locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
-													     dummy_texture->dummy_texture.GetAddressOf(),
-														 TexSlot_BaseColorMap);
-		}
-
-		{// Transform
-			TransformCB transform{};
-			transform.bone_transforms[0] = registry->GetComponent<component::TransformComponent>(entity).GetWorld4x4();
-			registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
-		}
-
-		{// Set constant buffer (Material)
-			MaterialCB material{};
-			material.material.base_color = geom_prim.GetMaterial().color;;
-			registry->GetComponent<component::MaterialComponent>(entity).SetAndBindCBuffer(material);
-		}
-
-		{// 描画処理
-			// Set of Vertex Buffers
-			UINT stride = sizeof(shader::Vertex);
-			UINT offset = 0;
-
-			immediate_context->IASetVertexBuffers(0, 1, geom_prim.GetMesh().vertex_buffer.GetAddressOf(), &stride, &offset);
-			// Set of Index Buffer
-			immediate_context->IASetIndexBuffer(geom_prim.GetMesh().index_buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-
-			// Rendering the index buffer
-			immediate_context->DrawIndexed(geom_prim.GetMesh().num_indices, 0, 0);
-		}
-
-		registry->GetComponent<component::TransformComponent>(entity).UnbindCBuffer();
-		registry->GetComponent<component::MaterialComponent>(entity).UnbindCBuffer();
-	}
-
-	void RenderPath::RenderOBJ(ID3D11DeviceContext* immediate_context,
-							   ecs::Registry* registry, mapping::rename_type::Entity entity,
-							   const component::MeshObjectComponent* mesh_object,
-							   const component::CameraComponent* view, const Light* light)
-	{
-		//-- Set of Constant Buffer --//
-		{// Transform
-			TransformCB transform{};
-
-			transform.bone_transforms[0] = registry->GetComponent<component::TransformComponent>(entity).GetWorld4x4();
-			registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
-		}
-
-		locator::Locator::GetDx11Device()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleList);
-		BindDirectXStates(immediate_context, &registry->GetComponent<component::MeshObjectComponent>(entity));
-
-		component::ObjModelComponent& obj_model = registry->GetComponent<component::ObjModelComponent>(entity);
-		u_int stride = sizeof(shader::Vertex);
-		u_int offset = 0;
-		immediate_context->IASetVertexBuffers(0, 1, obj_model.GetVertexBufferAddress(), &stride, &offset);
-		immediate_context->IASetIndexBuffer(obj_model.GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
-
-		for(auto& material : obj_model.GetMaterials())
-		{
-			MaterialCB cb_material{};
-			cb_material.material.base_color = material.data.color;
-			registry->GetComponent<component::MaterialComponent>(entity).SetAndBindCBuffer(cb_material);
-
-			if (material.texture)
-			{// Set of Texture
-				locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
-														     material.texture,
-														     TexSlot_BaseColorMap);
-			}
-			else
-			{// Set of Dummy texture
-				locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
-															 dummy_texture->dummy_texture.GetAddressOf(),
-															 TexSlot_BaseColorMap);
-			}
-
-			for (auto& subset : obj_model.GetSubsets())
-			{
-				if (material.newmtl == subset.usemtl)
-				{
-					immediate_context->DrawIndexed(subset.index_count, subset.index_start, 0);
-				}
-			}
-
-			registry->GetComponent<component::MaterialComponent>(entity).UnbindCBuffer();
-		}
-
-		registry->GetComponent<component::TransformComponent>(entity).UnbindCBuffer();
-	}
-
-	void RenderPath::RenderFBX(ID3D11DeviceContext* immediate_context,
-							   ecs::Registry* registry, mapping::rename_type::Entity entity,
-							   const component::MeshObjectComponent* mesh_object,
-							   const component::CameraComponent* view, const Light* light,
-							   bool is_use_shadow, bool is_use_gbuffer)
-	{
-		const component::FbxModelComponent&	 model		= registry->GetComponent<component::FbxModelComponent>(entity);
-		const FbxModelResource*				 resource	= model.GetResource();
-
-		if (!resource)
-			return;
-
-		for(const auto& mesh : resource->GetModelData().meshes)
-		{
-			// メッシュ単位コンスタントバッファ更新
-			TransformCB transform{};
-
-			if (mesh.node_indices.size() > 0)
-			{
-				for (size_t i = 0; i < mesh.node_indices.size(); ++i)
-				{
-					DirectX::SimpleMath::Matrix reverse;
-					reverse.Right(DirectX::SimpleMath::Vector3(-1, 0, 0));
-
-					DirectX::SimpleMath::Matrix world_transform   = DirectX::XMLoadFloat4x4(&model.GetNodes().at(mesh.node_indices.at(i)).world_transform);
-					DirectX::SimpleMath::Matrix inverse_transform = DirectX::XMLoadFloat4x4(&mesh.inverse_transforms.at(i));
-					DirectX::SimpleMath::Matrix bone_transform    = inverse_transform * world_transform;
-					XMStoreFloat4x4(&transform.bone_transforms[i], bone_transform);
-				}
-			}
-			else
-			{
-				transform.bone_transforms[0] = registry->GetComponent<component::TransformComponent>(entity).GetWorld4x4();
-			}
-
-			registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
-			view->BindCBuffer();
-
-			UINT stride = sizeof(shader::Vertex);
-			UINT offset = 0;
-			immediate_context->IASetVertexBuffers(0, 1, mesh.vertex_buffer.GetAddressOf(), &stride, &offset);
-			immediate_context->IASetIndexBuffer(mesh.index_buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-			locator::Locator::GetDx11Device()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleList);
-
-			for (const ModelData::Subset& subset : mesh.subsets)
-			{
-				MaterialCB cb_material;
-				cb_material.material.base_color   = subset.material != nullptr ? subset.material->color : XMFLOAT4{ 0.8f, 0.8f, 0.8f, 1.0f };
-				cb_material.material.base_color.w = model.GetColor().w;
-				registry->GetComponent<component::MaterialComponent>(entity).SetAndBindCBuffer(cb_material);
-
-				if(is_use_gbuffer)
-				{
-					// GBuffer用shader_slot(ライティングの変更)のセット
-					//model.GetMaterialsManager(subset.material_index)->BindGBuffShaderSlot();
-					// シェーダーが持つテクスチャのセット
-					// model.GetMaterialsManager(subset.material_index)->BindTexture();
-					model.BindPBRMaterialCBuffAndTexture(subset.material_index);
-				}
-				else if(!is_use_shadow)
-				{// メッシュ単位でのマテリアル適応
-					shader_manager->BindShader(model.GetMaterialsManager(subset.material_index)->GetCurrentAsset());
-					model.GetMaterialsManager(subset.material_index)->BindCBuffer();
-					model.GetMaterialsManager(subset.material_index)->BindTexture();
-				}
-
-				if (subset.material && subset.material->shader_resource_view)
-				{
-					locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
-																 subset.material->shader_resource_view.GetAddressOf(),
-																 TexSlot_BaseColorMap);
-				}
-				else
-				{
-					locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
-																 dummy_texture->dummy_texture.GetAddressOf(),
-																 TexSlot_BaseColorMap);
-				}
-				immediate_context->DrawIndexed(subset.index_count, subset.start_index, 0);
-
-				registry->GetComponent<component::MaterialComponent>(entity).UnbindCBuffer();
-
-				if (is_use_gbuffer)
-				{
-					//model.GetMaterialsManager(subset.material_index)->UnbindGBuffShaderSlot();
-					//model.GetMaterialsManager(subset.material_index)->UnbindCBuffer();
-					model.UnbindPBRMaterialCBuffAndTexture(subset.material_index);
-				}
-				else if(!is_use_shadow)
-				{
-					model.GetMaterialsManager(subset.material_index)->UnbindCBuffer();
-					model.GetMaterialsManager(subset.material_index)->UnbindTexture();
-					shader_manager->UnbindShader(model.GetMaterialsManager(subset.material_index)->GetCurrentAsset());
-				}
-			}
-		}
-	}
-
 	void RenderPath::RenderModel(
 		ID3D11DeviceContext* immediate_context,
 		ecs::Registry* registry, mapping::rename_type::Entity entity,
@@ -652,6 +402,8 @@ namespace cumulonimbus::renderer
 
 		const asset::ModelData& model_data =
 			locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>()->GetModel(model_comp->GetModelID()).GetModelData();
+
+		BindGraphicsState(immediate_context, model_comp->GetGraphicsState());
 
 		for (const auto& mesh : model_data.meshes)
 		{
@@ -690,63 +442,10 @@ namespace cumulonimbus::renderer
 				const auto material_id = model_comp->GetMaterialID(subset.material_index);
 				// マテリアルのバインド
 				locator::Locator::GetAssetManager()->GetLoader<asset::MaterialLoader>()->GetMaterial(material_id).BindMaterial(mapping::graphics::ShaderStage::PS);
-
-				// ここから
-				//MaterialCB cb_material;
-				//cb_material.material.base_color = subset.material != nullptr ? subset.material->color : XMFLOAT4{ 0.8f, 0.8f, 0.8f, 1.0f };
-				//cb_material.material.base_color.w = model.GetColor().w;
-				//registry->GetComponent<component::MaterialComponent>(entity).SetAndBindCBuffer(cb_material);
-
-				//if (is_use_gbuffer)
-				//{
-				//	// GBuffer用shader_slot(ライティングの変更)のセット
-				//	//model.GetMaterialsManager(subset.material_index)->BindGBuffShaderSlot();
-				//	// シェーダーが持つテクスチャのセット
-				//	// model.GetMaterialsManager(subset.material_index)->BindTexture();
-				//	model.BindPBRMaterialCBuffAndTexture(subset.material_index);
-				//}
-				//else if (!is_use_shadow)
-				//{// メッシュ単位でのマテリアル適応
-				//	shader_manager->BindShader(model.GetMaterialsManager(subset.material_index)->GetCurrentAsset());
-				//	model.GetMaterialsManager(subset.material_index)->BindCBuffer();
-				//	model.GetMaterialsManager(subset.material_index)->BindTexture();
-				//}
-				// ここまで消す予定
-
-				// Todo : マテリアルの適応方法を考える
-				//if (subset.material && subset.material->shader_resource_view)
-				//{
-				//	locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
-				//		subset.material->shader_resource_view.GetAddressOf(),
-				//		TexSlot_BaseColorMap);
-				//}
-				//else
-				//{
-				//	locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
-				//		dummy_texture->dummy_texture.GetAddressOf(),
-				//		TexSlot_BaseColorMap);
-				//}
-
-
 				immediate_context->DrawIndexed(subset.index_count, subset.start_index, 0);
-
 				// マテリアルのアンバインド
 				locator::Locator::GetAssetManager()->GetLoader<asset::MaterialLoader>()->GetMaterial(material_id).UnbindMaterial(mapping::graphics::ShaderStage::PS);
 
-				//registry->GetComponent<component::MaterialComponent>(entity).UnbindCBuffer();
-
-				//if (is_use_gbuffer)
-				//{
-				//	//model.GetMaterialsManager(subset.material_index)->UnbindGBuffShaderSlot();
-				//	//model.GetMaterialsManager(subset.material_index)->UnbindCBuffer();
-				//	model.UnbindPBRMaterialCBuffAndTexture(subset.material_index);
-				//}
-				//else if (!is_use_shadow)
-				//{
-				//	model.GetMaterialsManager(subset.material_index)->UnbindCBuffer();
-				//	model.GetMaterialsManager(subset.material_index)->UnbindTexture();
-				//	shader_manager->UnbindShader(model.GetMaterialsManager(subset.material_index)->GetCurrentAsset());
-				//}
 			}
 		}
 	}
@@ -774,9 +473,10 @@ namespace cumulonimbus::renderer
 
 		locator::Locator::GetDx11Device()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleList);
 
-		locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
-													 sky_box.GetShaderResoueceViewAddress(),
-													 TexSlot_SkyMap);
+		locator::Locator::GetDx11Device()->BindShaderResource(
+												mapping::graphics::ShaderStage::PS,
+												sky_box.GetShaderResoueceViewAddress(),
+												TexSlot_SkyMap);
 		view->BindCBuffer();
 		// Set of Vertex Buffers
 		UINT stride = sizeof(shader::Vertex);
@@ -851,7 +551,7 @@ namespace cumulonimbus::renderer
 				for (const ModelData::Subset& subset : mesh.subsets)
 				{
 
-					DebugCollisionCB cb_collision;
+					//DebugCollisionCB cb_collision;
 					//if (sphere.second.is_hit)
 					//{
 					//	cb_collision.collider_color = { 1.f,.0f,.0f,1.f };
@@ -888,7 +588,7 @@ namespace cumulonimbus::renderer
 				for (const ModelData::Subset& subset : mesh.subsets)
 				{
 
-					DebugCollisionCB cb_collision;
+					//DebugCollisionCB cb_collision;
 					//if (sphere.second.is_hit)
 					//{
 					//	cb_collision.collider_color = { 1.f,.0f,.0f,1.f };

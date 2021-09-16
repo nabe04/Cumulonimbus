@@ -101,6 +101,8 @@ namespace cumulonimbus::component
 		const mapping::rename_type::UUID& GetModelID() const { return model_id; }
 		[[nodiscard]]
 		bool GetIsVisible() const { return is_visible; }
+		[[nodiscard]]
+		const graphics::GraphicsState& GetGraphicsState() const { return graphics_state; }
 
 		void SetIsVisible(const bool result) { is_visible = result; }
 	private:
