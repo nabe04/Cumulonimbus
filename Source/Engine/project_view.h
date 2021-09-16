@@ -3,6 +3,8 @@
 #include <DirectXMath.h>
 #include <SimpleMath.h>
 
+#include <filesystem>
+
 namespace cumulonimbus
 {
 	namespace ecs
@@ -23,8 +25,12 @@ namespace cumulonimbus::editor
 		DirectX::SimpleMath::Vector2 viewer_size{}; // ImGui上でのviewer ウィンドウのサイズ
 
 		/**
-		 * @brief : インポートメニュー
+		 * @brief : アセットのインポートボタン
 		 */
 		void ImportMenu();
+		/**
+		 * @brief : ファイルツリーの表示
+		 */
+		std::filesystem::path ShowFileTree(const std::filesystem::path& path);
 	};
 } // cumulonimbus::editor

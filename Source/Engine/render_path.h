@@ -88,11 +88,6 @@ namespace cumulonimbus::renderer
 		 */
 		void BindDirectXStates(
 				ID3D11DeviceContext* immediate_context,
-				const component::MeshObjectComponent* mesh_object,
-				bool set_rasterizer = true	, bool set_sampler = true,
-				bool set_depth_stencil = true, bool set_blend = true);
-		void BindDirectXStates(
-				ID3D11DeviceContext* immediate_context,
 				const component::SpriteObjectComponent* sprite_object,
 			    bool set_rasterizer = true	, bool set_sampler = true,
 				bool set_depth_stencil = true, bool set_blend = true);

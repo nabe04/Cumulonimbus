@@ -53,22 +53,6 @@ namespace cumulonimbus::renderer
 
 	void RenderPath::BindDirectXStates(
 		ID3D11DeviceContext* immediate_context,
-		const component::MeshObjectComponent* const mesh_object,
-		bool set_rasterizer   , bool set_sampler,
-		bool set_depth_stencil, bool set_blend)
-	{
-		if(set_rasterizer)
-			rasterizer->Activate(immediate_context, mesh_object->GetRasterizerState());
-		if(set_sampler)
-			samplers.at(mesh_object->GetSamplerState())->Activate(immediate_context, SSlot_OnDemand0);
-		if(set_depth_stencil)
-			depth_stencil->Activate(immediate_context, mesh_object->GetDepthStencilState());
-		if(set_blend)
-			blend->Activate(immediate_context, mesh_object->GetBlendState());
-	}
-
-	void RenderPath::BindDirectXStates(
-		ID3D11DeviceContext* immediate_context,
 		const component::SpriteObjectComponent* sprite_object,
 		const bool set_rasterizer   , const bool set_sampler,
 		const bool set_depth_stencil, const bool set_blend)
@@ -188,21 +172,6 @@ namespace cumulonimbus::renderer
 
 			RenderModel(immediate_context, registry, ent, &model_comp, camera, light);
 		}
-
-		//for(auto& mesh_object : registry->GetArray<component::MeshObjectComponent>().GetComponents())
-		//{
-		//	if (!mesh_object.GetIsVisible())
-		//		continue;;
-
-		//	const mapping::rename_type::Entity ent = mesh_object.GetEntity();
-
-		//	// MeshObjectComponentが持つstate類の実行
-		//	// sampler stateはメッシュに関係なくLinearBorderを使用
-		//	BindDirectXStates(immediate_context, &mesh_object,
-		//							/*rasterizer*/   true, /*sampler*/false,
-		//							/*depth stencil*/true, /*blend*/  true);
-		//	samplers.at(RenderingSampleState::Linear_Border)->Activate(immediate_context, 0);
-		//}
 
 		light->UnbindCBuffer();
 		depth_map->Deactivate(immediate_context);
