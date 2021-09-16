@@ -10,8 +10,8 @@ namespace cumulonimbus::manager::texture
 {
 	TextureResourceManager::TextureResourceManager(ID3D11Device* device)
 	{
-		dummy_texture_white  = std::make_unique<DummyTexture>(device, DirectX::XMFLOAT4{ 1.f,1.f,1.f,1.f });
-		dummy_texture_normal = std::make_unique<DummyTexture>(device, DirectX::XMFLOAT4{ 0.5f,0.5f,1.0f,1.0f });
+		dummy_texture_white  = std::make_unique<cumulonimbus::asset::DummyTexture>(device, DirectX::XMFLOAT4{ 1.f,1.f,1.f,1.f });
+		dummy_texture_normal = std::make_unique<cumulonimbus::asset::DummyTexture>(device, DirectX::XMFLOAT4{ 0.5f,0.5f,1.0f,1.0f });
 
 		InitialLoad(device);
 	}

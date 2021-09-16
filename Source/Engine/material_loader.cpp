@@ -12,6 +12,11 @@ namespace
 
 namespace cumulonimbus::asset
 {
+	MaterialLoader::MaterialLoader()
+	{
+		dummy_material = std::make_unique<Material>();
+	}
+
 	void MaterialLoader::Load(AssetManager& asset_manager, const std::filesystem::path& path)
 	{
 		const auto id = Convert(asset_manager, path, copy_dir);
@@ -34,7 +39,7 @@ namespace cumulonimbus::asset
 		return extensions.contains(extension);
 	}
 
-	void MaterialLoader::CreateMaterial(
+	mapping::rename_type::UUID MaterialLoader::CreateMaterial(
 		AssetManager& asset_manager, const std::filesystem::path& parent_path,
 		const MaterialData& material_data = {}, std::string material_name = {""})
 	{
@@ -72,6 +77,7 @@ namespace cumulonimbus::asset
 		);
 		// アセットシート(更新後)の保存
 		asset_manager.Save();
+		return id;
 	}
 
 	void MaterialLoader::Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id)
@@ -128,7 +134,8 @@ namespace cumulonimbus::asset
 	{
 		// Todo : ダミーマテリアルを返すようにする
 		if (!materials.contains(id))
-			assert(!"Not found material id(MaterialLoader::GetMaterial)");
+			return *dummy_material.get();
+			//assert(!"Not found material id(MaterialLoader::GetMaterial)");
 		return *materials.at(id).get();
 	}
 } // cumulonimbus::asset

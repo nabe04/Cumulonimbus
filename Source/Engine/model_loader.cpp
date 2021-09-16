@@ -181,7 +181,6 @@ namespace cumulonimbus::asset
 		return false;
 	}
 
-
 	Model& ModelLoader::GetModel(const mapping::rename_type::UUID& model_id)
 	{
 		if (!models.contains(model_id))
@@ -656,9 +655,10 @@ namespace cumulonimbus::asset
 		}
 
 		// マテリアルの作成&アセットシート(更新後)の保存
-		asset_manager.GetLoader<MaterialLoader>()->CreateMaterial(
-			asset_manager, parent_path,
-			material, std::filesystem::path{ texture_path }.filename().replace_extension().string());
+		auto mat_id = asset_manager.GetLoader<MaterialLoader>()->CreateMaterial(
+																	asset_manager, parent_path,
+																	material, std::filesystem::path{ texture_path }.filename().replace_extension().string());
+		model.GetModelData().materials_id.emplace_back(mat_id);
 	}
 
 	void ModelLoader::BuildAnimations(Model& model, FbxScene* fbx_scene)

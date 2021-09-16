@@ -19,6 +19,12 @@ namespace
 
 namespace cumulonimbus::asset
 {
+	TextureLoader::TextureLoader()
+	{
+		const DirectX::SimpleMath::Vector4 color = { 1.f,1.f,1.f,1.f };
+		dummy_texture = std::make_unique<Texture>(locator::Locator::GetDx11Device()->device.Get(), color);
+	}
+
 	mapping::rename_type::UUID TextureLoader::Convert(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to)
 	{
 		// コピー先のフォルダ作成&コピー
@@ -128,7 +134,8 @@ namespace cumulonimbus::asset
 	{
 		// Todo : idが存在しない場合ダミーテクスチャを返すようにする
 		if (!textures.contains(id))
-			assert(!"Not found texture id(TextureLoader::GetTexture)");
+			return *dummy_texture.get();
+			//assert(!"Not found texture id(TextureLoader::GetTexture)");
 
 		return *textures.at(id).get();
 	}

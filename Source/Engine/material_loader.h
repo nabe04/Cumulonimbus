@@ -7,6 +7,7 @@ namespace cumulonimbus::asset
 	class MaterialLoader final : public Loader
 	{
 	public:
+		explicit MaterialLoader();
 		~MaterialLoader() override = default;
 
 		/**
@@ -44,8 +45,10 @@ namespace cumulonimbus::asset
 		 * @param parent_path : 保存するマテリアルの親階層のファイルパス
 		 * @param material_data : Material構造体のパラメータ
 		 * @param material_name : マテリアル名(※拡張子不要)
+		 * @return : 作成されたマテリアルID(UUID)
 		 */
-		void CreateMaterial(
+		[[nodiscard]]
+		mapping::rename_type::UUID CreateMaterial(
 			AssetManager& asset_manager, const std::filesystem::path& parent_path,
 			const MaterialData& material_data, std::string material_name);
 
@@ -57,6 +60,7 @@ namespace cumulonimbus::asset
 		Material& GetMaterial(const mapping::rename_type::UUID& id);
 	private:
 		std::map<mapping::rename_type::UUID, std::unique_ptr<Material>> materials{};
+		std::unique_ptr<Material> dummy_material{};
 
 		mapping::rename_type::UUID Convert(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to) override;
 	};

@@ -30,8 +30,8 @@ namespace cumulonimbus::manager::texture
 
 	private:
 		std::map<std::string, std::unique_ptr<TextureResource>> textures = {};
-		std::unique_ptr<DummyTexture> dummy_texture_white{ nullptr };
-		std::unique_ptr<DummyTexture> dummy_texture_normal{ nullptr };
+		std::unique_ptr<cumulonimbus::asset::DummyTexture> dummy_texture_white{ nullptr };
+		std::unique_ptr<cumulonimbus::asset::DummyTexture> dummy_texture_normal{ nullptr };
 
 		void InitialLoad(ID3D11Device* device);
 		void RemoveTexture(const std::string_view tex_filename);

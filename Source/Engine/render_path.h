@@ -73,7 +73,7 @@ namespace cumulonimbus::renderer
 
 		std::shared_ptr<FrameBuffer>							off_screen					{ nullptr };
 		std::unique_ptr<graphics::buffer::GBuffer>				g_buffer					{ nullptr };
-		std::unique_ptr<DummyTexture>							dummy_texture				{ nullptr };
+		std::unique_ptr<cumulonimbus::asset::DummyTexture>		dummy_texture				{ nullptr };
 		std::unique_ptr<DepthMap>								depth_map					{ nullptr };
 		std::unique_ptr<FullscreenQuad>							fullscreen_quad				{ nullptr };
 		std::unique_ptr<shader_asset::LocalShaderAssetManager>	local_shader_asset_manager	{ nullptr };

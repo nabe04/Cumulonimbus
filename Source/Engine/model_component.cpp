@@ -20,6 +20,7 @@ namespace cumulonimbus::component
 			cereal::base_class<ComponentBase>(this),
 
 			CEREAL_NVP(model_id),
+			CEREAL_NVP(material_ids),
 			CEREAL_NVP(nodes),
 
 			CEREAL_NVP(prev_key_index),
@@ -136,10 +137,10 @@ namespace cumulonimbus::component
 
 	const mapping::rename_type::UUID& ModelComponent::GetMaterialID(const u_int material_index) const
 	{
-		//if (material_ids.size() <= material_index)
-		//	assert(!"You are trying to access more than the number of elements(ModelComponent::GetMaterialID)");
-		//return material_ids.at(material_index);
-		return { 0 };
+		if (material_index >= material_ids.size())
+			assert(!"You are trying to access more than the number of elements(ModelComponent::GetMaterialID)");
+		return material_ids.at(material_index);
+		//return { 0 };
 	}
 
 	const DirectX::SimpleMath::Matrix& ModelComponent::GetNodeMatrix(const char* node_name)

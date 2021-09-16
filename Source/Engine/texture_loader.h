@@ -11,6 +11,7 @@ namespace cumulonimbus::asset
 	class TextureLoader final : public Loader
 	{
 	public:
+		explicit TextureLoader();
 		~TextureLoader() override = default;
 
 		/**
@@ -60,6 +61,7 @@ namespace cumulonimbus::asset
 		Texture& GetTexture(const mapping::rename_type::UUID& id);
 	private:
 		std::map<mapping::rename_type::UUID, std::unique_ptr<Texture>> textures{};
+		std::unique_ptr<Texture> dummy_texture{};
 
 		mapping::rename_type::UUID Convert(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to) override;
 	};

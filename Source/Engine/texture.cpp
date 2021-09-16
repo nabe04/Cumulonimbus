@@ -15,6 +15,11 @@ namespace cumulonimbus::asset
 		CreateTexture(device, tex_filename);
 	}
 
+	Texture::Texture(ID3D11Device* device, const DirectX::SimpleMath::Vector4& color)
+	{
+		CreateDummyTexture(device, color);
+	}
+
 	void Texture::CreateTexture(ID3D11Device* device, const char* tex_filename)
 	{
 		char name[MAX_PATH]{};
@@ -49,6 +54,43 @@ namespace cumulonimbus::asset
 		file_path = tex_filename;
 		filename = name;
 	}
+
+	void Texture::CreateDummyTexture(ID3D11Device* device, const DirectX::XMFLOAT4& color)
+	{
+		HRESULT hr;
+
+		// Create Texture2D
+		D3D11_TEXTURE2D_DESC					tex2d_desc = {};
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> tex2d = {};
+		{
+			tex2d_desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+			tex2d_desc.Width = 1;
+			tex2d_desc.Height = 1;
+			tex2d_desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+			tex2d_desc.Usage = D3D11_USAGE_DEFAULT;
+			tex2d_desc.ArraySize = 1;
+			tex2d_desc.SampleDesc.Count = 1;
+
+			D3D11_SUBRESOURCE_DATA initData = {};
+			initData.pSysMem = &color;
+			initData.SysMemPitch = sizeof(color);
+
+			hr = device->CreateTexture2D(&tex2d_desc, &initData, tex2d.GetAddressOf());
+			if (FAILED(hr))
+				assert(!"CreateTexture2D error");
+		}
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		srvDesc.Format = tex2d_desc.Format;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2DArray.ArraySize = 1;
+		srvDesc.Texture2DArray.MipLevels = 1;
+
+		hr = device->CreateShaderResourceView(tex2d.Get(), &srvDesc, texture_view.GetAddressOf());
+		if (FAILED(hr))
+			assert(!"CreateShaderResourceView error(dummy texture)");
+	}
+
 
 	void Texture::BindTexture(
 		const mapping::graphics::ShaderStage shader_stage,
@@ -124,7 +166,7 @@ void TextureResource::CreateTexture(ID3D11Device* device, const char* tex_filena
 
 void TextureManager::Initialize(ID3D11Device* device)
 {
-	dummy_texture_white = std::make_unique<DummyTexture>(device, DirectX::XMFLOAT4{ 1.f,1.f,1.f,1.f });
+	dummy_texture_white = std::make_unique<cumulonimbus::asset::DummyTexture>(device, DirectX::XMFLOAT4{ 1.f,1.f,1.f,1.f });
 }
 
 //-- Creating a texture from a file name --//

@@ -49,7 +49,7 @@ namespace cumulonimbus::renderer
 		samplers.at(Linear_Wrap)	= std::make_unique<Sampler>(device, D3D11_FILTER_MIN_MAG_MIP_LINEAR	, D3D11_TEXTURE_ADDRESS_WRAP	, D3D11_COMPARISON_ALWAYS, 0.0f, 0.0f, 0.0f, 1.0f);
 		samplers.at(Anistropic)		= std::make_unique<Sampler>(device, D3D11_FILTER_ANISOTROPIC			, D3D11_TEXTURE_ADDRESS_WRAP	, D3D11_COMPARISON_ALWAYS, 0.0f, 0.0f, 0.0f, 1.0f);
 
-		dummy_texture = std::make_unique<DummyTexture>( device, DirectX::XMFLOAT4{ 1.f,1.f,1.f,1.f } );
+		dummy_texture = std::make_unique<cumulonimbus::asset::DummyTexture>( device, DirectX::XMFLOAT4{ 1.f,1.f,1.f,1.f } );
 	}
 
 	void RenderPath::BindDirectXStates(ID3D11DeviceContext* immediate_context,
@@ -246,32 +246,39 @@ namespace cumulonimbus::renderer
 		g_buffer->BindShaderAndRTV();
 	}
 
-	void RenderPath::Render3DToGBuffer(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, const component::CameraComponent* view, const Light* light)
+	void RenderPath::Render3DToGBuffer(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, const component::CameraComponent* camera, const Light* light)
 	{
-		for (auto& mesh_object : registry->GetArray<component::MeshObjectComponent>().GetComponents())
+		for(auto& model_comp : registry->GetArray<component::ModelComponent>().GetComponents())
 		{
-			const mapping::rename_type::Entity ent = mesh_object.GetEntity();
+			const mapping::rename_type::Entity ent = model_comp.GetEntity();
 
-			// MeshObjectComponentが持つstate類の実行
-			// sampler stateはメッシュに関係なくLinearBorderを使用
-			BindDirectXStates(immediate_context, &mesh_object,
-				/*rasterizer*/   true, /*sampler*/false,
-				/*depth stencil*/true, /*blend*/  true);
-			samplers.at(RenderingSampleState::Linear_Border)->Activate(immediate_context, 0);
-
-			if (auto* geom = registry->TryGetComponent<component::GeomPrimComponent>(ent))
-			{
-				RenderGeomPrim(immediate_context, registry, ent, &mesh_object, view, light);
-			}
-			else if (auto* obj_model = registry->TryGetComponent<component::ObjModelComponent>(ent))
-			{
-				RenderOBJ(immediate_context, registry, ent, &mesh_object, view, light);
-			}
-			else if (auto* fbx_model = registry->TryGetComponent<component::FbxModelComponent>(ent))
-			{
-				RenderFBX(immediate_context, registry, ent, &mesh_object, view, light, false, true);
-			}
+			RenderModel(immediate_context, registry, ent, &model_comp, camera, light);
 		}
+
+		//for (auto& mesh_object : registry->GetArray<component::MeshObjectComponent>().GetComponents())
+		//{
+		//	const mapping::rename_type::Entity ent = mesh_object.GetEntity();
+
+		//	// MeshObjectComponentが持つstate類の実行
+		//	// sampler stateはメッシュに関係なくLinearBorderを使用
+		//	BindDirectXStates(immediate_context, &mesh_object,
+		//		/*rasterizer*/   true, /*sampler*/false,
+		//		/*depth stencil*/true, /*blend*/  true);
+		//	samplers.at(RenderingSampleState::Linear_Border)->Activate(immediate_context, 0);
+
+		//	if (auto* geom = registry->TryGetComponent<component::GeomPrimComponent>(ent))
+		//	{
+		//		RenderGeomPrim(immediate_context, registry, ent, &mesh_object, view, light);
+		//	}
+		//	else if (auto* obj_model = registry->TryGetComponent<component::ObjModelComponent>(ent))
+		//	{
+		//		RenderOBJ(immediate_context, registry, ent, &mesh_object, view, light);
+		//	}
+		//	else if (auto* fbx_model = registry->TryGetComponent<component::FbxModelComponent>(ent))
+		//	{
+		//		RenderFBX(immediate_context, registry, ent, &mesh_object, view, light, false, true);
+		//	}
+		//}
 	}
 
 	void RenderPath::Render3DToGBuffer_End(ID3D11DeviceContext* immediate_context, const component::CameraComponent* camera_comp) const
@@ -640,6 +647,9 @@ namespace cumulonimbus::renderer
 		const component::ModelComponent* model_comp,
 		const component::CameraComponent* view, const Light* light)
 	{
+		if (!locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>()->HasModel(model_comp->GetModelID()))
+			return;
+
 		const asset::ModelData& model_data =
 			locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>()->GetModel(model_comp->GetModelID()).GetModelData();
 
@@ -677,9 +687,9 @@ namespace cumulonimbus::renderer
 
 			for (const asset::ModelData::Subset& subset : mesh.subsets)
 			{
-				//const auto material_id = model_comp->GetMaterialID(subset.material_index);
-				//// マテリアルのバインド
-				//locator::Locator::GetAssetManager()->GetLoader<asset::MaterialLoader>()->GetMaterial(material_id).BindMaterial(mapping::graphics::ShaderStage::PS);
+				const auto material_id = model_comp->GetMaterialID(subset.material_index);
+				// マテリアルのバインド
+				locator::Locator::GetAssetManager()->GetLoader<asset::MaterialLoader>()->GetMaterial(material_id).BindMaterial(mapping::graphics::ShaderStage::PS);
 
 				// ここから
 				//MaterialCB cb_material;
@@ -721,7 +731,7 @@ namespace cumulonimbus::renderer
 				immediate_context->DrawIndexed(subset.index_count, subset.start_index, 0);
 
 				// マテリアルのアンバインド
-				//locator::Locator::GetAssetManager()->GetLoader<asset::MaterialLoader>()->GetMaterial(material_id).UnbindMaterial(mapping::graphics::ShaderStage::PS);
+				locator::Locator::GetAssetManager()->GetLoader<asset::MaterialLoader>()->GetMaterial(material_id).UnbindMaterial(mapping::graphics::ShaderStage::PS);
 
 				//registry->GetComponent<component::MaterialComponent>(entity).UnbindCBuffer();
 
