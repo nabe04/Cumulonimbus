@@ -2,6 +2,33 @@
 
 namespace cumulonimbus::helper::imgui
 {
+	bool Combo(
+		const std::string& label,
+		std::string& current_item,
+		const std::vector<std::string>& items)
+	{
+		bool changed = false;
+
+		if (ImGui::BeginCombo(label.c_str(), current_item.c_str()))
+		{
+			for (int n = 0; n < items.size(); ++n)
+			{
+				bool is_selected = (current_item == items[n]);
+				if (ImGui::Selectable(items[n].c_str(), is_selected))
+				{
+					current_item = items[n];
+					changed = true;
+				}
+				if (is_selected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
+		return changed;
+	}
+
 	void DragFloat3(
 		const std::string& label,
 		DirectX::SimpleMath::Vector3& v,
@@ -21,7 +48,6 @@ namespace cumulonimbus::helper::imgui
 		IMGUI_LEFT_LABEL(ImGui::DragFloat, "Z", &v.z, v_speed, v_min, v_max, format, flags);
 
 		ImGui::PushItemWidth(0); // ƒTƒCƒY‚ðŒ³‚É–ß‚·
-
 	}
 
 } // cumulonimbus::helper::imgui

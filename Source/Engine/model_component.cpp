@@ -1,7 +1,9 @@
 #include "model_component.h"
 
+#include <filesystem>
+
 #include "ecs.h"
-#include "fbx_model_component.h"
+#include "cum_imgui_helper.h"
 #include "locator.h"
 #include "model_loader.h"
 #include "transform_component.h"
@@ -50,7 +52,7 @@ namespace cumulonimbus::component
 	{
 	}
 
-	void ModelComponent::Update(float delta_time)
+	void ModelComponent::Update(const float delta_time)
 	{
 		const auto& world_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorld4x4();
 
@@ -62,6 +64,44 @@ namespace cumulonimbus::component
 
 	void ModelComponent::RenderImGui()
 	{
+		if (ImGui::CollapsingHeader("Model Component", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			auto& asset_sheet_manager = locator::Locator::GetAssetManager()->GetAssetSheetManager();
+			std::filesystem::path current_path{};
+			static std::string current_item{};
+			auto* model_loader = locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>();
+			if(model_loader->HasModel(model_id))
+			{
+				current_path = asset_sheet_manager.GetAssetFilename<asset::Model>(model_id);
+				current_item = current_path.filename().string();
+			}
+			std::vector<std::filesystem::path> items_path{};
+			std::vector<std::string> items{};
+			items_path.reserve(asset_sheet_manager.GetSheet<asset::Model>().sheet.size());
+			items.reserve(asset_sheet_manager.GetSheet<asset::Model>().sheet.size());
+			for (const auto& [key, value] : asset_sheet_manager.GetSheet<asset::Model>().sheet)
+			{
+				items_path.emplace_back(value);
+				items.emplace_back(items_path.back().filename().string());
+			}
+			// Combo内でアイテム選択時
+			if(helper::imgui::Combo("Model", current_item, items))
+			{
+				for (const auto& [key, value] : asset_sheet_manager.GetSheet<asset::Model>().sheet)
+				{
+					if (current_item != std::filesystem::path{ value }.filename().string())
+						continue;
+					if(model_id != key)
+					{
+						/*
+						 * 選択されたモデルが現在保持しているモデルと違う場合
+						 * model_idを更新 & ModelComponentの初期化処理
+						 */
+						Initialize(GetRegistry(), GetEntity(), key);
+					}
+				}
+			}
+		}
 	}
 
 	bool ModelComponent::IsPlayAnimation() const
@@ -94,11 +134,12 @@ namespace cumulonimbus::component
 		anim_states.SetState(AnimationState::Switch);
 	}
 
-	const mapping::rename_type::UUID& ModelComponent::GetMaterialID(const u_int material_index)
+	const mapping::rename_type::UUID& ModelComponent::GetMaterialID(const u_int material_index) const
 	{
-		if (material_ids.size() <= material_index)
-			assert(!"You are trying to access more than the number of elements(ModelComponent::GetMaterialID)");
-		return material_ids.at(material_index);
+		//if (material_ids.size() <= material_index)
+		//	assert(!"You are trying to access more than the number of elements(ModelComponent::GetMaterialID)");
+		//return material_ids.at(material_index);
+		return { 0 };
 	}
 
 	const DirectX::SimpleMath::Matrix& ModelComponent::GetNodeMatrix(const char* node_name)
@@ -187,7 +228,7 @@ namespace cumulonimbus::component
 
 		// マテリアルIDのコピー
 		const auto& mat_vec = model.GetModelData().GetMaterialsID();
-		std::copy(mat_vec.begin(), mat_vec.end(), material_ids);
+		std::copy(mat_vec.begin(), mat_vec.end(), std::back_inserter(material_ids));
 
 		anim_states.AddState(AnimationState::Switch, [ent, registry](const float dt) { registry->GetComponent<ModelComponent>(ent).BlendNextAnimation(dt); });
 		anim_states.AddState(AnimationState::Update, [ent, registry](const float dt) { registry->GetComponent<ModelComponent>(ent).UpdateAnimation(dt); });

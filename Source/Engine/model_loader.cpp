@@ -174,6 +174,14 @@ namespace cumulonimbus::asset
 		return extensions.contains(extension);
 	}
 
+	bool ModelLoader::HasModel(const mapping::rename_type::UUID& id) const
+	{
+		if (models.contains(id))
+			return true;
+		return false;
+	}
+
+
 	Model& ModelLoader::GetModel(const mapping::rename_type::UUID& model_id)
 	{
 		if (!models.contains(model_id))

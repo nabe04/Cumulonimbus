@@ -91,11 +91,6 @@ namespace cumulonimbus::component
 				item_current_idx = static_cast<int>(std::distance(v.begin(), f));
 				combo_label = locator::Locator::GetResourceManager()->FbxModelNames().at(item_current_idx).c_str();
 			}
-			else
-			{
-				int a;
-				a = 0;
-			}
 
 			if (ImGui::BeginCombo("Resources", combo_label.c_str()))
 			{

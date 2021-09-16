@@ -32,8 +32,18 @@ namespace cumulonimbus::asset
 		 * @brief : オーバーロードされているLoad関数の共通処理記述部
 		 */
 		void Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id) override;
-		
+
+		[[nodiscard]]
 		bool Supported(std::filesystem::path extension) override;
+
+		/**
+		 * @brief : 指定のIDを持つモデルが登録されているか
+		 * @param id : モデルID(UUID)
+		 * @return : true -> モデルが存在する
+		 * @return : false -> モデルが存在しない
+		 */
+		[[nodiscard]]
+		bool HasModel(const mapping::rename_type::UUID& id) const;
 
 		/**
 		 * @brief : 登録されたIDを元にModelアセットを返す

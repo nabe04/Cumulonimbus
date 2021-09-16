@@ -20,6 +20,19 @@ namespace cumulonimbus::helper::imgui
 	}
 
 	/**
+	 * @brief :ImGui::Comboのstd::string対応版
+	 * @param label : Combo名
+	 * @param current_item : 現在選択されているアイテム名
+	 * @param items : Combo内に表示されたい名前の配列
+	 * @return : true -> current_itemが変更されたとき
+	 * @return : false -> それ以外
+	 */
+	bool Combo(
+		const std::string& label,
+		std::string& current_item,
+		const std::vector<std::string>& items);
+
+	/**
 	 * @brief :	ImGui::DragFloat3のテキスト位置を左にし成分の表示(X,Y,Z)
 	 */
 	void DragFloat3(

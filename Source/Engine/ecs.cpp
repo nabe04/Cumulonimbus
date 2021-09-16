@@ -20,6 +20,7 @@
 #include "sprite.h"
 #include "sprite_object.h"
 #include "transform_component.h"
+#include "model_component.h"
 // components(game)
 #include "player_component.h"
 
@@ -121,6 +122,7 @@ namespace cumulonimbus::ecs
 		//RegistryComponent<component::SpriteObjectComponent>();
 		RegistryComponent<component::MeshObjectComponent>();
 		RegistryComponent<component::FbxModelComponent>();
+		RegistryComponent<component::ModelComponent>();
 		//RegistryComponent<component::GeomPrimComponent>();
 		//RegistryComponent<component::ObjModelComponent>();
 		RegistryComponent<component::SkyBoxComponent>();

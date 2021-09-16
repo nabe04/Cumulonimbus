@@ -13,19 +13,20 @@
 #include "physic_material_component.h"
 #include "rigid_body_component.h"
 #include "sphere_collision_component.h"
+#include "model_component.h"
 
 namespace cumulonimbus::editor
 {
 	Inspector::Inspector()
 	{
 		RegisterComponent<component::FbxModelComponent>(		"Model Component"	, mapping::component_tag::ComponentTag::Mesh);
+		RegisterComponent<component::ModelComponent>(			"New Model Component", mapping::component_tag::ComponentTag::Mesh);
 		RegisterComponent<component::RayCastComponent>(			"RayCast Collider"	, mapping::component_tag::ComponentTag::Physics);
 		RegisterComponent<component::CapsuleCollisionComponent>("Capsule Collider"	, mapping::component_tag::ComponentTag::Physics);
 		RegisterComponent<component::PhysicMaterialComponent>(	"Physic Material"	, mapping::component_tag::ComponentTag::Physics);
 		RegisterComponent<component::SphereCollisionComponent>(	"Sphere Collider"	, mapping::component_tag::ComponentTag::Physics);
 		RegisterComponent<component::RigidBodyComponent>(		"RigidBody"			, mapping::component_tag::ComponentTag::Physics);
 	}
-
 
 	void Inspector::Render(ecs::Registry* registry, const mapping::rename_type::Entity ent)
 	{

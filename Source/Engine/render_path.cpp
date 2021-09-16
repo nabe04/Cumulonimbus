@@ -677,9 +677,9 @@ namespace cumulonimbus::renderer
 
 			for (const asset::ModelData::Subset& subset : mesh.subsets)
 			{
-				const auto material_id = model_comp->GetMaterialID(subset.material_index);
-				// マテリアルのバインド
-				locator::Locator::GetAssetManager()->GetLoader<asset::MaterialLoader>()->GetMaterial(material_id).BindMaterial(mapping::graphics::ShaderStage::PS);
+				//const auto material_id = model_comp->GetMaterialID(subset.material_index);
+				//// マテリアルのバインド
+				//locator::Locator::GetAssetManager()->GetLoader<asset::MaterialLoader>()->GetMaterial(material_id).BindMaterial(mapping::graphics::ShaderStage::PS);
 
 				// ここから
 				//MaterialCB cb_material;
@@ -716,10 +716,12 @@ namespace cumulonimbus::renderer
 				//		dummy_texture->dummy_texture.GetAddressOf(),
 				//		TexSlot_BaseColorMap);
 				//}
+
+
 				immediate_context->DrawIndexed(subset.index_count, subset.start_index, 0);
 
 				// マテリアルのアンバインド
-				locator::Locator::GetAssetManager()->GetLoader<asset::MaterialLoader>()->GetMaterial(material_id).UnbindMaterial(mapping::graphics::ShaderStage::PS);
+				//locator::Locator::GetAssetManager()->GetLoader<asset::MaterialLoader>()->GetMaterial(material_id).UnbindMaterial(mapping::graphics::ShaderStage::PS);
 
 				//registry->GetComponent<component::MaterialComponent>(entity).UnbindCBuffer();
 
@@ -814,7 +816,6 @@ namespace cumulonimbus::renderer
 			RenderCapsuleCollisionModel(immediate_context, registry, ent, model_resource.get());
 		}
 	}
-
 
 	void RenderPath::RenderSphereCollisionModel(ID3D11DeviceContext* immediate_context,
 										  ecs::Registry* registry, mapping::rename_type::Entity entity,
