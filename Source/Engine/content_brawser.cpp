@@ -84,7 +84,8 @@ void ContentBrowser::SelectedContent(Scene* scene)
 			ImGui::PushID(n);
 			if (ImGui::ImageButton((void*)cumulonimbus::locator::Locator::GetResourceManager()->GetTextureResource("no_image_256")->GetTextureData()->texture_view.Get(), { 150,150 }))
 			{
-
+				int a;
+				a = 0;
 			}
 
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))

@@ -48,6 +48,34 @@ namespace cumulonimbus::asset
 		}
 
 		/**
+		 * @brief : AssetSheetに登録されている型(ハッシュ値)が
+		 *			存在するかをテンプレートの型(T)から判別
+		 */
+		template<class T>
+		[[nodiscard]]
+		bool HasSheet() const
+		{
+			if (sheets.contains(utility::GetHash<T>()))
+				return true;
+
+			return false;
+		}
+
+		/**
+		 * @brief : AssetSheetに登録されている型(ハッシュ値)が
+		 *			存在するかを引数から判別
+		 * @param hash : 判別対象のハッシュ値
+		 */
+		[[nodiscard]]
+		bool HasSheet(const mapping::rename_type::Hash hash) const
+		{
+			if (sheets.contains(hash))
+				return true;
+
+			return false;
+		}
+
+		/**
 		 * @brief  : 任意のクラスのアセットシートの取得
 		 * @remark : T型が存在しない場合処理を中断する
 		 */
