@@ -26,12 +26,23 @@ namespace cumulonimbus::helper::imgui
 	 * @brief : ImGui::Imageの簡易版
 	 *        (shader resource view と 画像の大きさを指定するのみ)
 	 */
-	inline void Image(
-		ID3D11ShaderResourceView*    srv,
-		DirectX::SimpleMath::Vector2 image_size = {100,100})
-	{
-		ImGui::Image((void*)srv, ImVec2(image_size.x, image_size.y));
-	}
+	void Image(
+		ID3D11ShaderResourceView* srv,
+		const DirectX::SimpleMath::Vector2& image_size = { 100,100 });
+
+	/**
+	 * @brief : Textureクラスから画像を表示
+	 */
+	void Image(
+		asset::Texture& texture,
+		const DirectX::SimpleMath::Vector2& image_size = { 100,100 });
+
+	/**
+	 * @breif : アセットシートのテクスチャIDから画像を表示
+	 */
+	void Image(
+		const mapping::rename_type::UUID& texture_id,
+		const DirectX::SimpleMath::Vector2& image_size = { 100,100 });
 
 	/**
 	 * @brief : テキスト & 画像付きボタンの作成

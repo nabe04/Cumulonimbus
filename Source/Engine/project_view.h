@@ -6,6 +6,7 @@
 #include <filesystem>
 
 #include "asset_manager.h"
+#include "cum_imgui_helper.h"
 
 namespace cumulonimbus
 {
@@ -35,10 +36,13 @@ namespace cumulonimbus::editor
 		ProjectView();
 		void Render(ecs::Registry* registry);
 	private:
-		NavigationType				current_selected_navigation{NavigationType::AllAssets};  // Navigation Paneで現在選択中の項目
-		std::filesystem::path		current_selected_path{}; // Folder Tree内で現在選択中のフォルダパス
-		mapping::rename_type::Hash	current_selected_id{};	 // All Assets内で現在選択中のLoader ID(Hash)
+		NavigationType				selected_navigation{NavigationType::AllAssets};  // Navigation Paneで現在選択中の項目
+		std::filesystem::path		selected_path{}; // Navigation Pane内で現在選択中のフォルダパス
+		std::filesystem::path		selected_file{}; // File and Folder内で現在選択中のファイル名
+		mapping::rename_type::Hash	selected_id{};	 // All Assets内で現在選択中のLoader ID(Hash)
 		std::map<std::filesystem::path, bool> is_folder_open{}; // Folder Tree上のフォルダが開かれているかどうか
+		float item_size{ 150 };
+		helper::imgui::IMButtonState button_state{};
 
 		/**
 		 * @brief : ハッシュ値から任意の型の名前に変換するためのコネクター

@@ -7,7 +7,6 @@
 #include <portable-file-dialogs.h>
 
 #include "asset_sheet_manager.h"
-#include "cum_imgui_helper.h"
 #include "locator.h"
 #include "generic.h"
 #include "material.h"
@@ -25,7 +24,7 @@ namespace cumulonimbus::editor
 	ProjectView::ProjectView()
 	{
 		// デフォルトのIDをModelにセット
-		current_selected_id = utility::GetHash<asset::Model>();
+		selected_id = utility::GetHash<asset::Model>();
 
 		//icon = ICON_FA_FOLDER_OPEN;
 		is_folder_open.emplace(viewer_dir, false);
@@ -127,8 +126,8 @@ namespace cumulonimbus::editor
 
 	std::filesystem::path ProjectView::ShowAllAssets(const asset::AssetManager& asset_manager)
 	{
-		if (current_selected_navigation == NavigationType::FileTree)
-			current_selected_id = {};
+		if (selected_navigation == NavigationType::FileTree)
+			selected_id = {};
 
 		if(ImGui::TreeNodeEx(ICON_FA_SEARCH"All Assets", ImGuiTreeNodeFlags_DefaultOpen))
 		{
@@ -138,12 +137,12 @@ namespace cumulonimbus::editor
 					continue;
 
 				const std::string asset_name = ICON_FA_SEARCH + connector.at(hash);
-				if (ImGui::Selectable(asset_name.c_str(), current_selected_id == hash))
+				if (ImGui::Selectable(asset_name.c_str(), selected_id == hash))
 				{// 選択された時
 					// 選択されたクラスのハッシュ値のセット
-					current_selected_id = hash;
+					selected_id = hash;
 					// File and Folder Listに表示する項目のセット
-					current_selected_navigation = NavigationType::AllAssets;
+					selected_navigation = NavigationType::AllAssets;
 				}
 			}
 			ImGui::TreePop();
@@ -161,7 +160,7 @@ namespace cumulonimbus::editor
 		const std::string path_name = path.filename().string();
 		bool is_open = false;
 
-		if(current_selected_path == path)
+		if(selected_path == path)
 		{
 			node_flags |= ImGuiTreeNodeFlags_Selected;
 		}
@@ -173,9 +172,9 @@ namespace cumulonimbus::editor
 			if (ImGui::IsItemClicked())
 			{
 				// 現在選択されているパスのセット
-				current_selected_path = path;
+				selected_path = path;
 				// File and Folder Listに表示する項目のセット
-				current_selected_navigation = NavigationType::FileTree;
+				selected_navigation = NavigationType::FileTree;
 			}
 
 			if (is_open)
@@ -200,79 +199,56 @@ namespace cumulonimbus::editor
 			}
 
 		}
-
-
-		//for (const auto& file : std::filesystem::recursive_directory_iterator(path))
-		//{
-		//}
-		//if(ImGui::TreeNodeEx(path_name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
-		//{
-		//	int n = 0;
-		//	for (const auto& file : std::filesystem::recursive_directory_iterator(path))
-		//	{
-		//		if (ImGui::IsItemClicked())
-		//		{
-		//			current_selected_path = file.path();
-		//			// File and Folder Listに表示する項目のセット
-		//			current_selected_navigation = NavigationType::FileTree;
-		//		}
-		//		if(file.path() == current_selected_path)
-		//		{
-
-		//		}
-
-		//		if (file.path().parent_path() == path)
-		//		{
-		//			if (std::filesystem::is_directory(file))
-		//			{
-		//				ShowFolderTree(file.path());
-		//			}
-		//			else
-		//			{
-
-		//				//static int selected = -1;
-		//				//std::string name = file.path().filename().string();
-		//				//if (ImGui::Selectable(name.c_str(), selected == n))
-		//				//	selected = n;
-		//				//++n;
-		//			}
-		//		}
-		//	}
-		//	ImGui::TreePop();
-		//}
 		return {};
 	}
 
 	std::filesystem::path ProjectView::ShowFileAndFolderList(const asset::AssetManager& asset_manager)
 	{
-		if(current_selected_navigation == NavigationType::AllAssets)
+		ImGui::PushItemWidth(200);
+		ImGui::SliderFloat("##Texture Size", &item_size, 10, 300,"size : %.1f");
+		ImGui::PopItemWidth();
+		ImGui::SameLine();
+		ImGui::Text(selected_file.string().c_str());
+
+		if (selected_navigation == NavigationType::AllAssets)
 		{
-			if (!asset_manager.GetAssetSheetManager().HasSheet(current_selected_id))
+			if (!asset_manager.GetAssetSheetManager().HasSheet(selected_id))
 				return {};
+
 			int n = 0;
 			ImGuiStyle& style = ImGui::GetStyle();
 			const float window_visible_x2 = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
-			for(auto& [uuid,path_str] : asset_manager.GetAssetSheetManager().GetSheets().at(current_selected_id).sheet)
+			for (auto& [uuid, path_str] : asset_manager.GetAssetSheetManager().GetSheets().at(selected_id).sheet)
 			{
 				ImGui::PushID(uuid.c_str());
 				std::filesystem::path path{ path_str };
-				helper::imgui::IMButtonState button_state{};
-				helper::imgui::ImageButtonWithText(uuid, std::string{ path.filename().string() }.c_str(), button_state, { 200,200 });
+				// ボタンの表示
+				helper::imgui::ImageButtonWithText(uuid, std::string{ path.filename().string() }.c_str(), button_state, { item_size,item_size });
+				if (button_state.pressed)
+					selected_file = path;
+
+				// ボタン配置位置の調整
 				const float last_button_x2 = ImGui::GetItemRectMax().x;
-				const float next_button_x2 = last_button_x2 + style.ItemSpacing.x + 200; // Expected position if next button was on same line
-				if (n + 1 < asset_manager.GetAssetSheetManager().GetSheets().at(current_selected_id).sheet.size()
+				const float next_button_x2 = last_button_x2 + style.ItemSpacing.x + item_size;
+				if (n + 1 < asset_manager.GetAssetSheetManager().GetSheets().at(selected_id).sheet.size()
 					&& next_button_x2 < window_visible_x2)
 					ImGui::SameLine();
 				ImGui::PopID();
+				// ドラック & ドロップ操作
+				if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+				{
+					ImGui::SetDragDropPayload("cell", &n, sizeof(int));
+					helper::imgui::Image(uuid);
+					ImGui::Text(path_str.c_str());
+					ImGui::EndDragDropSource();
+				}
+
 				++n;
-				//asset_manager.GetAssetSheetManager().
-				//ImGui::Text(path.c_str());
 			}
-			//asset_manager.GetAssetSheetManager().GetSheets().
 		}
-		else if(current_selected_navigation == NavigationType::FileTree)
+		else if(selected_navigation == NavigationType::FileTree)
 		{
-			for (const auto& file : std::filesystem::recursive_directory_iterator(current_selected_path))
+			for (const auto& file : std::filesystem::recursive_directory_iterator(selected_path))
 			{
 				const std::string name = file.path().string();
 				ImGui::Text(name.c_str());

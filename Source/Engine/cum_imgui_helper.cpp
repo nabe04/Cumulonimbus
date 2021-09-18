@@ -8,6 +8,29 @@
 
 namespace cumulonimbus::helper::imgui
 {
+	void Image(
+		ID3D11ShaderResourceView* srv,
+		const DirectX::SimpleMath::Vector2& image_size)
+	{
+		ImGui::Image((void*)srv, ImVec2(image_size.x, image_size.y));
+	}
+
+	void Image(
+		asset::Texture& texture,
+		const DirectX::SimpleMath::Vector2& image_size)
+	{
+		Image(texture.GetShaderResourceView(), image_size);
+	}
+
+	void Image(
+		const mapping::rename_type::UUID& texture_id,
+		const DirectX::SimpleMath::Vector2& image_size)
+	{
+		asset::Texture& texture = locator::Locator::GetAssetManager()->GetLoader<asset::TextureLoader>()->GetTexture(texture_id);
+		Image(texture, image_size);
+	}
+
+
 	void ImageButtonWithText(
 		ID3D11ShaderResourceView* srv	,const char* label,
 		IMButtonState& button_state		,const ImVec2& image_size,
