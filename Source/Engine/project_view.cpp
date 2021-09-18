@@ -7,6 +7,7 @@
 #include <portable-file-dialogs.h>
 
 #include "asset_sheet_manager.h"
+#include "cum_imgui_helper.h"
 #include "locator.h"
 #include "generic.h"
 #include "material.h"
@@ -248,9 +249,24 @@ namespace cumulonimbus::editor
 		{
 			if (!asset_manager.GetAssetSheetManager().HasSheet(current_selected_id))
 				return {};
-			for(auto& [uuid,path] : asset_manager.GetAssetSheetManager().GetSheets().at(current_selected_id).sheet)
+			int n = 0;
+			ImGuiStyle& style = ImGui::GetStyle();
+			const float window_visible_x2 = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
+			for(auto& [uuid,path_str] : asset_manager.GetAssetSheetManager().GetSheets().at(current_selected_id).sheet)
 			{
-				ImGui::Text(path.c_str());
+				ImGui::PushID(uuid.c_str());
+				std::filesystem::path path{ path_str };
+				helper::imgui::IMButtonState button_state{};
+				helper::imgui::ImageButtonWithText(uuid, std::string{ path.filename().string() }.c_str(), button_state, { 200,200 });
+				const float last_button_x2 = ImGui::GetItemRectMax().x;
+				const float next_button_x2 = last_button_x2 + style.ItemSpacing.x + 200; // Expected position if next button was on same line
+				if (n + 1 < asset_manager.GetAssetSheetManager().GetSheets().at(current_selected_id).sheet.size()
+					&& next_button_x2 < window_visible_x2)
+					ImGui::SameLine();
+				ImGui::PopID();
+				++n;
+				//asset_manager.GetAssetSheetManager().
+				//ImGui::Text(path.c_str());
 			}
 			//asset_manager.GetAssetSheetManager().GetSheets().
 		}
@@ -265,7 +281,4 @@ namespace cumulonimbus::editor
 
 		return {};
 	}
-
-
-
 } // cumulonimbus::editor

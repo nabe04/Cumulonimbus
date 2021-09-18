@@ -132,7 +132,6 @@ namespace cumulonimbus::asset
 
 	Texture& TextureLoader::GetTexture(const mapping::rename_type::UUID& id)
 	{
-		// Todo : idが存在しない場合ダミーテクスチャを返すようにする
 		if (!textures.contains(id))
 			return *dummy_texture.get();
 			//assert(!"Not found texture id(TextureLoader::GetTexture)");

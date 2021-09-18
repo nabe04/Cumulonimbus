@@ -35,6 +35,11 @@ namespace cumulonimbus::asset
 		 * @param tex_slot : テクスチャースロット番号
 		 */
 		void UnbindTexture(mapping::graphics::ShaderStage shader_stage, u_int tex_slot);
+
+		[[nodiscard]]
+		ID3D11ShaderResourceView* GetShaderResourceView() const { return texture_view.Get(); }
+		[[nodiscard]]
+		ID3D11ShaderResourceView** GetShaderResourceViewAddress() { return texture_view.GetAddressOf(); }
 	private:
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texture_view{};
 		std::string file_path{};	// テクスチャまでのファイルパス(相対参照)
