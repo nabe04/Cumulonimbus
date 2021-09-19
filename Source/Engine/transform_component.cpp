@@ -43,6 +43,13 @@ namespace cumulonimbus::component
 	{
 		if (ImGui::CollapsingHeader("TransformComponent", ImGuiTreeNodeFlags_DefaultOpen))
 		{
+			//ImGuizmo::SetOrthographic(false);
+			//ImGuizmo::SetDrawlist();
+			//const float window_width  = ImGui::GetWindowWidth();
+			//const float window_height = ImGui::GetWindowHeight();
+			//ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, window_width, window_height);
+			//ImGuizmo::DecomposeMatrixToComponents(world_f4x4, translation_matrix, rotation_matrix, scaling_matrix);
+			//ImGuizmo::DecomposeMatrixToComponents((float*)&world_f4x4, nullptr, nullptr, nullptr);
 			IMGUI_LEFT_LABEL(ImGui::DragFloat3, "Position", (float*)&position, 0.01f, -10000.0f, 10000.0f);
 			IMGUI_LEFT_LABEL(ImGui::DragFloat3, "Scale   ", (float*)&scale	 , 0.01f, -10000.0f, 10000.0f);
 			IMGUI_LEFT_LABEL(ImGui::DragFloat3, "Rotation", (float*)&angle	 , 0.01f, -180.0f  , 180.0f);

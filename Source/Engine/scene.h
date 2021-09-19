@@ -28,7 +28,7 @@ namespace cumulonimbus
 	{
 		class AssetManager;
 	} // asset
-	
+
 	namespace renderer
 	{
 		class RenderPath;
@@ -40,6 +40,45 @@ namespace cumulonimbus
 	} // collision
 
 } // cumulonimbus
+
+namespace cumulonimbus::scene
+{
+	class Scene final
+	{
+	public:
+		explicit Scene();
+		~Scene() = default;
+
+		void Initialize();
+		void UnInitialize();
+		void Update(float delta_time);
+		void Render();
+
+		/**
+		 * @brief    : シリアライズされた際に保存するファイル
+		 * @param file_dir  : 保存するファイルまでのディレクトリパス
+		 * @param scene_name : 保存するシーン名(※拡張子除く)
+		 */
+		void SaveScene(const std::string& file_dir, const std::string& scene_name);
+		/**
+		 * @brief : シーンのロード
+		 * @param file_dir : ロードするファイルまでのディレクトリパス
+		 * @param scene_name : ロードするファイル名(※拡張子を含む)
+		 */
+		void LoadScene(const std::string& file_dir, const std::string& scene_name);
+
+	private:
+		std::unique_ptr<ecs::Registry> registry{};
+		std::unique_ptr<renderer::RenderPath> render_path{};
+		std::unique_ptr<Light> light{}; // Todo : 後にコンポーネント化する予定
+		// Manager's
+		std::unique_ptr<asset::AssetManager> asset_manager{};
+		std::unique_ptr<collision::CollisionManager> collision_manager{};
+		std::unique_ptr<editor::EditorManager> editor_manager{};
+
+
+	};
+} // cumulonimbus::scene
 
 
 enum class SceneType
@@ -110,7 +149,7 @@ public:
 
 	/*
 	 * brief : シーンのロード
-	 * filename : 拡張子を除く、ファイルの相対パス
+	 * filename : ファイル名(※拡張子を含む)
 	 */
 	void LoadScene(const std::string& file_dir, const std::string& scene_name);
 
@@ -137,65 +176,65 @@ public:
 	void Execute(Framework* framework);
 };
 
-// とりあえずやりたいことのテスト
-class Scene01 :public Scene
-{
-private:
-	std::shared_ptr<FbxModelResource> fbxCube;
-	std::shared_ptr<FbxModelResource> resCharacter;
-
-public:
-	explicit Scene01() = default;
-	~Scene01() override = default;
-
-public:
-	static auto GetInstance()
-	{
-		static Scene01 instance{};
-		return &instance;
-	}
-
-	void InitializeScene() override;
-	void UnInitializeScene() override;
-	void UpdateScene(const float delta_time) override;
-};
-
-// 主に2D系のテスト
-class Scene02 :public Scene
-{
-public:
-	explicit Scene02()	= default;
-	~Scene02() override		= default;
-
-public:
-	static auto GetInstance()
-	{
-		static Scene02 instance{};
-		return &instance;
-	}
-
-	void InitializeScene() override;
-	void UnInitializeScene() override;
-	void UpdateScene(const float delta_time) override;
-};
-
-// スカイマップを適用
-class Scene03 : public Scene
-{
-private:
-	//std::shared_ptr<FbxModelResource> fbxTestBox;
-public:
-	explicit Scene03()	= default;
-	~Scene03() override = default;
-
-public:
-	static auto GetInstance()
-	{
-		static Scene03 instance{};
-		return &instance;
-	}
-
-	void InitializeScene() override;
-	void UnInitializeScene() override;
-	void UpdateScene(const float delta_time) override;
-};
+//// とりあえずやりたいことのテスト
+//class Scene01 :public Scene
+//{
+//private:
+//	std::shared_ptr<FbxModelResource> fbxCube;
+//	std::shared_ptr<FbxModelResource> resCharacter;
+//
+//public:
+//	explicit Scene01() = default;
+//	~Scene01() override = default;
+//
+//public:
+//	static auto GetInstance()
+//	{
+//		static Scene01 instance{};
+//		return &instance;
+//	}
+//
+//	void InitializeScene() override;
+//	void UnInitializeScene() override;
+//	void UpdateScene(const float delta_time) override;
+//};
+//
+//// 主に2D系のテスト
+//class Scene02 :public Scene
+//{
+//public:
+//	explicit Scene02()	= default;
+//	~Scene02() override		= default;
+//
+//public:
+//	static auto GetInstance()
+//	{
+//		static Scene02 instance{};
+//		return &instance;
+//	}
+//
+//	void InitializeScene() override;
+//	void UnInitializeScene() override;
+//	void UpdateScene(const float delta_time) override;
+//};
+//
+//// スカイマップを適用
+//class Scene03 : public Scene
+//{
+//private:
+//	//std::shared_ptr<FbxModelResource> fbxTestBox;
+//public:
+//	explicit Scene03()	= default;
+//	~Scene03() override = default;
+//
+//public:
+//	static auto GetInstance()
+//	{
+//		static Scene03 instance{};
+//		return &instance;
+//	}
+//
+//	void InitializeScene() override;
+//	void UnInitializeScene() override;
+//	void UpdateScene(const float delta_time) override;
+//};

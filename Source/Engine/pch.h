@@ -1,6 +1,7 @@
 #pragma once
 // ImGui
 #include <imgui.h>
+#include <./ImGuizmo/ImGuizmo.h>
 #include <Extensions/IconFontsCppHeaders/IconsFontAwesome5.h>
 // Cereal
 #include <cereal/cereal.hpp>

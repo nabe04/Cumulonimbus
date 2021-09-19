@@ -70,7 +70,6 @@ namespace cumulonimbus::renderer
 		std::unique_ptr<Rasterizer>		rasterizer;
 		std::unique_ptr<DepthStencil>	depth_stencil;
 		std::unique_ptr<Sampler>		sampler;
-		std::array< std::unique_ptr<Sampler>, static_cast<int>(RenderingSampleState::End)> samplers;
 
 		std::shared_ptr<FrameBuffer>							off_screen					{ nullptr };
 		std::unique_ptr<graphics::buffer::GBuffer>				g_buffer					{ nullptr };

@@ -42,12 +42,6 @@ namespace cumulonimbus::renderer
 		depth_stencil		= std::make_unique<DepthStencil>(device);
 		rasterizer			= std::make_unique<Rasterizer>(device);
 		sampler				= std::make_unique<Sampler>(device);
-
-		samplers.at(Linear_Border)	= std::make_unique<Sampler>(device, D3D11_FILTER_MIN_MAG_MIP_LINEAR	, D3D11_TEXTURE_ADDRESS_BORDER	, D3D11_COMPARISON_ALWAYS, 0.0f, 0.0f, 0.0f, 1.0f);
-		samplers.at(Point_Wrap)		= std::make_unique<Sampler>(device, D3D11_FILTER_MIN_MAG_MIP_POINT	, D3D11_TEXTURE_ADDRESS_WRAP	, D3D11_COMPARISON_ALWAYS, 0.0f, 0.0f, 0.0f, 1.0f);
-		samplers.at(Linear_Wrap)	= std::make_unique<Sampler>(device, D3D11_FILTER_MIN_MAG_MIP_LINEAR	, D3D11_TEXTURE_ADDRESS_WRAP	, D3D11_COMPARISON_ALWAYS, 0.0f, 0.0f, 0.0f, 1.0f);
-		samplers.at(Anistropic)		= std::make_unique<Sampler>(device, D3D11_FILTER_ANISOTROPIC			, D3D11_TEXTURE_ADDRESS_WRAP	, D3D11_COMPARISON_ALWAYS, 0.0f, 0.0f, 0.0f, 1.0f);
-
 		dummy_texture = std::make_unique<cumulonimbus::asset::DummyTexture>( device, DirectX::XMFLOAT4{ 1.f,1.f,1.f,1.f } );
 	}
 
@@ -60,7 +54,7 @@ namespace cumulonimbus::renderer
 		if (set_rasterizer)
 			rasterizer->Activate(immediate_context, sprite_object->GetRasterizerState());
 		if (set_sampler)
-			samplers.at(static_cast<int>(sprite_object->GetSamplerState()))->Activate(immediate_context, SSlot_OnDemand0);
+			sampler->Activate(immediate_context, 0);
 		if (set_depth_stencil)
 			depth_stencil->Activate(immediate_context, sprite_object->GetDepthStencilState());
 		if (set_blend)
@@ -427,7 +421,7 @@ namespace cumulonimbus::renderer
 		auto& sky_box = registry->GetComponent<component::SkyBoxComponent>(entity);
 		sky_box.ActivateShader(immediate_context);
 
-		samplers.at(RenderingSampleState::Linear_Border)->Activate(immediate_context, 0);
+		sampler->Activate(immediate_context, SamplerState::Linear_Border, 0);
 		depth_stencil->Activate(immediate_context, DepthStencilState::Depth_First);
 		rasterizer->Activate(immediate_context, RasterizeState::Cull_None);
 
