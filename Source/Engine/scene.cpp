@@ -115,8 +115,8 @@ namespace cumulonimbus::scene
 
 		const mapping::rename_type::Entity ent_main_camera = registry->CreateEntity();
 		registry->AddComponent<component::CameraComponent>(ent_main_camera, true);
-		registry->GetComponent<component::CameraComponent>(ent_main_camera).SetViewInfo({ 25,100,-300 }, { .0f, .0f, .0f }, XMFLOAT3(.0f, 1.0f, .0f));
-		registry->GetComponent<component::CameraComponent>(ent_main_camera).SetProjection(XM_PI / 8.0f, static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
+		registry->GetComponent<component::CameraComponent>(ent_main_camera).GetCamera()->SetViewInfo({ 25,100,-300 }, { .0f, .0f, .0f }, XMFLOAT3(.0f, 1.0f, .0f));
+		registry->GetComponent<component::CameraComponent>(ent_main_camera).GetCamera()->SetProjection(XM_PI / 8.0f, static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
 
 		const char* sky_filename = "./Data/Assets/cubemap/skybox";
 		const mapping::rename_type::Entity ent_sky_box = registry->CreateEntity();

@@ -25,6 +25,11 @@ class FbxModelResource;
 
 namespace cumulonimbus
 {
+	namespace camera
+	{
+		class Camera;
+	} // camera
+
 	namespace ecs
 	{
 		class Registry;
@@ -37,7 +42,6 @@ namespace cumulonimbus
 
 	namespace component
 	{
-		class CameraComponent;
 		class MeshObjectComponent;
 		class SpriteObjectComponent;
 		class GeomPrimComponent;
@@ -117,7 +121,11 @@ namespace cumulonimbus::renderer
 		 *			   を持つエンティティのみ描画される
 		 */
 		void RenderShadow_Begin(ID3D11DeviceContext* immediate_context) const;
-		void RenderShadow(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, const component::CameraComponent* view, const Light* light);
+		void RenderShadow(
+			ID3D11DeviceContext* immediate_context,
+			ecs::Registry* registry,
+			const camera::Camera* camera,
+			const Light* light);
 		void RenderShadow_End(ID3D11DeviceContext* immediate_context) const;
 
 		/*
@@ -125,16 +133,16 @@ namespace cumulonimbus::renderer
 		 *		   off_screenバッファを使用して書き込む
 		 */
 		void RenderSkyBox_Begin(
-				ID3D11DeviceContext*				immediate_context,
-				const component::CameraComponent*	camera_comp);
+				ID3D11DeviceContext*	immediate_context,
+				const camera::Camera*	camera);
 		void RenderSkyBox(
-				ID3D11DeviceContext*				immediate_context,
-				ecs::Registry*						registry,
-				const component::CameraComponent*	view,
-				const Light*						light);
+				ID3D11DeviceContext*  immediate_context,
+				ecs::Registry*		  registry,
+				const camera::Camera* camera,
+				const Light*		 light);
 		void RenderSkyBox_End(
 				ID3D11DeviceContext* immediate_context,
-				const component::CameraComponent* camera_comp);
+				const camera::Camera* camera);
 
 		/*
 		 * brief     : 3DモデルのGBufferへの描画
@@ -148,12 +156,18 @@ namespace cumulonimbus::renderer
 		/*
 		 * brief : GBufferを描画先にしたモデルの描画
 		 */
-		void Render3DToGBuffer(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, const component::CameraComponent* view, const Light* light);
+		void Render3DToGBuffer(
+			ID3D11DeviceContext*  immediate_context,
+			ecs::Registry*		  registry,
+			const camera::Camera* camera,
+			const Light*		  light);
 		/*
 		 * brier     : 各々のシェーダーに応じて作成したGBufferをoff_screenにまとめる
 		 * ※caution : Render3DToGBuffer_Begin関数でセットしたGBuffer用のシェーダアンバインドする
 		 */
-		void Render3DToGBuffer_End(ID3D11DeviceContext* immediate_context, const component::CameraComponent* camera_comp) const;
+		void Render3DToGBuffer_End(
+			ID3D11DeviceContext* immediate_context,
+			const camera::Camera* camera) const;
 
 		/*
 		 * brief : ポストプロセス処理
@@ -170,13 +184,13 @@ namespace cumulonimbus::renderer
 		 */
 		void Render3D_Begin(ID3D11DeviceContext* immediate_context);
 		void Render3D(
-				ID3D11DeviceContext* immediate_context,
-				ecs::Registry* registry,
-				const component::CameraComponent* view,
-				const Light* light);
+			ID3D11DeviceContext* immediate_context,
+			ecs::Registry* registry,
+			const camera::Camera* camera,
+			const Light* light);
 		void Render3D_End(
 				ID3D11DeviceContext* immediate_context,
-				const component::CameraComponent* camera_comp);
+				const camera::Camera* camera);
 
 		void Render2D(ID3D11DeviceContext* immediate_context, ecs::Registry* registry);
 
@@ -187,22 +201,22 @@ namespace cumulonimbus::renderer
 			ID3D11DeviceContext* immediate_context,
 			ecs::Registry* registry, mapping::rename_type::Entity entity,
 			const component::ModelComponent* model_comp,
-			const component::CameraComponent* view, const Light* light);
+			const camera::Camera* camera, const Light* light);
 
 		/**
 		 * @brief :   "SkyBoxComponent"が持つモデルの描画
 		 */
 		void RenderSkyBox(
-				ID3D11DeviceContext* immediate_context,
-				ecs::Registry* registry, mapping::rename_type::Entity entity,
-				const component::CameraComponent* view, const Light* light);
+			ID3D11DeviceContext* immediate_context,
+			ecs::Registry* registry, mapping::rename_type::Entity entity,
+			const camera::Camera* camera, const Light* light);
 
 		/*
 		 * brief : 当たり判定の描画
 		 */
 		void RenderCollision_Begin(
 				ID3D11DeviceContext* immediate_context,
-				const component::CameraComponent* camera_comp);
+				const camera::Camera* camera);
 		void RenderCollision(ID3D11DeviceContext* immediate_context, ecs::Registry* registry);
 		void RenderSphereCollisionModel(
 				ID3D11DeviceContext* immediate_context,
@@ -214,7 +228,7 @@ namespace cumulonimbus::renderer
 				const FbxModelResource* model_resource);
 		void RenderCollision_End(
 				ID3D11DeviceContext* immediate_context,
-				const component::CameraComponent* camera_comp);
+				const camera::Camera* camera);
 
 		/*
 		 * brief        : 2Dスプライトの描画

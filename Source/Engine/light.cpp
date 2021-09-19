@@ -44,12 +44,12 @@ void Light::Update(const cumulonimbus::component::CameraComponent* camera)
 	view_up    = arithmetic::CalcUpVec(view_front, view_right);
 	view_up.Normalize();
 
-	DirectX::XMFLOAT3 target_pos = camera->GetFocusPosition();
+	DirectX::XMFLOAT3 target_pos = camera->GetCamera()->GetFocusPosition();
 	DirectX::XMFLOAT3 position   = cb_light->data.light_position;
 	const XMMATRIX view_mat      = XMMatrixLookAtLH(XMLoadFloat3(&position), { 0,0,0 }, XMLoadFloat3(&view_up));
 
-	cb_light->data.light_view_matrix = camera->GetViewMat();
-	const XMMATRIX perspective_projection_mat = XMMatrixPerspectiveFovLH(camera->GetFov(), camera->GetAspect(), camera->GetNearZ(), camera->GetFarZ());
+	cb_light->data.light_view_matrix = camera->GetCamera()->GetViewMat();
+	const XMMATRIX perspective_projection_mat = XMMatrixPerspectiveFovLH(camera->GetCamera()->GetFov(), camera->GetCamera()->GetAspect(), camera->GetCamera()->GetNearZ(), camera->GetCamera()->GetFarZ());
 	XMStoreFloat4x4(&cb_light->data.light_perspective_projection_matrix, perspective_projection_mat);
 	XMStoreFloat4x4(&cb_light->data.light_perspective_view_projection_matrix, XMMatrixMultiply(view_mat, perspective_projection_mat));
 	const XMMATRIX orthographic_projection_mat = XMMatrixOrthographicLH(cb_light->data.orthographic_view_width, cb_light->data.orthographic_view_height, cb_light->data.orthographic_near_z, cb_light->data.orthographic_far_z);

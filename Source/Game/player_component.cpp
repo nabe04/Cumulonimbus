@@ -124,8 +124,8 @@ namespace cumulonimbus::component
 		{
 			registry->AddComponent<CameraComponent>(ent, true);
 		}
-		registry->GetComponent<CameraComponent>(ent).SetCameraSpeed({ 0.05f,0.05f });
-		registry->GetComponent<CameraComponent>(ent).SetFocusOffset({ 0.0f,50.0f,0.0f });
+		registry->GetComponent<CameraComponent>(ent).GetCamera()->SetCameraSpeed({ 0.05f,0.05f });
+		registry->GetComponent<CameraComponent>(ent).GetCamera()->SetFocusOffset({ 0.0f,50.0f,0.0f });
 	}
 
 	void PlayerComponent::NewFrame(float dt)
@@ -239,7 +239,7 @@ namespace cumulonimbus::component
 		if (stick_left.x < 0)
 			rad *= -1;
 		// カメラのフロントベクトルをrad分回転
-		SimpleMath::Vector3 camera_xz_front_vec = camera_comp.GetCameraFront();
+		SimpleMath::Vector3 camera_xz_front_vec = camera_comp.GetCamera()->GetCameraFront();
 		const SimpleMath::Quaternion q = SimpleMath::Quaternion::CreateFromAxisAngle({ 0,1,0 }, rad);
 		SimpleMath::Vector3::Transform(camera_xz_front_vec, q, camera_xz_front_vec);
 		camera_xz_front_vec.y = 0;
@@ -290,9 +290,9 @@ namespace cumulonimbus::component
 		const float rad_y		= Locator::GetInput()->GamePad().RightThumbStick(0).y;
 		auto& transform_comp	= GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 		auto& camera_comp		= GetRegistry()->GetComponent<CameraComponent>(GetEntity());
-		camera_comp.RotationTPSYaw(rad_x * camera_comp.GetCameraSpeed().x);
-		camera_comp.RotationTPSPitch(rad_y * camera_comp.GetCameraSpeed().y);
-		camera_comp.SetFocusPosition(transform_comp.GetPosition());
+		camera_comp.GetCamera()->RotationTPSYaw(rad_x * camera_comp.GetCamera()->GetCameraSpeed().x);
+		camera_comp.GetCamera()->RotationTPSPitch(rad_y * camera_comp.GetCamera()->GetCameraSpeed().y);
+		camera_comp.GetCamera()->SetFocusPosition(transform_comp.GetPosition());
 	}
 
 	void PlayerComponent::SetAdjustKeyFrame(const std::string& animation_name, u_int keyframe)

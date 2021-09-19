@@ -6,55 +6,52 @@
 
 namespace cumulonimbus::camera
 {
-	template <class Archive>
-	void Camera::serialize(Archive&& archive)
+	//template <class Archive>
+	//void Camera::serialize(Archive&& archive)
+	//{
+	//	archive(
+	//		CEREAL_NVP(max_camera_angle),
+
+	//		CEREAL_NVP(eye_position),
+	//		CEREAL_NVP(focus_position),
+	//		CEREAL_NVP(focus_offset),
+
+	//		CEREAL_NVP(up_vec),
+	//		CEREAL_NVP(current_up_vec),
+	//		CEREAL_NVP(right_vec),
+	//		CEREAL_NVP(front_vec),
+
+	//		CEREAL_NVP(current_camera_up),
+	//		CEREAL_NVP(camera_right),
+
+	//		CEREAL_NVP(view_mat),
+	//		CEREAL_NVP(projection_mat),
+	//		CEREAL_NVP(view_projection_mat),
+
+	//		CEREAL_NVP(camera_angle),
+
+	//		CEREAL_NVP(near_z),
+	//		CEREAL_NVP(far_z),
+	//		CEREAL_NVP(fov),
+	//		CEREAL_NVP(aspect),
+	//		CEREAL_NVP(width),
+	//		CEREAL_NVP(height),
+
+	//		CEREAL_NVP(camera_speed),
+	//		CEREAL_NVP(cur_mouse_pos),
+	//		CEREAL_NVP(prev_mouse_pos),
+
+	//		CEREAL_NVP(is_perspective)
+	//	);
+	//}
+
+	Camera::Camera(const float width, const float height)
 	{
-		archive(
-			CEREAL_NVP(max_camera_angle),
-
-			CEREAL_NVP(eye_position),
-			CEREAL_NVP(focus_position),
-			CEREAL_NVP(focus_offset),
-
-			CEREAL_NVP(up_vec),
-			CEREAL_NVP(current_up_vec),
-			CEREAL_NVP(right_vec),
-			CEREAL_NVP(front_vec),
-
-			CEREAL_NVP(current_camera_up),
-			CEREAL_NVP(camera_right),
-
-			CEREAL_NVP(view_mat),
-			CEREAL_NVP(projection_mat),
-			CEREAL_NVP(view_projection_mat),
-
-			CEREAL_NVP(camera_angle),
-
-			CEREAL_NVP(near_z),
-			CEREAL_NVP(far_z),
-			CEREAL_NVP(fov),
-			CEREAL_NVP(aspect),
-			CEREAL_NVP(width),
-			CEREAL_NVP(height),
-
-			CEREAL_NVP(camera_speed),
-			CEREAL_NVP(cur_mouse_pos),
-			CEREAL_NVP(prev_mouse_pos),
-
-			CEREAL_NVP(is_perspective)
-		);
-	}
-
-	Camera::Camera(float width, float height)
-	{
-		cb_camera  = std::make_shared<buffer::ConstantBuffer<CameraCB>>(locator::Locator::GetDx11Device()->device.Get());
-		off_screen = std::make_shared<FrameBuffer>(
-						locator::Locator::GetDx11Device()->device.Get(),
-						width, height);
-
 		// ‰ŠúÝ’è
 		this->width = width;
 		this->height = height;
+
+		Initialize();
 
 		cb_camera->data.camera_position = { .0f,.0f,.0f };
 		cb_camera->data.camera_at		= { 0.0f,0.0f,1.0f };
@@ -65,13 +62,27 @@ namespace cumulonimbus::camera
 		cb_camera->data.camera_front	= { cb_camera->data.camera_at.x - cb_camera->data.camera_position.x,
 											cb_camera->data.camera_at.y - cb_camera->data.camera_position.y,
 											cb_camera->data.camera_at.z - cb_camera->data.camera_position.z };
-		cb_camera->data.camera_fov			= 0.0f;
-		cb_camera->data.camera_aspect		= 0.0f;
-		cb_camera->data.camera_width		= locator::Locator::GetWindow()->Width();
-		cb_camera->data.camera_height		= locator::Locator::GetWindow()->Height();
-		cb_camera->data.camera_view_matrix	= { 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
+		cb_camera->data.camera_fov		= 0.0f;
+		cb_camera->data.camera_aspect	= 0.0f;
+		cb_camera->data.camera_width	= locator::Locator::GetWindow()->Width();
+		cb_camera->data.camera_height	= locator::Locator::GetWindow()->Height();
+		cb_camera->data.camera_view_matrix = { 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
 		cb_camera->data.camera_view_projection_matrix = { 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
 	}
+
+	void Camera::Initialize()
+	{
+		if (cb_camera)
+			cb_camera.reset();
+		cb_camera	= std::make_shared<buffer::ConstantBuffer<CameraCB>>(locator::Locator::GetDx11Device()->device.Get());
+
+		if (off_screen)
+			off_screen.reset();
+		off_screen	= std::make_shared<FrameBuffer>(
+						locator::Locator::GetDx11Device()->device.Get(),
+						width, height);
+	}
+
 
 	void Camera::Update(float dt)
 	{

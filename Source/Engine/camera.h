@@ -17,8 +17,45 @@ namespace cumulonimbus::camera
 		~Camera() = default;
 
 		template<class Archive>
-		void serialize(Archive&& archive);
+		void serialize(Archive&& archive)
+		{
+			archive(
+				CEREAL_NVP(max_camera_angle),
 
+				CEREAL_NVP(eye_position),
+				CEREAL_NVP(focus_position),
+				CEREAL_NVP(focus_offset),
+
+				CEREAL_NVP(up_vec),
+				CEREAL_NVP(current_up_vec),
+				CEREAL_NVP(right_vec),
+				CEREAL_NVP(front_vec),
+
+				CEREAL_NVP(current_camera_up),
+				CEREAL_NVP(camera_right),
+
+				CEREAL_NVP(view_mat),
+				CEREAL_NVP(projection_mat),
+				CEREAL_NVP(view_projection_mat),
+
+				CEREAL_NVP(camera_angle),
+
+				CEREAL_NVP(near_z),
+				CEREAL_NVP(far_z),
+				CEREAL_NVP(fov),
+				CEREAL_NVP(aspect),
+				CEREAL_NVP(width),
+				CEREAL_NVP(height),
+
+				CEREAL_NVP(camera_speed),
+				CEREAL_NVP(cur_mouse_pos),
+				CEREAL_NVP(prev_mouse_pos),
+
+				CEREAL_NVP(is_perspective)
+			);
+		}
+
+		void Initialize();
 		void Update(float dt);
 		void RenderImGui();
 
@@ -54,6 +91,55 @@ namespace cumulonimbus::camera
 		 * @param radian	: 回転分の角度(ラジアン角)
 		 */
 		void RotationTPSYaw(float radian);
+
+		/**
+		 * @brier : 直行ベクトル(right,up,front)の算出
+		 */
+		void CalcCameraOrthogonalVector();
+
+		/**
+		 * @brief : 非オブジェクトアタッチ時の更新関数
+		 *			is_use_camera_for_object == false時に実行される
+		 */
+		void UpdateDefaultCamera(float dt);
+
+		/**
+		 * @brief   : 現在のカメラの正規直行ベクトルを算出
+		 */
+		void CalcCameraDirectionalVector();
+
+		/**
+		 * @brief : 左手座標軸を基準にしてのカメラの角度(Degree)計算
+		 */
+		void CalcCameraAngle();
+
+		/**
+		 * @brief : カメラの角度調整
+		 *			カメラの最大角をもとにカメラ前方ベクトル(front_vec)を調整
+		 */
+		void AdjustCameraAngle();
+
+		/**
+		 * @brief : コンスタントバッファパラメータのセット
+		 *			(Update関数の最後で行う)
+		 */
+		void SetCBufferParam() const;
+
+		void SetCameraRight(const DirectX::SimpleMath::Vector3& right);
+		void SetCameraUp(const DirectX::SimpleMath::Vector3& up);
+		void SetCameraFront(const DirectX::SimpleMath::Vector3& front);
+
+		/**
+		 * @brief			: カメラワーク時の動作
+		 * @param velocity	: カメラスピード(デバックの設定で変更可能)
+		 */
+		void Pan(float velocity);								// カメラの左右の傾き(位置は固定)
+		void Tilt(float velocity);								// カメラの上下の傾き(位置は固定)
+		void DollyInOut(float velocity);						// カメラの前後の動き(向きは固定)
+		void Track(float velocity,
+			const DirectX::SimpleMath::Vector3& axis /*基準軸*/);								// カメラの左右移動(向きは固定)
+		void Crane(float velocity,
+			const DirectX::SimpleMath::Vector3& axis /*基準軸*/);	// カメラの上下移動(向きは固定)
 
 		/**
 		 * @brief				: カメラパラメータの設定(位置、注視点、カメラアップベクトル)
@@ -100,6 +186,7 @@ namespace cumulonimbus::camera
 		 */
 		void SetFov(const float fov) const { cb_camera->data.camera_fov = fov; }
 
+		void SetCameraSpeed(const DirectX::SimpleMath::Vector2& speed) { camera_speed = speed; }
 
 		[[nodiscard]]
 		float GetFov()    const { return fov; }
@@ -129,6 +216,9 @@ namespace cumulonimbus::camera
 		DirectX::SimpleMath::Vector3 GetCameraUp()    const { return up_vec; }
 		[[nodiscard]]
 		DirectX::SimpleMath::Vector3 GetCameraFront() const { return front_vec; }
+
+		[[nodiscard]]
+		const DirectX::SimpleMath::Vector2& GetCameraSpeed() const { return camera_speed; }
 
 		[[nodiscard]]
 		ID3D11ShaderResourceView** GetFrameBufferSRV_Address() const { return off_screen->GetRenderTargetSRV(); }
@@ -174,60 +264,5 @@ namespace cumulonimbus::camera
 
 		//-- カメラとオブジェクトのアタッチ用変数 --//
 		bool  is_perspective = true;  // 透視投影を使用するか
-
-		/**
-		 * @brier : 直行ベクトル(right,up,front)の算出
-		 */
-		void CalcCameraOrthogonalVector();
-
-		/**
-		 * @brief : オブジェクトアタッチ時の更新関数
-		 *			is_use_camera_for_object == true時に実行される
-		 */
-		void UpdateObjectCamera(float dt);
-
-		/**
-		 * @brief : 非オブジェクトアタッチ時の更新関数
-		 *			is_use_camera_for_object == false時に実行される
-		 */
-		void UpdateDefaultCamera(float dt);
-
-		/**
-		 * @brief   : 現在のカメラの正規直行ベクトルを算出
-		 */
-		void CalcCameraDirectionalVector();
-
-		/**
-		 * @brief : 左手座標軸を基準にしてのカメラの角度(Degree)計算
-		 */
-		void CalcCameraAngle();
-
-		/**
-		 * @brief : カメラの角度調整
-		 *			カメラの最大角をもとにカメラ前方ベクトル(front_vec)を調整
-		 */
-		void AdjustCameraAngle();
-
-		/**
-		 * @brief : コンスタントバッファパラメータのセット
-		 *			(Update関数の最後で行う)
-		 */
-		void SetCBufferParam() const;
-
-		void SetCameraRight(const DirectX::SimpleMath::Vector3& right);
-		void SetCameraUp(const DirectX::SimpleMath::Vector3& up);
-		void SetCameraFront(const DirectX::SimpleMath::Vector3& front);
-
-		/**
-		 * @brief			: カメラワーク時の動作
-		 * @param velocity	: カメラスピード(デバックの設定で変更可能)
-		 */
-		void Pan(float velocity);								// カメラの左右の傾き(位置は固定)
-		void Tilt(float velocity);								// カメラの上下の傾き(位置は固定)
-		void DollyInOut(float velocity);						// カメラの前後の動き(向きは固定)
-		void Track(float velocity,
-			const DirectX::SimpleMath::Vector3& axis /*基準軸*/);								// カメラの左右移動(向きは固定)
-		void Crane(float velocity,
-			const DirectX::SimpleMath::Vector3& axis /*基準軸*/);	// カメラの上下移動(向きは固定)
 	};
 } // cumulonimbus::camera

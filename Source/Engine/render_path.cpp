@@ -80,32 +80,32 @@ namespace cumulonimbus::renderer
 		{
 			if (!camera_comp.GetIsActive())
 				continue;
-			camera_comp.ClearFrameBuffer();
+			camera_comp.GetCamera()->ClearFrameBuffer();
 
 			if(registry->GetArray<component::ModelComponent>().GetComponents().size() > 0)
 			{
 				// ShadowMap作成
 				RenderShadow_Begin(immediate_context);
-				RenderShadow(immediate_context, registry, &camera_comp, light);
+				RenderShadow(immediate_context, registry, camera_comp.GetCamera(), light);
 				RenderShadow_End(immediate_context);
 			}
 
 			// SkyBoxの描画
-			RenderSkyBox_Begin(immediate_context, &camera_comp);
-			RenderSkyBox(immediate_context, registry, &camera_comp, light);
-			RenderSkyBox_End(immediate_context, &camera_comp);
+			RenderSkyBox_Begin(immediate_context, camera_comp.GetCamera());
+			RenderSkyBox(immediate_context, registry, camera_comp.GetCamera(), light);
+			RenderSkyBox_End(immediate_context, camera_comp.GetCamera());
 
 			if (registry->GetArray<component::ModelComponent>().GetComponents().size() > 0)
 			{
 				// GBufferへの描画処理
 				Render3DToGBuffer_Begin(immediate_context);
-				Render3DToGBuffer(immediate_context, registry, &camera_comp, light);
-				Render3DToGBuffer_End(immediate_context, &camera_comp);
+				Render3DToGBuffer(immediate_context, registry, camera_comp.GetCamera(), light);
+				Render3DToGBuffer_End(immediate_context, camera_comp.GetCamera());
 
 				// 当たり判定の描画
-				RenderCollision_Begin(immediate_context, &camera_comp);
+				RenderCollision_Begin(immediate_context, camera_comp.GetCamera());
 				RenderCollision(immediate_context, registry);
-				RenderCollision_End(immediate_context, &camera_comp);
+				RenderCollision_End(immediate_context, camera_comp.GetCamera());
 			}
 		}
 
@@ -130,7 +130,7 @@ namespace cumulonimbus::renderer
 				ImGui::Text("True");
 			}
 			const auto size = ImGui::GetWindowSize();
-			helper::imgui::Image(*camera_comp.GetFrameBufferSRV_Address(), { size.x,size.y});
+			helper::imgui::Image(*camera_comp.GetCamera()->GetFrameBufferSRV_Address(), { size.x,size.y});
 			ImGui::End();
 		}
 	}
@@ -152,9 +152,11 @@ namespace cumulonimbus::renderer
 		depth_map->Begin(immediate_context);
 	}
 
-	void RenderPath::RenderShadow(ID3D11DeviceContext* immediate_context,
-								  ecs::Registry* const registry,
-								  const component::CameraComponent* camera, const Light* light)
+	void RenderPath::RenderShadow(
+		ID3D11DeviceContext* immediate_context,
+		ecs::Registry* const registry,
+		const camera::Camera* camera,
+		const Light* light)
 	{
 		depth_map->Activate(immediate_context);
 		light->BindCBuffer();
@@ -176,14 +178,17 @@ namespace cumulonimbus::renderer
 	}
 
 	void RenderPath::RenderSkyBox_Begin(ID3D11DeviceContext* immediate_context,
-										const component::CameraComponent* camera_comp)
+										const camera::Camera* camera)
 	{
-		camera_comp->BindFrameBuffer();
+		camera->BindFrameBuffer();
 		//off_screen->Clear(immediate_context);
 		//off_screen->Activate(immediate_context);
 	}
 
-	void RenderPath::RenderSkyBox(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, const component::CameraComponent* view,
+	void RenderPath::RenderSkyBox(
+		ID3D11DeviceContext* immediate_context,
+		ecs::Registry* registry,
+		const camera::Camera* camera,
 		const Light* light)
 	{
 		// ライトパラメータをコンスタントバッファにバインド
@@ -193,17 +198,18 @@ namespace cumulonimbus::renderer
 		for (auto& sky_box : registry->GetArray<component::SkyBoxComponent>().GetComponents())
 		{
 			mapping::rename_type::Entity ent = sky_box.GetEntity();
-			RenderSkyBox(immediate_context, registry, sky_box.GetEntity(), view, light);
+			RenderSkyBox(immediate_context, registry, sky_box.GetEntity(), camera, light);
 		}
 	}
 
-	void RenderPath::RenderSkyBox_End(ID3D11DeviceContext* immediate_context,
-									  const component::CameraComponent* camera_comp)
+	void RenderPath::RenderSkyBox_End(
+		ID3D11DeviceContext* immediate_context,
+		const camera::Camera* camera)
 	{
 		// Skyマップをpixel shaderのshader resource viewにバインド
 		locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, sky_box_srv.GetAddressOf(), TexSlot_SkyMap);
 		//off_screen->Deactivate(immediate_context);
-		camera_comp->UnbindFrameBuffer();
+		camera->UnbindFrameBuffer();
 	}
 
 	void RenderPath::Render3DToGBuffer_Begin(ID3D11DeviceContext* immediate_context) const
@@ -214,7 +220,11 @@ namespace cumulonimbus::renderer
 		g_buffer->BindShaderAndRTV();
 	}
 
-	void RenderPath::Render3DToGBuffer(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, const component::CameraComponent* camera, const Light* light)
+	void RenderPath::Render3DToGBuffer(
+		ID3D11DeviceContext* immediate_context,
+		ecs::Registry* registry,
+		const camera::Camera* camera,
+		const Light* light)
 	{
 		for(auto& model_comp : registry->GetArray<component::ModelComponent>().GetComponents())
 		{
@@ -224,11 +234,13 @@ namespace cumulonimbus::renderer
 		}
 	}
 
-	void RenderPath::Render3DToGBuffer_End(ID3D11DeviceContext* immediate_context, const component::CameraComponent* camera_comp) const
+	void RenderPath::Render3DToGBuffer_End(
+		ID3D11DeviceContext* immediate_context,
+		const camera::Camera* camera) const
 	{
 		g_buffer->UnbindShaderAndRTV();
 
-		camera_comp->BindFrameBuffer();
+		camera->BindFrameBuffer();
 		// GBufferに書き出したテクスチャのセット
 		g_buffer->BindGBufferTextures();
 		// GBufferライティング用シェーダー(PS)のセット
@@ -237,7 +249,7 @@ namespace cumulonimbus::renderer
 
 		g_buffer->UnbindGBufferTextures();
 
-		camera_comp->UnbindFrameBuffer();
+		camera->UnbindFrameBuffer();
 
 		locator::Locator::GetDx11Device()->UnbindShaderResource(mapping::graphics::ShaderStage::PS, 0);
 		locator::Locator::GetDx11Device()->UnbindShaderResource(mapping::graphics::ShaderStage::PS, 1);
@@ -261,7 +273,7 @@ namespace cumulonimbus::renderer
 
 			locator::Locator::GetDx11Device()->BindShaderResource(
 				mapping::graphics::ShaderStage::PS,
-				camera_comp.GetFrameBufferSRV_Address(),
+				camera_comp.GetCamera()->GetFrameBufferSRV_Address(),
 				TexSlot_BaseColorMap);
 			fullscreen_quad->Blit(immediate_context, true, true, true);
 			ID3D11ShaderResourceView* const pSRV[1] = { nullptr };
@@ -279,9 +291,11 @@ namespace cumulonimbus::renderer
 		g_buffer->BindRTV();
 	}
 
-	void RenderPath::Render3D(ID3D11DeviceContext* immediate_context,
-							  ecs::Registry* registry,
-							  const component::CameraComponent* view, const Light* light)
+	void RenderPath::Render3D(
+		ID3D11DeviceContext* immediate_context,
+		ecs::Registry* registry,
+		const camera::Camera* camera,
+		const Light* light)
 	{
 		// ライトパラメータをコンスタントバッファにバインド
 		light->BindCBuffer();
@@ -290,7 +304,7 @@ namespace cumulonimbus::renderer
 		for(auto& sky_box : registry->GetArray<component::SkyBoxComponent>().GetComponents())
 		{
 			mapping::rename_type::Entity ent = sky_box.GetEntity();
-			RenderSkyBox(immediate_context, registry, sky_box.GetEntity(), view, light);
+			RenderSkyBox(immediate_context, registry, sky_box.GetEntity(), camera, light);
 		}
 
 		// Skyマップをpixel shaderのshader resource viewにバインド
@@ -301,15 +315,15 @@ namespace cumulonimbus::renderer
 
 	void RenderPath::Render3D_End(
 			ID3D11DeviceContext* immediate_context,
-			const component::CameraComponent* camera_comp)
+			const camera::Camera* camera)
 	{
 		g_buffer->UnbindRTV();
 		//off_screen->Activate(immediate_context);
-		camera_comp->BindFrameBuffer();
+		camera->BindFrameBuffer();
 		g_buffer->BindColorTexture();
 		fullscreen_quad->Blit(immediate_context, true, true, true);
 		//off_screen->Deactivate(immediate_context);
-		camera_comp->UnbindFrameBuffer();
+		camera->UnbindFrameBuffer();
 
 		locator::Locator::GetDx11Device()->UnbindShaderResource(mapping::graphics::ShaderStage::PS, 0);
 		locator::Locator::GetDx11Device()->UnbindShaderResource(mapping::graphics::ShaderStage::PS, 1);
@@ -357,7 +371,7 @@ namespace cumulonimbus::renderer
 		ID3D11DeviceContext* immediate_context,
 		ecs::Registry* registry, mapping::rename_type::Entity entity,
 		const component::ModelComponent* model_comp,
-		const component::CameraComponent* view, const Light* light)
+		const camera::Camera* camera, const Light* light)
 	{
 		if (!locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>()->HasModel(model_comp->GetModelID()))
 			return;
@@ -391,7 +405,7 @@ namespace cumulonimbus::renderer
 			}
 
 			registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
-			view->BindCBuffer();
+			camera->BindCBuffer();
 
 			UINT stride = sizeof(shader::Vertex);
 			UINT offset = 0;
@@ -413,9 +427,10 @@ namespace cumulonimbus::renderer
 	}
 
 
-	void RenderPath::RenderSkyBox(ID3D11DeviceContext* immediate_context,
-								  ecs::Registry* registry, mapping::rename_type::Entity entity,
-								  const component::CameraComponent* view, const Light* light)
+	void RenderPath::RenderSkyBox(
+		ID3D11DeviceContext* immediate_context,
+		ecs::Registry* registry, mapping::rename_type::Entity entity,
+		const camera::Camera* camera, const Light* light)
 	{
 		auto& sky_box = registry->GetComponent<component::SkyBoxComponent>(entity);
 		sky_box.ActivateShader(immediate_context);
@@ -439,7 +454,7 @@ namespace cumulonimbus::renderer
 												mapping::graphics::ShaderStage::PS,
 												sky_box.GetShaderResoueceViewAddress(),
 												TexSlot_SkyMap);
-		view->BindCBuffer();
+		camera->BindCBuffer();
 		// Set of Vertex Buffers
 		UINT stride = sizeof(shader::Vertex);
 		UINT offset = 0;
@@ -451,16 +466,18 @@ namespace cumulonimbus::renderer
 		sky_box_srv = sky_box.GetShaderResoueceView();
 		sky_box.DeactivateShader(immediate_context);
 		locator::Locator::GetDx11Device()->UnbindShaderResource(mapping::graphics::ShaderStage::PS, TexSlot_SkyMap);
-		view->UnbindCBuffer();
+		camera->UnbindCBuffer();
 		//off_screen->Deactivate(immediate_context);
 
 		//Blit(immediate_context);
 	}
 
-	void RenderPath::RenderCollision_Begin(ID3D11DeviceContext* immediate_context, const component::CameraComponent* camera_comp)
+	void RenderPath::RenderCollision_Begin(
+		ID3D11DeviceContext* immediate_context,
+		const camera::Camera* camera)
 	{
 		// off_screen->Activate(immediate_context);
-		camera_comp->BindFrameBuffer();
+		camera->BindFrameBuffer();
 		// DirectX graphics stateのバインド
 		rasterizer->Activate(immediate_context, RasterizeState::Wireframe);
 		depth_stencil->Activate(immediate_context, DepthStencilState::DepthTest_True_Write_True);
@@ -469,7 +486,7 @@ namespace cumulonimbus::renderer
 		shader_manager->BindLocalShader(mapping::shader_assets::LocalShaderAsset::Collision);
 		local_shader_asset_manager->BindCBuffer(mapping::shader_assets::LocalShaderAsset::Collision);
 		// ビュー行列のバインド
-		camera_comp->BindCBuffer();
+		camera->BindCBuffer();
 
 	}
 
@@ -566,15 +583,17 @@ namespace cumulonimbus::renderer
 	}
 
 
-	void RenderPath::RenderCollision_End(ID3D11DeviceContext* immediate_context, const component::CameraComponent* camera_comp)
+	void RenderPath::RenderCollision_End(
+		ID3D11DeviceContext* immediate_context,
+		const camera::Camera* camera)
 	{
 		// ビュー行列のバインド
-		camera_comp->UnbindCBuffer();
+		camera->UnbindCBuffer();
 		// シェーダーのバインド
 		shader_manager->UnbindLocalShader(mapping::shader_assets::LocalShaderAsset::Collision);
 		local_shader_asset_manager->UnbindCBuffer(mapping::shader_assets::LocalShaderAsset::Collision);
 		//off_screen->Deactivate(immediate_context);
-		camera_comp->UnbindFrameBuffer();
+		camera->UnbindFrameBuffer();
 	}
 
 	void RenderPath::RenderSprite(ID3D11DeviceContext* immediate_context,
