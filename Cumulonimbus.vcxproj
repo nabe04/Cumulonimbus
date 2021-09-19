@@ -37,6 +37,7 @@
     <ClInclude Include="Source\Engine\billboard_component.h" />
     <ClInclude Include="Source\Engine\blend.h" />
     <ClInclude Include="Source\Engine\bloom.h" />
+    <ClInclude Include="Source\Engine\camera.h" />
     <ClInclude Include="Source\Engine\capsule_collison_component.h" />
     <ClInclude Include="Source\Engine\cereal_helper.h" />
     <ClInclude Include="Source\Engine\child_actor.h" />
@@ -121,6 +122,8 @@
     <ClInclude Include="Source\Engine\resource_manager.h" />
     <ClInclude Include="Source\Engine\sampler_mapping.h" />
     <ClInclude Include="Source\Engine\sample_shader.h" />
+    <ClInclude Include="Source\Engine\scene_view.h" />
+    <ClInclude Include="Source\Engine\scene_view_camera.h" />
     <ClInclude Include="Source\Engine\shader_asset.h" />
     <ClInclude Include="Source\Engine\material3d_manager.h" />
     <ClInclude Include="Source\Engine\shader_asset_mapping.h" />
@@ -187,6 +190,7 @@
     <ClCompile Include="Source\Engine\billboard_component.cpp" />
     <ClCompile Include="Source\Engine\blend.cpp" />
     <ClCompile Include="Source\Engine\bloom.cpp" />
+    <ClCompile Include="Source\Engine\camera.cpp" />
     <ClCompile Include="Source\Engine\capsule_collison_component.cpp" />
     <ClCompile Include="Source\Engine\child_actor.cpp" />
     <ClCompile Include="Source\Engine\collision_component.cpp" />
@@ -264,6 +268,8 @@
     <ClCompile Include="Source\Engine\scene.cpp" />
     <ClCompile Include="Source\Engine\scene_game.cpp" />
     <ClCompile Include="Source\Engine\scene_load.cpp" />
+    <ClCompile Include="Source\Engine\scene_view.cpp" />
+    <ClCompile Include="Source\Engine\scene_view_camera.cpp" />
     <ClCompile Include="Source\Engine\shader.cpp" />
     <ClCompile Include="Source\Engine\shader_asset.cpp" />
     <ClCompile Include="Source\Engine\material3d_manager.cpp" />

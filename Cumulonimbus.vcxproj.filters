@@ -537,6 +537,15 @@
     <ClCompile Include="Source\Engine\graphics_statte.cpp">
       <Filter>Source\Engine\System</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\scene_view_camera.cpp">
+      <Filter>Source\Engine\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\scene_view.cpp">
+      <Filter>Source\Engine\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\camera.cpp">
+      <Filter>Source\Engine\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -984,6 +993,15 @@
       <Filter>Header\Engine\Components</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\graphics_state.h">
+      <Filter>Header\Engine\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\scene_view_camera.h">
+      <Filter>Header\Engine\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\scene_view.h">
+      <Filter>Header\Engine\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\camera.h">
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
   </ItemGroup>

@@ -3,73 +3,32 @@
 #include <DirectXMath.h>
 #include <SimpleMath.h>
 
-#include "component_base.h"
 #include "constant_buffer.h"
 #include "frame_buffer.h"
 #include "shader_interop_renderer.h"
-#include "rename_type_mapping.h"
-#include "locator.h"
 
-namespace cumulonimbus::ecs
+namespace cumulonimbus::camera
 {
-	class Registry;
-} // cumulonimbus::ecs
-
-namespace cumulonimbus::component
-{
-	class CameraComponent final : public ComponentBase
+	class Camera final
 	{
 	public:
-		/**
-		 * @param is_main_camera	: バックバッファ用カメラに設定するか(デフォルトはtrue)
-		 * @param width				: ビュー行列時の幅(デフォルトはスクリーンの幅)
-		 * @param height			: ビュー行列時の高さ(デフォルトはスクリーンの高さ)
-		 */
-		explicit CameraComponent(
-			ecs::Registry* registry, mapping::rename_type::Entity ent,
-			bool is_main_camera = true,
-			float width  = locator::Locator::GetWindow()->Width(),
-			float height = locator::Locator::GetWindow()->Height());
-		explicit CameraComponent()  = default; // for cereal
- 		~CameraComponent() override = default;
-
-		void Update(float dt) override;
-		void RenderImGui() override;
-
-		void Load(ecs::Registry* registry) override;
+		explicit Camera(float width, float height);
+		explicit Camera() = default;
+		~Camera() = default;
 
 		template<class Archive>
 		void serialize(Archive&& archive);
 
-		void ClearFrameBuffer(DirectX::SimpleMath::Vector4 clear_color = { 0.0f,0.0f,0.0f,1.0f }) const;
+		void Update(float dt);
+		void RenderImGui();
+
+		void ClearFrameBuffer(
+			const DirectX::SimpleMath::Vector4& clear_color = { 0.0f,0.0f,0.0f,1.0f }) const;
 		void BindFrameBuffer() const;
 		void UnbindFrameBuffer() const;
 
 		void BindCBuffer(bool set_in_vs = true, bool set_in_ps = true) const;
 		void UnbindCBuffer() const;
-
-		/**
-		 * @brief						: オブジェクトカメラを使用する際の
-		 *								  対象モデルのエンティティを指定
-		 * @param ent					: 対象モデルのエンティティ
-		 * @attention					: is_use_camera_for_debug(デバッグ用カメラ)フラグが"false"になる
-		 */
-		void AttachObject(cumulonimbus::mapping::rename_type::Entity ent);
-
-		/**
-		 * @brief				: オブジェクト用カメラのパラメータの初期化
-		 *						  カメラの初期位置をオブジェクトの後方にセット
-		 *						  (オブジェクトのフロントベクトル * -1) * camera_length
-		 * @param camera_length : オブジェクトとカメラ間の長さ(デフォルト == 50)
-		 */
-		void InitializeObjectCameraParam(float camera_length = 50.0f);
-
-		/**
-		 * @brief		: バックバッファ用のカメラに切り替える
-		 * @attention	: 現クラスのCameraComponent::is_main_cameraをtrueに
-		 *				  現クラス以外の全てのCameraComponent::is_main_cameraをfalseにする
-		 */
-		void SwitchMainCamera();
 
 		/**
 		 * @brief		 : クォータニオンを使用してright_vectorを基準に
@@ -98,14 +57,14 @@ namespace cumulonimbus::component
 
 		/**
 		 * @brief				: カメラパラメータの設定(位置、注視点、カメラアップベクトル)
-		 * @param eye_position	: カメラ位置
+		 * @param pos			: カメラ位置
 		 * @param target		: カメラ注視点
 		 * @param camera_up		: カメラアップベクトル
 		 */
 		void SetViewInfo(
-			DirectX::SimpleMath::Vector3 eye_position,
-			DirectX::SimpleMath::Vector3 target,
-			DirectX::SimpleMath::Vector3 camera_up);
+			const DirectX::SimpleMath::Vector3& pos,
+			const DirectX::SimpleMath::Vector3& target,
+			const DirectX::SimpleMath::Vector3& camera_up);
 		/**
 		 * @brief        : 透視投影に必要なパラメータの設定
 		 * @param fov    : 視野角
@@ -126,7 +85,7 @@ namespace cumulonimbus::component
 		/**
 		* @brief : カメラ位置の設定
 		*/
-		void SetEyePosition(const DirectX::SimpleMath::Vector3 & pos) { eye_position = pos; }
+		void SetEyePosition(const DirectX::SimpleMath::Vector3& pos) { eye_position = pos; }
 		/**
 		 * @brief : カメラ注視点の設定
 		 */
@@ -137,42 +96,42 @@ namespace cumulonimbus::component
 		void SetFocusOffset(const DirectX::SimpleMath::Vector3& offset) { focus_offset = offset; }
 
 		/**
-		 * @brief		: デバッグ時のカメラ速度の設定
-		 * @pram speed	: カメラの速さ
-		 */
-		void SetCameraSpeed(const DirectX::SimpleMath::Vector2& speed) { this->camera_speed = speed; }
-		/**
 		 * @brief : 視野角(fov)の設定
 		 */
 		void SetFov(const float fov) const { cb_camera->data.camera_fov = fov; }
 
-		void SetIsDebugCamera(const bool flg) { is_use_camera_for_debug = flg; }
-		void SetIsActive(const bool flg) { is_active = flg; }
 
-		[[nodiscard]] float GetFov()    const { return fov; }
-		[[nodiscard]] float GetAspect() const { return aspect; }
-		[[nodiscard]] float GetNearZ()  const { return near_z; }
-		[[nodiscard]] float GetFarZ()   const { return far_z; }
+		[[nodiscard]]
+		float GetFov()    const { return fov; }
+		[[nodiscard]]
+		float GetAspect() const { return aspect; }
+		[[nodiscard]]
+		float GetNearZ()  const { return near_z; }
+		[[nodiscard]]
+		float GetFarZ()   const { return far_z; }
 
-		[[nodiscard]] DirectX::SimpleMath::Matrix GetViewMat()			const { return view_mat; }
-		[[nodiscard]] DirectX::SimpleMath::Matrix GetProjectionMat()	const { return projection_mat; }
+		[[nodiscard]]
+		DirectX::SimpleMath::Matrix GetViewMat()			const { return view_mat; }
+		[[nodiscard]]
+		DirectX::SimpleMath::Matrix GetProjectionMat()	const { return projection_mat; }
 
-		[[nodiscard]] const DirectX::SimpleMath::Vector3& GetEyePosition()   const { return eye_position; }
-		[[nodiscard]] const DirectX::SimpleMath::Vector3& GetFocusPosition() const { return focus_position; }
-		[[nodiscard]] const DirectX::SimpleMath::Vector3& GetFocusOffset()	 const { return focus_offset; }
+		[[nodiscard]]
+		const DirectX::SimpleMath::Vector3& GetEyePosition()   const { return eye_position; }
+		[[nodiscard]]
+		const DirectX::SimpleMath::Vector3& GetFocusPosition() const { return focus_position; }
+		[[nodiscard]]
+		const DirectX::SimpleMath::Vector3& GetFocusOffset()   const { return focus_offset; }
 
 		// カメラの向き取得
-		[[nodiscard]] DirectX::SimpleMath::Vector3 GetCameraRight() const { return right_vec; }
-		[[nodiscard]] DirectX::SimpleMath::Vector3 GetCameraUp()    const { return up_vec; }
-		[[nodiscard]] DirectX::SimpleMath::Vector3 GetCameraFront() const { return front_vec; }
+		[[nodiscard]]
+		DirectX::SimpleMath::Vector3 GetCameraRight() const { return right_vec; }
+		[[nodiscard]]
+		DirectX::SimpleMath::Vector3 GetCameraUp()    const { return up_vec; }
+		[[nodiscard]]
+		DirectX::SimpleMath::Vector3 GetCameraFront() const { return front_vec; }
 
-		[[nodiscard]] DirectX::SimpleMath::Vector2 GetCameraSpeed() const { return camera_speed; }
-
-		[[nodiscard]] bool GetIsActive() const { return is_active; }
-		[[nodiscard]] bool GetIsMainCamera() const { return is_main_camera; }
-
-		[[nodiscard]] ID3D11ShaderResourceView** GetFrameBufferSRV_Address() const { return off_screen->GetRenderTargetSRV(); }
-
+		[[nodiscard]]
+		ID3D11ShaderResourceView** GetFrameBufferSRV_Address() const { return off_screen->GetRenderTargetSRV(); }
 	private:
 		std::shared_ptr<buffer::ConstantBuffer<CameraCB>>	cb_camera{ nullptr };
 		std::shared_ptr<FrameBuffer>						off_screen{ nullptr };
@@ -201,12 +160,12 @@ namespace cumulonimbus::component
 
 		DirectX::SimpleMath::Vector3 camera_angle{}; // カメラの角度(Degree),左手系の座標軸からの角度
 
-		float near_z;	// カメラの最近値
-		float far_z;	// カメラの最遠地
-		float fov;		// 視野角
-		float aspect;	// アスペクト比
-		float width;	// ビュー行列上の幅
-		float height;	// ビュー行列上の高さ
+		float near_z{};	// カメラの最近値
+		float far_z{};	// カメラの最遠地
+		float fov{};		// 視野角
+		float aspect{};	// アスペクト比
+		float width{};	// ビュー行列上の幅
+		float height{};	// ビュー行列上の高さ
 
 		//-- for debug --//
 		DirectX::SimpleMath::Vector2 camera_speed{ 1.f,1.f };
@@ -214,13 +173,7 @@ namespace cumulonimbus::component
 		DirectX::SimpleMath::Vector2 prev_mouse_pos{ 0.0f,0.0f };		// Mouse eye_position one frame ago
 
 		//-- カメラとオブジェクトのアタッチ用変数 --//
-		mapping::rename_type::Entity attach_entity;	// アタッチするオブジェクトのエンティティ
-		float camera_length; // オブジェクトとカメラの長さ
-
-		bool  is_use_camera_for_debug = true; // デバッグ用カメラを使用するか
 		bool  is_perspective = true;  // 透視投影を使用するか
-		bool  is_active		 = true;  // カメラを描画対象に加えるか(RenderPath::Render関数内でtrueの場合のみ描画する)
-		bool  is_main_camera = false; // バックバッファ用のカメラ(全てのcamera_componentの中でtrueになるのは常に一つだけ)
 
 		/**
 		 * @brier : 直行ベクトル(right,up,front)の算出
@@ -277,7 +230,4 @@ namespace cumulonimbus::component
 		void Crane(float velocity,
 			const DirectX::SimpleMath::Vector3& axis /*基準軸*/);	// カメラの上下移動(向きは固定)
 	};
-
-} // cumulonimbus::component
-
-
+} // cumulonimbus::camera

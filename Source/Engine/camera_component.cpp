@@ -20,6 +20,51 @@ CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cum
 
 namespace cumulonimbus::component
 {
+	template <class Archive>
+	void CameraComponent::serialize(Archive&& archive)
+	{
+		archive(
+			cereal::base_class<ComponentBase>(this),
+			CEREAL_NVP(max_camera_angle),
+
+			CEREAL_NVP(eye_position),
+			CEREAL_NVP(focus_position),
+			CEREAL_NVP(focus_offset),
+
+			CEREAL_NVP(up_vec),
+			CEREAL_NVP(current_up_vec),
+			CEREAL_NVP(right_vec),
+			CEREAL_NVP(front_vec),
+
+			CEREAL_NVP(current_camera_up),
+			CEREAL_NVP(camera_right),
+
+			CEREAL_NVP(view_mat),
+			CEREAL_NVP(projection_mat),
+			CEREAL_NVP(view_projection_mat),
+
+			CEREAL_NVP(camera_angle),
+
+			CEREAL_NVP(near_z),
+			CEREAL_NVP(far_z),
+			CEREAL_NVP(fov),
+			CEREAL_NVP(aspect),
+			CEREAL_NVP(width),
+			CEREAL_NVP(height),
+
+			CEREAL_NVP(camera_speed),
+			CEREAL_NVP(cur_mouse_pos),
+			CEREAL_NVP(prev_mouse_pos),
+
+			CEREAL_NVP(attach_entity),
+			CEREAL_NVP(camera_length),
+			CEREAL_NVP(is_use_camera_for_debug),
+			CEREAL_NVP(is_perspective),
+			CEREAL_NVP(is_active),
+			CEREAL_NVP(is_main_camera)
+		);
+	}
+
 	CameraComponent::CameraComponent(
 		cumulonimbus::ecs::Registry* registry,
 		const mapping::rename_type::Entity ent,
@@ -29,8 +74,8 @@ namespace cumulonimbus::component
 	{
 		cb_camera  = std::make_shared<buffer::ConstantBuffer<CameraCB>>(cumulonimbus::locator::Locator::GetDx11Device()->device.Get());
 		off_screen = std::make_shared<FrameBuffer>(
-			locator::Locator::GetDx11Device()->device.Get(),
-			width, height);
+						locator::Locator::GetDx11Device()->device.Get(),
+						width, height);
 
 		// 初期設定
 		this->width  = width;
@@ -154,53 +199,8 @@ namespace cumulonimbus::component
 
 		cb_camera = std::make_shared<buffer::ConstantBuffer<CameraCB>>(cumulonimbus::locator::Locator::GetDx11Device()->device.Get());
 		off_screen = std::make_shared<FrameBuffer>(
-			locator::Locator::GetDx11Device()->device.Get(),
-			width, height);
-	}
-
-	template <class Archive>
-	void CameraComponent::serialize(Archive&& archive)
-	{
-		archive(
-			cereal::base_class<ComponentBase>(this),
-			CEREAL_NVP(max_camera_angle),
-
-			CEREAL_NVP(eye_position),
-			CEREAL_NVP(focus_position),
-			CEREAL_NVP(focus_offset),
-
-			CEREAL_NVP(up_vec),
-			CEREAL_NVP(current_up_vec),
-			CEREAL_NVP(right_vec),
-			CEREAL_NVP(front_vec),
-
-			CEREAL_NVP(current_camera_up),
-			CEREAL_NVP(camera_right),
-
-			CEREAL_NVP(view_mat),
-			CEREAL_NVP(projection_mat),
-			CEREAL_NVP(view_projection_mat),
-
-			CEREAL_NVP(camera_angle),
-
-			CEREAL_NVP(near_z),
-			CEREAL_NVP(far_z),
-			CEREAL_NVP(fov),
-			CEREAL_NVP(aspect),
-			CEREAL_NVP(width),
-			CEREAL_NVP(height),
-
-			CEREAL_NVP(camera_speed),
-			CEREAL_NVP(cur_mouse_pos),
-			CEREAL_NVP(prev_mouse_pos),
-
-			CEREAL_NVP(attach_entity),
-			CEREAL_NVP(camera_length),
-			CEREAL_NVP(is_use_camera_for_debug),
-			CEREAL_NVP(is_perspective),
-			CEREAL_NVP(is_active),
-			CEREAL_NVP(is_main_camera)
-		);
+						locator::Locator::GetDx11Device()->device.Get(),
+						width, height);
 	}
 
 	void CameraComponent::AttachObject(cumulonimbus::mapping::rename_type::Entity ent)
@@ -214,7 +214,7 @@ namespace cumulonimbus::component
 		this->camera_length = camera_length;
 		auto& transform_comp = GetRegistry()->GetComponent<cumulonimbus::component::TransformComponent>(attach_entity);
 		// カメラの位置をエンティティの持つオブジェクトの後方にセット
-		eye_position = transform_comp.GetPosition() + (transform_comp.GetModelFront() * -1 * camera_length);
+		eye_position   = transform_comp.GetPosition() + (transform_comp.GetModelFront() * -1 * camera_length);
 		// 注視点をエンティティの位置にセット
 		focus_position = transform_comp.GetPosition();
 	}
@@ -254,8 +254,6 @@ namespace cumulonimbus::component
 	{
 		cb_camera->Deactivate(cumulonimbus::locator::Locator::GetDx11Device()->immediate_context.Get());
 	}
-
-
 
 	void CameraComponent::CalcCameraOrthogonalVector()
 	{
