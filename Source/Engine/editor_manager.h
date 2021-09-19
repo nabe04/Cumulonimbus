@@ -7,6 +7,14 @@
 #include "menu_bar.h"
 #include "project_view.h"
 
+namespace cumulonimbus
+{
+	namespace scene
+	{
+		class Scene;
+	} // scene
+} // cumulonimbus
+
 namespace cumulonimbus::editor
 {
 	class EditorManager final
@@ -22,6 +30,6 @@ namespace cumulonimbus::editor
 		explicit EditorManager();
 		~EditorManager() = default;
 
-		void RenderEditor(Scene* scene, ecs::Registry* registry) const;
+		void RenderEditor(scene::Scene* scene, ecs::Registry* registry) const;
 	};
 } // cumulonimbus::editor

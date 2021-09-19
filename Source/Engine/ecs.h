@@ -13,12 +13,19 @@
 #include "file_path_helper.h"
 #include "rename_type_mapping.h"
 
-class Scene;
-
-namespace cumulonimbus::component
+namespace cumulonimbus
 {
-	class ComponentBase;
-} // cumulonimbus::component
+	namespace scene
+	{
+		class Scene;
+	} // scene
+
+	namespace component
+	{
+		class ComponentBase;
+	} // component
+
+} // cumulonimbus
 
 // Entity Update Order (The smaller number is updated first)
 enum class UpdateOrder
@@ -514,8 +521,8 @@ namespace cumulonimbus::ecs
 		 */
 		void Load(const std::string& file_path);
 
-		void SetScene(Scene* scene)		  { this->scene = scene; }
-		[[nodiscard]] Scene*   GetScene()   const { return scene; }
+		void SetScene(scene::Scene* scene)		  { this->scene = scene; }
+		[[nodiscard]] scene::Scene*   GetScene()   const { return scene; }
 
 		template<typename Archive>
 		void serialize(Archive&& archive);
@@ -544,6 +551,6 @@ namespace cumulonimbus::ecs
 
 		std::unordered_map<mapping::rename_type::ComponentName, std::unique_ptr<ComponentArrayBase>> component_arrays;
 		std::unordered_map<mapping::rename_type::Entity, std::pair<mapping::rename_type::Entity, mapping::rename_type::EntityName>> entities;
-		Scene* scene;
+		scene::Scene* scene;
 	};
 } // cumulonimbus::ecs

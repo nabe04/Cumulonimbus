@@ -183,21 +183,6 @@
     <ClCompile Include="Source\Engine\scene_load.cpp">
       <Filter>Source\Engine\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\scene_title.cpp">
-      <Filter>Source\Engine\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\scene_tutorial.cpp">
-      <Filter>Source\Engine\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\scene01.cpp">
-      <Filter>Source\Engine\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\scene02.cpp">
-      <Filter>Source\Engine\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\scene03.cpp">
-      <Filter>Source\Engine\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Engine\gaussian_blur.cpp">
       <Filter>Source\Engine\Shader%28.cpp%29</Filter>
     </ClCompile>
@@ -561,12 +546,6 @@
       <Filter>Header\Engine\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\scene_load.h">
-      <Filter>Header\Engine\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\scene_title.h">
-      <Filter>Header\Engine\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\scene_tutorial.h">
       <Filter>Header\Engine\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\gaussian_blur.h">

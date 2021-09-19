@@ -7,7 +7,7 @@
 #include "mesh_object.h"
 #include "fbx_model_component.h"
 
-void ContentBrowser::Render(Scene* scene)
+void ContentBrowser::Render(cumulonimbus::scene::Scene* scene)
 {
 	auto* model_resource = cumulonimbus::locator::Locator::GetResourceManager();
 
@@ -75,7 +75,7 @@ void ContentBrowser::Render(Scene* scene)
 	}
 }
 
-void ContentBrowser::SelectedContent(Scene* scene)
+void ContentBrowser::SelectedContent(cumulonimbus::scene::Scene* scene)
 {
 	if (is_selected.test(Contents::FBX))
 	{

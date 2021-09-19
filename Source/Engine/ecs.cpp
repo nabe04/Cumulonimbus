@@ -10,7 +10,6 @@
 #include "camera_component.h"
 #include "child_actor.h"
 #include "fbx_model_component.h"
-#include "geometric_primitive_component.h"
 #include "material_component.h"
 #include "mesh_object.h"
 #include "obj_model_component.h"

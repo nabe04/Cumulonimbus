@@ -56,8 +56,10 @@ int Framework::Run()
 		return 0;
 	}
 
-	SceneManager scene_manager{};
-	scene_manager.Execute(this);
+	//SceneManager scene_manager{};
+	//scene_manager.Execute(this);
+	cumulonimbus::scene::Scene scene{};
+	scene.Execute(this);
 
 	UnInitialize();
 

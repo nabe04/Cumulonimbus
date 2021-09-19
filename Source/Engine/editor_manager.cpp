@@ -13,7 +13,7 @@ namespace cumulonimbus::editor
 		project_view	= std::make_unique<ProjectView>();
 	}
 
-	void EditorManager::RenderEditor(Scene* scene, ecs::Registry* registry) const
+	void EditorManager::RenderEditor(scene::Scene* scene, ecs::Registry* registry) const
 	{
 		content_browser->Render(scene);
 		hierarchy->Render(registry);

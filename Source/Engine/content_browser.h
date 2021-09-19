@@ -4,7 +4,11 @@
 #include <bitset>
 #include <string>
 
-class Scene;
+namespace cumulonimbus::scene
+{
+	class Scene;
+} // cumulonimbus::scene
+
 
 class ContentBrowser final
 {
@@ -24,8 +28,8 @@ public:
 	explicit ContentBrowser() = default;
 	~ContentBrowser() = default;
 
-	void Render(Scene* scene);
+	void Render(cumulonimbus::scene::Scene* scene);
 
 private:
-	void SelectedContent(Scene* scene);
+	void SelectedContent(cumulonimbus::scene::Scene* scene);
 };

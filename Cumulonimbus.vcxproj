@@ -136,8 +136,6 @@
     <ClInclude Include="Source\Engine\scene.h" />
     <ClInclude Include="Source\Engine\scene_game.h" />
     <ClInclude Include="Source\Engine\scene_load.h" />
-    <ClInclude Include="Source\Engine\scene_title.h" />
-    <ClInclude Include="Source\Engine\scene_tutorial.h" />
     <ClInclude Include="Source\Engine\shader.h" />
     <ClInclude Include="Source\Engine\shader_manager.h" />
     <ClInclude Include="Source\Engine\shadow_map.h" />
@@ -266,8 +264,6 @@
     <ClCompile Include="Source\Engine\scene.cpp" />
     <ClCompile Include="Source\Engine\scene_game.cpp" />
     <ClCompile Include="Source\Engine\scene_load.cpp" />
-    <ClCompile Include="Source\Engine\scene_title.cpp" />
-    <ClCompile Include="Source\Engine\scene_tutorial.cpp" />
     <ClCompile Include="Source\Engine\shader.cpp" />
     <ClCompile Include="Source\Engine\shader_asset.cpp" />
     <ClCompile Include="Source\Engine\material3d_manager.cpp" />
@@ -300,9 +296,6 @@
     <ClCompile Include="Source\Game\enemy_soldier_component.cpp" />
     <ClCompile Include="Source\Game\player_component.cpp" />
     <ClCompile Include="Source\Game\sound_resource.cpp" />
-    <ClCompile Include="Source\scene01.cpp" />
-    <ClCompile Include="Source\scene02.cpp" />
-    <ClCompile Include="Source\scene03.cpp" />
     <ClCompile Include="Source\test_animation_character.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -15,7 +15,6 @@
 #include "camera_component.h"
 #include "capsule_collison_component.h"
 #include "fbx_model_component.h"
-#include "geometric_primitive_component.h"
 #include "mesh_object.h"
 #include "sky_box.h"
 #include "sphere_collision_component.h"

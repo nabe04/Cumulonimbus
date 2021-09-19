@@ -8,8 +8,6 @@
 #include "scene.h"
 #include "ecs.h"
 
-class Scene;
-
 namespace cumulonimbus::editor
 {
 	void MenuBar::Render(ecs::Registry* registry)
