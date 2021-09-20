@@ -546,6 +546,9 @@
     <ClCompile Include="Source\Engine\camera.cpp">
       <Filter>Source\Engine\System</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\tool_bar.cpp">
+      <Filter>Source\Engine\Editor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -1003,6 +1006,9 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\camera.h">
       <Filter>Header\Engine\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\tool_bar.h">
+      <Filter>Header\Engine\Editor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

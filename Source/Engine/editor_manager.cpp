@@ -11,6 +11,7 @@ namespace cumulonimbus::editor
 		inspector		= std::make_unique<Inspector>();
 		menu_bar		= std::make_unique<MenuBar>();
 		project_view	= std::make_unique<ProjectView>();
+		tool_bar		= std::make_unique<ToolBar>();
 	}
 
 	void EditorManager::RenderEditor(scene::Scene* scene, ecs::Registry* registry) const
@@ -20,6 +21,7 @@ namespace cumulonimbus::editor
 		inspector->Render(registry, hierarchy->GetSelectedEntity());
 		menu_bar->Render(registry);
 		project_view->Render(registry);
+		tool_bar->Render(registry);
 	}
 } // cumulonimbus::editor
 

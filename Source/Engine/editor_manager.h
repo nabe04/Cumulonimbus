@@ -6,6 +6,7 @@
 #include "inspector.h"
 #include "menu_bar.h"
 #include "project_view.h"
+#include "tool_bar.h"
 
 namespace cumulonimbus
 {
@@ -25,6 +26,7 @@ namespace cumulonimbus::editor
 		std::unique_ptr<Inspector>		inspector{};
 		std::unique_ptr<MenuBar>		menu_bar{};
 		std::unique_ptr<ProjectView>	project_view{};
+		std::unique_ptr<ToolBar>		tool_bar{};
 
 	public:
 		explicit EditorManager();
