@@ -21,7 +21,7 @@ namespace cumulonimbus::editor
 		/**
 		 * @brief : PPS -> Play,Pause,Stepの略
 		 */
-		enum class PPS_Button
+		enum class PlaybackMode
 		{
 			Play,
 			Pause,
@@ -38,8 +38,23 @@ namespace cumulonimbus::editor
 
 	private:
 		// Play,Pause,Stepボタン状態
-		std::bitset<static_cast<size_t>(PPS_Button::End)> pps_state{};
+		std::bitset<static_cast<size_t>(PlaybackMode::End)> play_back_state{};
 
-		const DirectX::SimpleMath::Vector2 pps_size{ 40,30 };
+		// playback mode ボタンのサイズ
+		const DirectX::SimpleMath::Vector2 playback_size{ 40,30 };
+		// playback mode(pb)ボタンの通常時色
+		const DirectX::SimpleMath::Vector4 pb_col_normal{ .235f,0.235f,0.235f,1.f };
+		// playback mode(pb)ボタンのカーソルホバー時色
+		const DirectX::SimpleMath::Vector4 pb_col_hovered{ .607f,.607f ,.607f ,1.f };
+		// playback mode(pb)ボタンの選択時色
+
+		void PlayButton();
+		void PauseButton();
+		void StepButton();
+
+		/**
+		 * 
+		 */
+		bool IsPlaybackState(PlaybackMode mode);
 	};
 } // cumulonimbus::editor

@@ -7,7 +7,7 @@ namespace cumulonimbus::editor
 	void Hierarchy::Render(ecs::Registry* registry)
 	{
 		ImVec2 button_size{ 10.f,10.f };
-		ImGui::Begin("Hierarchy");
+		ImGui::Begin(ICON_FA_ALIGN_RIGHT" Hierarchy");
 		if (ImGui::Button(ICON_FA_PLUS, {30,30}))
 			ImGui::OpenPopup("my_file_popup");
 		if (ImGui::BeginPopup("my_file_popup"))

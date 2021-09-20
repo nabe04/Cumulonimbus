@@ -45,7 +45,7 @@ namespace cumulonimbus::editor
 	{
 		static ImGuiTableFlags flags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable;
 
-		ImGui::Begin(ICON_FA_FOLDER"Project");
+		ImGui::Begin(ICON_FA_FOLDER" Project");
 		if(ImGui::BeginTable("##table",2, flags))
 		{
 			ImGui::TableSetupScrollFreeze(0, 1); // Make top row always visible
