@@ -62,7 +62,18 @@ namespace cumulonimbus::renderer
 	public:
 		explicit RenderPath(ID3D11Device* device);
 
-		void Render(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, const Light* light);
+		/**
+		 * @brief : Scene Viewの描画
+		 */
+		void RenderScene(
+			ID3D11DeviceContext* immediate_context, ecs::Registry* registry,
+			const camera::Camera* camera, const Light* light);
+		/**
+		 * @brief : Game Viewの描画
+		 */
+		void RenderGame(
+			ID3D11DeviceContext* immediate_context,
+			ecs::Registry* registry, const Light* light);
 
 	private:
 		// すべてのシェーダーの生成とセット
@@ -122,10 +133,10 @@ namespace cumulonimbus::renderer
 		 */
 		void RenderShadow_Begin(ID3D11DeviceContext* immediate_context) const;
 		void RenderShadow(
-			ID3D11DeviceContext* immediate_context,
-			ecs::Registry* registry,
+			ID3D11DeviceContext*  immediate_context,
+			ecs::Registry*		  registry,
 			const camera::Camera* camera,
-			const Light* light);
+			const Light*		  light);
 		void RenderShadow_End(ID3D11DeviceContext* immediate_context) const;
 
 		/*

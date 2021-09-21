@@ -133,9 +133,9 @@ namespace cumulonimbus::camera
 		 * @brief			: カメラワーク時の動作
 		 * @param velocity	: カメラスピード(デバックの設定で変更可能)
 		 */
-		void Pan(float velocity);								// カメラの左右の傾き(位置は固定)
-		void Tilt(float velocity);								// カメラの上下の傾き(位置は固定)
-		void DollyInOut(float velocity);						// カメラの前後の動き(向きは固定)
+		void Pan(float velocity);			// カメラの左右の傾き(位置は固定)
+		void Tilt(float velocity);			// カメラの上下の傾き(位置は固定)
+		void DollyInOut(float velocity);	// カメラの前後の動き(向きは固定)
 		void Track(float velocity,
 			const DirectX::SimpleMath::Vector3& axis /*基準軸*/);								// カメラの左右移動(向きは固定)
 		void Crane(float velocity,
@@ -211,11 +211,11 @@ namespace cumulonimbus::camera
 
 		// カメラの向き取得
 		[[nodiscard]]
-		DirectX::SimpleMath::Vector3 GetCameraRight() const { return right_vec; }
+		const DirectX::SimpleMath::Vector3& GetCameraRight() const { return right_vec; }
 		[[nodiscard]]
-		DirectX::SimpleMath::Vector3 GetCameraUp()    const { return up_vec; }
+		const DirectX::SimpleMath::Vector3& GetCameraUp()    const { return up_vec; }
 		[[nodiscard]]
-		DirectX::SimpleMath::Vector3 GetCameraFront() const { return front_vec; }
+		const DirectX::SimpleMath::Vector3& GetCameraFront() const { return front_vec; }
 
 		[[nodiscard]]
 		const DirectX::SimpleMath::Vector2& GetCameraSpeed() const { return camera_speed; }

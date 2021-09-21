@@ -130,13 +130,13 @@ namespace cumulonimbus::scene
 		registry->DestroyAllEntities();
 	}
 
-	void Scene::Update(float delta_time)
+	void Scene::Update(const float dt)
 	{
-		registry->PreUpdate(delta_time);
-		registry->Update(delta_time);
-		registry->PostUpdate(delta_time);
+		registry->PreUpdate(dt);
+		registry->Update(dt);
+		registry->PostUpdate(dt);
 
-		collision_manager->Update(delta_time, registry.get());
+		collision_manager->Update(dt, registry.get());
 
 		// light update
 		for (const auto& camera_comp : registry->GetArray<cumulonimbus::component::CameraComponent>().GetComponents())
@@ -145,13 +145,17 @@ namespace cumulonimbus::scene
 				light->Update(&camera_comp);
 		}
 
+		editor_manager->Update(dt);
 	}
 
 	void Scene::Render()
 	{
 		auto* immediate_context = framework->GetDeviceContext();
 
-		render_path->Render(immediate_context, registry.get(), light.get());
+		render_path->RenderScene(immediate_context, registry.get(),
+								 &editor_manager->GetSceneView().GetSceneViewCamera().GetCamera(),
+								 light.get());
+		render_path->RenderGame(immediate_context, registry.get(), light.get());
 
 #ifdef _DEBUG
 		editor_manager->RenderEditor(this, registry.get());

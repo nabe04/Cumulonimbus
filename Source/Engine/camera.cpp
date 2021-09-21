@@ -68,6 +68,9 @@ namespace cumulonimbus::camera
 		cb_camera->data.camera_height	= locator::Locator::GetWindow()->Height();
 		cb_camera->data.camera_view_matrix = { 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
 		cb_camera->data.camera_view_projection_matrix = { 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
+
+		SetViewInfo(cb_camera->data.camera_position, cb_camera->data.camera_at, cb_camera->data.camera_up);
+		SetProjection(DirectX::XM_PI / 8.0f, static_cast<float>(locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
 	}
 
 	void Camera::Initialize()

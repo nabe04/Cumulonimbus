@@ -17,6 +17,7 @@
 #include "input_manager.h"
 #include "light.h"
 #include "render_path.h"
+#include "scene_view_camera.h"
 #include "resource_manager.h"
 #include "sound_resource.h"
 #include "texture_resource_manager.h"
@@ -69,7 +70,7 @@ namespace cumulonimbus::scene
 
 		[[nodiscard]]
 		Framework* GetFramework() const { return framework; };
-	
+
 	private:
 		Framework*							  framework{};
 		std::unique_ptr<Light>				  light{}; // Todo : 後にコンポーネント化する予定
@@ -82,7 +83,7 @@ namespace cumulonimbus::scene
 
 		void Initialize();
 		void UnInitialize();
-		void Update(float delta_time);
+		void Update(float dt);
 		void Render();
 	};
 } // cumulonimbus::scene

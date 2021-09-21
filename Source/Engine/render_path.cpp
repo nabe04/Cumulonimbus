@@ -62,7 +62,7 @@ namespace cumulonimbus::renderer
 
 	void RenderPath::BindGraphicsState(
 			ID3D11DeviceContext* immediate_context,
-			const cumulonimbus::graphics::GraphicsState& graphics_state)
+			const graphics::GraphicsState& graphics_state)
 	{
 		rasterizer->Activate(immediate_context, graphics_state.GetRasterizerState());
 		sampler->Activate(immediate_context, graphics_state.GetSamplerState(), SSlot_OnDemand0);
@@ -70,9 +70,50 @@ namespace cumulonimbus::renderer
 		blend->Activate(immediate_context, graphics_state.GetBlendState());
 	}
 
-	void RenderPath::Render(ID3D11DeviceContext* const immediate_context,
-							ecs::Registry* registry,
-							const Light* light)
+	void RenderPath::RenderScene(
+		ID3D11DeviceContext* immediate_context,ecs::Registry* registry,
+		const camera::Camera* camera, const Light* light)
+	{
+		RenderBegin(immediate_context);
+		camera->ClearFrameBuffer();
+
+		if (registry->GetArray<component::ModelComponent>().GetComponents().size() > 0)
+		{
+			// ShadowMapì¬
+			RenderShadow_Begin(immediate_context);
+			RenderShadow(immediate_context, registry, camera, light);
+			RenderShadow_End(immediate_context);
+		}
+
+		// SkyBox‚Ì•`‰æ
+		RenderSkyBox_Begin(immediate_context, camera);
+		RenderSkyBox(immediate_context, registry, camera, light);
+		RenderSkyBox_End(immediate_context, camera);
+
+		if (registry->GetArray<component::ModelComponent>().GetComponents().size() > 0)
+		{
+			// GBuffer‚Ö‚Ì•`‰æˆ—
+			Render3DToGBuffer_Begin(immediate_context);
+			Render3DToGBuffer(immediate_context, registry, camera, light);
+			Render3DToGBuffer_End(immediate_context, camera);
+
+			// “–‚½‚è”»’è‚Ì•`‰æ
+			RenderCollision_Begin(immediate_context, camera);
+			RenderCollision(immediate_context, registry);
+			RenderCollision_End(immediate_context, camera);
+		}
+
+		// 2DƒXƒvƒ‰ƒCƒg‚Ì•`‰æ
+		Render2D(immediate_context, registry);
+
+		RenderEnd(immediate_context);
+	}
+
+
+	void RenderPath::RenderGame(
+		ID3D11DeviceContext* const immediate_context,
+		ecs::Registry* registry,
+		const Light* light)
 	{
 		RenderBegin(immediate_context);
 
@@ -145,7 +186,6 @@ namespace cumulonimbus::renderer
 	{
 
 	}
-
 
 	void RenderPath::RenderShadow_Begin(ID3D11DeviceContext* const immediate_context) const
 	{

@@ -10,6 +10,11 @@ namespace cumulonimbus::editor
 		explicit SceneView();
 		~SceneView() = default;
 
+		void Update(float dt);
+		void Render() const;
+
+		[[nodiscard]]
+		camera::SceneViewCamera& GetSceneViewCamera() const { return *scene_view_camera.get(); }
 	private:
 		std::unique_ptr<camera::SceneViewCamera> scene_view_camera{};
 	};

@@ -5,6 +5,8 @@
 #include <DirectXMath.h>
 #include <SimpleMath.h>
 
+#include "input_system.h"
+
 namespace cumulonimbus
 {
 	namespace ecs
@@ -34,11 +36,17 @@ namespace cumulonimbus::editor
 		explicit ToolBar();
 		~ToolBar() = default;
 
+		void Update();
 		void Render(ecs::Registry* registry);
+
+		[[nodiscard]]
+		ButtonState GetButtonState(PlaybackMode mode) const;
 
 	private:
 		// Play,Pause,Stepボタン状態
-		std::bitset<static_cast<size_t>(PlaybackMode::End)> play_back_state{};
+		std::bitset<static_cast<size_t>(PlaybackMode::End)> playback_state{};
+		std::bitset<static_cast<size_t>(PlaybackMode::End)> old_playback_state{};
+		std::array<ButtonState, static_cast<size_t>(PlaybackMode::End)> button_state{};
 
 		// playback mode ボタンのサイズ
 		const DirectX::SimpleMath::Vector2 playback_size{ 40,30 };
@@ -53,7 +61,7 @@ namespace cumulonimbus::editor
 		void StepButton();
 
 		/**
-		 * 
+		 *
 		 */
 		bool IsPlaybackState(PlaybackMode mode);
 	};
