@@ -3,6 +3,8 @@
 #include <DirectXMath.h>
 #include <SimpleMath.h>
 
+#include <imgui_internal.h>
+
 #include "camera.h"
 #include "constant_buffer.h"
 #include "frame_buffer.h"
@@ -30,7 +32,7 @@ namespace cumulonimbus::camera
 		/**
 		 * @brief : SceneView’†‚ÌƒJƒƒ‰ƒ[ƒN
 		 */
-		void EditCamera() const;
+		void EditCamera(ImGuiWindow* window) const;
 	private:
 		std::unique_ptr<Camera> camera{};
 	};

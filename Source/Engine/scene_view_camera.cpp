@@ -31,10 +31,10 @@ namespace cumulonimbus::camera
 
 	void SceneViewCamera::RenderImGui()
 	{
-		
+
 	}
 
-	void SceneViewCamera::EditCamera() const
+	void SceneViewCamera::EditCamera(ImGuiWindow* window) const
 	{
 		const auto& mouse = locator::Locator::GetInput()->Mouse();
 		const auto& key = locator::Locator::GetInput()->Keyboard();

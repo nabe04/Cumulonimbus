@@ -17,6 +17,22 @@ namespace arithmetic
 	};
 
 	/**
+	 * @brief : ウィンドウ比率を元にウィンドウサイズを計算
+	 * @remark : widthのパラメータを優先にサイズを計算する
+	 * @remark : widthから算出された計算後のウィンドウ縦幅が
+	 *			 PCの縦画面のサイズよりも大きかった場合height
+	 *			 のパラメータからウィンドウサイズを算出する
+	 * @param aspect_ratio : ウィンドウ比率
+	 * @param width : 計算前のウィンドウ横幅
+	 * @param height : 計算前のウィンドウ縦幅
+	 * @return : aspect_ratioに基づいて再計算されたウィンドウサイズ
+	 */
+	[[nodiscard]]
+	DirectX::SimpleMath::Vector2 CalcWindowSize(
+		const DirectX::XMUINT2& aspect_ratio,
+		int width, int height);
+
+	/**
 	 * @brief  : 丸め誤差を考慮した同値関数
 	 * @return : true -> 同値
 	 */
@@ -29,9 +45,10 @@ namespace arithmetic
 	[[nodiscard]]
 	float Clamp(float n, float min, float max);
 
-
-	[[nodiscard]] DirectX::XMFLOAT2 CalcVecFromTwoPositions(DirectX::XMFLOAT2 vec1, DirectX::XMFLOAT2 vec2);
-	[[nodiscard]] DirectX::XMFLOAT3 CalcVecFromTwoPositions(DirectX::XMFLOAT3 vec1, DirectX::XMFLOAT3 vec2);
+	[[nodiscard]]
+	DirectX::XMFLOAT2 CalcVecFromTwoPositions(DirectX::XMFLOAT2 vec1, DirectX::XMFLOAT2 vec2);
+	[[nodiscard]]
+	DirectX::XMFLOAT3 CalcVecFromTwoPositions(DirectX::XMFLOAT3 vec1, DirectX::XMFLOAT3 vec2);
 
 	/**
 	* @brief		: upベクトルの算出
@@ -112,12 +129,14 @@ namespace arithmetic
 	 * @brief  : 乱数生成(int)
 	 * @return : minからmaxの範囲での乱数(int)
 	 */
-	[[nodiscard]] int   RandomIntInRange(int min, int max);
+	[[nodiscard]]
+	int RandomIntInRange(int min, int max);
 	/**
 	 * @brief  : 乱数生成(float)
 	 * @return : minからmaxの範囲での乱数(float)
 	 */
-	[[nodiscard]] float RandomFloatInRange(float min, float max);
+	[[nodiscard]]
+	float RandomFloatInRange(float min, float max);
 
 	/**
 	 * @brief  : 2つのベクトルが平行どうか判定
@@ -161,6 +180,7 @@ namespace arithmetic
 	 * @param c : 点c
 	 * @return  : 最短距離の平方の値
 	 */
+	[[nodiscard]]
 	float SqDistPointSegment(
 		const DirectX::SimpleMath::Vector3& a,
 		const DirectX::SimpleMath::Vector3& b,

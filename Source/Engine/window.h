@@ -7,21 +7,10 @@
 
 class Window final
 {
-private:
-	const wchar_t* window_class_name{};
-	HWND	hwnd{};
-	u_int	window_width{};
-	u_int	window_height{};
-
-	HINSTANCE instance{};
-	HINSTANCE prev_instance{};
-	LPWSTR	  cmd_line{};
-	INT		  cmd_show{};
-
-	RECT window_rect{};
-	RECT client_rect{};
-
 public:
+	// アスペクト比
+	inline static const DirectX::XMUINT2 aspect_ratio{ 16,9 };
+
 	Window(HINSTANCE instance, HINSTANCE prev_instance, LPWSTR cmd_line, INT cmd_show)
 		:instance{ instance }
 		,prev_instance{ prev_instance }
@@ -40,4 +29,18 @@ public:
 	[[nodiscard]] RECT GetThisClientRect();
 	[[nodiscard]] bool IsWithinWindow(DirectX::XMINT2 pos);
 	[[nodiscard]] const wchar_t* WindowClassName() const { return window_class_name; }
+private:
+	const wchar_t* window_class_name{};
+	HWND	hwnd{};
+	u_int	window_width{};
+	u_int	window_height{};
+
+	HINSTANCE instance{};
+	HINSTANCE prev_instance{};
+	LPWSTR	  cmd_line{};
+	INT		  cmd_show{};
+
+	RECT window_rect{};
+	RECT client_rect{};
+
 };

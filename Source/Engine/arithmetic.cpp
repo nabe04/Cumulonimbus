@@ -6,6 +6,27 @@ using namespace DirectX;
 
 namespace arithmetic
 {
+	SimpleMath::Vector2 CalcWindowSize(const XMUINT2& aspect_ratio,
+									   const int width, const int height)
+	{
+		SimpleMath::Vector2 result{};
+
+		// 横幅のサイズを元に計算
+		// aspect_ratio.x : aspect_ratio.y = width : Y
+		result.y = (width * aspect_ratio.y) / aspect_ratio.x;
+		if(result.y < height)
+		{
+			result.x = width;
+			return result;
+		}
+
+		// 縦幅のサイズを元に計算
+		// aspect_ratio.x : aspect_ratio.y = X : height
+		result.x = (height * aspect_ratio.x) / aspect_ratio.y;
+		result.y = height;
+		return result;
+	}
+
 	bool IsEqual(float l_val, float r_val)
 	{
 		return (fabs(l_val - r_val)) <= FLT_EPSILON ? true : false;
