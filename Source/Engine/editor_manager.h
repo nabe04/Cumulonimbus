@@ -31,6 +31,8 @@ namespace cumulonimbus::editor
 
 		[[nodiscard]]
 		SceneView& GetSceneView() const { return *scene_view.get(); }
+		[[nodiscard]]
+		ProjectView& GetProjectView() const { return *project_view.get(); }
 	private:
 		std::unique_ptr<ContentBrowser>  content_browser{};
 		std::unique_ptr<Hierarchy>		 hierarchy{};

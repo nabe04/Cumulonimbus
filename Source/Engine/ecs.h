@@ -319,7 +319,6 @@ namespace cumulonimbus::ecs
 
 	class Registry final
 	{
-
 	public:
 		explicit Registry()
 		{
@@ -482,7 +481,7 @@ namespace cumulonimbus::ecs
 		 * @return : false -> ë∂ç›ÇµÇ»Ç¢
 		 */
 		[[nodiscard]]
-		bool HasName(const std::string& name)
+		bool HasName(const std::string& name) const
 		{
 			for(const auto& entity : entities)
 			{
@@ -490,6 +489,15 @@ namespace cumulonimbus::ecs
 					return true;
 			}
 			return false;
+		}
+
+		[[nodiscard]]
+		std::string GetName(const mapping::rename_type::Entity& ent) const
+		{
+			if (!entities.contains(ent))
+				return "";
+
+			return entities.at(ent).second;
 		}
 
 		/*

@@ -27,8 +27,8 @@ namespace cumulonimbus::editor
 		hierarchy->Render(registry);
 		inspector->Render(registry, hierarchy->GetSelectedEntity());
 		menu_bar->Render(registry);
+		scene_view->Render(registry, project_view.get()); // ドラッグ & ドロップの関係上 scene_viewとproject_viewの順番を変えてはならない
 		project_view->Render(registry);
-		scene_view->Render();
 		system_inspector->Render(registry);
 		tool_bar->Render(registry);
 	}

@@ -41,7 +41,7 @@ namespace cumulonimbus::editor
 		Register<asset::Texture>("All Textures");
 	}
 
-	void ProjectView::Render(ecs::Registry* registry)
+	void ProjectView::Render(const ecs::Registry* registry)
 	{
 		static ImGuiTableFlags flags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable;
 
@@ -62,10 +62,20 @@ namespace cumulonimbus::editor
 			{
 				ImGui::TableSetColumnIndex(1);
 				ShowFileAndFolderList(*locator::Locator::GetAssetManager());
+				ImGui::Text("is_drag %d", is_dragged);
 			}
 			ImGui::EndTable();
 		}
 		ImGui::End();
+	}
+
+	bool ProjectView::DraggingAsset(std::filesystem::path& path) const
+	{
+		if (!is_dragged)
+			return false;
+
+		path = selected_file;
+		return true;
 	}
 
 	template <class Hash>
@@ -204,6 +214,7 @@ namespace cumulonimbus::editor
 
 	std::filesystem::path ProjectView::ShowFileAndFolderList(const asset::AssetManager& asset_manager)
 	{
+		is_dragged = false;
 		ImGui::PushItemWidth(200);
 		ImGui::SliderFloat("##Texture Size", &item_size, 10, 300,"size : %.1f");
 		ImGui::PopItemWidth();
@@ -223,8 +234,9 @@ namespace cumulonimbus::editor
 				ImGui::PushID(uuid.c_str());
 				std::filesystem::path path{ path_str };
 				// ボタンの表示
-				helper::imgui::ImageButtonWithText(uuid, std::string{ path.filename().string() }.c_str(), button_state, { item_size,item_size });
-				if (button_state.pressed)
+				helper::imgui::ImageButtonWithText(uuid, std::string{ path.filename().string() }.c_str(),
+												button_state, { item_size,item_size });
+				if (button_state.pressed || button_state.held)
 					selected_file = path;
 
 				// ボタン配置位置の調整
@@ -237,6 +249,7 @@ namespace cumulonimbus::editor
 				// ドラック & ドロップ操作
 				if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 				{
+					is_dragged = true;
 					ImGui::SetDragDropPayload("cell", &n, sizeof(int));
 					helper::imgui::Image(uuid);
 					ImGui::Text(path_str.c_str());

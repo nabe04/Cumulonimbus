@@ -34,15 +34,24 @@ namespace cumulonimbus::editor
 	{
 	public:
 		ProjectView();
-		void Render(ecs::Registry* registry);
+		void Render(const ecs::Registry* registry);
+
+		/**
+		 * @brief : Project View内で現在選択(ドラッグ)されているファイルの取得
+		 * @return : true -> アセットがドラッグされていれば
+		 * @return : false -> アセットがドラッグされていなければ
+		 */
+		[[nodiscard]]
+		bool DraggingAsset(std::filesystem::path& path) const;
 	private:
-		NavigationType				selected_navigation{NavigationType::AllAssets};  // Navigation Paneで現在選択中の項目
-		std::filesystem::path		selected_path{}; // Navigation Pane内で現在選択中のフォルダパス
-		std::filesystem::path		selected_file{}; // File and Folder内で現在選択中のファイル名
-		mapping::rename_type::Hash	selected_id{};	 // All Assets内で現在選択中のLoader ID(Hash)
-		std::map<std::filesystem::path, bool> is_folder_open{}; // Folder Tree上のフォルダが開かれているかどうか
-		float item_size{ 150 };
-		helper::imgui::IMButtonState button_state{};
+		NavigationType							selected_navigation{NavigationType::AllAssets};  // Navigation Paneで現在選択中の項目
+		std::filesystem::path					selected_path{};   // Navigation Pane内で現在選択中のフォルダパス
+		std::filesystem::path					selected_file{};   // File and Folder内で現在選択中のファイル名
+		mapping::rename_type::Hash				selected_id{};	   // All Assets内で現在選択中のLoader ID(Hash)
+		std::map<std::filesystem::path, bool>	is_folder_open{};  // Folder Tree上のフォルダが開かれているかどうか
+		helper::imgui::IMButtonState			button_state{};    // ボタンの押下状態
+		float									item_size{ 150 };  // File and Folder Listに表示するテクスチャサイズ
+		bool									is_dragged{false}; // File and Folder List内でモデルがドラッグされているか
 
 		/**
 		 * @brief : ハッシュ値から任意の型の名前に変換するためのコネクター

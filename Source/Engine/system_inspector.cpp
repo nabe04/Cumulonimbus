@@ -7,10 +7,10 @@ namespace cumulonimbus::editor
 {
 	void SystemInspector::Render(ecs::Registry* registry)
 	{
-		ImGui::Begin(ICON_FA_GLOBE"System Inspector");
+		ImGui::Begin(ICON_FA_GLOBE"System");
 
 		registry->GetScene()->GetCollisionManager()->RenderImGui(registry);
-		
+
 		ImGui::End();
 	}
 

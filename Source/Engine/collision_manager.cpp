@@ -1,6 +1,7 @@
 #include "collision_manager.h"
 
 #include "arithmetic.h"
+#include "cum_imgui_helper.h"
 #include "ecs.h"
 #include "fbx_model_resource.h"
 #include "model_data.h"
@@ -16,13 +17,6 @@
 
 namespace cumulonimbus::collision
 {
-	//template <class Archive>
-	//void CollisionManager::serialize(Archive&& archive)
-	//{
-	//	archive(CEREAL_NVP(ent_terrains));
-	//}
-
-
 	void CollisionManager::Update(const float dt, ecs::Registry* registry)
 	{
 		// 球同士の判定
@@ -88,7 +82,38 @@ namespace cumulonimbus::collision
 		{
 			if(ImGui::TreeNodeEx(ICON_FA_CHECK"Ray Casts",ImGuiTreeNodeFlags_DefaultOpen))
 			{
+				ImGui::Text("Add Terrain");
+				ImGui::SameLine();
+				if(ImGui::Button(ICON_FA_PLUS))
+				{//	レイキャスト対象を格納するコンテナの追加
+					ent_terrains.emplace_back();
+				}
+				ImGui::SameLine();
+				if(ImGui::Button(ICON_FA_MINUS))
+				{// レイキャスト対象を格納するコンテナの削除(一番後ろのコンテナ)
+					ent_terrains.pop_back();
+				}
+				for(int no = 0; auto& terrain : ent_terrains)
+				{// レイキャスト対象のエンティティを選択
+					std::string combo_name = "Terrain(" + std::to_string(no++) + ")";
 
+					if (ImGui::BeginCombo(combo_name.c_str(), registry->GetName(terrain).c_str()))
+					{
+						for (const auto& [key, value] : registry->GetEntities())
+						{
+							const bool is_selected = (registry->GetName(terrain) == value.second);
+							if (ImGui::Selectable(value.second.c_str(), is_selected))
+							{
+								// レイキャスト対象が重複しない場合のみ登録
+								if(!HasTerrain(key))
+									terrain = key;
+							}
+							if (is_selected)
+								ImGui::SetItemDefaultFocus();
+						}
+						ImGui::EndCombo();
+					}
+				}
 				ImGui::TreePop();
 			}
 		}
@@ -104,6 +129,18 @@ namespace cumulonimbus::collision
 
 		ent_terrains.emplace_back(ent);
 	}
+
+	bool CollisionManager::HasTerrain(mapping::rename_type::Entity ent)
+	{
+		for (const auto& terrain : ent_terrains)
+		{// 同じ地形を登録しようとした場合処理を抜ける
+			if (terrain == ent)
+				return true;
+		}
+
+		return false;
+	}
+
 
 	float CollisionManager::CalculateRestitution(
 		const component::PhysicMaterialComponent* physic_material_comp_1,

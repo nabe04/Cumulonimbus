@@ -54,11 +54,19 @@ namespace cumulonimbus::collision
 		void RenderImGui(ecs::Registry* registry);
 
 		/**
-		 * @brief : 地形として判定させたい物の登録
+		 * @brief : 地形として判定させたいモデルの登録
 		 *		   SceneのInitialize関数内などのComponentを追加した段階
 		 *		   に登録する
 		 */
 		void RegistryRayCastModel(mapping::rename_type::Entity ent);
+
+		/**
+		 * @brief : レイキャスト対象のモデルが存在するか
+		 * @return : true -> 存在する
+		 * @return : false -> 存在しない
+		 */
+		[[nodiscard]]
+		bool HasTerrain(mapping::rename_type::Entity ent);
 	private:
 		// レイキャストの判定を行う際の判定が行われる(地形)データ群
 		std::vector<mapping::rename_type::Entity> ent_terrains{};
