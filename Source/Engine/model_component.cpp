@@ -45,6 +45,7 @@ namespace cumulonimbus::component
 	ModelComponent::ModelComponent(
 		ecs::Registry* registry, const mapping::rename_type::Entity ent,
 		const mapping::rename_type::UUID& model_id)
+		:ComponentBase{ registry,ent }
 	{
 		Initialize(registry, ent, model_id);
 	}

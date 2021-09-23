@@ -102,11 +102,11 @@ namespace cumulonimbus::editor
 				}
 				if(mouse_hover.event == MouseHoverEvent::Hovering)
 				{
-					//auto win_pos = ConvertWindowPos();
-					//auto world_pos = arithmetic::ConvertScreenToWorld({ static_cast<float>(win_pos.x),static_cast<float>(win_pos.y),1.f },
-					//	GetSceneViewCamera().GetCamera().GetViewMat(),
-					//	GetSceneViewCamera().GetCamera().GetProjectionMat());
-					//registry->GetComponent<component::TransformComponent>(dragging_entity).SetPosition(world_pos);
+					const auto win_pos = ConvertWindowPos();
+					const auto world_pos = arithmetic::ConvertScreenToWorld({ static_cast<float>(win_pos.x),static_cast<float>(win_pos.y),1.f },
+																			GetSceneViewCamera().GetCamera().GetViewMat(),
+																			GetSceneViewCamera().GetCamera().GetProjectionMat());
+					registry->GetComponent<component::TransformComponent>(dragging_entity).SetPosition(world_pos);
 				}
 			}
 		}
@@ -114,12 +114,11 @@ namespace cumulonimbus::editor
 		{
 			if (project_view->DraggingAsset(selected_asset))
 			{
-				if (ImGui::IsMouseReleased(ImGuiMouseButton_Left))
+				if (mouse_hover.event == MouseHoverEvent::Hovering)
 				{
-
 					// エンティティとコンポーネント(Model)の削除
-					int a;
-					a = 0;
+					registry->Destroy(dragging_entity);
+					dragging_entity = {};
 				}
 			}
 		}
