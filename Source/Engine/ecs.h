@@ -526,24 +526,24 @@ namespace cumulonimbus::ecs
 		 * @brief				: entitiesとcomponent_arraysのファイルSave用関数
 		 * @param filename		: 保存する場所までのファイルパス
 		 * @param scene_name	: 保存するシーン名
-		 * @details	※caution(1) :「.json」と「.bin」で書き出される\n
-		 *			※caution(2) : 拡張子の指定は必要なし \n
-		 *			※caution(3) : ファイルパスは最後「/」の必要はなし
+		 * @remark : ※caution(1)「.json」と「.bin」で書き出される
+		 * @remark : ※caution(2) 拡張子の指定は必要なし 
+		 * @remark : ※caution(3) ファイルパスは最後「/」の必要はなし
 		 */
 		void Save(const std::string& filename,const std::string& scene_name);
 
 		/**
-		 * @brief					: entitiesとcomponent_arraysのファイルLoad用関数
-		 * @param file_path			: 「./Assets/Scenes/任意のシーン名」までのパス
-		 * @details ※caution(1)	: ファイル名のみで良い(ファイルパスなどの記述の必要なし) \n
-		 *					例) OK	: 「ファイル名 \n
-		 *						NG	:  ./Contents/「ファイル名」\n
-		 * @details ※caution(2)	:	現在のentitiesとcomponent_arraysは消去される
-		 * @details ※caution(3)	:	component_arraysのキー値に型の名前が登録されていない場合 \n
-		 *								assertionが発生するためResisterComponentName関数を呼ぶか、 \n
-		 *								RegisterComponent関数で型を登録する必要あり \n
-		 *								(ResisterComponentName関数は内部で行っているので、 \n
-		 *								assertionが発生した場合はRegisterComponentName関数を確認すれば良い)
+		 * @brief : entitiesとcomponent_arraysのファイルLoad用関数
+		 * @param file_path		: 「./Assets/Scenes/任意のシーン名」までのパス
+		 * @remark ※caution(1)	: ファイル名のみで良い(ファイルパスなどの記述の必要なし) 
+		 *				例) OK	: 「ファイル名 
+		 *					NG	:  ./Contents/「ファイル名」
+		 * @remark ※caution(2)	:	現在のentitiesとcomponent_arraysは消去される
+		 * @remark ※caution(3)	:	component_arraysのキー値に型の名前が登録されていない場合 
+		 *							assertionが発生するためResisterComponentName関数を呼ぶか、 
+		 *							RegisterComponent関数で型を登録する必要あり 
+		 *							(ResisterComponentName関数は内部で行っているので、 
+		 *							assertionが発生した場合はRegisterComponentName関数を確認すれば良い)
 		 */
 		void Load(const std::string& file_path);
 

@@ -84,5 +84,9 @@ namespace cumulonimbus::editor
 		 * @brief : プロジェクトビューからドラッグしてきたモデルの追加
 		 */
 		void AddModel(ecs::Registry* registry, const std::filesystem::path& file_path);
+		/**
+		 * @brief : プロジェクトビューからドラッグしてきたモデルをマウスで配置中
+		 */
+		void DraggingModel(ecs::Registry* registry) const;
 	};
 } // cumulonimbus::editor

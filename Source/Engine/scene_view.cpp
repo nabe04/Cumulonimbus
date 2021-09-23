@@ -11,6 +11,7 @@
 #include "project_view.h"
 // components
 #include "model_component.h"
+#include "scene.h"
 #include "transform_component.h"
 
 namespace cumulonimbus::editor
@@ -96,17 +97,20 @@ namespace cumulonimbus::editor
 				if (mouse_hover.event == MouseHoverEvent::Begin_Hovered)
 				{
 					// エンティティとコンポーネント(Model)の追加
-					int a;
-					a = 0;
 					AddModel(registry, selected_asset);
 				}
 				if(mouse_hover.event == MouseHoverEvent::Hovering)
 				{
-					const auto win_pos = ConvertWindowPos();
-					const auto world_pos = arithmetic::ConvertScreenToWorld({ static_cast<float>(win_pos.x),static_cast<float>(win_pos.y),1.f },
-																			GetSceneViewCamera().GetCamera().GetViewMat(),
-																			GetSceneViewCamera().GetCamera().GetProjectionMat());
-					registry->GetComponent<component::TransformComponent>(dragging_entity).SetPosition(world_pos);
+					DraggingModel(registry);
+					//const auto win_pos = ConvertWindowPos();
+					//const auto world_near_pos = arithmetic::ConvertScreenToWorld({ static_cast<float>(win_pos.x),static_cast<float>(win_pos.y),.0f },
+					//															 GetSceneViewCamera().GetCamera().GetViewMat(),
+					//															 GetSceneViewCamera().GetCamera().GetProjectionMat());
+					//const auto world_far_pos  = arithmetic::ConvertScreenToWorld({ static_cast<float>(win_pos.x),static_cast<float>(win_pos.y),1.f },
+					//															 GetSceneViewCamera().GetCamera().GetViewMat(),
+					//															 GetSceneViewCamera().GetCamera().GetProjectionMat());
+					////if(registry->GetScene()->GetCollisionManager()->IntersectRayVsModel(registry,))
+					//registry->GetComponent<component::TransformComponent>(dragging_entity).SetPosition(world_far_pos);
 				}
 			}
 		}
@@ -122,19 +126,6 @@ namespace cumulonimbus::editor
 				}
 			}
 		}
-		if (ImGui::IsMouseReleased(ImGuiMouseButton_Left))
-		{
-			int a;
-			a = 0;
-		}
-
-		//ImGui::Get()
-
-		//if(ImGui::GetWindow())
-		//{
-		//	int a;
-		//	a = 0;
-		//}
 
 		ImGui::End();
 
@@ -241,6 +232,27 @@ namespace cumulonimbus::editor
 		dragging_entity = registry->CreateEntity();
 		const auto model_id = locator::Locator::GetAssetManager()->GetAssetSheetManager().Search<asset::Model>(file_path);
 		registry->AddComponent<component::ModelComponent>(dragging_entity, model_id);
+	}
+
+	void SceneView::DraggingModel(ecs::Registry* registry) const
+	{
+		const DirectX::XMINT2 win_pos = ConvertWindowPos();
+		const DirectX::SimpleMath::Vector3 world_near_pos = arithmetic::ConvertScreenToWorld({ static_cast<float>(win_pos.x),static_cast<float>(win_pos.y),.0f },
+																							 GetSceneViewCamera().GetCamera().GetViewMat(),
+																							 GetSceneViewCamera().GetCamera().GetProjectionMat());
+		const DirectX::SimpleMath::Vector3 world_far_pos = arithmetic::ConvertScreenToWorld({ static_cast<float>(win_pos.x),static_cast<float>(win_pos.y),1.f },
+																							GetSceneViewCamera().GetCamera().GetViewMat(),
+																							GetSceneViewCamera().GetCamera().GetProjectionMat());
+		DirectX::SimpleMath::Vector3 hit_pos{};
+		const component::ModelComponent& model_comp = registry->GetComponent<component::ModelComponent>(dragging_entity);
+		if(registry->GetScene()->GetCollisionManager()->IntersectRayVsDragModel(registry,world_near_pos,world_far_pos,&hit_pos))
+		{
+			registry->GetComponent<component::TransformComponent>(dragging_entity).SetPosition(hit_pos);
+		}
+		else
+		{
+			registry->GetComponent<component::TransformComponent>(dragging_entity).SetPosition(world_far_pos);
+		}
 	}
 
 } // cumulonimbus::editor

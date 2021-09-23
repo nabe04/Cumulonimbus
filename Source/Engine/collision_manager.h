@@ -17,6 +17,7 @@ namespace cumulonimbus
 	namespace component
 	{
 		class FbxModelComponent;
+		class ModelComponent;
 		class SphereCollisionComponent;
 		class CapsuleCollisionComponent;
 		class RayCastComponent;
@@ -55,10 +56,16 @@ namespace cumulonimbus::collision
 
 		/**
 		 * @brief : 地形として判定させたいモデルの登録
-		 *		   SceneのInitialize関数内などのComponentを追加した段階
-		 *		   に登録する
+		 *		    SceneのInitialize関数内などのComponentを追加した段階
+		 *		    に登録する
 		 */
 		void RegistryRayCastModel(mapping::rename_type::Entity ent);
+
+		[[nodiscard]]
+		bool IntersectRayVsDragModel(ecs::Registry* registry,
+									const DirectX::SimpleMath::Vector3& ray_start,
+									const DirectX::SimpleMath::Vector3& ray_end,
+									DirectX::SimpleMath::Vector3* hit_pos);
 
 		/**
 		 * @brief : レイキャスト対象のモデルが存在するか
@@ -76,9 +83,8 @@ namespace cumulonimbus::collision
 		 * @brief	: 反発係数の算出
 		 * @return	: 反発係数(0～1)
 		 */
-		float CalculateRestitution(
-			const component::PhysicMaterialComponent* physic_material_comp_1,
-			const component::PhysicMaterialComponent* physic_material_comp_2);
+		float CalculateRestitution(const component::PhysicMaterialComponent* physic_material_comp_1,
+								   const component::PhysicMaterialComponent* physic_material_comp_2);
 
 		/**
 		 * @brief						: 押出し処理
@@ -92,57 +98,52 @@ namespace cumulonimbus::collision
 		 * @param collision_preset_2	: コリジョンプリセット(2)
 		 * @param penetration			: めり込み具合
 		 */
-		void Extrude(
-			float dt,
-			ecs::Registry* registry,
-			mapping::rename_type::Entity ent_1,
-			mapping::rename_type::Entity ent_2,
-			const DirectX::SimpleMath::Vector3& mass_point_1,
-			const DirectX::SimpleMath::Vector3& mass_point_2,
-			CollisionPreset collision_preset_1,
-			CollisionPreset collision_preset_2,
-			float penetration);
+		void Extrude(float dt,
+					 ecs::Registry* registry,
+					 mapping::rename_type::Entity ent_1,
+					 mapping::rename_type::Entity ent_2,
+					 const DirectX::SimpleMath::Vector3& mass_point_1,
+					 const DirectX::SimpleMath::Vector3& mass_point_2,
+					 CollisionPreset collision_preset_1,
+					 CollisionPreset collision_preset_2,
+					 float penetration);
 
 		/**
 		 * @brief : レイとモデルの衝突判定
 		 */
-		bool IntersectRayVsModel(
-			float dt,
-			ecs::Registry* registry,
-			const component::FbxModelComponent& model,
-			component::RayCastComponent& ray_cast_comp
+		bool IntersectRayVsModel(float dt,
+								 ecs::Registry* registry,
+								 const component::FbxModelComponent& model,
+								 component::RayCastComponent& ray_cast_comp
 		);
 
 		/**
 		 * @brief : 球と球の当たり判定
 		 *	        SphereCollisionComponentが持つSphere分処理を回す
 		 */
-		bool IntersectSphereVsSphere(
-			float dt,
-			ecs::Registry* registry,
-			component::SphereCollisionComponent& sphere_1,
-			component::SphereCollisionComponent& sphere_2
+		bool IntersectSphereVsSphere(float dt,
+									 ecs::Registry* registry,
+									 component::SphereCollisionComponent& sphere_1,
+									 component::SphereCollisionComponent& sphere_2
 		);
 
 		/**
 		 * @brief : カプセルとカプセルの当たり判定
 		 */
-		bool IntersectCapsuleVsCapsule(
-			float dt,
-			ecs::Registry* registry,
-			component::CapsuleCollisionComponent& capsule_1,
-			component::CapsuleCollisionComponent& capsule_2
+		bool IntersectCapsuleVsCapsule(float dt,
+									   ecs::Registry* registry,
+									   component::CapsuleCollisionComponent& capsule_1,
+									   component::CapsuleCollisionComponent& capsule_2
 		);
 
 		/**
 		 * @brief     : 球とカプセルの当たり判定
 		 * @attention : 同じエンティティ内での球とカプセルの判定は行わない
 		 */
-		bool IntersectSphereVsCapsule(
-			float dt,
-			ecs::Registry* registry,
-			component::SphereCollisionComponent&  sphere,
-			component::CapsuleCollisionComponent& capsule
+		bool IntersectSphereVsCapsule(float dt,
+									  ecs::Registry* registry,
+									  component::SphereCollisionComponent&  sphere,
+									  component::CapsuleCollisionComponent& capsule
 		);
 	};
 
