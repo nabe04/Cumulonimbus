@@ -45,6 +45,39 @@ namespace arithmetic
 	[[nodiscard]]
 	float Clamp(float n, float min, float max);
 
+	/**
+	 * @brief : スクリーン座標からNDC座標への変換
+	 * @param screen_pos : スクリーン位置(Z値は無視される)
+	 * @param window_width : ウィンドウ幅
+	 * @param window_height : ウィンドウ高さ
+	 * @return : NDC空間上の座標
+	 */
+	[[nodiscard]]
+	DirectX::SimpleMath::Vector2 ConvertScreenToNDC(const DirectX::SimpleMath::Vector3& screen_pos,
+													float window_width, float window_height);
+	/**
+	 * @brief : スクリーン座標からNDC座標への変換
+	 * @param screen_pos : スクリーン位置(Z値は無視される)
+	 * @param window_width : ウィンドウ幅
+	 * @param window_height : ウィンドウ高さ
+	 * @return : NDC空間上の座標
+	 */
+	[[nodiscard]]
+	DirectX::SimpleMath::Vector2 ConvertScreenToNDC(const DirectX::SimpleMath::Vector2& screen_pos,
+													float window_width, float window_height);
+
+	/**
+	 * @brief : スクリーン座標からワールド座標への変換
+	 * @param screen_pos : スクリーン位置(z値を含む)
+	 * @param view_mat : ビュー行列
+	 * @param projection_mat : プロジェクション行列
+	 * @return :
+	 */
+	[[nodiscard]]
+	DirectX::SimpleMath::Vector3 ConvertScreenToWorld(DirectX::SimpleMath::Vector3 screen_pos,
+													  const DirectX::SimpleMath::Matrix& view_mat,
+													  const DirectX::SimpleMath::Matrix& projection_mat);
+
 	[[nodiscard]]
 	DirectX::XMFLOAT2 CalcVecFromTwoPositions(DirectX::XMFLOAT2 vec1, DirectX::XMFLOAT2 vec2);
 	[[nodiscard]]

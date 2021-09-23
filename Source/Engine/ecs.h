@@ -178,7 +178,7 @@ namespace cumulonimbus::ecs
 			// コンポーネントとコンポーネント配列の最後の要素を入れ替える
 			std::iter_swap(components.begin() + static_cast<int>(index), components.end() - 1);
 
-			mapping::rename_type::Entity key{ static_cast<mapping::rename_type::Entity>(0) };
+			mapping::rename_type::Entity key{};
 			// componentsの最後の要素と同じEntityIdを持つEntityを検索
 			for (auto& it : entity_id)
 			{
@@ -464,14 +464,32 @@ namespace cumulonimbus::ecs
 
 		}
 
-		[[nodiscard]] std::unordered_map<mapping::rename_type::Entity, std::pair<mapping::rename_type::Entity, mapping::rename_type::EntityName>>& GetEntities()
+		[[nodiscard]]
+		std::unordered_map<mapping::rename_type::Entity, std::pair<mapping::rename_type::Entity, mapping::rename_type::EntityName>>& GetEntities()
 		{
 			return entities;
 		}
 
-		[[nodiscard]] std::unordered_map<mapping::rename_type::ComponentName, std::unique_ptr<ComponentArrayBase>>& GetComponentArrays()
+		[[nodiscard]]
+		std::unordered_map<mapping::rename_type::ComponentName, std::unique_ptr<ComponentArrayBase>>& GetComponentArrays()
 		{
 			return component_arrays;
+		}
+
+		/**
+		 * @brief : 指定されたエンティティ名が存在するか
+		 * @return : true -> 存在する
+		 * @return : false -> 存在しない
+		 */
+		[[nodiscard]]
+		bool HasName(const std::string& name)
+		{
+			for(const auto& entity : entities)
+			{
+				if (entity.second.second == name)
+					return true;
+			}
+			return false;
 		}
 
 		/*

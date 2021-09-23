@@ -31,6 +31,11 @@ namespace cumulonimbus::editor
 	void Inspector::Render(ecs::Registry* registry, const mapping::rename_type::Entity ent)
 	{
 		ImGui::Begin(ICON_FA_INFO_CIRCLE" Inspector");
+		if(!registry->GetEntities().contains(ent))
+		{
+			ImGui::End();
+			return;
+		}
 
 		// エンティティ名の変更
 		std::string& name = registry->GetEntities().at(ent).second;

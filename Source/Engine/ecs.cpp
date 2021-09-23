@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <fstream>
 
+#include "generic.h"
 // components(engine)
 #include "actor3d_component.h"
 #include "actor_component.h"
@@ -39,32 +40,60 @@ namespace cumulonimbus::ecs
 
 	Entity Registry::CreateEntity()
 	{
-		uint64_t entity = START_ID;
+		//uint64_t entity = START_ID;
 
+		//// 後置インクリメントをしているのはSTART_IDを初めの要素にセットしたいから
+		//while (entities.contains(static_cast<Entity>(entity)))
+		//{
+		//	entity++;
+		//}
+
+		//CreateEntity(static_cast<Entity>(entity));
+		//AddComponent<component::TransformComponent>(static_cast<Entity>(entity));
+		//return entities.at(static_cast<Entity>(entity)).first;
+
+		auto id = utility::GenerateUUID();
 		// 後置インクリメントをしているのはSTART_IDを初めの要素にセットしたいから
-		while (entities.contains(static_cast<Entity>(entity)))
+		while (entities.contains(id))
 		{
-			entity++;
+			id = utility::GenerateUUID();
 		}
 
-		CreateEntity(static_cast<Entity>(entity));
-		AddComponent<component::TransformComponent>(static_cast<Entity>(entity));
-		return entities.at(static_cast<Entity>(entity)).first;
+		CreateEntity(id);
+		AddComponent<component::TransformComponent>(id);
+		return entities.at(id).first;
 	}
 
 	void Registry::CreateEntity(ecs::Entity ent)
 	{
+		//std::string ent_name = "Entity";
+
+		//if (static_cast<uint64_t>(ent) == 0)
+		//{
+		//	entities.emplace(ent, std::make_pair(ent, ent_name));
+		//}
+		//else
+		//{
+		//	const int no = static_cast<int>(ent);
+		//	ent_name += "(" + std::to_string(no) + ")";
+		//	entities.emplace(ent, std::make_pair(ent, ent_name));
+		//}
+
 		std::string ent_name = "Entity";
 
-		if (static_cast<uint64_t>(ent) == 0)
+		int no = 0;
+		while(true)
 		{
-			entities.emplace(ent, std::make_pair(ent, ent_name));
-		}
-		else
-		{
-			const int no = static_cast<int>(ent);
-			ent_name += "(" + std::to_string(no) + ")";
-			entities.emplace(ent, std::make_pair(ent, ent_name));
+			if(HasName(ent_name))
+			{
+				ent_name = "Entity";
+				ent_name += "(" + std::to_string(++no) + ")";
+			}
+			else
+			{
+				entities.emplace(ent, std::make_pair(ent, ent_name));
+				break;
+			}
 		}
 	}
 

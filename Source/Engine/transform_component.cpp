@@ -43,16 +43,13 @@ namespace cumulonimbus::component
 	{
 		if (ImGui::CollapsingHeader("TransformComponent", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			//ImGuizmo::SetOrthographic(false);
-			//ImGuizmo::SetDrawlist();
-			//const float window_width  = ImGui::GetWindowWidth();
-			//const float window_height = ImGui::GetWindowHeight();
+			///ImGuizmo::SetDrawlist();
+			//////ImGuizmo::Manipulate()
+			
 			//ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, window_width, window_height);
-			//ImGuizmo::DecomposeMatrixToComponents(world_f4x4, translation_matrix, rotation_matrix, scaling_matrix);
-			//ImGuizmo::DecomposeMatrixToComponents((float*)&world_f4x4, nullptr, nullptr, nullptr);
-			IMGUI_LEFT_LABEL(ImGui::DragFloat3, "Position", (float*)&position, 0.01f, -10000.0f, 10000.0f);
-			IMGUI_LEFT_LABEL(ImGui::DragFloat3, "Scale   ", (float*)&scale	 , 0.01f, -10000.0f, 10000.0f);
-			IMGUI_LEFT_LABEL(ImGui::DragFloat3, "Rotation", (float*)&angle	 , 0.01f, -180.0f  , 180.0f);
+			IMGUI_LEFT_LABEL(ImGui::DragFloat3, "Position", reinterpret_cast<float*>(&position), 0.01f, -10000.0f, 10000.0f);
+			IMGUI_LEFT_LABEL(ImGui::DragFloat3, "Scale   ", reinterpret_cast<float*>(&scale)	 , 0.01f, -10000.0f, 10000.0f);
+			IMGUI_LEFT_LABEL(ImGui::DragFloat3, "Rotation", &angle.x	 , 0.01f, -180.0f  , 180.0f);
 
 			ImGui::Text("Right X %f", model_right.x);
 			ImGui::Text("Right Y %f", model_right.y);
@@ -191,14 +188,14 @@ namespace cumulonimbus::component
 
 		//-- Create world transform matrix --//
 		// Scaling
-		DirectX::XMMATRIX s = XMLoadFloat4x4(&scaling_matrix);
+		const DirectX::XMMATRIX s = XMLoadFloat4x4(&scaling_matrix);
 		// Rotation
-		DirectX::XMMATRIX r = XMLoadFloat4x4(&rotation_matrix);
+		const DirectX::XMMATRIX r = XMLoadFloat4x4(&rotation_matrix);
 		// Parallel movement
-		DirectX::XMMATRIX t = XMLoadFloat4x4(&translation_matrix);
+		const DirectX::XMMATRIX t = XMLoadFloat4x4(&translation_matrix);
 
 		// Matrix synthesis
-		DirectX::XMMATRIX world_matrix = s * r * t;
+		const DirectX::XMMATRIX world_matrix = s * r * t;
 		XMStoreFloat4x4(&world_f4x4, world_matrix);
 
 		model_right = DirectX::XMFLOAT3{ rotation_matrix._11,rotation_matrix._12,rotation_matrix._13 };

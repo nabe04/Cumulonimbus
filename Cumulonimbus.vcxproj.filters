@@ -549,6 +549,9 @@
     <ClCompile Include="Source\Engine\tool_bar.cpp">
       <Filter>Source\Engine\Editor</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\system_inspector.cpp">
+      <Filter>Source\Engine\Editor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -1008,6 +1011,9 @@
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\tool_bar.h">
+      <Filter>Header\Engine\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\system_inspector.h">
       <Filter>Header\Engine\Editor</Filter>
     </ClInclude>
   </ItemGroup>

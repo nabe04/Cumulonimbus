@@ -6,13 +6,14 @@ namespace cumulonimbus::editor
 {
 	EditorManager::EditorManager()
 	{
-		content_browser = std::make_unique<ContentBrowser>();
-		hierarchy		= std::make_unique<Hierarchy>();
-		inspector		= std::make_unique<Inspector>();
-		menu_bar		= std::make_unique<MenuBar>();
-		project_view	= std::make_unique<ProjectView>();
-		scene_view		= std::make_unique<SceneView>();
-		tool_bar		= std::make_unique<ToolBar>();
+		content_browser  = std::make_unique<ContentBrowser>();
+		hierarchy		 = std::make_unique<Hierarchy>();
+		inspector		 = std::make_unique<Inspector>();
+		menu_bar		 = std::make_unique<MenuBar>();
+		project_view	 = std::make_unique<ProjectView>();
+		scene_view		 = std::make_unique<SceneView>();
+		system_inspector = std::make_unique<SystemInspector>();
+		tool_bar		 = std::make_unique<ToolBar>();
 	}
 
 	void EditorManager::Update(const float dt)
@@ -28,6 +29,7 @@ namespace cumulonimbus::editor
 		menu_bar->Render(registry);
 		project_view->Render(registry);
 		scene_view->Render();
+		system_inspector->Render(registry);
 		tool_bar->Render(registry);
 	}
 } // cumulonimbus::editor

@@ -130,6 +130,7 @@
     <ClInclude Include="Source\Engine\shader_filename_mapping.h" />
     <ClInclude Include="Source\Engine\shader_interop.h" />
     <ClInclude Include="Source\Engine\shader_interop_renderer.h" />
+    <ClInclude Include="Source\Engine\system_inspector.h" />
     <ClInclude Include="Source\Engine\terrain_filename_mapping.h" />
     <ClInclude Include="Source\Engine\texture_filename_mapping.h" />
     <ClInclude Include="Source\Engine\texture_loader.h" />
@@ -288,6 +289,7 @@
     <ClCompile Include="Source\Engine\sprite_renderer.cpp" />
     <ClCompile Include="Source\Engine\standard_sprite.cpp" />
     <ClCompile Include="Source\Engine\string_helper.cpp" />
+    <ClCompile Include="Source\Engine\system_inspector.cpp" />
     <ClCompile Include="Source\Engine\texture.cpp" />
     <ClCompile Include="Source\Engine\texture2d_shader.cpp" />
     <ClCompile Include="Source\Engine\texture_loader.cpp" />

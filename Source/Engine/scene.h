@@ -70,6 +70,8 @@ namespace cumulonimbus::scene
 
 		[[nodiscard]]
 		Framework* GetFramework() const { return framework; };
+		[[nodiscard]]
+		collision::CollisionManager* GetCollisionManager() const { return collision_manager.get(); }
 
 	private:
 		Framework*							  framework{};

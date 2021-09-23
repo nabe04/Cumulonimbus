@@ -82,8 +82,26 @@ namespace cumulonimbus::collision
 		}
 	}
 
+	void CollisionManager::RenderImGui(ecs::Registry* registry)
+	{
+		if(ImGui::CollapsingHeader(ICON_FA_CUBES"Collision Manager", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			if(ImGui::TreeNodeEx(ICON_FA_CHECK"Ray Casts",ImGuiTreeNodeFlags_DefaultOpen))
+			{
+
+				ImGui::TreePop();
+			}
+		}
+	}
+
 	void CollisionManager::RegistryRayCastModel(mapping::rename_type::Entity ent)
 	{
+		for(const auto& terrain : ent_terrains)
+		{// “¯‚¶’nŒ`‚ğ“o˜^‚µ‚æ‚¤‚Æ‚µ‚½ê‡ˆ—‚ğ”²‚¯‚é
+			if (terrain == ent)
+				return;
+		}
+
 		ent_terrains.emplace_back(ent);
 	}
 

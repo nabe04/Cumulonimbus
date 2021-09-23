@@ -23,8 +23,8 @@ namespace cumulonimbus::editor
 		for (auto& [key, value] : registry->GetEntities())
 		{
 			//value.second
-			if (ImGui::Selectable(value.second.c_str(), selected_entity == static_cast<mapping::rename_type::Entity>(n)))
-				selected_entity = static_cast<mapping::rename_type::Entity>(n);
+			if (ImGui::Selectable(value.second.c_str(), selected_entity == key))
+				selected_entity = key;
 
 			++n;
 		}

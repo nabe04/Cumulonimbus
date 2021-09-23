@@ -1,0 +1,17 @@
+#include "system_inspector.h"
+
+#include "ecs.h"
+#include "scene.h"
+
+namespace cumulonimbus::editor
+{
+	void SystemInspector::Render(ecs::Registry* registry)
+	{
+		ImGui::Begin(ICON_FA_GLOBE"System Inspector");
+
+		registry->GetScene()->GetCollisionManager()->RenderImGui(registry);
+		
+		ImGui::End();
+	}
+
+} // cumulonimbus::editor

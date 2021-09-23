@@ -51,6 +51,8 @@ namespace cumulonimbus::collision
 		 */
 		void Update(float dt, ecs::Registry* registry);
 
+		void RenderImGui(ecs::Registry* registry);
+
 		/**
 		 * @brief : ’nŒ`‚Æ‚µ‚Ä”»’è‚³‚¹‚½‚¢•¨‚Ì“o˜^
 		 *		   Scene‚ÌInitializeŠÖ”“à‚È‚Ç‚ÌComponent‚ğ’Ç‰Á‚µ‚½’iŠK

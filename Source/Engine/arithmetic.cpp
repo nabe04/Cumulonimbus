@@ -2,6 +2,8 @@
 
 #include <random>
 
+#include "locator.h"
+
 using namespace DirectX;
 
 namespace arithmetic
@@ -38,6 +40,56 @@ namespace arithmetic
 		if (n > max) return max;
 
 		return n;
+	}
+
+	SimpleMath::Vector2 ConvertScreenToNDC(const SimpleMath::Vector3& screen_pos,
+										   const float window_width, const float window_height)
+	{
+		const SimpleMath::Vector2 result =
+		{
+			screen_pos.x / window_width * 2.f - 1.f,
+			screen_pos.y / window_height * 2.f - 1.f
+		};
+
+		return result;
+	}
+
+	SimpleMath::Vector2 ConvertScreenToNDC(const SimpleMath::Vector2& screen_pos,
+										   const float window_width, const float window_height)
+	{
+		const SimpleMath::Vector2 result =
+		{
+			screen_pos.x / window_width * 2.f - 1.f,
+			screen_pos.y / window_height * 2.f - 1.f
+		};
+
+		return result;
+	}
+
+	SimpleMath::Vector3 ConvertScreenToWorld(SimpleMath::Vector3 screen_pos,
+											 const SimpleMath::Matrix&  view_mat,
+											 const SimpleMath::Matrix&  projection_mat)
+	{
+		using namespace cumulonimbus::locator;
+
+		// ビューポート
+		const float viewport_x = 0.0f;
+		const float viewport_y = 0.0f;
+		const float viewport_w = static_cast<float>(Locator::GetWindow()->Width());
+		const float viewport_h = static_cast<float>(Locator::GetWindow()->Height());
+		const float viewport_min_z = 0.0f;
+		const float viewport_max_z = 1.0f;
+
+		XMFLOAT3 world_pos{};
+		const XMVECTOR result = XMVector3Unproject(XMLoadFloat3(&screen_pos),
+												   viewport_x, viewport_y,
+												   viewport_w,viewport_h,
+												   viewport_min_z, viewport_max_z,
+												   projection_mat,
+												   view_mat,
+												   XMMatrixIdentity());
+		XMStoreFloat3(&world_pos, result);
+		return world_pos;
 	}
 
 	//-- Create a vector of directions from point2 to point1 (point1 - point2) --//
