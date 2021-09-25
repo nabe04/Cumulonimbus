@@ -165,13 +165,15 @@ namespace cumulonimbus::renderer
 			if (!camera_comp.GetIsMainCamera())
 				continue;
 
-			ImGui::Begin("RTV");
-			if (ImGui::IsWindowFocused() && ImGui::IsMouseDown(ImGuiMouseButton_Left))
+			if (ImGui::Begin("RTV"))
 			{
-				ImGui::Text("True");
+				if (ImGui::IsWindowFocused() && ImGui::IsMouseDown(ImGuiMouseButton_Left))
+				{
+					ImGui::Text("True");
+				}
+				const auto size = ImGui::GetWindowSize();
+				helper::imgui::Image(*camera_comp.GetCamera()->GetFrameBufferSRV_Address(), { size.x,size.y });
 			}
-			const auto size = ImGui::GetWindowSize();
-			helper::imgui::Image(*camera_comp.GetCamera()->GetFrameBufferSRV_Address(), { size.x,size.y});
 			ImGui::End();
 		}
 	}
@@ -401,10 +403,9 @@ namespace cumulonimbus::renderer
 	void RenderPath::Blit(ID3D11DeviceContext* immediate_context) const
 	{
 		locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
-													 off_screen->GetRenderTargetSRV(),
-													 TexSlot_BaseColorMap);
+															  off_screen->GetRenderTargetSRV(),
+															  TexSlot_BaseColorMap);
 		fullscreen_quad->Blit(immediate_context, true, true, true);
-		ID3D11ShaderResourceView* const pSRV[1] = { nullptr };
 	}
 
 	void RenderPath::RenderModel(
@@ -433,9 +434,9 @@ namespace cumulonimbus::renderer
 					DirectX::SimpleMath::Matrix reverse;
 					reverse.Right(DirectX::SimpleMath::Vector3(-1, 0, 0));
 
-					DirectX::SimpleMath::Matrix world_transform = DirectX::XMLoadFloat4x4(&model_comp->GetNodes().at(mesh.node_indices.at(i)).world_transform);
-					DirectX::SimpleMath::Matrix inverse_transform = DirectX::XMLoadFloat4x4(&mesh.inverse_transforms.at(i));
-					DirectX::SimpleMath::Matrix bone_transform = inverse_transform * world_transform;
+					DirectX::SimpleMath::Matrix world_transform		= DirectX::XMLoadFloat4x4(&model_comp->GetNodes().at(mesh.node_indices.at(i)).world_transform);
+					DirectX::SimpleMath::Matrix inverse_transform	= DirectX::XMLoadFloat4x4(&mesh.inverse_transforms.at(i));
+					DirectX::SimpleMath::Matrix bone_transform		= inverse_transform * world_transform;
 					XMStoreFloat4x4(&transform.bone_transforms[i], bone_transform);
 				}
 			}

@@ -58,8 +58,10 @@ namespace cumulonimbus::component
 		template<class Archive>
 		void serialize(Archive&& archive);
 
-		void NewFrame(float delta_time) override;
-		void Update(float delta_time) override;
+		void SceneUpdate(float dt) override;
+		
+		void PreGameUpdate(float delta_time) override;
+		void GameUpdate(float delta_time) override;
 		void RenderImGui() override;
 
 		void Load(ecs::Registry* registry) override;

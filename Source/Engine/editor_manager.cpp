@@ -12,6 +12,7 @@ namespace cumulonimbus::editor
 		menu_bar		 = std::make_unique<MenuBar>();
 		project_view	 = std::make_unique<ProjectView>();
 		scene_view		 = std::make_unique<SceneView>();
+		game_view		 = std::make_unique<GameView>();
 		system_inspector = std::make_unique<SystemInspector>();
 		tool_bar		 = std::make_unique<ToolBar>();
 	}
@@ -19,6 +20,7 @@ namespace cumulonimbus::editor
 	void EditorManager::Update(const float dt)
 	{
 		scene_view->Update(dt);
+		tool_bar->Update();
 	}
 
 	void EditorManager::RenderEditor(scene::Scene* scene, ecs::Registry* registry) const
@@ -27,7 +29,8 @@ namespace cumulonimbus::editor
 		hierarchy->Render(registry);
 		inspector->Render(registry, hierarchy->GetSelectedEntity());
 		menu_bar->Render(registry);
-		scene_view->Render(registry, project_view.get()); // ドラッグ & ドロップの関係上 scene_viewとproject_viewの順番を変えてはならない
+		game_view->Render(registry);
+		scene_view->Render(registry, project_view.get(), hierarchy.get()); // ドラッグ & ドロップの関係上 scene_viewとproject_viewの順番を変えてはならない
 		project_view->Render(registry);
 		system_inspector->Render(registry);
 		tool_bar->Render(registry);

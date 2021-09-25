@@ -21,30 +21,32 @@ namespace cumulonimbus::editor
 		window_flags |= ImGuiWindowFlags_MenuBar;
 
 		//-- メニューバー --//
-        ImGui::Begin("Menu Bar", nullptr, window_flags);
-		if(ImGui::BeginMenuBar())
+		if (ImGui::Begin("Menu Bar", nullptr, window_flags))
 		{
-			if(ImGui::BeginMenu("File"))
+			if (ImGui::BeginMenuBar())
 			{
-				FileMenu(registry);
-				ImGui::EndMenu();
+				if (ImGui::BeginMenu("File"))
+				{
+					FileMenu(registry);
+					ImGui::EndMenu();
+				}
+
+				if (ImGui::BeginMenu("Window"))
+				{
+					if (ImGui::MenuItem("Menu Setting"))
+						is_menu_open = true;
+
+					ImGui::EndMenu();
+				}
+
+				if (ImGui::BeginMenu("Help"))
+				{
+
+					ImGui::EndMenu();;
+				}
+
+				ImGui::EndMenuBar();
 			}
-
-			if(ImGui::BeginMenu("Window"))
-			{
-				if(ImGui::MenuItem("Menu Setting"))
-					is_menu_open = true;
-
-				ImGui::EndMenu();
-			}
-
-			if(ImGui::BeginMenu("Help"))
-			{
-
-				ImGui::EndMenu();;
-			}
-
-			ImGui::EndMenuBar();
 		}
 		ImGui::End();
 
@@ -92,15 +94,15 @@ namespace cumulonimbus::editor
 
 	void MenuBar::MenuSetting()
 	{
-		ImGui::Begin("Menu Setting", &is_menu_open);
-
-		if (ImGui::BeginTable("table", 1))
+		if (ImGui::Begin("Menu Setting", &is_menu_open))
 		{
-			ImGui::TableNextColumn(); ImGui::Checkbox("No titlebar", &no_titlebar);
-			ImGui::TableNextColumn(); ImGui::Checkbox("No move", &no_move);
-			ImGui::EndTable();
+			if (ImGui::BeginTable("table", 1))
+			{
+				ImGui::TableNextColumn(); ImGui::Checkbox("No titlebar", &no_titlebar);
+				ImGui::TableNextColumn(); ImGui::Checkbox("No move", &no_move);
+				ImGui::EndTable();
+			}
 		}
-
 		ImGui::End();
 	}
 

@@ -61,12 +61,12 @@ namespace cumulonimbus::component
 		//SwitchAnimation(0, false, 0.0f);
 	}
 
-	void FbxModelComponent::NewFrame(const float delta_time)
+	void FbxModelComponent::PreGameUpdate(const float delta_time)
 	{
 
 	}
 
-	void FbxModelComponent::Update(const float delta_time)
+	void FbxModelComponent::GameUpdate(const float delta_time)
 	{
 		const auto& world_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorld4x4();
 

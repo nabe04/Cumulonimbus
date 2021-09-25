@@ -56,6 +56,19 @@ namespace cumulonimbus::scene
 		void Execute(Framework* framework);
 
 		/**
+		 * @brief : Gameが開始される時(プレイボタンが押された時)に
+		 *			保存されるオブジェクト情報
+		 * @param file_path_and_name : 保存するファイルパスを含む名前(※拡張子を含まない)
+		 */
+		void SaveSceneView(const std::string& file_path_and_name);
+		/**
+		 * @brief : Gameが終了される時にプレイ時に保存された
+		 *			オブジェクト情報を取り出す
+		 * @param file_path_and_name : 保存するファイルパスを含む名前(※拡張子を含まない)
+		 */
+		void LoadSceneView(const std::string& file_path_and_name);
+
+		/**
 		 * @brief    : シリアライズされた際に保存するファイル
 		 * @param file_dir  : 保存するファイルまでのディレクトリパス
 		 * @param scene_name : 保存するシーン名(※拡張子除く)
@@ -69,7 +82,9 @@ namespace cumulonimbus::scene
 		void LoadScene(const std::string& file_dir, const std::string& scene_name);
 
 		[[nodiscard]]
-		Framework* GetFramework() const { return framework; };
+		Framework* GetFramework() const { return framework; }
+		[[nodiscard]]
+		editor::EditorManager* GetEditorManager() const { return editor_manager.get(); }
 		[[nodiscard]]
 		collision::CollisionManager* GetCollisionManager() const { return collision_manager.get(); }
 

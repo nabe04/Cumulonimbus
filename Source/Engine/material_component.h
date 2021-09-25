@@ -17,8 +17,8 @@ namespace cumulonimbus::component
 		explicit MaterialComponent()  = default; // for cereal
 		~MaterialComponent() override = default;
 
-		void NewFrame(float dt) override {}
-		void Update(float dt)	override;
+		void PreGameUpdate(float dt) override {}
+		void GameUpdate(float dt)	override;
 		void RenderImGui()		override;
 
 		void Load(ecs::Registry* registry) override;

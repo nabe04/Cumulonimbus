@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="Libraries\imgui\imconfig.h" />
     <ClInclude Include="Libraries\imgui\imgui.h" />
+    <ClInclude Include="Libraries\imgui\ImGuizmo\ImGuizmo.h" />
     <ClInclude Include="Libraries\imgui\imgui_impl_dx11.h" />
     <ClInclude Include="Libraries\imgui\imgui_impl_win32.h" />
     <ClInclude Include="Libraries\imgui\imgui_internal.h" />
@@ -66,6 +67,7 @@
     <ClInclude Include="Source\Engine\framework.h" />
     <ClInclude Include="Source\Engine\frame_buffer.h" />
     <ClInclude Include="Source\Engine\fullscreen_quad.h" />
+    <ClInclude Include="Source\Engine\game_view.h" />
     <ClInclude Include="Source\Engine\gaussian_blur.h" />
     <ClInclude Include="Source\Engine\gbuffer.h" />
     <ClInclude Include="Source\Engine\generic.h" />
@@ -176,6 +178,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Libraries\imgui\imgui.cpp" />
+    <ClCompile Include="Libraries\imgui\ImGuizmo\ImGuizmo.cpp" />
     <ClCompile Include="Libraries\imgui\imgui_demo.cpp" />
     <ClCompile Include="Libraries\imgui\imgui_draw.cpp" />
     <ClCompile Include="Libraries\imgui\imgui_impl_dx11.cpp" />
@@ -214,6 +217,7 @@
     <ClCompile Include="Source\Engine\framework.cpp" />
     <ClCompile Include="Source\Engine\frame_buffer.cpp" />
     <ClCompile Include="Source\Engine\fullscreen_quad.cpp" />
+    <ClCompile Include="Source\Engine\game_view.cpp" />
     <ClCompile Include="Source\Engine\gaussian_blur.cpp" />
     <ClCompile Include="Source\Engine\gbuffer.cpp" />
     <ClCompile Include="Source\Engine\geometric_primitive_component.cpp" />

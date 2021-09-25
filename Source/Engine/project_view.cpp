@@ -45,26 +45,28 @@ namespace cumulonimbus::editor
 	{
 		static ImGuiTableFlags flags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable;
 
-		ImGui::Begin(ICON_FA_FOLDER" Project");
-		if(ImGui::BeginTable("##table",2, flags))
+		if (ImGui::Begin(ICON_FA_FOLDER" Project"))
 		{
-			ImGui::TableSetupScrollFreeze(0, 1); // Make top row always visible
-			ImGui::TableSetupColumn("##Navigation Pane", ImGuiTableColumnFlags_None);
-			ImGui::TableSetupColumn("##File and Folder list", ImGuiTableColumnFlags_None);
-			ImGui::TableHeadersRow();
-			ImGui::TableNextRow();
+			if (ImGui::BeginTable("##table", 2, flags))
 			{
-				ImGui::TableSetColumnIndex(0);
-				ImportMenu();
-				ShowAllAssets(*locator::Locator::GetAssetManager());
-				ShowFolderTree(viewer_dir);
+				ImGui::TableSetupScrollFreeze(0, 1); // Make top row always visible
+				ImGui::TableSetupColumn("##Navigation Pane", ImGuiTableColumnFlags_None);
+				ImGui::TableSetupColumn("##File and Folder list", ImGuiTableColumnFlags_None);
+				ImGui::TableHeadersRow();
+				ImGui::TableNextRow();
+				{
+					ImGui::TableSetColumnIndex(0);
+					ImportMenu();
+					ShowAllAssets(*locator::Locator::GetAssetManager());
+					ShowFolderTree(viewer_dir);
+				}
+				{
+					ImGui::TableSetColumnIndex(1);
+					ShowFileAndFolderList(*locator::Locator::GetAssetManager());
+					ImGui::Text("is_drag %d", is_dragged);
+				}
+				ImGui::EndTable();
 			}
-			{
-				ImGui::TableSetColumnIndex(1);
-				ShowFileAndFolderList(*locator::Locator::GetAssetManager());
-				ImGui::Text("is_drag %d", is_dragged);
-			}
-			ImGui::EndTable();
 		}
 		ImGui::End();
 	}

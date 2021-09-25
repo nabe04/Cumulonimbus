@@ -32,6 +32,13 @@ namespace cumulonimbus::file_path_helper
 	std::string GetSceneExtension();
 
 	/**
+	 * @brief : 「.lsn」を返す
+	 * @return : .lsn
+	 */
+	[[nodiscard]]
+	std::string GetLastSceneExtension();
+
+	/**
 	 * @brief : 「.sheet」を返す
 	 * @return : .sheet
 	 */
@@ -44,7 +51,7 @@ namespace cumulonimbus::file_path_helper
 	 */
 	[[nodiscard]]
 	std::string GetModelExtension();
-	
+
 	/**
 	 * @brief : 「.mat」を返す
 	 * @return : .mat
@@ -80,9 +87,17 @@ namespace cumulonimbus::file_path_helper
 	[[nodiscard]]
 	std::string GetScenesFilename();
 
-	/*
-	 * brief  : Contentsフォルダまでの相対パスを取得
-	 * return : ./Contents/
+	/**
+	 * @brief  : SceneViewが保存されるフォルダまでのパスと名前を取得
+	 *			 ※拡張子は含まれない
+	 * @return : ./Data/SceneView/save_scene
+	 */
+	[[nodiscard]]
+	std::string GetSaveSceneViewFilePathAndName();
+
+	/**
+	 * @brief  : Contentsフォルダまでの相対パスを取得
+	 * @return : ./Contents/
 	 */
 	[[nodiscard]]
 	constexpr std::string GetContentsDirectory();

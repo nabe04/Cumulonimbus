@@ -7,6 +7,7 @@
 #include "menu_bar.h"
 #include "project_view.h"
 #include "scene_view.h"
+#include "game_view.h"
 #include "system_inspector.h"
 #include "tool_bar.h"
 
@@ -33,6 +34,8 @@ namespace cumulonimbus::editor
 		SceneView& GetSceneView() const { return *scene_view.get(); }
 		[[nodiscard]]
 		ProjectView& GetProjectView() const { return *project_view.get(); }
+		[[nodiscard]]
+		ToolBar& GetToolBar() const { return *tool_bar.get(); }
 	private:
 		std::unique_ptr<ContentBrowser>  content_browser{};
 		std::unique_ptr<Hierarchy>		 hierarchy{};
@@ -40,6 +43,7 @@ namespace cumulonimbus::editor
 		std::unique_ptr<MenuBar>		 menu_bar{};
 		std::unique_ptr<ProjectView>	 project_view{};
 		std::unique_ptr<SceneView>		 scene_view{};
+		std::unique_ptr<GameView>		 game_view{};
 		std::unique_ptr<SystemInspector> system_inspector{};
 		std::unique_ptr<ToolBar>		 tool_bar{};
 	};

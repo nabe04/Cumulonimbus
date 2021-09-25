@@ -78,7 +78,7 @@ namespace cumulonimbus::renderer
 	private:
 		// すべてのシェーダーの生成とセット
 		std::unique_ptr<shader_system::ShaderManager> shader_manager;
-		std::unique_ptr<shader::SpriteShaderManager> shader_manager_2d;
+		std::unique_ptr<shader::SpriteShaderManager>  shader_manager_2d;
 
 		//-- DirectX States --//
 		std::unique_ptr<Blend>			blend;

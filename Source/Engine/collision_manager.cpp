@@ -397,7 +397,8 @@ namespace cumulonimbus::collision
 						neart = t;
 
 						// 交点と法線を更新
-						DirectX::XMStoreFloat3(hit_pos, position);
+						DirectX::XMVECTOR HitPos = DirectX::XMVector3TransformCoord(position, world_transform);
+						DirectX::XMStoreFloat3(hit_pos, HitPos);
 						return true;
 					}
 				}

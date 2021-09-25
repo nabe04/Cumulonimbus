@@ -128,12 +128,12 @@ namespace cumulonimbus::component
 		registry->GetComponent<CameraComponent>(ent).GetCamera()->SetFocusOffset({ 0.0f,50.0f,0.0f });
 	}
 
-	void PlayerComponent::NewFrame(float dt)
+	void PlayerComponent::PreGameUpdate(float dt)
 	{
 		//GetRegistry()->GetComponent<TransformComponent>(GetEntity()).AdjustPositionY(-2.f * dt);
 	}
 
-	void PlayerComponent::Update(float dt)
+	void PlayerComponent::GameUpdate(float dt)
 	{
 		Collision();
 

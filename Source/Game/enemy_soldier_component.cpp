@@ -47,7 +47,7 @@ namespace cumulonimbus::component
 		SetRandomRotationAngle(-180.f, 180.f);
 	}
 
-	void EnemySoldierComponent::Update(float dt)
+	void EnemySoldierComponent::GameUpdate(float dt)
 	{
 		soldier_state.Update(dt);
 	}

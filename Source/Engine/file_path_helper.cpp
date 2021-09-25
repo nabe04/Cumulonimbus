@@ -23,6 +23,12 @@ namespace cumulonimbus::file_path_helper
 		return { ".scene" };
 	}
 
+	std::string GetLastSceneExtension()
+	{
+		return { "lsn" };
+	}
+
+
 	std::string GetSheetExtension()
 	{
 		return { ".sheet" };
@@ -57,6 +63,11 @@ namespace cumulonimbus::file_path_helper
 	std::string GetScenesFilename()
 	{
 		return { "Scenes" };
+	}
+
+	std::string GetSaveSceneViewFilePathAndName()
+	{
+		return { "./Data/SceneView/save_scene" };
 	}
 
 	constexpr std::string GetContentsDirectory()

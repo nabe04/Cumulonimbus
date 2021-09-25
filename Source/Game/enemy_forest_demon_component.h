@@ -48,7 +48,7 @@ namespace cumulonimbus::component
 		explicit EnemyForestDemonComponent()  = default; // for cereal
 		~EnemyForestDemonComponent() override = default;
 
-		void Update(float dt) override;
+		void GameUpdate(float dt) override;
 		void RenderImGui()    override;
 		
 		void Load(ecs::Registry* registry) override;

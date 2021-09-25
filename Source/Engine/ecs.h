@@ -67,9 +67,12 @@ namespace cumulonimbus::ecs
 	public:
 		virtual ~ComponentArrayBase() = default;
 
-		virtual void PreUpdate(float dt)	= 0;
-		virtual void Update(float dt)		= 0;
-		virtual void PostUpdate(float dt)	= 0;
+		virtual void PreSceneUpdate(float dt)	= 0;
+		virtual void SceneUpdate(float dt)		= 0;
+		virtual void PostSceneUpdate(float dt)	= 0;
+		virtual void PreGameUpdate(float dt)	= 0;
+		virtual void GameUpdate(float dt)		= 0;
+		virtual void PostGameUpdate(float dt)	= 0;
 		virtual void Destroy(mapping::rename_type::Entity entity)	  = 0;
 		virtual void RenderImGui(mapping::rename_type::Entity entity) = 0;
 		virtual void Save(const std::string& filename) = 0;
@@ -91,27 +94,51 @@ namespace cumulonimbus::ecs
 			return typeid(T).hash_code();
 		}
 
-		void PreUpdate(float dt) override
+		void PreSceneUpdate(float dt) override
+		{
+			for (auto& component : components)
+			{
+				component.PreSceneUpdate(dt);
+			}
+		}
+
+		void SceneUpdate(float dt) override
+		{
+			for (auto& component : components)
+			{
+				component.SceneUpdate(dt);
+			}
+		}
+
+		void PostSceneUpdate(float dt) override
+		{
+			for (auto& component : components)
+			{
+				component.PostSceneUpdate(dt);
+			}
+		}
+
+		void PreGameUpdate(float dt) override
 		{
 			for(auto& component : components)
 			{
-				component.NewFrame(dt);
+				component.PreGameUpdate(dt);
 			}
 		}
 
-		void Update(float dt) override
+		void GameUpdate(float dt) override
 		{
 			for (auto& component : components)
 			{
-				component.Update(dt);
+				component.GameUpdate(dt);
 			}
 		}
 
-		void PostUpdate(float dt) override
+		void PostGameUpdate(float dt) override
 		{
 			for (auto& component : components)
 			{
-				component.PostUpdate(dt);
+				component.PostGameUpdate(dt);
 			}
 		}
 
@@ -325,23 +352,34 @@ namespace cumulonimbus::ecs
 			RegisterComponentName();
 		}
 
-		/*
-		 * brief : Component全体のPreUpdate処理
+		/**
+		 * @brief : Component全体のPreSceneUpdate処理
 		 */
-		void PreUpdate(float dt);
-
-		/*
-		 * brief : Component全体のUpdate処理
+		void PreSceneUpdate(float dt);
+		/**
+		 * @brief : Component全体のSceneUpdate処理
 		 */
-		void Update(float dt);
-
-		/*
-		 * brief : Component全体のPostUpdate処理
+		void SceneUpdate(float dt);
+		/**
+		 * @brief : Component全体のPostSceneUpdate処理
 		 */
-		void PostUpdate(float dt);
+		void PostSceneUpdate(float dt);
 
-		/*
-		 * brief : Entityが持つComponentの
+		/**
+		 * @brief : Component全体のPreGameUpdate処理
+		 */
+		void PreGameUpdate(float dt);
+		/**
+		 * @brief : Component全体のUpdate処理
+		 */
+		void GameUpdate(float dt);
+		/**
+		 * @brief : Component全体のPostUpdate処理
+		 */
+		void PostGameUpdate(float dt);
+
+		/**
+		 * @brief : Entityが持つComponentの
 		 *		   "RenderImGui"関数を呼ぶ
 		 */
 		void RenderImGui();
@@ -527,7 +565,7 @@ namespace cumulonimbus::ecs
 		 * @param filename		: 保存する場所までのファイルパス
 		 * @param scene_name	: 保存するシーン名
 		 * @remark : ※caution(1)「.json」と「.bin」で書き出される
-		 * @remark : ※caution(2) 拡張子の指定は必要なし 
+		 * @remark : ※caution(2) 拡張子の指定は必要なし
 		 * @remark : ※caution(3) ファイルパスは最後「/」の必要はなし
 		 */
 		void Save(const std::string& filename,const std::string& scene_name);
@@ -535,14 +573,14 @@ namespace cumulonimbus::ecs
 		/**
 		 * @brief : entitiesとcomponent_arraysのファイルLoad用関数
 		 * @param file_path		: 「./Assets/Scenes/任意のシーン名」までのパス
-		 * @remark ※caution(1)	: ファイル名のみで良い(ファイルパスなどの記述の必要なし) 
-		 *				例) OK	: 「ファイル名 
+		 * @remark ※caution(1)	: ファイル名のみで良い(ファイルパスなどの記述の必要なし)
+		 *				例) OK	: 「ファイル名
 		 *					NG	:  ./Contents/「ファイル名」
 		 * @remark ※caution(2)	:	現在のentitiesとcomponent_arraysは消去される
-		 * @remark ※caution(3)	:	component_arraysのキー値に型の名前が登録されていない場合 
-		 *							assertionが発生するためResisterComponentName関数を呼ぶか、 
-		 *							RegisterComponent関数で型を登録する必要あり 
-		 *							(ResisterComponentName関数は内部で行っているので、 
+		 * @remark ※caution(3)	:	component_arraysのキー値に型の名前が登録されていない場合
+		 *							assertionが発生するためResisterComponentName関数を呼ぶか、
+		 *							RegisterComponent関数で型を登録する必要あり
+		 *							(ResisterComponentName関数は内部で行っているので、
 		 *							assertionが発生した場合はRegisterComponentName関数を確認すれば良い)
 		 */
 		void Load(const std::string& file_path);

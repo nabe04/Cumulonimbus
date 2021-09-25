@@ -50,11 +50,21 @@ namespace cumulonimbus::component
 		Initialize(registry, ent, model_id);
 	}
 
-	void ModelComponent::NewFrame(float delta_time)
+	void ModelComponent::SceneUpdate(float dt)
+	{
+		const auto& world_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorld4x4();
+
+		CalculateLocalTransform();
+		CalculateWorldTransform(world_transform);
+
+		UpdateAnimState(dt);
+	}
+
+	void ModelComponent::PreGameUpdate(float delta_time)
 	{
 	}
 
-	void ModelComponent::Update(const float delta_time)
+	void ModelComponent::GameUpdate(const float delta_time)
 	{
 		const auto& world_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorld4x4();
 

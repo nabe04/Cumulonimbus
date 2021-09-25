@@ -30,32 +30,33 @@ namespace cumulonimbus::editor
 
 	void Inspector::Render(ecs::Registry* registry, const mapping::rename_type::Entity ent)
 	{
-		ImGui::Begin(ICON_FA_INFO_CIRCLE" Inspector");
-		if(!registry->GetEntities().contains(ent))
+		if (ImGui::Begin(ICON_FA_INFO_CIRCLE" Inspector"))
 		{
-			ImGui::End();
-			return;
+			if (!registry->GetEntities().contains(ent))
+			{
+				ImGui::End();
+				return;
+			}
+
+			// エンティティ名の変更
+			std::string& name = registry->GetEntities().at(ent).second;
+			const int arr_size = name.length();
+			char buf[256];
+			strcpy_s(buf, arr_size + 1, name.c_str());
+			if (ImGui::InputText("##", buf, 64, ImGuiInputTextFlags_CharsNoBlank))
+			{
+				name = buf;
+			}
+
+			// エンティティの持つコンポーネントの詳細
+			for (auto& [comp_name, comp_data] : registry->GetComponentArrays())
+			{
+				comp_data->RenderImGui(ent);
+			}
+
+			// 「Add Component」のボタン
+			AddComponentButton(registry, ent);
 		}
-
-		// エンティティ名の変更
-		std::string& name = registry->GetEntities().at(ent).second;
-		const int arr_size = name.length();
-		char buf[256];
-		strcpy_s(buf, arr_size + 1, name.c_str());
-		if(ImGui::InputText("##", buf,64, ImGuiInputTextFlags_CharsNoBlank))
-		{
-			name = buf;
-		}
-
-		// エンティティの持つコンポーネントの詳細
-		for(auto& [comp_name,comp_data] : registry->GetComponentArrays())
-		{
-			comp_data->RenderImGui(ent);
-		}
-
-		// 「Add Component」のボタン
-		AddComponentButton(registry, ent);
-
 		ImGui::End();
 	}
 

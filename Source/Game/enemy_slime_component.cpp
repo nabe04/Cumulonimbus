@@ -48,7 +48,7 @@ namespace cumulonimbus::component
 		SetRandomRotationAngle(-180.f, 180.f);
 	}
 
-	void EnemySlimeComponent::Update(float dt)
+	void EnemySlimeComponent::GameUpdate(float dt)
 	{
 		slime_state.Update(dt);
 	}

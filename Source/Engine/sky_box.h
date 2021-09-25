@@ -56,8 +56,8 @@ namespace cumulonimbus::component
 		ID3D11ShaderResourceView** GetShaderResoueceViewAddress() { return texture_view.GetAddressOf(); }
 
 
-		void NewFrame(float dt) override {}
-		void Update(float dt)	override {}
+		void PreGameUpdate(float dt) override {}
+		void GameUpdate(float dt)	override {}
 		void RenderImGui()		override;;
 
 		void Load(ecs::Registry* registry) override;

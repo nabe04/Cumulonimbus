@@ -48,7 +48,7 @@ namespace cumulonimbus::component
 			SwitchMainCamera();
 	}
 
-	void CameraComponent::Update(float dt)
+	void CameraComponent::GameUpdate(float dt)
 	{
 		if (is_use_camera_for_debug)
 		{

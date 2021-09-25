@@ -37,8 +37,8 @@ namespace cumulonimbus::component
 		explicit SpriteComponent() = default;	// For cereal
 		~SpriteComponent() override = default;
 
-		void NewFrame(const float delta_time)override {};
-		void Update(const float delta_time) override;
+		void PreGameUpdate(const float delta_time)override {};
+		void GameUpdate(const float delta_time) override;
 		void RenderImGui() override;
 
 		void Load(ecs::Registry* registry) override;

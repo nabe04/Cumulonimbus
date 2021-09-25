@@ -60,122 +60,134 @@ namespace cumulonimbus::editor
 		scene_view_camera->Update(dt);
 	}
 
-	void SceneView::Render(ecs::Registry* registry, const ProjectView* project_view)
+
+	void SceneView::Render(ecs::Registry* registry, const ProjectView* project_view, const Hierarchy* hierarchy)
 	{
 		ImVec2 mouse_pos{};
-		ImGui::Begin(ICON_FA_BORDER_ALL" Scene");
-		mouse_pos.x		 = ImGui::GetCurrentWindow()->Pos.x;
-		mouse_pos.y		 = ImGui::GetCurrentWindow()->Pos.y;
-		title_bar_height = ImGui::GetCurrentWindow()->TitleBarHeight();
-		window_pos		 = DirectX::SimpleMath::Vector2{ ImGui::GetCurrentWindow()->Pos.x,ImGui::GetCurrentWindow()->Pos.y + title_bar_height };
-		window_size		 = DirectX::SimpleMath::Vector2{ ImGui::GetContentRegionAvail().x ,ImGui::GetContentRegionAvail().y };
-		// ImGui上のウィンドウサイズに合うように調整
-		image_size = arithmetic::CalcWindowSize(Window::aspect_ratio,
-												static_cast<int>(ImGui::GetContentRegionAvail().x),
-												static_cast<int>(ImGui::GetContentRegionAvail().y));
-		// ウィンドウが画面の中央に来るように調整
-		window_offset.y = (ImGui::GetContentRegionAvail().y - image_size.y) / 2.f;
-		ImGui::Dummy({ .0f,window_offset.y });
-
-		helper::imgui::Image(*scene_view_camera->GetCamera().GetFrameBufferSRV_Address(), { image_size.x,image_size.y });
-
-		auto win = ImGui::GetCurrentWindow();
-
-		if (ImGui::IsWindowHovered())
-		{// 画面内にカーソルがあるときに
-			// カメラ操作処理
-			scene_view_camera->EditCamera(ImGui::GetCurrentWindow());
-
-		}
-
-		std::filesystem::path selected_asset = ""; // アセットのリセット
-		if(IsWindowHovered())
+		if (ImGui::Begin(ICON_FA_BORDER_ALL" Scene"))
 		{
-			if (project_view->DraggingAsset(selected_asset) &&
-				(selected_asset.extension().string() == file_path_helper::GetModelExtension()))
+			mouse_pos.x = ImGui::GetCurrentWindow()->Pos.x;
+			mouse_pos.y = ImGui::GetCurrentWindow()->Pos.y;
+			window_pos  = DirectX::SimpleMath::Vector2{ ImGui::GetCurrentWindow()->Pos.x,ImGui::GetCurrentWindow()->Pos.y + title_bar_height };
+			window_size = DirectX::SimpleMath::Vector2{ ImGui::GetContentRegionAvail().x ,ImGui::GetContentRegionAvail().y };
+			title_bar_height = ImGui::GetCurrentWindow()->TitleBarHeight();
+			// ImGui上のウィンドウサイズに合うように調整
+			image_size = arithmetic::CalcWindowSize(Window::aspect_ratio,
+				static_cast<int>(ImGui::GetContentRegionAvail().x),
+				static_cast<int>(ImGui::GetContentRegionAvail().y));
+			// ウィンドウが画面の中央に来るように調整
+			window_offset.y = (ImGui::GetContentRegionAvail().y - image_size.y) / 2.f;
+			ImGui::Dummy({ .0f,window_offset.y });
+
+			helper::imgui::Image(*scene_view_camera->GetCamera().GetFrameBufferSRV_Address(), { image_size.x,image_size.y });
+
+			//{// ImGuizmoを使ってのギズモ処理
+			//	auto* transform_comp = registry->TryGetComponent<component::TransformComponent>(hierarchy->GetSelectedEntity());
+			//	if(transform_comp)
+			//	{
+			//		auto& camera = scene_view_camera->GetCamera();
+
+			//		DirectX::SimpleMath::Matrix world_mat = transform_comp->GetWorld4x4();
+			//		DirectX::SimpleMath::Matrix view_mat = camera.GetViewMat();
+			//		DirectX::SimpleMath::Matrix proj_mat = camera.GetProjectionMat();
+			//		ImGuiIO& io = ImGui::GetIO();
+			//		ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+			//		ImGuizmo::Manipulate(reinterpret_cast<float*>(&view_mat),
+			//							 reinterpret_cast<float*>(&proj_mat),
+			//							 ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::MODE::WORLD,
+			//							 reinterpret_cast<float*>(&world_mat));
+
+			//		transform_comp->SetWorld4x4(world_mat);
+			//	}
+			//}
+
+			if (ImGui::IsWindowHovered())
+			{// 画面内にカーソルがあるときに
+				// カメラ操作処理
+				scene_view_camera->EditCamera(ImGui::GetCurrentWindow());
+
+			}
+
+			//-- ドラッグ & ドロップでのモデル追加 --//
+			std::filesystem::path selected_asset = ""; // アセットのリセット
+			if (IsWindowHovered())
 			{
-				if (mouse_hover.event == MouseHoverEvent::Begin_Hovered)
+				if (project_view->DraggingAsset(selected_asset) &&
+					(selected_asset.extension().string() == file_path_helper::GetModelExtension()))
 				{
-					// エンティティとコンポーネント(Model)の追加
-					AddModel(registry, selected_asset);
-				}
-				if(mouse_hover.event == MouseHoverEvent::Hovering)
-				{
-					DraggingModel(registry);
-					//const auto win_pos = ConvertWindowPos();
-					//const auto world_near_pos = arithmetic::ConvertScreenToWorld({ static_cast<float>(win_pos.x),static_cast<float>(win_pos.y),.0f },
-					//															 GetSceneViewCamera().GetCamera().GetViewMat(),
-					//															 GetSceneViewCamera().GetCamera().GetProjectionMat());
-					//const auto world_far_pos  = arithmetic::ConvertScreenToWorld({ static_cast<float>(win_pos.x),static_cast<float>(win_pos.y),1.f },
-					//															 GetSceneViewCamera().GetCamera().GetViewMat(),
-					//															 GetSceneViewCamera().GetCamera().GetProjectionMat());
-					////if(registry->GetScene()->GetCollisionManager()->IntersectRayVsModel(registry,))
-					//registry->GetComponent<component::TransformComponent>(dragging_entity).SetPosition(world_far_pos);
+					if (mouse_hover.event == MouseHoverEvent::Begin_Hovered)
+					{
+						// エンティティとコンポーネント(Model)の追加
+						AddModel(registry, selected_asset);
+					}
+					if (mouse_hover.event == MouseHoverEvent::Hovering)
+					{
+						DraggingModel(registry);
+					}
 				}
 			}
-		}
-		else
-		{
-			if (project_view->DraggingAsset(selected_asset))
+			else
 			{
-				if (mouse_hover.event == MouseHoverEvent::Hovering)
+				if (project_view->DraggingAsset(selected_asset))
 				{
-					// エンティティとコンポーネント(Model)の削除
-					registry->Destroy(dragging_entity);
-					dragging_entity = {};
+					if (mouse_hover.event == MouseHoverEvent::Hovering)
+					{
+						// エンティティとコンポーネント(Model)の削除
+						registry->Destroy(dragging_entity);
+						dragging_entity = {};
+					}
 				}
 			}
-		}
 
+		}
 		ImGui::End();
 
-		ImGui::Begin("Size Text");
+		if (ImGui::Begin("Size Text"))
+		{
+			RECT rect{};
+			GetClientRect(locator::Locator::GetWindow()->GetHWND(), &rect);
+			window_mouse_pos.x = ImGui::GetMousePos().x - mouse_pos.x;
+			window_mouse_pos.y = ImGui::GetMousePos().y - mouse_pos.y - title_bar_height - window_offset.y;
+
+			ImGui::Text("Win Mouse X : %f", window_mouse_pos.x);
+			ImGui::Text("Win Mouse Y : %f", window_mouse_pos.y);
+
+			ImGui::Text("Win Pos X : %f", window_pos.x);
+			ImGui::Text("Win Pos Y : %f", window_pos.y);
+
+			auto win_pos = ConvertWindowPos();
+			ImGui::Text("Convert Win Pos X : %d", win_pos.x);
+			ImGui::Text("Convert Win Pos Y : %d", win_pos.y);
+
+			ImGui::Text("Mouse Pos X : %f", ImGui::GetMousePos().x);
+			ImGui::Text("Mouse Pos Y : %f", ImGui::GetMousePos().y);
+
+			ImGui::Text("Win Size X %f", window_size.x);
+			ImGui::Text("Win Size Y %f", window_size.y);
+
+			//DirectX::XMMatrixMultiply(ndc_pos, inv_proj);
+			const DirectX::SimpleMath::Vector3 world_pos = arithmetic::ConvertScreenToWorld({ static_cast<float>(win_pos.x),static_cast<float>(win_pos.y),0 },
+				GetSceneViewCamera().GetCamera().GetViewMat(),
+				GetSceneViewCamera().GetCamera().GetProjectionMat());
+
+			ImGui::Text("World X : %f", world_pos.x);
+			ImGui::Text("World Y : %f", world_pos.y);
+			ImGui::Text("World Z : %f", world_pos.z);
 
 
-		RECT rect{};
-		GetClientRect(locator::Locator::GetWindow()->GetHWND(), &rect);
-		window_mouse_pos.x = ImGui::GetMousePos().x - mouse_pos.x;
-		window_mouse_pos.y = ImGui::GetMousePos().y - mouse_pos.y - title_bar_height - window_offset.y;
+			//DirectX::XMMatrixMultiply(ndc_pos, inv_proj);
+			const DirectX::SimpleMath::Vector3 world_pos_2 = arithmetic::ConvertScreenToWorld({ static_cast<float>(win_pos.x),static_cast<float>(win_pos.y),1.f },
+				GetSceneViewCamera().GetCamera().GetViewMat(),
+				GetSceneViewCamera().GetCamera().GetProjectionMat());
 
-		ImGui::Text("Win Mouse X : %f", window_mouse_pos.x);
-		ImGui::Text("Win Mouse Y : %f", window_mouse_pos.y);
+			ImGui::Text("World far X : %f", world_pos_2.x);
+			ImGui::Text("World far Y : %f", world_pos_2.y);
+			ImGui::Text("World far Z : %f", world_pos_2.z);
 
-		ImGui::Text("Win Pos X : %f", window_pos.x);
-		ImGui::Text("Win Pos Y : %f", window_pos.y);
-
-		auto win_pos = ConvertWindowPos();
-		ImGui::Text("Convert Win Pos X : %d", win_pos.x);
-		ImGui::Text("Convert Win Pos Y : %d", win_pos.y);
-
-		ImGui::Text("Mouse Pos X : %f", ImGui::GetMousePos().x);
-		ImGui::Text("Mouse Pos Y : %f", ImGui::GetMousePos().y);
-
-		ImGui::Text("Win Size X %f", window_size.x);
-		ImGui::Text("Win Size Y %f", window_size.y);
-
-		//DirectX::XMMatrixMultiply(ndc_pos, inv_proj);
-		const DirectX::SimpleMath::Vector3 world_pos = arithmetic::ConvertScreenToWorld({ static_cast<float>(win_pos.x),static_cast<float>(win_pos.y),0 },
-																						GetSceneViewCamera().GetCamera().GetViewMat(),
-																						GetSceneViewCamera().GetCamera().GetProjectionMat());
-
-		ImGui::Text("World X : %f" ,world_pos.x);
-		ImGui::Text("World Y : %f", world_pos.y);
-		ImGui::Text("World Z : %f", world_pos.z);
-
-
-		//DirectX::XMMatrixMultiply(ndc_pos, inv_proj);
-		const DirectX::SimpleMath::Vector3 world_pos_2 = arithmetic::ConvertScreenToWorld({ static_cast<float>(win_pos.x),static_cast<float>(win_pos.y),1.f },
-																						GetSceneViewCamera().GetCamera().GetViewMat(),
-																						GetSceneViewCamera().GetCamera().GetProjectionMat());
-
-		ImGui::Text("World far X : %f", world_pos_2.x);
-		ImGui::Text("World far Y : %f", world_pos_2.y);
-		ImGui::Text("World far Z : %f", world_pos_2.z);
-
-		ImGui::Text("Selected : %s", selected_asset.string().c_str());
-		ImGui::Text("Hovered %d", IsWindowHovered());
-		ImGui::Text("Hover Event %d", mouse_hover.event);
-
+			//ImGui::Text("Selected : %s", selected_asset.string().c_str());
+			ImGui::Text("Hovered %d", IsWindowHovered());
+			ImGui::Text("Hover Event %d", mouse_hover.event);
+		}
 		ImGui::End();
 	}
 

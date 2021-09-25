@@ -89,9 +89,9 @@ namespace cumulonimbus::component
 		explicit CollisionComponent()  = default;
 		~CollisionComponent() override = default;
 
-		void NewFrame(float dt)   override {}
-		void Update(float dt)     override {}
-		void PostUpdate(float dt) override {}
+		void PreGameUpdate(float dt)   override {}
+		void GameUpdate(float dt)     override {}
+		void PostGameUpdate(float dt) override {}
 		void RenderImGui()		  override {}
 
 		void Load(ecs::Registry* registry) override {};
@@ -124,8 +124,8 @@ CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cum
 //		explicit CollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, CollisionTag tag);
 //		~CollisionComponent() = default;
 //
-//		void NewFrame(float dt) override {};
-//		void Update(float delta_time) override;
+//		void PreGameUpdate(float dt) override {};
+//		void GameUpdate(float delta_time) override;
 //		void RenderImGui() override {};
 //
 //		bool Intersect(CollisionComponent* comp);

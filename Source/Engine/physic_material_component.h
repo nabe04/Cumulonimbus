@@ -27,7 +27,7 @@ namespace cumulonimbus::component
 		explicit PhysicMaterialComponent()  = default;
 		~PhysicMaterialComponent() override = default;
 
-		void Update(float dt) override;
+		void GameUpdate(float dt) override;
 		void RenderImGui() override;
 		void Load(ecs::Registry* registry) override;
 

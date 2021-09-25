@@ -32,8 +32,8 @@ namespace cumulonimbus::component
 		explicit ActorComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent, ActorType actor_type = ActorType::Actor3D);
 		~ActorComponent() override = default;
 
-		void NewFrame(const float delta_time)override {}
-		void Update(const float delta_time)override {}
+		void PreGameUpdate(const float delta_time)override {}
+		void GameUpdate(const float delta_time)override {}
 		void RenderImGui() override;
 
 		//void Save(const std::string& file_path) override;

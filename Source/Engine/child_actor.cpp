@@ -17,11 +17,11 @@ namespace cumulonimbus::component
 	{
 	}
 
-	void ChildActorComponent::NewFrame(const float delta_time)
+	void ChildActorComponent::PreGameUpdate(const float delta_time)
 	{
 	}
 
-	void ChildActorComponent::Update(const float delta_time)
+	void ChildActorComponent::GameUpdate(const float delta_time)
 	{
 		Link(tag_node_name);
 		SimpleMath::Matrix ent_matrix = GetRegistry()->GetComponent<component::TransformComponent>(GetEntity()).GetWorld4x4();

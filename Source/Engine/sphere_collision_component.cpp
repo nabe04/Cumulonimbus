@@ -14,17 +14,17 @@ namespace cumulonimbus::component
 	{
 	}
 
-	void SphereCollisionComponent::NewFrame(float dt)
+	void SphereCollisionComponent::PreGameUpdate(float dt)
 	{
 
 	}
 
-	void SphereCollisionComponent::Update(float dt)
+	void SphereCollisionComponent::GameUpdate(float dt)
 	{
 
 	}
 
-	void SphereCollisionComponent::PostUpdate(float dt)
+	void SphereCollisionComponent::PostGameUpdate(float dt)
 	{
 		// 判定用(球)データの更新
 		for (auto& sphere : spheres)

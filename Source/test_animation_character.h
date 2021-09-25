@@ -17,7 +17,7 @@
 //public:
 //	AnimationCharacterComponent(Entity* entity);
 //
-//	void NewFrame(const float delta_time) override;
+//	void PreGameUpdate(const float delta_time) override;
 //	void Update(const float delta_time) override;
 //	void RenderImGui() override;
 //};

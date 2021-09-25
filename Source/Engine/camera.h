@@ -198,9 +198,9 @@ namespace cumulonimbus::camera
 		float GetFarZ()   const { return far_z; }
 
 		[[nodiscard]]
-		DirectX::SimpleMath::Matrix GetViewMat()			const { return view_mat; }
+		const DirectX::SimpleMath::Matrix& GetViewMat()			const { return view_mat; }
 		[[nodiscard]]
-		DirectX::SimpleMath::Matrix GetProjectionMat()	const { return projection_mat; }
+		const DirectX::SimpleMath::Matrix& GetProjectionMat()	const { return projection_mat; }
 
 		[[nodiscard]]
 		const DirectX::SimpleMath::Vector3& GetEyePosition()   const { return eye_position; }

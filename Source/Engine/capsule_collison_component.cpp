@@ -16,15 +16,15 @@ namespace cumulonimbus::component
 	{
 	}
 
-	void CapsuleCollisionComponent::NewFrame(float dt)
+	void CapsuleCollisionComponent::PreGameUpdate(float dt)
 	{
 	}
 
-	void CapsuleCollisionComponent::Update(float dt)
+	void CapsuleCollisionComponent::GameUpdate(float dt)
 	{
 	}
 
-	void CapsuleCollisionComponent::PostUpdate(float dt)
+	void CapsuleCollisionComponent::PostGameUpdate(float dt)
 	{
 		// 判定用(カプセル)データの更新
 		for(auto& capsule : capsules)

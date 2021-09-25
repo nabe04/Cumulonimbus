@@ -33,8 +33,8 @@ namespace cumulonimbus::component
 		explicit AnimSpriteComponent() = default; // for cereal
 		~AnimSpriteComponent() override = default;
 
-		void NewFrame(const float delta_time)override {};
-		void Update(float delta_time) override {};
+		void PreGameUpdate(const float delta_time)override {};
+		void GameUpdate(float delta_time) override {};
 		void RenderImGui() override {};
 
 		//void Save(const std::string& file_path) override;

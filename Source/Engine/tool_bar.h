@@ -20,10 +20,7 @@ namespace cumulonimbus::editor
 	class ToolBar final
 	{
 	public:
-		/**
-		 * @brief : PPS -> Play,Pause,Stepの略
-		 */
-		enum class PlaybackMode
+		enum class Button
 		{
 			Play,
 			Pause,
@@ -32,22 +29,38 @@ namespace cumulonimbus::editor
 			End
 		};
 
+		struct ToolBarButton
+		{
+			std::array<ButtonState, static_cast<size_t>(Button::End)> button_state{};
+
+			void Update();
+			[[nodiscard]]
+			ButtonState GetButtonState(Button mode) const;
+
+			std::bitset<static_cast<size_t>(Button::End)> button_flg{};
+			std::bitset<static_cast<size_t>(Button::End)> old_button_flg{};
+		};
+
 	public:
-		explicit ToolBar();
+		explicit ToolBar() = default;
 		~ToolBar() = default;
 
 		void Update();
 		void Render(ecs::Registry* registry);
 
+		/**
+		 * @brief : 指定されたPlaybackModeのビットが立っているか確認
+		 * @return : true -> ビットが立っている
+		 * @return : false -> ビットが立っていない
+		 */
 		[[nodiscard]]
-		ButtonState GetButtonState(PlaybackMode mode) const;
+		bool IsPlaybackState(Button mode) const;
+
+		[[nodiscard]]
+		const ToolBarButton& GetToolBarButton() const { return tool_bar_button; }
 
 	private:
-		// Play,Pause,Stepボタン状態
-		std::bitset<static_cast<size_t>(PlaybackMode::End)> playback_state{};
-		std::bitset<static_cast<size_t>(PlaybackMode::End)> old_playback_state{};
-		std::array<ButtonState, static_cast<size_t>(PlaybackMode::End)> button_state{};
-
+		ToolBarButton tool_bar_button{};
 		// playback mode ボタンのサイズ
 		const DirectX::SimpleMath::Vector2 playback_size{ 40,30 };
 		// playback mode(pb)ボタンの通常時色
@@ -59,10 +72,5 @@ namespace cumulonimbus::editor
 		void PlayButton();
 		void PauseButton();
 		void StepButton();
-
-		/**
-		 *
-		 */
-		bool IsPlaybackState(PlaybackMode mode);
 	};
 } // cumulonimbus::editor

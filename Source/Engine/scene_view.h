@@ -16,6 +16,7 @@ namespace cumulonimbus
 
 	namespace editor
 	{
+		class Hierarchy;
 		class ProjectView;
 	} // editor
 } // cumulonimbus
@@ -50,7 +51,7 @@ namespace cumulonimbus::editor
 		~SceneView() = default;
 
 		void Update(float dt);
-		void Render(ecs::Registry* registry, const ProjectView* project_view);
+		void Render(ecs::Registry* registry, const ProjectView* project_view, const Hierarchy* hierarchy);
 
 		/**
 		 * @brief : SceneView内のマウス位置をWindow内の位置に変換

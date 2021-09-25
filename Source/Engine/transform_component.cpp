@@ -7,6 +7,8 @@
 #include "component_base.h"
 #include "locator.h"
 #include "cum_imgui_helper.h"
+#include "ecs.h"
+#include "scene.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::TransformComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::TransformComponent)
@@ -14,6 +16,37 @@ CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cum
 namespace cumulonimbus::component
 {
 	using namespace DirectX::SimpleMath;
+
+	template <class Archive>
+	void TransformComponent::serialize(Archive&& archive)
+	{
+		archive(
+			cereal::base_class<ComponentBase>(this),
+			CEREAL_NVP(position),
+			CEREAL_NVP(prev_pos),
+			CEREAL_NVP(scale),
+			CEREAL_NVP(angle),
+			CEREAL_NVP(prev_angle),
+
+			CEREAL_NVP(world_f4x4),
+			CEREAL_NVP(scaling_matrix),
+			CEREAL_NVP(rotation_matrix),
+			CEREAL_NVP(translation_matrix),
+
+			CEREAL_NVP(model_right),
+			CEREAL_NVP(model_front),
+			CEREAL_NVP(model_up),
+			CEREAL_NVP(orientation),
+
+			// Quaternion
+			CEREAL_NVP(rotation_quaternion),
+
+			CEREAL_NVP(is_billboard),
+			CEREAL_NVP(is_quaternion)
+
+		);
+	}
+
 
 	TransformComponent::TransformComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent)
 		: ComponentBase{ registry,ent}
@@ -24,16 +57,20 @@ namespace cumulonimbus::component
 		CreateIdentity4x4(&scaling_matrix);
 		CreateIdentity4x4(&rotation_matrix);
 		CreateIdentity4x4(&translation_matrix);
-
-		set_angle_bit_flg.reset();
 	}
 
-	void TransformComponent::NewFrame(const float delta_time)
+	void TransformComponent::SceneUpdate(float dt)
+	{
+		NormalizeAngle();
+		CreateWorldTransformMatrix();
+	}
+
+	void TransformComponent::PreGameUpdate(const float delta_time)
 	{
 		SetOldPosition(GetPosition());
 	}
 
-	void TransformComponent::Update(const float delta_time)
+	void TransformComponent::GameUpdate(const float delta_time)
 	{
 		NormalizeAngle();
 		CreateWorldTransformMatrix();
@@ -43,9 +80,12 @@ namespace cumulonimbus::component
 	{
 		if (ImGui::CollapsingHeader("TransformComponent", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			///ImGuizmo::SetDrawlist();
-			//////ImGuizmo::Manipulate()
-			
+			auto& camera = GetRegistry()->GetScene()->GetEditorManager()->GetSceneView().GetSceneViewCamera();
+
+			DirectX::SimpleMath::Matrix world_mat{};
+			DirectX::SimpleMath::Matrix view_mat = camera.GetCamera().GetViewMat();
+			DirectX::SimpleMath::Matrix proj_mat = camera.GetCamera().GetProjectionMat();
+
 			//ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, window_width, window_height);
 			IMGUI_LEFT_LABEL(ImGui::DragFloat3, "Position", reinterpret_cast<float*>(&position), 0.01f, -10000.0f, 10000.0f);
 			IMGUI_LEFT_LABEL(ImGui::DragFloat3, "Scale   ", reinterpret_cast<float*>(&scale)	 , 0.01f, -10000.0f, 10000.0f);
@@ -75,41 +115,7 @@ namespace cumulonimbus::component
 		CreateIdentity4x4(&scaling_matrix);
 		CreateIdentity4x4(&rotation_matrix);
 		CreateIdentity4x4(&translation_matrix);
-
-		set_angle_bit_flg.reset();
 	}
-
-	template <class Archive>
-	void TransformComponent::serialize(Archive&& archive)
-	{
-		archive(
-			cereal::base_class<ComponentBase>(this),
-			CEREAL_NVP(position),
-			CEREAL_NVP(prev_pos),
-			CEREAL_NVP(scale),
-			CEREAL_NVP(angle),
-			CEREAL_NVP(prev_angle),
-
-			CEREAL_NVP(world_f4x4),
-			CEREAL_NVP(scaling_matrix),
-			CEREAL_NVP(rotation_matrix),
-			CEREAL_NVP(translation_matrix),
-
-			CEREAL_NVP(model_right),
-			CEREAL_NVP(model_front),
-			CEREAL_NVP(model_up),
-			CEREAL_NVP(orientation),
-
-			// Quaternion
-			CEREAL_NVP(rotation_quaternion),
-
-			CEREAL_NVP(set_angle_bit_flg),
-			CEREAL_NVP(is_billboard),
-			CEREAL_NVP(is_quaternion)
-
-		);
-	}
-
 
 	void TransformComponent::SetTransformCB(const TransformCB transform) const
 	{

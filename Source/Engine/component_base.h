@@ -25,10 +25,15 @@ namespace cumulonimbus::component
 		}
 		virtual ~ComponentBase() = default;
 
-		virtual void NewFrame(float dt)	  {}
-		virtual void Update(float dt)	  {}
-		virtual void PostUpdate(float dt) {}
-		virtual void RenderImGui()		  {}
+		virtual void PreSceneUpdate(float dt) {}
+		virtual void SceneUpdate(float dt) {}
+		virtual void PostSceneUpdate(float dt) {}
+
+		virtual void PreGameUpdate(float dt) {}
+		virtual void GameUpdate(float dt) {}
+		virtual void PostGameUpdate(float dt) {}
+
+		virtual void RenderImGui() {}
 		//virtual void Save(const std::string& file_path)			 = 0;
 		virtual void Load(ecs::Registry* registry) = 0;
 

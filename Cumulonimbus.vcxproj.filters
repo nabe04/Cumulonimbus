@@ -552,6 +552,12 @@
     <ClCompile Include="Source\Engine\system_inspector.cpp">
       <Filter>Source\Engine\Editor</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\game_view.cpp">
+      <Filter>Source\Engine\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\imgui\ImGuizmo\ImGuizmo.cpp">
+      <Filter>Source\Engine\ImGui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -1015,6 +1021,12 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\system_inspector.h">
       <Filter>Header\Engine\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\game_view.h">
+      <Filter>Header\Engine\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\imgui\ImGuizmo\ImGuizmo.h">
+      <Filter>Header\Engine\ImGui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

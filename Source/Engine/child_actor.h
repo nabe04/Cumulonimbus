@@ -21,8 +21,8 @@ namespace cumulonimbus::component
 		explicit ChildActorComponent() = default;
 		explicit ChildActorComponent(ecs::Registry* registry, mapping::rename_type::Entity ent,
 									 EntityTag tag, std::string node_name);
-		void NewFrame(float delta_time) override;
-		void Update(float delta_time) override;
+		void PreGameUpdate(float delta_time) override;
+		void GameUpdate(float delta_time) override;
 		void RenderImGui() override;
 
 		void Link(std::string node_name);

@@ -41,8 +41,8 @@ namespace cumulonimbus::component
 		explicit ObjModelComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, ID3D11Device* device, const std::string_view filename);
 		~ObjModelComponent();
 
-		void NewFrame(const float delta_time)override;
-		void Update(const float delta_time)override;
+		void PreGameUpdate(const float delta_time)override;
+		void GameUpdate(const float delta_time)override;
 		void RenderImGui() override;
 
 		void Load(ecs::Registry* registry) override {};

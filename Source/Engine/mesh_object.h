@@ -33,15 +33,15 @@ namespace cumulonimbus::component
 		shader::MeshShaderState	shader_state;
 		RenderingBufferBitset	rendering_buffer;
 
-		bool is_visible = true;	// •`‰æ‚·‚é‚©
+		bool is_visible = true;	// ï¿½`ï¿½æ‚·ï¿½é‚©
 	
 	public:
 		explicit MeshObjectComponent() = default; // for cereal
 		explicit MeshObjectComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
 		~MeshObjectComponent() override = default;
 
-		void NewFrame(const float delta_time)override {};
-		void Update(const float delta_time)override {};
+		void PreGameUpdate(const float delta_time)override {};
+		void GameUpdate(const float delta_time)override {};
 		void RenderImGui() override;
 
 		void Load(ecs::Registry* registry) override;

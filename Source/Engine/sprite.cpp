@@ -44,7 +44,7 @@ namespace cumulonimbus::component
 		CreateVertexBuffer(device);
 	}
 
-	void SpriteComponent::Update(const float delta_time)
+	void SpriteComponent::GameUpdate(const float delta_time)
 	{
 		//auto& transform = GetRegistry()->GetComponent<component::TransformComponent>(GetEntity());
 

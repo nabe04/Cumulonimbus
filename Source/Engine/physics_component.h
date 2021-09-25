@@ -14,7 +14,7 @@ namespace cumulonimbus::component
 		explicit PhysicsComponent()  = default; // for cereal
 		~PhysicsComponent() override = default;
 
-		void Update(float dt) override;
+		void GameUpdate(float dt) override;
 		void RenderImGui() override;
 
 		void Load(ecs::Registry* registry) override;

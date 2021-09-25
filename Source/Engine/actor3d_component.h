@@ -17,8 +17,8 @@ namespace cumulonimbus::component
 		explicit Actor3DComponent()  = default; // for cereal
 		~Actor3DComponent() override = default;
 
-		void NewFrame(float dt) override{}
-		void Update(float dt)   override{}
+		void PreGameUpdate(float dt) override{}
+		void GameUpdate(float dt)   override{}
 		void RenderImGui()		override{}
 
 		//void Save(const std::string& file_path)			 override {}

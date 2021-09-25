@@ -23,8 +23,10 @@ namespace cumulonimbus::component
 		}; // for cereal
 		~TransformComponent() override = default;
 
-		void NewFrame(float delta_time)override;
-		void Update(float delta_time) override;
+		void SceneUpdate(float dt) override;
+
+		void PreGameUpdate(float delta_time)override;
+		void GameUpdate(float delta_time) override;
 		void RenderImGui() override;
 
 		void Load(ecs::Registry* registry) override;
@@ -77,9 +79,9 @@ namespace cumulonimbus::component
 		//-- Angle --//
 		void SetWorldRotation(const DirectX::XMFLOAT3& angle) { this->angle = angle; }
 		void SetWorldRotation(const float angle) { this->angle.x = this->angle.y = this->angle.z = angle; }
-		void SetWorldRotation_X(const float x) { angle.x = x; set_angle_bit_flg.set(Bit::X); }
-		void SetWorldRotation_Y(const float y) { angle.y = y; set_angle_bit_flg.set(Bit::Y); }
-		void SetWorldRotation_Z(const float z) { angle.z = z; set_angle_bit_flg.set(Bit::Z); }
+		void SetWorldRotation_X(const float x) { angle.x = x;}
+		void SetWorldRotation_Y(const float y) { angle.y = y;}
+		void SetWorldRotation_Z(const float z) { angle.z = z;}
 		void AdjustWorldRotation(const DirectX::XMFLOAT3& angle) { this->angle.x += angle.x; this->angle.y += angle.y; this->angle.z += angle.z; }
 		void AdjustWorldRotation(const float angle) { this->angle.x += angle; this->angle.y += angle; this->angle.z += angle; }
 		void AdjustWorldRotation_X(const float x) { angle.x += x; }
@@ -171,8 +173,7 @@ namespace cumulonimbus::component
 		DirectX::SimpleMath::Matrix translation_matrix;
 
 
-		/* TODO: constメンバ変数にしたいが、
-		 * Entityの削除の際のstd::iter_swap関数でエラーが出るため非constにしている*/
+		// Entityの削除の際のstd::iter_swap関数でエラーが出るため非constにしている
 		DirectX::SimpleMath::Vector3 right	= { 1.0f,0.0f,0.0f };
 		DirectX::SimpleMath::Vector3 up		= { 0.0f,1.0f,0.0f };
 		DirectX::SimpleMath::Vector3 front	= { 0.0f,0.0f,1.0f };
@@ -194,14 +195,6 @@ namespace cumulonimbus::component
 		DirectX::SimpleMath::Quaternion rotation_quaternion{};
 		DirectX::SimpleMath::Quaternion rotation_prev_quaternion{};		// Slerp時の変形前のクォータニオン値
 		DirectX::SimpleMath::Quaternion rotation_result_quaternion{};	// Slerp時の変形後のクォータニオン値
-
-		enum Bit
-		{
-			X,
-			Y,
-			Z,
-		};
-		std::bitset<3> set_angle_bit_flg;
 
 		bool is_billboard  = false;
 		bool is_quaternion = false;

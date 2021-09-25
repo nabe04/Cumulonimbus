@@ -13,7 +13,7 @@ namespace cumulonimbus::component
 
 	}
 
-	void RigidBodyComponent::NewFrame(float dt)
+	void RigidBodyComponent::PreGameUpdate(float dt)
 	{
 		if (is_gravity)
 		{
@@ -22,12 +22,12 @@ namespace cumulonimbus::component
 		}
 	}
 
-	void RigidBodyComponent::Update(float dt)
+	void RigidBodyComponent::GameUpdate(float dt)
 	{
 
 	}
 
-	void RigidBodyComponent::PostUpdate(float dt)
+	void RigidBodyComponent::PostGameUpdate(float dt)
 	{
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 		if (transform_comp.GetPosition().y < 0)

@@ -77,8 +77,8 @@ namespace cumulonimbus::component
 		explicit FbxModelComponent()  = default; // for cereal
 		~FbxModelComponent() override = default;
 
-		void NewFrame(float delta_time) override;
-		void Update(float delta_time) override;
+		void PreGameUpdate(float delta_time) override;
+		void GameUpdate(float delta_time) override;
 		void RenderImGui() override;
 
 		/**

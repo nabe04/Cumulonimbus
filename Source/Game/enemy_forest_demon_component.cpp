@@ -42,7 +42,7 @@ namespace cumulonimbus::component
 		SetRandomRotationAngle(-180.f, 180.f);
 	}
 
-	void EnemyForestDemonComponent::Update(const float dt)
+	void EnemyForestDemonComponent::GameUpdate(const float dt)
 	{
 		forest_demon_state.Update(dt);
 	}

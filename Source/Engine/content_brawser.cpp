@@ -15,62 +15,62 @@ void ContentBrowser::Render(cumulonimbus::scene::Scene* scene)
 		ImGuiWindowFlags window_flags{};
 		window_flags |= ImGuiWindowFlags_::ImGuiWindowFlags_NoTitleBar;
 		bool is_open = true;;
-		ImGui::Begin("Content", &is_open, window_flags);
+		if (ImGui::Begin("Content", &is_open, window_flags))
+		{
+			{// コンテンツの表示(左)
+				ImGuiWindowFlags flag = ImGuiWindowFlags_HorizontalScrollbar;
+				ImGui::BeginChild("ChildL", ImVec2{ ImGui::GetWindowContentRegionWidth() * 0.25f, 300 }, true, flag);
 
-		{// コンテンツの表示(左)
-			ImGuiWindowFlags flag = ImGuiWindowFlags_HorizontalScrollbar;
-			ImGui::BeginChild("ChildL", ImVec2{ ImGui::GetWindowContentRegionWidth() * 0.25f, 300 }, true, flag);
+				ImGui::Text("Content");
+				ImGui::Separator();
 
-			ImGui::Text("Content");
-			ImGui::Separator();
+				static int selected = -1;
 
-			static int selected = -1;
-
-			for (int n = 0; n < contents.size(); ++n)
-			{
-				is_selected.reset(n);
-
-				char buf[100];
-				sprintf_s(buf, contents.at(n).c_str());
-				if (ImGui::Selectable(buf, selected == n))
+				for (int n = 0; n < contents.size(); ++n)
 				{
-					selected = n;
+					is_selected.reset(n);
+
+					char buf[100];
+					sprintf_s(buf, contents.at(n).c_str());
+					if (ImGui::Selectable(buf, selected == n))
+					{
+						selected = n;
+					}
+					if (selected != -1)
+						is_selected.set(selected);
 				}
-				if(selected != -1)
-					is_selected.set(selected);
+
+				//for (int n = 0; n < model_resource.FbxModelNames().size(); ++n)
+				//{
+				//	char buf[100];
+				//	sprintf_s(buf, model_resource.FbxModelNames().at(n).c_str());
+				//	if (ImGui::Selectable(buf, selected == n))
+				//		selected = n;
+				//}
+
+				ImGui::EndChild();
 			}
 
-			//for (int n = 0; n < model_resource.FbxModelNames().size(); ++n)
-			//{
-			//	char buf[100];
-			//	sprintf_s(buf, model_resource.FbxModelNames().at(n).c_str());
-			//	if (ImGui::Selectable(buf, selected == n))
-			//		selected = n;
-			//}
+			ImGui::SameLine();
 
-			ImGui::EndChild();
+			{// コンテンツの詳細表示(右)
+				ImGuiWindowFlags flag = ImGuiWindowFlags_HorizontalScrollbar;
+				ImGui::BeginChild("ChildR", ImVec2{ ImGui::GetWindowContentRegionWidth() * 0.73f, 300 }, true, flag);
+
+				//static int selected = -1;
+				//for (int n = 0; n < model_resource.FbxModelNames().size(); ++n)
+				//{
+				//	char buf[100];
+				//	sprintf_s(buf, model_resource.FbxModelNames().at(n).c_str());
+				//	if (ImGui::Selectable(buf, selected == n))
+				//		selected = n;
+				//}
+
+				SelectedContent(scene);
+
+				ImGui::EndChild();
+			}
 		}
-
-		ImGui::SameLine();
-
-		{// コンテンツの詳細表示(右)
-			ImGuiWindowFlags flag = ImGuiWindowFlags_HorizontalScrollbar;
-			ImGui::BeginChild("ChildR", ImVec2{ ImGui::GetWindowContentRegionWidth() * 0.73f, 300 }, true, flag);
-
-			//static int selected = -1;
-			//for (int n = 0; n < model_resource.FbxModelNames().size(); ++n)
-			//{
-			//	char buf[100];
-			//	sprintf_s(buf, model_resource.FbxModelNames().at(n).c_str());
-			//	if (ImGui::Selectable(buf, selected == n))
-			//		selected = n;
-			//}
-
-			SelectedContent(scene);
-
-			ImGui::EndChild();
-		}
-
 		ImGui::End();
 	}
 }

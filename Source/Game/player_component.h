@@ -136,8 +136,8 @@ namespace cumulonimbus::component
 		explicit PlayerComponent() = default; // for cereal
 		~PlayerComponent() override = default;
 
-		void NewFrame(float dt) override;
-		void Update(float dt)	override;
+		void PreGameUpdate(float dt) override;
+		void GameUpdate(float dt)	override;
 		void RenderImGui()		override;
 
 		void Load(ecs::Registry* registry) override;

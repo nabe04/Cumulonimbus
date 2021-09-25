@@ -51,7 +51,7 @@ namespace cumulonimbus::component
 		explicit EnemySlimeComponent()  = default; // for cereal
 		~EnemySlimeComponent() override = default;
 
-		void Update(float dt) override;
+		void GameUpdate(float dt) override;
 		void RenderImGui()	  override;
 
 		void Load(ecs::Registry* registry) override;

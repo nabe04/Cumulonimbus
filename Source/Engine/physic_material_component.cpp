@@ -7,7 +7,7 @@ namespace cumulonimbus::component
 	{
 	}
 
-	void PhysicMaterialComponent::Update(float dt)
+	void PhysicMaterialComponent::GameUpdate(float dt)
 	{
 	}
 

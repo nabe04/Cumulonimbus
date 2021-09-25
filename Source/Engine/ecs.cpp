@@ -21,6 +21,7 @@
 #include "sprite_object.h"
 #include "transform_component.h"
 #include "model_component.h"
+#include "rigid_body_component.h"
 // components(game)
 #include "player_component.h"
 
@@ -97,27 +98,51 @@ namespace cumulonimbus::ecs
 		}
 	}
 
-	void Registry::PreUpdate(float dt)
-	{
-		for(auto& component : component_arrays)
-		{
-			component.second->PreUpdate(dt);
-		}
-	}
-
-	void Registry::Update(float dt)
-	{
-		for(auto& component : component_arrays)
-		{
-			component.second->Update(dt);
-		}
-	}
-
-	void Registry::PostUpdate(float dt)
+	void Registry::PreSceneUpdate(const float dt)
 	{
 		for (auto& component : component_arrays)
 		{
-			component.second->PostUpdate(dt);
+			component.second->PreSceneUpdate(dt);
+		}
+	}
+
+	void Registry::SceneUpdate(const float dt)
+	{
+		for (auto& component : component_arrays)
+		{
+			component.second->SceneUpdate(dt);
+		}
+	}
+
+	void Registry::PostSceneUpdate(const float dt)
+	{
+		for (auto& component : component_arrays)
+		{
+			component.second->PostSceneUpdate(dt);
+		}
+	}
+
+	void Registry::PreGameUpdate(const float dt)
+	{
+		for(auto& component : component_arrays)
+		{
+			component.second->PreGameUpdate(dt);
+		}
+	}
+
+	void Registry::GameUpdate(const float dt)
+	{
+		for(auto& component : component_arrays)
+		{
+			component.second->GameUpdate(dt);
+		}
+	}
+
+	void Registry::PostGameUpdate(const float dt)
+	{
+		for (auto& component : component_arrays)
+		{
+			component.second->PostGameUpdate(dt);
 		}
 	}
 
@@ -155,6 +180,7 @@ namespace cumulonimbus::ecs
 		//RegistryComponent<component::ObjModelComponent>();
 		RegistryComponent<component::SkyBoxComponent>();
 		RegistryComponent<component::CameraComponent>();
+		RegistryComponent<component::RigidBodyComponent>();
 		//RegistryComponent<component::MaterialComponent>();
 		// game
 		//RegistryComponent<component::PlayerComponent>();

@@ -132,9 +132,17 @@ namespace cumulonimbus::scene
 
 	void Scene::Update(const float dt)
 	{
-		registry->PreUpdate(dt);
-		registry->Update(dt);
-		registry->PostUpdate(dt);
+		// Scene Viewの更新処理
+		registry->PreSceneUpdate(dt);
+		registry->SceneUpdate(dt);
+		registry->PostSceneUpdate(dt);
+		if(editor_manager->GetToolBar().IsPlaybackState(editor::ToolBar::Button::Play))
+		{
+			// Game Viewの更新処理
+			registry->PreGameUpdate(dt);
+			registry->GameUpdate(dt);
+			registry->PostGameUpdate(dt);
+		}
 
 		collision_manager->Update(dt, registry.get());
 
@@ -146,6 +154,16 @@ namespace cumulonimbus::scene
 		}
 
 		editor_manager->Update(dt);
+		if( editor_manager->GetToolBar().GetToolBarButton().GetButtonState(editor::ToolBar::Button::Play) ==
+			ButtonState::Press)
+		{
+			SaveScene(file_path_helper::GetSaveSceneViewFilePathAndName(), "test");
+		}
+		if (editor_manager->GetToolBar().GetToolBarButton().GetButtonState(editor::ToolBar::Button::Play) ==
+			ButtonState::Release)
+		{
+			LoadScene(file_path_helper::GetSaveSceneViewFilePathAndName(), "test");
+		}
 	}
 
 	void Scene::Render()
@@ -304,7 +322,7 @@ namespace cumulonimbus::scene
 //
 //	registry->PreUpdate(elapsed_time);
 //	registry->Update(elapsed_time);
-//	registry->PostUpdate(elapsed_time);
+//	registry->PostGameUpdate(elapsed_time);
 //
 //	collision_manager->Update(elapsed_time, registry.get());
 //

@@ -12,7 +12,7 @@ namespace cumulonimbus::component
 
 	}
 
-	void PhysicsComponent::Update(float dt)
+	void PhysicsComponent::GameUpdate(float dt)
 	{
 		Integrate(dt);
 	}

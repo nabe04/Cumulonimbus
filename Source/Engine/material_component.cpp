@@ -23,7 +23,7 @@ namespace cumulonimbus::component
 		cb_material->data.material.metalness = 0;
 	}
 
-	void MaterialComponent::Update(float dt)
+	void MaterialComponent::GameUpdate(float dt)
 	{
 
 	}

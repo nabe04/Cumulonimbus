@@ -30,8 +30,8 @@ namespace cumulonimbus::component
 		explicit SpriteObjectComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
 		~SpriteObjectComponent() override = default;
 
-		void NewFrame(float dt) override {};
-		void Update(float dt)   override {};
+		void PreGameUpdate(float dt) override {};
+		void GameUpdate(float dt)   override {};
 		void RenderImGui()      override {};
 
 		void Load(ecs::Registry* registry) override;

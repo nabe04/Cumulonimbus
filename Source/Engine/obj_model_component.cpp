@@ -22,12 +22,12 @@ namespace cumulonimbus::component
 		SetCenerLocalPos();
 	}
 
-	void ObjModelComponent::NewFrame(const float delta_time)
+	void ObjModelComponent::PreGameUpdate(const float delta_time)
 	{
 
 	}
 
-	void ObjModelComponent::Update(const float delta_time)
+	void ObjModelComponent::GameUpdate(const float delta_time)
 	{
 		//auto* view = GetRegistry()->GetScene()->GetView();
 
