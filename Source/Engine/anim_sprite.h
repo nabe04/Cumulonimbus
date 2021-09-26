@@ -5,7 +5,6 @@
 
 #include <d3d11.h>
 #include <DirectXMath.h>
-#include <cereal/cereal.hpp>
 
 #include "sprite.h"
 #include "rename_type_mapping.h"
@@ -25,11 +24,11 @@ namespace cumulonimbus::component
 
 	public:
 		explicit AnimSpriteComponent(ecs::Registry* registry, mapping::rename_type::Entity ent,
-			ID3D11Device* device,
-			const char* filename, PivotType pivot_type,
-			int src_left,   int src_top,
-			int src_width,  int src_height,
-			int num_clip_w, int num_clip_h);
+									 ID3D11Device* device,
+									 const char* filename, PivotType pivot_type,
+									 int src_left,   int src_top,
+									 int src_width,  int src_height,
+									 int num_clip_w, int num_clip_h);
 		explicit AnimSpriteComponent() = default; // for cereal
 		~AnimSpriteComponent() override = default;
 
@@ -37,7 +36,6 @@ namespace cumulonimbus::component
 		void GameUpdate(float delta_time) override {};
 		void RenderImGui() override {};
 
-		//void Save(const std::string& file_path) override;
 		void Load(ecs::Registry* registry) override;
 
 		/*
@@ -51,30 +49,15 @@ namespace cumulonimbus::component
 		[[nodiscard]] const DirectX::XMINT2& GetNumClip() const { return num_clip; }
 
 		template <class Archive>
-		void serialize(Archive&& archive)
-		{
-			archive(
-				cereal::base_class<SpriteComponent>(this),
-				CEREAL_NVP(clip_texcoord),
-				CEREAL_NVP(num_clip),
-				CEREAL_NVP(anim_texcoord),
-				CEREAL_NVP(anim_pivot)
-			);
-		}
-
+		void serialize(Archive&& archive);
 	private:
 		using Texcoord = std::vector<DirectX::XMFLOAT2>;
-		std::array<Texcoord, 4> clip_texcoord{};	// AnimationópÇÃtexcoord(â°óDêÊ)
-
-		DirectX::XMINT2 num_clip{};
+		std::array<Texcoord, 4>			 clip_texcoord{};	// AnimationópÇÃtexcoord(â°óDêÊ)
 		std::array<DirectX::XMFLOAT2, 4> anim_texcoord{};
-
-		DirectX::XMFLOAT2 anim_pivot{};
+		DirectX::XMINT2					 num_clip{};
+		DirectX::XMFLOAT2				 anim_pivot{};
 
 		void CreateAnim(const int num_clip_w, const int num_clip_h);
 		void AdjustAnimPivot(PivotType pivot, const int left, const int top, const int width, const int height);
 	};
-}
-
-CEREAL_REGISTER_TYPE(cumulonimbus::component::AnimSpriteComponent);
-CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::SpriteComponent, cumulonimbus::component::AnimSpriteComponent)
+} // cumulonimbus::component

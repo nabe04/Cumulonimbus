@@ -34,7 +34,7 @@ namespace cumulonimbus::component
 		RenderingBufferBitset	rendering_buffer;
 
 		bool is_visible = true;	// �`�悷�邩
-	
+
 	public:
 		explicit MeshObjectComponent() = default; // for cereal
 		explicit MeshObjectComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
@@ -59,7 +59,7 @@ namespace cumulonimbus::component
 		void SetSamplerState(const RenderingSampleState& state) { sampler_state.SetState(state); }
 		void SetShaderState(shader::MeshShaderTypes type) { shader_state.SetShaderState(type); }
 		void SetIsVisible(const bool visible) { is_visible = visible; }
-		
+
 		[[nodiscard]] RenderingBufferBitset* UsingBuffer() { return &rendering_buffer; }
 
 		template<class Archive>

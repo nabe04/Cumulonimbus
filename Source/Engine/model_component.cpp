@@ -22,6 +22,7 @@ namespace cumulonimbus::component
 			CEREAL_NVP(model_id),
 			CEREAL_NVP(material_ids),
 			CEREAL_NVP(nodes),
+			CEREAL_NVP(graphics_state),
 
 			CEREAL_NVP(prev_key_index),
 			CEREAL_NVP(current_keyframe),
@@ -33,12 +34,12 @@ namespace cumulonimbus::component
 			CEREAL_NVP(current_seconds),
 			CEREAL_NVP(animation_switch_time),
 
+			CEREAL_NVP(is_visible),
 			CEREAL_NVP(loop_animation),
 			CEREAL_NVP(end_animation),
 
 			CEREAL_NVP(prev_animation),
-			CEREAL_NVP(anim_states),
-			CEREAL_NVP(graphics_state)
+			CEREAL_NVP(anim_states)
 		);
 	}
 
@@ -50,7 +51,7 @@ namespace cumulonimbus::component
 		Initialize(registry, ent, model_id);
 	}
 
-	void ModelComponent::SceneUpdate(float dt)
+	void ModelComponent::SceneUpdate(const float dt)
 	{
 		const auto& world_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorld4x4();
 
@@ -60,18 +61,18 @@ namespace cumulonimbus::component
 		UpdateAnimState(dt);
 	}
 
-	void ModelComponent::PreGameUpdate(float delta_time)
+	void ModelComponent::PreGameUpdate(const float dt)
 	{
 	}
 
-	void ModelComponent::GameUpdate(const float delta_time)
+	void ModelComponent::GameUpdate(const float dt)
 	{
-		const auto& world_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorld4x4();
+		//const auto& world_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorld4x4();
 
-		CalculateLocalTransform();
-		CalculateWorldTransform(world_transform);
+		//CalculateLocalTransform();
+		//CalculateWorldTransform(world_transform);
 
-		UpdateAnimState(delta_time);
+		//UpdateAnimState(dt);
 	}
 
 	void ModelComponent::RenderImGui()
@@ -116,6 +117,11 @@ namespace cumulonimbus::component
 		}
 
 		graphics_state.RenderImGui();
+	}
+
+	void ModelComponent::Load(ecs::Registry* registry)
+	{
+		SetRegistry(registry);
 	}
 
 	bool ModelComponent::IsPlayAnimation() const
@@ -191,11 +197,6 @@ namespace cumulonimbus::component
 		if (anim_states.GetNumState() <= 0)
 			return;
 		anim_states.Update(delta_time);
-	}
-
-	void ModelComponent::Load(ecs::Registry* registry)
-	{
-		SetRegistry(registry);
 	}
 
 	void ModelComponent::InitializeParameter()

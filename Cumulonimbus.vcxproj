@@ -30,12 +30,10 @@
     <ClInclude Include="Libraries\imgui\imstb_truetype.h" />
     <ClInclude Include="Source\Engine\3d_standard.h" />
     <ClInclude Include="Source\Engine\actor3d_component.h" />
-    <ClInclude Include="Source\Engine\actor_component.h" />
     <ClInclude Include="Source\Engine\anim_sprite.h" />
     <ClInclude Include="Source\Engine\arithmetic.h" />
     <ClInclude Include="Source\Engine\asset_manager.h" />
     <ClInclude Include="Source\Engine\asset_sheet_manager.h" />
-    <ClInclude Include="Source\Engine\billboard_component.h" />
     <ClInclude Include="Source\Engine\blend.h" />
     <ClInclude Include="Source\Engine\bloom.h" />
     <ClInclude Include="Source\Engine\camera.h" />
@@ -71,7 +69,6 @@
     <ClInclude Include="Source\Engine\gaussian_blur.h" />
     <ClInclude Include="Source\Engine\gbuffer.h" />
     <ClInclude Include="Source\Engine\generic.h" />
-    <ClInclude Include="Source\Engine\geometric_primitive_component.h" />
     <ClInclude Include="Source\Engine\geometric_primitive_resource.h" />
     <ClInclude Include="Source\Engine\graphics_mapping.h" />
     <ClInclude Include="Source\Engine\graphics_state.h" />
@@ -79,7 +76,6 @@
     <ClInclude Include="Source\Engine\high_resolution_timer.h" />
     <ClInclude Include="Source\Engine\imgui_helper.h" />
     <ClInclude Include="Source\Engine\imgui_manager.h" />
-    <ClInclude Include="Source\Engine\inner_sphere_collision.h" />
     <ClInclude Include="Source\Engine\InputManager.h" />
     <ClInclude Include="Source\Engine\input_device.h" />
     <ClInclude Include="Source\Engine\input_manager.h" />
@@ -96,7 +92,6 @@
     <ClInclude Include="Source\Engine\material_loader.h" />
     <ClInclude Include="Source\Engine\menu_bar.h" />
     <ClInclude Include="Source\Engine\mesh_object.h" />
-    <ClInclude Include="Source\Engine\mesh_particle.h" />
     <ClInclude Include="Source\Engine\model.h" />
     <ClInclude Include="Source\Engine\model_component.h" />
     <ClInclude Include="Source\Engine\model_loader.h" />
@@ -104,7 +99,6 @@
     <ClInclude Include="Source\Engine\project_view.h" />
     <ClInclude Include="Source\Engine\rigid_body_component.h" />
     <ClInclude Include="Source\Engine\normal_map_resource.h" />
-    <ClInclude Include="Source\Engine\obj_model_component.h" />
     <ClInclude Include="Source\Engine\metal.h" />
     <ClInclude Include="Source\Engine\Misc.h" />
     <ClInclude Include="Source\Engine\model_data.h" />
@@ -112,7 +106,6 @@
     <ClInclude Include="Source\Engine\pbr_material.h" />
     <ClInclude Include="Source\Engine\pch.h" />
     <ClInclude Include="Source\Engine\phong.h" />
-    <ClInclude Include="Source\Engine\physics_component.h" />
     <ClInclude Include="Source\Engine\pixel_shader.h" />
     <ClInclude Include="Source\Engine\rasterizer.h" />
     <ClInclude Include="Source\Engine\raycast_component.h" />
@@ -152,7 +145,6 @@
     <ClInclude Include="Source\Engine\sphere_collision_component.h" />
     <ClInclude Include="Source\Engine\spot_light.h" />
     <ClInclude Include="Source\Engine\sprite.h" />
-    <ClInclude Include="Source\Engine\sprite_object.h" />
     <ClInclude Include="Source\Engine\sprite_renderer.h" />
     <ClInclude Include="Source\Engine\standard_sprite.h" />
     <ClInclude Include="Source\Engine\state_machine.h" />
@@ -172,9 +164,7 @@
     <ClInclude Include="Source\Game\enemy_slime_component.h" />
     <ClInclude Include="Source\Game\enemy_soldier_component.h" />
     <ClInclude Include="Source\Game\player_component.h" />
-    <ClInclude Include="Source\Game\rotation_sample.h" />
     <ClInclude Include="Source\Game\sound_resource.h" />
-    <ClInclude Include="Source\test_animation_character.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Libraries\imgui\imgui.cpp" />
@@ -187,12 +177,10 @@
     <ClCompile Include="Libraries\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Source\Engine\3d_standard.cpp" />
     <ClCompile Include="Source\Engine\actor3d_component.cpp" />
-    <ClCompile Include="Source\Engine\actor_component.cpp" />
     <ClCompile Include="Source\Engine\anim_sprite.cpp" />
     <ClCompile Include="Source\Engine\arithmetic.cpp" />
     <ClCompile Include="Source\Engine\asset_manager.cpp" />
     <ClCompile Include="Source\Engine\asset_sheet_manager.cpp" />
-    <ClCompile Include="Source\Engine\billboard_component.cpp" />
     <ClCompile Include="Source\Engine\blend.cpp" />
     <ClCompile Include="Source\Engine\bloom.cpp" />
     <ClCompile Include="Source\Engine\camera.cpp" />
@@ -220,7 +208,6 @@
     <ClCompile Include="Source\Engine\game_view.cpp" />
     <ClCompile Include="Source\Engine\gaussian_blur.cpp" />
     <ClCompile Include="Source\Engine\gbuffer.cpp" />
-    <ClCompile Include="Source\Engine\geometric_primitive_component.cpp" />
     <ClCompile Include="Source\Engine\geometric_primitive_resource.cpp" />
     <ClCompile Include="Source\Engine\graphics_statte.cpp" />
     <ClCompile Include="Source\Engine\hierarchy.cpp" />
@@ -240,14 +227,12 @@
     <ClCompile Include="Source\Engine\material_loader.cpp" />
     <ClCompile Include="Source\Engine\menu_bar.cpp" />
     <ClCompile Include="Source\Engine\mesh_object.cpp" />
-    <ClCompile Include="Source\Engine\mesh_particle.cpp" />
     <ClCompile Include="Source\Engine\model.cpp" />
     <ClCompile Include="Source\Engine\model_component.cpp" />
     <ClCompile Include="Source\Engine\model_loader.cpp" />
     <ClCompile Include="Source\Engine\physic_material_component.cpp" />
     <ClCompile Include="Source\Engine\project_view.cpp" />
     <ClCompile Include="Source\Engine\rigid_body_component..cpp" />
-    <ClCompile Include="Source\Engine\obj_model_component.cpp" />
     <ClCompile Include="Source\Engine\metal.cpp" />
     <ClCompile Include="Source\Engine\model_data.cpp" />
     <ClCompile Include="Source\Engine\model_render.cpp" />
@@ -259,7 +244,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Source\Engine\physics_component.cpp" />
     <ClCompile Include="Source\Engine\phong.cpp" />
     <ClCompile Include="Source\Engine\pixel_shader.cpp" />
     <ClCompile Include="Source\Engine\rasterize.cpp" />
@@ -289,7 +273,6 @@
     <ClCompile Include="Source\Engine\sphere_collision_component.cpp" />
     <ClCompile Include="Source\Engine\spot_light.cpp" />
     <ClCompile Include="Source\Engine\sprite.cpp" />
-    <ClCompile Include="Source\Engine\sprite_object.cpp" />
     <ClCompile Include="Source\Engine\sprite_renderer.cpp" />
     <ClCompile Include="Source\Engine\standard_sprite.cpp" />
     <ClCompile Include="Source\Engine\string_helper.cpp" />
@@ -310,7 +293,6 @@
     <ClCompile Include="Source\Game\enemy_soldier_component.cpp" />
     <ClCompile Include="Source\Game\player_component.cpp" />
     <ClCompile Include="Source\Game\sound_resource.cpp" />
-    <ClCompile Include="Source\test_animation_character.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

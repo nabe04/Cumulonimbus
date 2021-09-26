@@ -4,19 +4,39 @@
 
 #include <Windows.h>
 #include <cereal/archives/json.hpp>
-#include <cereal/types/bitset.hpp>
-#include <cereal/types/array.hpp>
 
-#include "file_path_helper.h"
+#include "cereal_helper.h"
 #include "framework.h"
 #include "locator.h"
 #include "scene.h"
 #include "shader.h"
-#include "sprite_object.h"
 #include "transform_component.h"
+
+CEREAL_REGISTER_TYPE(cumulonimbus::component::SpriteComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::SpriteComponent)
 
 namespace cumulonimbus::component
 {
+	template <class Archive>
+	void SpriteComponent::serialize(Archive&& archive)
+	{
+		archive(
+			cereal::base_class<ComponentBase>(this),
+			CEREAL_NVP(texture),
+			CEREAL_NVP(graphics_state),
+			CEREAL_NVP(sprite_shader_state),
+			CEREAL_NVP(pivot_type),
+			CEREAL_NVP(src_pivot),
+			CEREAL_NVP(src_width),
+			CEREAL_NVP(src_height),
+			CEREAL_NVP(variable_texcoords),
+			CEREAL_NVP(variable_width),
+			CEREAL_NVP(variable_height),
+			CEREAL_NVP(color),
+			CEREAL_NVP(image_size)
+		);
+	}
+
 	SpriteComponent::SpriteComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent,
 		ID3D11Device* device,
 		const char* texture_filename, const PivotType pivot_type,
@@ -30,9 +50,6 @@ namespace cumulonimbus::component
 		, variable_width{ src_width }
 		, variable_height{ src_height }
 	{
-		//if (!registry->HasComponent<component::SpriteObjectComponent>(GetEntity()))
-		//	assert(!"Don't have SpriteObject(SpriteComponent)");
-
 		texture = locator::Locator::GetResourceManager()->GetTextureResource(texture_filename);
 
 		variable_texcoords.at(0) = { .0f,.0f };
@@ -63,6 +80,47 @@ namespace cumulonimbus::component
 		//variable_texcoords.at(1).x = clip_rate.x; // Righit top
 		//variable_texcoords.at(2).y = clip_rate.y; // Left bottom
 		//variable_texcoords.at(3) = clip_rate;   // Right bottom
+	}
+
+	void SpriteComponent::RenderImGui()
+	{
+		if (ImGui::TreeNode("Sprite Data"))
+		{
+			if (ImGui::TreeNode("Image"))
+			{
+				ImGui::Text(texture->GetTextureData()->file_path.c_str());
+				ImGui::SameLine();
+				ImGui::Image((void*)texture->GetTextureData()->texture_view.Get(), { image_size.x,image_size.y });
+
+				if (ImGui::Button("Reset"))
+				{
+					image_size = DirectX::XMFLOAT2{ 100.0f,100.0f };
+				}
+
+				ImGui::SliderFloat2("Size", (float*)&image_size, 0.0f, 300.0f);
+				ImGui::TreePop();
+			}
+
+			ImGui::SliderInt("Clip Width", &variable_width, 0, src_width);
+			ImGui::SliderInt("Clip Height", &variable_height, 0, src_height);
+
+			ImGui::TreePop();
+		}
+	}
+
+	void SpriteComponent::Load(ecs::Registry* registry)
+	{
+		SetRegistry(registry);
+
+		texture = locator::Locator::GetResourceManager()->GetTextureResource(texture->GetTextureData()->filename);
+
+		variable_texcoords.at(0) = { .0f,.0f };
+		variable_texcoords.at(1) = { 1.f,.0f };
+		variable_texcoords.at(2) = { .0f,1.f };
+		variable_texcoords.at(3) = { 1.f,1.f };
+
+		AdjustSrcTexturePivot(pivot_type, 0, 0, src_width, src_height);
+		CreateVertexBuffer(GetRegistry()->GetScene()->GetFramework()->GetDevice());
 	}
 
 	void SpriteComponent::AdjustSrcTexturePivot(const PivotType pivot_type,
@@ -123,46 +181,5 @@ namespace cumulonimbus::component
 				assert(!"CreateBuffer Error (Texture2DComponent class)");
 		}
 	}
-
-	void SpriteComponent::RenderImGui()
-	{
-		if (ImGui::TreeNode("Sprite Data"))
-		{
-			if (ImGui::TreeNode("Image"))
-			{
-				ImGui::Text(texture->GetTextureData()->file_path.c_str());
-				ImGui::SameLine();
-				ImGui::Image((void*)texture->GetTextureData()->texture_view.Get(), { image_size.x,image_size.y });
-
-				if (ImGui::Button("Reset"))
-				{
-					image_size = DirectX::XMFLOAT2{ 100.0f,100.0f };
-				}
-
-				ImGui::SliderFloat2("Size", (float*)&image_size, 0.0f, 300.0f);
-				ImGui::TreePop();
-			}
-
-			ImGui::SliderInt("Clip Width", &variable_width, 0, src_width);
-			ImGui::SliderInt("Clip Height", &variable_height, 0, src_height);
-
-			ImGui::TreePop();
-		}
-	}
-
-	void SpriteComponent::Load(ecs::Registry* registry)
-	{
-		SetRegistry(registry);
-		
-		texture = locator::Locator::GetResourceManager()->GetTextureResource(texture->GetTextureData()->filename);
-
-		variable_texcoords.at(0) = { .0f,.0f };
-		variable_texcoords.at(1) = { 1.f,.0f };
-		variable_texcoords.at(2) = { .0f,1.f };
-		variable_texcoords.at(3) = { 1.f,1.f };
-
-		AdjustSrcTexturePivot(pivot_type, 0, 0, src_width, src_height);
-		CreateVertexBuffer(GetRegistry()->GetScene()->GetFramework()->GetDevice());
-	}
-}
+} // cumulonimbus::component
 

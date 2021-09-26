@@ -1,8 +1,4 @@
 #pragma once
-#include <d3d11.h>
-#include <DirectXMath.h>
-#include <SimpleMath.h>
-
 #include "component_base.h"
 #include "camera.h"
 #include "rename_type_mapping.h"
@@ -23,11 +19,10 @@ namespace cumulonimbus::component
 		 * @param width				: ビュー行列時の幅(デフォルトはスクリーンの幅)
 		 * @param height			: ビュー行列時の高さ(デフォルトはスクリーンの高さ)
 		 */
-		explicit CameraComponent(
-			ecs::Registry* registry, mapping::rename_type::Entity ent,
-			bool is_main_camera = true,
-			float width  = locator::Locator::GetWindow()->Width(),
-			float height = locator::Locator::GetWindow()->Height());
+		explicit CameraComponent(ecs::Registry* registry, mapping::rename_type::Entity ent,
+								 bool is_main_camera = true,
+								 float width  = locator::Locator::GetWindow()->Width(),
+								 float height = locator::Locator::GetWindow()->Height());
 		explicit CameraComponent()  = default; // for cereal
  		~CameraComponent() override = default;
 
@@ -75,9 +70,9 @@ namespace cumulonimbus::component
 		mapping::rename_type::Entity attach_entity;	// アタッチするオブジェクトのエンティティ
 		float camera_length; // オブジェクトとカメラの長さ
 
+		bool  is_active				  = true;  // カメラを描画対象に加えるか(RenderPath::Render関数内でtrueの場合のみ描画する)
 		bool  is_use_camera_for_debug = true; // デバッグ用カメラを使用するか
-		bool  is_active		 = true;  // カメラを描画対象に加えるか(RenderPath::Render関数内でtrueの場合のみ描画する)
-		bool  is_main_camera = false; // バックバッファ用のカメラ(全てのcamera_componentの中でtrueになるのは常に一つだけ)
+		bool  is_main_camera		  = false; // バックバッファ用のカメラ(全てのcamera_componentの中でtrueになるのは常に一つだけ)
 
 		/**
 		 * @brief : オブジェクトアタッチ時の更新関数

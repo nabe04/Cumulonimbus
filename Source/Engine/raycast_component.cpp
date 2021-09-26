@@ -1,7 +1,40 @@
 #include "raycast_component.h"
 
+#include "cereal_helper.h"
+
+CEREAL_REGISTER_TYPE(cumulonimbus::component::RayCastComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::CollisionComponent, cumulonimbus::component::RayCastComponent)
+
+namespace cumulonimbus::collision
+{
+	template <class Archive>
+	void Ray::serialize(Archive&& archive)
+	{
+		archive(
+			CEREAL_NVP(hit_result),
+			CEREAL_NVP(ray_start),
+			CEREAL_NVP(ray_end),
+			CEREAL_NVP(ray_offset),
+			CEREAL_NVP(block_pos),
+			CEREAL_NVP(terrain_attribute),
+			CEREAL_NVP(is_block),
+			CEREAL_NVP(is_block_hit)
+		);
+	}
+
+} // cumulonimbus::collision
+
 namespace cumulonimbus::component
 {
+	template <class Archive>
+	void RayCastComponent::serialize(Archive&& archive)
+	{
+		archive(
+			CEREAL_NVP(rays)
+		);
+	}
+
+
 	RayCastComponent::RayCastComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, CollisionTag tag)
 		: CollisionComponent{ registry,ent,tag }
 	{
@@ -35,6 +68,11 @@ namespace cumulonimbus::component
 			}
 			ImGui::TreePop();
 		}
+	}
+
+	void RayCastComponent::Load(ecs::Registry* registry)
+	{
+		SetRegistry(registry);
 	}
 
 	void RayCastComponent::AddRay(const std::string& ray_name, const collision::Ray& ray)

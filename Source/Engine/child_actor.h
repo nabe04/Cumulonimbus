@@ -45,7 +45,7 @@ namespace cumulonimbus::component
 		DirectX::SimpleMath::Matrix parent_matrix;
 		std::string tag_node_name;
 	};
-}
+} // cumulonimbus::component
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::ChildActorComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::MeshObjectComponent, cumulonimbus::component::ChildActorComponent)

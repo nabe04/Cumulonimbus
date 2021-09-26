@@ -2,13 +2,44 @@
 
 #include <cassert>
 
+#include "cereal_helper.h"
 #include "ecs.h"
-#include "transform_component.h"
-#include "fbx_model_resource.h"
+// components
 #include "fbx_model_component.h"
+#include "fbx_model_resource.h"
+#include "transform_component.h"
+
+CEREAL_REGISTER_TYPE(cumulonimbus::component::SphereCollisionComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::CollisionComponent, cumulonimbus::component::SphereCollisionComponent)
+
+namespace cumulonimbus::collision
+{
+	template <class Archive>
+	void Sphere::serialize(Archive&& archive)
+	{
+		archive(
+			CEREAL_NVP(world_transform_matrix),
+			CEREAL_NVP(offset),
+			CEREAL_NVP(bone_name),
+			CEREAL_NVP(radius),
+			CEREAL_NVP(hit_result),
+			CEREAL_NVP(collision_preset)
+		);
+	}
+
+} // cumulonimbus::collision
 
 namespace cumulonimbus::component
 {
+	template <class Archive>
+	void SphereCollisionComponent::serialize(Archive&& archive)
+	{
+		archive(
+			cereal::base_class<CollisionComponent>(this),
+			CEREAL_NVP(spheres)
+		);
+	}
+
 	SphereCollisionComponent::SphereCollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, CollisionTag tag)
 		:CollisionComponent{ registry,ent ,tag }
 	{
@@ -98,7 +129,7 @@ namespace cumulonimbus::component
 	{
 		if(name == "")
 		{// 名前の指定がない場合は「sphere(番号)」という名前にする
-			int no = spheres.size();
+			size_t no = spheres.size();
 			std::string new_name{};
 			new_name = "CollisionTag tag(" + std::to_string(no) + ")";
 			while(true)

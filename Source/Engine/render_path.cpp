@@ -19,7 +19,6 @@
 #include "sky_box.h"
 #include "sphere_collision_component.h"
 #include "sprite.h"
-#include "sprite_object.h"
 #include "transform_component.h"
 #include "model_component.h"
 
@@ -42,22 +41,6 @@ namespace cumulonimbus::renderer
 		rasterizer			= std::make_unique<Rasterizer>(device);
 		sampler				= std::make_unique<Sampler>(device);
 		dummy_texture = std::make_unique<cumulonimbus::asset::DummyTexture>( device, DirectX::XMFLOAT4{ 1.f,1.f,1.f,1.f } );
-	}
-
-	void RenderPath::BindDirectXStates(
-		ID3D11DeviceContext* immediate_context,
-		const component::SpriteObjectComponent* sprite_object,
-		const bool set_rasterizer   , const bool set_sampler,
-		const bool set_depth_stencil, const bool set_blend)
-	{
-		if (set_rasterizer)
-			rasterizer->Activate(immediate_context, sprite_object->GetRasterizerState());
-		if (set_sampler)
-			sampler->Activate(immediate_context, 0);
-		if (set_depth_stencil)
-			depth_stencil->Activate(immediate_context, sprite_object->GetDepthStencilState());
-		if (set_blend)
-			blend->Activate(immediate_context, sprite_object->GetBlendState());
 	}
 
 	void RenderPath::BindGraphicsState(
@@ -380,23 +363,19 @@ namespace cumulonimbus::renderer
 	{
 		for(auto& sprite : registry->GetArray<component::SpriteComponent>().GetComponents())
 		{
-			component::SpriteObjectComponent& sprite_obj = registry->GetComponent<component::SpriteObjectComponent>(sprite.GetEntity());
-
-			BindDirectXStates(immediate_context, &sprite_obj);
-			shader_manager_2d->Activate(immediate_context, sprite_obj.GetShaderState());
+			BindGraphicsState(immediate_context, sprite.GetGraphicsState());
+			shader_manager_2d->Activate(immediate_context, sprite.GetShaderState());
 			RenderSprite(immediate_context, registry, sprite.GetEntity());
-			shader_manager_2d->Deactivate(immediate_context, sprite_obj.GetShaderState());
+			shader_manager_2d->Deactivate(immediate_context, sprite.GetShaderState());
 		}
 
 		for(auto& anim_sprite : registry->GetArray<component::AnimSpriteComponent>().GetComponents())
 		{
-			component::SpriteObjectComponent& sprite_obj = registry->GetComponent<component::SpriteObjectComponent>(anim_sprite.GetEntity());
-
-			BindDirectXStates(immediate_context, &sprite_obj);
-			shader_manager_2d->Activate(immediate_context, sprite_obj.GetShaderState());
+			BindGraphicsState(immediate_context, anim_sprite.GetGraphicsState());
+			shader_manager_2d->Activate(immediate_context, anim_sprite.GetShaderState());
 			RenderSprite(immediate_context, registry, anim_sprite.GetEntity());
 			RenderAnimSprite(immediate_context, registry, anim_sprite.GetEntity());
-			shader_manager_2d->Deactivate(immediate_context, sprite_obj.GetShaderState());
+			shader_manager_2d->Deactivate(immediate_context, anim_sprite.GetShaderState());
 		}
 	}
 

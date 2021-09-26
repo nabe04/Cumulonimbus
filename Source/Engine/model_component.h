@@ -28,7 +28,6 @@ namespace cumulonimbus::component
 		{
 			std::string					name{};
 			int							parent_index{ -1 };
-			//Node*						parent{};
 			DirectX::XMFLOAT3			scale{};
 			DirectX::XMFLOAT4			rotate{};
 			DirectX::XMFLOAT3			translate{};
@@ -41,7 +40,6 @@ namespace cumulonimbus::component
 				archive(
 					cereal::make_nvp("node_name", name),
 					CEREAL_NVP(parent_index),
-					//cereal::make_nvp("parent node", parent),
 					CEREAL_NVP(scale),
 					CEREAL_NVP(rotate),
 					CEREAL_NVP(translate),
@@ -59,9 +57,9 @@ namespace cumulonimbus::component
 		void serialize(Archive&& archive);
 
 		void SceneUpdate(float dt) override;
-		
-		void PreGameUpdate(float delta_time) override;
-		void GameUpdate(float delta_time) override;
+
+		void PreGameUpdate(float dt) override;
+		void GameUpdate(float dt) override;
 		void RenderImGui() override;
 
 		void Load(ecs::Registry* registry) override;
@@ -108,27 +106,27 @@ namespace cumulonimbus::component
 
 		void SetIsVisible(const bool result) { is_visible = result; }
 	private:
-		mapping::rename_type::UUID model_id{};
+		mapping::rename_type::UUID				model_id{};
 		std::vector<mapping::rename_type::UUID> material_ids{};	// マテリアルコピー用
-		std::vector<Node> nodes{};
+		std::vector<Node>						nodes{};
+		graphics::GraphicsState					graphics_state{};
 
-		int	prev_key_index{ 0 };
-		int	current_keyframe{ 0 };	// 現在のキーフレーム
-		int	prev_animation_index{ -1 };	// 前のアニメーションのインデックス番号(ブレンドで使用)
-		int	current_animation_index{ -1 };
+		int	prev_key_index			{ 0 };
+		int	current_keyframe		{ 0 };	// 現在のキーフレーム
+		int	prev_animation_index	{ -1 };	// 前のアニメーションのインデックス番号(ブレンドで使用)
+		int	current_animation_index	{ -1 };
 
-		float prev_seconds{ .0f }; // アニメーションが切り替わった時点の前のアニメーションのキーフレーム(ブレンドで使用)
-		float changer_timer{ .0f };
-		float current_seconds{ .0f };
-		float animation_switch_time{ .0f };
+		float prev_seconds			{ .0f }; // アニメーションが切り替わった時点の前のアニメーションのキーフレーム(ブレンドで使用)
+		float changer_timer			{ .0f };
+		float current_seconds		{ .0f };
+		float animation_switch_time	{ .0f };
 
 		bool is_visible		{ true };	// 描画するか
 		bool end_animation	{ false };
 		bool loop_animation	{ false };// アニメーションのループ再生
 
-		asset::ModelData::Animation prev_animation{};
 		StateMachine<AnimationState, void, const float>	anim_states{};
-		graphics::GraphicsState graphics_state{};
+		asset::ModelData::Animation prev_animation{};
 
 		void InitializeParameter();
 		// ModelのIDから情報を取得

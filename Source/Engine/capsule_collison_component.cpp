@@ -3,14 +3,48 @@
 
 #include <cassert>
 
-#include "ecs.h"
 #include "arithmetic.h"
-#include "transform_component.h"
-#include "fbx_model_resource.h"
+#include "cereal_helper.h"
+#include "ecs.h"
 #include "fbx_model_component.h"
+#include "fbx_model_resource.h"
+#include "transform_component.h"
+
+CEREAL_REGISTER_TYPE(cumulonimbus::component::CapsuleCollisionComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::CollisionComponent, cumulonimbus::component::CapsuleCollisionComponent)
+
+namespace cumulonimbus::collision
+{
+	template <class Archive>
+	void Capsule::serialize(Archive&& archive)
+	{
+		archive(
+			CEREAL_NVP(world_transform_matrix),
+			CEREAL_NVP(offset),
+			CEREAL_NVP(rotation),
+			CEREAL_NVP(start),
+			CEREAL_NVP(end),
+			CEREAL_NVP(bone_name),
+			CEREAL_NVP(length),
+			CEREAL_NVP(radius),
+			CEREAL_NVP(hit_result),
+			CEREAL_NVP(collision_preset)
+		);
+	}
+
+} // collision
 
 namespace cumulonimbus::component
 {
+	template <class Archive>
+	void CapsuleCollisionComponent::serialize(Archive&& archive)
+	{
+		archive(
+			CEREAL_NVP(capsules)
+		);
+	}
+
+
 	CapsuleCollisionComponent::CapsuleCollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, CollisionTag tag)
 		:CollisionComponent{ registry,ent,tag }
 	{

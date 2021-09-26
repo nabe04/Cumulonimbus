@@ -43,7 +43,6 @@ namespace cumulonimbus
 	namespace component
 	{
 		class MeshObjectComponent;
-		class SpriteObjectComponent;
 		class GeomPrimComponent;
 		class ModelComponent;
 	} // component
@@ -100,11 +99,6 @@ namespace cumulonimbus::renderer
 		 * brief : "MeshObjectComponent"がもつDirectX stateのセット
 		 *         (states : rasterizer , sampler , depth_stencil , blend)
 		 */
-		void BindDirectXStates(
-				ID3D11DeviceContext* immediate_context,
-				const component::SpriteObjectComponent* sprite_object,
-			    bool set_rasterizer = true	, bool set_sampler = true,
-				bool set_depth_stencil = true, bool set_blend = true);
 		void BindGraphicsState(
 				ID3D11DeviceContext* immediate_context,
 				const cumulonimbus::graphics::GraphicsState& graphics_state);
@@ -128,7 +122,7 @@ namespace cumulonimbus::renderer
 		 * brief     : 深度テクスチャの作成
 		 *             作成されたテクスチャは
 		 *		       Render3D()でのShadowMapのリソースとして使用
-		 * ※caution : "FBXModelComponent", "ObjModelComponent", "GeometricPrimitiveComponent"
+		 * ※caution : "FBXModelComponent"
 		 *			   を持つエンティティのみ描画される
 		 */
 		void RenderShadow_Begin(ID3D11DeviceContext* immediate_context) const;
@@ -190,7 +184,7 @@ namespace cumulonimbus::renderer
 
 		/*
 		 * brief     : 3Dモデルの描画
-		 * ※caution : "FBXModelComponent", "ObjModelComponent", "GeometricPrimitiveComponent"
+		 * ※caution : "FBXModelComponent"
 		 *			   を持つエンティティのみ描画される
 		 */
 		void Render3D_Begin(ID3D11DeviceContext* immediate_context);
@@ -243,7 +237,7 @@ namespace cumulonimbus::renderer
 
 		/*
 		 * brief        : 2Dスプライトの描画
-		 * ※caution(1) : "SpriteObjectComponent", "SpriteComponent", "AnimSpriteComponent"
+		 * ※caution(1) : "SpriteComponent", "AnimSpriteComponent"
 		 *                を持つエンティティのみ描画される
 		 * ※caution(2) : "バックバッファに直接書き込むため「Begin」や「End」はない"
 		 */

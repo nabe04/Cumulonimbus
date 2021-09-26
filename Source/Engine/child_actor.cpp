@@ -54,4 +54,4 @@ namespace cumulonimbus::component
 		SetRegistry(registry);
 	}
 
-}
+} // cumulonimbus::component

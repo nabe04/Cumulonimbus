@@ -24,6 +24,9 @@ namespace cumulonimbus
 			float						 radius{ 1 };		// カプセルの半径
 			HitResult					 hit_result{};		// ヒット結果
 			CollisionPreset				 collision_preset{ CollisionPreset::OverlapAll };	// コリジョンのプロファイル
+
+			template <class Archive>
+			void serialize(Archive&& archive);
 		};
 	} // collision
 
@@ -44,6 +47,9 @@ namespace cumulonimbus
 
 			void Load(ecs::Registry* registry) override;
 
+			template<class Archive>
+			void serialize(Archive&& archive);
+			
 			/**
 			 * @brief		 : カプセルの追加
 			 * @param name	 : カプセル名(std::unordered_mapのキー値として使用)

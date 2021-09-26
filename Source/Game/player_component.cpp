@@ -417,7 +417,6 @@ namespace cumulonimbus::component
 		const float				trigger_right = Locator::GetInput()->GamePad().RightTrigger(0);
 
 		{// ˆÚ“®‘¬“x‚ÌÝ’è
-			//auto& physics_comp = GetRegistry()->GetComponent<PhysicsComponent>(GetEntity());
 			//physics_comp.AddForce({ walk_speed,0.0f,walk_speed });
 			auto& movement_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
 			movement_comp.AddForce({ walk_speed,0.0f,walk_speed });

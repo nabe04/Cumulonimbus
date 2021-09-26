@@ -34,7 +34,6 @@ namespace cumulonimbus::component
 		virtual void PostGameUpdate(float dt) {}
 
 		virtual void RenderImGui() {}
-		//virtual void Save(const std::string& file_path)			 = 0;
 		virtual void Load(ecs::Registry* registry) = 0;
 
 		template<typename Archive>

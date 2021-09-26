@@ -6,8 +6,6 @@
 
 #include <d3d11.h>
 #include <wrl.h>
-#include <cereal/cereal.hpp>
-#include <cereal/types/polymorphic.hpp>
 
 #include "component_base.h"
 #include "texture.h"
@@ -25,8 +23,17 @@ namespace cumulonimbus::component
 		*/
 		explicit SkyBoxComponent(ecs::Registry* registry, mapping::rename_type::Entity ent,
 								 ID3D11Device* device, const char* filename);
-		explicit SkyBoxComponent() = default; // for cereal
+		explicit SkyBoxComponent()  = default; // for cereal
 		~SkyBoxComponent() override = default;
+
+		void PreGameUpdate(float dt) override {}
+		void GameUpdate(float dt)	 override {}
+		void RenderImGui()			 override;;
+
+		void Load(ecs::Registry* registry) override;
+
+		template <class Archive>
+		void serialize(Archive&& archive);
 
 		/*
 		 * brief : SkyBox用 vs,psのセット
@@ -54,16 +61,6 @@ namespace cumulonimbus::component
 
 		ID3D11ShaderResourceView* GetShaderResoueceView() { return texture_view.Get(); }
 		ID3D11ShaderResourceView** GetShaderResoueceViewAddress() { return texture_view.GetAddressOf(); }
-
-
-		void PreGameUpdate(float dt) override {}
-		void GameUpdate(float dt)	override {}
-		void RenderImGui()		override;;
-
-		void Load(ecs::Registry* registry) override;
-
-		template <class Archive>
-		void serialize(Archive&& archive);
 
 	private:
 		std::array<std::shared_ptr<TextureResource>, 6> cube_texture{};

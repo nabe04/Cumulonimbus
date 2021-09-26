@@ -63,8 +63,9 @@ public:
 	void serialize(Archive&& archive)
 	{
 		archive(
-			cereal::make_nvp("State Map"	, state_map),
-			cereal::make_nvp("Current State", current_state)
+			CEREAL_NVP(state_map),
+			CEREAL_NVP(state_names),
+			CEREAL_NVP(current_state)
 		);
 	}
 

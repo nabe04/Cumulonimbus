@@ -16,14 +16,17 @@ namespace cumulonimbus
 	{
 		struct Ray
 		{
+			HitResult					 hit_result{};	// ヒット結果
 			DirectX::SimpleMath::Vector3 ray_start;		// レイの始点
 			DirectX::SimpleMath::Vector3 ray_end;		// レイの終点
 			DirectX::SimpleMath::Vector3 ray_offset;	// レイキャストを行う位置のオフセット値(TransformComponentと合わせて使用する)
 			DirectX::SimpleMath::Vector3 block_pos;		// is_blockがtrue時の地形とのブロック位置
-			HitResult  hit_result{};	// ヒット結果
-			utility::TerrainAttribute terrain_attribute{};	// 判定した地形の属性判別
-			bool is_block		= true;		// 判定が行われたときにモデルと地形とをブロックするか
-			bool is_block_hit	= false;	// block_posと地形とが当たったとき
+			utility::TerrainAttribute	 terrain_attribute{};		// 判定した地形の属性判別
+			bool						 is_block		= true;		// 判定が行われたときにモデルと地形とをブロックするか
+			bool						 is_block_hit	= false;	// block_posと地形とが当たったとき
+
+			template<class Archive>
+			void serialize(Archive&& archive);
 		};
 	} // collision
 
@@ -34,14 +37,17 @@ namespace cumulonimbus
 		public:
 			using CollisionComponent::CollisionComponent;
 			explicit RayCastComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, CollisionTag tag);
-			explicit RayCastComponent() = default; // for cereal
+			explicit RayCastComponent()  = default; // for cereal
 			~RayCastComponent() override = default;
 
-			void PreGameUpdate(float dt) override {}
-			void GameUpdate(float dt)   override {}
-			void RenderImGui()		override;
+			void PreGameUpdate(float dt)		override {}
+			void GameUpdate(float dt)			override {}
+			void RenderImGui()					override;
 
-			void Load(ecs::Registry* registry) override {}
+			void Load(ecs::Registry* registry)	override;
+
+			template<class Archive>
+			void serialize(Archive&& archive);
 
 			void AddRay(const std::string& ray_name, const collision::Ray& ray);
 

@@ -6,19 +6,16 @@
 #include "generic.h"
 // components(engine)
 #include "actor3d_component.h"
-#include "actor_component.h"
 #include "anim_sprite.h"
 #include "camera_component.h"
 #include "child_actor.h"
 #include "fbx_model_component.h"
 #include "material_component.h"
 #include "mesh_object.h"
-#include "obj_model_component.h"
 #include "raycast_component.h"
 #include "scene.h"
 #include "sky_box.h"
 #include "sprite.h"
-#include "sprite_object.h"
 #include "transform_component.h"
 #include "model_component.h"
 #include "rigid_body_component.h"
@@ -167,17 +164,14 @@ namespace cumulonimbus::ecs
 	void Registry::RegisterComponentName()
 	{
 		//// engine
-		//RegistryComponent<component::ActorComponent>();
 		//RegistryComponent<component::ChildActorComponent>();
 		RegistryComponent<component::TransformComponent>();
 		//RegistryComponent<component::SpriteComponent>();
 		//RegistryComponent<component::AnimSpriteComponent>();
-		//RegistryComponent<component::SpriteObjectComponent>();
 		RegistryComponent<component::MeshObjectComponent>();
 		RegistryComponent<component::FbxModelComponent>();
 		RegistryComponent<component::ModelComponent>();
 		//RegistryComponent<component::GeomPrimComponent>();
-		//RegistryComponent<component::ObjModelComponent>();
 		RegistryComponent<component::SkyBoxComponent>();
 		RegistryComponent<component::CameraComponent>();
 		RegistryComponent<component::RigidBodyComponent>();

@@ -1,16 +1,25 @@
 #include "anim_sprite.h"
 
-#include <cereal/types/array.hpp>
-#include <cereal/types/vector.hpp>
-
-#include "cereal_helper.h"
-#include "file_path_helper.h"
-#include "locator.h"
 #include "scene.h"
-#include "texture.h"
+
+CEREAL_REGISTER_TYPE(cumulonimbus::component::AnimSpriteComponent);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::SpriteComponent, cumulonimbus::component::AnimSpriteComponent)
 
 namespace cumulonimbus::component
 {
+	template <class Archive>
+	void AnimSpriteComponent::serialize(Archive&& archive)
+	{
+		archive(
+			cereal::base_class<SpriteComponent>(this),
+			CEREAL_NVP(clip_texcoord),
+			CEREAL_NVP(num_clip),
+			CEREAL_NVP(anim_texcoord),
+			CEREAL_NVP(anim_pivot)
+		);
+	}
+
+
 	AnimSpriteComponent::AnimSpriteComponent(ecs::Registry* const registry, const  mapping::rename_type::Entity ent,
 		ID3D11Device* device,
 		const char* filename, const PivotType pivot_type,
@@ -115,8 +124,8 @@ namespace cumulonimbus::component
 
 	void AnimSpriteComponent::Load(ecs::Registry* registry)
 	{
-
+		SetRegistry(registry);
 	}
 
-}
+} // cumulonimbus::component
 

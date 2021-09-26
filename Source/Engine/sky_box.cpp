@@ -4,7 +4,6 @@
 #include <string>
 
 #include <cereal/archives/json.hpp>
-#include <cereal/types/array.hpp>
 #include <cereal/types/memory.hpp>
 #include <cereal/types/string.hpp>
 #include <imgui.h>
@@ -18,6 +17,18 @@ CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cum
 
 namespace cumulonimbus::component
 {
+	template <class Archive>
+	void SkyBoxComponent::serialize(Archive&& archive)
+	{
+		archive(
+			cereal::base_class<ComponentBase>(this),
+			CEREAL_NVP(cube_texture),
+			CEREAL_NVP(vs_name),
+			CEREAL_NVP(ps_name)
+		);
+	}
+
+
 	SkyBoxComponent::SkyBoxComponent(ecs::Registry* registry, mapping::rename_type::Entity ent,
 									 ID3D11Device* device	, const char* filename)
 		:ComponentBase{ registry, ent }
@@ -27,6 +38,32 @@ namespace cumulonimbus::component
 
 		vertex_shader = std::make_shared<shader::VertexShader>(device, vs_name.c_str());
 		pixel_shader  = std::make_shared<shader::PixelShader>(device, ps_name.c_str());
+	}
+
+	void SkyBoxComponent::RenderImGui()
+	{
+		if (ImGui::TreeNode("Sky map texture"))
+		{
+			for (auto& it : cube_texture)
+			{
+				ImGui::Text(it->GetTextureData()->file_path.c_str());
+				ImGui::SameLine();
+				ImGui::Image((void*)it->GetTextureData()->texture_view.Get(), { 100,100 });
+			}
+
+			ImGui::TreePop();
+		}
+	}
+
+	void SkyBoxComponent::Load(ecs::Registry* registry)
+	{
+		SetRegistry(registry);
+
+		CreateVertexBufferAndIndexBuffer(GetRegistry()->GetScene()->GetFramework()->GetDevice());
+		CreateTextures(GetRegistry()->GetScene()->GetFramework()->GetDevice(), "./Data/Assets/cubemap/skybox"); // Todo : SkyBox‚ÌTextureLoad•û–@‚ª–¢’è
+
+		vertex_shader = std::make_unique<shader::VertexShader>(GetRegistry()->GetScene()->GetFramework()->GetDevice(), vs_name.c_str());
+		pixel_shader  = std::make_unique<shader::PixelShader>(GetRegistry()->GetScene()->GetFramework()->GetDevice(), ps_name.c_str());
 	}
 
 	void SkyBoxComponent::CreateVertexBufferAndIndexBuffer(ID3D11Device* device)
@@ -144,48 +181,5 @@ namespace cumulonimbus::component
 		if (FAILED(hr))
 			assert(!"CreateShaderResoueceView error(skybox.cpp)");
 	}
-
-	void SkyBoxComponent::RenderImGui()
-	{
-		if (ImGui::TreeNode("Sky map texture"))
-		{
-			for (auto& it : cube_texture)
-			{
-				ImGui::Text(it->GetTextureData()->file_path.c_str());
-				ImGui::SameLine();
-				ImGui::Image((void*)it->GetTextureData()->texture_view.Get(), { 100,100 });
-			}
-
-			ImGui::TreePop();
-		}
-	}
-
-	void SkyBoxComponent::Load(ecs::Registry* registry)
-	{
-		SetRegistry(registry);
-		//{
-		//	std::ifstream ifs(file_path_and_name);
-		//	cereal::JSONInputArchive i_archive(ifs);
-		//	i_archive(*this);
-		//}
-
-		CreateVertexBufferAndIndexBuffer(GetRegistry()->GetScene()->GetFramework()->GetDevice());
-		CreateTextures(GetRegistry()->GetScene()->GetFramework()->GetDevice(), "./Data/Assets/cubemap/skybox"); // Todo : SkyBox‚ÌTextureLoad•û–@‚ª–¢’è
-
-		vertex_shader = std::make_unique<shader::VertexShader>(GetRegistry()->GetScene()->GetFramework()->GetDevice(), vs_name.c_str());
-		pixel_shader  = std::make_unique<shader::PixelShader>(GetRegistry()->GetScene()->GetFramework()->GetDevice(), ps_name.c_str());
-	}
-
-	template <class Archive>
-	void SkyBoxComponent::serialize(Archive&& archive)
-	{
-		archive(
-			cereal::base_class<ComponentBase>(this),
-			CEREAL_NVP(cube_texture),
-			CEREAL_NVP(vs_name),
-			CEREAL_NVP(ps_name)
-		);
-	}
-
 } //  cumulonimbus::component
 

@@ -19,13 +19,13 @@ namespace cumulonimbus::editor
 {
 	Inspector::Inspector()
 	{
-		RegisterComponent<component::FbxModelComponent>(		"Model Component"	, mapping::component_tag::ComponentTag::Mesh);
+		RegisterComponent<component::FbxModelComponent>(		"Model Component"	 , mapping::component_tag::ComponentTag::Mesh);
 		RegisterComponent<component::ModelComponent>(			"New Model Component", mapping::component_tag::ComponentTag::Mesh);
-		RegisterComponent<component::RayCastComponent>(			"RayCast Collider"	, mapping::component_tag::ComponentTag::Physics);
-		RegisterComponent<component::CapsuleCollisionComponent>("Capsule Collider"	, mapping::component_tag::ComponentTag::Physics);
-		RegisterComponent<component::PhysicMaterialComponent>(	"Physic Material"	, mapping::component_tag::ComponentTag::Physics);
-		RegisterComponent<component::SphereCollisionComponent>(	"Sphere Collider"	, mapping::component_tag::ComponentTag::Physics);
-		RegisterComponent<component::RigidBodyComponent>(		"RigidBody"			, mapping::component_tag::ComponentTag::Physics);
+		RegisterComponent<component::RayCastComponent>(			"RayCast Collider"	 , mapping::component_tag::ComponentTag::Physics);
+		RegisterComponent<component::CapsuleCollisionComponent>("Capsule Collider"	 , mapping::component_tag::ComponentTag::Physics);
+		RegisterComponent<component::PhysicMaterialComponent>(	"Physic Material"	 , mapping::component_tag::ComponentTag::Physics);
+		RegisterComponent<component::SphereCollisionComponent>(	"Sphere Collider"	 , mapping::component_tag::ComponentTag::Physics);
+		RegisterComponent<component::RigidBodyComponent>(		"RigidBody"			 , mapping::component_tag::ComponentTag::Physics);
 	}
 
 	void Inspector::Render(ecs::Registry* registry, const mapping::rename_type::Entity ent)
@@ -40,7 +40,7 @@ namespace cumulonimbus::editor
 
 			// エンティティ名の変更
 			std::string& name = registry->GetEntities().at(ent).second;
-			const int arr_size = name.length();
+			const size_t arr_size = name.length();
 			char buf[256];
 			strcpy_s(buf, arr_size + 1, name.c_str());
 			if (ImGui::InputText("##", buf, 64, ImGuiInputTextFlags_CharsNoBlank))

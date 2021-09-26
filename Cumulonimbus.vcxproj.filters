@@ -186,22 +186,10 @@
     <ClCompile Include="Source\Engine\gaussian_blur.cpp">
       <Filter>Source\Engine\Shader%28.cpp%29</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\actor_component.cpp">
-      <Filter>Source\Engine\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\billboard_component.cpp">
-      <Filter>Source\Engine\Components</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Engine\collision_component.cpp">
       <Filter>Source\Engine\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\geometric_primitive_component.cpp">
-      <Filter>Source\Engine\Components</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Engine\fbx_model_component.cpp">
-      <Filter>Source\Engine\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\obj_model_component.cpp">
       <Filter>Source\Engine\Components</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\sky_box.cpp">
@@ -375,17 +363,8 @@
     <ClCompile Include="Source\Engine\window.cpp">
       <Filter>Source\Engine\System</Filter>
     </ClCompile>
-    <ClCompile Include="Source\test_animation_character.cpp">
-      <Filter>Sample</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Engine\model_render.cpp">
       <Filter>Source\Engine\Render</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\mesh_particle.cpp">
-      <Filter>Source\Engine\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\sprite_object.cpp">
-      <Filter>Source\Engine\Components</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\file_path_helper.cpp">
       <Filter>Source\Engine\System</Filter>
@@ -466,9 +445,6 @@
       <Filter>Source\Engine\Components</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\rigid_body_component..cpp">
-      <Filter>Source\Engine\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\physics_component.cpp">
       <Filter>Source\Engine\Components</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game\enemy_base_component.cpp">
@@ -572,13 +548,7 @@
     <ClInclude Include="Source\Engine\gaussian_blur.h">
       <Filter>Header\Engine\Shader%28.h%29</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\actor_component.h">
-      <Filter>Header\Engine\Components</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Engine\anim_sprite.h">
-      <Filter>Header\Engine\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\billboard_component.h">
       <Filter>Header\Engine\Components</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\child_actor.h">
@@ -591,15 +561,6 @@
       <Filter>Header\Engine\Components</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\fbx_model_component.h">
-      <Filter>Header\Engine\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\geometric_primitive_component.h">
-      <Filter>Header\Engine\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\inner_sphere_collision.h">
-      <Filter>Header\Engine\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\obj_model_component.h">
       <Filter>Header\Engine\Components</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\sphere_collision_component.h">
@@ -683,9 +644,6 @@
     <ClInclude Include="Source\Engine\3d_standard.h">
       <Filter>Header\Engine\Shader%28.h%29</Filter>
     </ClInclude>
-    <ClInclude Include="Source\test_animation_character.h">
-      <Filter>Sample</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Engine\arithmetic.h">
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
@@ -766,15 +724,6 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\model_render.h">
       <Filter>Header\Engine\Render</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\mesh_particle.h">
-      <Filter>Header\Engine\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Game\rotation_sample.h">
-      <Filter>Sample</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\sprite_object.h">
-      <Filter>Header\Engine\Components</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\enum_state_map.h">
       <Filter>Header\Engine\System</Filter>
@@ -921,9 +870,6 @@
       <Filter>Header\Engine\Helper</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\camera_component.h">
-      <Filter>Header\Engine\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\physics_component.h">
       <Filter>Header\Engine\Components</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\rigid_body_component.h">
@@ -1098,9 +1044,6 @@
     </Filter>
     <Filter Include="Shader%28HLSL%29">
       <UniqueIdentifier>{502b13e1-5329-4d21-9ab3-7b11b51e65a7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sample">
-      <UniqueIdentifier>{03982cba-4776-4550-8bdf-3ff24f6e0613}</UniqueIdentifier>
     </Filter>
     <Filter Include="Shader%28HLSL%29\VS">
       <UniqueIdentifier>{5f97243d-ddd1-4849-b3fb-ba6b9c46c3d3}</UniqueIdentifier>

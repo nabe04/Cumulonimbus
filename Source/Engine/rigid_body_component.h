@@ -15,11 +15,14 @@ namespace cumulonimbus::component
 		explicit RigidBodyComponent()  = default; // for cereal
 		~RigidBodyComponent() override = default;
 
-		void PreGameUpdate(float dt) override;
-		void GameUpdate(float dt) override;
-		void PostGameUpdate(float dt) override;
-		void RenderImGui() override;
-		void Load(ecs::Registry* registry) override;
+		void PreGameUpdate(float dt)		override;
+		void GameUpdate(float dt)			override;
+		void PostGameUpdate(float dt)		override;
+		void RenderImGui()					override;
+		void Load(ecs::Registry* registry)	override;
+
+		template<class Archive>
+		void serialize(Archive&& archive);
 
 		void Integrate(float dt);
 

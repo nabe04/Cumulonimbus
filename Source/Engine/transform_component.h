@@ -23,13 +23,20 @@ namespace cumulonimbus::component
 		}; // for cereal
 		~TransformComponent() override = default;
 
-		void SceneUpdate(float dt) override;
+		void SceneUpdate(float dt)			override;
 
 		void PreGameUpdate(float delta_time)override;
-		void GameUpdate(float delta_time) override;
-		void RenderImGui() override;
+		void GameUpdate(float delta_time)	override;
+		void RenderImGui()					override;
 
 		void Load(ecs::Registry* registry) override;
+
+		/*
+		 * brief : cereal
+		 *         À‘•‚ğ"transform_component.cpp"‚Å‘‚¢‚Ä‚¢‚é
+		 */
+		template<class  Archive>
+		void serialize(Archive&& archive);
 
 		void SetTransformCB(const TransformCB transform) const;
 		void BindCBuffer(bool set_in_vs = true, bool set_in_ps = true) const;
@@ -144,13 +151,6 @@ namespace cumulonimbus::component
 		[[nodiscard]] const DirectX::SimpleMath::Vector3& GetModelRight()const { return model_right; }
 		[[nodiscard]] const DirectX::SimpleMath::Vector3& GetModelUp() const { return model_up; }
 		[[nodiscard]] const DirectX::SimpleMath::Vector3& GetModelFront()const { return model_front; }
-
-		/*
-		 * brief : cereal
-		 *         À‘•‚ğ"transform_component.cpp"‚Å‘‚¢‚Ä‚¢‚é
-		 */
-		template<class  Archive>
-		void serialize(Archive&& archive);
 
 	private:
 		std::shared_ptr<buffer::ConstantBuffer<TransformCB>> cb_transform;

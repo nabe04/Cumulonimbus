@@ -27,9 +27,12 @@ namespace cumulonimbus::component
 		explicit PhysicMaterialComponent()  = default;
 		~PhysicMaterialComponent() override = default;
 
-		void GameUpdate(float dt) override;
-		void RenderImGui() override;
-		void Load(ecs::Registry* registry) override;
+		template<class Archive>
+		void serialize(Archive&& archive);
+		
+		void GameUpdate(float dt)			override;
+		void RenderImGui()					override;
+		void Load(ecs::Registry* registry)	override;
 
 		[[nodiscard]] float GetDynamicFriction()			const { return dynamic_friction; }
 		[[nodiscard]] float GetStaticFriction()				const { return static_friction; }

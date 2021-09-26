@@ -5,13 +5,12 @@
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <wrl.h>
-#include <cereal/cereal.hpp>
-#include <cereal/types/polymorphic.hpp>
 
 #include "component_base.h"
-#include "cereal_helper.h"
 #include "texture.h"
 #include "rename_type_mapping.h"
+#include "graphics_state.h"
+#include "shader_manager.h"
 
 enum class PivotType
 {
@@ -37,49 +36,50 @@ namespace cumulonimbus::component
 		explicit SpriteComponent() = default;	// For cereal
 		~SpriteComponent() override = default;
 
-		void PreGameUpdate(const float delta_time)override {};
-		void GameUpdate(const float delta_time) override;
-		void RenderImGui() override;
+		void PreGameUpdate(float delta_time)override {};
+		void GameUpdate(float delta_time)	override;
+		void RenderImGui()					override;
 
 		void Load(ecs::Registry* registry) override;
 
-
-		[[nodiscard]] int VariableWidth()  const { return variable_width; }
-		[[nodiscard]] int VariableHeight() const { return variable_height; }
-		[[nodiscard]] const DirectX::XMFLOAT4& Color() const { return color; }
-
-		void  VariableWidth(int width) { variable_width = width; }
-		void  VariableHeight(int height) { variable_height = height; }
-		void  Color(const DirectX::XMFLOAT4& color) { this->color = color; }
-
-		[[nodiscard]] const std::array<DirectX::XMFLOAT2, 4>& GetVariableTexcoords() const { return variable_texcoords; }
-		[[nodiscard]] const DirectX::XMFLOAT2& GetSrcPivot() const { return src_pivot; }
-		[[nodiscard]] ID3D11Buffer* GetVertexBuffer() const { return vertex_buffer.Get(); }
-		[[nodiscard]] ID3D11Buffer** GetVertexBufferAddress() { return vertex_buffer.GetAddressOf(); }
-		[[nodiscard]] TextureResource* GetTexture() const { return texture.get(); }
-
 		template<class Archive>
-		void serialize(Archive&& archive)
-		{
-			archive(
-				cereal::base_class<ComponentBase>(this),
-				CEREAL_NVP(texture),
-				CEREAL_NVP(pivot_type),
-				CEREAL_NVP(src_pivot),
-				CEREAL_NVP(src_width),
-				CEREAL_NVP(src_height),
-				CEREAL_NVP(variable_texcoords),
-				CEREAL_NVP(variable_width),
-				CEREAL_NVP(variable_height),
-				CEREAL_NVP(color),
-				CEREAL_NVP(image_size)
-			);
-		}
+		void serialize(Archive&& archive);
+
+
+		[[nodiscard]]
+		const graphics::GraphicsState& GetGraphicsState() const { return graphics_state; }
+		[[nodiscard]]
+		const shader::SpriteShaderTypes& GetShaderState() const { return sprite_shader_state.GetShaderState(); }
+
+		[[nodiscard]]
+		int VariableWidth()  const { return variable_width; }
+		[[nodiscard]]
+		int VariableHeight() const { return variable_height; }
+		[[nodiscard]]
+		const DirectX::XMFLOAT4& Color() const { return color; }
+
+		[[nodiscard]]
+		const std::array<DirectX::XMFLOAT2, 4>& GetVariableTexcoords() const { return variable_texcoords; }
+		[[nodiscard]]
+		const DirectX::XMFLOAT2& GetSrcPivot() const { return src_pivot; }
+		[[nodiscard]]
+		ID3D11Buffer* GetVertexBuffer() const { return vertex_buffer.Get(); }
+		[[nodiscard]]
+		ID3D11Buffer** GetVertexBufferAddress() { return vertex_buffer.GetAddressOf(); }
+		[[nodiscard]]
+		TextureResource* GetTexture() const { return texture.get(); }
+
+		void SetShaderState(const shader::SpriteShaderTypes& type) { sprite_shader_state.SetShaderState(type); }
+		void VariableWidth(int width) { variable_width = width; }
+		void VariableHeight(int height) { variable_height = height; }
+		void Color(const DirectX::XMFLOAT4& color) { this->color = color; }
 
 	protected:
 		Microsoft::WRL::ComPtr<ID3D11Buffer> vertex_buffer;
+		std::shared_ptr<TextureResource>     texture;
 
-		std::shared_ptr<TextureResource> texture;
+		graphics::GraphicsState   graphics_state{};
+		shader::SpriteShaderState sprite_shader_state;
 
 		PivotType			pivot_type{};
 		DirectX::XMFLOAT2	src_pivot{};
@@ -95,13 +95,11 @@ namespace cumulonimbus::component
 		// For Imgui
 		DirectX::XMFLOAT2 image_size = { 100,100 };
 
-		void AdjustSrcTexturePivot(const PivotType pivot_type,
-			const int src_left, const int src_top,
-			const int src_width, const int src_height);
+		void AdjustSrcTexturePivot(
+			PivotType pivot_type,
+			int src_left,  int src_top,
+			int src_width, int src_height);
 
 		void CreateVertexBuffer(ID3D11Device* device);
 	};
-}
-
-CEREAL_REGISTER_TYPE(cumulonimbus::component::SpriteComponent)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::SpriteComponent)
+} // cumulonimbus::component
