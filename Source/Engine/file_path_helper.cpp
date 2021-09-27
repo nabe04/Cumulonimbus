@@ -28,7 +28,6 @@ namespace cumulonimbus::file_path_helper
 		return { "lsn" };
 	}
 
-
 	std::string GetSheetExtension()
 	{
 		return { ".sheet" };
@@ -68,6 +67,18 @@ namespace cumulonimbus::file_path_helper
 	std::string GetSaveSceneViewFilePathAndName()
 	{
 		return { "./Data/SceneView/save_scene" };
+	}
+
+	bool SupportedTextureExtension(const std::filesystem::path& path)
+	{
+		static const std::set<std::filesystem::path> extensions
+		{
+			".png" , ".PNG",
+			".jpeg", ".JPEG",
+			".tga" , ".TGA",
+			".dds" , ".DDS"
+		};
+		return extensions.contains(path.extension());
 	}
 
 	constexpr std::string GetContentsDirectory()

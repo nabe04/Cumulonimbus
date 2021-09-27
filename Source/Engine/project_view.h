@@ -47,6 +47,7 @@ namespace cumulonimbus::editor
 		NavigationType							selected_navigation{NavigationType::AllAssets};  // Navigation Paneで現在選択中の項目
 		std::filesystem::path					selected_path{};   // Navigation Pane内で現在選択中のフォルダパス
 		std::filesystem::path					selected_file{};   // File and Folder内で現在選択中のファイル名
+		std::filesystem::path					delete_file{};	   // File and Folderで選択されたアセットの削除ファイルパス
 		mapping::rename_type::Hash				selected_id{};	   // All Assets内で現在選択中のLoader ID(Hash)
 		std::map<std::filesystem::path, bool>	is_folder_open{};  // Folder Tree上のフォルダが開かれているかどうか
 		helper::imgui::IMButtonState			button_state{};    // ボタンの押下状態
@@ -70,7 +71,13 @@ namespace cumulonimbus::editor
 		/**
 		 * @brief : アセットのインポートボタン
 		 */
-		void ImportMenu();
+		void ImportMenu() const;
+
+		/**
+		 * @brief : File and Folder List内のアセット右クリック時の操作
+		 */
+		void ContextMenu();
+
 		/**
 		 * @brief : アセットシート内の全てのアセット表示
 		 */
@@ -83,6 +90,6 @@ namespace cumulonimbus::editor
 		/**
 		 * @brief : Navigation Pane で選択された項目の表示
 		 */
-		std::filesystem::path ShowFileAndFolderList(const asset::AssetManager& asset_manager);
+		std::filesystem::path ShowFileAndFolderList(asset::AssetManager& asset_manager);
 	};
 } // cumulonimbus::editor

@@ -33,6 +33,11 @@ namespace cumulonimbus::asset
 		 */
 		void Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id) override;
 
+		/**
+		 * @brief : モデルアセットの削除
+		 */
+		void Delete(AssetManager& asset_manager, const std::filesystem::path& path) override;
+
 		[[nodiscard]]
 		bool Supported(std::filesystem::path extension) override;
 

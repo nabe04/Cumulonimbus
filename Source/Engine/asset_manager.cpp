@@ -11,6 +11,7 @@
 #include "model_loader.h"
 #include "texture_loader.h"
 #include "file_path_helper.h"
+#include "loader.h"
 
 namespace
 {
@@ -36,6 +37,41 @@ namespace cumulonimbus::asset
 		{
 			if (value->Supported(path.extension()))
 				value->Load(*this, path);
+		}
+	}
+
+	void AssetManager::DeleteAssetAndLoader(const std::filesystem::path& path)
+	{
+		DeleteLoader(path);
+		DeleteAsset(path);
+	}
+
+	void AssetManager::DeleteAsset(const std::filesystem::path& path) const
+	{
+		// pathとアセットシートに登録されているパスが一致した場合trueになる
+		bool is_hit{ false };
+
+		for (auto& [hash, asset_sheet] : sheet_manager->GetSheets())
+		{
+			for(auto& [uuid,asset_path] : asset_sheet.sheet)
+			{
+				if(path == asset_path)
+				{
+					is_hit = true;
+					asset_sheet.sheet.erase(uuid);
+					break;
+				}
+			}
+			if (is_hit)
+				break;
+		}
+	}
+
+	void AssetManager::DeleteLoader(const std::filesystem::path& path)
+	{
+		for (auto& [hash, loader] : loaders)
+		{
+			loader->Delete(*this,path);
 		}
 	}
 

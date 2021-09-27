@@ -4,22 +4,23 @@
 #include <fstream>
 
 #include "generic.h"
+#include "scene.h"
 // components(engine)
 #include "actor3d_component.h"
 #include "anim_sprite.h"
 #include "camera_component.h"
-#include "child_actor.h"
-#include "fbx_model_component.h"
-#include "material_component.h"
-#include "mesh_object.h"
+#include "capsule_collison_component.h"
+#include "model_component.h"
+#include "physic_material_component.h"
 #include "raycast_component.h"
-#include "scene.h"
+#include "rigid_body_component.h"
 #include "sky_box.h"
+#include "sphere_collision_component.h"
 #include "sprite.h"
 #include "transform_component.h"
-#include "model_component.h"
-#include "rigid_body_component.h"
 // components(game)
+#include "enemy_base_component.h"
+#include "enemy_soldier_component.h"
 #include "player_component.h"
 
 namespace cumulonimbus::ecs
@@ -163,21 +164,33 @@ namespace cumulonimbus::ecs
 	 */
 	void Registry::RegisterComponentName()
 	{
-		//// engine
-		//RegistryComponent<component::ChildActorComponent>();
+		//-- engine --//
+		// transform
 		RegistryComponent<component::TransformComponent>();
-		//RegistryComponent<component::SpriteComponent>();
-		//RegistryComponent<component::AnimSpriteComponent>();
-		RegistryComponent<component::MeshObjectComponent>();
-		RegistryComponent<component::FbxModelComponent>();
+		// actor
+		RegistryComponent<component::Actor3DComponent>();
+		// model
 		RegistryComponent<component::ModelComponent>();
-		//RegistryComponent<component::GeomPrimComponent>();
-		RegistryComponent<component::SkyBoxComponent>();
-		RegistryComponent<component::CameraComponent>();
+		// sprite
+		RegistryComponent<component::SpriteComponent>();
+		RegistryComponent<component::AnimSpriteComponent>();
+		// physics
+		RegistryComponent<component::SphereCollisionComponent>();
+		RegistryComponent<component::CollisionComponent>();
+		RegistryComponent<component::RayCastComponent>();
+		RegistryComponent<component::CapsuleCollisionComponent>();
+		RegistryComponent<component::PhysicMaterialComponent>();
 		RegistryComponent<component::RigidBodyComponent>();
-		//RegistryComponent<component::MaterialComponent>();
-		// game
-		//RegistryComponent<component::PlayerComponent>();
+		// camera
+		RegistryComponent<component::CameraComponent>();
+		// sky box
+		RegistryComponent<component::SkyBoxComponent>();
+		//-- game --//
+		// player
+		RegistryComponent<component::PlayerComponent>();
+		// enemy
+		RegistryComponent<component::EnemyBaseComponent>();
+		RegistryComponent<component::EnemySoldierComponent>();
 	}
 
 	void Registry::Save(const std::string& filename, const std::string& scene_name)

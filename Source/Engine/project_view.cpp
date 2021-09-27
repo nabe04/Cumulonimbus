@@ -1,22 +1,25 @@
 #include "project_view.h"
 
 #include <vector>
+#include <filesystem>
 
 #include <Windows.h>
-
 #include <portable-file-dialogs.h>
 
-#include "asset_sheet_manager.h"
-#include "locator.h"
+#include "asset_manager.h"
+#include "file_path_helper.h"
 #include "generic.h"
+#include "locator.h"
 #include "material.h"
 #include "model.h"
 #include "texture.h"
+#include "texture_loader.h"
 
 
 namespace
 {
 	const std::string viewer_dir{ "./Data/Assets" };
+	const std::string context_id{ "context_menu" }; // ImGui::OpenPopup,BeginPopupのコンテキストメニューID
 }
 
 namespace cumulonimbus::editor
@@ -51,18 +54,20 @@ namespace cumulonimbus::editor
 			{
 				ImGui::TableSetupScrollFreeze(0, 1); // Make top row always visible
 				ImGui::TableSetupColumn("##Navigation Pane", ImGuiTableColumnFlags_None);
-				ImGui::TableSetupColumn("##File and Folder list", ImGuiTableColumnFlags_None);
+				ImGui::TableSetupColumn("##File and Folder List", ImGuiTableColumnFlags_None);
 				ImGui::TableHeadersRow();
 				ImGui::TableNextRow();
-				{
+				{// Navigation Pane
 					ImGui::TableSetColumnIndex(0);
 					ImportMenu();
 					ShowAllAssets(*locator::Locator::GetAssetManager());
 					ShowFolderTree(viewer_dir);
 				}
-				{
+				{// File and Folder List
 					ImGui::TableSetColumnIndex(1);
 					ShowFileAndFolderList(*locator::Locator::GetAssetManager());
+					// OpenPopup時コンテキストメニューの表示
+					//ContextMenu();
 					ImGui::Text("is_drag %d", is_dragged);
 				}
 				ImGui::EndTable();
@@ -90,7 +95,7 @@ namespace cumulonimbus::editor
 		connector.emplace(hash, name);
 	}
 
-	void ProjectView::ImportMenu()
+	void ProjectView::ImportMenu() const
 	{
 		if (ImGui::Button(ICON_FA_PLUS "Import" ICON_FA_SORT_DOWN))
 			ImGui::OpenPopup("my_file_popup");
@@ -132,6 +137,30 @@ namespace cumulonimbus::editor
 				// アセット(テクスチャ)
 				locator::Locator::GetAssetManager()->AddAsset(selection.at(0));
 			}
+			ImGui::EndPopup();
+		}
+	}
+
+	void ProjectView::ContextMenu()
+	{
+		if(ImGui::BeginPopup(context_id.c_str()))
+		{
+			if (ImGui::MenuItem("Delete"))
+			{
+				//// 現在選択されているアセットの削除
+				delete_file = selected_file;
+				locator::Locator::GetAssetManager()->DeleteLoader(delete_file);
+				//if(file_path_helper::SupportedTextureExtension(delete_file))
+				//{
+				//	locator::Locator::GetAssetManager()->DeleteLoader<asset::TextureLoader>(delete_file);
+				//}
+			}
+			//ImGui::Text("context");
+			//if(ImGui::Button("Delete"))
+			//{
+			//	// 現在選択されているアセットの削除
+			//	ImGui::CloseCurrentPopup();
+			//}
 			ImGui::EndPopup();
 		}
 	}
@@ -214,7 +243,7 @@ namespace cumulonimbus::editor
 		return {};
 	}
 
-	std::filesystem::path ProjectView::ShowFileAndFolderList(const asset::AssetManager& asset_manager)
+	std::filesystem::path ProjectView::ShowFileAndFolderList(asset::AssetManager& asset_manager)
 	{
 		is_dragged = false;
 		ImGui::PushItemWidth(200);
@@ -238,8 +267,19 @@ namespace cumulonimbus::editor
 				// ボタンの表示
 				helper::imgui::ImageButtonWithText(uuid, std::string{ path.filename().string() }.c_str(),
 												button_state, { item_size,item_size });
-				if (button_state.pressed || button_state.held)
+				if (button_state.pressed ||
+					button_state.held ||
+					button_state.hovered)
 					selected_file = path;
+
+				if(button_state.hovered)
+				{
+					if(ImGui::IsMouseReleased(ImGuiMouseButton_Right))
+					{
+						ImGui::OpenPopup(context_id.c_str());
+					}
+				}
+				ContextMenu();
 
 				// ボタン配置位置の調整
 				const float last_button_x2 = ImGui::GetItemRectMax().x;
@@ -259,6 +299,13 @@ namespace cumulonimbus::editor
 				}
 
 				++n;
+			}
+			// 削除される要素の削除
+			if (!delete_file.empty())
+			{
+				asset_manager.DeleteAsset(delete_file);
+				asset_manager.Save();
+				delete_file.clear();
 			}
 		}
 		else if(selected_navigation == NavigationType::FileTree)

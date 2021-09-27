@@ -504,9 +504,6 @@
     <ClCompile Include="Source\Engine\model.cpp">
       <Filter>Source\Engine\System</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\material_loader.cpp">
-      <Filter>Source\Engine\System</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Engine\model_component.cpp">
       <Filter>Source\Engine\Components</Filter>
     </ClCompile>
@@ -533,6 +530,9 @@
     </ClCompile>
     <ClCompile Include="Libraries\imgui\ImGuizmo\ImGuizmo.cpp">
       <Filter>Source\Engine\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\material_loader.cpp">
+      <Filter>Source\Engine\Loader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -944,9 +944,6 @@
     <ClInclude Include="Source\Engine\model.h">
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\material_loader.h">
-      <Filter>Header\Engine\System</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Engine\model_component.h">
       <Filter>Header\Engine\Components</Filter>
     </ClInclude>
@@ -973,6 +970,9 @@
     </ClInclude>
     <ClInclude Include="Libraries\imgui\ImGuizmo\ImGuizmo.h">
       <Filter>Header\Engine\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\material_loader.h">
+      <Filter>Header\Engine\Loader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

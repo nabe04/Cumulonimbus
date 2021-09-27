@@ -53,11 +53,12 @@ namespace cumulonimbus::component
 
 		void Load(ecs::Registry* registry) override;
 
+		template<class Archive>
+		void serialize(Archive&& archive);
+
 	private:
 		// “G(ForestDemon)‚Ìó‘ÔŠÇ—•Ï”
 		StateMachine<SoldierState, void, const float> soldier_state{};
-		// ƒ‚ƒfƒ‹‚Ìyaw‰ñ“](“x”–@)‚Ìƒ‰ƒ“ƒ_ƒ€’l
-		RandomFloat random_rotation_angle{};
 
 		//-- ƒpƒ‰ƒ[ƒ^ --//
 		// Quaternion::Slerp‚Ì‰ñ“]ŠÔ”{—¦
@@ -76,7 +77,7 @@ namespace cumulonimbus::component
 		float tracking_transition_distance{ 200 };
 		// ’ÇÕ‚ÉˆÚ‚éŠp“x()
 		float tracking_transition_angle{ 90 };
-		// “Ë‚«UŒ‚‚ÉˆÚ‚é‹——£	
+		// “Ë‚«UŒ‚‚ÉˆÚ‚é‹——£
 		float attack_thrust_distance{ 50 };
 
 		/**

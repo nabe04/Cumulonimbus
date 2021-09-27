@@ -8,8 +8,22 @@
 #include "rigid_body_component.h"
 #include "transform_component.h"
 
+CEREAL_REGISTER_TYPE(cumulonimbus::component::EnemyBaseComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::Actor3DComponent, cumulonimbus::component::EnemyBaseComponent)
+
 namespace cumulonimbus::component
 {
+	template <class Archive>
+	void EnemyBaseComponent::serialize(Archive&& archive)
+	{
+		archive(
+			cereal::base_class<Actor3DComponent>(this),
+			CEREAL_NVP(transition_timer),
+			CEREAL_NVP(random_rotation_angle)
+		);
+	}
+
+
 	void EnemyBaseComponent::RandomFloat::SetRandomVal()
 	{
 		random_val = arithmetic::RandomFloatInRange(min, max);
@@ -18,6 +32,11 @@ namespace cumulonimbus::component
 	EnemyBaseComponent::EnemyBaseComponent(ecs::Registry* registry, mapping::rename_type::Entity ent)
 		:Actor3DComponent{ registry,ent }
 	{
+	}
+
+	void EnemyBaseComponent::Load(ecs::Registry* registry)
+	{
+		SetRegistry(registry);
 	}
 
 	void EnemyBaseComponent::RegisterTransitionTimer(

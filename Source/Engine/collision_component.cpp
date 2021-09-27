@@ -11,6 +11,7 @@ namespace cumulonimbus::component
 	void CollisionComponent::serialize(Archive&& archive)
 	{
 		archive(
+			cereal::base_class<ComponentBase>(this),
 			CEREAL_NVP(collision_tag)
 		);
 	}

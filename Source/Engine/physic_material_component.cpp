@@ -9,6 +9,7 @@ namespace cumulonimbus::component
 	void PhysicMaterialComponent::serialize(Archive&& archive)
 	{
 		archive(
+			cereal::base_class<ComponentBase>(this),
 			CEREAL_NVP(dynamic_friction),
 			CEREAL_NVP(static_friction),
 			CEREAL_NVP(bounciness),

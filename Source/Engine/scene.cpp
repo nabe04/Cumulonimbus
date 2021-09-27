@@ -161,7 +161,7 @@ namespace cumulonimbus::scene
 		if (editor_manager->GetToolBar().GetToolBarButton().GetButtonState(editor::ToolBar::Button::Play) ==
 			ButtonState::Release)
 		{
-			LoadScene(file_path_helper::GetSaveSceneViewFilePathAndName(), "test");
+			LoadScene(file_path_helper::GetSaveSceneViewFilePathAndName(), "test" + file_path_helper::GetSceneExtension());
 		}
 	}
 

@@ -13,6 +13,7 @@ namespace cumulonimbus::component
 	void RigidBodyComponent::serialize(Archive&& archive)
 	{
 		archive(
+			cereal::base_class<ComponentBase>(this),
 			CEREAL_NVP(velocity),
 			CEREAL_NVP(acceleration),
 

@@ -7,7 +7,6 @@
 #include "fbx_model_resource.h"
 #include "file_path_helper.h"
 // components
-#include "fbx_model_component.h"
 #include "raycast_component.h"
 #include "capsule_collison_component.h"
 #include "physic_material_component.h"
@@ -19,8 +18,7 @@ namespace cumulonimbus::editor
 {
 	Inspector::Inspector()
 	{
-		RegisterComponent<component::FbxModelComponent>(		"Model Component"	 , mapping::component_tag::ComponentTag::Mesh);
-		RegisterComponent<component::ModelComponent>(			"New Model Component", mapping::component_tag::ComponentTag::Mesh);
+		RegisterComponent<component::ModelComponent>(			"Model Component"	 , mapping::component_tag::ComponentTag::Mesh);
 		RegisterComponent<component::RayCastComponent>(			"RayCast Collider"	 , mapping::component_tag::ComponentTag::Physics);
 		RegisterComponent<component::CapsuleCollisionComponent>("Capsule Collider"	 , mapping::component_tag::ComponentTag::Physics);
 		RegisterComponent<component::PhysicMaterialComponent>(	"Physic Material"	 , mapping::component_tag::ComponentTag::Physics);

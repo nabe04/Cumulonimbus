@@ -26,6 +26,8 @@ namespace cumulonimbus::component
 		explicit CameraComponent()  = default; // for cereal
  		~CameraComponent() override = default;
 
+		void SceneUpdate(float dt) override;
+
 		void GameUpdate(float dt) override;
 		void RenderImGui() override;
 

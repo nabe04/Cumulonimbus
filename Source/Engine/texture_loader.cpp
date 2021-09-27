@@ -27,11 +27,18 @@ namespace cumulonimbus::asset
 
 	mapping::rename_type::UUID TextureLoader::Convert(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to)
 	{
-		// コピー先のフォルダ作成&コピー
-		std::filesystem::copy(
-			from, to,
-			std::filesystem::copy_options::recursive |
-			std::filesystem::copy_options::overwrite_existing);
+		//const auto filename = std::filesystem::path{ from }.filename().replace_extension().string();
+		//std::filesystem::create_directory(to.string() + "/" + filename);
+		//const auto to_path = to.string() + "/" + filename;
+		if (!equivalent(from.parent_path(), to))
+		{
+			// コピー先のフォルダ作成&コピー
+			std::filesystem::copy(
+				from, to,
+				std::filesystem::copy_options::recursive |
+				std::filesystem::copy_options::overwrite_existing);
+		}
+
 
 		const std::string copy_str = to.string() + "/" + from.filename().string();
 		const std::filesystem::path copy_path{ copy_str };
@@ -84,14 +91,24 @@ namespace cumulonimbus::asset
 		asset_manager.Save();
 	}
 
+	void TextureLoader::Delete(AssetManager& asset_manager, const std::filesystem::path& path)
+	{
+		const mapping::rename_type::UUID tex_id = asset_manager.GetAssetSheetManager().Search<Texture>(path);
+		// アセット(ID)が存在していなければ処理を抜ける
+		if (!textures.contains(tex_id))
+			return;
+
+		textures.erase(tex_id);
+	}
+
 	bool TextureLoader::Supported(const std::filesystem::path extension)
 	{
 		static const std::set<std::filesystem::path> extensions
 		{
-			".png", ".PNG",
-			".jpeg",".JPEG",
-			".tga", ".TGA",
-			".dds", ".DDS"
+			".png" , ".PNG",
+			".jpeg", ".JPEG",
+			".tga" , ".TGA",
+			".dds" , ".DDS"
 		};
 		return extensions.contains(extension);
 	}

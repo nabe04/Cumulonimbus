@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <filesystem>
 
 namespace cumulonimbus::file_path_helper
 {
@@ -108,6 +109,12 @@ namespace cumulonimbus::file_path_helper
 	 */
 	[[nodiscard]]
 	constexpr std::string GetSceneDirectory();
+
+	/**
+	 * @brief : テクスチャ形式の拡張が一致しているかの判定
+	 */
+	[[nodiscard]]
+	bool SupportedTextureExtension(const std::filesystem::path& path);
 
 	/**
 	 * @brief			: Contentsフォルダまでの相対パスとfilenameを足したものを返す

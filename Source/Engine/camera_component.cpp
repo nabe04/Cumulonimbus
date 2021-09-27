@@ -48,7 +48,7 @@ namespace cumulonimbus::component
 			SwitchMainCamera();
 	}
 
-	void CameraComponent::GameUpdate(float dt)
+	void CameraComponent::SceneUpdate(const float dt)
 	{
 		if (is_use_camera_for_debug)
 		{
@@ -76,6 +76,36 @@ namespace cumulonimbus::component
 		}
 
 		camera->Update(dt);
+	}
+
+	void CameraComponent::GameUpdate(float dt)
+	{
+		//if (is_use_camera_for_debug)
+		//{
+		//	camera->CalcCameraDirectionalVector();
+		//	camera->CalcCameraAngle();
+		//	camera->UpdateDefaultCamera(dt);
+		//	//CalcCameraDirectionalVector();
+		//	//CalcCameraAngle(); //オイラー角で(現在)計算しているので今は使わない
+		//	//UpdateDefaultCamera(dt);
+		//}
+		//else
+		//{
+		//	UpdateObjectCamera(dt);
+		//}
+
+		//{// TODO : クォータニオンテスト
+		//	SimpleMath::Quaternion q;
+		//	q = q.CreateFromAxisAngle({ 0,1,0 }, XMConvertToRadians(90));
+		//	SimpleMath::Quaternion p = { 1,0,0,0 };
+		//	SimpleMath::Quaternion inv_q;
+		//	q.Inverse(inv_q);
+		//	SimpleMath::Quaternion qp = q * p * inv_q;
+		//	SimpleMath::Vector3 v{ 1,0,0 };
+		//	SimpleMath::Vector3::Transform(v, q, v);
+		//}
+
+		//camera->Update(dt);
 	}
 
 	void CameraComponent::RenderImGui()

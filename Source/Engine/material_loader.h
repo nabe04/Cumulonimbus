@@ -28,7 +28,10 @@ namespace cumulonimbus::asset
 		 */
 		void Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id) override;
 
-		//void LoadMaterials();
+		/**
+		 * @brief : マテリアルアセットの削除
+		 */
+		void Delete(AssetManager& asset_manager, const std::filesystem::path& path) override;
 
 		/**
 		 * @brief : 指定された拡張子はロード可能か

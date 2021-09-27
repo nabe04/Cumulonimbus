@@ -34,7 +34,12 @@ namespace cumulonimbus::asset
 		 * @brief : オーバーロードされているLoad関数の共通処理記述部
 		 */
 		virtual void Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id) = 0;
-		
+
+		/**
+		 * @brief : アセットの削除
+		 */
+		virtual void Delete(AssetManager& asset_manager, const std::filesystem::path& path) = 0;
+
 		/**
 		 * @brief : 指定された拡張子はロード可能か
 		 * @param extension : ファイルの拡張子
@@ -50,7 +55,9 @@ namespace cumulonimbus::asset
 		 *					 (例 : ./Data/Assets/Texture/sample.png(実際に保存されるパスとファイル名)
 		 *						  -> ./Data/Assets/Texture(コピー先のフォルダまでのパス))
 		 */
-		virtual mapping::rename_type::UUID Convert(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to) = 0;
+		virtual mapping::rename_type::UUID Convert(AssetManager& asset_manager,
+												   const std::filesystem::path& from,
+												   const std::filesystem::path& to) = 0;
 
 		/**
 		 * @brief : 同じフォルダ階層のファイル名を取得し

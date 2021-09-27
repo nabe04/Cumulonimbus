@@ -40,6 +40,7 @@ namespace cumulonimbus::component
 	void CapsuleCollisionComponent::serialize(Archive&& archive)
 	{
 		archive(
+			cereal::base_class<CollisionComponent>(this),
 			CEREAL_NVP(capsules)
 		);
 	}
@@ -140,7 +141,7 @@ namespace cumulonimbus::component
 	{
 		if (name == "")
 		{// 名前の指定がない場合は「sphere(番号)」という名前にする
-			int no = capsules.size();
+			size_t no = capsules.size();
 			std::string new_name{};
 			new_name = "capsule(" + std::to_string(no) + ")";
 			while (true)

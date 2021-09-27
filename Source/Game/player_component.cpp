@@ -14,6 +14,9 @@
 #include "transform_component.h"
 #include "collision_name_mapping.h"
 
+CEREAL_REGISTER_TYPE(cumulonimbus::component::PlayerComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::Actor3DComponent, cumulonimbus::component::PlayerComponent)
+
 // プレイヤーアニメーションのキーフレーム調整値
 namespace adjust_key_frame
 {
@@ -22,6 +25,28 @@ namespace adjust_key_frame
 
 namespace cumulonimbus::component
 {
+	template <class Archive>
+	void PlayerComponent::serialize(Archive&& archive)
+	{
+		archive(
+			cereal::base_class<Actor3DComponent>(this),
+			CEREAL_NVP(player_state),
+			CEREAL_NVP(precede_input),
+			CEREAL_NVP(adjust_keyframe_map),
+			CEREAL_NVP(animation_break_frame),
+			CEREAL_NVP(walk_speed),
+			CEREAL_NVP(dash_speed),
+			CEREAL_NVP(attack_04_speed),
+			CEREAL_NVP(avoid_dash_speed),
+			CEREAL_NVP(jump_movement_speed),
+			CEREAL_NVP(threshold),
+			CEREAL_NVP(long_press_time),
+			CEREAL_NVP(long_press_slot),
+			CEREAL_NVP(attack_04_jump_strength)
+		);
+	}
+
+
 	PlayerComponent::PlayerComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent)
 		:Actor3DComponent{ registry, ent }
 	{
@@ -170,7 +195,7 @@ namespace cumulonimbus::component
 
 	void PlayerComponent::Load(ecs::Registry* registry)
 	{
-
+		SetRegistry(registry);
 	}
 
 	int PlayerComponent::GetAnimDataIndex(AnimationData anim_state) const
@@ -355,7 +380,7 @@ namespace cumulonimbus::component
 			assert((!"Don't have state(PlayerComponent::IsBreakAnimationFrame)"));
 
 		const auto& fbx_model_comp = GetRegistry()->GetComponent<FbxModelComponent>(GetEntity());
-		return animation_break_frame.at(state) < fbx_model_comp.CurrentKeyframe() ? true : false;
+		return static_cast<int>(animation_break_frame.at(state)) < fbx_model_comp.CurrentKeyframe() ? true : false;
 	}
 
 

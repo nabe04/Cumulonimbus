@@ -2,8 +2,10 @@
 #include <memory>
 #include <filesystem>
 
+#include "asset_sheet_manager.h"
 #include "rename_type_mapping.h"
 #include "generic.h"
+//#include "loader.h"
 
 namespace cumulonimbus::asset
 {
@@ -27,7 +29,66 @@ namespace cumulonimbus::asset
 			);
 		}
 
+		/**
+		 * @brief : AssetSheetとLoader両方にアセットの追加
+		 */
 		void AddAsset(const std::filesystem::path& path);
+		/**
+		 * @brief : AssetSheetとLoader両方のアセット情報削除
+		 * @remark : テンプレート型(Loader)にはLoaderに登録した
+		 *			 型を使用する
+		 * @remark : テンプレート型(Sheet)にはAssetSheetに登録
+		 *			 した型を使用する
+		 */
+		template<class Loader, class Sheet>
+		void DeleteAssetAndLoader(const std::filesystem::path& path)
+		{
+			DeleteLoader<Loader>(path);
+			DeleteAssetSheet<Sheet>(path);
+		}
+		/**
+		 * @brief : AssetSheetとLoader両方のアセット情報削除
+		 * @remark : 引数のpathからアセットシート全てに検索をかけ
+		 *			 ヒットしたものを削除するため型がわかっている
+		 *			 場合はテンプレート側のDeleteAsset関数を使用
+		 *			 する方が速度が早い
+		 */
+		void DeleteAssetAndLoader(const std::filesystem::path& path);
+		/**
+		 * @brief : AssetSheetのアセット情報削除
+		 */
+		template<class Sheet>
+		void DeleteAsset(const std::filesystem::path& path)
+		{
+			const auto& asset_id = sheet_manager->Search<Sheet>(path);
+			auto& sheet = sheet_manager->GetSheet<Sheet>().sheet;
+			if (sheet.contains(asset_id))
+				sheet.erase(asset_id);
+		}
+		/**
+		 * @brief : AssetSheetのアセット情報削除
+		 * @remark : 引数のpathからアセットシート全てに検索をかけ
+		 *			 ヒットしたものを削除するため型がわかっている
+		 *			 場合はテンプレート側のDeleteAssetSheet関数を使用
+		 *			 する方が速度が早い
+		 */
+		void DeleteAsset(const std::filesystem::path& path) const;
+		/**
+		 * @brief : Loaderのアセット情報削除
+		 */
+		template<class Loader>
+		void DeleteLoader(const std::filesystem::path& path)
+		{
+			loaders.at(utility::GetHash<Loader>())->Delete(*this, path);
+		}
+		/**
+		 * @brief : Loaderのアセット情報削除
+		 * @remark : 引数のpathからアセットシート全てに検索をかけ
+		 *			 ヒットしたものを削除するため型がわかっている
+		 *			 場合はテンプレート側のDeleteLoader関数を使用
+		 *			 する方が速度が早い
+		 */
+		void DeleteLoader(const std::filesystem::path& path);
 
 		/**
 		 * @breif : アセットシートの保存

@@ -30,6 +30,7 @@ namespace cumulonimbus::component
 	void RayCastComponent::serialize(Archive&& archive)
 	{
 		archive(
+			cereal::base_class<CollisionComponent>(this),
 			CEREAL_NVP(rays)
 		);
 	}

@@ -136,37 +136,39 @@ namespace cumulonimbus::component
 		explicit PlayerComponent() = default; // for cereal
 		~PlayerComponent() override = default;
 
-		void PreGameUpdate(float dt) override;
-		void GameUpdate(float dt)	override;
-		void RenderImGui()		override;
+		void PreGameUpdate(float dt)		override;
+		void GameUpdate(float dt)			override;
+		void RenderImGui()					override;
+		void Load(ecs::Registry* registry)	override;
 
-		void Load(ecs::Registry* registry) override;
+		template<class Archive>
+		void serialize(Archive&& archive);
 	private:
 		// プレイヤーの状態管理変数
 		StateMachine<PlayerState, void, const float> player_state{};
 		// 先行入力(入力なし(リセット) == PlayerState::End)
-		PlayerState precede_input = PlayerState::End;
+		PlayerState precede_input{ PlayerState::End };
 		// アニメーションキーフレームの調整用(終端フレームの調整)
 		std::map<std::string, u_int> adjust_keyframe_map{};
 		// アニメーション中断フレーム(先行入力などで使用)
 		std::map<AnimationData, u_int> animation_break_frame{};
 
 		//-- 状態に応じてのスピード設定 --//
-		float walk_speed = 300;	 // 歩きの速さ
-		float dash_speed = 700;	 // 走りの速さ
-		float attack_04_speed = 700; // 通常攻撃04(ジャンプ攻撃)時の速さ
-		float avoid_dash_speed = 900;  // 回避ダッシュ速度
-		float jump_movement_speed = 300;
+		float walk_speed{ 300 };	 // 歩きの速さ
+		float dash_speed{ 700 };	 // 走りの速さ
+		float attack_04_speed{ 700 }; // 通常攻撃04(ジャンプ攻撃)時の速さ
+		float avoid_dash_speed{ 900 };  // 回避ダッシュ速度
+		float jump_movement_speed{ 300 };
 
 		// パッド入力のデッドゾーン値
-		float threshold = 0.05f;
+		float threshold{ 0.05f };
 		// パッド長押し時間
-		float long_press_time = 0.0f;
+		float long_press_time{ 0.0f };
 		// パッド長押しスロット数(長押し判定に使用)
-		int   long_press_slot = 60;
+		int   long_press_slot{ 60 };
 
 		// 通常攻撃04(ジャンプで斬りつけ)時のジャンプ強度
-		float attack_04_jump_strength = 500;
+		float attack_04_jump_strength{ 500 };
 
 		/**
 		 * @brief : State変更時にアニメーション用のメンバ変数の初期化
@@ -293,6 +295,3 @@ namespace cumulonimbus::component
 		void DashAttack(float dt);				// ダッシュ攻撃
 	};
 } // cumulonimbus::component
-
-CEREAL_REGISTER_TYPE(cumulonimbus::component::PlayerComponent)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::PlayerComponent)

@@ -129,26 +129,23 @@ namespace cumulonimbus::asset
 		return id;
 	}
 
-	void ModelLoader::Load(
-		AssetManager& asset_manager,
-		const std::filesystem::path& path)
+	void ModelLoader::Load(AssetManager& asset_manager,
+						   const std::filesystem::path& path)
 	{
 		const auto id = Convert(asset_manager, path, copy_dir);
 		Load(asset_manager, id);
 	}
 
-	void ModelLoader::Load(
-		AssetManager& asset_manager,
-		const std::filesystem::path& from,
-		const std::filesystem::path& to)
+	void ModelLoader::Load(AssetManager& asset_manager,
+						   const std::filesystem::path& from,
+						   const std::filesystem::path& to)
 	{
 		const auto id = Convert(asset_manager, from, to);
 		Load(asset_manager, id);
 	}
 
-	void ModelLoader::Load(
-		AssetManager& asset_manager,
-		const mapping::rename_type::UUID& id)
+	void ModelLoader::Load(AssetManager& asset_manager,
+						   const mapping::rename_type::UUID& id)
 	{
 		// すでにモデルが存在する場合は処理を抜ける
 		if (models.contains(id))
@@ -160,6 +157,11 @@ namespace cumulonimbus::asset
 			std::make_unique<Model>(asset_manager.GetAssetSheetManager().GetAssetFilename<Model>(id))));
 		// アセットシート(更新後)の保存
 		asset_manager.Save();
+	}
+
+	void ModelLoader::Delete(AssetManager& asset_manager, const std::filesystem::path& path)
+	{
+
 	}
 
 	bool ModelLoader::Supported(const std::filesystem::path extension)

@@ -30,6 +30,11 @@ namespace cumulonimbus::asset
 		Load(asset_manager, id);
 	}
 
+	void MaterialLoader::Delete(AssetManager& asset_manager, const std::filesystem::path& path)
+	{
+
+	}
+
 	bool MaterialLoader::Supported(std::filesystem::path extension)
 	{
 		static const std::set<std::filesystem::path> extensions

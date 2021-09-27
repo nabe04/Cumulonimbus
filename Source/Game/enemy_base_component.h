@@ -18,9 +18,12 @@ namespace cumulonimbus::component
 		explicit EnemyBaseComponent()  = default;
 		~EnemyBaseComponent() override = default;
 
-		void GameUpdate(float dt) override {}
-		void RenderImGui()	  override {}
-		void Load(ecs::Registry* registry) override {}
+		void GameUpdate(float dt)		   override {}
+		void RenderImGui()				   override {}
+		void Load(ecs::Registry* registry) override;
+
+		template<class Archive>
+		void serialize(Archive&& archive);
 
 	protected:
 		/**
@@ -38,9 +41,20 @@ namespace cumulonimbus::component
 			 * @brief : min,maxの値をもとにrandom_valの値を設定
 			 */
 			void SetRandomVal();
+
+			template <class Archive>
+			void serialize(Archive&& archive)
+			{
+				archive(
+					CEREAL_NVP(min),
+					CEREAL_NVP(max),
+					CEREAL_NVP(random_val),
+					CEREAL_NVP(current_time)
+				);
+			}
 		};
 
-		
+
 		std::unordered_map<std::string, RandomFloat> transition_timer{};
 		// モデルのyaw回転(度数法)のランダム値
 		RandomFloat random_rotation_angle{};
@@ -61,7 +75,7 @@ namespace cumulonimbus::component
 		* @param max	: 最大値
 		*/
 		void SetRandomRotationAngle(float min, float max);
-		
+
 		/**
 		 * @brief : 自身の位置と前方ベクトルから索敵範囲内(rad)、索敵距離内(length)に
 		 *			ターゲット(target_pos)がいるか判定
