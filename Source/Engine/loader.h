@@ -83,7 +83,7 @@ namespace cumulonimbus::asset
 			{
 				for(const auto&[key,value] : asset_manager.GetAssetSheetManager().GetSheet<T>().sheet)
 				{
-					if (std::filesystem::path{ value }.parent_path().replace_extension().compare(filename) != 0)
+					if (std::filesystem::path{ value }.replace_extension().compare(filename) != 0)
 					{
 						is_loop = false;
 					}

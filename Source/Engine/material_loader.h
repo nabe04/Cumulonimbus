@@ -53,7 +53,7 @@ namespace cumulonimbus::asset
 		[[nodiscard]]
 		mapping::rename_type::UUID CreateMaterial(
 			AssetManager& asset_manager, const std::filesystem::path& parent_path,
-			const MaterialData& material_data, std::string material_name);
+			const MaterialData& material_data = {}, std::string material_name = {""});
 
 		/**
 		 * @brief : 取得したいマテリアルのID(UUID)を元にマテリアルを取得

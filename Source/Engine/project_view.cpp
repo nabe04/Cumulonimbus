@@ -6,11 +6,14 @@
 #include <Windows.h>
 #include <portable-file-dialogs.h>
 
+#include "imgui_stdlib.h"
+
 #include "asset_manager.h"
 #include "file_path_helper.h"
 #include "generic.h"
 #include "locator.h"
 #include "material.h"
+#include "material_loader.h"
 #include "model.h"
 #include "texture.h"
 #include "texture_loader.h"
@@ -59,16 +62,13 @@ namespace cumulonimbus::editor
 				ImGui::TableNextRow();
 				{// Navigation Pane
 					ImGui::TableSetColumnIndex(0);
-					ImportMenu();
+					ImportMenu(*locator::Locator::GetAssetManager());
 					ShowAllAssets(*locator::Locator::GetAssetManager());
 					ShowFolderTree(viewer_dir);
 				}
 				{// File and Folder List
 					ImGui::TableSetColumnIndex(1);
 					ShowFileAndFolderList(*locator::Locator::GetAssetManager());
-					// OpenPopup時コンテキストメニューの表示
-					//ContextMenu();
-					ImGui::Text("is_drag %d", is_dragged);
 				}
 				ImGui::EndTable();
 			}
@@ -95,7 +95,7 @@ namespace cumulonimbus::editor
 		connector.emplace(hash, name);
 	}
 
-	void ProjectView::ImportMenu() const
+	void ProjectView::ImportMenu(asset::AssetManager& asset_manager) const
 	{
 		if (ImGui::Button(ICON_FA_FILE_IMPORT "Import" ICON_FA_SORT_DOWN))
 			ImGui::OpenPopup("my_file_popup");
@@ -114,7 +114,7 @@ namespace cumulonimbus::editor
 					return;
 				}
 				// アセットロード(モデル)
-				locator::Locator::GetAssetManager()->AddAsset(selection.at(0));
+				asset_manager.AddAsset(selection.at(0));
 			}
 			ImGui::Separator();
 			if(ImGui::MenuItem("Material"))
@@ -135,7 +135,7 @@ namespace cumulonimbus::editor
 					return;
 				}
 				// アセット(テクスチャ)
-				locator::Locator::GetAssetManager()->AddAsset(selection.at(0));
+				asset_manager.AddAsset(selection.at(0));
 			}
 			ImGui::EndPopup();
 		}
@@ -146,13 +146,9 @@ namespace cumulonimbus::editor
 
 		if (ImGui::BeginPopup("create_popup"))
 		{
-			if (ImGui::MenuItem("Model"))
-			{
-			}
-			ImGui::Separator();
 			if (ImGui::MenuItem("Material"))
 			{
-
+				const auto id = asset_manager.GetLoader<asset::MaterialLoader>()->CreateMaterial(asset_manager, viewer_dir);
 			}
 			ImGui::Separator();
 			ImGui::EndPopup();
@@ -161,16 +157,44 @@ namespace cumulonimbus::editor
 
 	void ProjectView::ContextMenu()
 	{
+		std::string name;
+
 		if(ImGui::BeginPopup(context_id.c_str()))
 		{
 			if (ImGui::MenuItem("Delete"))
 			{
-				//// 現在選択されているアセットの削除
+				// 現在選択されているアセットの削除
 				delete_file = selected_file;
 				locator::Locator::GetAssetManager()->DeleteLoader(delete_file);
 			}
+			if(ImGui::MenuItem("Rename"))
+			{
+				rename = selected_file.filename().string();
+				rename_id = locator::Locator::GetAssetManager()->GetAssetSheetManager().Search(selected_file);
+				is_rename = true;
+			}
 			ImGui::EndPopup();
 		}
+
+		//if (is_rename)
+			//ImGui::InputText("Test",&name);
+	}
+
+	void ProjectView::RenameItem()
+	{
+		//const ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+		const ImVec2 offset{ item_size,-item_size };
+		const ImVec2 window_pos = ImGui::GetCursorScreenPos();
+		ImGui::SetNextWindowPos(ImVec2{window_pos.x + offset.x * 2.5f , window_pos.y + offset.y}, ImGuiCond_Appearing);
+		ImGui::SetNextWindowSize(ImVec2{ item_size * 2,item_size * 2 });
+		if(ImGui::Begin(ICON_FA_EDIT"Rename"))
+		{
+			ImGui::InputText("##Rename Text", &rename);
+			if (ImGui::Button("Cancel"))
+				is_rename = false;
+			//ImGui::SetNextWindowPos()
+		}
+		ImGui::End();
 	}
 
 	std::filesystem::path ProjectView::ShowAllAssets(const asset::AssetManager& asset_manager)
@@ -275,10 +299,16 @@ namespace cumulonimbus::editor
 				// ボタンの表示
 				helper::imgui::ImageButtonWithText(uuid, std::string{ path.filename().string() }.c_str(),
 												button_state, { item_size,item_size });
+
 				if (button_state.pressed ||
 					button_state.held ||
 					button_state.hovered)
 					selected_file = path;
+
+				if (is_rename && (rename_id == uuid))
+				{
+					RenameItem();
+				}
 
 				if(button_state.hovered)
 				{
@@ -287,6 +317,7 @@ namespace cumulonimbus::editor
 						ImGui::OpenPopup(context_id.c_str());
 					}
 				}
+				// OpenPopup時コンテキストメニューの表示
 				ContextMenu();
 
 				// ボタン配置位置の調整

@@ -52,7 +52,12 @@ namespace cumulonimbus::editor
 		std::map<std::filesystem::path, bool>	is_folder_open{};  // Folder Tree上のフォルダが開かれているかどうか
 		helper::imgui::IMButtonState			button_state{};    // ボタンの押下状態
 		float									item_size{ 150 };  // File and Folder Listに表示するテクスチャサイズ
-		bool									is_dragged{false}; // File and Folder List内でモデルがドラッグされているか
+		bool									is_dragged{ false }; // File and Folder List内でモデルがドラッグされているか
+		bool									is_rename{ false }; // アセットのリネームフラグ
+		bool									is_rename_win_open{ false };
+		std::string								rename{};			// アセットリネーム時の名前格納場所
+		mapping::rename_type::UUID				rename_id{};		// リネーム対象のアセットID
+
 
 		/**
 		 * @brief : ハッシュ値から任意の型の名前に変換するためのコネクター
@@ -71,12 +76,17 @@ namespace cumulonimbus::editor
 		/**
 		 * @brief : アセットのインポートボタン
 		 */
-		void ImportMenu() const;
+		void ImportMenu(asset::AssetManager& asset_manager) const;
 
 		/**
 		 * @brief : File and Folder List内のアセット右クリック時の操作
 		 */
 		void ContextMenu();
+
+		/**
+		 * @brief : アセットのリネーム
+		 */
+		void RenameItem();
 
 		/**
 		 * @brief : アセットシート内の全てのアセット表示

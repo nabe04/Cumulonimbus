@@ -135,6 +135,17 @@ namespace cumulonimbus::asset
 
 			return "";
 		}
+		/**
+		 * @brief : アセットシートに登録しているパスからIDを検索
+		 * @remark : パスがヒットしなかった場合でも例外処理は出ない
+		 * @remark : パスがヒットしなかった場合「""」が変える
+		 * @reamrk : 型を全てのアセットシートに検索をかけるので型情報が
+		 *			 わかっている場合はテンプレート版のSearchを使うべし
+		 * @param path : 検索したいファイルパス
+		 * @return : 検索でヒットしたパスのID
+		 */
+		[[nodiscard]]
+		mapping::rename_type::UUID Search(const std::filesystem::path& path) const;
 
 	private:
 		/**

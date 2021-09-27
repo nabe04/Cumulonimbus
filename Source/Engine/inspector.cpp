@@ -74,7 +74,7 @@ namespace cumulonimbus::editor
 
 		ImGui::MenuItem("Component", nullptr, false, false);
 
-		ComponentMenu(registry, ent, "Mesn", mapping::component_tag::ComponentTag::Mesh);
+		ComponentMenu(registry, ent, "Mesh", mapping::component_tag::ComponentTag::Mesh);
 		ComponentMenu(registry, ent, "Physics", mapping::component_tag::ComponentTag::Physics);
 
 		ImGui::EndPopup(); // "my_file_popup"

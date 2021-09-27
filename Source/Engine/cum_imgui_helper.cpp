@@ -1,6 +1,7 @@
 #include "cum_imgui_helper.h"
 
 #include <imgui_internal.h>
+#include <imgui_stdlib.h>
 
 #include "locator.h"
 #include "texture.h"

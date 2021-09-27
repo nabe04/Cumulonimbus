@@ -46,12 +46,12 @@ namespace cumulonimbus::asset
 
 	mapping::rename_type::UUID MaterialLoader::CreateMaterial(
 		AssetManager& asset_manager, const std::filesystem::path& parent_path,
-		const MaterialData& material_data = {}, std::string material_name = {""})
+		const MaterialData& material_data, std::string material_name)
 	{
 		// マテリアル名が無名の場合「New Material」に名前を設定
 		if(material_name == "")
 		{
-			const std::string path = parent_path.string() + "/Materials" + "/New Name" + file_path_helper::GetMaterialExtension();
+			const std::string path = parent_path.string() + "/Materials" + "/New Material" + file_path_helper::GetMaterialExtension();
 			material_name = CompareAndReName<Material>(asset_manager, path).filename().replace_extension().string();
 		}
 		const std::string save_path{
