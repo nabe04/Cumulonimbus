@@ -97,7 +97,7 @@ namespace cumulonimbus::editor
 
 	void ProjectView::ImportMenu() const
 	{
-		if (ImGui::Button(ICON_FA_PLUS "Import" ICON_FA_SORT_DOWN))
+		if (ImGui::Button(ICON_FA_FILE_IMPORT "Import" ICON_FA_SORT_DOWN))
 			ImGui::OpenPopup("my_file_popup");
 		if (ImGui::BeginPopup("my_file_popup"))
 		{
@@ -139,6 +139,24 @@ namespace cumulonimbus::editor
 			}
 			ImGui::EndPopup();
 		}
+
+		ImGui::SameLine(0,15);
+		if (ImGui::Button(ICON_FA_PLUS "Create" ICON_FA_SORT_DOWN))
+			ImGui::OpenPopup("create_popup");
+
+		if (ImGui::BeginPopup("create_popup"))
+		{
+			if (ImGui::MenuItem("Model"))
+			{
+			}
+			ImGui::Separator();
+			if (ImGui::MenuItem("Material"))
+			{
+
+			}
+			ImGui::Separator();
+			ImGui::EndPopup();
+		}
 	}
 
 	void ProjectView::ContextMenu()
@@ -150,17 +168,7 @@ namespace cumulonimbus::editor
 				//// 現在選択されているアセットの削除
 				delete_file = selected_file;
 				locator::Locator::GetAssetManager()->DeleteLoader(delete_file);
-				//if(file_path_helper::SupportedTextureExtension(delete_file))
-				//{
-				//	locator::Locator::GetAssetManager()->DeleteLoader<asset::TextureLoader>(delete_file);
-				//}
 			}
-			//ImGui::Text("context");
-			//if(ImGui::Button("Delete"))
-			//{
-			//	// 現在選択されているアセットの削除
-			//	ImGui::CloseCurrentPopup();
-			//}
 			ImGui::EndPopup();
 		}
 	}

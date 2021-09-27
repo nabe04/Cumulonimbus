@@ -88,7 +88,7 @@ namespace imgui
 		ImGui::SetCurrentContext( ImGui::CreateContext());
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
-		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
+		//ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
 		ImGui::StyleColorsDark();
         SetupImGuiStyle(true, 1.0f);
 
