@@ -159,6 +159,11 @@ namespace cumulonimbus::asset
 		asset_manager.Save();
 	}
 
+	void ModelLoader::Delete(AssetManager& asset_manager, const mapping::rename_type::UUID& asset_id)
+	{
+
+	}
+
 	void ModelLoader::Delete(AssetManager& asset_manager, const std::filesystem::path& path)
 	{
 

@@ -36,6 +36,10 @@ namespace cumulonimbus::asset
 		/**
 		 * @brief : モデルアセットの削除
 		 */
+		void Delete(AssetManager& asset_manager, const mapping::rename_type::UUID& asset_id) override;
+		/**
+		 * @brief : モデルアセットの削除
+		 */
 		void Delete(AssetManager& asset_manager, const std::filesystem::path& path) override;
 
 		[[nodiscard]]

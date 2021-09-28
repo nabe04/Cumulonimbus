@@ -29,9 +29,19 @@ namespace cumulonimbus::asset
 		void Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id) override;
 
 		/**
-		 * @brief : マテリアルアセットの削除
+		 * @brief : アセットの削除
+		 * @remark : ※caution : 削除したいパスが存在しない場合処理を飛ばす
+		 * @param asset_manager : AssetManagerクラスの参照
+		 * @param path : 削除したいファイルパス
 		 */
 		void Delete(AssetManager& asset_manager, const std::filesystem::path& path) override;
+		/**
+		 * @breief : アセットの削除
+		 * @remark :  ※caution : 削除したいIDが存在しない場合処理を飛ばす
+		 * @param asset_manager : AssetManagerクラスの参照
+		 * @param asset_id : 削除したいアセットのID(UUID)
+		 */
+		void Delete(AssetManager& asset_manager, const mapping::rename_type::UUID& asset_id) override;
 
 		/**
 		 * @brief : 指定された拡張子はロード可能か
@@ -53,7 +63,7 @@ namespace cumulonimbus::asset
 		[[nodiscard]]
 		mapping::rename_type::UUID CreateMaterial(
 			AssetManager& asset_manager, const std::filesystem::path& parent_path,
-			const MaterialData& material_data = {}, std::string material_name = {""});
+			const MaterialData& material_data = {}, std::string material_name = { "" });
 
 		/**
 		 * @brief : 取得したいマテリアルのID(UUID)を元にマテリアルを取得
@@ -65,6 +75,18 @@ namespace cumulonimbus::asset
 		std::map<mapping::rename_type::UUID, std::unique_ptr<Material>> materials{};
 		std::unique_ptr<Material> dummy_material{};
 
-		mapping::rename_type::UUID Convert(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to) override;
+		mapping::rename_type::UUID Convert(
+			AssetManager& asset_manager,
+			const std::filesystem::path& from,
+			const std::filesystem::path& to) override;
+
+		/**
+		 * @brief : マテリアルアセットとフォルダ内のマテリアルファイルの削除
+		 * @param mat_id : マテリアルID(UUID)
+		 * @param delete_path : 削除先のマテリアルフォルダパス
+		 */
+		void DeleteMaterial(
+			const mapping::rename_type::UUID& mat_id,
+			const std::filesystem::path& delete_path);
 	};
 } // cumulonimbus::asset

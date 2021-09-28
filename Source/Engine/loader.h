@@ -18,13 +18,13 @@ namespace cumulonimbus::asset
 
 		/**
 		 * @brief : アセットのロード
-		 * @param : asset_manager : AssetManagerクラスの参照
+		 * @param asset_manager : AssetManagerクラスの参照
 		 * @param path : ロードされたモデルのファイルパス
 		 */
 		virtual void Load(AssetManager& asset_manager, const std::filesystem::path& path) = 0;
 		/**
 		 * @brief : アセットのロード
-		 * @param : asset_manager : AssetManagerクラスの参照
+		 * @param asset_manager : AssetManagerクラスの参照
 		 * @param from: ロードされたモデルのファイルパス
 		 * @param to : コピー先のファイルパス
 		 */
@@ -37,8 +37,18 @@ namespace cumulonimbus::asset
 
 		/**
 		 * @brief : アセットの削除
+		 * @remark : ※caution : 削除したいパスが存在しない場合処理を飛ばす
+		 * @param asset_manager : AssetManagerクラスの参照
+		 * @param path : 削除したいファイルパス
 		 */
 		virtual void Delete(AssetManager& asset_manager, const std::filesystem::path& path) = 0;
+		/**
+		 * @breief : アセットの削除
+		 * @remark :  ※caution : 削除したいIDが存在しない場合処理を飛ばす
+		 * @param asset_manager : AssetManagerクラスの参照
+		 * @param asset_id : 削除したいアセットのID(UUID)
+		 */
+		virtual void Delete(AssetManager& asset_manager, const mapping::rename_type::UUID& asset_id) = 0;
 
 		/**
 		 * @brief : 指定された拡張子はロード可能か
@@ -55,9 +65,10 @@ namespace cumulonimbus::asset
 		 *					 (例 : ./Data/Assets/Texture/sample.png(実際に保存されるパスとファイル名)
 		 *						  -> ./Data/Assets/Texture(コピー先のフォルダまでのパス))
 		 */
-		virtual mapping::rename_type::UUID Convert(AssetManager& asset_manager,
-												   const std::filesystem::path& from,
-												   const std::filesystem::path& to) = 0;
+		virtual mapping::rename_type::UUID Convert(
+			AssetManager& asset_manager,
+			const std::filesystem::path& from,
+			const std::filesystem::path& to) = 0;
 
 		/**
 		 * @brief : 同じフォルダ階層のファイル名を取得し

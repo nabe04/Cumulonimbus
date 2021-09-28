@@ -98,8 +98,21 @@ namespace cumulonimbus::asset
 		if (!textures.contains(tex_id))
 			return;
 
-		textures.erase(tex_id);
+		DeleteTexture(tex_id, path);
+		asset_manager.Save();
 	}
+
+	void TextureLoader::Delete(AssetManager& asset_manager, const mapping::rename_type::UUID& asset_id)
+	{
+		const std::filesystem::path path = asset_manager.GetAssetSheetManager().GetAssetFilename<asset::Texture>(asset_id);
+		// アセット(ID)が存在していなければ処理を抜ける
+		if (!textures.contains(asset_id))
+			return;
+
+		DeleteTexture(asset_id, path);
+		asset_manager.Save();
+	}
+
 
 	bool TextureLoader::Supported(const std::filesystem::path extension)
 	{
@@ -155,4 +168,12 @@ namespace cumulonimbus::asset
 
 		return *textures.at(id).get();
 	}
+
+	void TextureLoader::DeleteTexture(const mapping::rename_type::UUID& tex_id, const std::filesystem::path& delete_path)
+	{
+		textures.erase(tex_id);
+		// ファイルの削除
+		std::filesystem::remove(delete_path);
+	}
+
 } // cumulonimbus::asset

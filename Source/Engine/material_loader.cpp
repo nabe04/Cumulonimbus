@@ -32,10 +32,28 @@ namespace cumulonimbus::asset
 
 	void MaterialLoader::Delete(AssetManager& asset_manager, const std::filesystem::path& path)
 	{
+		const mapping::rename_type::UUID mat_id = asset_manager.GetAssetSheetManager().Search<asset::Material>(path);
+		// アセット(ID)が存在していなければ処理を抜ける
+		if (!materials.contains(mat_id))
+			return;
 
+		DeleteMaterial(mat_id, path);
+		asset_manager.Save();
 	}
 
-	bool MaterialLoader::Supported(std::filesystem::path extension)
+	void MaterialLoader::Delete(AssetManager& asset_manager, const mapping::rename_type::UUID& asset_id)
+	{
+		const std::filesystem::path path = asset_manager.GetAssetSheetManager().GetAssetFilename<asset::Material>(asset_id);
+		// アセット(ID)が存在していなければ処理を抜ける
+		if (!materials.contains(asset_id))
+			return;
+
+		DeleteMaterial(asset_id, path);
+		asset_manager.Save();
+	}
+
+
+	bool MaterialLoader::Supported(const std::filesystem::path extension)
 	{
 		static const std::set<std::filesystem::path> extensions
 		{
@@ -143,4 +161,17 @@ namespace cumulonimbus::asset
 			//assert(!"Not found material id(MaterialLoader::GetMaterial)");
 		return *materials.at(id).get();
 	}
+
+	void MaterialLoader::DeleteMaterial(const mapping::rename_type::UUID& mat_id, const std::filesystem::path& delete_path)
+	{
+		// 登録したマテリアル情報の削除
+		materials.erase(mat_id);
+		// ファイル(.mat)の削除
+		std::filesystem::remove(delete_path);
+		// ファイル(.json)の削除
+		std::filesystem::path p = delete_path;
+		p.replace_extension();
+		std::filesystem::remove(p.string() + file_path_helper::GetJsonExtension());
+	}
+
 } // cumulonimbus::asset

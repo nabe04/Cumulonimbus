@@ -9,6 +9,7 @@
 
 namespace cumulonimbus::asset
 {
+	//class AssetManager;
 	class Loader;
 } // cumulonimbus::asset
 
@@ -99,14 +100,14 @@ namespace cumulonimbus::asset
 		/**
 		 * @brief : 任意のクラスのアセットシートに登録されている
 		 *			ファイルパス + ファイル名 + 拡張子の取得
-		 * @remark : ・引数のidはAssetSheetのsheet(std::map)のキー値になる
-		 * @remark : ・T型が存在しない場合処理を中断する
+		 * @remark : 引数のidはAssetSheetのsheet(std::map)のキー値になる
+		 * @remark : T型が存在しない場合処理を中断する
 		 * @param id : アセットのUUID値
 		 * @return : アセットのファイルパス + ファイル名 + 拡張子
 		 */
 		template<class T>
 		[[nodiscard]]
-		std::string GetAssetFilename(const mapping::rename_type::UUID id) const
+		std::string GetAssetFilename(const mapping::rename_type::UUID& id) const
 		{
 			const auto hash = utility::GetHash<T>();
 			if (!sheets.contains(hash))
@@ -114,6 +115,18 @@ namespace cumulonimbus::asset
 
 			return sheets.at(hash).sheet.at(id);
 		}
+		/**
+		 * @brief : 任意のクラスのアセットシートに登録されている
+		 *			ファイルパス + ファイル名 + 拡張子の取得
+		 * @remark : 引数のidはAssetSheetのsheet(std::map)のキー値になる
+		 * @remark : idが存在しない場合空の名前("")を返す
+		 * @remark : 型を全てのアセットシートに検索をかけるので型情報が
+		 *			 わかっている場合はテンプレート版のGetAssetFilenameを使うべし
+		 * @param id : アセットのUUID値
+		 * @return : アセットのファイルパス + ファイル名 + 拡張子
+		 */
+		[[nodiscard]]
+		std::string GetAssetFilename(const mapping::rename_type::UUID& id) const;
 
 		/**
 		 * @brief : アセットシートに登録しているパスからIDを検索

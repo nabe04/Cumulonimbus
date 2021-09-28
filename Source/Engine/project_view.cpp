@@ -169,9 +169,10 @@ namespace cumulonimbus::editor
 			}
 			if(ImGui::MenuItem("Rename"))
 			{
-				rename = selected_file.filename().string();
-				rename_id = locator::Locator::GetAssetManager()->GetAssetSheetManager().Search(selected_file);
-				is_rename = true;
+				rename		= selected_file.filename().string();
+				rename_exe	= selected_file.extension().string();
+				rename_id	= locator::Locator::GetAssetManager()->GetAssetSheetManager().Search(selected_file);
+				is_rename	= true;
 			}
 			ImGui::EndPopup();
 		}
@@ -180,19 +181,43 @@ namespace cumulonimbus::editor
 			//ImGui::InputText("Test",&name);
 	}
 
-	void ProjectView::RenameItem()
+	void ProjectView::RenameItem(asset::AssetManager& asset_manager)
 	{
-		//const ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+		static const ImVec2 adjust_win_pos{ 2.5f,1.f };
+		static const ImVec2 adjust_win_size{ 2.f,2.f };
 		const ImVec2 offset{ item_size,-item_size };
 		const ImVec2 window_pos = ImGui::GetCursorScreenPos();
-		ImGui::SetNextWindowPos(ImVec2{window_pos.x + offset.x * 2.5f , window_pos.y + offset.y}, ImGuiCond_Appearing);
-		ImGui::SetNextWindowSize(ImVec2{ item_size * 2,item_size * 2 });
+		ImGui::SetNextWindowPos(ImVec2{ window_pos.x + offset.x * adjust_win_pos.x ,
+										window_pos.y + offset.y * adjust_win_pos.y},
+								ImGuiCond_Appearing);
+		ImGui::SetNextWindowSize(ImVec2{ item_size * adjust_win_size.x,item_size * adjust_win_size.y });
 		if(ImGui::Begin(ICON_FA_EDIT"Rename"))
 		{
 			ImGui::InputText("##Rename Text", &rename);
+			if(ImGui::Button("OK"))
+			{// 名前編集完了 & 確定
+				if (!rename.empty())
+				{// 変更したい名前が空でない場合リネーム
+					const std::filesystem::path prev_path	= asset_manager.GetAssetSheetManager().GetAssetFilename(rename_id);
+					std::filesystem::path		parent_path	= prev_path.parent_path();
+					std::filesystem::path		cur_name	= rename;
+					cur_name.replace_extension();
+					asset_manager.RenameAsset(rename_id,
+											  parent_path.string() + "/" +
+											  cur_name.string() + rename_exe);
+					// リネームパラメータのリセット
+					rename_id.clear();
+					rename_exe.clear();
+					rename.clear();
+				}
+
+				//std::filesystem::path rename_path =
+
+				is_rename = false;
+			}
+			ImGui::SameLine();
 			if (ImGui::Button("Cancel"))
 				is_rename = false;
-			//ImGui::SetNextWindowPos()
 		}
 		ImGui::End();
 	}
@@ -307,7 +332,7 @@ namespace cumulonimbus::editor
 
 				if (is_rename && (rename_id == uuid))
 				{
-					RenameItem();
+					RenameItem(asset_manager);
 				}
 
 				if(button_state.hovered)

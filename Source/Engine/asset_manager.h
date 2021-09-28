@@ -33,6 +33,29 @@ namespace cumulonimbus::asset
 		 * @brief : AssetSheetとLoader両方にアセットの追加
 		 */
 		void AddAsset(const std::filesystem::path& path);
+
+		/**
+		 *
+		 */
+		template<class Sheet>
+		void RenameAsset(const mapping::rename_type::UUID& asset_id,
+						 const std::filesystem::path& path)
+		{
+			if(sheet_manager->GetSheet<Sheet>().sheet.contains(asset_id))
+			{
+				auto& sheet = sheet_manager->GetSheet<Sheet>().sheet.at(asset_id);
+				std::filesystem::rename(sheet, path);
+				sheet_manager->GetSheet<Sheet>().sheet.at(asset_id) = path;
+				Save();
+			}
+		}
+		/**
+		 *
+		 */
+		void RenameAsset(const mapping::rename_type::UUID& asset_id,
+						 const std::filesystem::path& path);
+
+
 		/**
 		 * @brief : AssetSheetとLoader両方のアセット情報削除
 		 * @remark : テンプレート型(Loader)にはLoaderに登録した
@@ -40,17 +63,17 @@ namespace cumulonimbus::asset
 		 * @remark : テンプレート型(Sheet)にはAssetSheetに登録
 		 *			 した型を使用する
 		 */
-		template<class Loader, class Sheet>
+		template<class Sheet, class Loader>
 		void DeleteAssetAndLoader(const std::filesystem::path& path)
 		{
+			DeleteAsset<Sheet>(path);
 			DeleteLoader<Loader>(path);
-			DeleteAssetSheet<Sheet>(path);
 		}
 		/**
 		 * @brief : AssetSheetとLoader両方のアセット情報削除
 		 * @remark : 引数のpathからアセットシート全てに検索をかけ
 		 *			 ヒットしたものを削除するため型がわかっている
-		 *			 場合はテンプレート側のDeleteAsset関数を使用
+		 *			 場合はテンプレート側のDeleteAssetAndLoader関数を使用
 		 *			 する方が速度が早い
 		 */
 		void DeleteAssetAndLoader(const std::filesystem::path& path);

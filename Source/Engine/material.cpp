@@ -47,13 +47,13 @@ namespace cumulonimbus::asset
 			cereal::BinaryOutputArchive output_archive(ofs);
 			output_archive(*this);
 		}
-		{
-			std::filesystem::path json_path = path;
+		//{ // jsonŒ`®‚Å‚Ì•Û‘¶‚ğŒ»İ‚ÍØ‚Á‚Ä‚¨‚­
+		//	std::filesystem::path json_path = path;
 
-			std::ofstream ofs(json_path.replace_extension().string() + file_path_helper::GetJsonExtension());
-			cereal::JSONOutputArchive output_archive(ofs);
-			output_archive(*this);
-		}
+		//	std::ofstream ofs(json_path.replace_extension().string() + file_path_helper::GetJsonExtension());
+		//	cereal::JSONOutputArchive output_archive(ofs);
+		//	output_archive(*this);
+		//}
 	}
 
 	void Material::Load(const std::filesystem::path& path)

@@ -36,9 +36,19 @@ namespace cumulonimbus::asset
 		void Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id) override;
 
 		/**
-		 * @brief : テクスチャアセットの削除
+		 * @brief : アセットの削除
+		 * @remark : ※caution : 削除したいパスが存在しない場合処理を飛ばす
+		 * @param asset_manager : AssetManagerクラスの参照
+		 * @param path : 削除したいファイルパス
 		 */
 		void Delete(AssetManager& asset_manager, const std::filesystem::path& path) override;
+		/**
+		 * @breief : アセットの削除
+		 * @remark :  ※caution : 削除したいIDが存在しない場合処理を飛ばす
+		 * @param asset_manager : AssetManagerクラスの参照
+		 * @param asset_id : 削除したいアセットのID(UUID)
+		 */
+		void Delete(AssetManager& asset_manager, const mapping::rename_type::UUID& asset_id) override;
 
 		/**
 		 * @brief : 指定された拡張子はロード可能か
@@ -68,6 +78,18 @@ namespace cumulonimbus::asset
 		std::map<mapping::rename_type::UUID, std::unique_ptr<Texture>> textures{};
 		std::unique_ptr<Texture> dummy_texture{};
 
-		mapping::rename_type::UUID Convert(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to) override;
+		mapping::rename_type::UUID Convert(
+			AssetManager& asset_manager,
+			const std::filesystem::path& from,
+			const std::filesystem::path& to) override;
+
+		/**
+		 * @brief : テクスチャアセット、ファイルの削除
+		 * @param tex_id : 削除したいテクスチャID(UUID)
+		 * @param delete_path : 削除したいテクスチャパス
+		 */
+		void DeleteTexture(
+			const mapping::rename_type::UUID& tex_id,
+			const std::filesystem::path& delete_path);
 	};
 } // cumulonimbus::asset

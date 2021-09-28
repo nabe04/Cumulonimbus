@@ -4,7 +4,6 @@
 #include <fstream>
 #include <set>
 
-#include "asset_sheet_manager.h"
 #include "texture.h"
 // Loaders
 #include "material_loader.h"
@@ -37,6 +36,23 @@ namespace cumulonimbus::asset
 		{
 			if (value->Supported(path.extension()))
 				value->Load(*this, path);
+		}
+	}
+
+	void AssetManager::RenameAsset(const mapping::rename_type::UUID& asset_id, const std::filesystem::path& path)
+	{
+		for (auto& [hash, asset_sheet] : sheet_manager->GetSheets())
+		{
+			for (auto& [uuid, asset_path] : asset_sheet.sheet)
+			{
+				if(uuid == asset_id)
+				{
+					std::filesystem::rename(asset_path, path);
+					asset_path = path.string();
+					Save();
+					return;
+				}
+			}
 		}
 	}
 
@@ -155,5 +171,4 @@ namespace cumulonimbus::asset
 			}
 		}
 	}
-
 } // cumulonimbus::asset

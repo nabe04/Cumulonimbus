@@ -56,6 +56,7 @@ namespace cumulonimbus::editor
 		bool									is_rename{ false }; // アセットのリネームフラグ
 		bool									is_rename_win_open{ false };
 		std::string								rename{};			// アセットリネーム時の名前格納場所
+		std::string								rename_exe{};		// アセットリネーム時の拡張子
 		mapping::rename_type::UUID				rename_id{};		// リネーム対象のアセットID
 
 
@@ -86,7 +87,7 @@ namespace cumulonimbus::editor
 		/**
 		 * @brief : アセットのリネーム
 		 */
-		void RenameItem();
+		void RenameItem(asset::AssetManager& asset_manager);
 
 		/**
 		 * @brief : アセットシート内の全てのアセット表示
