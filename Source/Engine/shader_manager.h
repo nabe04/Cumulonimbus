@@ -260,5 +260,5 @@ namespace cumulonimbus
 				local_shader_map.emplace(asset_type, std::make_unique<T>());
 			}
 		};
-	}
-}
+	} // shader_system
+} // cumulonimbus

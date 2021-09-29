@@ -25,16 +25,21 @@ enum class PivotType
 
 namespace cumulonimbus::component
 {
-	class SpriteComponent : public ComponentBase
+	//
+
+
+	// Todo : 消す
+	//-- 旧コンポーネント --//
+	class OldSpriteComponent : public ComponentBase
 	{
 	public:
-		explicit SpriteComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent,
+		explicit OldSpriteComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent,
 		                         ID3D11Device* device,
 		                         const char* filename, PivotType pivot_type,
 		                         int src_left, int src_top,
 		                         int src_width, int src_height);
-		explicit SpriteComponent() = default;	// For cereal
-		~SpriteComponent() override = default;
+		explicit OldSpriteComponent() = default;	// For cereal
+		~OldSpriteComponent() override = default;
 
 		void PreGameUpdate(float delta_time)override {};
 		void GameUpdate(float delta_time)	override;

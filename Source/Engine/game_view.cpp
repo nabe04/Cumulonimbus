@@ -1,5 +1,6 @@
 #include "game_view.h"
 
+#include "arithmetic.h"
 #include "ecs.h"
 #include "camera_component.h"
 #include "cum_imgui_helper.h"
@@ -16,8 +17,14 @@ namespace cumulonimbus::editor
 				if (!camera_comp.GetIsMainCamera())
 					continue;
 
-				const auto size = ImGui::GetWindowSize();
-				helper::imgui::Image(*camera_comp.GetCamera()->GetFrameBufferSRV_Address(), { size.x,size.y });
+				// ImGui上のウィンドウサイズに合うように調整
+				image_size = arithmetic::CalcWindowSize(Window::aspect_ratio,
+					static_cast<int>(ImGui::GetContentRegionAvail().x),
+					static_cast<int>(ImGui::GetContentRegionAvail().y));
+				// ウィンドウが画面の中央に来るように調整
+				window_offset.y = (ImGui::GetContentRegionAvail().y - image_size.y) / 2.f;
+				ImGui::Dummy({ .0f,window_offset.y });
+				helper::imgui::Image(*camera_comp.GetCamera()->GetFrameBufferSRV_Address(), { image_size.x,image_size.y });
 			}
 		}
 		ImGui::End();

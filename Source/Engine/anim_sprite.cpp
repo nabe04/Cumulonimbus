@@ -2,16 +2,16 @@
 
 #include "scene.h"
 
-CEREAL_REGISTER_TYPE(cumulonimbus::component::AnimSpriteComponent);
-CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::SpriteComponent, cumulonimbus::component::AnimSpriteComponent)
+CEREAL_REGISTER_TYPE(cumulonimbus::component::OldAnimSpriteComponent);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::OldSpriteComponent, cumulonimbus::component::OldAnimSpriteComponent)
 
 namespace cumulonimbus::component
 {
 	template <class Archive>
-	void AnimSpriteComponent::serialize(Archive&& archive)
+	void OldAnimSpriteComponent::serialize(Archive&& archive)
 	{
 		archive(
-			cereal::base_class<SpriteComponent>(this),
+			cereal::base_class<OldSpriteComponent>(this),
 			CEREAL_NVP(clip_texcoord),
 			CEREAL_NVP(num_clip),
 			CEREAL_NVP(anim_texcoord),
@@ -20,13 +20,13 @@ namespace cumulonimbus::component
 	}
 
 
-	AnimSpriteComponent::AnimSpriteComponent(ecs::Registry* const registry, const  mapping::rename_type::Entity ent,
+	OldAnimSpriteComponent::OldAnimSpriteComponent(ecs::Registry* const registry, const  mapping::rename_type::Entity ent,
 		ID3D11Device* device,
 		const char* filename, const PivotType pivot_type,
 		const int src_left,   const int src_top,
 		const int src_width,  const int src_height,
 		const int num_clip_w, const int num_clip_h)
-		:SpriteComponent{ registry, ent, device, filename, pivot_type, src_left, src_top, src_width, src_height }
+		:OldSpriteComponent{ registry, ent, device, filename, pivot_type, src_left, src_top, src_width, src_height }
 	{
 		num_clip.x = num_clip_w;
 		num_clip.y = num_clip_h;
@@ -36,7 +36,7 @@ namespace cumulonimbus::component
 		SetAnimation(0, 0);
 	}
 
-	void AnimSpriteComponent::CreateAnim(const int num_clip_w, const int num_clip_h)
+	void OldAnimSpriteComponent::CreateAnim(const int num_clip_w, const int num_clip_h)
 	{
 		const float rate_w = 1.0f / static_cast<float>(num_clip_w);
 		const float rate_h = 1.0f / static_cast<float>(num_clip_h);
@@ -77,7 +77,7 @@ namespace cumulonimbus::component
 		}
 	}
 
-	void AnimSpriteComponent::AdjustAnimPivot(PivotType pivot, const int left, const int top, const int width, const int height)
+	void OldAnimSpriteComponent::AdjustAnimPivot(PivotType pivot, const int left, const int top, const int width, const int height)
 	{
 		switch (pivot)
 		{
@@ -112,7 +112,7 @@ namespace cumulonimbus::component
 		}
 	}
 
-	void AnimSpriteComponent::SetAnimation(size_t clip_w, size_t clip_h)
+	void OldAnimSpriteComponent::SetAnimation(size_t clip_w, size_t clip_h)
 	{
 		const size_t h = num_clip.x * clip_h;
 
@@ -122,7 +122,7 @@ namespace cumulonimbus::component
 		anim_texcoord.at(TexSide::RightBottom) = clip_texcoord.at(TexSide::RightBottom).at(h + clip_w);
 	}
 
-	void AnimSpriteComponent::Load(ecs::Registry* registry)
+	void OldAnimSpriteComponent::Load(ecs::Registry* registry)
 	{
 		SetRegistry(registry);
 	}

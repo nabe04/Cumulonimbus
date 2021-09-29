@@ -48,11 +48,11 @@ namespace cumulonimbus::asset
 		if (FAILED(hr))
 			assert(!"Create shader resource view error");
 
-		format = metadata.format;
-		width = static_cast<u_int>(metadata.width);
-		height = static_cast<u_int>(metadata.height);
-		file_path = tex_filename;
-		filename = name;
+		format		= metadata.format;
+		width		= static_cast<u_int>(metadata.width);
+		height		= static_cast<u_int>(metadata.height);
+		file_path	= tex_filename;
+		filename	= name;
 	}
 
 	void Texture::CreateDummyTexture(ID3D11Device* device, const DirectX::XMFLOAT4& color)
@@ -63,12 +63,12 @@ namespace cumulonimbus::asset
 		D3D11_TEXTURE2D_DESC					tex2d_desc = {};
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> tex2d = {};
 		{
-			tex2d_desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-			tex2d_desc.Width = 1;
-			tex2d_desc.Height = 1;
-			tex2d_desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-			tex2d_desc.Usage = D3D11_USAGE_DEFAULT;
-			tex2d_desc.ArraySize = 1;
+			tex2d_desc.Format			= DXGI_FORMAT_R32G32B32A32_FLOAT;
+			tex2d_desc.Width			= 1;
+			tex2d_desc.Height			= 1;
+			tex2d_desc.BindFlags		= D3D11_BIND_SHADER_RESOURCE;
+			tex2d_desc.Usage			= D3D11_USAGE_DEFAULT;
+			tex2d_desc.ArraySize		= 1;
 			tex2d_desc.SampleDesc.Count = 1;
 
 			D3D11_SUBRESOURCE_DATA initData = {};
@@ -78,6 +78,10 @@ namespace cumulonimbus::asset
 			hr = device->CreateTexture2D(&tex2d_desc, &initData, tex2d.GetAddressOf());
 			if (FAILED(hr))
 				assert(!"CreateTexture2D error");
+
+			format = tex2d_desc.Format;
+			width  = 1;
+			height = 1;
 		}
 
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};

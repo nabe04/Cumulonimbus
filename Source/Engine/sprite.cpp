@@ -12,13 +12,13 @@
 #include "shader.h"
 #include "transform_component.h"
 
-CEREAL_REGISTER_TYPE(cumulonimbus::component::SpriteComponent)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::SpriteComponent)
+CEREAL_REGISTER_TYPE(cumulonimbus::component::OldSpriteComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::OldSpriteComponent)
 
 namespace cumulonimbus::component
 {
 	template <class Archive>
-	void SpriteComponent::serialize(Archive&& archive)
+	void OldSpriteComponent::serialize(Archive&& archive)
 	{
 		archive(
 			cereal::base_class<ComponentBase>(this),
@@ -37,7 +37,7 @@ namespace cumulonimbus::component
 		);
 	}
 
-	SpriteComponent::SpriteComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent,
+	OldSpriteComponent::OldSpriteComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent,
 		ID3D11Device* device,
 		const char* texture_filename, const PivotType pivot_type,
 		const int src_left, const int src_top,
@@ -61,7 +61,7 @@ namespace cumulonimbus::component
 		CreateVertexBuffer(device);
 	}
 
-	void SpriteComponent::GameUpdate(const float delta_time)
+	void OldSpriteComponent::GameUpdate(const float delta_time)
 	{
 		//auto& transform = GetRegistry()->GetComponent<component::TransformComponent>(GetEntity());
 
@@ -82,7 +82,7 @@ namespace cumulonimbus::component
 		//variable_texcoords.at(3) = clip_rate;   // Right bottom
 	}
 
-	void SpriteComponent::RenderImGui()
+	void OldSpriteComponent::RenderImGui()
 	{
 		if (ImGui::TreeNode("Sprite Data"))
 		{
@@ -108,7 +108,7 @@ namespace cumulonimbus::component
 		}
 	}
 
-	void SpriteComponent::Load(ecs::Registry* registry)
+	void OldSpriteComponent::Load(ecs::Registry* registry)
 	{
 		SetRegistry(registry);
 
@@ -123,7 +123,7 @@ namespace cumulonimbus::component
 		CreateVertexBuffer(GetRegistry()->GetScene()->GetFramework()->GetDevice());
 	}
 
-	void SpriteComponent::AdjustSrcTexturePivot(const PivotType pivot_type,
+	void OldSpriteComponent::AdjustSrcTexturePivot(const PivotType pivot_type,
 		const int src_left, const int src_top,
 		const int src_width, const int src_height)
 	{
@@ -160,7 +160,7 @@ namespace cumulonimbus::component
 		}
 	}
 
-	void SpriteComponent::CreateVertexBuffer(ID3D11Device* device)
+	void OldSpriteComponent::CreateVertexBuffer(ID3D11Device* device)
 	{
 		HRESULT hr = E_FAIL;
 		std::array<shader::VertexSprite, 4> vertices;

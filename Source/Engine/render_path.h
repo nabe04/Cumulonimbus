@@ -237,7 +237,7 @@ namespace cumulonimbus::renderer
 
 		/*
 		 * brief        : 2Dスプライトの描画
-		 * ※caution(1) : "SpriteComponent", "AnimSpriteComponent"
+		 * ※caution(1) : "OldSpriteComponent", "OldAnimSpriteComponent"
 		 *                を持つエンティティのみ描画される
 		 * ※caution(2) : "バックバッファに直接書き込むため「Begin」や「End」はない"
 		 */

@@ -40,15 +40,29 @@ namespace cumulonimbus::asset
 		ID3D11ShaderResourceView* GetShaderResourceView() const { return texture_view.Get(); }
 		[[nodiscard]]
 		ID3D11ShaderResourceView** GetShaderResourceViewAddress() { return texture_view.GetAddressOf(); }
+		[[nodiscard]]
+		const DirectX::ScratchImage& GetScratchImage() const { return scratch; }
+		[[nodiscard]]
+		const std::string& GetFilePath() const { return file_path; }
+		[[nodiscard]]
+		const std::string& GetFilename() const { return filename; }
+		[[nodiscard]]
+		const DXGI_FORMAT& GetFormat() const { return format; }
+		[[nodiscard]]
+		u_int GetWidth()  const { return width; }
+		[[nodiscard]]
+		u_int GetHeight() const { return height; }
+
 	private:
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texture_view{};
-		std::string file_path{};	// テクスチャまでのファイルパス(相対参照)
+		DirectX::TexMetadata metadata{};
+		DirectX::ScratchImage scratch{};
+		std::string file_path{};// テクスチャまでのファイルパス(相対参照)
 		std::string filename{};	// テクスチャ名のみ(ファイルパスや拡張子などを取り除いたもの)
 		DXGI_FORMAT format{};
 		u_int		width{};
 		u_int		height{};
-		DirectX::TexMetadata metadata{};
-		DirectX::ScratchImage scratch{};
+
 
 		void CreateTexture(ID3D11Device* device, const char* tex_filename);
 		void CreateDummyTexture(ID3D11Device* device, const DirectX::XMFLOAT4& color);

@@ -25,6 +25,10 @@ namespace cumulonimbus::component
 		}
 		virtual ~ComponentBase() = default;
 
+		virtual void PreCommonUpdate(float dt) {}
+		virtual void CommonUpdate(float dt) {}
+		virtual void PostCommonUpdate(float dt) {}
+
 		virtual void PreSceneUpdate(float dt) {}
 		virtual void SceneUpdate(float dt) {}
 		virtual void PostSceneUpdate(float dt) {}

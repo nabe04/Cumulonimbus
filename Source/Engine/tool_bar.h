@@ -59,6 +59,13 @@ namespace cumulonimbus::editor
 		[[nodiscard]]
 		const ToolBarButton& GetToolBarButton() const { return tool_bar_button; }
 
+		/**
+		 * @breif : ゲーム実行中(プレイボタンが押されている)かの判断
+		 * @return : true -> ゲーム実行中(プレイボタンが押されている)
+		 */
+		[[nodiscard]]
+		bool IsPlayGame() const { return IsPlaybackState(Button::Play); }
+
 	private:
 		ToolBarButton tool_bar_button{};
 		// playback mode ボタンのサイズ

@@ -34,6 +34,7 @@ namespace buffer
 		{
 			CreateCBuffer(device);
 		}
+
 		void CreateCBuffer(ID3D11Device* const device)
 		{
 			int size = sizeof(T);

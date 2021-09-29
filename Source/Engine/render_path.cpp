@@ -361,7 +361,7 @@ namespace cumulonimbus::renderer
 	void RenderPath::Render2D(ID3D11DeviceContext* immediate_context,
 							  ecs::Registry* registry)
 	{
-		for(auto& sprite : registry->GetArray<component::SpriteComponent>().GetComponents())
+		for(auto& sprite : registry->GetArray<component::OldSpriteComponent>().GetComponents())
 		{
 			BindGraphicsState(immediate_context, sprite.GetGraphicsState());
 			shader_manager_2d->Activate(immediate_context, sprite.GetShaderState());
@@ -369,7 +369,7 @@ namespace cumulonimbus::renderer
 			shader_manager_2d->Deactivate(immediate_context, sprite.GetShaderState());
 		}
 
-		for(auto& anim_sprite : registry->GetArray<component::AnimSpriteComponent>().GetComponents())
+		for(auto& anim_sprite : registry->GetArray<component::OldAnimSpriteComponent>().GetComponents())
 		{
 			BindGraphicsState(immediate_context, anim_sprite.GetGraphicsState());
 			shader_manager_2d->Activate(immediate_context, anim_sprite.GetShaderState());
@@ -619,7 +619,7 @@ namespace cumulonimbus::renderer
 	void RenderPath::RenderSprite(ID3D11DeviceContext* immediate_context,
 								  ecs::Registry* const registry , const mapping::rename_type::Entity entity)
 	{
-		component::SpriteComponent&		sprite		= registry->GetComponent<component::SpriteComponent>(entity);
+		component::OldSpriteComponent&		sprite		= registry->GetComponent<component::OldSpriteComponent>(entity);
 		component::TransformComponent&	transform	= registry->GetComponent<component::TransformComponent>(entity);
 
 		locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
@@ -708,10 +708,6 @@ namespace cumulonimbus::renderer
 		vertex.at(1).position = DirectX::XMFLOAT4{ pos[1].x,pos[1].y,.0f,1.f };
 		vertex.at(2).position = DirectX::XMFLOAT4{ pos[2].x,pos[2].y,.0f,1.f };
 		vertex.at(3).position = DirectX::XMFLOAT4{ pos[3].x,pos[3].y,.0f,1.f };
-		vertex.at(0).color	  = sprite.Color();
-		vertex.at(1).color	  = sprite.Color();
-		vertex.at(2).color	  = sprite.Color();
-		vertex.at(3).color	  = sprite.Color();
 		vertex.at(0).texcoord = sprite.GetVariableTexcoords().at(0);
 		vertex.at(1).texcoord = sprite.GetVariableTexcoords().at(1);
 		vertex.at(2).texcoord = sprite.GetVariableTexcoords().at(2);
@@ -730,7 +726,7 @@ namespace cumulonimbus::renderer
 	void RenderPath::RenderAnimSprite(ID3D11DeviceContext* immediate_context,
 									  ecs::Registry* const registry, const mapping::rename_type::Entity entity)
 	{
-		component::AnimSpriteComponent& anim_sprite = registry->GetComponent<component::AnimSpriteComponent>(entity);
+		component::OldAnimSpriteComponent& anim_sprite = registry->GetComponent<component::OldAnimSpriteComponent>(entity);
 		component::TransformComponent&  transform	= registry->GetComponent<component::TransformComponent>(entity);
 
 		locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
@@ -817,14 +813,10 @@ namespace cumulonimbus::renderer
 		vertex.at(1).position	= DirectX::XMFLOAT4{ pos[1].x,pos[1].y,.0f,1.f };
 		vertex.at(2).position	= DirectX::XMFLOAT4{ pos[2].x,pos[2].y,.0f,1.f };
 		vertex.at(3).position	= DirectX::XMFLOAT4{ pos[3].x,pos[3].y,.0f,1.f };
-		vertex.at(0).color		= anim_sprite.Color();
-		vertex.at(1).color		= anim_sprite.Color();
-		vertex.at(2).color		= anim_sprite.Color();
-		vertex.at(3).color		= anim_sprite.Color();
-		vertex.at(0).texcoord	= anim_sprite.GetAnimTexcoord().at(component::AnimSpriteComponent::TexSide::LeftTop);
-		vertex.at(1).texcoord	= anim_sprite.GetAnimTexcoord().at(component::AnimSpriteComponent::TexSide::RightTop);
-		vertex.at(2).texcoord	= anim_sprite.GetAnimTexcoord().at(component::AnimSpriteComponent::TexSide::LeftBottom);
-		vertex.at(3).texcoord	= anim_sprite.GetAnimTexcoord().at(component::AnimSpriteComponent::TexSide::RightBottom);
+		vertex.at(0).texcoord	= anim_sprite.GetAnimTexcoord().at(component::OldAnimSpriteComponent::TexSide::LeftTop);
+		vertex.at(1).texcoord	= anim_sprite.GetAnimTexcoord().at(component::OldAnimSpriteComponent::TexSide::RightTop);
+		vertex.at(2).texcoord	= anim_sprite.GetAnimTexcoord().at(component::OldAnimSpriteComponent::TexSide::LeftBottom);
+		vertex.at(3).texcoord	= anim_sprite.GetAnimTexcoord().at(component::OldAnimSpriteComponent::TexSide::RightBottom);
 
 		immediate_context->UpdateSubresource(anim_sprite.GetVertexBuffer(), 0, NULL, vertex.data(), 0, 0);
 

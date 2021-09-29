@@ -45,8 +45,6 @@ namespace cumulonimbus
 			ImGui::DragFloat("Reflection coefficient"	, &cb_phong->data.phong_ref_coefficient	, 0.005f, 0.0f, 1.0f);
 			ImGui::DragFloat("Power"					, &cb_phong->data.phong_pow_value		, 0.5f	, 1.0f, 100.0f);
 		}
-
-
 	} // shader_asset
 } // cumulonimbus
 

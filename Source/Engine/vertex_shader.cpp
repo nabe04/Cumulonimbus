@@ -122,4 +122,4 @@ namespace cumulonimbus::shader_system
 		immediate_context->IASetInputLayout(default_input_layout.Get());
 		immediate_context->VSSetShader(default_shader_object.Get(), 0, 0);
 	}
-}
+} // cumulonimbus::shader_system

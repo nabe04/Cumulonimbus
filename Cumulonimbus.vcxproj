@@ -34,6 +34,7 @@
     <ClInclude Include="Source\Engine\arithmetic.h" />
     <ClInclude Include="Source\Engine\asset_manager.h" />
     <ClInclude Include="Source\Engine\asset_sheet_manager.h" />
+    <ClInclude Include="Source\Engine\billboard_component.h" />
     <ClInclude Include="Source\Engine\blend.h" />
     <ClInclude Include="Source\Engine\bloom.h" />
     <ClInclude Include="Source\Engine\camera.h" />
@@ -121,10 +122,12 @@
     <ClInclude Include="Source\Engine\scene_view_camera.h" />
     <ClInclude Include="Source\Engine\shader_asset.h" />
     <ClInclude Include="Source\Engine\material3d_manager.h" />
+    <ClInclude Include="Source\Engine\shader_asset_manager.h" />
     <ClInclude Include="Source\Engine\shader_asset_mapping.h" />
     <ClInclude Include="Source\Engine\shader_filename_mapping.h" />
     <ClInclude Include="Source\Engine\shader_interop.h" />
     <ClInclude Include="Source\Engine\shader_interop_renderer.h" />
+    <ClInclude Include="Source\Engine\sprite_component.h" />
     <ClInclude Include="Source\Engine\system_inspector.h" />
     <ClInclude Include="Source\Engine\terrain_filename_mapping.h" />
     <ClInclude Include="Source\Engine\texture_filename_mapping.h" />
@@ -263,6 +266,7 @@
     <ClCompile Include="Source\Engine\shader.cpp" />
     <ClCompile Include="Source\Engine\shader_asset.cpp" />
     <ClCompile Include="Source\Engine\material3d_manager.cpp" />
+    <ClCompile Include="Source\Engine\shader_asset_manager.cpp" />
     <ClCompile Include="Source\Engine\shader_filename_mapping.cpp" />
     <ClCompile Include="Source\Engine\shader_manager.cpp" />
     <ClCompile Include="Source\Engine\shadow_map.cpp" />
@@ -273,6 +277,7 @@
     <ClCompile Include="Source\Engine\sphere_collision_component.cpp" />
     <ClCompile Include="Source\Engine\spot_light.cpp" />
     <ClCompile Include="Source\Engine\sprite.cpp" />
+    <ClCompile Include="Source\Engine\sprite_component.cpp" />
     <ClCompile Include="Source\Engine\sprite_renderer.cpp" />
     <ClCompile Include="Source\Engine\standard_sprite.cpp" />
     <ClCompile Include="Source\Engine\string_helper.cpp" />

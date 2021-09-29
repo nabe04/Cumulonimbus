@@ -131,6 +131,10 @@ namespace cumulonimbus::scene
 
 	void Scene::Update(const float dt)
 	{
+		// 共通の更新処理
+		registry->PreCommonUpdate(dt);
+		registry->CommonUpdate(dt);
+		registry->PostCommonUpdate(dt);
 		// Scene Viewの更新処理
 		registry->PreSceneUpdate(dt);
 		registry->SceneUpdate(dt);

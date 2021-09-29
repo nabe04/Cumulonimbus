@@ -50,19 +50,19 @@ namespace cumulonimbus::component
 
 	void CameraComponent::SceneUpdate(const float dt)
 	{
-		if (is_use_camera_for_debug)
-		{
-			camera->CalcCameraDirectionalVector();
-			camera->CalcCameraAngle();
-			camera->UpdateDefaultCamera(dt);
-			//CalcCameraDirectionalVector();
-			//CalcCameraAngle(); //オイラー角で(現在)計算しているので今は使わない
-			//UpdateDefaultCamera(dt);
-		}
-		else
-		{
+		//if (is_use_camera_for_debug)
+		//{
+		//	camera->CalcCameraDirectionalVector();
+		//	camera->CalcCameraAngle();
+		//	camera->UpdateDefaultCamera(dt);
+		//	//CalcCameraDirectionalVector();
+		//	//CalcCameraAngle(); //オイラー角で(現在)計算しているので今は使わない
+		//	//UpdateDefaultCamera(dt);
+		//}
+		//else
+		//{
 			UpdateObjectCamera(dt);
-		}
+		//}
 
 		{// TODO : クォータニオンテスト
 			SimpleMath::Quaternion q;
@@ -158,7 +158,7 @@ namespace cumulonimbus::component
 		auto& position = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetPosition();
 
 		camera->SetFocusPosition(position + camera->GetFocusOffset());
-		camera->SetEyePosition(position + camera->GetFocusOffset());
+		//camera->SetEyePosition(position + camera->GetFocusOffset());
 		camera->SetEyePosition(camera->GetFocusPosition() + (camera->GetCameraFront() * -1) * camera_length);
 	}
 } // cumulonimbus::component

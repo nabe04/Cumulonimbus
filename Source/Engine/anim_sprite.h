@@ -11,7 +11,7 @@
 
 namespace cumulonimbus::component
 {
-	class AnimSpriteComponent final :public SpriteComponent
+	class OldAnimSpriteComponent final :public OldSpriteComponent
 	{
 	public:
 		enum TexSide
@@ -23,14 +23,14 @@ namespace cumulonimbus::component
 		};
 
 	public:
-		explicit AnimSpriteComponent(ecs::Registry* registry, mapping::rename_type::Entity ent,
+		explicit OldAnimSpriteComponent(ecs::Registry* registry, mapping::rename_type::Entity ent,
 									 ID3D11Device* device,
 									 const char* filename, PivotType pivot_type,
 									 int src_left,   int src_top,
 									 int src_width,  int src_height,
 									 int num_clip_w, int num_clip_h);
-		explicit AnimSpriteComponent() = default; // for cereal
-		~AnimSpriteComponent() override = default;
+		explicit OldAnimSpriteComponent() = default; // for cereal
+		~OldAnimSpriteComponent() override = default;
 
 		void PreGameUpdate(const float delta_time)override {};
 		void GameUpdate(float delta_time) override {};

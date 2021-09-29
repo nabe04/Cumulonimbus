@@ -96,6 +96,30 @@ namespace cumulonimbus::ecs
 		}
 	}
 
+	void Registry::PreCommonUpdate(const float dt)
+	{
+		for (auto& component : component_arrays)
+		{
+			component.second->PreCommonUpdate(dt);
+		}
+	}
+
+	void Registry::CommonUpdate(const float dt)
+	{
+		for (auto& component : component_arrays)
+		{
+			component.second->CommonUpdate(dt);
+		}
+	}
+
+	void Registry::PostCommonUpdate(const float dt)
+	{
+		for (auto& component : component_arrays)
+		{
+			component.second->PostCommonUpdate(dt);
+		}
+	}
+
 	void Registry::PreSceneUpdate(const float dt)
 	{
 		for (auto& component : component_arrays)
@@ -172,8 +196,8 @@ namespace cumulonimbus::ecs
 		// model
 		RegistryComponent<component::ModelComponent>();
 		// sprite
-		RegistryComponent<component::SpriteComponent>();
-		RegistryComponent<component::AnimSpriteComponent>();
+		RegistryComponent<component::OldSpriteComponent>();
+		RegistryComponent<component::OldAnimSpriteComponent>();
 		// physics
 		RegistryComponent<component::SphereCollisionComponent>();
 		RegistryComponent<component::CollisionComponent>();

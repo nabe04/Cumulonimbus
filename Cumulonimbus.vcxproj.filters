@@ -534,6 +534,12 @@
     <ClCompile Include="Source\Engine\material_loader.cpp">
       <Filter>Source\Engine\Loader</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\sprite_component.cpp">
+      <Filter>Source\Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\shader_asset_manager.cpp">
+      <Filter>Source\Engine\Shader%28.cpp%29\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -973,6 +979,15 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\material_loader.h">
       <Filter>Header\Engine\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\billboard_component.h">
+      <Filter>Header\Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\sprite_component.h">
+      <Filter>Header\Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\shader_asset_manager.h">
+      <Filter>Header\Engine\Shader%28.h%29\System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

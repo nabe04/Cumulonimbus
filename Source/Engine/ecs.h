@@ -67,12 +67,19 @@ namespace cumulonimbus::ecs
 	public:
 		virtual ~ComponentArrayBase() = default;
 
+		// 共通の更新処理
+		virtual void PreCommonUpdate(float dt)	= 0;
+		virtual void CommonUpdate(float dt)		= 0;
+		virtual void PostCommonUpdate(float dt) = 0;
+		// シーン中の更新処理
 		virtual void PreSceneUpdate(float dt)	= 0;
 		virtual void SceneUpdate(float dt)		= 0;
 		virtual void PostSceneUpdate(float dt)	= 0;
+		// ゲーム中の更新処理
 		virtual void PreGameUpdate(float dt)	= 0;
 		virtual void GameUpdate(float dt)		= 0;
 		virtual void PostGameUpdate(float dt)	= 0;
+
 		virtual void Destroy(mapping::rename_type::Entity entity)	  = 0;
 		virtual void RenderImGui(mapping::rename_type::Entity entity) = 0;
 		virtual void Save(const std::string& filename) = 0;
@@ -94,47 +101,66 @@ namespace cumulonimbus::ecs
 			return typeid(T).hash_code();
 		}
 
-		void PreSceneUpdate(float dt) override
+		//-- 共通の更新処理 --//
+		void PreCommonUpdate(const float dt) override
+		{
+			for(auto& component : components)
+			{
+				component.PreCommonUpdate(dt);
+			}
+		}
+		void CommonUpdate(const float dt) override
+		{
+			for(auto& component : components)
+			{
+				component.CommonUpdate(dt);
+			}
+		}
+		void PostCommonUpdate(float dt) override
+		{
+			for(auto& component : components)
+			{
+				component.PostCommonUpdate(dt);
+			}
+		}
+		//-- シーン更新処理 --//
+		void PreSceneUpdate(const float dt) override
 		{
 			for (auto& component : components)
 			{
 				component.PreSceneUpdate(dt);
 			}
 		}
-
-		void SceneUpdate(float dt) override
+		void SceneUpdate(const float dt) override
 		{
 			for (auto& component : components)
 			{
 				component.SceneUpdate(dt);
 			}
 		}
-
-		void PostSceneUpdate(float dt) override
+		void PostSceneUpdate(const float dt) override
 		{
 			for (auto& component : components)
 			{
 				component.PostSceneUpdate(dt);
 			}
 		}
-
-		void PreGameUpdate(float dt) override
+		//-- ゲーム更新処理 --//
+		void PreGameUpdate(const float dt) override
 		{
 			for(auto& component : components)
 			{
 				component.PreGameUpdate(dt);
 			}
 		}
-
-		void GameUpdate(float dt) override
+		void GameUpdate(const float dt) override
 		{
 			for (auto& component : components)
 			{
 				component.GameUpdate(dt);
 			}
 		}
-
-		void PostGameUpdate(float dt) override
+		void PostGameUpdate(const float dt) override
 		{
 			for (auto& component : components)
 			{
@@ -142,7 +168,7 @@ namespace cumulonimbus::ecs
 			}
 		}
 
-		void RenderImGui(mapping::rename_type::Entity entity) override
+		void RenderImGui(const mapping::rename_type::Entity entity) override
 		{
 			if (!Content(entity))
 				return;
@@ -352,30 +378,17 @@ namespace cumulonimbus::ecs
 			RegisterComponentName();
 		}
 
-		/**
-		 * @brief : Component全体のPreSceneUpdate処理
-		 */
+		//-- 共通の更新処理 --//
+		void PreCommonUpdate(float dt);
+		void CommonUpdate(float dt);
+		void PostCommonUpdate(float dt);
+		//-- シーンの更新処理 --//
 		void PreSceneUpdate(float dt);
-		/**
-		 * @brief : Component全体のSceneUpdate処理
-		 */
 		void SceneUpdate(float dt);
-		/**
-		 * @brief : Component全体のPostSceneUpdate処理
-		 */
 		void PostSceneUpdate(float dt);
-
-		/**
-		 * @brief : Component全体のPreGameUpdate処理
-		 */
+		//-- ゲームの更新処理 --//
 		void PreGameUpdate(float dt);
-		/**
-		 * @brief : Component全体のUpdate処理
-		 */
 		void GameUpdate(float dt);
-		/**
-		 * @brief : Component全体のPostUpdate処理
-		 */
 		void PostGameUpdate(float dt);
 
 		/**

@@ -90,7 +90,6 @@ namespace shader
 	{
 		DirectX::XMFLOAT4 position{};
 		DirectX::XMFLOAT2 texcoord{};
-		DirectX::XMFLOAT4 color = DirectX::XMFLOAT4{ 1.0f,1.0f,1.0f,1.0f };
 	};
 
 	struct Empty
