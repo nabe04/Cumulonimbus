@@ -6,6 +6,7 @@ namespace cumulonimbus::mapping::component_tag
 	{
 		NoTag,
 		Mesh,
+		Sprite,
 		Physics,
 
 		End

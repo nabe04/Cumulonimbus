@@ -1,9 +1,14 @@
 #include "sprite_component.h"
 
+#include <cereal/types/array.hpp>
+
 #include "arithmetic.h"
 #include "locator.h"
 #include "texture_loader.h"
 #include "standard_sprite.h"
+
+CEREAL_REGISTER_TYPE(cumulonimbus::component::SpriteComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::SpriteComponent)
 
 namespace cumulonimbus::component
 {
@@ -11,6 +16,7 @@ namespace cumulonimbus::component
 	void SpriteComponent::serialize(Archive&& archive)
 	{
 		archive(
+			cereal::base_class<ComponentBase>(this),
 			CEREAL_NVP(texture_id),
 			CEREAL_NVP(graphics_state),
 			CEREAL_NVP(pivot_type),
@@ -18,28 +24,54 @@ namespace cumulonimbus::component
 		);
 	}
 
+	SpriteComponent::SpriteComponent()
+	{
+		// 初期テクスチャのセット(ダミーテクスチャ)
+		asset::TextureLoader* texture_loader = locator::Locator::GetAssetManager()->GetLoader<asset::TextureLoader>();
+		const auto& texture = texture_loader->GetTexture({});
+		Initialize(static_cast<float>(texture.GetWidth()), static_cast<float>(texture.GetHeight()));
+	}
+
 	SpriteComponent::SpriteComponent(
 		ecs::Registry* registry,
-		const mapping::rename_type::Entity ent,
-		const mapping::rename_type::UUID& tex_id)
+		const mapping::rename_type::Entity ent)
 		: ComponentBase{ registry,ent }
+	{
+		// 初期テクスチャのセット(ダミーテクスチャ)
+		asset::TextureLoader* texture_loader = locator::Locator::GetAssetManager()->GetLoader<asset::TextureLoader>();
+		const auto& texture = texture_loader->GetTexture({});
+		Initialize(static_cast<float>(texture.GetWidth()), static_cast<float>(texture.GetHeight()));
+	}
+
+	SpriteComponent::SpriteComponent(const mapping::component_tag::ComponentTag tag)
+		:ComponentBase{ tag }
+	{
+
+	}
+
+	void SpriteComponent::Initialize(const float width, const float height)
 	{
 		vertices.at(0).texcoord = { .0f,.0f };
 		vertices.at(1).texcoord = { 1.f,.0f };
 		vertices.at(2).texcoord = { .0f,1.f };
 		vertices.at(3).texcoord = { 1.f,1.f };
 
-		shader_asset = std::make_shared<shader_asset::ShaderAsset2DManager>();
-		asset::TextureLoader* texture_loader = locator::Locator::GetAssetManager()->GetLoader<asset::TextureLoader>();
-		const auto& texture = texture_loader->GetTexture(tex_id);
+		shader_asset_manager = std::make_shared<shader_asset::ShaderAsset2DManager>();
+		shader_asset_manager->SetCurrentShaderAsset<shader_asset::StandardSpriteAsset>();
 		CreateVertexBuffer();
-		ResizeTexture({ static_cast<float>(texture.GetWidth()),static_cast<float>(texture.GetHeight()) });
+		ResizeTexture({ width,height });
 		SetPivotType(render::PivotType::Center); // ピボットのデフォルト設定(PivotType::Center)
+	}
+
+
+	void SpriteComponent::CommonUpdate(const float dt)
+	{
+
 	}
 
 	void SpriteComponent::Load(ecs::Registry* registry)
 	{
-
+		SetRegistry(registry);
 	}
 
 	void SpriteComponent::ResizeTexture(const DirectX::SimpleMath::Vector2& size)
@@ -62,7 +94,7 @@ namespace cumulonimbus::component
 		const Window* window = locator::Locator::GetWindow();
 		const DirectX::SimpleMath::Vector2 screen_size = arithmetic::ConvertScreenToNDC({ static_cast<float>(texture.GetWidth()),static_cast<float>(texture.GetHeight()) },
 																						  static_cast<float>(window->Width()), static_cast<float>(window->Height()));
-		auto& cb_data = shader_asset->GetShaderAsset<shader_asset::StandardSpriteAsset>()->GetCBuffer()->data;
+		auto& cb_data = shader_asset_manager->GetShaderAsset<shader_asset::StandardSpriteAsset>()->GetCBuffer()->data;
 		pivot_type = pivot;
 
 		switch(pivot_type)

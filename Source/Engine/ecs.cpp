@@ -7,7 +7,7 @@
 #include "scene.h"
 // components(engine)
 #include "actor3d_component.h"
-#include "anim_sprite.h"
+#include "billboard_component.h"
 #include "camera_component.h"
 #include "capsule_collison_component.h"
 #include "model_component.h"
@@ -16,7 +16,7 @@
 #include "rigid_body_component.h"
 #include "sky_box.h"
 #include "sphere_collision_component.h"
-#include "sprite.h"
+#include "sprite_component.h"
 #include "transform_component.h"
 // components(game)
 #include "enemy_base_component.h"
@@ -196,8 +196,8 @@ namespace cumulonimbus::ecs
 		// model
 		RegistryComponent<component::ModelComponent>();
 		// sprite
-		RegistryComponent<component::OldSpriteComponent>();
-		RegistryComponent<component::OldAnimSpriteComponent>();
+		RegistryComponent<component::SpriteComponent>();
+		RegistryComponent<component::BillboardComponent>();
 		// physics
 		RegistryComponent<component::SphereCollisionComponent>();
 		RegistryComponent<component::CollisionComponent>();

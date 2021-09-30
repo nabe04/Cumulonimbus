@@ -54,6 +54,7 @@ CBUFFER(SpriteCB, CBSlot_Sprite)
 				void UnbindCBuffer() override;
 				void RenderImGui()   override;
 
+				[[nodiscard]]
 				buffer::ConstantBuffer<SpriteCB>* GetCBuffer() const { return cb_sprite.get(); }
 
 				template<class Archive>
@@ -70,6 +71,10 @@ CBUFFER(SpriteCB, CBSlot_Sprite)
 		} // shader_asset
 
 	} // cumulonimbus
+
+	CEREAL_REGISTER_TYPE(cumulonimbus::shader_asset::StandardSpriteAsset)
+	CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::shader_asset::ShaderAsset, cumulonimbus::shader_asset::StandardSpriteAsset)
+
 
 namespace shader
 {

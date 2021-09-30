@@ -1,12 +1,15 @@
 #include "shader_asset_manager.h"
 
+// 2D Shader Asset
 #include "standard_sprite.h"
+#include "billboard.h"
 
 namespace cumulonimbus::shader_asset
 {
 	ShaderAsset2DManager::ShaderAsset2DManager()
 	{
 		RegisterShaderAsset<shader_asset::StandardSpriteAsset>();
+		RegisterShaderAsset<shader_asset::BillboardAsset>();
 	}
 
 	void ShaderAsset2DManager::BindCBuffer() const

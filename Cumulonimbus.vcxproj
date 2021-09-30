@@ -34,6 +34,7 @@
     <ClInclude Include="Source\Engine\arithmetic.h" />
     <ClInclude Include="Source\Engine\asset_manager.h" />
     <ClInclude Include="Source\Engine\asset_sheet_manager.h" />
+    <ClInclude Include="Source\Engine\billboard.h" />
     <ClInclude Include="Source\Engine\billboard_component.h" />
     <ClInclude Include="Source\Engine\blend.h" />
     <ClInclude Include="Source\Engine\bloom.h" />
@@ -184,6 +185,8 @@
     <ClCompile Include="Source\Engine\arithmetic.cpp" />
     <ClCompile Include="Source\Engine\asset_manager.cpp" />
     <ClCompile Include="Source\Engine\asset_sheet_manager.cpp" />
+    <ClCompile Include="Source\Engine\billboard.cpp" />
+    <ClCompile Include="Source\Engine\billboard_component.cpp" />
     <ClCompile Include="Source\Engine\blend.cpp" />
     <ClCompile Include="Source\Engine\bloom.cpp" />
     <ClCompile Include="Source\Engine\camera.cpp" />
@@ -352,6 +355,18 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Shader\billboard_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\billboard_vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="Shader\convolution_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

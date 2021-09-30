@@ -172,6 +172,12 @@
     <FxCompile Include="Shader\debug_collision_ps.hlsl">
       <Filter>Shader%28HLSL%29\PS</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\billboard_vs.hlsl">
+      <Filter>Shader%28HLSL%29\VS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\billboard_ps.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\scene.cpp">
@@ -539,6 +545,12 @@
     </ClCompile>
     <ClCompile Include="Source\Engine\shader_asset_manager.cpp">
       <Filter>Source\Engine\Shader%28.cpp%29\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\billboard_component.cpp">
+      <Filter>Source\Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\billboard.cpp">
+      <Filter>Source\Engine\Shader%28.cpp%29</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -988,6 +1000,9 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\shader_asset_manager.h">
       <Filter>Header\Engine\Shader%28.h%29\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\billboard.h">
+      <Filter>Header\Engine\Shader%28.h%29</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

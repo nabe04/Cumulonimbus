@@ -36,6 +36,7 @@ namespace cumulonimbus::mapping::shader_assets
 	enum class ShaderAsset2D
 	{
 		Standard,
+		Billboard,
 
 		End
 	};

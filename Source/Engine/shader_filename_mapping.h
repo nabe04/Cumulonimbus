@@ -12,6 +12,7 @@ namespace cumulonimbus::mapping::shader_filename
 		inline std::string Diffuse_VS()							{ return { "./Shader/cso/diffuse_vs.cso" }; }
 		inline std::string GBuffer_VS()							{ return { "./Shader/cso/gbuffer_vs.cso" }; }
 		inline std::string Sprite2D_VS()						{ return { "./Shader/cso/sprite2d_vs.cso" }; }
+		inline std::string Billboard_VS()						{ return { "./Shader/cso/billboard_vs.cso" }; }
 		inline std::string Standard3D_VS()						{ return { "./Shader/cso/3d_standard_vs.cso" }; }
 		inline std::string SingleColor_VS()						{ return { "./Shader/cso/single_color_vs.cso" }; }
 		inline std::string SampleShader_VS()					{ return { "./Shader/cso/sample_shader_vs.cso" }; }
@@ -34,6 +35,7 @@ namespace cumulonimbus::mapping::shader_filename
 		inline std::string MetalMTR_PS()						{ return { "./Shader/cso/metal_mtr_ps.cso" }; }
 		inline std::string PhongMTR_PS()						{ return { "./Shader/cso/phong_mtr_ps.cso" }; }
 		inline std::string Sprite2D_PS()						{ return { "./Shader/cso/sprite2d_ps.cso" }; }
+		inline std::string Billboard_PS()						{ return { "./Shader/cso/billboard_ps.cso" }; }
 		inline std::string DiffuseMRT_PS()						{ return { "./Shader/cso/diffuse_mrt_ps.cso" }; }
 		inline std::string Monochrome_PS()						{ return { "./Shader/cso/monochrome_ps.cso" }; }
 		inline std::string Standard3D_PS()						{ return { "./Shader/cso/3d_standard_ps.cso" }; }

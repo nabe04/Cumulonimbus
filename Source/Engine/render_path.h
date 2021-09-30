@@ -45,6 +45,8 @@ namespace cumulonimbus
 		class MeshObjectComponent;
 		class GeomPrimComponent;
 		class ModelComponent;
+		class SpriteComponent;
+		class BillboardComponent;
 	} // component
 
 	namespace graphics::buffer
@@ -77,7 +79,6 @@ namespace cumulonimbus::renderer
 	private:
 		// すべてのシェーダーの生成とセット
 		std::unique_ptr<shader_system::ShaderManager> shader_manager;
-		std::unique_ptr<shader::SpriteShaderManager>  shader_manager_2d;
 
 		//-- DirectX States --//
 		std::unique_ptr<Blend>			blend;
@@ -87,14 +88,11 @@ namespace cumulonimbus::renderer
 
 		std::shared_ptr<FrameBuffer>							off_screen					{ nullptr };
 		std::unique_ptr<graphics::buffer::GBuffer>				g_buffer					{ nullptr };
-		std::unique_ptr<cumulonimbus::asset::DummyTexture>		dummy_texture				{ nullptr };
 		std::unique_ptr<DepthMap>								depth_map					{ nullptr };
 		std::unique_ptr<FullscreenQuad>							fullscreen_quad				{ nullptr };
 		std::unique_ptr<shader_asset::LocalShaderAssetManager>	local_shader_asset_manager	{ nullptr };
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>		sky_box_srv					{ nullptr };
-		//Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>
 
-		// Todo : BindDirectXStates関数は消す
 		/*
 		 * brief : "MeshObjectComponent"がもつDirectX stateのセット
 		 *         (states : rasterizer , sampler , depth_stencil , blend)
@@ -197,7 +195,11 @@ namespace cumulonimbus::renderer
 				ID3D11DeviceContext* immediate_context,
 				const camera::Camera* camera);
 
-		void Render2D(ID3D11DeviceContext* immediate_context, ecs::Registry* registry);
+		void Render2D(
+			ID3D11DeviceContext* immediate_context,
+			ecs::Registry* registry,
+			const camera::Camera* camera,
+			bool is_scene);
 
 		/**
 		 * @brief : "ModelComponent"の持つモデルの描画
@@ -241,10 +243,32 @@ namespace cumulonimbus::renderer
 		 *                を持つエンティティのみ描画される
 		 * ※caution(2) : "バックバッファに直接書き込むため「Begin」や「End」はない"
 		 */
-		// 2Dスプライト描画(Animationなし)
-		void RenderSprite(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, mapping::rename_type::Entity entity);
-		// 2Dスプライト描画(Animationあり)
-		void RenderAnimSprite(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, mapping::rename_type::Entity entity);
+
+		/**
+		 * @brief : 2Dスプライト描画(Animationなし)
+		 */
+		void RenderSprite(
+			ID3D11DeviceContext* immediate_context,
+			ecs::Registry* registry,
+			mapping::rename_type::Entity entity,
+			component::SpriteComponent* sprite_comp);
+		/**
+		 * @brief : 2Dスプライト描画(Animationあり)
+		 */
+		void RenderAnimSprite(
+			ID3D11DeviceContext* immediate_context,
+			ecs::Registry* registry,
+			mapping::rename_type::Entity entity);
+		/**
+		 * @brief : 2Dスプライト描画(ビルボード)
+		 */
+		void RenderBillboard(
+			ID3D11DeviceContext* immediate_context,
+			ecs::Registry* registry,
+			mapping::rename_type::Entity entity,
+			component::BillboardComponent* billboard_comp,
+			const camera::Camera* camera,
+			bool is_scene /* 描画先がScene Viewかどうか */);
 
 		/*
 		 * brief     : GBufferをoff_screenに結合

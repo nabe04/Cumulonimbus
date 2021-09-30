@@ -38,7 +38,7 @@ dcl_temps 1
 //   v1.x <- pin.texcoord0.x; v1.y <- pin.texcoord0.y; 
 //   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
 //
-#line 12 "D:\Desktop\Cumulonimbus\Shader\standard_sprite_ps.hlsl"
+#line 12 "D:\Desktop\Cumulonimbus\Shader\billboard_ps.hlsl"
 sample_indexable(texture2d)(float,float,float,float) r0.xyzw, v1.xyxx, t20.xyzw, s0  // r0.x <- color.x; r0.y <- color.y; r0.z <- color.z; r0.w <- color.w
 
 #line 14

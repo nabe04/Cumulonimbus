@@ -6,6 +6,7 @@
 #include <wrl.h>
 #include <DirectXMath.h>
 
+#include "cereal_helper.h"
 #include "constant_buffer.h"
 #include "vertex_shader.h"
 #include "pixel_shader.h"
@@ -90,6 +91,15 @@ namespace shader
 	{
 		DirectX::XMFLOAT4 position{};
 		DirectX::XMFLOAT2 texcoord{};
+
+		template<class Archive>
+		void serialize(Archive&& archive)
+		{
+			archive(
+				CEREAL_NVP(position),
+				CEREAL_NVP(texcoord)
+			);
+		}
 	};
 
 	struct Empty

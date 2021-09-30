@@ -1,31 +1,32 @@
 #pragma once
-
 #include <memory>
 #include <unordered_map>
 
 #include <d3d11.h>
 #include <cereal/cereal.hpp>
 
-#include "shader.h"
-#include "state_machine.h"
 #include "enum_state_map.h"
-#include "shader_asset_mapping.h"
 #include "gbuffer.h"
+#include "generic.h"
+#include "rename_type_mapping.h"
+#include "shader.h"
+#include "shader_asset_mapping.h"
+#include "state_machine.h"
 
 //-- Shader 3D --//
 #include "3d_standard.h"
 #include "diffuse.h"
-#include "phong.h"
 #include "metal.h"
-#include "toon.h"
+#include "phong.h"
 #include "reflection_mapping.h"
-#include "spot_light.h"
 #include "refraction_mapping.h"
 #include "single_color.h"
+#include "spot_light.h"
+#include "toon.h"
 
 //-- Shader 2D --//
-#include "texture2d_shader.h"
 #include "standard_sprite.h"
+#include "texture2d_shader.h"
 
 class Scene;
 //namespace cumulonimbus::shader_system
@@ -120,7 +121,7 @@ namespace shader
 		void EditShaderParam(MeshShaderTypes type);
 
 		// cereal
-		template<typename Archive>
+		template<class Archive>
 		void serialize(Archive&& archive)
 		{
 			archive(
@@ -195,27 +196,34 @@ namespace cumulonimbus
 			explicit ShaderManager();
 			~ShaderManager() = default;
 
-			/*
-			 * brief : Material3DComponentに登録されている
-			 *		   現在のマテリアルに応じてセットする
-			 *		   シェーダーを変える
+			/**
+			 * @brief : Material3DComponentに登録されている
+			 *	 	    現在のマテリアルに応じてセットする
+			 *		    シェーダーを変える
 			 */
 			void BindShader(mapping::shader_assets::ShaderAsset3D asset);
 			void UnbindShader(mapping::shader_assets::ShaderAsset3D asset);
 
-			/*
-			 * brief : Material2DComponentに登録されている
-			 *		   現在のマテリアルに応じてセットする
-			 *		   シェーダーを変える
+			/**
+			 * @brief : Material2DComponentに登録されている
+			 *		    現在のマテリアルに応じてセットする
+			 *		    シェーダーを変える
 			 */
-			void BindShader(mapping::shader_assets::ShaderAsset2D asset);
-			void UnbindShader(mapping::shader_assets::ShaderAsset2D asset);
+			void BindShader2D(mapping::shader_assets::ShaderAsset2D asset);
+			void UnbindShader2D(mapping::shader_assets::ShaderAsset2D asset);
 
-			/*
-			 * brief : LocalShaderの種類に応じてのシェーダーのバインド
+			/**
+			 * @brief : LocalShaderの種類に応じてのシェーダーのバインド
 			 */
 			void BindLocalShader(mapping::shader_assets::LocalShaderAsset asset);
 			void UnbindLocalShader(mapping::shader_assets::LocalShaderAsset asset);
+
+			/**
+			 * @brief : ShaderAssetクラスの型ハッシュ値からコネクターに
+			 *			登録されているShaderAsset2Dと取り出す
+			 */
+			[[nodiscard]]
+			mapping::shader_assets::ShaderAsset2D GetAsset2DFromConnector(const mapping::rename_type::Hash& hash) const;
 
 		private:
 			// モデルが使用するシェーダーのマップ(3D)
@@ -224,10 +232,13 @@ namespace cumulonimbus
 			std::unordered_map<mapping::shader_assets::ShaderAsset2D, std::unique_ptr<shader_system::Shader>> shader2d_map;
 			// モデルの描画以外のシェーダー(ポストプロセスなど)
 			std::unordered_map<mapping::shader_assets::LocalShaderAsset  , std::unique_ptr<shader_system::Shader>> local_shader_map;
+			// ShaderAsset(2D)型とmapping::shader_assets::ShaderAsset2Dの関連付けを行う
+			std::unordered_map<mapping::rename_type::Hash, mapping::shader_assets::ShaderAsset2D> connector_shader2d{};
+
 			/*
 			 * brief : 作成したシェーダーの登録(3D)
 			 */
-			template<typename T>
+			template<class T>
 			void RegistryShader(mapping::shader_assets::ShaderAsset3D asset_type)
 			{
 				if (shader3d_map.contains(asset_type))
@@ -236,22 +247,26 @@ namespace cumulonimbus
 				shader3d_map.emplace(asset_type, std::make_unique<T>());
 			}
 
-			/*
-			 * brief : 作成したシェーダーの登録(2D)
+			/**
+			 * @brief : 作成したシェーダーの登録(2D)
+			 * @remark : 同時にconnector_shader2d
 			 */
-			template<typename T>
-			void RegistryShader(mapping::shader_assets::ShaderAsset2D asset_type)
+			template<class Shader, class ShaderAsset>
+			void RegistryShader2D(const mapping::shader_assets::ShaderAsset2D asset_type)
 			{
+				// 既に存在している場合は処理を抜ける
 				if (shader2d_map.contains(asset_type))
 					return;
 
-				shader2d_map.emplace(asset_type, std::make_unique<T>());
+				const auto& hash = utility::GetHash<ShaderAsset>();
+				shader2d_map.emplace(asset_type, std::make_unique<Shader>());
+				connector_shader2d.emplace(hash, asset_type);
 			}
 
-			/*
-			 * brief :作成したシェーダーの登録(LocalShaderAsset)
+			/**
+			 * @brief :作成したシェーダーの登録(LocalShaderAsset)
 			 */
-			template<typename T>
+			template<class T>
 			void RegisterShader(mapping::shader_assets::LocalShaderAsset asset_type)
 			{
 				if (local_shader_map.contains(asset_type))

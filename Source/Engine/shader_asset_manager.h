@@ -49,6 +49,8 @@ namespace cumulonimbus::shader_asset
 
 			return static_cast<T*>(shader_assets.at(hash).get());
 		}
+		[[nodiscard]]
+		const mapping::rename_type::Hash& GetHash() const { return current_asset_hash; }
 
 		template<class T>
 		void SetCurrentShaderAsset()
