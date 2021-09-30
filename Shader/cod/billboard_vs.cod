@@ -93,13 +93,13 @@ add r0.xyzw, r0.xyzw, r1.xyzw
 mul r1.xyzw, cb1[11].xyzw, l(1.000000, 1.000000, 1.000000, 1.000000)
 add r0.xyzw, r0.xyzw, r1.xyzw  // r0.x <- wvp_pos.x; r0.y <- wvp_pos.y; r0.z <- wvp_pos.z; r0.w <- wvp_pos.w
 
-#line 18
+#line 17
 mov r0.xyzw, r0.xyzw  // r0.x <- vout.position.x; r0.y <- vout.position.y; r0.z <- vout.position.z; r0.w <- vout.position.w
 
-#line 19
+#line 18
 mov r1.xy, v1.xyxx  // r1.x <- vout.texcoord0.x; r1.y <- vout.texcoord0.y
 
-#line 21
+#line 20
 mov o0.xyzw, r0.xyzw
 mov o1.xy, r1.xyxx
 ret 

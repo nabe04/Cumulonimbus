@@ -7,8 +7,9 @@
 PS_Input main(VS_Input vin)
 {
     PS_Input vout = (PS_Input) 0;
+    float3 world = mul(transform_matrix, vin.position).xyz;
 
-    vout.position   = mul(transform_matrix, vin.position);
+    vout.position = float4(world, 1.f);
     vout.texcoord0  = vin.texcoord0;
     return vout;
 }

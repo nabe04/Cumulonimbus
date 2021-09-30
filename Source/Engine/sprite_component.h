@@ -42,6 +42,7 @@ namespace cumulonimbus::component
 		void CommonUpdate(float dt) override;
 
 		void Load(ecs::Registry* registry) override;
+		void RenderImGui() override;
 
 		template<class Archive>
 		void serialize(Archive&& archive);
@@ -80,5 +81,10 @@ namespace cumulonimbus::component
 		 */
 		void Initialize(float width, float height);
 		void CreateVertexBuffer();
+
+		/**
+		 * @brief : スクリーン空間上の座標をNDC空間上の座標に変換
+		 */
+		void ConvertScreenToNDC() const;
 	};
 } // cumulonimbus::component

@@ -378,11 +378,13 @@ namespace cumulonimbus::renderer
 		{
 			for (auto& sprite_comp : registry->GetArray<component::SpriteComponent>().GetComponents())
 			{
+				camera->BindCBuffer();
 				BindGraphicsState(immediate_context, sprite_comp.GetGraphicsState());
 				const mapping::shader_assets::ShaderAsset2D asset = shader_manager->GetAsset2DFromConnector(sprite_comp.GetShaderAssetManager()->GetHash());
 				shader_manager->BindShader2D(asset);
 				RenderSprite(immediate_context, registry, sprite_comp.GetEntity(), &sprite_comp);
 				shader_manager->UnbindShader2D(asset);
+				camera->UnbindCBuffer();
 			}
 		}
 

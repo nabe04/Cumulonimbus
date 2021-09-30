@@ -51,20 +51,24 @@ dcl_temps 2
 //   o1.x <- <main return value>.texcoord0.x; o1.y <- <main return value>.texcoord0.y; 
 //   o0.x <- <main return value>.position.x; o0.y <- <main return value>.position.y; o0.z <- <main return value>.position.z; o0.w <- <main return value>.position.w
 //
-#line 11 "D:\Desktop\Cumulonimbus\Shader\standard_sprite_vs.hlsl"
-mul r0.xyzw, v0.xxxx, cb3[512].xyzw
-mul r1.xyzw, v0.yyyy, cb3[513].xyzw
-add r0.xyzw, r0.xyzw, r1.xyzw
-mul r1.xyzw, v0.zzzz, cb3[514].xyzw
-add r0.xyzw, r0.xyzw, r1.xyzw
-mul r1.xyzw, v0.wwww, cb3[515].xyzw
-add r0.xyzw, r0.xyzw, r1.xyzw  // r0.x <- vout.position.x; r0.y <- vout.position.y; r0.z <- vout.position.z; r0.w <- vout.position.w
+#line 10 "D:\Desktop\Cumulonimbus\Shader\standard_sprite_vs.hlsl"
+mul r0.xyz, v0.xxxx, cb3[512].xyzx
+mul r1.xyz, v0.yyyy, cb3[513].xyzx
+add r0.xyz, r0.xyzx, r1.xyzx
+mul r1.xyz, v0.zzzz, cb3[514].xyzx
+add r0.xyz, r0.xyzx, r1.xyzx
+mul r1.xyz, v0.wwww, cb3[515].xyzx
+add r0.xyz, r0.xyzx, r1.xyzx  // r0.x <- world.x; r0.y <- world.y; r0.z <- world.z
 
 #line 12
-mov r1.xy, v1.xyxx  // r1.x <- vout.texcoord0.x; r1.y <- vout.texcoord0.y
+mov r0.xyz, r0.xyzx  // r0.x <- vout.position.x; r0.y <- vout.position.y; r0.z <- vout.position.z
+mov r0.w, l(1.000000)  // r0.w <- vout.position.w
 
 #line 13
+mov r1.xy, v1.xyxx  // r1.x <- vout.texcoord0.x; r1.y <- vout.texcoord0.y
+
+#line 14
 mov o0.xyzw, r0.xyzw
 mov o1.xy, r1.xyxx
 ret 
-// Approximately 11 instruction slots used
+// Approximately 13 instruction slots used

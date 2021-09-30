@@ -3,9 +3,11 @@
 #include <cereal/types/array.hpp>
 
 #include "arithmetic.h"
+#include "ecs.h"
 #include "locator.h"
 #include "texture_loader.h"
 #include "standard_sprite.h"
+#include "transform_component.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::SpriteComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::SpriteComponent)
@@ -63,26 +65,45 @@ namespace cumulonimbus::component
 		SetPivotType(render::PivotType::Center); // ピボットのデフォルト設定(PivotType::Center)
 	}
 
-
 	void SpriteComponent::CommonUpdate(const float dt)
 	{
-
+		ConvertScreenToNDC();
 	}
 
 	void SpriteComponent::Load(ecs::Registry* registry)
 	{
 		SetRegistry(registry);
+
+		// 保存されているNDC空間上の座標から現在のスクリーン空間上の座標を算出する
+	}
+
+	void SpriteComponent::RenderImGui()
+	{
+		if (ImGui::CollapsingHeader("Sprite Component", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+
+		}
 	}
 
 	void SpriteComponent::ResizeTexture(const DirectX::SimpleMath::Vector2& size)
 	{
 		const Window* window = locator::Locator::GetWindow();
-		const DirectX::SimpleMath::Vector2 screen_size = arithmetic::ConvertScreenToNDC(size, static_cast<float>(window->Width()), static_cast<float>(window->Height()));
+		//DirectX::SimpleMath::Vector2 screen_size;
+		auto convert_ndc = [&](const DirectX::SimpleMath::Vector2& size)
+		{
+			const DirectX::SimpleMath::Vector2 screen_pos = arithmetic::ConvertScreenToNDC(size, static_cast<float>(window->Width()), static_cast<float>(window->Height()));
+			return DirectX::SimpleMath::Vector4{ screen_pos.x,screen_pos.y,.0f,1.f };
+		};
+		//screen_size = arithmetic::ConvertScreenToNDC({ .0f,.0f }, static_cast<float>(window->Width()), static_cast<float>(window->Height()));
+		//vertices.at(0).position = convert_ndc({    .0f,    .0f});
+		//vertices.at(1).position = convert_ndc({ size.x,    .0f});
+		//vertices.at(2).position = convert_ndc({    .0f, size.y});
+		//vertices.at(3).position = convert_ndc({ size.x, size.y});
 
-		vertices.at(0).position = {			  .0f,   		 .0f,.0f,1.f };
-		vertices.at(1).position = { screen_size.x,		     .0f,.0f,1.f };
-		vertices.at(2).position = {			  .0f,-screen_size.y,.0f,1.f };
-		vertices.at(3).position = { screen_size.x,-screen_size.y,.0f,1.f };
+		vertices.at(0).position = convert_ndc({ .0f,    .0f });
+		vertices.at(1).position = convert_ndc({ 200,    .0f });
+		vertices.at(2).position = convert_ndc({ .0f, 200 });
+		vertices.at(3).position = convert_ndc({ 200,200 });
 
 		locator::Locator::GetDx11Device()->immediate_context->UpdateSubresource(vertex_buffer.Get(), 0, nullptr, vertices.data(), 0, 0);
 	}
@@ -144,5 +165,13 @@ namespace cumulonimbus::component
 		HRESULT hr = locator::Locator::GetDx11Device()->device->CreateBuffer(&bd, &initData, vertex_buffer.GetAddressOf());
 		if (FAILED(hr))
 			assert(!"CreateBuffer Error (Texture2DComponent class)");
+	}
+
+	void SpriteComponent::ConvertScreenToNDC() const
+	{
+		const DirectX::SimpleMath::Vector3 world_pos = GetRegistry()->GetComponent<component::TransformComponent>(GetEntity()).GetPosition();
+		const Window& window = *locator::Locator::GetWindow();
+		const DirectX::SimpleMath::Vector2 ndc_pos = arithmetic::ConvertScreenToNDC(world_pos, static_cast<float>(window.Width()), static_cast<float>(window.Height()));
+		//GetRegistry()->GetComponent<component::TransformComponent>(GetEntity()).SetPosition({ ndc_pos.x,ndc_pos.y,.0f });
 	}
 } // cumulonimbus::component

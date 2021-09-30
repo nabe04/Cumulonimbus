@@ -48,7 +48,7 @@ namespace arithmetic
 		const SimpleMath::Vector2 result =
 		{
 			screen_pos.x / window_width * 2.f - 1.f,
-			screen_pos.y / window_height * 2.f - 1.f
+			screen_pos.y / window_height * -2.f + 1.f
 		};
 
 		return result;
@@ -60,7 +60,7 @@ namespace arithmetic
 		const SimpleMath::Vector2 result =
 		{
 			screen_pos.x / window_width * 2.f - 1.f,
-			screen_pos.y / window_height * 2.f - 1.f
+			screen_pos.y / window_height * -2.f + 1.f
 		};
 
 		return result;
