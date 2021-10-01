@@ -14,8 +14,8 @@
 
 CBUFFER(SpriteCB, CBSlot_Sprite)
 {
-	float2 sprite_offset{};
-	float2 sprite_padding{};
+	float2 sprite_offset;
+	float2 sprite_padding;
 
 #ifdef __cplusplus
 	template <typename Archive>

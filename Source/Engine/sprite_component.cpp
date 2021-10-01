@@ -68,6 +68,7 @@ namespace cumulonimbus::component
 	void SpriteComponent::CommonUpdate(const float dt)
 	{
 		ConvertScreenToNDC();
+		auto& cb_data = shader_asset_manager->GetShaderAsset<shader_asset::StandardSpriteAsset>()->GetCBuffer()->data;
 	}
 
 	void SpriteComponent::Load(ecs::Registry* registry)
@@ -88,22 +89,21 @@ namespace cumulonimbus::component
 	void SpriteComponent::ResizeTexture(const DirectX::SimpleMath::Vector2& size)
 	{
 		const Window* window = locator::Locator::GetWindow();
-		//DirectX::SimpleMath::Vector2 screen_size;
-		auto convert_ndc = [&](const DirectX::SimpleMath::Vector2& size)
+		const float win_half_width  = window->Width() / 2.f;
+		const float win_half_height = window->Height() / 2.f;
+		auto convert_ndc = [&](const DirectX::SimpleMath::Vector2& tex_size)
 		{
-			const DirectX::SimpleMath::Vector2 screen_pos = arithmetic::ConvertScreenToNDC(size, static_cast<float>(window->Width()), static_cast<float>(window->Height()));
+			const DirectX::SimpleMath::Vector2 screen_pos = arithmetic::ConvertScreenToNDC(tex_size, static_cast<float>(window->Width()), static_cast<float>(window->Height()));
 			return DirectX::SimpleMath::Vector4{ screen_pos.x,screen_pos.y,.0f,1.f };
 		};
-		//screen_size = arithmetic::ConvertScreenToNDC({ .0f,.0f }, static_cast<float>(window->Width()), static_cast<float>(window->Height()));
-		//vertices.at(0).position = convert_ndc({    .0f,    .0f});
-		//vertices.at(1).position = convert_ndc({ size.x,    .0f});
-		//vertices.at(2).position = convert_ndc({    .0f, size.y});
-		//vertices.at(3).position = convert_ndc({ size.x, size.y});
 
-		vertices.at(0).position = convert_ndc({ .0f,    .0f });
-		vertices.at(1).position = convert_ndc({ 200,    .0f });
-		vertices.at(2).position = convert_ndc({ .0f, 200 });
-		vertices.at(3).position = convert_ndc({ 200,200 });
+		// ndc空間上でのテクスチャサイズ
+		const DirectX::SimpleMath::Vector2 ndc_size = arithmetic::ConvertScreenToNDC(size, static_cast<float>(window->Width()), static_cast<float>(window->Height()));
+
+		vertices.at(0).position = convert_ndc({ win_half_width - size.x,  win_half_height - size.y });	// 左上
+		vertices.at(1).position = convert_ndc({ win_half_width + size.x,  win_half_height - size.y });	// 右上
+		vertices.at(2).position = convert_ndc({ win_half_width - size.x,  win_half_height + size.y });	// 左下
+		vertices.at(3).position = convert_ndc({ win_half_width + size.x,  win_half_height + size.y });	// 右下
 
 		locator::Locator::GetDx11Device()->immediate_context->UpdateSubresource(vertex_buffer.Get(), 0, nullptr, vertices.data(), 0, 0);
 	}
@@ -113,33 +113,37 @@ namespace cumulonimbus::component
 		asset::TextureLoader* texture_loader = locator::Locator::GetAssetManager()->GetLoader<asset::TextureLoader>();
 		const auto& texture = texture_loader->GetTexture(texture_id);
 		const Window* window = locator::Locator::GetWindow();
-		const DirectX::SimpleMath::Vector2 screen_size = arithmetic::ConvertScreenToNDC({ static_cast<float>(texture.GetWidth()),static_cast<float>(texture.GetHeight()) },
-																						  static_cast<float>(window->Width()), static_cast<float>(window->Height()));
+		const float win_half_width  = window->Width() / 2.f;
+		const float win_half_height = window->Height() / 2.f;
+		const DirectX::SimpleMath::Vector2 tex_size = arithmetic::ConvertScreenToNDC({win_half_width + static_cast<float>(texture.GetWidth()),
+																					  win_half_height + static_cast<float>(texture.GetHeight()) },
+																					  static_cast<float>(window->Width()), 
+																					  static_cast<float>(window->Height()));
 		auto& cb_data = shader_asset_manager->GetShaderAsset<shader_asset::StandardSpriteAsset>()->GetCBuffer()->data;
 		pivot_type = pivot;
 
 		switch(pivot_type)
 		{
 		case render::PivotType::Center:
-			cb_data.sprite_offset = { -screen_size.x / 2.f,screen_size.y / 2.f };
-			break;
-		case render::PivotType::BottomCenter:
-			cb_data.sprite_offset = { -screen_size.x / 2.f,screen_size.y };
-			break;
-		case render::PivotType::TopCenter:
-			cb_data.sprite_offset = { screen_size.x / 2.f , .0f };
-			break;
-		case render::PivotType::LeftTop:
 			cb_data.sprite_offset = { .0f,.0f };
 			break;
+		case render::PivotType::BottomCenter:
+			cb_data.sprite_offset = { .0f,tex_size.y };
+			break;
+		case render::PivotType::TopCenter:
+			cb_data.sprite_offset = { .0f, -tex_size.y };
+			break;
+		case render::PivotType::LeftTop:
+			cb_data.sprite_offset = { -tex_size.x,-tex_size.y };
+			break;
 		case render::PivotType::LeftBottom:
-			cb_data.sprite_offset = { -screen_size.x , .0f };
+			cb_data.sprite_offset = { -tex_size.x , tex_size.y };
 			break;
 		case render::PivotType::RightTop:
-			cb_data.sprite_offset = { screen_size.x ,.0f };
+			cb_data.sprite_offset = { tex_size.x ,-tex_size.y };
 			break;
 		case render::PivotType::RightBottom:
-			cb_data.sprite_offset = { screen_size.x,screen_size.y };
+			cb_data.sprite_offset = { tex_size.x, tex_size.y };
 			break;
 		case render::PivotType::End:
 			assert(!"Type does not exist(SpriteComponent::SetPivotType)");

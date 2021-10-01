@@ -49,6 +49,8 @@ namespace cumulonimbus::component
 
 		/**
 		 * @brief : テクスチャサイズの変更
+		 * @remark : NDC空間上の原点(ウィンドウ位置で言うところのウィンドウの中心)
+		 *			 を中心として頂点位置を決める
 		 * @param size : 変更のテクスチャサイズ
 		 */
 		void ResizeTexture(const DirectX::SimpleMath::Vector2& size);
