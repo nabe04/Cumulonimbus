@@ -21,6 +21,7 @@ namespace cumulonimbus::editor
 	{
 		scene_view->Update(dt);
 		tool_bar->Update();
+		system_inspector->Update(dt);
 	}
 
 	void EditorManager::RenderEditor(scene::Scene* scene, ecs::Registry* registry) const

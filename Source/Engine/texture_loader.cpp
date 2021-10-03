@@ -4,6 +4,7 @@
 #include <filesystem>
 
 #include "asset_sheet_manager.h"
+#include "cum_imgui_helper.h"
 #include "texture.h"
 #include "locator.h"
 //
@@ -167,6 +168,65 @@ namespace cumulonimbus::asset
 			//assert(!"Not found texture id(TextureLoader::GetTexture)");
 
 		return *textures.at(id).get();
+	}
+
+	void TextureLoader::SelectableTexture(AssetManager& asset_manager, mapping::rename_type::UUID& tex_id)
+	{
+		std::filesystem::path texture_filename{};
+		bool is_dummy = false;
+		const asset::AssetSheet& texture_sheet = asset_manager.GetAssetSheetManager().GetSheet<asset::Texture>();
+		if(texture_sheet.sheet.contains(tex_id))
+		{
+			texture_filename = texture_sheet.sheet.at(tex_id);
+			texture_filename.filename().replace_extension();
+			is_dummy = true;
+		}
+		else
+		{
+			texture_filename = "None";
+		}
+
+		if(ImGui::BeginCombo("Textures",texture_filename.string().c_str()))
+		{
+			ImGui::SliderFloat("##Size", &selectable_magnification, .5f, 5.f, "Size : %.2f");
+			{// ダミーテクスチャ用
+				helper::imgui::Image({}, { selectable_image_size.x ,
+										   selectable_image_size.y  });
+				ImGui::SameLine();
+				if(ImGui::Selectable(texture_filename.string().c_str(),
+									 is_dummy,0,
+									 {selectable_size.x,
+									  selectable_size.y }))
+				{
+					tex_id = {""};
+				}
+				if(is_dummy)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+
+			for (const auto& [id, tex_filepath] : texture_sheet.sheet)
+			{
+				helper::imgui::Image(id, { selectable_image_size.x,
+										   selectable_image_size.y });
+				ImGui::SameLine();
+				const bool is_selected = (tex_id == id);
+				std::filesystem::path tex_filename = tex_filepath;
+				if (ImGui::Selectable(tex_filename.filename().replace_extension().string().c_str(),
+									  is_selected, 0,
+									  { selectable_size.x,
+									    selectable_size.y }))
+				{
+					tex_id = id;
+				}
+				if (is_selected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
 	}
 
 	void TextureLoader::DeleteTexture(const mapping::rename_type::UUID& tex_id, const std::filesystem::path& delete_path)

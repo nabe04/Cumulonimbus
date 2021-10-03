@@ -1,5 +1,6 @@
 #include "billboard_component.h"
 
+#include "billboard.h"
 #include "locator.h"
 
 namespace cumulonimbus::component
@@ -15,13 +16,25 @@ namespace cumulonimbus::component
 
 	}
 
-	void BillboardComponent::SceneUpdate(float dt)
+	void BillboardComponent::CommonUpdate(const float dt)
+	{
+		auto* billboard_asset = shader_asset_manager->GetShaderAsset<shader_asset::BillboardAsset>();
+		//billboard_asset->GetCBuffer()->data.billboard_translation_matrix =
+	}
+
+	void BillboardComponent::PostCommonUpdate(float dt)
+	{
+		auto* billboard_asset = shader_asset_manager->GetShaderAsset<shader_asset::BillboardAsset>();
+		//billboard_asset->GetCBuffer()->data.billboard_translation_matrix =
+	}
+
+	void BillboardComponent::SceneUpdate(const float dt)
 	{
 		// SceneViewカメラに対してのビルボード
 
 	}
 
-	void BillboardComponent::GameUpdate(float dt)
+	void BillboardComponent::GameUpdate(const float dt)
 	{
 		// Game Viewカメラ(メインカメラ)に対してのビルボード
 	}

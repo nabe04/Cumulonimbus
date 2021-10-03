@@ -1,6 +1,7 @@
 #pragma once
 #include "component_base.h"
 #include "camera.h"
+#include "cereal_helper.h"
 #include "rename_type_mapping.h"
 #include "locator.h"
 
@@ -9,11 +10,29 @@ namespace cumulonimbus::ecs
 	class Registry;
 } // cumulonimbus::ecs
 
+namespace cumulonimbus::camera
+{
+	/**
+	 * @brief : CameraComponent用ビルボードを適用した
+	 *			カメラテクスチャの設定
+	 * @remark : SystemInspectorクラスでパラメータを編集して
+	 *			 全てのカメラコンポーネントのテクスチャに適用する
+	 */
+	struct CameraTexture
+	{
+		mapping::rename_type::UUID	 tex_id{};	 // カメラテクスチャID
+		DirectX::SimpleMath::Vector2 tex_size{ 1.f,1.f }; // 画面に表示するテクスチャサイズ
+		DirectX::SimpleMath::Matrix  scaling_matrix{DirectX::SimpleMath::Matrix::Identity}; // カメラテクスチャ全体に適用する倍率(描画時に)
+	};
+} // cumulonimbus::camera
+
 namespace cumulonimbus::component
 {
 	class CameraComponent final : public ComponentBase
 	{
 	public:
+		using ComponentBase::ComponentBase;
+		explicit CameraComponent(); // for cereal & Inspector View上でのAddComponent用
 		/**
 		 * @param is_main_camera	: バックバッファ用カメラに設定するか(デフォルトはtrue)
 		 * @param width				: ビュー行列時の幅(デフォルトはスクリーンの幅)
@@ -23,8 +42,12 @@ namespace cumulonimbus::component
 								 bool is_main_camera = true,
 								 float width  = locator::Locator::GetWindow()->Width(),
 								 float height = locator::Locator::GetWindow()->Height());
-		explicit CameraComponent()  = default; // for cereal
- 		~CameraComponent() override = default;
+		explicit CameraComponent(mapping::component_tag::ComponentTag tag);
+		~CameraComponent() override = default;
+
+		void Initialize(ecs::Registry* registry, mapping::rename_type::Entity ent) override;
+
+		void CommonUpdate(float dt) override;
 
 		void SceneUpdate(float dt) override;
 

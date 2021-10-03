@@ -25,6 +25,12 @@ namespace cumulonimbus::component
 		}
 		virtual ~ComponentBase() = default;
 
+		/**
+		 * @brief : インスペクタービューなどコンポーネントの
+		 *			追加時に引数を指定できない場合に使用
+		 */
+		virtual void Initialize(ecs::Registry* registry, mapping::rename_type::Entity ent) {}
+
 		virtual void PreCommonUpdate(float dt) {}
 		virtual void CommonUpdate(float dt) {}
 		virtual void PostCommonUpdate(float dt) {}

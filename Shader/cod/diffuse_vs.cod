@@ -50,6 +50,9 @@
 //
 //   float4x4 bone_transforms[128];     // Offset:    0 Size:  8192
 //   float4x4 transform_matrix;         // Offset: 8192 Size:    64 [unused]
+//   float4x4 scaling_matrix;           // Offset: 8256 Size:    64 [unused]
+//   float4x4 rotation_matrix;          // Offset: 8320 Size:    64 [unused]
+//   float4x4 translation_matrix;       // Offset: 8384 Size:    64 [unused]
 //
 // }
 //

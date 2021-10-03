@@ -8,6 +8,7 @@ namespace cumulonimbus::mapping::component_tag
 		Mesh,
 		Sprite,
 		Physics,
+		Camera,
 
 		End
 	};

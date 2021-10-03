@@ -22,15 +22,20 @@ namespace cumulonimbus::component
 	public:
 		using SpriteComponent::SpriteComponent;
 		explicit BillboardComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
-		explicit BillboardComponent(); // for cereal
-		~BillboardComponent() = default;
+		explicit BillboardComponent(); // for cereal & Inspector Viewè„Ç≈ÇÃAddComponentóp
+		~BillboardComponent() override  = default;
+
+		void CommonUpdate(float dt) override;
+		void PostCommonUpdate(float dt) override;
 
 		void SceneUpdate(float dt) override;
+
 		void GameUpdate(float dt)  override;
 
 		[[nodiscard]]
 		const EnumStateMap<render::RenderingTarget>& GetRenderingTarget() const { return rendering_target; }
 
+		void SetRenderingTarget(const render::RenderingTarget target) { rendering_target.SetState(target); }
 	private:
 		EnumStateMap<render::RenderingTarget> rendering_target{};
 

@@ -14,14 +14,23 @@
 
 CBUFFER(BillboardCB, CBSlot_Billboard)
 {
-	float2 billboard_offset{};
-	float2 billboard_padding{};
+	float4x4 billboard_world_transform_matrix;
+	float4x4 billboard_scaling_matrix;
+	float4x4 billboard_rotation_matrix;
+	float4x4 billboard_translation_matrix;
+
+	float2 billboard_offset;
+	float2 billboard_padding;
 
 #ifdef __cplusplus
 	template <typename Archive>
 	void serialize(Archive && archive)
 	{
 		archive(
+			CEREAL_NVP(billboard_world_transform_matrix),
+			CEREAL_NVP(billboard_scaling_matrix),
+			CEREAL_NVP(billboard_rotation_matrix),
+			CEREAL_NVP(billboard_translation_matrix),
 			CEREAL_NVP(billboard_offset)
 		);
 	}

@@ -24,7 +24,7 @@
 #define CBSlot_ReflectionMapping	CBSlot_OnDemand0
 #define CBSlot_RefractionMapping	CBSlot_OnDemand0
 #define CBSlot_SingleColor			CBSlot_OnDemand0
-// それぞれのシェーダー独自のCBuffer(3Dスプライト用)
+// それぞれのシェーダー独自のCBuffer(2Dスプライト用)
 #define CBSlot_Sprite				CBSlot_OnDemand0
 #define CBSlot_Billboard			CBSlot_OnDemand0
 

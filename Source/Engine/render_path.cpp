@@ -661,6 +661,9 @@ namespace cumulonimbus::renderer
 	{
 		TransformCB transform{};
 		transform.transform_matrix = registry->GetComponent<component::TransformComponent>(entity).GetWorld4x4();
+		//auto m = DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&transform.transform_matrix));
+		//DirectX::XMStoreFloat4x4(&transform.transform_matrix, m);
+
 		registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
 
 		UINT stride = sizeof(shader::VertexSprite);
@@ -915,21 +918,31 @@ namespace cumulonimbus::renderer
 			TransformCB transform{};
 			DirectX::SimpleMath::Matrix inv_view_mat = camera->GetViewMat().Invert();
 			inv_view_mat._41 = inv_view_mat._42 = inv_view_mat._43 = 0.0f;
-			transform.transform_matrix = registry->GetComponent<component::TransformComponent>(entity).GetWorld4x4() * inv_view_mat;
+			if(registry->TryGetComponent<component::CameraComponent>(entity))
+			{
+				const component::TransformComponent& transform_comp = registry->GetComponent<component::TransformComponent>(entity);
+				const DirectX::SimpleMath::Matrix& camera_scaling_mat = registry->GetScene()->GetEditorManager()->GetSystemInspector().GetCameraScalingMatrix();
+				DirectX::SimpleMath::Matrix transform_mat = transform_comp.GetScalingMat() * camera_scaling_mat * transform_comp.GetTranslationMat();
+				transform.transform_matrix =  transform_mat * inv_view_mat;
+			}
+			else
+			{
+				transform.transform_matrix = registry->GetComponent<component::TransformComponent>(entity).GetWorld4x4() * inv_view_mat;
+			}
 			registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
-
-			camera->BindCBuffer();
-			UINT stride = sizeof(shader::VertexSprite);
-			UINT offset = 0;
-			immediate_context->IASetVertexBuffers(0, 1, billboard_comp->GetVertexBufferAddress(), &stride, &offset);
-			locator::Locator::GetDx11Device()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleStrip);
-			auto& texture = locator::Locator::GetAssetManager()->GetLoader<asset::TextureLoader>()->GetTexture(billboard_comp->GetTextureId());
-			texture.BindTexture(mapping::graphics::ShaderStage::PS, TexSlot_BaseColorMap);
-			immediate_context->Draw(4, 0);
-			texture.UnbindTexture(mapping::graphics::ShaderStage::PS, TexSlot_BaseColorMap);
-			registry->GetComponent<component::TransformComponent>(entity).UnbindCBuffer();
-			camera->UnbindCBuffer();
 		}
+
+		camera->BindCBuffer();
+		UINT stride = sizeof(shader::VertexSprite);
+		UINT offset = 0;
+		immediate_context->IASetVertexBuffers(0, 1, billboard_comp->GetVertexBufferAddress(), &stride, &offset);
+		locator::Locator::GetDx11Device()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleStrip);
+		auto& texture = locator::Locator::GetAssetManager()->GetLoader<asset::TextureLoader>()->GetTexture(billboard_comp->GetTextureId());
+		texture.BindTexture(mapping::graphics::ShaderStage::PS, TexSlot_BaseColorMap);
+		immediate_context->Draw(4, 0);
+		texture.UnbindTexture(mapping::graphics::ShaderStage::PS, TexSlot_BaseColorMap);
+		registry->GetComponent<component::TransformComponent>(entity).UnbindCBuffer();
+		camera->UnbindCBuffer();
 	}
 
 

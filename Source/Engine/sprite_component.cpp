@@ -27,6 +27,7 @@ namespace cumulonimbus::component
 	}
 
 	SpriteComponent::SpriteComponent()
+		:ComponentBase{}
 	{
 		// 初期テクスチャのセット(ダミーテクスチャ)
 		asset::TextureLoader* texture_loader = locator::Locator::GetAssetManager()->GetLoader<asset::TextureLoader>();
@@ -82,7 +83,8 @@ namespace cumulonimbus::component
 	{
 		if (ImGui::CollapsingHeader("Sprite Component", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-
+			asset::AssetManager& asset_manager = *locator::Locator::GetAssetManager();
+			asset_manager.GetLoader<asset::TextureLoader>()->SelectableTexture(asset_manager, texture_id);
 		}
 	}
 
@@ -117,7 +119,7 @@ namespace cumulonimbus::component
 		const float win_half_height = window->Height() / 2.f;
 		const DirectX::SimpleMath::Vector2 tex_size = arithmetic::ConvertScreenToNDC({win_half_width + static_cast<float>(texture.GetWidth()),
 																					  win_half_height + static_cast<float>(texture.GetHeight()) },
-																					  static_cast<float>(window->Width()), 
+																					  static_cast<float>(window->Width()),
 																					  static_cast<float>(window->Height()));
 		auto& cb_data = shader_asset_manager->GetShaderAsset<shader_asset::StandardSpriteAsset>()->GetCBuffer()->data;
 		pivot_type = pivot;

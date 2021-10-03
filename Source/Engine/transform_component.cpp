@@ -144,6 +144,8 @@ namespace cumulonimbus::component
 		DirectX::XMMATRIX s = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z);
 
 		XMStoreFloat4x4(&scaling_matrix, s);
+		// Constant Bufferのセット
+		cb_transform->data.scaling_matrix = scaling_matrix;
 	}
 
 	void TransformComponent::CreateRotation4x4()
@@ -157,6 +159,7 @@ namespace cumulonimbus::component
 		else if (is_quaternion)
 		{
 			//AdjustRotationFromAxis({ 0,1,0 }, XMConvertToRadians(1));
+			rotation_quaternion.Normalize();
 			r = DirectX::XMMatrixRotationQuaternion(XMLoadFloat4(&rotation_quaternion));
 			angle   = arithmetic::QuaternionToEulerAngle(rotation_quaternion);
 			angle.x = DirectX::XMConvertToDegrees(angle.x);
@@ -169,6 +172,11 @@ namespace cumulonimbus::component
 		}
 
 		XMStoreFloat4x4(&rotation_matrix, r);
+		//DirectX::XMMatrix
+		//DirectX::S
+		//rotation_matrix.
+		// Constant Bufferのセット
+		cb_transform->data.rotation_matrix = rotation_matrix;
 	}
 
 	void TransformComponent::CreateTranslation4x4()
@@ -177,6 +185,8 @@ namespace cumulonimbus::component
 		DirectX::XMMATRIX t = DirectX::XMMatrixTranslation(position.x, position.y, position.z);
 
 		XMStoreFloat4x4(&translation_matrix, t);
+		// Constant Bufferのセット
+		cb_transform->data.translation_matrix = translation_matrix;
 	}
 
 	void TransformComponent::CalcModelCoordinateAxis(const DirectX::XMFLOAT4X4& orientation)
@@ -201,8 +211,10 @@ namespace cumulonimbus::component
 		const DirectX::XMMATRIX t = XMLoadFloat4x4(&translation_matrix);
 
 		// Matrix synthesis
-		const DirectX::XMMATRIX world_matrix = s * r * t;
-		XMStoreFloat4x4(&world_f4x4, world_matrix);
+		const DirectX::XMMATRIX matrix = s * r * t;
+		XMStoreFloat4x4(&world_f4x4, matrix);
+		// Constant Bufferのセット
+		cb_transform->data.transform_matrix = world_f4x4;
 
 		model_right = DirectX::XMFLOAT3{ rotation_matrix._11,rotation_matrix._12,rotation_matrix._13 };
 		model_up	= DirectX::XMFLOAT3{ rotation_matrix._21,rotation_matrix._22,rotation_matrix._23 };

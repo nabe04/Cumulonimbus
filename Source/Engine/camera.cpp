@@ -48,7 +48,7 @@ namespace cumulonimbus::camera
 	Camera::Camera(const float width, const float height)
 	{
 		// ‰ŠúÝ’è
-		this->width = width;
+		this->width  = width;
 		this->height = height;
 
 		Initialize();

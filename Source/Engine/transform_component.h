@@ -127,8 +127,10 @@ namespace cumulonimbus::component
 		void QuaternionSlerp(float t);
 		void SetRotationQuaternion(const DirectX::SimpleMath::Quaternion& q)		{ rotation_quaternion = q; }
 		void SetRotationResultQuaternion(const DirectX::SimpleMath::Quaternion& q)	{ rotation_result_quaternion = q; }
-		[[nodiscard]] const auto& GetRotationQuaternion()		const { return rotation_quaternion; }
-		[[nodiscard]] const auto& GetRotationResultQuaternion() const { return rotation_result_quaternion; }
+		[[nodiscard]]
+		const auto& GetRotationQuaternion()		const { return rotation_quaternion; }
+		[[nodiscard]]
+		const auto& GetRotationResultQuaternion() const { return rotation_result_quaternion; }
 
 		/**
 		 * @brief	    : モデルの任意軸回転(クォータニオン)
@@ -137,9 +139,12 @@ namespace cumulonimbus::component
 		 */
 		void AdjustRotationFromAxis(const DirectX::SimpleMath::Vector3& axis, float angle);
 
-		[[nodiscard]] const DirectX::SimpleMath::Matrix& GetRotationMat()	 const { return rotation_matrix; }
-		[[nodiscard]] const DirectX::SimpleMath::Matrix& GetScalingMat()	 const { return scaling_matrix; }
-		[[nodiscard]] const DirectX::SimpleMath::Matrix& GetTransformMat()   const { return translation_matrix; }
+		[[nodiscard]]
+		const DirectX::SimpleMath::Matrix& GetRotationMat()	 const { return rotation_matrix; }
+		[[nodiscard]]
+		const DirectX::SimpleMath::Matrix& GetScalingMat()	 const { return scaling_matrix; }
+		[[nodiscard]]
+		const DirectX::SimpleMath::Matrix& GetTranslationMat()   const { return translation_matrix; }
 
 		/*
 		* brief : Front Billboard
@@ -148,9 +153,12 @@ namespace cumulonimbus::component
 		*/
 		void GetBillboardRotation(const DirectX::XMFLOAT3 billPos, const DirectX::XMFLOAT3 targetPos);
 
-		[[nodiscard]] const DirectX::SimpleMath::Vector3& GetModelRight()const { return model_right; }
-		[[nodiscard]] const DirectX::SimpleMath::Vector3& GetModelUp() const { return model_up; }
-		[[nodiscard]] const DirectX::SimpleMath::Vector3& GetModelFront()const { return model_front; }
+		[[nodiscard]]
+		const DirectX::SimpleMath::Vector3& GetModelRight()const { return model_right; }
+		[[nodiscard]]
+		const DirectX::SimpleMath::Vector3& GetModelUp() const { return model_up; }
+		[[nodiscard]]
+		const DirectX::SimpleMath::Vector3& GetModelFront()const { return model_front; }
 
 	private:
 		std::shared_ptr<buffer::ConstantBuffer<TransformCB>> cb_transform;

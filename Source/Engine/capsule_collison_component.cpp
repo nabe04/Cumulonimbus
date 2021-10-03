@@ -81,7 +81,7 @@ namespace cumulonimbus::component
 			if (capsule.second.bone_name.empty())
 			{
 				// ƒ‚ƒfƒ‹‚ªŽ‚Â‰ñ“] ~ •½sˆÚ“®s—ñ‚©‚çs—ñ‚ðì¬(ƒ‚ƒfƒ‹‚ÌŠgk‚Íl—¶‚µ‚È‚¢)
-				DirectX::SimpleMath::Matrix st_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetRotationMat() * GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetTransformMat();
+				DirectX::SimpleMath::Matrix st_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetRotationMat() * GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetTranslationMat();
 				//world_transform._11 = world_transform._22   = world_transform._33 = world_transform._44 = 1.0f;
 				capsule.second.world_transform_matrix	    = model_local_matrix * st_transform;
 			}

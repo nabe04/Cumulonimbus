@@ -35,6 +35,8 @@ namespace cumulonimbus::editor
 		[[nodiscard]]
 		ProjectView& GetProjectView() const { return *project_view.get(); }
 		[[nodiscard]]
+		SystemInspector& GetSystemInspector() const { return *system_inspector.get(); }
+		[[nodiscard]]
 		ToolBar& GetToolBar() const { return *tool_bar.get(); }
 	private:
 		std::unique_ptr<ContentBrowser>  content_browser{};

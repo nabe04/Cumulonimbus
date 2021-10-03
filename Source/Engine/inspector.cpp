@@ -7,14 +7,15 @@
 #include "fbx_model_resource.h"
 #include "file_path_helper.h"
 // components
-#include "raycast_component.h"
+#include "billboard_component.h"
+#include "camera_component.h"
 #include "capsule_collison_component.h"
+#include "model_component.h"
 #include "physic_material_component.h"
+#include "raycast_component.h"
 #include "rigid_body_component.h"
 #include "sphere_collision_component.h"
 #include "sprite_component.h"
-#include "billboard_component.h"
-#include "model_component.h"
 
 namespace cumulonimbus::editor
 {
@@ -28,6 +29,7 @@ namespace cumulonimbus::editor
 		RegisterComponent<component::PhysicMaterialComponent>(	"Physic Material"	 , mapping::component_tag::ComponentTag::Physics);
 		RegisterComponent<component::SphereCollisionComponent>(	"Sphere Collider"	 , mapping::component_tag::ComponentTag::Physics);
 		RegisterComponent<component::RigidBodyComponent>(		"RigidBody"			 , mapping::component_tag::ComponentTag::Physics);
+		RegisterComponent<component::CameraComponent>(			"Camera"			 , mapping::component_tag::ComponentTag::Camera);
 	}
 
 	void Inspector::Render(ecs::Registry* registry, const mapping::rename_type::Entity ent)
@@ -78,9 +80,10 @@ namespace cumulonimbus::editor
 
 		ImGui::MenuItem("Component", nullptr, false, false);
 
-		ComponentMenu(registry, ent, "Mesh", mapping::component_tag::ComponentTag::Mesh);
-		ComponentMenu(registry, ent, "Sprite", mapping::component_tag::ComponentTag::Sprite);
-		ComponentMenu(registry, ent, "Physics", mapping::component_tag::ComponentTag::Physics);
+		ComponentMenu(registry, ent, "Mesh"		, mapping::component_tag::ComponentTag::Mesh);
+		ComponentMenu(registry, ent, "Sprite"	, mapping::component_tag::ComponentTag::Sprite);
+		ComponentMenu(registry, ent, "Physics"	, mapping::component_tag::ComponentTag::Physics);
+		ComponentMenu(registry, ent, "Camera"	, mapping::component_tag::ComponentTag::Camera);
 
 		ImGui::EndPopup(); // "my_file_popup"
 	}
@@ -102,6 +105,7 @@ namespace cumulonimbus::editor
 					auto* comp = registry->GetComponentArrays().at(value.first)->AddComponentFromInspector(ent);
 					comp->SetRegistry(registry);
 					comp->SetEntity(ent);
+					comp->Initialize(registry, ent);
 				}
 				is_used = true;
 				ImGui::EndMenu();
@@ -116,7 +120,7 @@ namespace cumulonimbus::editor
 		if(component_map.contains(comp_name))
 			assert(!"The name already exists(Inspector::RegisterComponent)");
 
-		component_map.insert(std::make_pair(comp_name, std::make_pair(file_path_helper::GetTypeName<T>(), std::make_unique<T>(tag))));
+		component_map.emplace(comp_name, std::make_pair(file_path_helper::GetTypeName<T>(), std::make_unique<T>(tag)));
 	}
 
 } // cumulonimbus::editor

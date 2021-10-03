@@ -30,50 +30,50 @@ CBUFFER(SpriteCB, CBSlot_Sprite)
 
 #ifdef __cplusplus
 
-	namespace cumulonimbus
+namespace cumulonimbus
+{
+	namespace shader_system
 	{
-		namespace shader_system
+		class StandardSpriteShader final : public Shader
 		{
-			class StandardSpriteShader final : public Shader
-			{
-			public:
-				explicit StandardSpriteShader();
-				~StandardSpriteShader() override = default;
-			};
-		} // shader_system
+		public:
+			explicit StandardSpriteShader();
+			~StandardSpriteShader() override = default;
+		};
+	} // shader_system
 
-		namespace shader_asset
+	namespace shader_asset
+	{
+		class StandardSpriteAsset final : public ShaderAsset
 		{
-			class StandardSpriteAsset final : public ShaderAsset
+		public:
+			explicit StandardSpriteAsset();
+			~StandardSpriteAsset() override = default;
+
+			void BindCBuffer()   override;
+			void UnbindCBuffer() override;
+			void RenderImGui()   override;
+
+			[[nodiscard]]
+			buffer::ConstantBuffer<SpriteCB>* GetCBuffer() const { return cb_sprite.get(); }
+
+			template<class Archive>
+			void serialize(Archive&& archive)
 			{
-			public:
-				explicit StandardSpriteAsset();
-				~StandardSpriteAsset() override = default;
+				archive(
+					cereal::base_class<ShaderAsset>(this),
+					CEREAL_NVP(cb_sprite)
+				);
+			}
+		private:
+			std::unique_ptr<buffer::ConstantBuffer<SpriteCB>> cb_sprite{ nullptr };
+		};
+	} // shader_asset
 
-				void BindCBuffer()   override;
-				void UnbindCBuffer() override;
-				void RenderImGui()   override;
+} // cumulonimbus
 
-				[[nodiscard]]
-				buffer::ConstantBuffer<SpriteCB>* GetCBuffer() const { return cb_sprite.get(); }
-
-				template<class Archive>
-				void serialize(Archive&& archive)
-				{
-					archive(
-						cereal::base_class<ShaderAsset>(this),
-						CEREAL_NVP(cb_sprite)
-					);
-				}
-			private:
-				std::unique_ptr<buffer::ConstantBuffer<SpriteCB>> cb_sprite{ nullptr };
-			};
-		} // shader_asset
-
-	} // cumulonimbus
-
-	CEREAL_REGISTER_TYPE(cumulonimbus::shader_asset::StandardSpriteAsset)
-	CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::shader_asset::ShaderAsset, cumulonimbus::shader_asset::StandardSpriteAsset)
+CEREAL_REGISTER_TYPE(cumulonimbus::shader_asset::StandardSpriteAsset)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::shader_asset::ShaderAsset, cumulonimbus::shader_asset::StandardSpriteAsset)
 
 
 namespace shader
@@ -90,7 +90,7 @@ namespace shader
 		void Activate(ID3D11DeviceContext* immediate_context) override;
 		void Deactivate(ID3D11DeviceContext* immediate_context) override;
 	};
-}
+} // shader
 
 #endif // __cplusplus
 

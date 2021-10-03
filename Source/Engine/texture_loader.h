@@ -1,4 +1,8 @@
 #pragma once
+#include <d3d11.h>
+#include <DirectXMath.h>
+#include <SimpleMath.h>
+
 #include "loader.h"
 
 namespace cumulonimbus::asset
@@ -74,9 +78,21 @@ namespace cumulonimbus::asset
 		 * @return : 取得したテクスチャの参照
 		 */
 		Texture& GetTexture(const mapping::rename_type::UUID& id);
+
+		/**
+		 * @brief : ImGui上でのテクスチャ選択関数
+		 * @remark : ※caution(1) : ImGuiを使用する関数内で使用すること
+		 * @remark : ※caution(2) : ImGui::Begin()の中でこの関数を呼ぶこと
+		 * @param tex_id : 格納されるテクスチャID(UUID)
+		 */
+		void SelectableTexture(AssetManager& asset_manager, mapping::rename_type::UUID& tex_id);
 	private:
 		std::map<mapping::rename_type::UUID, std::unique_ptr<Texture>> textures{};
 		std::unique_ptr<Texture> dummy_texture{};
+		//-- ImGui用変数 --//
+		DirectX::SimpleMath::Vector2 selectable_image_size{ 100.f,100.f };	// テクスチャ選択の画像サイズ
+		DirectX::SimpleMath::Vector2 selectable_size{ 500,50 }; // ImGui::Selectableサイズ
+		float selectable_magnification = 1.0f; // テクスチャ選択項目のサイズ倍率
 
 		mapping::rename_type::UUID Convert(
 			AssetManager& asset_manager,

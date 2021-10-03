@@ -32,14 +32,13 @@ namespace cumulonimbus::component
 	{
 	public:
 		using ComponentBase::ComponentBase;
-		explicit SpriteComponent(
-			ecs::Registry* registry,
-			mapping::rename_type::Entity ent);
+		explicit SpriteComponent(); // for cereal & Inspector Viewè„Ç≈ÇÃAddComponentóp
+		explicit SpriteComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
 		explicit SpriteComponent(const mapping::component_tag::ComponentTag tag);
-		explicit SpriteComponent(); // for cereal
 		~SpriteComponent() override = default;
 
 		void CommonUpdate(float dt) override;
+		void PostCommonUpdate(float dt) override {}
 
 		void Load(ecs::Registry* registry) override;
 		void RenderImGui() override;
@@ -64,6 +63,7 @@ namespace cumulonimbus::component
 		[[nodiscard]]
 		shader_asset::ShaderAsset2DManager* GetShaderAssetManager() const { return shader_asset_manager.get(); }
 
+		void SetTextureId(const mapping::rename_type::UUID tex_id) { texture_id = tex_id; }
 		void SetPivotType(render::PivotType pivot);
 
 	protected:

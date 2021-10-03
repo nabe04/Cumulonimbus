@@ -189,6 +189,9 @@ CBUFFER(TransformCB, CBSlot_Transform)
 {
 	float4x4 bone_transforms[MaxBones];
 	float4x4 transform_matrix;
+	float4x4 scaling_matrix;
+	float4x4 rotation_matrix;
+	float4x4 translation_matrix;
 
 #ifdef __cplusplus
 	template<typename Archive>
@@ -196,7 +199,10 @@ CBUFFER(TransformCB, CBSlot_Transform)
 	{
 		archive(
 			CEREAL_NVP(bone_transforms),
-			CEREAL_NVP(transform_matrix)
+			CEREAL_NVP(transform_matrix),
+			CEREAL_NVP(scaling_matrix),
+			CEREAL_NVP(rotation_matrix),
+			CEREAL_NVP(translation_matrix)
 		);
 	}
 
