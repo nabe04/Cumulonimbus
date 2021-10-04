@@ -27,31 +27,34 @@ namespace cumulonimbus::asset
 		// transform
 		RegistryComponent<component::TransformComponent>();
 		// actor
-		RegistryComponent<component::Actor3DComponent>();
-		// model
-		RegistryComponent<component::ModelComponent>();
-		// sprite
-		RegistryComponent<component::SpriteComponent>();
-		RegistryComponent<component::BillboardComponent>();
-		// physics
-		RegistryComponent<component::SphereCollisionComponent>();
-		RegistryComponent<component::CollisionComponent>();
-		RegistryComponent<component::RayCastComponent>();
-		RegistryComponent<component::CapsuleCollisionComponent>();
-		RegistryComponent<component::PhysicMaterialComponent>();
-		RegistryComponent<component::RigidBodyComponent>();
-		// camera
-		RegistryComponent<component::CameraComponent>();
-		// sky box
-		RegistryComponent<component::SkyBoxComponent>();
-		//-- game --//
-		// player
-		RegistryComponent<component::PlayerComponent>();
-		// enemy
-		RegistryComponent<component::EnemyBaseComponent>();
-		RegistryComponent<component::EnemySoldierComponent>();
+		//RegistryComponent<component::Actor3DComponent>();
+		//// model
+		//RegistryComponent<component::ModelComponent>();
+		//// sprite
+		//RegistryComponent<component::SpriteComponent>();
+		//RegistryComponent<component::BillboardComponent>();
+		//// physics
+		//RegistryComponent<component::SphereCollisionComponent>();
+		//RegistryComponent<component::CollisionComponent>();
+		//RegistryComponent<component::RayCastComponent>();
+		//RegistryComponent<component::CapsuleCollisionComponent>();
+		//RegistryComponent<component::PhysicMaterialComponent>();
+		//RegistryComponent<component::RigidBodyComponent>();
+		//// camera
+		//RegistryComponent<component::CameraComponent>();
+		//// sky box
+		//RegistryComponent<component::SkyBoxComponent>();
+		////-- game --//
+		//// player
+		//RegistryComponent<component::PlayerComponent>();
+		//// enemy
+		//RegistryComponent<component::EnemyBaseComponent>();
+		//RegistryComponent<component::EnemySoldierComponent>();
+	}
 
-		
+	void Prefab::CreatePrefab(ecs::Registry* registry, const mapping::rename_type::Entity& ent)
+	{
+		auto& component_arrays = registry->GetComponentArrays();
 	}
 
 	template <class T>

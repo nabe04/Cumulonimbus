@@ -27,11 +27,11 @@ namespace cumulonimbus::component
 		~TransformComponent() override = default;
 
 
-		void SceneUpdate(float dt)			override;
+		void SceneUpdate(float dt) override;
 
-		void PreGameUpdate(float delta_time)override;
-		void GameUpdate(float delta_time)	override;
-		void RenderImGui()					override;
+		void PreGameUpdate(float dt) override;
+		void GameUpdate(float dt) override;
+		void RenderImGui() override;
 
 		void Load(ecs::Registry* registry) override;
 

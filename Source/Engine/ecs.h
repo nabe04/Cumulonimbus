@@ -397,11 +397,11 @@ namespace cumulonimbus::ecs
 		 */
 		void RenderImGui();
 
-		/*
-		 * brief : 指定のEntityの削除
-		 *         Entityに含まれるコンポーネントも削除
+		/**
+		 * @brief : 指定のEntityの削除
+		 *          Entityに含まれるコンポーネントも削除
 		 */
-		void Destroy(mapping::rename_type::Entity entity)
+		void Destroy(const mapping::rename_type::Entity entity)
 		{
 			if (!entities.contains(entity))
 				return;
@@ -414,9 +414,9 @@ namespace cumulonimbus::ecs
 			entities.erase(entity);
 		}
 
-		/*
-		 * brief : すべてのエンティティの削除
-		 *         Entityに含まれるコンポーネントも削除
+		/**
+		 * @brief : すべてのエンティティの削除
+		 *          Entityに含まれるコンポーネントも削除
 		 */
 		void DestroyAllEntities()
 		{
@@ -441,8 +441,8 @@ namespace cumulonimbus::ecs
 			return array.GetComponent(entity);
 		}
 
-		/*
-		 * brief      : Entityが持つT型のComponentを返す
+		/**
+		 * @brief      : Entityが持つT型のComponentを返す
 		 * ※caution  : EntityがT型を保持していない場合はnullptrを返す
 		 */
 		template <typename T>
@@ -455,10 +455,10 @@ namespace cumulonimbus::ecs
 			return &array.GetComponent(entity);
 		}
 
-		/*
-		 * brief : Componentの追加
-		 *         すでにComponentを所持していた場合
-		 *         新しく追加せず、所持しているComponentを返す
+		/**
+		 * @brief : Componentの追加
+		 *          すでにComponentを所持していた場合
+		 *          新しく追加せず、所持しているComponentを返す
 		 */
 		template <typename T, typename... Args>
 		T& AddComponent(const mapping::rename_type::Entity entity, Args... args)
@@ -469,8 +469,8 @@ namespace cumulonimbus::ecs
 			return array.GetComponent(entity);
 		}
 
-		/*
-		 * brief : T型のComponentのEntityを削除
+		/**
+		 * @brief : T型のComponentのEntityを削除
 		 */
 		template <typename T>
 		void RemoveComponent(const mapping::rename_type::Entity entity)
@@ -479,8 +479,8 @@ namespace cumulonimbus::ecs
 			array.RemoveComponent(entity);
 		}
 
-		/*
-		 * brief : T型が持つComponentId(uint64_t)からComponentArrayを取得する
+		/**
+		 * @brief : T型が持つComponentId(uint64_t)からComponentArrayを取得する
 		 */
 		template <typename T>
 		ComponentArray<T>& GetArray()
@@ -496,9 +496,9 @@ namespace cumulonimbus::ecs
 			return static_cast<ComponentArray<T>&>(*component_arrays.at(component_name).get());
 		}
 
-		/*
-		 * brief : コンポーネントがあれば持っているコンポーネントを返し
-		 *         なければ、コンポーネントを作る
+		/**
+		 * @brief : コンポーネントがあれば持っているコンポーネントを返し
+		 *          なければ、コンポーネントを作る
 		 */
 		template<typename T, typename... Args>
 		T& GetOrEmplaceComponent(mapping::rename_type::Entity entity, Args... args)
@@ -551,16 +551,16 @@ namespace cumulonimbus::ecs
 			return entities.at(ent).second;
 		}
 
-		/*
-		 * brief : Entityの作成
+		/**
+		 * @brief : Entityの作成
 		 */
 		mapping::rename_type::Entity CreateEntity();
 
-		/*
-		 * brief        : T型のComponentArrayを登録
-		 * ※caution(1) : namespaceが含まれている場合クラス名のみ保存される
-		 * ※caution(2) :「class 」が含まれる場合もクラス名のみ保存される
-		 * ※caution(3) : 上記以外の場合はtypeid(T).name()が保存される
+		/**
+		 * @brief        : T型のComponentArrayを登録
+		 * ※caution(1)  : namespaceが含まれている場合クラス名のみ保存される
+		 * ※caution(2)  :「class 」が含まれる場合もクラス名のみ保存される
+		 * ※caution(3)  : 上記以外の場合はtypeid(T).name()が保存される
 		 */
 		template <typename T>
 		void RegistryComponent()
@@ -613,14 +613,14 @@ namespace cumulonimbus::ecs
 		//	return id;
 		//}
 
-		/*
-		 * brief     : component_arraysのキー値を予め登録
+		/**
+		 * @brief     : component_arraysのキー値を予め登録
 		 * ※caution : デシリアライズの際の型の判別に使用
 		 */
 		void RegisterComponentName();
 
-		/*
-		 * brief : entitiesにEntityId(uint64_t),EntityName(std::string)の登録
+		/**
+		 * @brief : entitiesにEntityId(uint64_t),EntityName(std::string)の登録
 		 */
 		void CreateEntity(mapping::rename_type::Entity ent);
 

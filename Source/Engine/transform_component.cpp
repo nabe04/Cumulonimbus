@@ -60,27 +60,59 @@ namespace cumulonimbus::component
 	}
 
 	TransformComponent::TransformComponent(const TransformComponent& other)
-		:position{other.GetPosition()},
-		prev_pos{other.GetOldPosition()},
-		scale{other.GetScale()},
-		angle{other.GetWorldRotation()},
-		world_f4x4{other.GetWorld4x4()},
-		scaling_matrix{other.GetScalingMat()},
-		rotation_matrix{other.GetRotationMat()},
-		translation_matrix{other.GetTranslationMat()},
-		right{other.GetModelRight()},
-		up{other.GetModelUp()},
-		front{other.GetModelFront()},
-		orientation{DirectX::SimpleMath::Matrix::Identity},
-		rotation_quaternion{other.GetRotationQuaternion()},
-		rotation_result_quaternion{other.GetRotationResultQuaternion()},
-		is_billboard{other.IsBillboard()},
-		is_quaternion{other.IsQuaternion()}
+		:ComponentBase{other},
+		 position{other.GetPosition()},
+		 prev_pos{other.GetOldPosition()},
+		 scale{other.GetScale()},
+		 angle{other.GetWorldRotation()},
+		 world_f4x4{other.GetWorld4x4()},
+		 scaling_matrix{other.GetScalingMat()},
+		 rotation_matrix{other.GetRotationMat()},
+		 translation_matrix{other.GetTranslationMat()},
+		 right{other.GetModelRight()},
+		 up{other.GetModelUp()},
+		 front{other.GetModelFront()},
+		 orientation{DirectX::SimpleMath::Matrix::Identity},
+		 rotation_quaternion{other.GetRotationQuaternion()},
+		 rotation_result_quaternion{other.GetRotationResultQuaternion()},
+		 is_billboard{other.IsBillboard()},
+		 is_quaternion{other.IsQuaternion()}
 	{
 		if (cb_transform)
 			cb_transform.reset();
 
 		cb_transform = std::make_shared<buffer::ConstantBuffer<TransformCB>>(locator::Locator::GetDx11Device()->device.Get());
+	}
+
+	TransformComponent& TransformComponent::operator=(const TransformComponent& other)
+	{
+		if(this == &other)
+		{
+			return *this;
+		}
+
+		position					= other.GetPosition();
+		prev_pos					= other.GetOldPosition();
+		scale						= other.GetScale();
+		angle						= other.GetWorldRotation();
+		world_f4x4					= other.GetWorld4x4();
+		scaling_matrix				= other.GetScalingMat();
+		rotation_matrix				= other.GetRotationMat();
+		translation_matrix			= other.GetTranslationMat();
+		right						= other.GetModelRight();
+		up							= other.GetModelUp();
+		front						= other.GetModelFront();
+		orientation					= DirectX::SimpleMath::Matrix::Identity;
+		rotation_quaternion			= other.GetRotationQuaternion();
+		rotation_result_quaternion	= other.GetRotationResultQuaternion();
+		is_billboard				= other.IsBillboard();
+		is_quaternion				= other.IsQuaternion();
+
+		if (cb_transform)
+			cb_transform.reset();
+		cb_transform = std::make_shared<buffer::ConstantBuffer<TransformCB>>(locator::Locator::GetDx11Device()->device.Get());
+
+		return *this;
 	}
 
 	void TransformComponent::SceneUpdate(float dt)
@@ -89,12 +121,12 @@ namespace cumulonimbus::component
 		CreateWorldTransformMatrix();
 	}
 
-	void TransformComponent::PreGameUpdate(const float delta_time)
+	void TransformComponent::PreGameUpdate(const float dt)
 	{
 		SetOldPosition(GetPosition());
 	}
 
-	void TransformComponent::GameUpdate(const float delta_time)
+	void TransformComponent::GameUpdate(const float dt)
 	{
 		NormalizeAngle();
 		CreateWorldTransformMatrix();

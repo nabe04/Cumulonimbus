@@ -21,7 +21,7 @@ namespace cumulonimbus::asset
 		component::ComponentBase* AddComponent(ecs::Registry* registry) override
 		{
 			const auto ent = registry->CreateEntity();
-			auto& comp = registry->AddComponent<T>();
+			auto& comp = registry->AddComponent<T>(ent);
 			comp = component_data;
 			comp.SetEntity(ent);
 			comp.SetRegistry(registry);
@@ -39,7 +39,13 @@ namespace cumulonimbus::asset
 		explicit Prefab(const mapping::rename_type::Entity& ent, ecs::Registry* registry);
 		explicit Prefab() = default; // for cereal
 
-		//void Set
+		/**
+		 * @brief : Prefab‚Ìì¬
+		 * @remark : Hierarchy Viewã‚ÅEntity‚ğPrefab‰»‚µ‚½‚¢‚Ég—p
+		 * @param registry :
+		 * @param ent : Prefab‰»‚µ‚½‚¢Entity
+		 */
+		void CreatePrefab(ecs::Registry* registry, const mapping::rename_type::Entity& ent);
 
 	private:
 		std::map<mapping::rename_type::ComponentName, std::shared_ptr<ComponentAssetBase>> components;
