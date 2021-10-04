@@ -21,7 +21,11 @@ namespace cumulonimbus::component
 		{
 			component_tag = mapping::component_tag::ComponentTag::Mesh;
 		}; // for cereal
+		explicit TransformComponent(const TransformComponent& other);
+		TransformComponent& operator=(const TransformComponent& other);
+
 		~TransformComponent() override = default;
+
 
 		void SceneUpdate(float dt)			override;
 
@@ -95,6 +99,7 @@ namespace cumulonimbus::component
 		void AdjustWorldRotation_Y(const float y) { angle.y += y; }
 		void AdjustWorldRotation_Z(const float z) { angle.z += z; }
 		auto& GetWorldRotation() { return angle; }
+		const auto& GetWorldRotation() const { return angle; }
 		DirectX::XMFLOAT3 GetDeltaAngle() const
 		{
 			return DirectX::XMFLOAT3{ angle.x - prev_angle.x,angle.y - prev_angle.y,angle.z - prev_angle.z };
@@ -108,10 +113,12 @@ namespace cumulonimbus::component
 		const auto& GetWorld4x4() const { return world_f4x4; }
 
 		// Billboard
+		bool IsBillboard() const { return is_billboard; }
 		void ActiveBillboard()  { is_billboard = true; }
 		void PassiveBillboard() { is_billboard = false; }
 
 		// Quaternion
+		bool IsQuaternion() const { return is_quaternion; }
 		void ActiveQuaternion()  { is_quaternion = true; }
 		void PassiveQuaternion() { is_quaternion = false; }
 		/**

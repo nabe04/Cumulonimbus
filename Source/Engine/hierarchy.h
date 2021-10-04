@@ -19,5 +19,20 @@ namespace cumulonimbus::editor
 		mapping::rename_type::Entity GetSelectedEntity() const { return selected_entity; }
 	private:
 		mapping::rename_type::Entity selected_entity{};
+
+		/**
+		 * @brief : Hierarchy View上でのアセット右クリック時の操作
+		 */
+		void ContextMenu();
+		/**
+		 * @brief : アセットのプレファブ化
+		 * @remark : ※caution : ImGui::MenuItem内に記述すること
+		 */
+		void CreatePrefab();
+		/**
+		 * @brief : アセットの削除
+		 * @remark : ※caution : ImGui::MenuItem内に記述すること
+		 */
+		//void DeleteAsset();
 	};
 } // cumulonimbus::editor

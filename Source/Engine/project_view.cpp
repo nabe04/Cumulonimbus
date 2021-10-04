@@ -43,8 +43,8 @@ namespace cumulonimbus::editor
 		}
 
 		Register<asset::Material>("All Materials");
-		Register<asset::Model>("All Models");
-		Register<asset::Texture>("All Textures");
+		Register<asset::Model>(   "All Models");
+		Register<asset::Texture>( "All Textures");
 	}
 
 	void ProjectView::Render(const ecs::Registry* registry)

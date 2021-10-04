@@ -67,7 +67,7 @@ namespace cumulonimbus::asset
 		 * @remark : ※Load関数との違い
 		 * @remark : フォルダのコピーを行わずpathに指定された
 		 *			 ファイルパスを元にテクスチャを作成する
-		 * @param : asset_manager : AssetManagerクラスの参照
+		 * @param asset_manager : AssetManagerクラスの参照
 		 * @param path : テクスチャまでのファイルパス(※拡張子含む)
 		 */
 		void CreateTexture(AssetManager& asset_manager, const std::filesystem::path& path);

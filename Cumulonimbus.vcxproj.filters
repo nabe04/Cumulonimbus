@@ -552,6 +552,12 @@
     <ClCompile Include="Source\Engine\billboard.cpp">
       <Filter>Source\Engine\Shader%28.cpp%29</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\prefab_loader.cpp">
+      <Filter>Source\Engine\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\prefab.cpp">
+      <Filter>Source\Engine\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -1003,6 +1009,12 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\billboard.h">
       <Filter>Header\Engine\Shader%28.h%29</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\prefab_loader.h">
+      <Filter>Header\Engine\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\prefab.h">
+      <Filter>Header\Engine\System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

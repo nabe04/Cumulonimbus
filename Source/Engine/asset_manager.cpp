@@ -5,11 +5,12 @@
 #include <set>
 
 #include "texture.h"
+#include "file_path_helper.h"
 // Loaders
 #include "material_loader.h"
 #include "model_loader.h"
 #include "texture_loader.h"
-#include "file_path_helper.h"
+#include "prefab_loader.h"
 #include "loader.h"
 
 namespace

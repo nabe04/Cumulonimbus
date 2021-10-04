@@ -123,7 +123,7 @@ namespace cumulonimbus::component
 
 		bool is_visible		{ true };	// 描画するか
 		bool end_animation	{ false };
-		bool loop_animation	{ false };// アニメーションのループ再生
+		bool loop_animation	{ false };  // アニメーションのループ再生
 
 		StateMachine<AnimationState, void, const float>	anim_states{};
 		asset::ModelData::Animation prev_animation{};

@@ -98,6 +98,8 @@
     <ClInclude Include="Source\Engine\model_component.h" />
     <ClInclude Include="Source\Engine\model_loader.h" />
     <ClInclude Include="Source\Engine\physic_material_component.h" />
+    <ClInclude Include="Source\Engine\prefab.h" />
+    <ClInclude Include="Source\Engine\prefab_loader.h" />
     <ClInclude Include="Source\Engine\project_view.h" />
     <ClInclude Include="Source\Engine\rigid_body_component.h" />
     <ClInclude Include="Source\Engine\normal_map_resource.h" />
@@ -237,6 +239,8 @@
     <ClCompile Include="Source\Engine\model_component.cpp" />
     <ClCompile Include="Source\Engine\model_loader.cpp" />
     <ClCompile Include="Source\Engine\physic_material_component.cpp" />
+    <ClCompile Include="Source\Engine\prefab.cpp" />
+    <ClCompile Include="Source\Engine\prefab_loader.cpp" />
     <ClCompile Include="Source\Engine\project_view.cpp" />
     <ClCompile Include="Source\Engine\rigid_body_component..cpp" />
     <ClCompile Include="Source\Engine\metal.cpp" />
