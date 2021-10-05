@@ -98,6 +98,7 @@ namespace cumulonimbus::asset
 					if (std::filesystem::path{ value }.replace_extension().compare(filename) != 0)
 					{
 						is_loop = false;
+						filename += exe;
 					}
 					else
 					{

@@ -33,21 +33,36 @@ namespace cumulonimbus::asset
 		std::filesystem::path save_path{};
 		if (prefab_name.empty())
 		{
-			const std::string path = save_parent_path + "/" + "New Prefab" + file_path_helper::GetPrefabExtension();
-			save_path = CompareAndReName<Prefab>(asset_manager, path);
+			// 保存先のパスを指定(既に存在していた場合は名前を変更する)
+			const std::string path =  save_parent_path + "/" +
+									  "New Prefab" + "/" +
+									  "New Prefab" +
+									  file_path_helper::GetPrefabExtension();
+			// 保存するファイル名の決定
+			const std::string save_name  = CompareAndReName<Prefab>(asset_manager, path).filename().replace_extension().string();
+			// 保存先のパス(ファイル名、拡張子含む)決定
+			save_path = save_parent_path + "/" +
+						save_name + "/" +
+						save_name +
+						file_path_helper::GetPrefabExtension();
 		}
 		else
 		{
-			const std::string path = save_parent_path + "/" + prefab_name + file_path_helper::GetPrefabExtension();
-			save_path = CompareAndReName<Prefab>(asset_manager, path);
+			// 保存先のパスを指定(既に存在していた場合は名前を変更する)
+			const std::string path = save_parent_path + "/" +
+									 prefab_name + "/" +
+									 prefab_name +
+									 file_path_helper::GetPrefabExtension();
+			// 保存するファイル名の決定
+			const std::string save_name = CompareAndReName<Prefab>(asset_manager, path).filename().replace_extension().string();
+			// 保存先のパス(ファイル名、拡張子含む)決定
+			save_path = save_parent_path + "/" +
+						save_name + "/" +
+						save_name +
+						file_path_helper::GetPrefabExtension();
 		}
 
 		std::unique_ptr<Prefab> prefab = std::make_unique<Prefab>();
 		prefab->CreatePrefab(registry, ent, save_path);
-
-
-		//const mapping::rename_type::UUID& id = utility::GenerateUUID();
-		//prefabs.emplace(id, std::make_unique<Prefab>());
-		//prefabs.at(id)->CreatePrefab(registry, ent);
 	}
 } // cumulonimbus::asset
