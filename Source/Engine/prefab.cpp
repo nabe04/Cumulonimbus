@@ -39,7 +39,7 @@ namespace cumulonimbus::asset
 	//}
 
 
-	Prefab::Prefab(const mapping::rename_type::Entity& ent, ecs::Registry* registry)
+	Prefab::Prefab()
 	{
 		//-- engine --//
 		// transform
@@ -72,7 +72,11 @@ namespace cumulonimbus::asset
 
 	void Prefab::CreatePrefab(ecs::Registry* registry, const mapping::rename_type::Entity& ent)
 	{
-		component_assets.at(ent)->RegistryPrefab(registry, ent);
+		for(auto& component_asset : component_assets)
+		{
+			component_asset.second->RegistryPrefab(registry, ent);
+		}
+		//component_assets.at(ent)->RegistryPrefab(registry, ent);
 		//auto component_arrays = registry->GetComponentArrays().at(ent)->TryGetComponent(ent);
 		//components.at("").
 	}

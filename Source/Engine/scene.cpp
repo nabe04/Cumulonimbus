@@ -25,6 +25,9 @@
 #include "transform_component.h"
 #include "sky_box.h"
 
+//Todo : è¡Ç∑
+#include "prefab_loader.h"
+
 namespace cumulonimbus::scene
 {
 	template <class Archive>
@@ -122,6 +125,12 @@ namespace cumulonimbus::scene
 		registry->AddComponent<component::SkyBoxComponent>(ent_sky_box, locator::Locator::GetDx11Device()->device.Get(), sky_filename);
 		registry->GetComponent<component::TransformComponent>(ent_sky_box).SetScale(3.f);
 
+		const mapping::rename_type::Entity test_ent = registry->CreateEntity();
+		registry->GetComponent<component::TransformComponent>(test_ent).SetPosition({ 10,100,-30 });
+		registry->GetComponent<component::TransformComponent>(test_ent).SetScale({20,60,1000});
+
+		asset::PrefabLoader* prefab_loader = asset_manager->GetLoader<asset::PrefabLoader>();
+		prefab_loader->CreatePrefab(*asset_manager.get(), registry.get(), test_ent);
 	}
 
 	void Scene::UnInitialize()

@@ -699,7 +699,7 @@ namespace cumulonimbus::ecs
 		{
 			auto& component_arrays = registry->GetComponentArrays();
 			const auto& comp_name = file_path_helper::GetTypeName<T>();
-			if(component_arrays.contains(comp_name))
+			if(!component_arrays.contains(comp_name))
 				assert(!"Not registered in the component array");
 
 			ComponentArrayBase* component = component_arrays.at(comp_name).get();
@@ -707,6 +707,8 @@ namespace cumulonimbus::ecs
 			if (!component->HasEntity(ent))
 				return;
 			component_data = static_cast<ComponentArray<T>*>(component)->GetComponent(ent);
+			int a;
+			a = 0;
 		}
 
 		const T& GetComponentData() const { return component_data; }

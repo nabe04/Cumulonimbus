@@ -23,9 +23,10 @@ namespace cumulonimbus::asset
 	AssetManager::AssetManager()
 	{
 		sheet_manager = std::make_unique<AssetSheetManager>();
-		RegisterLoader<Material	,MaterialLoader>();
-		RegisterLoader<Model	,ModelLoader>();
-		RegisterLoader<Texture	,TextureLoader>();
+		RegisterLoader<Material	, MaterialLoader>();
+		RegisterLoader<Model	, ModelLoader>();
+		RegisterLoader<Texture	, TextureLoader>();
+		RegisterLoader<Prefab	, PrefabLoader>();
 
 		// デフォルトパスからのロード
 		Load();
