@@ -225,9 +225,6 @@ namespace cumulonimbus::ecs
 			return  &components.at(index);
 		}
 
-		// Todo :: エラー
-		//void CreatePrefab(mapping::rename_type::Entity entity, asset::Prefab& prefab) override;
-
 		void RemoveComponent(const mapping::rename_type::Entity entity)
 		{
 			// entityがcomponentを持っていない場合は何もしない
@@ -663,18 +660,20 @@ namespace cumulonimbus::ecs
 	public:
 		explicit ComponentAssetBase() = default;
 		virtual ~ComponentAssetBase() = default;
-		explicit ComponentAssetBase(const ComponentAssetBase&) = delete;
-		explicit ComponentAssetBase(const ComponentAssetBase&&) = delete;
-		explicit ComponentAssetBase(ComponentAssetBase&) = delete;
-		explicit ComponentAssetBase(ComponentAssetBase&&) = delete;
-		ComponentAssetBase& operator=(const ComponentAssetBase&) = delete;
-		ComponentAssetBase& operator=(const ComponentAssetBase&&) = delete;
-		ComponentAssetBase& operator=(ComponentAssetBase&) = delete;
-		ComponentAssetBase& operator=(ComponentAssetBase&&) = delete;
+		explicit ComponentAssetBase(const ComponentAssetBase&)		= delete;
+		explicit ComponentAssetBase(const ComponentAssetBase&&)		= delete;
+		explicit ComponentAssetBase(ComponentAssetBase&)			= delete;
+		explicit ComponentAssetBase(ComponentAssetBase&&)			= delete;
+		ComponentAssetBase& operator=(const ComponentAssetBase&)	= delete;
+		ComponentAssetBase& operator=(const ComponentAssetBase&&)	= delete;
+		ComponentAssetBase& operator=(ComponentAssetBase&)			= delete;
+		ComponentAssetBase& operator=(ComponentAssetBase&&)			= delete;
+
 		virtual component::ComponentBase* AddComponent(ecs::Registry* registry) = 0;
-		virtual void RegistryPrefab(
+		virtual bool RegistryPrefab(
 			ecs::Registry* registry,
-			const mapping::rename_type::Entity& ent) = 0;
+			const mapping::rename_type::Entity& ent)	= 0;
+		virtual void Save(const std::string& file_path) = 0;
 	};
 
 	template<class T>
@@ -703,7 +702,7 @@ namespace cumulonimbus::ecs
 			return nullptr;
 		}
 
-		void RegistryPrefab(ecs::Registry* registry,const mapping::rename_type::Entity& ent) override
+		bool RegistryPrefab(ecs::Registry* registry,const mapping::rename_type::Entity& ent) override
 		{
 			auto& component_arrays = registry->GetComponentArrays();
 			const auto& comp_name = file_path_helper::GetTypeName<T>();
@@ -713,8 +712,37 @@ namespace cumulonimbus::ecs
 			ComponentArrayBase* component = component_arrays.at(comp_name).get();
 			// エンティティを持っていなければプレファブ化しない(処理を抜ける)
 			if (!component->HasEntity(ent))
-				return;
+				return false;
 			component_data = static_cast<ComponentArray<T>*>(component)->GetComponent(ent);
+			return true;
+		}
+
+		void Save(const std::string& file_path) override
+		{
+			const std::string save_file_path{ file_path + "/" + file_path_helper::GetComponentsFilename() + "/" + file_path_helper::GetTypeName<T>()};
+			if(!std::filesystem::exists(save_file_path))
+				std::filesystem::create_directories(save_file_path);
+
+			// 保存する先のフォルダ指定 & 作成
+			const std::string save_file_path_and_name{ save_file_path + "/" + file_path_helper::GetTypeName<T>()};
+
+			{// JSONでの出力
+				std::ofstream ofs(save_file_path_and_name + file_path_helper::GetJsonExtension());
+				if (!ofs)
+					assert(!"Not open file");
+				cereal::JSONOutputArchive output_archive(ofs);
+				output_archive(*this);
+			}
+
+			{// バイナリでの出力
+
+				std::ofstream ofs(save_file_path_and_name + file_path_helper::GetBinExtension(), std::ios_base::binary);
+				if (!ofs)
+					assert(!"Not open file");
+				cereal::BinaryOutputArchive output_archive(ofs);
+				output_archive(*this);
+			}
+
 		}
 
 		const T& GetComponentData() const { return component_data; }
@@ -723,19 +751,4 @@ namespace cumulonimbus::ecs
 	private:
 		T component_data;
 	};
-
-	//template <typename T>
-	//inline void ComponentArray<T>::CreatePrefab(mapping::rename_type::Entity entity, asset::Prefab& prefab)
-	//{
-	//	ComponentAssetBase* t = prefab.GetComponentsAsset().at("").get();
-	//	static_cast<ComponentAsset<T>*>(t)->GetComponentData();
-	//}
-
-	//template <typename T>
-	//void ComponentArray<T>::CreatePrefab(mapping::rename_type::Entity entity, asset::Prefab& prefab)
-	//{
-	//	ComponentAssetBase* t = prefab.GetComponentsAsset().at("").get();
-	//	static_cast<ComponentAsset<T>*>(t)->GetComponentData();
-	//}
-
 } // cumulonimbus::ecs

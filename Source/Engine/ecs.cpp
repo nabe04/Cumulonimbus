@@ -268,10 +268,10 @@ namespace cumulonimbus::ecs
 		}
 		component_arrays.clear();
 
-		const std::string n = file_path + "/" +
-			file_path_helper::GetEntitiesFilename() + "/" +
-			file_path_helper::GetEntitiesFilename() + "/" +
-			file_path_helper::GetBinExtension();
+		//const std::string n = file_path + "/" +
+		//	file_path_helper::GetEntitiesFilename() + "/" +
+		//	file_path_helper::GetEntitiesFilename() + "/" +
+		//	file_path_helper::GetBinExtension();
 
 		{// エンティティの読み込み
 			// ./file_path/「Entities」.bin

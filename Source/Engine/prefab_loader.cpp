@@ -33,13 +33,13 @@ namespace cumulonimbus::asset
 		std::filesystem::path save_path{};
 		if (prefab_name.empty())
 		{
-			const std::string path = save_parent_path + "/" + "Prefabs" + "/" + "New Prefab" + file_path_helper::GetPrefabExtension();
-			save_path = CompareAndReName<Prefab>(asset_manager, path).filename().replace_extension().string();
+			const std::string path = save_parent_path + "/" + "New Prefab" + file_path_helper::GetPrefabExtension();
+			save_path = CompareAndReName<Prefab>(asset_manager, path);
 		}
 		else
 		{
-			const std::string path = save_parent_path + "/" + "Prefabs" + "/" + prefab_name + file_path_helper::GetPrefabExtension();
-			save_path = CompareAndReName<Prefab>(asset_manager, path).filename().replace_extension().string();
+			const std::string path = save_parent_path + "/" + prefab_name + file_path_helper::GetPrefabExtension();
+			save_path = CompareAndReName<Prefab>(asset_manager, path);
 		}
 
 		std::unique_ptr<Prefab> prefab = std::make_unique<Prefab>();

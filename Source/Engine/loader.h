@@ -84,10 +84,11 @@ namespace cumulonimbus::asset
 			int no = 0;
 			bool is_loop = true;
 			const std::string exe = path.extension().string();
-			std::string filename = path.replace_extension().string();
+			std::filesystem::path copy_path = path;
+			std::string filename = copy_path.replace_extension().string();
 			if(asset_manager.GetAssetSheetManager().GetSheet<T>().sheet.size() == 0)
 			{
-				return filename;
+				return path;
 			}
 
 			while(is_loop)
@@ -101,7 +102,7 @@ namespace cumulonimbus::asset
 					else
 					{
 						is_loop = true;
-						filename = path.string();
+						filename = copy_path.string();
 						filename += "(" + std::to_string(++no) + ")" + exe;
 						break;
 					}

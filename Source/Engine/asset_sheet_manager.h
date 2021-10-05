@@ -160,6 +160,11 @@ namespace cumulonimbus::asset
 		[[nodiscard]]
 		mapping::rename_type::UUID Search(const std::filesystem::path& path) const;
 
+		/**
+		 * @brief : sheets‚Ì“o˜^
+		 * @param : “o˜^‚µ‚½‚¢Œ^‚ÌƒnƒbƒVƒ…’l
+		 */
+		void Register(const mapping::rename_type::Hash& hash);
 	private:
 		/**
 		 * @brief : (ŠÇ—‚³‚¹‚½‚¢)Œ^‚²‚Æ‚ÌƒV[ƒg

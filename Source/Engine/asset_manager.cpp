@@ -30,6 +30,17 @@ namespace cumulonimbus::asset
 
 		// デフォルトパスからのロード
 		Load();
+
+		// アセットシートの型が消えていた場合の追加
+		AssetSheetManager check{};
+		for(const auto& [hash, asset_sheet] : check.GetSheets())
+		{
+			if(!sheet_manager->HasSheet(hash))
+			{
+				sheet_manager->Register(hash);
+			}
+		}
+
 	}
 
 	void AssetManager::AddAsset(const std::filesystem::path& path)

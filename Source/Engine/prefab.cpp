@@ -24,14 +24,6 @@
 
 namespace cumulonimbus::asset
 {
-	template <class Archive>
-	void Prefab::serialize(Archive&& archive)
-	{
-		archive(
-			CEREAL_NVP(component_assets)
-		);
-	}
-
 	Prefab::Prefab()
 	{
 		//-- engine --//
@@ -67,9 +59,12 @@ namespace cumulonimbus::asset
 		ecs::Registry* registry, const mapping::rename_type::Entity& ent,
 		const std::filesystem::path& path)
 	{
-		for(auto& component_asset : component_assets)
+		for(auto& [comp_name, comp_asset] : component_assets)
 		{
-			component_asset.second->RegistryPrefab(registry, ent);
+			if(comp_asset->RegistryPrefab(registry, ent))
+			{
+				components_name.emplace(comp_name);
+			}
 		}
 
 		Save(path);
@@ -86,8 +81,15 @@ namespace cumulonimbus::asset
 		std::filesystem::create_directory(path.parent_path());
 		{
 			std::ofstream ofs(path, std::ios_base::binary);
+			if (!ofs)
+				assert(!"Not open file");
 			cereal::BinaryOutputArchive output_archive(ofs);
 			output_archive(*this);
+		}
+
+		for(auto& comp : component_assets)
+		{
+			comp.second->Save(path.parent_path().string());
 		}
 	}
 

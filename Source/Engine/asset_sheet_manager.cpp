@@ -42,6 +42,14 @@ namespace cumulonimbus::asset
 		return {};
 	}
 
+	void AssetSheetManager::Register(const mapping::rename_type::Hash& hash)
+	{
+		if (sheets.contains(hash))
+			return;
+		// ƒV[ƒg‚Ì“o˜^
+		sheets.emplace(hash, AssetSheet{});
+	}
+
 	template<class T>
 	void AssetSheetManager::Register()
 	{
@@ -49,6 +57,6 @@ namespace cumulonimbus::asset
 		if (sheets.contains(id))
 			return;
 		// ƒV[ƒg‚Ì“o˜^
-		sheets.insert(std::make_pair(id, AssetSheet{}));
+		sheets.emplace(id, AssetSheet{});
 	}
 } // cumulonimbus::asset

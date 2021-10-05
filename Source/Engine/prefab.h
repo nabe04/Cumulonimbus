@@ -1,5 +1,6 @@
 #pragma once
 #include <map>
+#include <set>
 #include <filesystem>
 
 #include "component_base.h"
@@ -20,7 +21,12 @@ namespace cumulonimbus::asset
 		~Prefab() = default;
 
 		template<class Archive>
-		void serialize(Archive&& archive);
+		void serialize(Archive&& archive)
+		{
+			archive(
+				CEREAL_NVP(components_name)
+			);
+		}
 
 		/**
 		 * @brief : Prefab�̍쐬
@@ -43,6 +49,7 @@ namespace cumulonimbus::asset
 
 	private:
 		std::map<mapping::rename_type::ComponentName, std::shared_ptr<ecs::ComponentAssetBase>> component_assets;
+		std::set<mapping::rename_type::ComponentName> components_name;
 
 		template<class T>
 		void RegistryComponent();
