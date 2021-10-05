@@ -130,7 +130,7 @@ namespace cumulonimbus::scene
 		registry->GetComponent<component::TransformComponent>(test_ent).SetScale({20,60,1000});
 
 		asset::PrefabLoader* prefab_loader = asset_manager->GetLoader<asset::PrefabLoader>();
-		prefab_loader->CreatePrefab(*asset_manager.get(), registry.get(), test_ent);
+		prefab_loader->CreatePrefab(*asset_manager.get(), registry.get(), test_ent, "Test Prefab");
 	}
 
 	void Scene::UnInitialize()

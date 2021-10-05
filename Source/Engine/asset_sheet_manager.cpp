@@ -3,6 +3,7 @@
 #include "material.h"
 #include "model.h"
 #include "texture.h"
+#include "prefab.h"
 
 namespace cumulonimbus::asset
 {
@@ -11,6 +12,7 @@ namespace cumulonimbus::asset
 		Register<Material>();
 		Register<Model>();
 		Register<Texture>();
+		Register<Prefab>();
 	}
 
 	std::string AssetSheetManager::GetAssetFilename(const mapping::rename_type::UUID& id) const

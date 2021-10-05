@@ -24,20 +24,13 @@
 
 namespace cumulonimbus::asset
 {
-	//template <class T>
-	//void ComponentAsset<T>::RegistryPrefab(
-	//	ecs::Registry* registry,
-	//	const mapping::rename_type::Entity& ent,
-	//	Prefab& prefab)
-	//{
-	//	auto& component_arrays = registry->GetComponentArrays();
-	//	const auto& comp_name  = file_path_helper::GetTypeName<T>();
-	//	if (component_arrays.contains(comp_name))
-	//		assert(!"Not registered in the component array");
-
-	//	//component_arrays.at(comp_name).Get
-	//}
-
+	template <class Archive>
+	void Prefab::serialize(Archive&& archive)
+	{
+		archive(
+			CEREAL_NVP(component_assets)
+		);
+	}
 
 	Prefab::Prefab()
 	{
@@ -70,15 +63,32 @@ namespace cumulonimbus::asset
 		//RegistryComponent<component::EnemySoldierComponent>();
 	}
 
-	void Prefab::CreatePrefab(ecs::Registry* registry, const mapping::rename_type::Entity& ent)
+	void Prefab::CreatePrefab(
+		ecs::Registry* registry, const mapping::rename_type::Entity& ent,
+		const std::filesystem::path& path)
 	{
 		for(auto& component_asset : component_assets)
 		{
 			component_asset.second->RegistryPrefab(registry, ent);
 		}
+
+		Save(path);
+
 		//component_assets.at(ent)->RegistryPrefab(registry, ent);
 		//auto component_arrays = registry->GetComponentArrays().at(ent)->TryGetComponent(ent);
 		//components.at("").
+	}
+
+	void Prefab::Save(const std::filesystem::path& path)
+	{
+		if (path.extension().compare(file_path_helper::GetPrefabExtension()) != 0)
+			assert(!"The file extension is not Åu.prefabÅv");
+		std::filesystem::create_directory(path.parent_path());
+		{
+			std::ofstream ofs(path, std::ios_base::binary);
+			cereal::BinaryOutputArchive output_archive(ofs);
+			output_archive(*this);
+		}
 	}
 
 	template <class T>

@@ -52,7 +52,6 @@ namespace cumulonimbus::asset
 		asset_manager.Save();
 	}
 
-
 	bool MaterialLoader::Supported(const std::filesystem::path extension)
 	{
 		static const std::set<std::filesystem::path> extensions
@@ -155,7 +154,6 @@ namespace cumulonimbus::asset
 
 	Material& MaterialLoader::GetMaterial(const mapping::rename_type::UUID& id)
 	{
-		// Todo : ダミーマテリアルを返すようにする
 		if (!materials.contains(id))
 			return *dummy_material.get();
 			//assert(!"Not found material id(MaterialLoader::GetMaterial)");

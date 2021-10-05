@@ -60,6 +60,9 @@ namespace cumulonimbus::file_path_helper
 	[[nodiscard]]
 	std::string GetMaterialExtension();
 
+	[[nodiscard]]
+	std::string GetPrefabExtension();
+
 	/**
 	 * @brief  : uContentsv‚ğ•Ô‚·
 	 * @return :  Contents

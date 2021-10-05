@@ -43,6 +43,11 @@ namespace cumulonimbus::file_path_helper
 		return { ".mat" };
 	}
 
+	std::string GetPrefabExtension()
+	{
+		return { ".prefab" };
+	}
+
 	std::string GetContentsFilename()
 	{
 		return { "Contents" };

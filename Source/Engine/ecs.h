@@ -684,6 +684,14 @@ namespace cumulonimbus::ecs
 		explicit ComponentAsset() = default;
 		~ComponentAsset() override = default;
 
+		template<class Archive>
+		void serialize(Archive&& archive)
+		{
+			archive(
+				CEREAL_NVP(component_data)
+			);
+		}
+
 		component::ComponentBase* AddComponent(ecs::Registry* registry) override
 		{
 			const auto ent = registry->CreateEntity();
@@ -707,8 +715,6 @@ namespace cumulonimbus::ecs
 			if (!component->HasEntity(ent))
 				return;
 			component_data = static_cast<ComponentArray<T>*>(component)->GetComponent(ent);
-			int a;
-			a = 0;
 		}
 
 		const T& GetComponentData() const { return component_data; }
