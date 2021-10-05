@@ -12,6 +12,7 @@
 
 #include "file_path_helper.h"
 #include "rename_type_mapping.h"
+#include "prefab.h"
 
 namespace cumulonimbus
 {
@@ -80,14 +81,17 @@ namespace cumulonimbus::ecs
 		virtual void GameUpdate(float dt)		= 0;
 		virtual void PostGameUpdate(float dt)	= 0;
 
-		virtual void Destroy(mapping::rename_type::Entity entity)	  = 0;
-		virtual void RenderImGui(mapping::rename_type::Entity entity) = 0;
-		virtual void Save(const std::string& filename) = 0;
-		virtual void Load(const std::string& filename, ecs::Registry* registry) = 0;
-		virtual size_t GetHashCode() = 0;
-		virtual component::ComponentBase* AddComponentFromInspector(mapping::rename_type::Entity entity) = 0;
 
-		//component::ComponentBase* base;
+		virtual component::ComponentBase* AddComponent(mapping::rename_type::Entity entity)	  = 0;
+		//virtual void CreatePrefab(mapping::rename_type::Entity entity, asset::Prefab& prefab) = 0;
+		virtual component::ComponentBase* TryGetComponent(mapping::rename_type::Entity entity)   = 0;
+		virtual void Destroy(mapping::rename_type::Entity entity)							  = 0;
+		virtual void Save(const std::string& filename)										  = 0;
+		virtual void Load(const std::string& filename, ecs::Registry* registry)				  = 0;
+		virtual void RenderImGui(mapping::rename_type::Entity entity)						  = 0;
+
+		virtual bool HasEntity(const mapping::rename_type::Entity& entity) = 0;
+		virtual size_t GetHashCode()									   = 0;
 	};
 
 	template <typename T>
@@ -96,6 +100,15 @@ namespace cumulonimbus::ecs
 	public:
 		explicit ComponentArray() = default;
 
+		[[nodiscard]]
+		bool HasEntity(const mapping::rename_type::Entity& entity) override
+		{
+			if (entity_id.contains(entity))
+				return true;
+			return false;
+		}
+
+		[[nodiscard]]
 		size_t GetHashCode() override
 		{
 			return typeid(T).hash_code();
@@ -197,7 +210,7 @@ namespace cumulonimbus::ecs
 			return  components.at(index);
 		}
 
-		component::ComponentBase* AddComponentFromInspector(const mapping::rename_type::Entity entity) override
+		component::ComponentBase* AddComponent(const mapping::rename_type::Entity entity) override
 		{
 			if (entity_id.contains(entity))
 			{
@@ -212,7 +225,10 @@ namespace cumulonimbus::ecs
 			return  &components.at(index);
 		}
 
-		void RemoveComponent(mapping::rename_type::Entity entity)
+		// Todo :: エラー
+		//void CreatePrefab(mapping::rename_type::Entity entity, asset::Prefab& prefab) override;
+
+		void RemoveComponent(const mapping::rename_type::Entity entity)
 		{
 			// entityがcomponentを持っていない場合は何もしない
 			if (!Content(entity))
@@ -271,6 +287,17 @@ namespace cumulonimbus::ecs
 
 			const size_t index = static_cast<size_t>(entity_id.at(entity));
 			return components.at(index);
+		}
+
+		component::ComponentBase* TryGetComponent(const mapping::rename_type::Entity entity) override
+		{
+			if (entity_id.contains(entity))
+			{
+				const size_t index = static_cast<size_t>(entity_id.at(entity));
+				return &components.at(index);
+			}
+
+			return nullptr;
 		}
 
 		/**
@@ -630,4 +657,77 @@ namespace cumulonimbus::ecs
 		std::unordered_map<mapping::rename_type::Entity, std::pair<mapping::rename_type::Entity, mapping::rename_type::EntityName>> entities;
 		scene::Scene* scene;
 	};
+
+	class ComponentAssetBase
+	{
+	public:
+		explicit ComponentAssetBase() = default;
+		virtual ~ComponentAssetBase() = default;
+		explicit ComponentAssetBase(const ComponentAssetBase&) = delete;
+		explicit ComponentAssetBase(const ComponentAssetBase&&) = delete;
+		explicit ComponentAssetBase(ComponentAssetBase&) = delete;
+		explicit ComponentAssetBase(ComponentAssetBase&&) = delete;
+		ComponentAssetBase& operator=(const ComponentAssetBase&) = delete;
+		ComponentAssetBase& operator=(const ComponentAssetBase&&) = delete;
+		ComponentAssetBase& operator=(ComponentAssetBase&) = delete;
+		ComponentAssetBase& operator=(ComponentAssetBase&&) = delete;
+		virtual component::ComponentBase* AddComponent(ecs::Registry* registry) = 0;
+		virtual void RegistryPrefab(
+			ecs::Registry* registry,
+			const mapping::rename_type::Entity& ent) = 0;
+	};
+
+	template<class T>
+	class ComponentAsset final : public ComponentAssetBase
+	{
+	public:
+		explicit ComponentAsset() = default;
+		~ComponentAsset() override = default;
+
+		component::ComponentBase* AddComponent(ecs::Registry* registry) override
+		{
+			const auto ent = registry->CreateEntity();
+			auto& comp = registry->AddComponent<T>(ent);
+			comp = component_data;
+			comp.SetEntity(ent);
+			comp.SetRegistry(registry);
+
+			return nullptr;
+		}
+
+		void RegistryPrefab(ecs::Registry* registry,const mapping::rename_type::Entity& ent) override
+		{
+			auto& component_arrays = registry->GetComponentArrays();
+			const auto& comp_name = file_path_helper::GetTypeName<T>();
+			if(component_arrays.contains(comp_name))
+				assert(!"Not registered in the component array");
+
+			ComponentArrayBase* component = component_arrays.at(comp_name).get();
+			// エンティティを持っていなければプレファブ化しない(処理を抜ける)
+			if (!component->HasEntity(ent))
+				return;
+			component_data = static_cast<ComponentArray<T>*>(component)->GetComponent(ent);
+		}
+
+		const T& GetComponentData() const { return component_data; }
+		void SetComponentData(const T& data) { component_data = data; }
+
+	private:
+		T component_data;
+	};
+
+	//template <typename T>
+	//inline void ComponentArray<T>::CreatePrefab(mapping::rename_type::Entity entity, asset::Prefab& prefab)
+	//{
+	//	ComponentAssetBase* t = prefab.GetComponentsAsset().at("").get();
+	//	static_cast<ComponentAsset<T>*>(t)->GetComponentData();
+	//}
+
+	//template <typename T>
+	//void ComponentArray<T>::CreatePrefab(mapping::rename_type::Entity entity, asset::Prefab& prefab)
+	//{
+	//	ComponentAssetBase* t = prefab.GetComponentsAsset().at("").get();
+	//	static_cast<ComponentAsset<T>*>(t)->GetComponentData();
+	//}
+
 } // cumulonimbus::ecs

@@ -19,6 +19,6 @@ namespace cumulonimbus::asset
 		 */
 		void CreatePrefab(AssetManager& asset_manager,const mapping::rename_type::Entity& ent);
 	private:
-		//std::map<mapping::rename_type::UUID,std::
+		std::map<mapping::rename_type::UUID, std::unique_ptr<Prefab>> prefabs{};
 	};
 } // cumulonimbus::asset

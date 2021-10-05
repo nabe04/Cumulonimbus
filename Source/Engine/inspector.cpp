@@ -102,7 +102,7 @@ namespace cumulonimbus::editor
 					ImGui::MenuItem(menu_name.c_str(), nullptr, false, false);
 				if (ImGui::MenuItem(key.c_str()))
 				{
-					auto* comp = registry->GetComponentArrays().at(value.first)->AddComponentFromInspector(ent);
+					auto* comp = registry->GetComponentArrays().at(value.first)->AddComponent(ent);
 					comp->SetRegistry(registry);
 					comp->SetEntity(ent);
 					comp->Initialize(registry, ent);

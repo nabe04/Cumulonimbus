@@ -21,8 +21,8 @@ namespace cumulonimbus::component
 		{
 			component_tag = mapping::component_tag::ComponentTag::Mesh;
 		}; // for cereal
-		explicit TransformComponent(const TransformComponent& other);
-		TransformComponent& operator=(const TransformComponent& other);
+		TransformComponent(const TransformComponent& other);
+		//TransformComponent& operator=(const TransformComponent& other);
 
 		~TransformComponent() override = default;
 

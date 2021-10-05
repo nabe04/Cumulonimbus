@@ -3,41 +3,20 @@
 
 #include "component_base.h"
 #include "rename_type_mapping.h"
-#include "ecs.h"
 
+namespace cumulonimbus::ecs
+{
+	class Registry;
+	class ComponentAssetBase;
+} // cumulonimbus::ecs
 
 namespace cumulonimbus::asset
 {
-	class ComponentAssetBase
-	{
-	public:
-		virtual component::ComponentBase* AddComponent(ecs::Registry* registry) = 0;
-	};
-
-	template<class T>
-	class ComponentAsset final : public ComponentAssetBase
-	{
-	public:
-		component::ComponentBase* AddComponent(ecs::Registry* registry) override
-		{
-			const auto ent = registry->CreateEntity();
-			auto& comp = registry->AddComponent<T>(ent);
-			comp = component_data;
-			comp.SetEntity(ent);
-			comp.SetRegistry(registry);
-
-			return nullptr;
-		}
-
-	private:
-		T component_data;
-	};
-
 	class Prefab final
 	{
 	public:
-		explicit Prefab(const mapping::rename_type::Entity& ent, ecs::Registry* registry);
-		explicit Prefab() = default; // for cereal
+		explicit Prefab();
+		~Prefab() = default;
 
 		/**
 		 * @brief : Prefab�̍쐬
@@ -47,8 +26,14 @@ namespace cumulonimbus::asset
 		 */
 		void CreatePrefab(ecs::Registry* registry, const mapping::rename_type::Entity& ent);
 
+		[[nodiscard]]
+		std::map<mapping::rename_type::ComponentName, std::shared_ptr<ecs::ComponentAssetBase>>& GetComponentsAssets()
+		{
+			return component_assets;
+		}
+
 	private:
-		std::map<mapping::rename_type::ComponentName, std::shared_ptr<ComponentAssetBase>> components;
+		std::map<mapping::rename_type::ComponentName, std::shared_ptr<ecs::ComponentAssetBase>> component_assets;
 
 		template<class T>
 		void RegistryComponent();

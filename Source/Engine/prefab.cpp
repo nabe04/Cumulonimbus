@@ -1,5 +1,8 @@
 #include "prefab.h"
 
+#include "ecs.h"
+#include "file_path_helper.h"
+#include "generic.h"
 #include "file_path_helper.h"
 // components(engine)
 #include "actor3d_component.h"
@@ -21,6 +24,21 @@
 
 namespace cumulonimbus::asset
 {
+	//template <class T>
+	//void ComponentAsset<T>::RegistryPrefab(
+	//	ecs::Registry* registry,
+	//	const mapping::rename_type::Entity& ent,
+	//	Prefab& prefab)
+	//{
+	//	auto& component_arrays = registry->GetComponentArrays();
+	//	const auto& comp_name  = file_path_helper::GetTypeName<T>();
+	//	if (component_arrays.contains(comp_name))
+	//		assert(!"Not registered in the component array");
+
+	//	//component_arrays.at(comp_name).Get
+	//}
+
+
 	Prefab::Prefab(const mapping::rename_type::Entity& ent, ecs::Registry* registry)
 	{
 		//-- engine --//
@@ -54,7 +72,9 @@ namespace cumulonimbus::asset
 
 	void Prefab::CreatePrefab(ecs::Registry* registry, const mapping::rename_type::Entity& ent)
 	{
-		auto& component_arrays = registry->GetComponentArrays();
+		component_assets.at(ent)->RegistryPrefab(registry, ent);
+		//auto component_arrays = registry->GetComponentArrays().at(ent)->TryGetComponent(ent);
+		//components.at("").
 	}
 
 	template <class T>
@@ -62,10 +82,10 @@ namespace cumulonimbus::asset
 	{
 		const mapping::rename_type::ComponentName component_name = file_path_helper::GetTypeName<T>();
 
-		if (components.contains(component_name))
+		if (component_assets.contains(component_name))
 			return;
 
-		components.emplace(component_name, std::make_shared<ComponentAsset<T>>());
+		component_assets.emplace(component_name, std::make_shared<ecs::ComponentAsset<T>>());
 	}
 
 } // cumulonimbus::asset
