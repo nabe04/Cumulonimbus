@@ -86,8 +86,12 @@ namespace cumulonimbus::editor
 		 */
 		void AddModel(ecs::Registry* registry, const std::filesystem::path& file_path);
 		/**
+		 * @brief : プロジェクトビューからドラッグしてきたプレファブの追加
+		 */
+		void AddPrefab(ecs::Registry* registry, const std::filesystem::path& file_path);
+		/**
 		 * @brief : プロジェクトビューからドラッグしてきたモデルをマウスで配置中
 		 */
-		void DraggingModel(ecs::Registry* registry) const;
+		void DraggingAsset(ecs::Registry* registry) const;
 	};
 } // cumulonimbus::editor

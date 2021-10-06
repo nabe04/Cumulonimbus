@@ -9,6 +9,7 @@
 #include "file_path_helper.h"
 #include "locator.h"
 #include "project_view.h"
+#include "prefab_loader.h"
 // components
 #include "model_component.h"
 #include "scene.h"
@@ -112,17 +113,31 @@ namespace cumulonimbus::editor
 			std::filesystem::path selected_asset = ""; // アセットのリセット
 			if (IsWindowHovered())
 			{
-				if (project_view->DraggingAsset(selected_asset) &&
-					(selected_asset.extension().string() == file_path_helper::GetModelExtension()))
+				if (project_view->DraggingAsset(selected_asset))
 				{
+					// 「.model」形式をドラッグしているか判別
+					const bool is_model  = (selected_asset.extension().string() == file_path_helper::GetModelExtension());
+					// 「.prefab」形式をドラッグしているか判別
+					const bool is_prefab = (selected_asset.extension().string() == file_path_helper::GetPrefabExtension());
 					if (mouse_hover.event == MouseHoverEvent::Begin_Hovered)
 					{
-						// エンティティとコンポーネント(Model)の追加
-						AddModel(registry, selected_asset);
+						if(is_model)
+						{
+							// エンティティとコンポーネント(Model)の追加
+							AddModel(registry, selected_asset);
+						}
+						if(is_prefab)
+						{
+							// プレファブからコンポーネントの追加
+							AddPrefab(registry, selected_asset);
+						}
 					}
 					if (mouse_hover.event == MouseHoverEvent::Hovering)
 					{
-						DraggingModel(registry);
+						if(is_model)
+						{
+							DraggingAsset(registry);
+						}
 					}
 				}
 			}
@@ -130,6 +145,7 @@ namespace cumulonimbus::editor
 			{
 				if (project_view->DraggingAsset(selected_asset))
 				{
+					const bool is_model = (selected_asset.extension().string() == file_path_helper::GetModelExtension());
 					if (mouse_hover.event == MouseHoverEvent::Hovering)
 					{
 						// エンティティとコンポーネント(Model)の削除
@@ -241,12 +257,18 @@ namespace cumulonimbus::editor
 
 	void SceneView::AddModel(ecs::Registry* registry, const std::filesystem::path& file_path)
 	{
-		dragging_entity = registry->CreateEntity();
+		dragging_entity		= registry->CreateEntity();
 		const auto model_id = locator::Locator::GetAssetManager()->GetAssetSheetManager().Search<asset::Model>(file_path);
 		registry->AddComponent<component::ModelComponent>(dragging_entity, model_id);
 	}
 
-	void SceneView::DraggingModel(ecs::Registry* registry) const
+	void SceneView::AddPrefab(ecs::Registry* registry, const std::filesystem::path& file_path)
+	{
+		const auto prefab_id = locator::Locator::GetAssetManager()->GetAssetSheetManager().Search<asset::Prefab>(file_path);
+		dragging_entity = locator::Locator::GetAssetManager()->GetLoader<asset::PrefabLoader>()->AddComponent(registry, prefab_id);
+	}
+
+	void SceneView::DraggingAsset(ecs::Registry* registry) const
 	{
 		const DirectX::XMINT2 win_pos = ConvertWindowPos();
 		const DirectX::SimpleMath::Vector3 world_near_pos = arithmetic::ConvertScreenToWorld({ static_cast<float>(win_pos.x),static_cast<float>(win_pos.y),.0f },
@@ -256,7 +278,6 @@ namespace cumulonimbus::editor
 																							GetSceneViewCamera().GetCamera().GetViewMat(),
 																							GetSceneViewCamera().GetCamera().GetProjectionMat());
 		DirectX::SimpleMath::Vector3 hit_pos{};
-		const component::ModelComponent& model_comp = registry->GetComponent<component::ModelComponent>(dragging_entity);
 		if(registry->GetScene()->GetCollisionManager()->IntersectRayVsDragModel(registry,world_near_pos,world_far_pos,&hit_pos))
 		{
 			registry->GetComponent<component::TransformComponent>(dragging_entity).SetPosition(hit_pos);

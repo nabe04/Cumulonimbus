@@ -17,6 +17,8 @@
 #include "model.h"
 #include "texture.h"
 #include "texture_loader.h"
+#include "prefab.h"
+#include "prefab_loader.h"
 
 
 namespace
@@ -45,6 +47,7 @@ namespace cumulonimbus::editor
 		Register<asset::Material>("All Materials");
 		Register<asset::Model>(   "All Models");
 		Register<asset::Texture>( "All Textures");
+		Register<asset::Prefab>(  "All Prefabs");
 	}
 
 	void ProjectView::Render(const ecs::Registry* registry)
@@ -332,6 +335,7 @@ namespace cumulonimbus::editor
 
 				if (is_rename && (rename_id == uuid))
 				{
+					// アセットのリネーム
 					RenameItem(asset_manager);
 				}
 

@@ -20,13 +20,13 @@ namespace cumulonimbus::asset
 
 		/**
 		 * @brief : アセットのロード
-		 * @param : asset_manager : AssetManagerクラスの参照
+		 * @param asset_manager : AssetManagerクラスの参照
 		 * @param path : ロードされたモデルのファイルパス
 		 */
 		void Load(AssetManager& asset_manager, const std::filesystem::path& path) override;
 		/**
 		 * @brief : アセットのロード
-		 * @param : asset_manager : AssetManagerクラスの参照
+		 * @param asset_manager : AssetManagerクラスの参照
 		 * @param from: ロードされたモデルのファイルパス
 		 * @param to : コピー先のファイルパス
 		 */

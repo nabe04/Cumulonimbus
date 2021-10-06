@@ -268,13 +268,8 @@ namespace cumulonimbus::ecs
 		}
 		component_arrays.clear();
 
-		//const std::string n = file_path + "/" +
-		//	file_path_helper::GetEntitiesFilename() + "/" +
-		//	file_path_helper::GetEntitiesFilename() + "/" +
-		//	file_path_helper::GetBinExtension();
-
 		{// エンティティの読み込み
-			// ./file_path/「Entities」.bin
+			// パス -> ./file_path/「Entities」.bin
 			std::ifstream ifs(
 				file_path + "/" +
 				file_path_helper::GetEntitiesFilename() + "/" +
@@ -282,7 +277,7 @@ namespace cumulonimbus::ecs
 				file_path_helper::GetBinExtension()
 				, std::ios_base::binary);
 			if (!ifs)
-				assert(!"Not open file");
+				assert(!"Not open file(Registry::Load)");
 			cereal::BinaryInputArchive input_archive(ifs);
 			input_archive(*this);
 		}

@@ -39,7 +39,10 @@ namespace cumulonimbus::asset
 			ecs::Registry* registry, const mapping::rename_type::Entity& ent,
 			const std::filesystem::path& path);
 
+		void AddComponent(ecs::Registry* registry, const mapping::rename_type::Entity& ent);
+
 		void Save(const std::filesystem::path& path);
+		void Load(const std::filesystem::path& path);
 
 		[[nodiscard]]
 		std::map<mapping::rename_type::ComponentName, std::shared_ptr<ecs::ComponentAssetBase>>& GetComponentsAssets()

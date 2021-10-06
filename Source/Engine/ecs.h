@@ -669,11 +669,12 @@ namespace cumulonimbus::ecs
 		ComponentAssetBase& operator=(ComponentAssetBase&)			= delete;
 		ComponentAssetBase& operator=(ComponentAssetBase&&)			= delete;
 
-		virtual component::ComponentBase* AddComponent(ecs::Registry* registry) = 0;
+		virtual void AddComponent(ecs::Registry* registry, const mapping::rename_type::Entity& ent) = 0;
 		virtual bool RegistryPrefab(
 			ecs::Registry* registry,
 			const mapping::rename_type::Entity& ent)	= 0;
 		virtual void Save(const std::string& file_path) = 0;
+		virtual void Load(const std::string& file_path) = 0;
 	};
 
 	template<class T>
@@ -691,15 +692,12 @@ namespace cumulonimbus::ecs
 			);
 		}
 
-		component::ComponentBase* AddComponent(ecs::Registry* registry) override
+		void AddComponent(ecs::Registry* registry,const mapping::rename_type::Entity& ent) override
 		{
-			const auto ent = registry->CreateEntity();
-			auto& comp = registry->AddComponent<T>(ent);
-			comp = component_data;
+			auto& comp	= registry->AddComponent<T>(ent);
+			comp		= component_data;
 			comp.SetEntity(ent);
 			comp.SetRegistry(registry);
-
-			return nullptr;
 		}
 
 		bool RegistryPrefab(ecs::Registry* registry,const mapping::rename_type::Entity& ent) override
@@ -717,6 +715,13 @@ namespace cumulonimbus::ecs
 			return true;
 		}
 
+		/**
+		 * @brief : コンポーネントの保存(シリアライズ)
+		 * @param file_path : 保存したい先のファイルパス
+		 *					  例 : ./Data/Components　の場合
+		 *					      「Components」フォルダは作成されるので
+		 *					       "./Data"までを指定する
+		 */
 		void Save(const std::string& file_path) override
 		{
 			const std::string save_file_path{ file_path + "/" + file_path_helper::GetComponentsFilename() + "/" + file_path_helper::GetTypeName<T>()};
@@ -735,14 +740,34 @@ namespace cumulonimbus::ecs
 			}
 
 			{// バイナリでの出力
-
 				std::ofstream ofs(save_file_path_and_name + file_path_helper::GetBinExtension(), std::ios_base::binary);
 				if (!ofs)
 					assert(!"Not open file");
 				cereal::BinaryOutputArchive output_archive(ofs);
 				output_archive(*this);
 			}
+		}
 
+		/**
+		 * @brief : コンポーネントデータの取得(デシリアライズ)
+		 * @param file_path : 取得したいコンポーネントの「Components」までのファイルパス
+		 *					  例 : "./Data/Componentsなら
+		 *						   "./Data"を指定
+		 */
+		void Load(const std::string& file_path) override
+		{
+			const std::string load_file_path_and_name{ file_path + "/" +
+													   file_path_helper::GetComponentsFilename() + "/" +
+												       file_path_helper::GetTypeName<T>() + "/" +
+												       file_path_helper::GetTypeName<T>() };
+
+			{// バイナリファイルから取得
+				std::ifstream ifs(load_file_path_and_name + file_path_helper::GetBinExtension(), std::ios_base::binary);
+				if (!ifs)
+					assert(!"Not open file");
+				cereal::BinaryInputArchive input_archive(ifs);
+				input_archive(*this);
+			}
 		}
 
 		const T& GetComponentData() const { return component_data; }

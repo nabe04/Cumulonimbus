@@ -29,7 +29,7 @@ namespace cumulonimbus::asset
 		//-- engine --//
 		// transform
 		RegistryComponent<component::TransformComponent>();
-		// actor
+		//// actor
 		//RegistryComponent<component::Actor3DComponent>();
 		//// model
 		//RegistryComponent<component::ModelComponent>();
@@ -66,12 +66,19 @@ namespace cumulonimbus::asset
 				components_name.emplace(comp_name);
 			}
 		}
-
+		// プレファブの保存(シリアライズ)
 		Save(path);
+	}
 
-		//component_assets.at(ent)->RegistryPrefab(registry, ent);
-		//auto component_arrays = registry->GetComponentArrays().at(ent)->TryGetComponent(ent);
-		//components.at("").
+	void Prefab::AddComponent(ecs::Registry* registry, const mapping::rename_type::Entity& ent)
+	{
+		for (auto& [comp_name, comp_asset] : component_assets)
+		{
+			if(components_name.contains(comp_name))
+			{
+				component_assets.at(comp_name)->AddComponent(registry, ent);
+			}
+		}
 	}
 
 	void Prefab::Save(const std::filesystem::path& path)
@@ -79,17 +86,42 @@ namespace cumulonimbus::asset
 		if (path.extension().compare(file_path_helper::GetPrefabExtension()) != 0)
 			assert(!"The file extension is not 「.prefab」");
 		std::filesystem::create_directory(path.parent_path());
-		{
+		{// 「.prefab」拡張子のファイルの保存
 			std::ofstream ofs(path, std::ios_base::binary);
 			if (!ofs)
-				assert(!"Not open file");
+				assert(!"Not open file(Prefab::Save)");
 			cereal::BinaryOutputArchive output_archive(ofs);
 			output_archive(*this);
 		}
 
 		for(auto& comp : component_assets)
-		{
+		{// コンポーネントのデータをファイルに保存(シリアライズ)
 			comp.second->Save(path.parent_path().string());
+		}
+	}
+
+	void Prefab::Load(const std::filesystem::path& path)
+	{
+		if (path.extension().compare(file_path_helper::GetPrefabExtension()) != 0)
+			assert(!"The file extension is not 「.prefab」");
+
+		// パラメータのリセット
+		if (!component_assets.empty())
+			component_assets.clear();
+		if (!components_name.empty())
+			components_name.clear();
+
+		{// プレファブの読み込み
+			std::ifstream ifs(path);
+			if (!ifs)
+				assert("!Not open file(Prefab::Load)");
+			cereal::BinaryInputArchive input_archive(ifs);
+			input_archive(*this);
+		}
+
+		for (auto& comp : component_assets)
+		{// コンポーネントのデータをファイルから読み込み(デシリアライズ)
+			comp.second->Load(path.parent_path().string());
 		}
 	}
 

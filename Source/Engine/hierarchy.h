@@ -23,12 +23,12 @@ namespace cumulonimbus::editor
 		/**
 		 * @brief : Hierarchy View上でのアセット右クリック時の操作
 		 */
-		void ContextMenu();
+		void ContextMenu(ecs::Registry* registry);
 		/**
 		 * @brief : アセットのプレファブ化
 		 * @remark : ※caution : ImGui::MenuItem内に記述すること
 		 */
-		void CreatePrefab();
+		void CreatePrefab(ecs::Registry* registry, const mapping::rename_type::Entity& ent);
 		/**
 		 * @brief : アセットの削除
 		 * @remark : ※caution : ImGui::MenuItem内に記述すること

@@ -1,6 +1,8 @@
 #include "hierarchy.h"
 
 #include "ecs.h"
+#include "locator.h"
+#include "prefab_loader.h"
 
 namespace
 {
@@ -43,24 +45,25 @@ namespace cumulonimbus::editor
 					}
 					if(ImGui::IsMouseClicked(ImGuiMouseButton_Right))
 					{// 右クリック時
+						selected_entity = key;
 						ImGui::OpenPopup(context_id.c_str());
 					}
 				}
 			}
 
 			//
-			ContextMenu();
+			ContextMenu(registry);
 		}
 		ImGui::End();
 	}
 
-	void Hierarchy::ContextMenu()
+	void Hierarchy::ContextMenu(ecs::Registry* registry)
 	{
 		if(ImGui::BeginPopup(context_id.c_str()))
 		{
 			if (ImGui::MenuItem("Create Prefab"))
 			{
-				CreatePrefab();
+				CreatePrefab(registry, selected_entity);
 			}
 			ImGui::MenuItem("Delete");
 
@@ -69,9 +72,11 @@ namespace cumulonimbus::editor
 		}
 	}
 
-	void Hierarchy::CreatePrefab()
+	void Hierarchy::CreatePrefab(ecs::Registry* registry, const mapping::rename_type::Entity& ent)
 	{
-
+		asset::AssetManager* asset_manager = locator::Locator::GetAssetManager();
+		const std::string& ent_name = registry->GetName(selected_entity);
+		asset_manager->GetLoader<asset::PrefabLoader>()->CreatePrefab(*asset_manager, registry, selected_entity, false, ent_name);
 	}
 
 } // cumulonimbus::editor

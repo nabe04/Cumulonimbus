@@ -7,15 +7,11 @@
 #include "cum_imgui_helper.h"
 #include "texture.h"
 #include "locator.h"
-//
-//CEREAL_REGISTER_TYPE(cumulonimbus::asset::TextureLoader)
-//CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::asset::Loader, cumulonimbus::asset::TextureLoader)
-
 
 namespace
 {
 	// テクスチャを保存するまでのパス
-	const std::filesystem::path copy_dir = "./Data/Assets/Textures";
+	const std::filesystem::path save_parent_path = "./Data/Assets/Textures";
 }
 
 namespace cumulonimbus::asset
@@ -28,9 +24,6 @@ namespace cumulonimbus::asset
 
 	mapping::rename_type::UUID TextureLoader::Convert(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to)
 	{
-		//const auto filename = std::filesystem::path{ from }.filename().replace_extension().string();
-		//std::filesystem::create_directory(to.string() + "/" + filename);
-		//const auto to_path = to.string() + "/" + filename;
 		if (!equivalent(from.parent_path(), to))
 		{
 			// コピー先のフォルダ作成&コピー
@@ -40,19 +33,18 @@ namespace cumulonimbus::asset
 				std::filesystem::copy_options::overwrite_existing);
 		}
 
-
 		const std::string copy_str = to.string() + "/" + from.filename().string();
 		const std::filesystem::path copy_path{ copy_str };
 
 		for (const auto& [key, value] : asset_manager.GetAssetSheetManager().GetSheet<Texture>().sheet)
-		{
+		{// 同じアセットが存在していた場合そのアセットのID(UUID)を返す
 			if (copy_path.compare(value) == 0)
 				return key;
 		}
 
 		mapping::rename_type::UUID id;
 		while (true)
-		{
+		{// ID(UUID)の重複がないか確認
 			id = utility::GenerateUUID();
 			if (asset_manager.GetAssetSheetManager().GetSheet<Texture>().sheet.contains(id))
 				continue;
@@ -66,7 +58,7 @@ namespace cumulonimbus::asset
 
 	void TextureLoader::Load(AssetManager& asset_manager, const std::filesystem::path& path)
 	{
-		const auto id = Convert(asset_manager, path, copy_dir);
+		const auto id = Convert(asset_manager, path, save_parent_path);
 		Load(asset_manager, id);
 	}
 
@@ -86,7 +78,7 @@ namespace cumulonimbus::asset
 		textures.insert(std::make_pair(
 			id,
 			std::make_unique<Texture>(locator::Locator::GetDx11Device()->device.Get(),
-				asset_manager.GetAssetSheetManager().GetAssetFilename<Texture>(id).c_str()))
+									  asset_manager.GetAssetSheetManager().GetAssetFilename<Texture>(id).c_str()))
 		);
 		// アセットシート(更新後)の保存
 		asset_manager.Save();
