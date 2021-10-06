@@ -23,7 +23,17 @@ namespace cumulonimbus::asset
 		void Load(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to) override;
 		void Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id) override;
 
+		/**
+		 * @brief : 削除したいファイルパスからアセットを削除
+		 * @param asset_manager :
+		 * @param path : 削除したいファイルパス(拡張子「.prefab」までを含む)
+		 */
 		void Delete(AssetManager& asset_manager, const std::filesystem::path& path) override;
+		/**
+		 * @brief : 削除したいプレファブアセットIDからアセットを削除
+		 * @param asset_manager :
+		 * @param asset_id : 削除したいアセットID
+		 */
 		void Delete(AssetManager& asset_manager, const mapping::rename_type::UUID& asset_id) override;
 
 		[[nodiscard]]
@@ -63,5 +73,15 @@ namespace cumulonimbus::asset
 			AssetManager& asset_manager,
 			const std::filesystem::path& from,
 			const std::filesystem::path& to) override;
+
+		/**
+		 * @brief : プレファブファイルの削除
+		 * @remark : 「.prefab」の持つフォルダごと削除する
+		 * @param prefab_id : アセットシートに登録されているプレファブID
+		 * @param delete_path : 削除したいファイルパス(「.prefab」拡張子までを含むパス)
+		 */
+		void DeletePrefab(
+			const mapping::rename_type::UUID& prefab_id,
+			const std::filesystem::path& delete_path);
 	};
 } // cumulonimbus::asset

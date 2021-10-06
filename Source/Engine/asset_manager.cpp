@@ -100,7 +100,7 @@ namespace cumulonimbus::asset
 	{
 		for (auto& [hash, loader] : loaders)
 		{
-			loader->Delete(*this,path);
+			loader->Delete(*this, path);
 		}
 	}
 

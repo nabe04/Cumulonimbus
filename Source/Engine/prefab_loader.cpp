@@ -85,10 +85,24 @@ namespace cumulonimbus::asset
 
 	void PrefabLoader::Delete(AssetManager& asset_manager, const std::filesystem::path& path)
 	{
+		const mapping::rename_type::UUID prefab_id = asset_manager.GetAssetSheetManager().Search<Prefab>(path);
+		// アセット(ID)が存在していなければ処理を抜ける
+		if (!prefabs.contains(prefab_id))
+			return;
+
+		DeletePrefab(prefab_id, path);
+		asset_manager.Save();
 	}
 
 	void PrefabLoader::Delete(AssetManager& asset_manager, const mapping::rename_type::UUID& asset_id)
 	{
+		const std::filesystem::path path = asset_manager.GetAssetSheetManager().GetAssetFilename<asset::Prefab>(asset_id);
+		// アセット(ID)が存在していなければ処理を抜ける
+		if (!prefabs.contains(asset_id))
+			return;
+
+		DeletePrefab(asset_id, path);
+		asset_manager.Save();
 	}
 
 	bool PrefabLoader::Supported(std::filesystem::path extension)
@@ -184,5 +198,18 @@ namespace cumulonimbus::asset
 		const mapping::rename_type::Entity ent = registry->CreateEntity();
 		prefabs.at(prefab_id)->AddComponent(registry, ent);
 		return ent;
+	}
+
+	void PrefabLoader::DeletePrefab(const mapping::rename_type::UUID& prefab_id, const std::filesystem::path& delete_path)
+	{
+		/*
+		 * ※注意 : 「delete_path」には拡張子まで含まれたパスが入っている
+		 *			 ので必ずこの親階層のパスから削除する
+		 */
+
+		// 登録したプレファブ情報の削除
+		prefabs.erase(prefab_id);
+		// 現プレファブのファイルごと削除
+		std::filesystem::remove_all(delete_path.parent_path());
 	}
 } // cumulonimbus::asset
