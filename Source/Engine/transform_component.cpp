@@ -51,7 +51,7 @@ namespace cumulonimbus::component
 	TransformComponent::TransformComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent)
 		: ComponentBase{ registry,ent}
 	{
-		cb_transform = std::make_shared<buffer::ConstantBuffer<TransformCB>>(locator::Locator::GetDx11Device()->device.Get());
+		cb_transform = std::make_unique<buffer::ConstantBuffer<TransformCB>>(locator::Locator::GetDx11Device()->device.Get());
 
 		// Initialize XMFLOAT4x4
 		CreateIdentity4x4(&scaling_matrix);
@@ -77,9 +77,6 @@ namespace cumulonimbus::component
 		 scaling_matrix{other.GetScalingMat()},
 		 rotation_matrix{other.GetRotationMat()},
 		 translation_matrix{other.GetTranslationMat()},
-		 right{other.GetModelRight()},
-		 up{other.GetModelUp()},
-		 front{other.GetModelFront()},
 		 orientation{DirectX::SimpleMath::Matrix::Identity},
 		 rotation_quaternion{other.GetRotationQuaternion()},
 		 rotation_result_quaternion{other.GetRotationResultQuaternion()},
@@ -89,7 +86,7 @@ namespace cumulonimbus::component
 		if (cb_transform)
 			cb_transform.reset();
 
-		cb_transform = std::make_shared<buffer::ConstantBuffer<TransformCB>>(locator::Locator::GetDx11Device()->device.Get());
+		cb_transform = std::make_unique<buffer::ConstantBuffer<TransformCB>>(locator::Locator::GetDx11Device()->device.Get());
 	}
 
 	TransformComponent& TransformComponent::operator=(const TransformComponent& other)
@@ -107,9 +104,6 @@ namespace cumulonimbus::component
 		scaling_matrix				= other.GetScalingMat();
 		rotation_matrix				= other.GetRotationMat();
 		translation_matrix			= other.GetTranslationMat();
-		right						= other.GetModelRight();
-		up							= other.GetModelUp();
-		front						= other.GetModelFront();
 		orientation					= DirectX::SimpleMath::Matrix::Identity;
 		rotation_quaternion			= other.GetRotationQuaternion();
 		rotation_result_quaternion	= other.GetRotationResultQuaternion();
@@ -118,7 +112,7 @@ namespace cumulonimbus::component
 
 		if (cb_transform)
 			cb_transform.reset();
-		cb_transform = std::make_shared<buffer::ConstantBuffer<TransformCB>>(locator::Locator::GetDx11Device()->device.Get());
+		cb_transform = std::make_unique<buffer::ConstantBuffer<TransformCB>>(locator::Locator::GetDx11Device()->device.Get());
 
 		return *this;
 	}
@@ -173,7 +167,7 @@ namespace cumulonimbus::component
 	{
 		SetRegistry(registry);
 
-		cb_transform = std::make_shared<buffer::ConstantBuffer<TransformCB>>(locator::Locator::GetDx11Device()->device.Get());
+		cb_transform = std::make_unique<buffer::ConstantBuffer<TransformCB>>(locator::Locator::GetDx11Device()->device.Get());
 
 		// Initialize XMFLOAT4x4
 		CreateIdentity4x4(&scaling_matrix);

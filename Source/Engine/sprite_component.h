@@ -64,18 +64,18 @@ namespace cumulonimbus::component
 		[[nodiscard]]
 		ID3D11Buffer** GetVertexBufferAddress() { return vertex_buffer.GetAddressOf(); }
 		[[nodiscard]]
-		shader_asset::ShaderAsset2DManager* GetShaderAssetManager() const { return shader_asset_manager.get(); }
+		shader_asset::ShaderAsset2DManager* GetShaderAssetManager() { return &shader_asset_manager; }
 
 		void SetTextureId(const mapping::rename_type::UUID tex_id) { texture_id = tex_id; }
 		void SetPivotType(render::PivotType pivot);
 
 	protected:
-		mapping::rename_type::UUID	texture_id{}; // テクスチャID(UUID)
-		graphics::GraphicsState		graphics_state{};
-		std::shared_ptr<shader_asset::ShaderAsset2DManager> shader_asset_manager{};
+		mapping::rename_type::UUID			texture_id{}; // テクスチャID(UUID)
+		graphics::GraphicsState				graphics_state{};
+		shader_asset::ShaderAsset2DManager	shader_asset_manager{};
 
 		Microsoft::WRL::ComPtr<ID3D11Buffer> vertex_buffer{};
-		render::PivotType pivot_type{ render::PivotType::Center };
+		render::PivotType					 pivot_type{ render::PivotType::Center };
 
 		std::array<shader::VertexSprite, 4> vertices;
 

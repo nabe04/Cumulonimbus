@@ -169,7 +169,7 @@ namespace cumulonimbus::component
 		const DirectX::SimpleMath::Vector3& GetModelFront()const { return model_front; }
 
 	private:
-		std::shared_ptr<buffer::ConstantBuffer<TransformCB>> cb_transform;
+		std::unique_ptr<buffer::ConstantBuffer<TransformCB>> cb_transform{};
 
 		DirectX::SimpleMath::Vector3  position{ 0.0f,0.0f,0.0f };
 		DirectX::SimpleMath::Vector3  prev_pos{ 0.0f,0.0f,0.0f };
@@ -188,11 +188,9 @@ namespace cumulonimbus::component
 		DirectX::SimpleMath::Matrix rotation_matrix;
 		DirectX::SimpleMath::Matrix translation_matrix;
 
-
-		// Entity‚Ìíœ‚ÌÛ‚Ìstd::iter_swapŠÖ”‚ÅƒGƒ‰[‚ªo‚é‚½‚ß”ñconst‚É‚µ‚Ä‚¢‚é
-		DirectX::SimpleMath::Vector3 right	= { 1.0f,0.0f,0.0f };
-		DirectX::SimpleMath::Vector3 up		= { 0.0f,1.0f,0.0f };
-		DirectX::SimpleMath::Vector3 front	= { 0.0f,0.0f,1.0f };
+		const DirectX::SimpleMath::Vector3 right	= { 1.0f,0.0f,0.0f };
+		const DirectX::SimpleMath::Vector3 up		= { 0.0f,1.0f,0.0f };
+		const DirectX::SimpleMath::Vector3 front	= { 0.0f,0.0f,1.0f };
 
 		// Orientation vector
 		DirectX::SimpleMath::Vector3 model_right = { 1.0f,0.0f,0.0f };

@@ -8,6 +8,8 @@ namespace cumulonimbus::component
 	BillboardComponent::BillboardComponent(ecs::Registry* registry, mapping::rename_type::Entity ent)
 		:SpriteComponent{ registry,ent }
 	{
+		auto entity = GetEntity();
+		int a{};
 	}
 
 	BillboardComponent::BillboardComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const BillboardComponent& copy_comp)
@@ -25,13 +27,13 @@ namespace cumulonimbus::component
 
 	void BillboardComponent::CommonUpdate(const float dt)
 	{
-		auto* billboard_asset = shader_asset_manager->GetShaderAsset<shader_asset::BillboardAsset>();
+		auto* billboard_asset = shader_asset_manager.GetShaderAsset<shader_asset::BillboardAsset>();
 		//billboard_asset->GetCBuffer()->data.billboard_translation_matrix =
 	}
 
 	void BillboardComponent::PostCommonUpdate(float dt)
 	{
-		auto* billboard_asset = shader_asset_manager->GetShaderAsset<shader_asset::BillboardAsset>();
+		auto* billboard_asset = shader_asset_manager.GetShaderAsset<shader_asset::BillboardAsset>();
 		//billboard_asset->GetCBuffer()->data.billboard_translation_matrix =
 	}
 

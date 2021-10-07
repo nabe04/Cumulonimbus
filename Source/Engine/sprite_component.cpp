@@ -63,7 +63,8 @@ namespace cumulonimbus::component
 	}
 
 	SpriteComponent::SpriteComponent(const SpriteComponent& other)
-		:texture_id{other.texture_id},
+		: ComponentBase{ other },
+		 texture_id{other.texture_id},
 		 graphics_state{other.graphics_state},
 		 pivot_type{other.pivot_type},
 		 vertices{other.vertices}
@@ -100,10 +101,7 @@ namespace cumulonimbus::component
 		vertices.at(2).texcoord = { .0f,1.f };
 		vertices.at(3).texcoord = { 1.f,1.f };
 
-		if (shader_asset_manager.get())
-			shader_asset_manager.reset();
-		shader_asset_manager = std::make_shared<shader_asset::ShaderAsset2DManager>();
-		shader_asset_manager->SetCurrentShaderAsset<shader_asset::StandardSpriteAsset>();
+		shader_asset_manager.SetCurrentShaderAsset<shader_asset::StandardSpriteAsset>();
 		CreateVertexBuffer();
 		ResizeTexture({ width,height });
 		SetPivotType(render::PivotType::Center); // ピボットのデフォルト設定(PivotType::Center)
@@ -112,7 +110,7 @@ namespace cumulonimbus::component
 	void SpriteComponent::CommonUpdate(const float dt)
 	{
 		ConvertScreenToNDC();
-		auto& cb_data = shader_asset_manager->GetShaderAsset<shader_asset::StandardSpriteAsset>()->GetCBuffer()->data;
+		auto& cb_data = shader_asset_manager.GetShaderAsset<shader_asset::StandardSpriteAsset>()->GetCBuffer()->data;
 	}
 
 	void SpriteComponent::Load(ecs::Registry* registry)
@@ -164,7 +162,7 @@ namespace cumulonimbus::component
 																					  win_half_height + static_cast<float>(texture.GetHeight()) },
 																					  static_cast<float>(window->Width()),
 																					  static_cast<float>(window->Height()));
-		auto& cb_data = shader_asset_manager->GetShaderAsset<shader_asset::StandardSpriteAsset>()->GetCBuffer()->data;
+		auto& cb_data = shader_asset_manager.GetShaderAsset<shader_asset::StandardSpriteAsset>()->GetCBuffer()->data;
 		pivot_type = pivot;
 
 		switch(pivot_type)

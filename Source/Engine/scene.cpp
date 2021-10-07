@@ -129,8 +129,8 @@ namespace cumulonimbus::scene
 		registry->GetComponent<component::TransformComponent>(test_ent).SetPosition({ 10,100,-30 });
 		registry->GetComponent<component::TransformComponent>(test_ent).SetScale({20,60,1000});
 
-		asset::PrefabLoader* prefab_loader = asset_manager->GetLoader<asset::PrefabLoader>();
-		prefab_loader->CreatePrefab(*asset_manager.get(), registry.get(), test_ent, true, "Test Prefab");
+		//asset::PrefabLoader* prefab_loader = asset_manager->GetLoader<asset::PrefabLoader>();
+		//prefab_loader->CreatePrefab(*asset_manager.get(), registry.get(), test_ent, true, "Test Prefab");
 	}
 
 	void Scene::UnInitialize()

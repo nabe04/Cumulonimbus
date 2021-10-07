@@ -57,6 +57,8 @@ namespace cumulonimbus::camera
 			);
 		}
 
+		std::unique_ptr<Camera> Clone() { return std::make_unique<Camera>(*this); }
+
 		void Initialize();
 		void Update(float dt);
 		void RenderImGui();

@@ -15,6 +15,8 @@
 #include "scene.h"
 #include "transform_component.h"
 
+DirectX::SimpleMath::Vector3 w_pos;
+
 namespace cumulonimbus::editor
 {
 	void SceneView::MouseHover::Update()
@@ -134,10 +136,7 @@ namespace cumulonimbus::editor
 					}
 					if (mouse_hover.event == MouseHoverEvent::Hovering)
 					{
-						if(is_model)
-						{
-							DraggingAsset(registry);
-						}
+						DraggingAsset(registry);
 					}
 				}
 			}
@@ -158,9 +157,14 @@ namespace cumulonimbus::editor
 		}
 		ImGui::End();
 
+		RECT rect{};
+		GetClientRect(locator::Locator::GetWindow()->GetHWND(), &rect);
+		window_mouse_pos.x = ImGui::GetMousePos().x - mouse_pos.x;
+		window_mouse_pos.y = ImGui::GetMousePos().y - mouse_pos.y - title_bar_height - window_offset.y;
+
 		if (ImGui::Begin("Size Text"))
 		{
-			RECT rect{};
+
 			GetClientRect(locator::Locator::GetWindow()->GetHWND(), &rect);
 			window_mouse_pos.x = ImGui::GetMousePos().x - mouse_pos.x;
 			window_mouse_pos.y = ImGui::GetMousePos().y - mouse_pos.y - title_bar_height - window_offset.y;
@@ -203,6 +207,10 @@ namespace cumulonimbus::editor
 			//ImGui::Text("Selected : %s", selected_asset.string().c_str());
 			ImGui::Text("Hovered %d", IsWindowHovered());
 			ImGui::Text("Hover Event %d", mouse_hover.event);
+
+			ImGui::Text("Dragging w pos X : %f", w_pos.x);
+			ImGui::Text("Dragging w pos Y : %f", w_pos.y);
+			ImGui::Text("Dragging w pos Z : %f", w_pos.z);
 		}
 		ImGui::End();
 	}
@@ -285,6 +293,7 @@ namespace cumulonimbus::editor
 		else
 		{
 			registry->GetComponent<component::TransformComponent>(dragging_entity).SetPosition(world_far_pos);
+			w_pos = world_far_pos;
 		}
 	}
 

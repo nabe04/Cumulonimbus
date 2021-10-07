@@ -24,8 +24,7 @@ namespace cumulonimbus::asset
 		void serialize(Archive&& archive)
 		{
 			archive(
-				CEREAL_NVP(sheet_manager),
-				CEREAL_NVP(connector)
+				CEREAL_NVP(sheet_manager)
 			);
 		}
 

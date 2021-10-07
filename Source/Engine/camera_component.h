@@ -96,7 +96,7 @@ namespace cumulonimbus::component
 		[[nodiscard]]
 		bool GetIsMainCamera() const { return is_main_camera; }
 	private:
-		std::shared_ptr<camera::Camera> camera{};
+		std::unique_ptr<camera::Camera> camera{};
 
 		//-- カメラとオブジェクトのアタッチ用変数 --//
 		mapping::rename_type::Entity attach_entity;	// アタッチするオブジェクトのエンティティ

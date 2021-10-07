@@ -257,6 +257,7 @@ namespace cumulonimbus::renderer
 		const camera::Camera* camera,
 		const Light* light)
 	{
+		auto& model = registry->GetArray<component::ModelComponent>().GetComponents();
 		for(auto& model_comp : registry->GetArray<component::ModelComponent>().GetComponents())
 		{
 			const mapping::rename_type::Entity ent = model_comp.GetEntity();
@@ -388,6 +389,7 @@ namespace cumulonimbus::renderer
 			}
 		}
 
+		auto& comp = registry->GetArray<component::BillboardComponent>().GetComponents();
 		for(auto& billboard_comp : registry->GetArray<component::BillboardComponent>().GetComponents())
 		{
 			BindGraphicsState(immediate_context, billboard_comp.GetGraphicsState());

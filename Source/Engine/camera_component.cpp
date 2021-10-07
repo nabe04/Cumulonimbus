@@ -41,7 +41,7 @@ namespace cumulonimbus::component
 	CameraComponent::CameraComponent()
 		:ComponentBase{}
 	{
-		camera = std::make_shared<camera::Camera>(locator::Locator::GetWindow()->Width(),
+		camera = std::make_unique<camera::Camera>(locator::Locator::GetWindow()->Width(),
 			locator::Locator::GetWindow()->Height());;
 	}
 
@@ -69,7 +69,7 @@ namespace cumulonimbus::component
 		float width, float height)
 		:ComponentBase{ registry,ent }
 	{
-		camera = std::make_shared<camera::Camera>(width, height);
+		camera = std::make_unique<camera::Camera>(width, height);
 
 		registry->AddComponent<BillboardComponent>(ent);
 		registry->GetComponent<BillboardComponent>(ent).SetRenderingTarget(render::RenderingTarget::SceneOnly);
@@ -92,7 +92,7 @@ namespace cumulonimbus::component
 		 is_use_camera_for_debug{other.is_use_camera_for_debug},
 		 is_main_camera{ other.is_main_camera }
 	{
-		camera = std::make_shared<camera::Camera>(*other.camera.get());
+		camera = other.camera->Clone();
 	}
 
 	CameraComponent& CameraComponent::operator=(const CameraComponent& other)
@@ -107,7 +107,7 @@ namespace cumulonimbus::component
 		is_active				= other.is_active;
 		is_use_camera_for_debug = other.is_use_camera_for_debug;
 		is_main_camera			= other.is_main_camera;
-		camera					= std::make_shared<camera::Camera>(*other.camera.get());
+		camera					= other.camera->Clone();
 
 		return *this;
 	}
