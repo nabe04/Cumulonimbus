@@ -10,6 +10,13 @@ namespace cumulonimbus::component
 	{
 	}
 
+	BillboardComponent::BillboardComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const BillboardComponent& copy_comp)
+	{
+		*this = copy_comp;
+		SetRegistry(registry);
+		SetEntity(ent);
+	}
+
 	BillboardComponent::BillboardComponent()
 		:SpriteComponent{}
 	{

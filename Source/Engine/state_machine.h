@@ -11,15 +11,6 @@
 template<typename Key, typename ReturnVal = void ,typename... Args>
 class StateMachine
 {
-private:
-	Key current_state{ static_cast<int>(-1) };
-	Key old_state{ static_cast<int>(-1)};		// State‚Ì‰Šú‰»‚È‚Ç‚Ég‚¤
-	//std::function<ReturnVal(Args...)> call_back;
-
-	std::map<Key, std::function<ReturnVal(Args...)>> states;
-
-	bool is_switched = false;
-
 public:
 	~StateMachine() = default;
 
@@ -71,4 +62,13 @@ public:
 			cereal::make_nvp("is switched"	,is_switched)
 		);
 	}
+private:
+	Key current_state{ static_cast<int>(-1) };
+	Key old_state{ static_cast<int>(-1) };		// State‚Ì‰Šú‰»‚È‚Ç‚Ég‚¤
+	//std::function<ReturnVal(Args...)> call_back;
+
+	std::map<Key, std::function<ReturnVal(Args...)>> states;
+
+	bool is_switched = false;
+
 };

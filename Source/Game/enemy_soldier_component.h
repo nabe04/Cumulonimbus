@@ -45,7 +45,8 @@ namespace cumulonimbus::component
 
 	public:
 		explicit EnemySoldierComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
-		explicit EnemySoldierComponent()  = default;
+		explicit EnemySoldierComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const EnemySoldierComponent& copy_comp); // for prefab
+		explicit EnemySoldierComponent()  = default; // for cereal
 		~EnemySoldierComponent() override = default;
 
 		void GameUpdate(float dt) override;

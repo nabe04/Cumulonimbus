@@ -22,6 +22,7 @@ namespace cumulonimbus::component
 	public:
 		using SpriteComponent::SpriteComponent;
 		explicit BillboardComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
+		explicit BillboardComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const BillboardComponent& copy_comp); // for prefab
 		explicit BillboardComponent(); // for cereal & Inspector Viewè„Ç≈ÇÃAddComponentóp
 		~BillboardComponent() override  = default;
 
@@ -38,6 +39,5 @@ namespace cumulonimbus::component
 		void SetRenderingTarget(const render::RenderingTarget target) { rendering_target.SetState(target); }
 	private:
 		EnumStateMap<render::RenderingTarget> rendering_target{};
-
 	};
 } // cumulonimbus::component

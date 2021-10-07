@@ -34,7 +34,10 @@ namespace cumulonimbus::component
 		using ComponentBase::ComponentBase;
 		explicit SpriteComponent(); // for cereal & Inspector Viewè„Ç≈ÇÃAddComponentóp
 		explicit SpriteComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
-		explicit SpriteComponent(const mapping::component_tag::ComponentTag tag);
+		explicit SpriteComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const SpriteComponent& copy_comp); // for prefab
+		explicit SpriteComponent(mapping::component_tag::ComponentTag tag);
+		SpriteComponent(const SpriteComponent& other);
+		SpriteComponent& operator=(const SpriteComponent& other);
 		~SpriteComponent() override = default;
 
 		void CommonUpdate(float dt) override;

@@ -45,6 +45,13 @@ namespace cumulonimbus::component
 	{
 	}
 
+	SphereCollisionComponent::SphereCollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const SphereCollisionComponent& copy_comp)
+	{
+		*this = copy_comp;
+		SetRegistry(registry);
+		SetEntity(ent);
+	}
+
 	void SphereCollisionComponent::PreGameUpdate(float dt)
 	{
 

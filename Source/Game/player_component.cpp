@@ -153,6 +153,36 @@ namespace cumulonimbus::component
 		registry->GetComponent<CameraComponent>(ent).GetCamera()->SetFocusOffset({ 0.0f,50.0f,0.0f });
 	}
 
+	PlayerComponent::PlayerComponent(
+		ecs::Registry* registry,
+		const mapping::rename_type::Entity ent,
+		const PlayerComponent& copy_comp)
+	{
+		*this = copy_comp;
+		SetRegistry(registry);
+		SetEntity(ent);
+
+		// レイキャストに関する設定
+		if (!registry->TryGetComponent<RayCastComponent>(ent))
+		{
+			registry->AddComponent<RayCastComponent>(ent, CollisionTag::Player);
+		}
+		// 床(floor)用rayの追加 & 設定
+		registry->GetComponent<RayCastComponent>(ent).AddRay(mapping::collision_name::ray::ForFloor(), {});
+		registry->GetComponent<RayCastComponent>(ent).SetRayOffset(mapping::collision_name::ray::ForFloor(), { 0.0f,20.0f,0.0f });
+		// 壁(wall)用rayの追加 & 設定
+		registry->GetComponent<RayCastComponent>(ent).AddRay(mapping::collision_name::ray::ForWall(), {});
+		registry->GetComponent<RayCastComponent>(ent).SetRayOffset(mapping::collision_name::ray::ForWall(), { 0.0f,20.0f,0.0f });
+
+		// カメラに関する設定
+		if (!registry->TryGetComponent<CameraComponent>(ent))
+		{
+			registry->AddComponent<CameraComponent>(ent, true);
+		}
+		registry->GetComponent<CameraComponent>(ent).GetCamera()->SetCameraSpeed({ 0.05f,0.05f });
+		registry->GetComponent<CameraComponent>(ent).GetCamera()->SetFocusOffset({ 0.0f,50.0f,0.0f });
+	}
+
 	void PlayerComponent::PreGameUpdate(float dt)
 	{
 		//GetRegistry()->GetComponent<TransformComponent>(GetEntity()).AdjustPositionY(-2.f * dt);

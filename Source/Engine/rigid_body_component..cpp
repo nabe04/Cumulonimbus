@@ -34,6 +34,14 @@ namespace cumulonimbus::component
 
 	}
 
+	RigidBodyComponent::RigidBodyComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const RigidBodyComponent& copy_comp)
+	{
+		*this = copy_comp;
+		SetRegistry(registry);
+		SetEntity(ent);
+	}
+
+
 	void RigidBodyComponent::PreGameUpdate(float dt)
 	{
 		if (is_gravity)

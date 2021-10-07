@@ -12,6 +12,7 @@ namespace cumulonimbus::component
 	public:
 		using ComponentBase::ComponentBase;
 		explicit RigidBodyComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
+		explicit RigidBodyComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const RigidBodyComponent& copy_comp); // for prefab
 		explicit RigidBodyComponent()  = default; // for cereal
 		~RigidBodyComponent() override = default;
 

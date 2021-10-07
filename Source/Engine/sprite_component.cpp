@@ -46,11 +46,52 @@ namespace cumulonimbus::component
 		Initialize(static_cast<float>(texture.GetWidth()), static_cast<float>(texture.GetHeight()));
 	}
 
+	SpriteComponent::SpriteComponent(
+		ecs::Registry* registry,
+		const mapping::rename_type::Entity ent,
+		const SpriteComponent& copy_comp)
+	{
+		*this = copy_comp;
+		SetRegistry(registry);
+		SetEntity(ent);
+	}
+
 	SpriteComponent::SpriteComponent(const mapping::component_tag::ComponentTag tag)
 		:ComponentBase{ tag }
 	{
 
 	}
+
+	SpriteComponent::SpriteComponent(const SpriteComponent& other)
+		:texture_id{other.texture_id},
+		 graphics_state{other.graphics_state},
+		 pivot_type{other.pivot_type},
+		 vertices{other.vertices}
+	{
+		asset::TextureLoader* texture_loader = locator::Locator::GetAssetManager()->GetLoader<asset::TextureLoader>();
+		const auto& texture = texture_loader->GetTexture(texture_id);
+		Initialize(static_cast<float>(texture.GetWidth()), static_cast<float>(texture.GetHeight()));
+	}
+
+	SpriteComponent& SpriteComponent::operator=(const SpriteComponent& other)
+	{
+		if(this == &other)
+		{
+			return *this;
+		}
+
+		texture_id		= other.texture_id;
+		graphics_state	= other.graphics_state;
+		pivot_type		= other.pivot_type;
+		vertices		= other.vertices;
+
+		asset::TextureLoader* texture_loader = locator::Locator::GetAssetManager()->GetLoader<asset::TextureLoader>();
+		const auto& texture = texture_loader->GetTexture(texture_id);
+		Initialize(static_cast<float>(texture.GetWidth()), static_cast<float>(texture.GetHeight()));
+
+		return *this;
+	}
+
 
 	void SpriteComponent::Initialize(const float width, const float height)
 	{
@@ -59,6 +100,8 @@ namespace cumulonimbus::component
 		vertices.at(2).texcoord = { .0f,1.f };
 		vertices.at(3).texcoord = { 1.f,1.f };
 
+		if (shader_asset_manager.get())
+			shader_asset_manager.reset();
 		shader_asset_manager = std::make_shared<shader_asset::ShaderAsset2DManager>();
 		shader_asset_manager->SetCurrentShaderAsset<shader_asset::StandardSpriteAsset>();
 		CreateVertexBuffer();
@@ -168,7 +211,7 @@ namespace cumulonimbus::component
 		D3D11_SUBRESOURCE_DATA initData{};
 		initData.pSysMem = vertices.data();
 
-		HRESULT hr = locator::Locator::GetDx11Device()->device->CreateBuffer(&bd, &initData, vertex_buffer.GetAddressOf());
+		const HRESULT hr = locator::Locator::GetDx11Device()->device->CreateBuffer(&bd, &initData, vertex_buffer.GetAddressOf());
 		if (FAILED(hr))
 			assert(!"CreateBuffer Error (Texture2DComponent class)");
 	}

@@ -34,6 +34,13 @@ namespace cumulonimbus::component
 	{
 	}
 
+	EnemyBaseComponent::EnemyBaseComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const EnemyBaseComponent& copy_comp)
+	{
+		*this = copy_comp;
+		SetRegistry(registry);
+		SetEntity(ent);
+	}
+
 	void EnemyBaseComponent::Load(ecs::Registry* registry)
 	{
 		SetRegistry(registry);

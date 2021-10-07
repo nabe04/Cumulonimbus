@@ -33,26 +33,26 @@ namespace cumulonimbus::asset
 		RegistryComponent<component::Actor3DComponent>();
 		// model
 		RegistryComponent<component::ModelComponent>();
-		//// sprite
-		//RegistryComponent<component::SpriteComponent>();
-		//RegistryComponent<component::BillboardComponent>();
-		//// physics
-		//RegistryComponent<component::SphereCollisionComponent>();
-		//RegistryComponent<component::CollisionComponent>();
+		//sprite
+		RegistryComponent<component::SpriteComponent>();
+		RegistryComponent<component::BillboardComponent>();
+		// physics
+		RegistryComponent<component::SphereCollisionComponent>();
+		RegistryComponent<component::CollisionComponent>();
 		RegistryComponent<component::RayCastComponent>();
 		RegistryComponent<component::CapsuleCollisionComponent>();
 		RegistryComponent<component::PhysicMaterialComponent>();
-		//RegistryComponent<component::RigidBodyComponent>();
+		RegistryComponent<component::RigidBodyComponent>();
 		// camera
 		RegistryComponent<component::CameraComponent>();
-		//// sky box
+		// sky box
 		//RegistryComponent<component::SkyBoxComponent>();
-		////-- game --//
-		//// player
-		//RegistryComponent<component::PlayerComponent>();
+		//-- game --//
+		// player
+		RegistryComponent<component::PlayerComponent>();
 		//// enemy
-		//RegistryComponent<component::EnemyBaseComponent>();
-		//RegistryComponent<component::EnemySoldierComponent>();
+		RegistryComponent<component::EnemyBaseComponent>();
+		RegistryComponent<component::EnemySoldierComponent>();
 	}
 
 	void Prefab::CreatePrefab(

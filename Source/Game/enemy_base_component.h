@@ -15,7 +15,8 @@ namespace cumulonimbus::component
 	{
 	public:
 		explicit EnemyBaseComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
-		explicit EnemyBaseComponent()  = default;
+		explicit EnemyBaseComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const EnemyBaseComponent& copy_comp); // for prefab
+		explicit EnemyBaseComponent()  = default; // for cereal
 		~EnemyBaseComponent() override = default;
 
 		void GameUpdate(float dt)		   override {}

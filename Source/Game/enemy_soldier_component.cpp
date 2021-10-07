@@ -67,6 +67,13 @@ namespace cumulonimbus::component
 		SetRandomRotationAngle(-180.f, 180.f);
 	}
 
+	EnemySoldierComponent::EnemySoldierComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const EnemySoldierComponent& copy_comp)
+	{
+		*this = copy_comp;
+		SetRegistry(registry);
+		SetEntity(ent);
+	}
+
 	void EnemySoldierComponent::GameUpdate(float dt)
 	{
 		soldier_state.Update(dt);

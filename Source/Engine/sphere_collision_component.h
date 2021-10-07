@@ -33,6 +33,7 @@ namespace cumulonimbus
 		public:
 			using CollisionComponent::CollisionComponent;
 			explicit SphereCollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, CollisionTag tag);
+			explicit SphereCollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const SphereCollisionComponent& copy_comp); // for prefab
 			explicit SphereCollisionComponent()  = default; // for cereal
 			~SphereCollisionComponent() override = default;
 

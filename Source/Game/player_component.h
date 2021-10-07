@@ -133,6 +133,7 @@ namespace cumulonimbus::component
 		};
 	public:
 		explicit PlayerComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
+		explicit PlayerComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const PlayerComponent& copy_comp); // for prefab
 		explicit PlayerComponent() = default; // for cereal
 		~PlayerComponent() override = default;
 
