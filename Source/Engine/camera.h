@@ -14,6 +14,8 @@ namespace cumulonimbus::camera
 	public:
 		explicit Camera(float width, float height);
 		explicit Camera() = default;
+		Camera(const Camera& other);
+		Camera& operator=(const Camera& other);
 		~Camera() = default;
 
 		template<class Archive>

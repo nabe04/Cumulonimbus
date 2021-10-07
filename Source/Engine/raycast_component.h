@@ -37,6 +37,7 @@ namespace cumulonimbus
 		public:
 			using CollisionComponent::CollisionComponent;
 			explicit RayCastComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, CollisionTag tag);
+			explicit RayCastComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const RayCastComponent& copy_comp); // for prefab
 			explicit RayCastComponent()  = default; // for cereal
 			~RayCastComponent() override = default;
 

@@ -694,8 +694,8 @@ namespace cumulonimbus::ecs
 
 		void AddComponent(ecs::Registry* registry,const mapping::rename_type::Entity& ent) override
 		{
-			auto& comp	= registry->AddComponent<T>(ent);
-			comp		= component_data;
+			auto& comp = registry->AddComponent<T>(ent, component_data);
+			//comp		= component_data;
 			comp.SetEntity(ent);
 			comp.SetRegistry(registry);
 		}

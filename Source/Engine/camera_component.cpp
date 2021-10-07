@@ -46,9 +46,26 @@ namespace cumulonimbus::component
 	}
 
 	CameraComponent::CameraComponent(
+		ecs::Registry* registry,
+		const mapping::rename_type::Entity ent,
+		const CameraComponent& copy_comp)
+		:ComponentBase{ registry,ent }
+	{
+		*this = copy_comp;
+		SetRegistry(registry);
+		SetEntity(ent);
+
+		registry->AddComponent<BillboardComponent>(ent);
+		registry->GetComponent<BillboardComponent>(ent).SetRenderingTarget(render::RenderingTarget::SceneOnly);
+
+		if (is_main_camera)
+			SwitchMainCamera();
+	}
+
+	CameraComponent::CameraComponent(
 		cumulonimbus::ecs::Registry* registry,
 		const mapping::rename_type::Entity ent,
-		bool is_main_camera,
+		const bool is_main_camera,
 		float width, float height)
 		:ComponentBase{ registry,ent }
 	{
@@ -66,6 +83,35 @@ namespace cumulonimbus::component
 	{
 
 	}
+
+	CameraComponent::CameraComponent(const CameraComponent& other)
+		:ComponentBase{other},
+		 attach_entity{other.attach_entity},
+		 camera_length{other.camera_length},
+		 is_active{other.is_active},
+		 is_use_camera_for_debug{other.is_use_camera_for_debug},
+		 is_main_camera{ other.is_main_camera }
+	{
+		camera = std::make_shared<camera::Camera>(*other.camera.get());
+	}
+
+	CameraComponent& CameraComponent::operator=(const CameraComponent& other)
+	{
+		if(this == &other)
+		{
+			return *this;
+		}
+
+		attach_entity			= other.attach_entity;
+		camera_length			= other.camera_length;
+		is_active				= other.is_active;
+		is_use_camera_for_debug = other.is_use_camera_for_debug;
+		is_main_camera			= other.is_main_camera;
+		camera					= std::make_shared<camera::Camera>(*other.camera.get());
+
+		return *this;
+	}
+
 
 	void CameraComponent::Initialize(ecs::Registry* registry, mapping::rename_type::Entity ent)
 	{
@@ -119,32 +165,7 @@ namespace cumulonimbus::component
 
 	void CameraComponent::GameUpdate(float dt)
 	{
-		//if (is_use_camera_for_debug)
-		//{
-		//	camera->CalcCameraDirectionalVector();
-		//	camera->CalcCameraAngle();
-		//	camera->UpdateDefaultCamera(dt);
-		//	//CalcCameraDirectionalVector();
-		//	//CalcCameraAngle(); //オイラー角で(現在)計算しているので今は使わない
-		//	//UpdateDefaultCamera(dt);
-		//}
-		//else
-		//{
-		//	UpdateObjectCamera(dt);
-		//}
 
-		//{// TODO : クォータニオンテスト
-		//	SimpleMath::Quaternion q;
-		//	q = q.CreateFromAxisAngle({ 0,1,0 }, XMConvertToRadians(90));
-		//	SimpleMath::Quaternion p = { 1,0,0,0 };
-		//	SimpleMath::Quaternion inv_q;
-		//	q.Inverse(inv_q);
-		//	SimpleMath::Quaternion qp = q * p * inv_q;
-		//	SimpleMath::Vector3 v{ 1,0,0 };
-		//	SimpleMath::Vector3::Transform(v, q, v);
-		//}
-
-		//camera->Update(dt);
 	}
 
 	void CameraComponent::RenderImGui()

@@ -35,12 +35,25 @@ namespace cumulonimbus::component
 		);
 	}
 
-
-	RayCastComponent::RayCastComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, CollisionTag tag)
+	RayCastComponent::RayCastComponent(
+		ecs::Registry* registry,
+		const mapping::rename_type::Entity ent, 
+		const CollisionTag tag)
 		: CollisionComponent{ registry,ent,tag }
 	{
 
 	}
+
+	RayCastComponent::RayCastComponent(
+		ecs::Registry* registry, 
+		const mapping::rename_type::Entity ent, 
+		const RayCastComponent& copy_comp)
+	{
+		*this = copy_comp;
+		SetRegistry(registry);
+		SetEntity(ent);
+	}
+
 
 	void RayCastComponent::RenderImGui()
 	{

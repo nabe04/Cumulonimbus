@@ -50,6 +50,7 @@ namespace cumulonimbus::component
 		};
 		using ComponentBase::ComponentBase;
 		explicit ModelComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const mapping::rename_type::UUID& model_id);
+		explicit ModelComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const ModelComponent& copy_comp); // for prefab
 		explicit ModelComponent() = default; // for cereal
 		~ModelComponent() override = default;
 

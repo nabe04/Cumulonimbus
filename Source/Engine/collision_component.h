@@ -100,7 +100,8 @@ namespace cumulonimbus::component
 	public:
 		using ComponentBase::ComponentBase;
 		explicit CollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, CollisionTag tag);
-		explicit CollisionComponent()  = default;
+		explicit CollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const CollisionComponent& copy_comp); // for prefab
+		explicit CollisionComponent()  = default; // for cereal
 		~CollisionComponent() override = default;
 
 		void PreGameUpdate(float dt)   override {}

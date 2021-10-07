@@ -18,10 +18,23 @@ namespace cumulonimbus::component
 		);
 	}
 
-	PhysicMaterialComponent::PhysicMaterialComponent(ecs::Registry* registry, mapping::rename_type::Entity ent)
+	PhysicMaterialComponent::PhysicMaterialComponent(
+		ecs::Registry* registry,
+		mapping::rename_type::Entity ent)
 		:ComponentBase{ registry,ent }
 	{
 	}
+
+	PhysicMaterialComponent::PhysicMaterialComponent(
+		ecs::Registry* registry,
+		const mapping::rename_type::Entity ent,
+		const PhysicMaterialComponent& copy_comp)
+	{
+		*this = copy_comp;
+		SetRegistry(registry);
+		SetEntity(ent);
+	}
+
 
 	void PhysicMaterialComponent::GameUpdate(float dt)
 	{

@@ -24,12 +24,13 @@ namespace cumulonimbus::component
 	public:
 		using ComponentBase::ComponentBase;
 		explicit PhysicMaterialComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
-		explicit PhysicMaterialComponent()  = default;
+		explicit PhysicMaterialComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const PhysicMaterialComponent& copy_comp); // for prefab
+		explicit PhysicMaterialComponent()  = default; // for cereal
 		~PhysicMaterialComponent() override = default;
 
 		template<class Archive>
 		void serialize(Archive&& archive);
-		
+
 		void GameUpdate(float dt)			override;
 		void RenderImGui()					override;
 		void Load(ecs::Registry* registry)	override;

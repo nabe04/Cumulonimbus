@@ -51,6 +51,15 @@ namespace cumulonimbus::component
 		Initialize(registry, ent, model_id);
 	}
 
+	ModelComponent::ModelComponent(
+		ecs::Registry* registry, const mapping::rename_type::Entity ent,
+		const ModelComponent& copy_comp)
+	{
+		*this = copy_comp;
+		SetRegistry(registry);
+		SetEntity(ent);
+	}
+
 	void ModelComponent::SceneUpdate(const float dt)
 	{
 		const auto& world_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorld4x4();

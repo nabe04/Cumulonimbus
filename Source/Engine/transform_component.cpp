@@ -59,6 +59,14 @@ namespace cumulonimbus::component
 		CreateIdentity4x4(&translation_matrix);
 	}
 
+	TransformComponent::TransformComponent(ecs::Registry* registry, const mapping::rename_type::Entity ent, const TransformComponent& copy_comp)
+		:ComponentBase{ registry,ent }
+	{
+		*this = copy_comp;
+		SetRegistry(registry);
+		SetEntity(ent);
+	}
+
 	TransformComponent::TransformComponent(const TransformComponent& other)
 		:ComponentBase{other},
 		 position{other.GetPosition()},
@@ -84,36 +92,36 @@ namespace cumulonimbus::component
 		cb_transform = std::make_shared<buffer::ConstantBuffer<TransformCB>>(locator::Locator::GetDx11Device()->device.Get());
 	}
 
-	//TransformComponent& TransformComponent::operator=(const TransformComponent& other)
-	//{
-	//	if(this == &other)
-	//	{
-	//		return *this;
-	//	}
+	TransformComponent& TransformComponent::operator=(const TransformComponent& other)
+	{
+		if(this == &other)
+		{
+			return *this;
+		}
 
-	//	position					= other.GetPosition();
-	//	prev_pos					= other.GetOldPosition();
-	//	scale						= other.GetScale();
-	//	angle						= other.GetWorldRotation();
-	//	world_f4x4					= other.GetWorld4x4();
-	//	scaling_matrix				= other.GetScalingMat();
-	//	rotation_matrix				= other.GetRotationMat();
-	//	translation_matrix			= other.GetTranslationMat();
-	//	right						= other.GetModelRight();
-	//	up							= other.GetModelUp();
-	//	front						= other.GetModelFront();
-	//	orientation					= DirectX::SimpleMath::Matrix::Identity;
-	//	rotation_quaternion			= other.GetRotationQuaternion();
-	//	rotation_result_quaternion	= other.GetRotationResultQuaternion();
-	//	is_billboard				= other.IsBillboard();
-	//	is_quaternion				= other.IsQuaternion();
+		position					= other.GetPosition();
+		prev_pos					= other.GetOldPosition();
+		scale						= other.GetScale();
+		angle						= other.GetWorldRotation();
+		world_f4x4					= other.GetWorld4x4();
+		scaling_matrix				= other.GetScalingMat();
+		rotation_matrix				= other.GetRotationMat();
+		translation_matrix			= other.GetTranslationMat();
+		right						= other.GetModelRight();
+		up							= other.GetModelUp();
+		front						= other.GetModelFront();
+		orientation					= DirectX::SimpleMath::Matrix::Identity;
+		rotation_quaternion			= other.GetRotationQuaternion();
+		rotation_result_quaternion	= other.GetRotationResultQuaternion();
+		is_billboard				= other.IsBillboard();
+		is_quaternion				= other.IsQuaternion();
 
-	//	if (cb_transform)
-	//		cb_transform.reset();
-	//	cb_transform = std::make_shared<buffer::ConstantBuffer<TransformCB>>(locator::Locator::GetDx11Device()->device.Get());
+		if (cb_transform)
+			cb_transform.reset();
+		cb_transform = std::make_shared<buffer::ConstantBuffer<TransformCB>>(locator::Locator::GetDx11Device()->device.Get());
 
-	//	return *this;
-	//}
+		return *this;
+	}
 
 	void TransformComponent::SceneUpdate(float dt)
 	{

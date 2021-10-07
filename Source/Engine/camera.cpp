@@ -6,45 +6,6 @@
 
 namespace cumulonimbus::camera
 {
-	//template <class Archive>
-	//void Camera::serialize(Archive&& archive)
-	//{
-	//	archive(
-	//		CEREAL_NVP(max_camera_angle),
-
-	//		CEREAL_NVP(eye_position),
-	//		CEREAL_NVP(focus_position),
-	//		CEREAL_NVP(focus_offset),
-
-	//		CEREAL_NVP(up_vec),
-	//		CEREAL_NVP(current_up_vec),
-	//		CEREAL_NVP(right_vec),
-	//		CEREAL_NVP(front_vec),
-
-	//		CEREAL_NVP(current_camera_up),
-	//		CEREAL_NVP(camera_right),
-
-	//		CEREAL_NVP(view_mat),
-	//		CEREAL_NVP(projection_mat),
-	//		CEREAL_NVP(view_projection_mat),
-
-	//		CEREAL_NVP(camera_angle),
-
-	//		CEREAL_NVP(near_z),
-	//		CEREAL_NVP(far_z),
-	//		CEREAL_NVP(fov),
-	//		CEREAL_NVP(aspect),
-	//		CEREAL_NVP(width),
-	//		CEREAL_NVP(height),
-
-	//		CEREAL_NVP(camera_speed),
-	//		CEREAL_NVP(cur_mouse_pos),
-	//		CEREAL_NVP(prev_mouse_pos),
-
-	//		CEREAL_NVP(is_perspective)
-	//	);
-	//}
-
 	Camera::Camera(const float width, const float height)
 	{
 		// ‰ŠúÝ’è
@@ -71,6 +32,110 @@ namespace cumulonimbus::camera
 
 		SetViewInfo(cb_camera->data.camera_position, cb_camera->data.camera_at, cb_camera->data.camera_up);
 		SetProjection(DirectX::XM_PI / 8.0f, static_cast<float>(locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
+	}
+
+	Camera::Camera(const Camera& other)
+		:max_camera_angle{other.max_camera_angle},
+		 eye_position{other.eye_position},
+		 focus_position{other.focus_position},
+		 focus_offset{other.focus_offset},
+		 up_vec{other.up_vec},
+		 current_up_vec{other.current_up_vec},
+		 right_vec{other.right_vec},
+		 front_vec{other.front_vec},
+		 current_camera_up{other.current_camera_up},
+		 camera_right{other.camera_right},
+		 view_mat{other.view_mat},
+		 projection_mat{other.projection_mat},
+		 view_projection_mat{other.view_projection_mat},
+		 camera_angle{other.camera_angle},
+		 near_z{other.near_z},
+		 far_z{other.far_z},
+		 fov{other.fov},
+		 aspect{other.aspect},
+		 width{other.width},
+		 height{other.height},
+		 camera_speed{other.camera_speed},
+		 cur_mouse_pos{other.cur_mouse_pos},
+		 prev_mouse_pos{other.prev_mouse_pos},
+		 is_perspective{other.is_perspective}
+	{
+		Initialize();
+
+		cb_camera->data.camera_position = eye_position;
+		cb_camera->data.camera_at		= focus_position;
+		cb_camera->data.camera_far_z	= far_z;
+		cb_camera->data.camera_near_z	= near_z;
+		cb_camera->data.camera_right	= right_vec;
+		cb_camera->data.camera_up		= up_vec;
+		cb_camera->data.camera_front	= { cb_camera->data.camera_at.x - cb_camera->data.camera_position.x,
+											cb_camera->data.camera_at.y - cb_camera->data.camera_position.y,
+											cb_camera->data.camera_at.z - cb_camera->data.camera_position.z };
+		cb_camera->data.camera_fov		= fov;
+		cb_camera->data.camera_aspect	= aspect;
+		cb_camera->data.camera_width	= width;
+		cb_camera->data.camera_height	= height;
+		cb_camera->data.camera_view_matrix = view_mat;
+		cb_camera->data.camera_view_projection_matrix = view_projection_mat;
+
+		SetViewInfo(cb_camera->data.camera_position, cb_camera->data.camera_at, cb_camera->data.camera_up);
+		SetProjection(DirectX::XM_PI / 8.0f, static_cast<float>(locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
+	}
+
+	Camera& Camera::operator=(const Camera& other)
+	{
+		if (this == &other)
+		{
+			return *this;
+		}
+
+		max_camera_angle		= other.max_camera_angle;
+		eye_position			=  other.eye_position;
+		focus_position			= other.focus_position;
+		focus_offset			= other.focus_offset;
+		up_vec					=  other.up_vec;
+		current_up_vec			= other.current_up_vec;
+		right_vec				= other.right_vec;
+		front_vec				= other.front_vec;
+		current_camera_up		= other.current_camera_up;
+		camera_right			= other.camera_right;
+		view_mat				= other.view_mat;
+		projection_mat			= other.projection_mat;
+		view_projection_mat		= other.view_projection_mat;
+		camera_angle			= other.camera_angle;
+		near_z					= other.near_z;
+		far_z					= other.far_z;
+		fov						= other.fov;
+		aspect					= other.aspect;
+		width					= other.width;
+		height					= other.height;
+		camera_speed			= other.camera_speed;
+		cur_mouse_pos			= other.cur_mouse_pos;
+		prev_mouse_pos			= other.prev_mouse_pos;
+		is_perspective			= other.is_perspective;
+
+		Initialize();
+
+		cb_camera->data.camera_position = eye_position;
+		cb_camera->data.camera_at		= focus_position;
+		cb_camera->data.camera_far_z	= far_z;
+		cb_camera->data.camera_near_z	= near_z;
+		cb_camera->data.camera_right	= right_vec;
+		cb_camera->data.camera_up		= up_vec;
+		cb_camera->data.camera_front	= { cb_camera->data.camera_at.x - cb_camera->data.camera_position.x,
+											cb_camera->data.camera_at.y - cb_camera->data.camera_position.y,
+											cb_camera->data.camera_at.z - cb_camera->data.camera_position.z };
+		cb_camera->data.camera_fov		= fov;
+		cb_camera->data.camera_aspect	= aspect;
+		cb_camera->data.camera_width	= width;
+		cb_camera->data.camera_height	= height;
+		cb_camera->data.camera_view_matrix = view_mat;
+		cb_camera->data.camera_view_projection_matrix = view_projection_mat;
+
+		SetViewInfo(cb_camera->data.camera_position, cb_camera->data.camera_at, cb_camera->data.camera_up);
+		SetProjection(DirectX::XM_PI / 8.0f, static_cast<float>(locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
+
+		return *this;
 	}
 
 	void Camera::Initialize()

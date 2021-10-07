@@ -33,16 +33,23 @@ namespace cumulonimbus::component
 	public:
 		using ComponentBase::ComponentBase;
 		explicit CameraComponent(); // for cereal & Inspector View上でのAddComponent用
+		explicit CameraComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const CameraComponent& copy_comp); // for prefab
 		/**
+		 * @param registry :
+		 * @param ent :
 		 * @param is_main_camera	: バックバッファ用カメラに設定するか(デフォルトはtrue)
 		 * @param width				: ビュー行列時の幅(デフォルトはスクリーンの幅)
 		 * @param height			: ビュー行列時の高さ(デフォルトはスクリーンの高さ)
 		 */
-		explicit CameraComponent(ecs::Registry* registry, mapping::rename_type::Entity ent,
-								 bool is_main_camera = true,
-								 float width  = locator::Locator::GetWindow()->Width(),
-								 float height = locator::Locator::GetWindow()->Height());
+		explicit CameraComponent(
+			ecs::Registry* registry, mapping::rename_type::Entity ent,
+			bool is_main_camera = true,
+			float width = locator::Locator::GetWindow()->Width(),
+			float height = locator::Locator::GetWindow()->Height());
 		explicit CameraComponent(mapping::component_tag::ComponentTag tag);
+		CameraComponent(const CameraComponent& other);
+		CameraComponent& operator=(const CameraComponent& other);
+
 		~CameraComponent() override = default;
 
 		void Initialize(ecs::Registry* registry, mapping::rename_type::Entity ent) override;

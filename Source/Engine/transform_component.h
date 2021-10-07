@@ -16,13 +16,14 @@ namespace cumulonimbus::component
 	{
 	public:
 		explicit TransformComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
+		explicit TransformComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const TransformComponent& copy_comp); // プレファブからの追加用
 		explicit TransformComponent()
 			:ComponentBase{}
 		{
 			component_tag = mapping::component_tag::ComponentTag::Mesh;
 		}; // for cereal
 		TransformComponent(const TransformComponent& other);
-		//TransformComponent& operator=(const TransformComponent& other);
+		TransformComponent& operator=(const TransformComponent& other);
 
 		~TransformComponent() override = default;
 

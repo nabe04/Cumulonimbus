@@ -31,7 +31,6 @@ namespace cumulonimbus::collision
 			CEREAL_NVP(collision_preset)
 		);
 	}
-
 } // collision
 
 namespace cumulonimbus::component
@@ -49,6 +48,13 @@ namespace cumulonimbus::component
 	CapsuleCollisionComponent::CapsuleCollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, CollisionTag tag)
 		:CollisionComponent{ registry,ent,tag }
 	{
+	}
+
+	CapsuleCollisionComponent::CapsuleCollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const CapsuleCollisionComponent& copy_comp)
+	{
+		*this = copy_comp;
+		SetRegistry(registry);
+		SetEntity(ent);
 	}
 
 	void CapsuleCollisionComponent::PreGameUpdate(float dt)

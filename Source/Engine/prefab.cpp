@@ -29,22 +29,22 @@ namespace cumulonimbus::asset
 		//-- engine --//
 		// transform
 		RegistryComponent<component::TransformComponent>();
-		//// actor
-		//RegistryComponent<component::Actor3DComponent>();
-		//// model
-		//RegistryComponent<component::ModelComponent>();
+		// actor
+		RegistryComponent<component::Actor3DComponent>();
+		// model
+		RegistryComponent<component::ModelComponent>();
 		//// sprite
 		//RegistryComponent<component::SpriteComponent>();
 		//RegistryComponent<component::BillboardComponent>();
 		//// physics
 		//RegistryComponent<component::SphereCollisionComponent>();
 		//RegistryComponent<component::CollisionComponent>();
-		//RegistryComponent<component::RayCastComponent>();
-		//RegistryComponent<component::CapsuleCollisionComponent>();
-		//RegistryComponent<component::PhysicMaterialComponent>();
+		RegistryComponent<component::RayCastComponent>();
+		RegistryComponent<component::CapsuleCollisionComponent>();
+		RegistryComponent<component::PhysicMaterialComponent>();
 		//RegistryComponent<component::RigidBodyComponent>();
-		//// camera
-		//RegistryComponent<component::CameraComponent>();
+		// camera
+		RegistryComponent<component::CameraComponent>();
 		//// sky box
 		//RegistryComponent<component::SkyBoxComponent>();
 		////-- game --//

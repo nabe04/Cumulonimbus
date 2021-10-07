@@ -28,6 +28,13 @@ namespace cumulonimbus::component
 
 	}
 
+	CollisionComponent::CollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const CollisionComponent& copy_comp)
+	{
+		*this = copy_comp;
+		SetRegistry(registry);
+		SetEntity(ent);
+	}
+
 	void CollisionComponent::SetCollisionTag(CollisionTag tag)
 	{
 		collision_tag = tag;
