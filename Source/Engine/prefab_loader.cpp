@@ -185,7 +185,7 @@ namespace cumulonimbus::asset
 		// アセットシートの登録
 		asset_manager.GetAssetSheetManager().GetSheet<Prefab>().sheet.emplace(id, save_path.string());
 		// アセットシート(更新後)の保存
-		//asset_manager.Save();
+		asset_manager.Save();
 
 		return id;
 	}

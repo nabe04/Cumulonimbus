@@ -20,6 +20,7 @@ namespace cumulonimbus::component
 		archive(
 			cereal::base_class<ComponentBase>(this),
 			CEREAL_NVP(texture_id),
+			CEREAL_NVP(shader_asset_manager),
 			CEREAL_NVP(graphics_state),
 			CEREAL_NVP(pivot_type),
 			CEREAL_NVP(vertices)
@@ -29,10 +30,7 @@ namespace cumulonimbus::component
 	SpriteComponent::SpriteComponent()
 		:ComponentBase{}
 	{
-		// 初期テクスチャのセット(ダミーテクスチャ)
-		asset::TextureLoader* texture_loader = locator::Locator::GetAssetManager()->GetLoader<asset::TextureLoader>();
-		const auto& texture = texture_loader->GetTexture({});
-		Initialize(static_cast<float>(texture.GetWidth()), static_cast<float>(texture.GetHeight()));
+
 	}
 
 	SpriteComponent::SpriteComponent(
@@ -118,6 +116,10 @@ namespace cumulonimbus::component
 		SetRegistry(registry);
 
 		// 保存されているNDC空間上の座標から現在のスクリーン空間上の座標を算出する
+		asset::TextureLoader* texture_loader = locator::Locator::GetAssetManager()->GetLoader<asset::TextureLoader>();
+		const auto& texture = texture_loader->GetTexture(texture_id);
+		Initialize(static_cast<float>(texture.GetWidth()), static_cast<float>(texture.GetHeight()));
+
 	}
 
 	void SpriteComponent::RenderImGui()

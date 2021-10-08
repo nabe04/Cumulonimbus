@@ -329,7 +329,7 @@ namespace shader
 
 
 namespace cumulonimbus::shader_system
-{
+{	
 	ShaderManager::ShaderManager()
 	{
 		using namespace mapping::shader_assets;
@@ -365,8 +365,6 @@ namespace cumulonimbus::shader_system
 	//-------------------  2D用シェーダーのBind,Unbind  ----------------------//
 	mapping::shader_assets::ShaderAsset2D ShaderManager::GetAsset2DFromConnector(const mapping::rename_type::Hash& hash) const
 	{
-		int a;
-		a = 0;
 		if (!connector_shader2d.contains(hash))
 			assert(!"Don't have key value");
 

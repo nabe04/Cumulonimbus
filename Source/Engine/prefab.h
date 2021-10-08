@@ -5,6 +5,7 @@
 
 #include "component_base.h"
 #include "rename_type_mapping.h"
+#include "asset_manager.h"
 
 namespace cumulonimbus::ecs
 {

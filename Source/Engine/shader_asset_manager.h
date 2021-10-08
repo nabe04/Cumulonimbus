@@ -27,6 +27,15 @@ namespace cumulonimbus::shader_asset
 		explicit ShaderAsset2DManager();
 		~ShaderAsset2DManager() = default;
 
+		template<class Archive>
+		void serialize(Archive&& archive)
+		{
+			archive(
+				CEREAL_NVP(shader_assets),
+				CEREAL_NVP(current_asset_hash)
+			);
+		}
+
 		/**
 		 * @brief : 現在セットされているシェーダーの
 		 *			コンスタントバッファをセット(バインド)
