@@ -106,13 +106,18 @@ namespace cumulonimbus::scene
 
 		light = std::make_unique<Light>(locator::Locator::GetDx11Device()->device.Get());
 		light->SetLightDir(XMFLOAT3{ .0f,.0f,1.f, });
+
 		registry    = std::make_unique<ecs::Registry>();
 		registry->SetScene(this);
 		render_path = std::make_unique<renderer::RenderPath>(locator::Locator::GetDx11Device()->device.Get());
 
+		system = std::make_shared<system::System>();
+		locator::Locator::Provide<system::System>(system);
+
 		asset_manager = std::make_shared<asset::AssetManager>();
 		locator::Locator::Provide<asset::AssetManager>(asset_manager);
-		collision_manager = std::make_unique<collision::CollisionManager>();
+
+		collision_manager = std::make_unique<collision::CollisionManager>(*system.get());
 
 		const mapping::rename_type::Entity ent_main_camera = registry->CreateEntity();
 		registry->AddComponent<component::CameraComponent>(ent_main_camera, true);

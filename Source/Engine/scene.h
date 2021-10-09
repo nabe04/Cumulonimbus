@@ -10,6 +10,7 @@
 #include "input_manager.h"
 #include "light.h"
 #include "render_path.h"
+#include "system.h"
 
 class GeometricPrimitiveResource;
 namespace cumulonimbus
@@ -69,6 +70,7 @@ namespace cumulonimbus::scene
 		std::unique_ptr<Light>				  light{}; // Todo : Œã‚ÉComponent‰»‚·‚é—\’è
 		std::unique_ptr<ecs::Registry>		  registry{};
 		std::unique_ptr<renderer::RenderPath> render_path{};
+		std::shared_ptr<system::System>		  system{};
 		// Manager's
 		std::shared_ptr<asset::AssetManager>		 asset_manager{};
 		std::unique_ptr<editor::EditorManager>		 editor_manager{};

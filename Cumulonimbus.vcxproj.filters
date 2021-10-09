@@ -561,6 +561,9 @@
     <ClCompile Include="Source\Engine\scene_loader.cpp">
       <Filter>Source\Engine\Loader</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\system.cpp">
+      <Filter>Source\Engine\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -1021,6 +1024,9 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\scene_loader.h">
       <Filter>Header\Engine\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\system.h">
+      <Filter>Header\Engine\System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

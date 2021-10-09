@@ -14,6 +14,11 @@ namespace cumulonimbus
 		class Registry;
 	}// ecs
 
+	namespace system
+	{
+		class System;
+	} // system
+
 	namespace component
 	{
 		class FbxModelComponent;
@@ -38,7 +43,8 @@ namespace cumulonimbus::collision
 	class CollisionManager final
 	{
 	public:
-		explicit CollisionManager() = default;
+		explicit CollisionManager() = default; // for cereal
+		explicit CollisionManager(system::System& system);
 		~CollisionManager()			= default;
 
 		template<class Archive>

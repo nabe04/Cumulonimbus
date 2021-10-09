@@ -5,10 +5,19 @@
 #include "rename_type_mapping.h"
 #include "locator.h"
 
-namespace cumulonimbus::ecs
+namespace cumulonimbus
 {
-	class Registry;
-} // cumulonimbus::ecs
+	namespace ecs
+	{
+		class Registry;
+	} // ecs
+
+	namespace system
+	{
+		class System;
+	} // system
+
+} // cumulonimbus
 
 namespace cumulonimbus::camera
 {
@@ -18,11 +27,18 @@ namespace cumulonimbus::camera
 	 * @remark : SystemInspectorクラスでパラメータを編集して
 	 *			 全てのカメラコンポーネントのテクスチャに適用する
 	 */
-	struct CameraTexture
+	class CameraTexture
 	{
+	public:
+		CameraTexture();
+		CameraTexture(system::System& system);
+		~CameraTexture() = default;
+
 		mapping::rename_type::UUID	 tex_id{};	 // カメラテクスチャID
 		DirectX::SimpleMath::Vector2 tex_size{ 1.f,1.f }; // 画面に表示するテクスチャサイズ
 		DirectX::SimpleMath::Matrix  scaling_matrix{DirectX::SimpleMath::Matrix::Identity}; // カメラテクスチャ全体に適用する倍率(描画時に)
+
+		void RenderImGui(ecs::Registry* registry);
 	};
 } // cumulonimbus::camera
 

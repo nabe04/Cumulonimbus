@@ -12,6 +12,7 @@
 #include "framework.h"
 #include "frame_buffer.h"
 #include "locator.h"
+#include "texture_loader.h"
 // components
 #include "billboard_component.h"
 #include "scene.h"
@@ -20,6 +21,36 @@ using namespace DirectX;
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::CameraComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::CameraComponent)
+
+namespace cumulonimbus::camera
+{
+	CameraTexture::CameraTexture()
+	{
+
+	}
+
+	CameraTexture::CameraTexture(system::System& system)
+	{
+		// System::Render関数内で使用する関数の登録
+		system.RegisterRenderFunction(utility::GetHash<CameraTexture>(),
+									  [&](ecs::Registry* registry) {RenderImGui(registry); });
+	}
+
+
+	void CameraTexture::RenderImGui(ecs::Registry* registry)
+	{
+		if (ImGui::CollapsingHeader(ICON_FA_VIDEO"Camera Setting", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			auto* asset_manager = locator::Locator::GetAssetManager();
+			auto* texture_loader = asset_manager->GetLoader<asset::TextureLoader>();
+			// テクスチャ選択
+			texture_loader->SelectableTexture(*asset_manager, tex_id);
+			// テクスチャサイズ設定
+			IMGUI_LEFT_LABEL(ImGui::DragFloat2, "Texture Size", reinterpret_cast<float*>(&tex_size), .5f, 1.f, 100000.f);
+		}
+	}
+
+} // cumulonimbus::camera
 
 namespace cumulonimbus::component
 {

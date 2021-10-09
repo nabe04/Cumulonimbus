@@ -154,7 +154,7 @@ namespace cumulonimbus::asset
 			return;
 		}
 
-		// 任意のフォルダからの読み込
+		// 任意のフォルダからの読み込み
 		if (!extension.contains(load_path.extension()))
 			assert(!"The extension is incorrect(AssetManager::Load)");
 		{

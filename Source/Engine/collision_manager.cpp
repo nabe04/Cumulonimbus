@@ -8,6 +8,7 @@
 #include "model_data.h"
 #include "model_loader.h"
 #include "rename_type_mapping.h"
+#include "system.h"
 // Components
 #include "transform_component.h"
 #include "capsule_collison_component.h"
@@ -20,6 +21,13 @@
 
 namespace cumulonimbus::collision
 {
+	CollisionManager::CollisionManager(system::System& system)
+	{
+		// System::RenderŠÖ”“à‚Åg—p‚·‚éŠÖ”‚Ì“o˜^
+		system.RegisterRenderFunction(utility::GetHash<CollisionManager>(),
+									  [&](ecs::Registry* registry) {RenderImGui(registry); });
+	}
+
 	void CollisionManager::Update(const float dt, ecs::Registry* registry)
 	{
 		// ‹…“¯m‚Ì”»’è
