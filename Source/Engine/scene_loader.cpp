@@ -67,11 +67,24 @@ namespace cumulonimbus::asset
 
 	void SceneLoader::Delete(AssetManager& asset_manager, const std::filesystem::path& path)
 	{
+		const mapping::rename_type::UUID scene_id = asset_manager.GetAssetSheetManager().Search<SceneAsset>(path);
+		// アセット(ID)が存在していなければ処理を抜ける
+		if (!scenes.contains(scene_id))
+			return;
 
+		DeleteScene(scene_id, path);
+		asset_manager.Save();
 	}
 
 	void SceneLoader::Delete(AssetManager& asset_manager, const mapping::rename_type::UUID& asset_id)
 	{
+		const std::filesystem::path delete_path = asset_manager.GetAssetSheetManager().GetAssetFilename<SceneAsset>(asset_id);
+		// アセット(ID)が存在していなければ処理を抜ける
+		if (!scenes.contains(asset_id))
+			return;
+
+		DeleteScene(asset_id, delete_path);
+		asset_manager.Save();
 	}
 
 	bool SceneLoader::Supported(const std::filesystem::path extension)
@@ -127,4 +140,19 @@ namespace cumulonimbus::asset
 		asset_manager.GetAssetSheetManager().GetSheet<SceneAsset>().sheet.insert(std::make_pair(id, copy_path.string()));
 		return id;
 	}
+
+	void SceneLoader::DeleteScene(const mapping::rename_type::UUID& scene_id, const std::filesystem::path& delete_path)
+	{
+		/*
+		 * ※注意 : 「delete_path」には拡張子(「.scene」)まで含まれたパスが入っている
+		 *			 ので必ずこの親階層("シーン名")のパスから削除する
+		 *		例) ./Scenes/"シーン名"/"シーン名".scene
+		 */
+
+		 // 登録したプレファブ情報の削除
+		scenes.erase(scene_id);
+		// 現プレファブのファイルごと削除
+		std::filesystem::remove_all(delete_path.parent_path());
+	}
+
 } // cumulonimbus::asset

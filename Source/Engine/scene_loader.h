@@ -41,5 +41,14 @@ namespace cumulonimbus::asset
 			AssetManager& asset_manager,
 			const std::filesystem::path& from,
 			const std::filesystem::path& to) override;
+
+		/**
+		 * @brief : シーンのフォルダと対応するscenesのIDの削除
+		 * @param scene_id : シーンID(UUID)
+		 * @param delete_path : 「.scene」までのファイルパス
+		 */
+		void DeleteScene(
+			const mapping::rename_type::UUID& scene_id,
+			const std::filesystem::path& delete_path);
 	};
 } // cumulonimbus::asset

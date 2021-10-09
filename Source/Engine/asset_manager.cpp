@@ -146,16 +146,6 @@ namespace cumulonimbus::asset
 					input_archive(*this);
 				}
 
-				//// アセットシートの型が消えていた場合の追加
-				//AssetSheetManager check{};
-				//for (const auto& [hash, asset_sheet] : check.GetSheets())
-				//{
-				//	if (!sheet_manager->HasSheet(hash))
-				//	{
-				//		sheet_manager->Register(hash);
-				//	}
-				//}
-
 				// Loaderへのアセット登録
 				AssetLoad();
 				return;
