@@ -19,6 +19,7 @@
 #include "texture_loader.h"
 #include "prefab.h"
 #include "prefab_loader.h"
+#include "scene_loader.h"
 
 
 namespace
@@ -44,10 +45,11 @@ namespace cumulonimbus::editor
 			}
 		}
 
-		Register<asset::Material>("All Materials");
-		Register<asset::Model>(   "All Models");
-		Register<asset::Texture>( "All Textures");
-		Register<asset::Prefab>(  "All Prefabs");
+		Register<asset::SceneAsset>("All Scenes");
+		Register<asset::Material>(	"All Materials");
+		Register<asset::Model>(		"All Models");
+		Register<asset::Texture>(	"All Textures");
+		Register<asset::Prefab>(	"All Prefabs");
 	}
 
 	void ProjectView::Render(const ecs::Registry* registry)

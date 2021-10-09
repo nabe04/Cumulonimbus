@@ -1,12 +1,14 @@
 #include "menu_bar.h"
 
 #include <filesystem>
-
 #include <Windows.h>
 
 #include <portable-file-dialogs.h>
+
 #include "scene.h"
 #include "ecs.h"
+#include "locator.h"
+#include "scene_loader.h"
 
 namespace cumulonimbus::editor
 {
@@ -70,10 +72,10 @@ namespace cumulonimbus::editor
 
 			if (selection.empty())
 				return;
-			const std::filesystem::path p = selection.at(0);
+			const std::filesystem::path path = selection.at(0);
 
-			registry->GetScene()->LoadScene(p.parent_path().string(), p.filename().string());
-
+			locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->OpenScene(*registry->GetScene(), path);
+			//registry->GetScene()->LoadScene(path.parent_path().string(), path.filename().string());
 		}
 		ImGui::Separator();
 		if(ImGui::MenuItem("Save","Ctrl+S"))

@@ -7,11 +7,12 @@
 #include "texture.h"
 #include "file_path_helper.h"
 // Loaders
+#include "loader.h"
 #include "material_loader.h"
 #include "model_loader.h"
 #include "texture_loader.h"
+#include "scene_loader.h"
 #include "prefab_loader.h"
-#include "loader.h"
 
 namespace
 {
@@ -23,10 +24,11 @@ namespace cumulonimbus::asset
 	AssetManager::AssetManager()
 	{
 		sheet_manager = std::make_unique<AssetSheetManager>();
-		RegisterLoader<Material	, MaterialLoader>();
-		RegisterLoader<Model	, ModelLoader>();
-		RegisterLoader<Texture	, TextureLoader>();
-		RegisterLoader<Prefab	, PrefabLoader>();
+		RegisterLoader<Material	 , MaterialLoader>();
+		RegisterLoader<Model	 , ModelLoader>();
+		RegisterLoader<Texture	 , TextureLoader>();
+		RegisterLoader<Prefab	 , PrefabLoader>();
+		RegisterLoader<SceneAsset, SceneLoader>();
 
 		// デフォルトパスからのロード
 		Load();
@@ -40,7 +42,6 @@ namespace cumulonimbus::asset
 				sheet_manager->Register(hash);
 			}
 		}
-
 	}
 
 	void AssetManager::AddAsset(const std::filesystem::path& path)
@@ -145,15 +146,15 @@ namespace cumulonimbus::asset
 					input_archive(*this);
 				}
 
-				// アセットシートの型が消えていた場合の追加
-				AssetSheetManager check{};
-				for (const auto& [hash, asset_sheet] : check.GetSheets())
-				{
-					if (!sheet_manager->HasSheet(hash))
-					{
-						sheet_manager->Register(hash);
-					}
-				}
+				//// アセットシートの型が消えていた場合の追加
+				//AssetSheetManager check{};
+				//for (const auto& [hash, asset_sheet] : check.GetSheets())
+				//{
+				//	if (!sheet_manager->HasSheet(hash))
+				//	{
+				//		sheet_manager->Register(hash);
+				//	}
+				//}
 
 				// Loaderへのアセット登録
 				AssetLoad();

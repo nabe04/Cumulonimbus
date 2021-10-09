@@ -1,5 +1,9 @@
 #include "player_component.h"
 
+#include <d3d11.h>
+#include <DirectXMath.h>
+#include <SimpleMath.h>
+
 #include "cum_imgui_helper.h"
 #include "ecs.h"
 #include "locator.h"
@@ -243,7 +247,7 @@ namespace cumulonimbus::component
 		const auto& rigid_body_comp  = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
 
 		{// 床(floor)用rayの設定
-			const SimpleMath::Vector3 ray_start = transform_comp.GetPosition() + ray_cast_comp->GetRayOffset(mapping::collision_name::ray::ForFloor());
+			const DirectX::SimpleMath::Vector3 ray_start = transform_comp.GetPosition() + ray_cast_comp->GetRayOffset(mapping::collision_name::ray::ForFloor());
 			ray_cast_comp->SetRayStartPos(mapping::collision_name::ray::ForFloor(), ray_start);
 			ray_cast_comp->SetBlockPos(mapping::collision_name::ray::ForFloor(), transform_comp.GetPosition());
 			if (rigid_body_comp.GetIsGravity())
@@ -257,9 +261,9 @@ namespace cumulonimbus::component
 		}
 
 		{// 壁(wall)用rayの設定
-			const SimpleMath::Vector3 ray_start	= transform_comp.GetPosition() + ray_cast_comp->GetRayOffset(mapping::collision_name::ray::ForWall());
-			const SimpleMath::Vector3 ray_end = ray_start + SimpleMath::Vector3{ transform_comp.GetModelFront().x * 70,0,transform_comp.GetModelFront().z * 70 };
-			SimpleMath::Vector3 ray_vec{ ray_end - ray_start };
+			const DirectX::SimpleMath::Vector3 ray_start	= transform_comp.GetPosition() + ray_cast_comp->GetRayOffset(mapping::collision_name::ray::ForWall());
+			const DirectX::SimpleMath::Vector3 ray_end = ray_start + DirectX::SimpleMath::Vector3{ transform_comp.GetModelFront().x * 70,0,transform_comp.GetModelFront().z * 70 };
+			DirectX::SimpleMath::Vector3 ray_vec{ ray_end - ray_start };
 			ray_vec.Normalize();
 			ray_cast_comp->SetRayStartPos(mapping::collision_name::ray::ForWall(), ray_start);
 			ray_cast_comp->SetRayEndPos(mapping::collision_name::ray::ForWall(), ray_end);
@@ -277,7 +281,7 @@ namespace cumulonimbus::component
 
 	void PlayerComponent::Rotation(float dt)
 	{
-		const XMFLOAT2 stick_left = locator::Locator::GetInput()->GamePad().LeftThumbStick(0);
+		const DirectX::XMFLOAT2 stick_left = locator::Locator::GetInput()->GamePad().LeftThumbStick(0);
 
 		if (IsDeadZone())
 			return;
@@ -285,7 +289,7 @@ namespace cumulonimbus::component
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 		auto& camera_comp	 = GetRegistry()->GetComponent<CameraComponent>(GetEntity());
 
-		SimpleMath::Vector3 stick_direction = { stick_left.x,0.0f,stick_left.y };
+		DirectX::SimpleMath::Vector3 stick_direction = { stick_left.x,0.0f,stick_left.y };
 		stick_direction.Normalize();
 
 		// モデルの基底前方ベクトル{0,0,1}とスティック入力方向とのベクトルの角度(ラジアン)を算出
@@ -294,14 +298,14 @@ namespace cumulonimbus::component
 		if (stick_left.x < 0)
 			rad *= -1;
 		// カメラのフロントベクトルをrad分回転
-		SimpleMath::Vector3 camera_xz_front_vec = camera_comp.GetCamera()->GetCameraFront();
-		const SimpleMath::Quaternion q = SimpleMath::Quaternion::CreateFromAxisAngle({ 0,1,0 }, rad);
-		SimpleMath::Vector3::Transform(camera_xz_front_vec, q, camera_xz_front_vec);
+		DirectX::SimpleMath::Vector3 camera_xz_front_vec = camera_comp.GetCamera()->GetCameraFront();
+		const DirectX::SimpleMath::Quaternion q = DirectX::SimpleMath::Quaternion::CreateFromAxisAngle({ 0,1,0 }, rad);
+		DirectX::SimpleMath::Vector3::Transform(camera_xz_front_vec, q, camera_xz_front_vec);
 		camera_xz_front_vec.y = 0;
 		camera_xz_front_vec.Normalize();
 
 		// モデルの前方ベクトルとfront_vecとの角度(ラジアン)を算出
-		SimpleMath::Vector3 model_xz_front = transform_comp.GetModelFront();
+		DirectX::SimpleMath::Vector3 model_xz_front = transform_comp.GetModelFront();
 		model_xz_front.y = 0;
 		model_xz_front.Normalize();
 		if (arithmetic::IsEqual(model_xz_front.x, camera_xz_front_vec.x) &&
@@ -310,7 +314,7 @@ namespace cumulonimbus::component
 			return;
 
 		rad = arithmetic::CalcAngleFromTwoVec(camera_xz_front_vec, model_xz_front);
-		const SimpleMath::Vector3 cross_vec = model_xz_front.Cross(camera_xz_front_vec);
+		const DirectX::SimpleMath::Vector3 cross_vec = model_xz_front.Cross(camera_xz_front_vec);
 		if (cross_vec.y < 0)
 			rad *= -1;
 
@@ -395,7 +399,7 @@ namespace cumulonimbus::component
 	bool PlayerComponent::IsDeadZone() const
 	{
 		bool ret_flg = true;
-		const XMFLOAT2 stick_left = locator::Locator::GetInput()->GamePad().LeftThumbStick(0);
+		const DirectX::XMFLOAT2 stick_left = locator::Locator::GetInput()->GamePad().LeftThumbStick(0);
 
 		if (fabs(stick_left.x) < threshold &&
 			fabs(stick_left.y) < threshold)
@@ -560,7 +564,7 @@ namespace cumulonimbus::component
 		}
 
 		{// 移動速度の設定
-			const SimpleMath::Vector2 stick_left = locator::Locator::GetInput()->GamePad().LeftThumbStick(0);
+			const DirectX::SimpleMath::Vector2 stick_left = locator::Locator::GetInput()->GamePad().LeftThumbStick(0);
 			movement_comp.AddForce({ stick_left.x * jump_movement_speed,0.0f,stick_left.y * jump_movement_speed });
 		}
 

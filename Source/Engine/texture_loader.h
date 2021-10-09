@@ -83,6 +83,7 @@ namespace cumulonimbus::asset
 		 * @brief : ImGui上でのテクスチャ選択関数
 		 * @remark : ※caution(1) : ImGuiを使用する関数内で使用すること
 		 * @remark : ※caution(2) : ImGui::Begin()の中でこの関数を呼ぶこと
+		 * @param asset_manager :
 		 * @param tex_id : 格納されるテクスチャID(UUID)
 		 */
 		void SelectableTexture(AssetManager& asset_manager, mapping::rename_type::UUID& tex_id);

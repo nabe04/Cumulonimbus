@@ -1,26 +1,15 @@
-
 #pragma once
 #include <filesystem>
 #include <memory>
 #include <string>
 
-#include <DirectXMath.h>
-
 #include "collision_manager.h"
-#include "dx11_configurator.h"
-#include "gaussian_blur.h"
 #include "ecs.h"
 #include "editor_manager.h"
-#include "fbx_model_resource.h"
 #include "framework.h"
-#include "geometric_primitive_resource.h"
 #include "input_manager.h"
 #include "light.h"
 #include "render_path.h"
-#include "scene_view_camera.h"
-#include "resource_manager.h"
-#include "sound_resource.h"
-#include "texture_resource_manager.h"
 
 class GeometricPrimitiveResource;
 namespace cumulonimbus
@@ -56,19 +45,6 @@ namespace cumulonimbus::scene
 		void Execute(Framework* framework);
 
 		/**
-		 * @brief : Gameが開始される時(プレイボタンが押された時)に
-		 *			保存されるオブジェクト情報
-		 * @param file_path_and_name : 保存するファイルパスを含む名前(※拡張子を含まない)
-		 */
-		void SaveSceneView(const std::string& file_path_and_name);
-		/**
-		 * @brief : Gameが終了される時にプレイ時に保存された
-		 *			オブジェクト情報を取り出す
-		 * @param file_path_and_name : 保存するファイルパスを含む名前(※拡張子を含まない)
-		 */
-		void LoadSceneView(const std::string& file_path_and_name);
-
-		/**
 		 * @brief    : シリアライズされた際に保存するファイル
 		 * @param file_dir  : 保存するファイルまでのディレクトリパス
 		 * @param scene_name : 保存するシーン名(※拡張子除く)
@@ -90,7 +66,7 @@ namespace cumulonimbus::scene
 
 	private:
 		Framework*							  framework{};
-		std::unique_ptr<Light>				  light{}; // Todo : 後にコンポーネント化する予定
+		std::unique_ptr<Light>				  light{}; // Todo : 後にComponent化する予定
 		std::unique_ptr<ecs::Registry>		  registry{};
 		std::unique_ptr<renderer::RenderPath> render_path{};
 		// Manager's

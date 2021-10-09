@@ -56,13 +56,19 @@ namespace cumulonimbus::asset
 		return id;
 	}
 
-	void TextureLoader::Load(AssetManager& asset_manager, const std::filesystem::path& path)
+	void TextureLoader::Load(
+		AssetManager& asset_manager,
+		const std::filesystem::path& path)
 	{
 		const auto id = Convert(asset_manager, path, save_parent_path);
 		Load(asset_manager, id);
 	}
 
-	void TextureLoader::Load(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to)
+	void TextureLoader::Load(
+		AssetManager& asset_manager,
+		const std::filesystem::path& from,
+
+		const std::filesystem::path& to)
 	{
 		const auto id = Convert(asset_manager, from, to);
 		Load(asset_manager, id);
@@ -105,7 +111,6 @@ namespace cumulonimbus::asset
 		DeleteTexture(asset_id, path);
 		asset_manager.Save();
 	}
-
 
 	bool TextureLoader::Supported(const std::filesystem::path extension)
 	{

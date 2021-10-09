@@ -4,6 +4,7 @@
 #include "model.h"
 #include "texture.h"
 #include "prefab.h"
+#include "scene_loader.h"
 
 namespace cumulonimbus::asset
 {
@@ -13,6 +14,7 @@ namespace cumulonimbus::asset
 		Register<Model>();
 		Register<Texture>();
 		Register<Prefab>();
+		Register<SceneAsset>();
 	}
 
 	std::string AssetSheetManager::GetAssetFilename(const mapping::rename_type::UUID& id) const

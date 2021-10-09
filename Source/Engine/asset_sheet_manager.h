@@ -131,7 +131,7 @@ namespace cumulonimbus::asset
 		/**
 		 * @brief : アセットシートに登録しているパスからIDを検索
 		 * @remark : パスがヒットしなかった場合でも例外処理は出ない
-		 * @remark : パスがヒットしなかった場合「""」が変える
+		 * @remark : パスがヒットしなかった場合「""」を返す
 		 * @param path : 検索したいファイルパス
 		 * @return : 検索でヒットしたパスのID
 		 */

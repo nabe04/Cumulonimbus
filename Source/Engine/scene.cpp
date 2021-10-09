@@ -9,6 +9,7 @@
 #include "input_manager.h"
 #include "locator.h"
 #include "render_path.h"
+#include "gaussian_blur.h"
 #include "resource_manager.h"
 #include "window.h"
 #include "file_path_helper.h"
@@ -77,7 +78,6 @@ namespace cumulonimbus::scene
 			output_archive(*this);
 		}
 		{// Åu.jsonÅvå`éÆÇ≈ÇÃï€ë∂
-
 			std::ofstream ofs(filename + cumulonimbus::file_path_helper::GetJsonExtension());
 			cereal::JSONOutputArchive output_archive(ofs);
 			output_archive(*this);
@@ -86,7 +86,6 @@ namespace cumulonimbus::scene
 
 	void Scene::LoadScene(const std::string& file_dir, const std::string& scene_name)
 	{
-
 		std::ifstream ifs(file_dir + "/" + scene_name);
 		cereal::BinaryInputArchive i_archive(ifs);
 		i_archive(*this);
@@ -103,7 +102,7 @@ namespace cumulonimbus::scene
 		{
 			editor_manager = std::make_unique<editor::EditorManager>();
 		}
-#endif
+#endif // _DEBUG
 
 		light = std::make_unique<Light>(locator::Locator::GetDx11Device()->device.Get());
 		light->SetLightDir(XMFLOAT3{ .0f,.0f,1.f, });

@@ -3,6 +3,7 @@
 #include "cum_imgui_helper.h"
 #include "debug_collision.h"
 #include "gbuffer.h"
+#include "gaussian_blur.h"
 #include "graphics_mapping.h"
 #include "material_loader.h"
 #include "model_loader.h"
@@ -799,7 +800,7 @@ namespace cumulonimbus::renderer
 		transform.SetWorldRotation_X(.0f);
 		transform.SetWorldRotation_Y(.0f);
 
-		std::array<XMFLOAT2, 4> pos{};
+		std::array<DirectX::XMFLOAT2, 4> pos{};
 		// Left top
 		pos[0].x = 0.0f;
 		pos[0].y = 0.0f;
