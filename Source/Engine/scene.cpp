@@ -26,9 +26,6 @@
 #include "transform_component.h"
 #include "sky_box.h"
 
-//Todo : è¡Ç∑
-#include "prefab_loader.h"
-
 namespace cumulonimbus::scene
 {
 	template <class Archive>
@@ -39,7 +36,6 @@ namespace cumulonimbus::scene
 			CEREAL_NVP(light)
 		);
 	}
-
 
 	cumulonimbus::scene::Scene::Scene()
 	{
@@ -112,6 +108,7 @@ namespace cumulonimbus::scene
 		render_path = std::make_unique<renderer::RenderPath>(locator::Locator::GetDx11Device()->device.Get());
 
 		system = std::make_shared<system::System>();
+		system->Load();
 		locator::Locator::Provide<system::System>(system);
 
 		asset_manager = std::make_shared<asset::AssetManager>();
@@ -136,6 +133,9 @@ namespace cumulonimbus::scene
 
 	void Scene::UnInitialize()
 	{
+		// ÉVÉXÉeÉÄèÓïÒÇÃï€ë∂
+		system->Save();
+
 		registry->DestroyAllEntities();
 	}
 

@@ -34,11 +34,29 @@ namespace cumulonimbus::camera
 		CameraTexture(system::System& system);
 		~CameraTexture() = default;
 
-		mapping::rename_type::UUID	 tex_id{};	 // カメラテクスチャID
-		DirectX::SimpleMath::Vector2 tex_size{ 1.f,1.f }; // 画面に表示するテクスチャサイズ
-		DirectX::SimpleMath::Matrix  scaling_matrix{DirectX::SimpleMath::Matrix::Identity}; // カメラテクスチャ全体に適用する倍率(描画時に)
+		template<class Archive>
+		void serialize(Archive&& archive)
+		{
+			archive(
+				CEREAL_NVP(tex_id),
+				CEREAL_NVP(tex_size),
+				CEREAL_NVP(scaling_matrix)
+			);
+		}
 
 		void RenderImGui(ecs::Registry* registry);
+
+		[[nodiscard]]
+		const mapping::rename_type::UUID& GetTexId() const { return tex_id; }
+		[[nodiscard]]
+		const DirectX::SimpleMath::Vector2& GetTexSize() const { return tex_size; }
+		[[nodiscard]]
+		const DirectX::SimpleMath::Matrix& GetScalingMatrix() const { return scaling_matrix; }
+
+	private:
+		mapping::rename_type::UUID	 tex_id{};			  // カメラテクスチャID
+		DirectX::SimpleMath::Vector2 tex_size{ 1.f,1.f }; // 画面に表示するテクスチャサイズ
+		DirectX::SimpleMath::Matrix  scaling_matrix{ DirectX::SimpleMath::Matrix::Identity }; // カメラテクスチャ全体に適用する倍率(描画時に)
 	};
 } // cumulonimbus::camera
 

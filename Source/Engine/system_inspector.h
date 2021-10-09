@@ -21,13 +21,13 @@ namespace cumulonimbus::editor
 		void Update(float dt);
 		void Render(ecs::Registry* registry);
 
-		[[nodiscard]]
-		const mapping::rename_type::UUID& GetCameraTexID() const { return camera_texture.tex_id; }
-		[[nodiscard]]
-		const DirectX::SimpleMath::Matrix& GetCameraScalingMatrix() const { return camera_texture.scaling_matrix; }
+		//[[nodiscard]]
+		//const mapping::rename_type::UUID& GetCameraTexID() const { return camera_texture.tex_id; }
+		//[[nodiscard]]
+		//const DirectX::SimpleMath::Matrix& GetCameraScalingMatrix() const { return camera_texture.scaling_matrix; }
 	private:
 		// CameraComponentのScene View上に表示するビルボードテクスチャID(UUID)
 		//mapping::rename_type::UUID camera_tex_id{};
-		camera::CameraTexture camera_texture{};
+		//camera::CameraTexture camera_texture{};
 	};
 } // cumulonimbus::editor

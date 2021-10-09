@@ -924,7 +924,7 @@ namespace cumulonimbus::renderer
 			if(registry->TryGetComponent<component::CameraComponent>(entity))
 			{
 				const component::TransformComponent& transform_comp = registry->GetComponent<component::TransformComponent>(entity);
-				const DirectX::SimpleMath::Matrix& camera_scaling_mat = registry->GetScene()->GetEditorManager()->GetSystemInspector().GetCameraScalingMatrix();
+				const DirectX::SimpleMath::Matrix& camera_scaling_mat = locator::Locator::GetSystem()->GetCameraTexture().GetScalingMatrix();
 				DirectX::SimpleMath::Matrix transform_mat = transform_comp.GetScalingMat() * camera_scaling_mat * transform_comp.GetTranslationMat();
 				transform.transform_matrix =  transform_mat * inv_view_mat;
 			}

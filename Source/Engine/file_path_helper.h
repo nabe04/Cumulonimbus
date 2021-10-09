@@ -33,6 +33,13 @@ namespace cumulonimbus::file_path_helper
 	std::string GetSceneExtension();
 
 	/**
+	 * @brief : 「.sys」を返す
+	 * @return : .sys
+	 */
+	[[nodiscard]]
+	std::string GetSystemExtension();
+
+	/**
 	 * @brief : 「.lsn」を返す
 	 * @return : .lsn
 	 */

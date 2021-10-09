@@ -23,6 +23,12 @@ namespace cumulonimbus::file_path_helper
 		return { ".scene" };
 	}
 
+	std::string GetSystemExtension()
+	{
+		return { ".sys" };
+	}
+
+
 	std::string GetLastSceneExtension()
 	{
 		return { "lsn" };

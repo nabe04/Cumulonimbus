@@ -11,7 +11,7 @@ namespace cumulonimbus::editor
 	void SystemInspector::Update(const float dt)
 	{
 		//-- CameraComponentのカメラテクスチャ用設定 --//
-		camera_texture.scaling_matrix = DirectX::SimpleMath::Matrix::CreateScale(camera_texture.tex_size.x, camera_texture.tex_size.y, 1.f);
+		//camera_texture.scaling_matrix = DirectX::SimpleMath::Matrix::CreateScale(camera_texture.tex_size.x, camera_texture.tex_size.y, 1.f);
 	}
 
 	void SystemInspector::Render(ecs::Registry* registry)

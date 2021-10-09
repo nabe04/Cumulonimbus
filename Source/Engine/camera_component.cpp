@@ -7,6 +7,7 @@
 #include <imgui.h>
 
 #include "arithmetic.h"
+#include "cereal_helper.h"
 #include "cum_imgui_helper.h"
 #include "ecs.h"
 #include "framework.h"
@@ -160,7 +161,7 @@ namespace cumulonimbus::component
 		camera->Update(dt);
 
 		// Scene View表示用ビルボードテクスチャのセット
-		const auto camera_tex_id = GetRegistry()->GetScene()->GetEditorManager()->GetSystemInspector().GetCameraTexID();
+		const auto camera_tex_id = locator::Locator::GetSystem()->GetCameraTexture().GetTexId();
 		GetRegistry()->GetComponent<BillboardComponent>(GetEntity()).SetTextureId(camera_tex_id);
 	}
 
