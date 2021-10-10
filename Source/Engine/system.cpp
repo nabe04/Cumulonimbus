@@ -1,9 +1,13 @@
 #include "system.h"
 
 #include <fstream>
+#include <functional>
 
 #include "camera_component.h"
 #include "file_path_helper.h"
+#include "sky_box.h"
+
+CEREAL_CLASS_VERSION(cumulonimbus::system::System, 1)
 
 namespace
 {
@@ -12,17 +16,55 @@ namespace
 
 namespace cumulonimbus::system
 {
+	//template <class Archive>
+	//void System::serialize(Archive&& archive ,std::uint32_t const version)
+	//{
+	//	archive(
+	//		CEREAL_NVP(camera_texture)
+	//	);
+
+	//	if(version == 1)
+	//	{
+	//		archive(
+	//			CEREAL_NVP(sky_box)
+	//		);
+	//	}
+	//}
+
 	template <class Archive>
-	void System::serialize(Archive&& archive)
+	void System::save(Archive&& archive, std::uint32_t const version) const
 	{
 		archive(
 			CEREAL_NVP(camera_texture)
 		);
+
+		if(version >= 0)
+		{
+			archive(
+				CEREAL_NVP(sky_box)
+			);
+		}
+	}
+
+	template<class Archive>
+	void System::load(Archive&& archive, std::uint32_t const version)
+	{
+		archive(
+			CEREAL_NVP(camera_texture)
+		);
+
+		if(version == 1)
+		{
+			archive(
+				CEREAL_NVP(sky_box)
+			);
+		}
 	}
 
 	System::System()
 	{
-		camera_texture = std::make_unique<camera::CameraTexture>(*this);
+		camera_texture	= std::make_unique<camera::CameraTexture>(*this);
+		sky_box			= std::make_unique<graphics::SkyBox>(*this, locator::Locator::GetDx11Device()->device.Get());
 	}
 
 	void System::Save(const std::filesystem::path& save_path)
@@ -50,6 +92,21 @@ namespace cumulonimbus::system
 
 		std::filesystem::create_directory(std::filesystem::path{ default_path_and_name }.parent_path());
 
+		// Load時の初期設定
+		auto Initialize = [&]()
+		{
+			if(!camera_texture.get())
+				camera_texture = std::make_unique<camera::CameraTexture>(*this);
+			if(!sky_box.get())
+				sky_box = std::make_unique<graphics::SkyBox>(*this, locator::Locator::GetDx11Device()->device.Get());
+
+			// System::Render内関数の再登録(再読込されたもののみ)
+			RegisterRenderFunction(utility::GetHash<camera::CameraTexture>(),
+								   [&](ecs::Registry* registry) {camera_texture->RenderImGui(registry); });
+
+			sky_box->Load(*this);
+		};
+
 		if(load_path.empty())
 		{// デフォルトのフォルダにある「.sys」の読み込み
 			std::filesystem::path default_path{};
@@ -65,9 +122,7 @@ namespace cumulonimbus::system
 					cereal::BinaryInputArchive input_archive(ifs);
 					input_archive(*this);
 				}
-				// System::Render内関数の再登録(再読込されたもののみ)
-				RegisterRenderFunction(utility::GetHash<camera::CameraTexture>(),
-									   [&](ecs::Registry* registry) {camera_texture->RenderImGui(registry); });
+				Initialize();
 				return;
 			}
 			// ファイルパスが存在しなかったので現在の情報で保存
@@ -85,9 +140,7 @@ namespace cumulonimbus::system
 			cereal::BinaryInputArchive input_archive(ifs);
 			input_archive(*this);
 		}
-		// System::Render内関数の再登録(再読込されたもののみ)
-		RegisterRenderFunction(utility::GetHash<camera::CameraTexture>(),
-							   [&](ecs::Registry* registry) {camera_texture->RenderImGui(registry); });
+		Initialize();
 	}
 
 
@@ -112,7 +165,11 @@ namespace cumulonimbus::system
 
 	camera::CameraTexture& System::GetCameraTexture() const
 	{
-		return *camera_texture.get();
+		return *(camera_texture.get());
 	}
 
+	graphics::SkyBox& System::GetSkyBox() const
+	{
+		return *(sky_box.get());
+	}
 } // cumulonimbus::system

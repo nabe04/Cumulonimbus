@@ -10,28 +10,42 @@
 #include <wrl.h>
 
 #include "component_base.h"
+#include "cereal_helper.h"
 #include "texture.h"
 #include "shader.h"
 #include "rename_type_mapping.h"
 
-namespace cumulonimbus::ecs
+namespace cumulonimbus
 {
-	class Registry;
-} // cumulonimbus::ecs
+	namespace ecs
+	{
+		class Registry;
+	} // ecs
+
+	namespace system
+	{
+		class System;
+	} // system
+} // cumulonimbus
 
 namespace cumulonimbus::graphics
 {
 	class SkyBox final
 	{
 	public:
-		explicit SkyBox(ID3D11Device* device, const std::string& filename = { "" });
+		explicit SkyBox(system::System& system, ID3D11Device* device, const std::string& filename = { "" });
 		explicit SkyBox() = default; // for cereal
 		~SkyBox() = default;
 
 		template<class Archive>
 		void serialize(Archive&& archive)
 		{
-
+			archive(
+				CEREAL_NVP(file_path_and_name),
+				CEREAL_NVP(position),
+				CEREAL_NVP(scale),
+				CEREAL_NVP(angle)
+			);
 		}
 
 		void Update(float dt);
@@ -41,6 +55,12 @@ namespace cumulonimbus::graphics
 		 * @param registry : System::Renderに登録するために必要
 		 */
 		void RenderImGui(ecs::Registry* registry);
+
+		/**
+		 * @brief : ロード時処理
+		 * @ramerk : シリアライズが不可能なパラメータの設定
+		 */
+		void Load(system::System& system);
 
 		void BindShader(ID3D11DeviceContext* immediate_context) const;
 		void UnBindShader(ID3D11DeviceContext* immediate_context) const;
@@ -69,6 +89,8 @@ namespace cumulonimbus::graphics
 		Microsoft::WRL::ComPtr<ID3D11Buffer>  index_buffer{};
 		std::unique_ptr<shader::VertexShader> vertex_shader{};
 		std::unique_ptr<shader::PixelShader>  pixel_shader{};
+
+		std::string file_path_and_name{}; // SkyBoxテクスチャがあるファイルパス
 
 		DirectX::SimpleMath::Vector3 position{};
 		DirectX::SimpleMath::Vector3 scale{ 1.f,1.f,1.f };

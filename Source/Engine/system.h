@@ -17,6 +17,11 @@ namespace cumulonimbus
 		class CameraTexture;
 	} // camera
 
+	namespace graphics
+	{
+		class SkyBox;
+	} // graphics
+
 } // cumulonimbus
 
 namespace cumulonimbus::system
@@ -27,8 +32,14 @@ namespace cumulonimbus::system
 		explicit System();
 		~System() = default;
 
+		//template<class Archive>
+		//void serialize(Archive&& archive, std::uint32_t version);
+
 		template<class Archive>
-		void serialize(Archive&& archive);
+		void save(Archive&& archive, std::uint32_t version) const;
+
+		template<class Archive>
+		void load(Archive&& archive, std::uint32_t version);
 
 		/**
 		 * @brief : 「.system」ファイルのセーブ
@@ -58,11 +69,15 @@ namespace cumulonimbus::system
 		 */
 		void RegisterRenderFunction(const mapping::rename_type::Hash& hash, const  std::function<void(ecs::Registry* registry)>& render_func);
 
+		[[nodiscard]]
 		camera::CameraTexture& GetCameraTexture() const;
+		[[nodiscard]]
+		graphics::SkyBox& GetSkyBox() const;
 	private:
 		// 登録された型のRender関数の保持
 		std::map<mapping::rename_type::Hash, std::function<void(ecs::Registry* registry)>> render_functions{};
 
 		std::unique_ptr<camera::CameraTexture> camera_texture{};
+		std::unique_ptr<graphics::SkyBox>	   sky_box{};
 	};
 } // cumulonimbus::system

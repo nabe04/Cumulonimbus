@@ -24,15 +24,17 @@ namespace
 
 namespace cumulonimbus::graphics
 {
-	SkyBox::SkyBox(ID3D11Device* device, const std::string& filename)
+	SkyBox::SkyBox(system::System& system, ID3D11Device* device, const std::string& filename)
 	{
 		CreateVertexBufferAndIndexBuffer(device);
 		if (filename.empty())
 		{
+			file_path_and_name = sky_box_file_path;
 			CreateTextures(device, sky_box_file_path.c_str());
 		}
 		else
 		{
+			file_path_and_name = filename;
 			CreateTextures(device, filename.c_str());
 		}
 
@@ -40,7 +42,7 @@ namespace cumulonimbus::graphics
 		pixel_shader  = std::make_unique<shader::PixelShader>( device, mapping::shader_filename::ps::SkyBox_PS().c_str());
 
 		// System::Renderì‡Ç≈é¿çsÇ∑ÇÈä÷êîÇÃìoò^
-		locator::Locator::GetSystem()->RegisterRenderFunction(utility::GetHash<SkyBox>(),
+		system.RegisterRenderFunction(utility::GetHash<SkyBox>(),
 															  [&](ecs::Registry* registry) {RenderImGui(registry); });
 	}
 
@@ -67,6 +69,20 @@ namespace cumulonimbus::graphics
 
 			ImGui::TreePop();
 		}
+	}
+
+	void SkyBox::Load(system::System& system)
+	{
+		ID3D11Device* device = locator::Locator::GetDx11Device()->device.Get();
+		CreateVertexBufferAndIndexBuffer(device);
+		CreateTextures(device, file_path_and_name.c_str());
+
+		vertex_shader = std::make_unique<shader::VertexShader>(device, mapping::shader_filename::vs::SkyBox_VS().c_str());
+		pixel_shader  = std::make_unique<shader::PixelShader>( device, mapping::shader_filename::ps::SkyBox_PS().c_str());
+
+		// System::Renderì‡Ç≈é¿çsÇ∑ÇÈä÷êîÇÃìoò^
+		system.RegisterRenderFunction(utility::GetHash<SkyBox>(),
+									  [&](ecs::Registry* registry) { RenderImGui(registry); });
 	}
 
 	void SkyBox::BindShader(ID3D11DeviceContext* immediate_context) const

@@ -492,16 +492,14 @@ namespace cumulonimbus::renderer
 		ecs::Registry* registry, mapping::rename_type::Entity entity,
 		const camera::Camera* camera, const Light* light)
 	{
-		auto& sky_box = registry->GetComponent<component::SkyBoxComponent>(entity);
-		sky_box.ActivateShader(immediate_context);
+		auto& sky_box = locator::Locator::GetSystem()->GetSkyBox();
+		sky_box.BindShader(immediate_context);
 
-		sampler->Activate(immediate_context, SamplerState::Linear_Border, 0);
+		sampler->Activate(immediate_context		 , SamplerState::Linear_Border, 0);
 		depth_stencil->Activate(immediate_context, DepthStencilState::Depth_First);
-		rasterizer->Activate(immediate_context, RasterizeState::Cull_None);
+		rasterizer->Activate(immediate_context	 , RasterizeState::Cull_None);
 
 		{// Transform
-			//shader::CB_CoordinateTransformation cb{};
-			//cb.mat_view_projection = view->GetViewMat() * view->GetProjectionMat();
 			TransformCB transform{};
 
 			transform.bone_transforms[0] = registry->GetComponent<component::TransformComponent>(entity).GetWorld4x4();
@@ -509,11 +507,9 @@ namespace cumulonimbus::renderer
 		}
 
 		locator::Locator::GetDx11Device()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleList);
-
-		locator::Locator::GetDx11Device()->BindShaderResource(
-												mapping::graphics::ShaderStage::PS,
-												sky_box.GetShaderResoueceViewAddress(),
-												TexSlot_SkyMap);
+		locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
+															  sky_box.GetShaderResourceViewAddress(),
+															  TexSlot_SkyMap);
 		camera->BindCBuffer();
 		// Set of Vertex Buffers
 		UINT stride = sizeof(shader::Vertex);
@@ -523,13 +519,10 @@ namespace cumulonimbus::renderer
 
 		immediate_context->DrawIndexed(36, 0, 0);
 
-		sky_box_srv = sky_box.GetShaderResoueceView();
-		sky_box.DeactivateShader(immediate_context);
+		sky_box_srv = sky_box.GetShaderResourceView();
+		sky_box.UnBindShader(immediate_context);
 		locator::Locator::GetDx11Device()->UnbindShaderResource(mapping::graphics::ShaderStage::PS, TexSlot_SkyMap);
 		camera->UnbindCBuffer();
-		//off_screen->Deactivate(immediate_context);
-
-		//Blit(immediate_context);
 	}
 
 	void RenderPath::RenderCollision_Begin(
