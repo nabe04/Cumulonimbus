@@ -210,14 +210,6 @@ namespace cumulonimbus::renderer
 			const component::ModelComponent* model_comp,
 			const camera::Camera* camera, const Light* light);
 
-		/**
-		 * @brief :   "SkyBoxComponent"‚ª‚Âƒ‚ƒfƒ‹‚Ì•`‰æ
-		 */
-		void RenderSkyBox(
-			ID3D11DeviceContext* immediate_context,
-			ecs::Registry* registry, mapping::rename_type::Entity entity,
-			const camera::Camera* camera, const Light* light);
-
 		/*
 		 * brief : “–‚½‚è”»’è‚Ì•`‰æ
 		 */

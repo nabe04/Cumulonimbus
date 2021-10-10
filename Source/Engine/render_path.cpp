@@ -226,12 +226,33 @@ namespace cumulonimbus::renderer
 		// ライトパラメータをコンスタントバッファにバインド
 		light->BindCBuffer();
 
-		auto& components = registry->GetArray<component::SkyBoxComponent>().GetComponents();
-		for (auto& sky_box : registry->GetArray<component::SkyBoxComponent>().GetComponents())
-		{
-			mapping::rename_type::Entity ent = sky_box.GetEntity();
-			RenderSkyBox(immediate_context, registry, sky_box.GetEntity(), camera, light);
-		}
+		auto& sky_box = locator::Locator::GetSystem()->GetSkyBox();
+
+		// 各種Graphics Stateのセット
+		sampler->Activate(immediate_context, SamplerState::Linear_Border, 0);
+		depth_stencil->Activate(immediate_context, DepthStencilState::Depth_First);
+		rasterizer->Activate(immediate_context, RasterizeState::Cull_None);
+
+		sky_box.BindShader(immediate_context);
+		sky_box.BindCBuffer(immediate_context);
+		locator::Locator::GetDx11Device()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleList);
+		locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
+															  sky_box.GetShaderResourceViewAddress(),
+															  TexSlot_SkyMap);
+		camera->BindCBuffer();
+		// Set of Vertex Buffers
+		UINT stride = sizeof(shader::Vertex);
+		UINT offset = 0;
+		immediate_context->IASetVertexBuffers(0, 1, sky_box.GetVertexBufferAddress(), &stride, &offset);
+		immediate_context->IASetIndexBuffer(sky_box.GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+
+		immediate_context->DrawIndexed(36, 0, 0);
+
+		sky_box_srv = sky_box.GetShaderResourceView();
+		sky_box.UnBindShader(immediate_context);
+		sky_box.UnBindCBuffer(immediate_context);
+		locator::Locator::GetDx11Device()->UnbindShaderResource(mapping::graphics::ShaderStage::PS, TexSlot_SkyMap);
+		camera->UnbindCBuffer();
 	}
 
 	void RenderPath::RenderSkyBox_End(
@@ -333,12 +354,7 @@ namespace cumulonimbus::renderer
 		// ライトパラメータをコンスタントバッファにバインド
 		light->BindCBuffer();
 
-		auto& components = registry->GetArray<component::SkyBoxComponent>().GetComponents();
-		for(auto& sky_box : registry->GetArray<component::SkyBoxComponent>().GetComponents())
-		{
-			mapping::rename_type::Entity ent = sky_box.GetEntity();
-			RenderSkyBox(immediate_context, registry, sky_box.GetEntity(), camera, light);
-		}
+		RenderSkyBox(immediate_context, registry, camera, light);
 
 		// Skyマップをpixel shaderのshader resource viewにバインド
 		locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, sky_box_srv.GetAddressOf(), TexSlot_SkyMap);
@@ -484,45 +500,6 @@ namespace cumulonimbus::renderer
 
 			}
 		}
-	}
-
-
-	void RenderPath::RenderSkyBox(
-		ID3D11DeviceContext* immediate_context,
-		ecs::Registry* registry, mapping::rename_type::Entity entity,
-		const camera::Camera* camera, const Light* light)
-	{
-		auto& sky_box = locator::Locator::GetSystem()->GetSkyBox();
-		sky_box.BindShader(immediate_context);
-
-		sampler->Activate(immediate_context		 , SamplerState::Linear_Border, 0);
-		depth_stencil->Activate(immediate_context, DepthStencilState::Depth_First);
-		rasterizer->Activate(immediate_context	 , RasterizeState::Cull_None);
-
-		{// Transform
-			TransformCB transform{};
-
-			transform.bone_transforms[0] = registry->GetComponent<component::TransformComponent>(entity).GetWorld4x4();
-			registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
-		}
-
-		locator::Locator::GetDx11Device()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleList);
-		locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
-															  sky_box.GetShaderResourceViewAddress(),
-															  TexSlot_SkyMap);
-		camera->BindCBuffer();
-		// Set of Vertex Buffers
-		UINT stride = sizeof(shader::Vertex);
-		UINT offset = 0;
-		immediate_context->IASetVertexBuffers(0, 1, sky_box.GetVertexBufferAddress(), &stride, &offset);
-		immediate_context->IASetIndexBuffer(sky_box.GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
-
-		immediate_context->DrawIndexed(36, 0, 0);
-
-		sky_box_srv = sky_box.GetShaderResourceView();
-		sky_box.UnBindShader(immediate_context);
-		locator::Locator::GetDx11Device()->UnbindShaderResource(mapping::graphics::ShaderStage::PS, TexSlot_SkyMap);
-		camera->UnbindCBuffer();
 	}
 
 	void RenderPath::RenderCollision_Begin(

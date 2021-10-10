@@ -208,7 +208,7 @@ namespace cumulonimbus::ecs
 		// camera
 		RegistryComponent<component::CameraComponent>();
 		// sky box
-		RegistryComponent<component::SkyBoxComponent>();
+		//RegistryComponent<component::SkyBoxComponent>();
 		//-- game --//
 		// player
 		RegistryComponent<component::PlayerComponent>();

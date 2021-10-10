@@ -57,6 +57,8 @@ namespace cumulonimbus::system
 		 */
 		void Load(const std::filesystem::path& load_path = {""});
 
+		void Updata(float dt);
+		
 		/**
 		 * @brief : render_functions‚É“o˜^‚³‚ê‚½ŠÖ”‚ÌÀs
 		 */

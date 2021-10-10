@@ -143,6 +143,10 @@ namespace cumulonimbus::system
 		Initialize();
 	}
 
+	void System::Updata(const float dt)
+	{
+		sky_box->Update(dt);
+	}
 
 	void System::Render(ecs::Registry* registry)
 	{
