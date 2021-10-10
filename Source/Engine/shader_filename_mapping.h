@@ -9,6 +9,7 @@ namespace cumulonimbus::mapping::shader_filename
 		inline std::string Phong_VS()							{ return { "./Shader/cso/phong_vs.cso" }; }
 		inline std::string Image_VS()							{ return { "./Shader/cso/image_vs.cso" }; }
 		inline std::string Metal_VS()							{ return { "./Shader/cso/cook_torrance_vs.cso" }; }
+		inline std::string SkyBox_VS()							{ return { "./Shader/cso/sky_box_vs.cso" }; }
 		inline std::string Diffuse_VS()							{ return { "./Shader/cso/diffuse_vs.cso" }; }
 		inline std::string GBuffer_VS()							{ return { "./Shader/cso/gbuffer_vs.cso" }; }
 		inline std::string Sprite2D_VS()						{ return { "./Shader/cso/sprite2d_vs.cso" }; }
@@ -29,6 +30,7 @@ namespace cumulonimbus::mapping::shader_filename
 		inline std::string Toon_PS()							{ return { "./Shader/cso/toon_ps.cso" }; }
 		inline std::string Phong_PS()							{ return { "./Shader/cso/phong_ps.cso" }; }
 		inline std::string Metal_PS()							{ return { "./Shader/cso/cook_torrance_ps.cso" }; }
+		inline std::string SkyBox_PS()							{ return "./Shader/cso/sky_box_ps.cso"; }
 		inline std::string Diffuse_PS()							{ return { "./Shader/cso/diffuse_ps.cso" }; }
 		inline std::string GBuffer_PS()							{ return { "./Shader/cso/gbuffer_ps.cso" }; }
 		inline std::string ToonMTR_PS()							{ return {"./Shader/cso/toon_mtr_ps.cso"}; }

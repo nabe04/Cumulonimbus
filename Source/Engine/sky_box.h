@@ -5,12 +5,84 @@
 #include <string>
 
 #include <d3d11.h>
+#include <DirectXMath.h>
+#include <SimpleMath.h>
 #include <wrl.h>
 
 #include "component_base.h"
 #include "texture.h"
 #include "shader.h"
 #include "rename_type_mapping.h"
+
+namespace cumulonimbus::ecs
+{
+	class Registry;
+} // cumulonimbus::ecs
+
+namespace cumulonimbus::graphics
+{
+	class SkyBox final
+	{
+	public:
+		explicit SkyBox(ID3D11Device* device, const std::string& filename = { "" });
+		explicit SkyBox() = default; // for cereal
+		~SkyBox() = default;
+
+		template<class Archive>
+		void serialize(Archive&& archive)
+		{
+
+		}
+
+		void Update(float dt);
+
+		/**
+		 * @brief : ImGuiでのパラメータ表示関数
+		 * @param registry : System::Renderに登録するために必要
+		 */
+		void RenderImGui(ecs::Registry* registry);
+
+		void BindShader(ID3D11DeviceContext* immediate_context) const;
+		void UnBindShader(ID3D11DeviceContext* immediate_context) const;
+
+		[[nodiscard]]
+		ID3D11Buffer* GetVertexBuffer() const { return vertex_buffer.Get(); }
+		[[nodiscard]]
+		ID3D11Buffer* GetIndexBuffer()  const { return index_buffer.Get(); }
+		[[nodiscard]]
+		ID3D11Buffer** GetVertexBufferAddress() { return vertex_buffer.GetAddressOf(); }
+		[[nodiscard]]
+		ID3D11Buffer** GetIndexBufferAddress() { return index_buffer.GetAddressOf(); }
+
+		[[nodiscard]]
+		ID3D11ShaderResourceView* GetShaderResourceView() const { return texture_view.Get(); }
+		[[nodiscard]]
+		ID3D11ShaderResourceView** GetShaderResourceViewAddress() { return texture_view.GetAddressOf(); }
+
+		[[nodiscard]]
+		const DirectX::SimpleMath::Matrix& GetWorldMatrix() const { return world_mat; }
+	private:
+		std::array<std::unique_ptr<asset::Texture>, 6>	 cube_textures{};
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> texture_view{};
+
+		Microsoft::WRL::ComPtr<ID3D11Buffer>  vertex_buffer{};
+		Microsoft::WRL::ComPtr<ID3D11Buffer>  index_buffer{};
+		std::unique_ptr<shader::VertexShader> vertex_shader{};
+		std::unique_ptr<shader::PixelShader>  pixel_shader{};
+
+		DirectX::SimpleMath::Vector3 position{};
+		DirectX::SimpleMath::Vector3 scale{ 1.f,1.f,1.f };
+		DirectX::SimpleMath::Vector3 angle{};
+
+		DirectX::SimpleMath::Matrix world_mat		{ DirectX::SimpleMath::Matrix::Identity };
+		DirectX::SimpleMath::Matrix scaling_mat		{ DirectX::SimpleMath::Matrix::Identity };
+		DirectX::SimpleMath::Matrix rotation_mat	{ DirectX::SimpleMath::Matrix::Identity };
+		DirectX::SimpleMath::Matrix translation_mat	{ DirectX::SimpleMath::Matrix::Identity };
+
+		void CreateVertexBufferAndIndexBuffer(ID3D11Device* device);
+		void CreateTextures(ID3D11Device* device, const char* filename);
+	};
+} // cumulonimbus::skybox
 
 namespace cumulonimbus::component
 {
@@ -28,7 +100,7 @@ namespace cumulonimbus::component
 
 		void PreGameUpdate(float dt) override {}
 		void GameUpdate(float dt)	 override {}
-		void RenderImGui()			 override;;
+		void RenderImGui()			 override;
 
 		void Load(ecs::Registry* registry) override;
 
