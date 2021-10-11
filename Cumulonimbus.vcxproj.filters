@@ -210,7 +210,7 @@
     <ClCompile Include="Source\Engine\anim_sprite.cpp">
       <Filter>Source\Engine\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\child_actor.cpp">
+    <ClCompile Include="Source\Engine\child_actor_component.cpp">
       <Filter>Source\Engine\Components</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\sprite.cpp">
@@ -570,6 +570,9 @@
     <ClCompile Include="Source\Engine\generic.cpp">
       <Filter>Source\Engine\System</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\hierarchy_component.cpp">
+      <Filter>Source\Engine\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -587,7 +590,7 @@
     <ClInclude Include="Source\Engine\anim_sprite.h">
       <Filter>Header\Engine\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\child_actor.h">
+    <ClInclude Include="Source\Engine\child_actor_component.h">
       <Filter>Header\Engine\Components</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\collision_component.h">
@@ -1036,6 +1039,9 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\filename_helper.h">
       <Filter>Header\Engine\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\hierarchy_component.h">
+      <Filter>Header\Engine\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

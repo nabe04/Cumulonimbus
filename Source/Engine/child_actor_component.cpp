@@ -1,4 +1,4 @@
-#include "child_actor.h"
+#include "child_actor_component.h"
 
 #include <cassert>
 
@@ -12,7 +12,6 @@ namespace cumulonimbus::component
 {
 	ChildActorComponent::ChildActorComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, EntityTag tag, std::string node_name)
 		:MeshObjectComponent{ registry , ent }
-		, parent_tag{ tag }
 		, tag_node_name{ node_name }
 	{
 	}

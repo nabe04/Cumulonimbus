@@ -552,6 +552,23 @@ namespace cumulonimbus::ecs
 		}
 
 		/**
+		 * @brief : 指定のコンポーネントをエンティティが持っているかの判別
+		 * @param ent : 判別対象のエンティティ
+		 * @return : true -> 所持している
+		 * @return : false -> 所持していない
+		 */
+		template<class T>
+		[[nodiscard]]
+		bool HasComponent(const mapping::rename_type::Entity& ent)
+		{
+			const ComponentArray<T>& array = GetArray<T>();
+			if (!array.Content(ent))
+				return false;
+
+			return true;
+		}
+
+		/**
 		 * @brief : 指定されたエンティティ名が存在するか
 		 * @return : true -> 存在する
 		 * @return : false -> 存在しない

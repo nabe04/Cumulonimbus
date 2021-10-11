@@ -10,6 +10,7 @@
 #include "billboard_component.h"
 #include "camera_component.h"
 #include "capsule_collison_component.h"
+#include "hierarchy_component.h"
 #include "model_component.h"
 #include "physic_material_component.h"
 #include "raycast_component.h"
@@ -193,6 +194,7 @@ namespace cumulonimbus::ecs
 		RegistryComponent<component::TransformComponent>();
 		// actor
 		RegistryComponent<component::Actor3DComponent>();
+		RegistryComponent<component::HierarchyComponent>();
 		// model
 		RegistryComponent<component::ModelComponent>();
 		// sprite
@@ -207,8 +209,6 @@ namespace cumulonimbus::ecs
 		RegistryComponent<component::RigidBodyComponent>();
 		// camera
 		RegistryComponent<component::CameraComponent>();
-		// sky box
-		//RegistryComponent<component::SkyBoxComponent>();
 		//-- game --//
 		// player
 		RegistryComponent<component::PlayerComponent>();

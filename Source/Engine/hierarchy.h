@@ -19,6 +19,7 @@ namespace cumulonimbus::editor
 		mapping::rename_type::Entity GetSelectedEntity() const { return selected_entity; }
 	private:
 		mapping::rename_type::Entity selected_entity{};
+		mapping::rename_type::Entity test_selected_entity{};
 
 		/**
 		 * @brief : Hierarchy View上でのアセット右クリック時の操作
@@ -34,5 +35,7 @@ namespace cumulonimbus::editor
 		 * @remark : ※caution : ImGui::MenuItem内に記述すること
 		 */
 		//void DeleteAsset();
+
+		void EntityTree(ecs::Registry* registry, const mapping::rename_type::Entity& parent_ent, const std::string& entity_name);
 	};
 } // cumulonimbus::editor

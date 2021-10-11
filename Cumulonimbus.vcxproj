@@ -41,7 +41,7 @@
     <ClInclude Include="Source\Engine\camera.h" />
     <ClInclude Include="Source\Engine\capsule_collison_component.h" />
     <ClInclude Include="Source\Engine\cereal_helper.h" />
-    <ClInclude Include="Source\Engine\child_actor.h" />
+    <ClInclude Include="Source\Engine\child_actor_component.h" />
     <ClInclude Include="Source\Engine\collision_component.h" />
     <ClInclude Include="Source\Engine\collision_manager.h" />
     <ClInclude Include="Source\Engine\collision_name_mapping.h" />
@@ -76,6 +76,7 @@
     <ClInclude Include="Source\Engine\graphics_mapping.h" />
     <ClInclude Include="Source\Engine\graphics_state.h" />
     <ClInclude Include="Source\Engine\hierarchy.h" />
+    <ClInclude Include="Source\Engine\hierarchy_component.h" />
     <ClInclude Include="Source\Engine\high_resolution_timer.h" />
     <ClInclude Include="Source\Engine\imgui_helper.h" />
     <ClInclude Include="Source\Engine\imgui_manager.h" />
@@ -196,7 +197,7 @@
     <ClCompile Include="Source\Engine\bloom.cpp" />
     <ClCompile Include="Source\Engine\camera.cpp" />
     <ClCompile Include="Source\Engine\capsule_collison_component.cpp" />
-    <ClCompile Include="Source\Engine\child_actor.cpp" />
+    <ClCompile Include="Source\Engine\child_actor_component.cpp" />
     <ClCompile Include="Source\Engine\collision_component.cpp" />
     <ClCompile Include="Source\Engine\collision_manager.cpp" />
     <ClCompile Include="Source\Engine\component_list.cpp" />
@@ -224,6 +225,7 @@
     <ClCompile Include="Source\Engine\geometric_primitive_resource.cpp" />
     <ClCompile Include="Source\Engine\graphics_statte.cpp" />
     <ClCompile Include="Source\Engine\hierarchy.cpp" />
+    <ClCompile Include="Source\Engine\hierarchy_component.cpp" />
     <ClCompile Include="Source\Engine\imgui_manager.cpp" />
     <ClCompile Include="Source\Engine\InputManager.cpp" />
     <ClCompile Include="Source\Engine\input_device.cpp" />

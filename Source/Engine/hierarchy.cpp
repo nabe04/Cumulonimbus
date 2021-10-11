@@ -3,6 +3,7 @@
 #include "ecs.h"
 #include "locator.h"
 #include "prefab_loader.h"
+#include "hierarchy_component.h"
 
 namespace
 {
@@ -13,7 +14,6 @@ namespace cumulonimbus::editor
 {
 	void Hierarchy::Render(ecs::Registry* registry)
 	{
-		ImVec2 button_size{ 10.f,10.f };
 		if (ImGui::Begin(ICON_FA_ALIGN_RIGHT" Hierarchy"))
 		{
 			if (ImGui::Button(ICON_FA_PLUS, { 30,30 }))
@@ -53,6 +53,29 @@ namespace cumulonimbus::editor
 
 			//
 			ContextMenu(registry);
+
+			{// V‹KHierarchy
+				std::filesystem::path current_scene_path = locator::Locator::GetSystem()->GetCurrentScenePath();
+				if(ImGui::TreeNode(current_scene_path.filename().replace_extension().string().c_str()))
+				{
+					for (auto& [key, value] : registry->GetEntities())
+					{
+						if (registry->HasComponent<component::HierarchyComponent>(key))
+							continue;
+
+						EntityTree(registry, key, registry->GetName(key));
+						ImGui::Selectable(value.second.c_str(), selected_entity == key);
+					}
+
+					ImGui::TreePop();
+				}
+			}
+		}
+		ImGui::End();
+
+		if(ImGui::Begin("Hierarchy Data"))
+		{
+			ImGui::Text(registry->GetName(test_selected_entity).c_str());
 		}
 		ImGui::End();
 	}
@@ -79,4 +102,18 @@ namespace cumulonimbus::editor
 		asset_manager->GetLoader<asset::PrefabLoader>()->CreatePrefab(*asset_manager, registry, selected_entity, false, ent_name);
 	}
 
+	void Hierarchy::EntityTree(
+		ecs::Registry* registry,
+		const mapping::rename_type::Entity& parent_ent,
+		const std::string& entity_name)
+	{
+		ecs::ComponentArray<component::HierarchyComponent>& hierarchy_comp_array = registry->GetArray<component::HierarchyComponent>();
+		for(const auto& hierarchy_comp : hierarchy_comp_array.GetComponents())
+		{
+			if(hierarchy_comp.GetParentEntity() == parent_ent)
+			{
+				EntityTree(registry, hierarchy_comp.GetParentEntity(), registry->GetName(hierarchy_comp.GetEntity()));
+			}
+		}
+	}
 } // cumulonimbus::editor

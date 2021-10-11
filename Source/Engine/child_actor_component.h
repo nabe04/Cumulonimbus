@@ -12,6 +12,7 @@
 #include "ecs.h"
 #include "mesh_object.h"
 #include "enum_state_map.h"
+#include "rename_type_mapping.h"
 
 namespace cumulonimbus::component
 {
@@ -29,18 +30,21 @@ namespace cumulonimbus::component
 
 		void Load(ecs::Registry* registry) override;
 
+		[[nodiscard]]
+		const mapping::rename_type::Entity& GetParentEntity() const { return parent_ent; }
+
 		template<typename Archive>
 		void serialize(Archive&& archive)
 		{
 			archive(
 				cereal::base_class<MeshObjectComponent>(this),
-				CEREAL_NVP(parent_tag),
 				CEREAL_NVP(parent_matrix),
 				CEREAL_NVP(tag_node_name)
 			);
 		}
 	private:
-		EnumStateMap<EntityTag> parent_tag{ EntityTag::Default };
+		mapping::rename_type::Entity parent_ent{}; // 親のエンティティ
+		//EnumStateMap<EntityTag> parent_tag{ EntityTag::Default };
 
 		DirectX::SimpleMath::Matrix parent_matrix;
 		std::string tag_node_name;
