@@ -13,6 +13,7 @@
 #include "resource_manager.h"
 #include "window.h"
 #include "file_path_helper.h"
+#include "filename_helper.h"
 
 #include "scene_game.h"
 
@@ -60,6 +61,23 @@ namespace cumulonimbus::scene
 		}
 
 		UnInitialize();
+	}
+
+	void Scene::CreateScene() const
+	{
+		// 現在存在する全てのエンティティを削除
+		registry->DestroyAllEntities();
+
+		// デフォルトのゲームオブジェクトの追加
+		// カメラ
+		const mapping::rename_type::Entity ent_main_camera = registry->CreateEntity();
+		registry->AddComponent<component::CameraComponent>(ent_main_camera, true);
+		registry->Rename(ent_main_camera, filename_helper::GetMainCamera());
+		// Todo : ライトコンポーネントを作成すれば...
+		// ライト
+
+		// シーン名が決まって無いので"NoTitled"をセットする
+		system->SetCurrentScenePath(filename_helper::GetNoTitled());
 	}
 
 	void Scene::SaveScene(const std::string& file_dir, const std::string& scene_name)
@@ -116,19 +134,20 @@ namespace cumulonimbus::scene
 
 		collision_manager = std::make_unique<collision::CollisionManager>(*system.get());
 
-		const mapping::rename_type::Entity ent_main_camera = registry->CreateEntity();
-		registry->AddComponent<component::CameraComponent>(ent_main_camera, true);
-		registry->GetComponent<component::CameraComponent>(ent_main_camera).GetCamera()->SetViewInfo({ 25,100,-300 }, { .0f, .0f, .0f }, XMFLOAT3(.0f, 1.0f, .0f));
-		registry->GetComponent<component::CameraComponent>(ent_main_camera).GetCamera()->SetProjection(XM_PI / 8.0f, static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
+		CreateScene();
+		//const mapping::rename_type::Entity ent_main_camera = registry->CreateEntity();
+		//registry->AddComponent<component::CameraComponent>(ent_main_camera, true);
+		//registry->GetComponent<component::CameraComponent>(ent_main_camera).GetCamera()->SetViewInfo({ 25,100,-300 }, { .0f, .0f, .0f }, XMFLOAT3(.0f, 1.0f, .0f));
+		//registry->GetComponent<component::CameraComponent>(ent_main_camera).GetCamera()->SetProjection(XM_PI / 8.0f, static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(cumulonimbus::locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
 
-		//const char* sky_filename = "./Data/Assets/cubemap/skybox";
-		//const mapping::rename_type::Entity ent_sky_box = registry->CreateEntity();
-		//registry->AddComponent<component::SkyBoxComponent>(ent_sky_box, locator::Locator::GetDx11Device()->device.Get(), sky_filename);
-		//registry->GetComponent<component::TransformComponent>(ent_sky_box).SetScale(3.f);
+		////const char* sky_filename = "./Data/Assets/cubemap/skybox";
+		////const mapping::rename_type::Entity ent_sky_box = registry->CreateEntity();
+		////registry->AddComponent<component::SkyBoxComponent>(ent_sky_box, locator::Locator::GetDx11Device()->device.Get(), sky_filename);
+		////registry->GetComponent<component::TransformComponent>(ent_sky_box).SetScale(3.f);
 
-		const mapping::rename_type::Entity test_ent = registry->CreateEntity();
-		registry->GetComponent<component::TransformComponent>(test_ent).SetPosition({ 10,100,-30 });
-		registry->GetComponent<component::TransformComponent>(test_ent).SetScale({20,60,1000});
+		//const mapping::rename_type::Entity test_ent = registry->CreateEntity();
+		//registry->GetComponent<component::TransformComponent>(test_ent).SetPosition({ 10,100,-30 });
+		//registry->GetComponent<component::TransformComponent>(test_ent).SetScale({20,60,1000});
 	}
 
 	void Scene::UnInitialize()
@@ -141,6 +160,8 @@ namespace cumulonimbus::scene
 
 	void Scene::Update(const float dt)
 	{
+		auto a = locator::Locator::GetSystem()->GetCurrentScenePath();
+
 		// 共通の更新処理
 		registry->PreCommonUpdate(dt);
 		registry->CommonUpdate(dt);
@@ -159,7 +180,7 @@ namespace cumulonimbus::scene
 
 		collision_manager->Update(dt, registry.get());
 
-		system->Updata(dt);
+		system->Update(dt);
 
 		// light update
 		for (const auto& camera_comp : registry->GetArray<cumulonimbus::component::CameraComponent>().GetComponents())

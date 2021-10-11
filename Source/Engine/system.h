@@ -57,8 +57,8 @@ namespace cumulonimbus::system
 		 */
 		void Load(const std::filesystem::path& load_path = {""});
 
-		void Updata(float dt);
-		
+		void Update(float dt);
+
 		/**
 		 * @brief : render_functionsに登録された関数の実行
 		 */
@@ -75,11 +75,25 @@ namespace cumulonimbus::system
 		camera::CameraTexture& GetCameraTexture() const;
 		[[nodiscard]]
 		graphics::SkyBox& GetSkyBox() const;
+		[[nodiscard]]
+		const std::string& GetCurrentScenePath() const { return current_scene_path; }
+		[[nodiscard]]
+		const std::string& GetDefaultScenePath() const { return default_scene_path; }
+
+		void SetCurrentScenePath(const std::string& scene_path)
+		{
+			current_scene_path = scene_path;
+			int a;
+			a = 0;
+		}
 	private:
 		// 登録された型のRender関数の保持
 		std::map<mapping::rename_type::Hash, std::function<void(ecs::Registry* registry)>> render_functions{};
 
 		std::unique_ptr<camera::CameraTexture> camera_texture{};
 		std::unique_ptr<graphics::SkyBox>	   sky_box{};
+
+		std::string current_scene_path{};  // 現在開かれているシーン(cerealがstd::filesystem未対応のためstd::stringにしている)
+		std::string default_scene_path{}; // ウィンドウ作成時に開くシーン(cerealがstd::filesystem未対応のためstd::stringにしている)
 	};
 } // cumulonimbus::system

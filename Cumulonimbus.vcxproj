@@ -63,6 +63,7 @@
     <ClInclude Include="Source\Engine\enum_state_map.h" />
     <ClInclude Include="Source\Engine\fbx_model_component.h" />
     <ClInclude Include="Source\Engine\fbx_model_resource.h" />
+    <ClInclude Include="Source\Engine\filename_helper.h" />
     <ClInclude Include="Source\Engine\file_path_helper.h" />
     <ClInclude Include="Source\Engine\framework.h" />
     <ClInclude Include="Source\Engine\frame_buffer.h" />
@@ -211,6 +212,7 @@
     <ClCompile Include="Source\Engine\editor_manager.cpp" />
     <ClCompile Include="Source\Engine\fbx_model_component.cpp" />
     <ClCompile Include="Source\Engine\fbx_model_resource.cpp" />
+    <ClCompile Include="Source\Engine\filename_helper.cpp" />
     <ClCompile Include="Source\Engine\file_path_helper.cpp" />
     <ClCompile Include="Source\Engine\framework.cpp" />
     <ClCompile Include="Source\Engine\frame_buffer.cpp" />
@@ -218,6 +220,7 @@
     <ClCompile Include="Source\Engine\game_view.cpp" />
     <ClCompile Include="Source\Engine\gaussian_blur.cpp" />
     <ClCompile Include="Source\Engine\gbuffer.cpp" />
+    <ClCompile Include="Source\Engine\generic.cpp" />
     <ClCompile Include="Source\Engine\geometric_primitive_resource.cpp" />
     <ClCompile Include="Source\Engine\graphics_statte.cpp" />
     <ClCompile Include="Source\Engine\hierarchy.cpp" />

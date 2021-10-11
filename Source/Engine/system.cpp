@@ -41,7 +41,9 @@ namespace cumulonimbus::system
 		if(version >= 0)
 		{
 			archive(
-				CEREAL_NVP(sky_box)
+				CEREAL_NVP(sky_box),
+				CEREAL_NVP(current_scene_path),
+				CEREAL_NVP(default_scene_path)
 			);
 		}
 	}
@@ -57,6 +59,14 @@ namespace cumulonimbus::system
 		{
 			archive(
 				CEREAL_NVP(sky_box)
+			);
+		}
+		if(version == 2)
+		{
+			archive(
+				CEREAL_NVP(sky_box),
+				CEREAL_NVP(current_scene_path),
+				CEREAL_NVP(default_scene_path)
 			);
 		}
 	}
@@ -143,9 +153,11 @@ namespace cumulonimbus::system
 		Initialize();
 	}
 
-	void System::Updata(const float dt)
+	void System::Update(const float dt)
 	{
 		sky_box->Update(dt);
+		auto a = current_scene_path;
+		int b;
 	}
 
 	void System::Render(ecs::Registry* registry)

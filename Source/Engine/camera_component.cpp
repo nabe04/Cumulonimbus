@@ -74,7 +74,7 @@ namespace cumulonimbus::component
 		:ComponentBase{}
 	{
 		camera = std::make_unique<camera::Camera>(locator::Locator::GetWindow()->Width(),
-			locator::Locator::GetWindow()->Height());;
+												  locator::Locator::GetWindow()->Height());;
 	}
 
 	CameraComponent::CameraComponent(

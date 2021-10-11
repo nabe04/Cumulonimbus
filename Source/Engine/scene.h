@@ -46,6 +46,10 @@ namespace cumulonimbus::scene
 		void Execute(Framework* framework);
 
 		/**
+		 * @brief : 新規シーンの作成
+		 */
+		void CreateScene() const;
+		/**
 		 * @brief    : シリアライズされた際に保存するファイル
 		 * @param file_dir  : 保存するファイルまでのディレクトリパス
 		 * @param scene_name : 保存するシーン名(※拡張子除く)

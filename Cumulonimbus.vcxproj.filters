@@ -297,9 +297,6 @@
     <ClCompile Include="Source\Engine\dx11_configurator.cpp">
       <Filter>Source\Engine\System</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\easing.cpp">
-      <Filter>Source\Engine\System</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Engine\ecs.cpp">
       <Filter>Source\Engine\System</Filter>
     </ClCompile>
@@ -360,9 +357,6 @@
     <ClCompile Include="Source\Engine\sprite_renderer.cpp">
       <Filter>Source\Engine\System</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\string_helper.cpp">
-      <Filter>Source\Engine\System</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Engine\texture.cpp">
       <Filter>Source\Engine\System</Filter>
     </ClCompile>
@@ -371,9 +365,6 @@
     </ClCompile>
     <ClCompile Include="Source\Engine\model_render.cpp">
       <Filter>Source\Engine\Render</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\file_path_helper.cpp">
-      <Filter>Source\Engine\System</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\render_path.cpp">
       <Filter>Source\Engine\System</Filter>
@@ -471,9 +462,6 @@
     <ClCompile Include="Source\Game\enemy_soldier_component.cpp">
       <Filter>Source\Game\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\cum_imgui_helper.cpp">
-      <Filter>Source\Engine\System</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Engine\editor_manager.cpp">
       <Filter>Source\Engine\Editor</Filter>
     </ClCompile>
@@ -562,6 +550,24 @@
       <Filter>Source\Engine\Loader</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\system.cpp">
+      <Filter>Source\Engine\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\cum_imgui_helper.cpp">
+      <Filter>Source\Engine\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\file_path_helper.cpp">
+      <Filter>Source\Engine\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\easing.cpp">
+      <Filter>Source\Engine\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\string_helper.cpp">
+      <Filter>Source\Engine\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\filename_helper.cpp">
+      <Filter>Source\Engine\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\generic.cpp">
       <Filter>Source\Engine\System</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1028,6 +1034,9 @@
     <ClInclude Include="Source\Engine\system.h">
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\filename_helper.h">
+      <Filter>Header\Engine\Helper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Cumulonimbus.rc" />
@@ -1194,6 +1203,9 @@
     </Filter>
     <Filter Include="Source\Engine\Loader">
       <UniqueIdentifier>{f725f828-e4b4-4a47-a8b8-b1a504ad3ffd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Helper">
+      <UniqueIdentifier>{334f6bc4-557b-4d65-a850-2872d175b01d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

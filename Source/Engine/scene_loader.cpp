@@ -47,8 +47,19 @@ namespace cumulonimbus::asset
 		scene::Scene& scene,
 		const std::filesystem::path& path)
 	{
-		std::filesystem::create_directory(path.parent_path());
-		scene.SaveScene(path.parent_path().string(), path.filename().string());
+		std::filesystem::create_directory(path);
+		// 選択されたファイルパスがアセットに存在していない場合登録する
+		AssetManager& asset_manager = *locator::Locator::GetAssetManager();
+		if (asset_manager.GetAssetSheetManager().Search<SceneAsset>(path).empty())
+		{
+			Load(asset_manager, path);
+		}
+		scene.SaveScene(path.string(), path.filename().string());
+	}
+
+	void SceneLoader::CreateScene(scene::Scene& scene)
+	{
+		scene.CreateScene();
 	}
 
 	void SceneLoader::OpenScene(
@@ -62,6 +73,7 @@ namespace cumulonimbus::asset
 			Load(asset_manager, path);
 		}
 
+		locator::Locator::GetSystem()->SetCurrentScenePath(path.string());
 		scene.LoadScene(path.parent_path().string(), path.filename().string());
 	}
 

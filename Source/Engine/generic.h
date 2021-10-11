@@ -44,4 +44,12 @@ namespace cumulonimbus::utility
 
 		return to_string(id);
 	}
+
+	/**
+	 * @brief : 現プロジェクトの絶対パスを相対パスに変換
+	 * @remark : パス名に「Cumulonimbus」が存在しない時例外処理を出す
+	 * @remark : 例) D:/Desktop/Cumulonimbus/Data -> ./Data
+	 */
+	[[nodiscard]]
+	std::string ConvertAbsolutePathToRelativePath(const std::string& path);
 } // cumulonimbus::utility

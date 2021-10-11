@@ -266,7 +266,6 @@ namespace cumulonimbus::ecs
 		{
 			DestroyAllEntities();
 		}
-		component_arrays.clear();
 
 		{// エンティティの読み込み
 			// パス -> ./file_path/「Entities」.bin

@@ -453,6 +453,7 @@ namespace cumulonimbus::ecs
 			}
 
 			entities.clear();
+			component_arrays.clear();
 		}
 
 		template <typename T>
@@ -573,6 +574,20 @@ namespace cumulonimbus::ecs
 				return "";
 
 			return entities.at(ent).second;
+		}
+
+		/**
+		 * @brief : エンティティ名の変更
+		 * @param ent : 名前を変更したいエンティティ
+		 * @param name : 変更後の名前
+		 */
+		void Rename(const mapping::rename_type::Entity& ent, const std::string& name)
+		{
+			// エンティティが存在しない場合処理を抜ける
+			if (!entities.contains(ent))
+				return;
+
+			entities.at(ent).second = name;
 		}
 
 		/**

@@ -26,8 +26,8 @@ namespace cumulonimbus::asset
 
 		void Save(scene::Scene& scene, const std::filesystem::path& path);
 
+		void CreateScene(scene::Scene& scene);
 		void OpenScene(scene::Scene& scene, const std::filesystem::path& path);
-		//void CreateScene()
 
 		void Delete(AssetManager& asset_manager, const std::filesystem::path& path) override;
 		void Delete(AssetManager& asset_manager, const mapping::rename_type::UUID& asset_id) override;
