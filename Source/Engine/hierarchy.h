@@ -19,7 +19,6 @@ namespace cumulonimbus::editor
 		mapping::rename_type::Entity GetSelectedEntity() const { return selected_entity; }
 	private:
 		mapping::rename_type::Entity selected_entity{};
-		mapping::rename_type::Entity test_selected_entity{};
 
 		/**
 		 * @brief : Hierarchy View上でのアセット右クリック時の操作
@@ -36,6 +35,18 @@ namespace cumulonimbus::editor
 		 */
 		//void DeleteAsset();
 
-		void EntityTree(ecs::Registry* registry, const mapping::rename_type::Entity& parent_ent, const std::string& entity_name);
+		/**
+		 * @brief : エンティティの親子階層の表示
+		 * @param registry :
+		 * @param ent : 現在選択されているエンティティ
+		 * @param entity_name : 現在選択されているエンティティ名 
+		 */
+		void EntityTree(ecs::Registry* registry, const mapping::rename_type::Entity& ent, const std::string& entity_name);
+
+
+		bool HasParentEntity(
+			ecs::Registry* registry, 
+			const mapping::rename_type::Entity& selected_ent,
+			const mapping::rename_type::Entity& ent) const;
 	};
 } // cumulonimbus::editor
