@@ -12,7 +12,7 @@ namespace
 
 namespace cumulonimbus::editor
 {
-	void Hierarchy::Render(ecs::Registry* registry)
+	void Hierarchy::Render(ecs::Registry* const registry)
 	{
 		if (ImGui::Begin(ICON_FA_ALIGN_RIGHT" Hierarchy"))
 		{
@@ -51,7 +51,6 @@ namespace cumulonimbus::editor
 				}
 			}
 
-			//
 			ContextMenu(registry);
 
 			{// 新規Hierarchy
@@ -85,6 +84,7 @@ namespace cumulonimbus::editor
 						if (registry->HasComponent<component::HierarchyComponent>(key))
 							continue;
 
+						is_dragged_entity = false;
 						EntityTree(registry, key, registry->GetName(key));
 					}
 
@@ -103,7 +103,7 @@ namespace cumulonimbus::editor
 		ImGui::End();
 	}
 
-	void Hierarchy::ContextMenu(ecs::Registry* registry)
+	void Hierarchy::ContextMenu(ecs::Registry* const registry)
 	{
 		if(ImGui::BeginPopup(context_id.c_str()))
 		{
@@ -113,29 +113,31 @@ namespace cumulonimbus::editor
 			}
 			ImGui::MenuItem("Delete");
 
-
 			ImGui::EndPopup();
 		}
 	}
 
-	void Hierarchy::CreatePrefab(ecs::Registry* registry, const mapping::rename_type::Entity& ent)
+	void Hierarchy::CreatePrefab(ecs::Registry* const registry, const mapping::rename_type::Entity& ent)
 	{
-		asset::AssetManager* asset_manager = locator::Locator::GetAssetManager();
-		const std::string& ent_name = registry->GetName(selected_entity);
+		asset::AssetManager* asset_manager	= locator::Locator::GetAssetManager();
+		const std::string&	 ent_name		= registry->GetName(selected_entity);
 		asset_manager->GetLoader<asset::PrefabLoader>()->CreatePrefab(*asset_manager, registry, selected_entity, false, ent_name);
 	}
 
 	void Hierarchy::EntityTree(
-		ecs::Registry* registry,
+		ecs::Registry* const registry,
 		const mapping::rename_type::Entity& ent,
 		const std::string& entity_name)
 	{
-		bool is_last = true;
+		bool is_last		= true;	// 現エンティティに子供の階層が存在しないか
+		bool is_selectable	= true;	// ドラッグ & ドロップでの親子付け時に選択可能か
 
-		ImGuiTreeNodeFlags flg{};
+		ImGuiTreeNodeFlags node_flg{ ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth };
 		ecs::ComponentArray<component::HierarchyComponent>& hierarchy_comp_array = registry->GetArray<component::HierarchyComponent>();
 		for (const auto& hierarchy_comp : hierarchy_comp_array.GetComponents())
 		{
+			// 現在のエンティティに子供がいないか判定
+			// もし子供がいなければImGuiTreeにImGuiTreeNodeFlags_Leafを追加する
 			if (hierarchy_comp.GetParentEntity() != ent)
 				continue;
 
@@ -143,29 +145,34 @@ namespace cumulonimbus::editor
 		}
 		if(HasParentEntity(registry, selected_entity, ent))
 		{
-			int a;
-			a = 0;
+			is_selectable = false;
 		}
 		// 現エンティティの小階層が存在しないときTreeNodeの矢印を表示しない
 		if (is_last)
-			flg |= ImGuiTreeNodeFlags_Leaf;
+			node_flg |= ImGuiTreeNodeFlags_Leaf;
 		// 現エンティティが選択されている場合TreeNodeを選択状態にする
 		if (ent == selected_entity)
-			flg |= ImGuiTreeNodeFlags_Selected;
+			node_flg |= ImGuiTreeNodeFlags_Selected;
+		if (!is_selectable &&
+			is_dragged_entity)
+			ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImGuiCol_TextDisabled));
 		// ノード作成
-		const bool node_opened = ImGui::TreeNodeEx(entity_name.c_str(), flg);
+		const bool is_opened = ImGui::TreeNodeEx(entity_name.c_str(), node_flg);
+		if (!is_selectable &&
+			is_dragged_entity)
+			ImGui::PopStyleColor();
 		if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
-		{
 			selected_entity = ent;
-		}
+
 		// ドラック & ドロップ操作
 		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 		{
+			is_dragged_entity = true;
 			ImGui::SetDragDropPayload("cell", &ent, sizeof(mapping::rename_type::Entity));
 			ImGui::Text(registry->GetName(selected_entity).c_str());
 			ImGui::EndDragDropSource();
 		}
-		if (ImGui::BeginDragDropTarget())
+		if (ImGui::BeginDragDropTarget() && is_selectable)
 		{
 			if (ImGui::AcceptDragDropPayload("cell"))
 			{
@@ -176,7 +183,7 @@ namespace cumulonimbus::editor
 			ImGui::EndDragDropTarget();
 		}
 
-		if (node_opened)
+		if (is_opened)
 		{
 			for (const auto& hierarchy_comp : hierarchy_comp_array.GetComponents())
 			{
@@ -188,12 +195,10 @@ namespace cumulonimbus::editor
 			}
 			ImGui::TreePop();
 		}
-
-		// is_last ?  ImGuiTreeNodeFlags_Leaf | flg : ImGuiTreeNodeFlags_None | flg
 	}
 
 	bool Hierarchy::HasParentEntity(
-		ecs::Registry* registry,
+		ecs::Registry* const registry,
 		const mapping::rename_type::Entity& selected_ent,
 		const mapping::rename_type::Entity& ent) const
 	{
