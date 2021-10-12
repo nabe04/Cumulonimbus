@@ -7,7 +7,8 @@
 
 namespace
 {
-	const std::string context_id{ "Context_Menu" };	// ImGui::PopupのコンテキストメニューID
+	const std::string context_id{ "context_menu" };	// ImGui::PopupのコンテキストメニューID
+	const std::string dragged_id{ "dragged_entity" };
 }
 
 namespace cumulonimbus::editor
@@ -51,36 +52,29 @@ namespace cumulonimbus::editor
 				}
 			}
 
-			ContextMenu(registry);
-
 			{// 新規Hierarchy
 				std::filesystem::path current_scene_path = locator::Locator::GetSystem()->GetCurrentScenePath();
-				if (ImGui::TreeNode(current_scene_path.filename().replace_extension().string().c_str()))
+				if (ImGui::TreeNodeEx(current_scene_path.filename().replace_extension().string().c_str(),
+									  ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen))
 				{
-					// シーン階層へのドラッグ & ドロップ処理
-					if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
-					{
-						ImGui::SetDragDropPayload("cell", &selected_entity, sizeof(mapping::rename_type::Entity));
-						ImGui::Text(registry->GetName(selected_entity).c_str());
-						ImGui::EndDragDropSource();
-					}
+					//-- シーン階層へのドラッグ & ドロップ処理 --//
 					if (ImGui::BeginDragDropTarget())
-					{
-						const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("cell");
-						if (payload)
+					{// シーン階層に対してのエンティティドロップ処理
+						if (ImGui::AcceptDragDropPayload(dragged_id.c_str()))
 						{
-
-							const mapping::rename_type::Entity drag_ent = *static_cast<mapping::rename_type::Entity*>(payload->Data);
-							auto drag_name = registry->GetName(drag_ent);
-							auto name = registry->GetName(selected_entity);
-							int a;
-							a = 0;
+							if(registry->HasComponent<component::HierarchyComponent>(selected_entity))
+							{
+								registry->RemoveComponent<component::HierarchyComponent>(selected_entity);
+							}
 						}
 
 						ImGui::EndDragDropTarget();
 					}
+
 					for (auto& [key, value] : registry->GetEntities())
 					{
+						// エンティティの階層表示
+						// 初めは一番上の親階層から始める
 						if (registry->HasComponent<component::HierarchyComponent>(key))
 							continue;
 
@@ -93,6 +87,8 @@ namespace cumulonimbus::editor
 				}
 
 			}
+
+			ContextMenu(registry);
 		}
 		ImGui::End();
 
@@ -147,20 +143,23 @@ namespace cumulonimbus::editor
 		{
 			is_selectable = false;
 		}
-		// 現エンティティの小階層が存在しないときTreeNodeの矢印を表示しない
-		if (is_last)
-			node_flg |= ImGuiTreeNodeFlags_Leaf;
-		// 現エンティティが選択されている場合TreeNodeを選択状態にする
-		if (ent == selected_entity)
-			node_flg |= ImGuiTreeNodeFlags_Selected;
-		if (!is_selectable &&
-			is_dragged_entity)
-			ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImGuiCol_TextDisabled));
+
+		{// ImGui::TreeNodeExでのフラグ、テキスト色の設定
+			// 現エンティティの小階層が存在しないときTreeNodeの矢印を表示しない
+			if (is_last)
+				node_flg |= ImGuiTreeNodeFlags_Leaf;
+			// 現エンティティが選択されている場合TreeNodeを選択状態にする
+			if (ent == selected_entity)
+				node_flg |= ImGuiTreeNodeFlags_Selected;
+			if (!is_selectable && is_dragged_entity)
+				ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImGuiCol_TextDisabled));
+		}
 		// ノード作成
 		const bool is_opened = ImGui::TreeNodeEx(entity_name.c_str(), node_flg);
-		if (!is_selectable &&
-			is_dragged_entity)
+
+		if (!is_selectable && is_dragged_entity)
 			ImGui::PopStyleColor();
+
 		if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 			selected_entity = ent;
 
@@ -168,16 +167,15 @@ namespace cumulonimbus::editor
 		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 		{
 			is_dragged_entity = true;
-			ImGui::SetDragDropPayload("cell", &ent, sizeof(mapping::rename_type::Entity));
+			ImGui::SetDragDropPayload(dragged_id.c_str(), &ent, sizeof(mapping::rename_type::Entity));
 			ImGui::Text(registry->GetName(selected_entity).c_str());
 			ImGui::EndDragDropSource();
 		}
 		if (ImGui::BeginDragDropTarget() && is_selectable)
 		{
-			if (ImGui::AcceptDragDropPayload("cell"))
-			{
-				auto drag_name	= registry->GetName(selected_entity);
-				auto name		= registry->GetName(ent);
+			if (ImGui::AcceptDragDropPayload(dragged_id.c_str()))
+			{// Hierarchy Componentの親エンティティを変更
+				registry->GetOrEmplaceComponent<component::HierarchyComponent>(selected_entity).SetParentEntity(ent);
 			}
 
 			ImGui::EndDragDropTarget();
