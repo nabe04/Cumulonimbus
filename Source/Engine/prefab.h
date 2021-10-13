@@ -18,14 +18,60 @@ namespace cumulonimbus::asset
 	class Prefab final
 	{
 	public:
+		/**
+		 * @brief : エンティティ毎のコンポーネント情報
+		 * @remark : 階層構造で保存する為に複数のエンティティ
+		 *			 を保存する必要が出てきたため
+		 */
+		struct ComponentAsset
+		{
+			template<class Archive>
+			void serialize(Archive&& archive)
+			{
+				archive(
+					CEREAL_NVP(components_name)
+				);
+			}
+
+			std::map<mapping::rename_type::ComponentName,
+					 std::shared_ptr<ecs::ComponentAssetBase>> component_assets{};
+			std::set<mapping::rename_type::ComponentName>      components_name{};
+		};
+
 		explicit Prefab();
 		~Prefab() = default;
 
+		//template<class Archive>
+		//void serialize(Archive&& archive)
+		//{
+		//	archive(
+		//		CEREAL_NVP(components_name)
+		//	);
+		//}
+
 		template<class Archive>
-		void serialize(Archive&& archive)
+		void load(Archive&& archive,uint32_t const version)
+		{
+			if(version == 0)
+			{
+				archive(
+					CEREAL_NVP(components_name)
+				);
+			}
+
+			if(version == 1)
+			{
+				archive(
+					CEREAL_NVP(entity_assets)
+				);
+			}
+		}
+
+		template<class Archive>
+		void save(Archive&& archive,uint32_t const version) const
 		{
 			archive(
-				CEREAL_NVP(components_name)
+				CEREAL_NVP(entity_assets)
 			);
 		}
 
@@ -55,7 +101,10 @@ namespace cumulonimbus::asset
 		std::map<mapping::rename_type::ComponentName, std::shared_ptr<ecs::ComponentAssetBase>> component_assets;
 		std::set<mapping::rename_type::ComponentName> components_name;
 
+		std::map<mapping::rename_type::Entity, ComponentAsset> entity_assets{};
 		template<class T>
 		void RegistryComponent();
 	};
 } // cumulonimbus::asset
+
+CEREAL_CLASS_VERSION(cumulonimbus::asset::Prefab, 0);

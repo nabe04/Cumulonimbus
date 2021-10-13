@@ -30,31 +30,24 @@ namespace cumulonimbus::editor
 
 			for (auto& [key, value] : registry->GetEntities())
 			{
-				//value.second
-				//if (ImGui::Selectable(value.second.c_str(), selected_entity == key,ImGuiSelectableFlags_AllowItemOverlap))
-				//{
-				//	selected_entity = key;
-
-				//}
-
 				ImGui::Selectable(value.second.c_str(), selected_entity == key);
-				if(ImGui::IsItemHovered())
-				{// ヒエラルキービュー上でのアイテム選択
-					if(ImGui::IsMouseClicked(ImGuiMouseButton_Left))
-					{// 左クリック時
-						selected_entity = key;
-					}
-					if(ImGui::IsMouseClicked(ImGuiMouseButton_Right))
-					{// 右クリック時
-						selected_entity = key;
-						ImGui::OpenPopup(context_id.c_str());
-					}
-				}
+				//if(ImGui::IsItemHovered())
+				//{// ヒエラルキービュー上でのアイテム選択
+				//	if(ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+				//	{// 左クリック時
+				//		selected_entity = key;
+				//	}
+				//	if(ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+				//	{// 右クリック時
+				//		selected_entity = key;
+				//		ImGui::OpenPopup(context_id.c_str());
+				//	}
+				//}
 			}
 
 			{// 新規Hierarchy
 				std::filesystem::path current_scene_path = locator::Locator::GetSystem()->GetCurrentScenePath();
-				if (ImGui::TreeNodeEx(current_scene_path.filename().replace_extension().string().c_str(),
+				if (ImGui::TreeNodeEx(std::string{ ICON_FA_CLOUD_SUN + current_scene_path.filename().replace_extension().string() }.c_str(),
 									  ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen))
 				{
 					//-- シーン階層へのドラッグ & ドロップ処理 --//
@@ -71,6 +64,17 @@ namespace cumulonimbus::editor
 						ImGui::EndDragDropTarget();
 					}
 
+					{//-- 現在選択されているエンティティの小階層エンティティを取得 --//
+						sub_hierarchical_entities.clear();
+						for (const auto& hierarchy_comp : registry->GetArray<component::HierarchyComponent>().GetComponents())
+						{
+							if (HasParentEntity(registry, selected_entity, hierarchy_comp.GetEntity()))
+							{
+								sub_hierarchical_entities.emplace_back(hierarchy_comp.GetEntity());
+							}
+						}
+					}
+
 					for (auto& [key, value] : registry->GetEntities())
 					{
 						// エンティティの階層表示
@@ -78,23 +82,28 @@ namespace cumulonimbus::editor
 						if (registry->HasComponent<component::HierarchyComponent>(key))
 							continue;
 
+						//ImGui::Separator();
 						is_dragged_entity = false;
+						is_opened_context_menu = false;
 						EntityTree(registry, key, registry->GetName(key));
 					}
 
-
+					//ContextMenu(registry);
 					ImGui::TreePop();
 				}
 
 			}
-
-			ContextMenu(registry);
 		}
 		ImGui::End();
 
 		if(ImGui::Begin("Hierarchy Data"))
 		{
 			ImGui::Text(registry->GetName(selected_entity).c_str());
+			ImGui::Text("Sub Entities");
+			for(const auto& ent : sub_hierarchical_entities)
+			{
+				ImGui::Text(registry->GetName(ent).c_str());
+			}
 		}
 		ImGui::End();
 	}
@@ -125,8 +134,8 @@ namespace cumulonimbus::editor
 		const mapping::rename_type::Entity& ent,
 		const std::string& entity_name)
 	{
-		bool is_last		= true;	// 現エンティティに子供の階層が存在しないか
-		bool is_selectable	= true;	// ドラッグ & ドロップでの親子付け時に選択可能か
+		bool is_last		{ true };	// 現エンティティに子供の階層が存在しないか
+		bool is_selectable	{ true };	// ドラッグ & ドロップでの親子付け時に選択可能か
 
 		ImGuiTreeNodeFlags node_flg{ ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth };
 		ecs::ComponentArray<component::HierarchyComponent>& hierarchy_comp_array = registry->GetArray<component::HierarchyComponent>();
@@ -155,13 +164,24 @@ namespace cumulonimbus::editor
 				ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImGuiCol_TextDisabled));
 		}
 		// ノード作成
-		const bool is_opened = ImGui::TreeNodeEx(entity_name.c_str(), node_flg);
+		const bool is_opened = ImGui::TreeNodeEx(std::string{ ICON_FA_CUBE + entity_name }.c_str(),
+												 node_flg);
 
 		if (!is_selectable && is_dragged_entity)
 			ImGui::PopStyleColor();
 
-		if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
-			selected_entity = ent;
+		if (ImGui::IsItemHovered())
+		{// ヒエラルキービュー上でのアイテム選択
+			if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+			{// 左クリック時
+				selected_entity = ent;
+			}
+			if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+			{// 右クリック時
+				selected_entity = ent;
+				ImGui::OpenPopup(context_id.c_str());
+			}
+		}
 
 		// ドラック & ドロップ操作
 		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
@@ -179,6 +199,12 @@ namespace cumulonimbus::editor
 			}
 
 			ImGui::EndDragDropTarget();
+		}
+
+		if(!is_opened_context_menu)
+		{
+			is_opened_context_menu = true;
+			ContextMenu(registry);
 		}
 
 		if (is_opened)

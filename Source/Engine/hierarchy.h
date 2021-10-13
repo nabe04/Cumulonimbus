@@ -18,8 +18,10 @@ namespace cumulonimbus::editor
 		[[nodiscard]]
 		mapping::rename_type::Entity GetSelectedEntity() const { return selected_entity; }
 	private:
+		std::vector<mapping::rename_type::Entity> sub_hierarchical_entities{}; // 選択されているエンティティよりも子階層のエンティティ郡
 		mapping::rename_type::Entity selected_entity{};
 		bool is_dragged_entity{ false };
+		bool is_opened_context_menu{ false };
 
 		/**
 		 * @brief : Hierarchy View上でのアセット右クリック時の操作
@@ -43,8 +45,8 @@ namespace cumulonimbus::editor
 		 * @param entity_name : 現在選択されているエンティティ名
 		 */
 		void EntityTree(
-			ecs::Registry* registry, 
-			const mapping::rename_type::Entity& ent, 
+			ecs::Registry* registry,
+			const mapping::rename_type::Entity& ent,
 			const std::string& entity_name);
 
 

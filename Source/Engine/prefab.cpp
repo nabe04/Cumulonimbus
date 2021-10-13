@@ -61,7 +61,7 @@ namespace cumulonimbus::asset
 	{
 		for(auto& [comp_name, comp_asset] : component_assets)
 		{
-			if(comp_asset->RegistryPrefab(registry, ent))
+			if(comp_asset->RegistryComponentData(registry, ent))
 			{
 				components_name.emplace(comp_name);
 			}

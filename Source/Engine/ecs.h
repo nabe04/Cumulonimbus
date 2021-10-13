@@ -701,8 +701,10 @@ namespace cumulonimbus::ecs
 		ComponentAssetBase& operator=(ComponentAssetBase&)			= delete;
 		ComponentAssetBase& operator=(ComponentAssetBase&&)			= delete;
 
-		virtual void AddComponent(ecs::Registry* registry, const mapping::rename_type::Entity& ent) = 0;
-		virtual bool RegistryPrefab(
+		virtual void AddComponent(
+			ecs::Registry* registry,
+			const mapping::rename_type::Entity& ent) = 0;
+		virtual bool RegistryComponentData(
 			ecs::Registry* registry,
 			const mapping::rename_type::Entity& ent)	= 0;
 		virtual void Save(const std::string& file_path) = 0;
@@ -732,7 +734,13 @@ namespace cumulonimbus::ecs
 			comp.SetRegistry(registry);
 		}
 
-		bool RegistryPrefab(ecs::Registry* registry,const mapping::rename_type::Entity& ent) override
+		/**
+		 * @brief : プレファブ化するためのコンポーネント情報の登録
+		 * @param registry :
+		 * @param ent : プレファブ化したいエンティティ
+		 * @return : true -> ComponentArrayが指定のエンティティを保持していた場合
+		 */
+		bool RegistryComponentData(ecs::Registry* registry,const mapping::rename_type::Entity& ent) override
 		{
 			auto& component_arrays = registry->GetComponentArrays();
 			const auto& comp_name = file_path_helper::GetTypeName<T>();
