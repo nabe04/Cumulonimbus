@@ -5,7 +5,7 @@
 namespace
 {
 	// シーンを保存するまでのパス
-	const std::filesystem::path save_parent_path = "./Data/Scenes";
+	const std::filesystem::path save_parent_path = "./Data/Assets/Scenes";
 }
 
 namespace cumulonimbus::asset

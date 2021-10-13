@@ -58,6 +58,24 @@ namespace cumulonimbus::asset
 			const std::string& prefab_name = {""});
 
 		/**
+		 * @brief : プレファブの作成
+		 * @ramark : is_once(第4引数)をfalseにした場合アセットシート
+		 *			 に登録されているパスと保存したいパスが同じ場合
+		 *			 プレファブの追加は行われない
+		 * @param asset_manager : AssetManagerクラスの参照
+		 * @param registry :
+		 * @param entities : プレファブ化したいエンティティ郡
+		 * @param is_once : プレファブの重複を許すか
+		 * @param prefab_name : プレファブ名
+		 * @return : 作成されたプレファブのID(作成されなかった場合は空文字を返す)
+		 */
+		mapping::rename_type::UUID CreatePrefab(
+			AssetManager& asset_manager, ecs::Registry* registry,
+			const std::vector<mapping::rename_type::Entity>& entities,
+			bool is_once = {false},
+			const std::string& prefab_name = {""});
+
+		/**
 		 * @brief : プレファブからコンポーネントの追加
 		 * @remark : プレファブIDがなければ処理を中断
 		 * @param registry :
@@ -65,7 +83,9 @@ namespace cumulonimbus::asset
 		 * @return : 作成された
 		 */
 		[[nodiscard]]
-		mapping::rename_type::Entity AddComponent(ecs::Registry* registry, const mapping::rename_type::UUID& prefab_id);
+		mapping::rename_type::Entity AddComponent(
+			ecs::Registry* registry,
+			const mapping::rename_type::UUID& prefab_id);
 	private:
 		std::map<mapping::rename_type::UUID, std::unique_ptr<Prefab>> prefabs{};
 

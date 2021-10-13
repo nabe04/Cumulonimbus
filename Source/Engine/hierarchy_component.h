@@ -13,7 +13,13 @@ namespace cumulonimbus::component
 	public:
 		explicit HierarchyComponent() = default; // for cereal
 		explicit HierarchyComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
+		explicit HierarchyComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const HierarchyComponent& copy_comp); // プレファブからの追加用
+		//HierarchyComponent(const HierarchyComponent& other);
+		//HierarchyComponent& operator=(const HierarchyComponent& other);
 		~HierarchyComponent() override = default;
+
+		template<class Archive>
+		void serialize(Archive&& archive);
 
 		void CommonUpdate(float dt) override;
 

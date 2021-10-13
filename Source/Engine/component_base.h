@@ -20,8 +20,21 @@ namespace cumulonimbus::component
 		explicit ComponentBase(const mapping::component_tag::ComponentTag tag) { component_tag = tag; }	// インスペクタービュー用
 		explicit ComponentBase(ecs::Registry* registry, mapping::rename_type::Entity ent)
 			: registry{ registry }
-			, entity{ ent }
+			, entity{ ent } {}
+		ComponentBase(const ComponentBase& other)
+			:registry(other.registry),
+		     entity(other.entity) {}
+		ComponentBase& operator=(const ComponentBase& other)
 		{
+			if(this == &other)
+			{
+				return *this;
+			}
+
+			registry = other.registry;
+			entity   = other.entity;
+
+			return *this;
 		}
 		virtual ~ComponentBase() = default;
 

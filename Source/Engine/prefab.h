@@ -25,6 +25,8 @@ namespace cumulonimbus::asset
 		 */
 		struct ComponentAsset
 		{
+			ComponentAsset();
+
 			template<class Archive>
 			void serialize(Archive&& archive)
 			{
@@ -32,6 +34,14 @@ namespace cumulonimbus::asset
 					CEREAL_NVP(components_name)
 				);
 			}
+
+			/**
+			 * @brief : コンポーネントの登録
+			 * @remark : プレファブに対応したい全てのコンポーネント
+			 *			 をコンストラクタで書く
+			 */
+			template<class T>
+			void RegistryComponent();
 
 			std::map<mapping::rename_type::ComponentName,
 					 std::shared_ptr<ecs::ComponentAssetBase>> component_assets{};
@@ -55,7 +65,7 @@ namespace cumulonimbus::asset
 			if(version == 0)
 			{
 				archive(
-					CEREAL_NVP(components_name)
+					CEREAL_NVP(entity_assets)
 				);
 			}
 
@@ -86,10 +96,26 @@ namespace cumulonimbus::asset
 			ecs::Registry* registry, const mapping::rename_type::Entity& ent,
 			const std::filesystem::path& path);
 
-		void AddComponent(ecs::Registry* registry, const mapping::rename_type::Entity& ent);
+		/**
+		 * @brief : Prefabの作成
+		 * @remark : Hierarchy View上でEntityをPrefab化したい時に使用
+		 * @param registry :
+		 * @param entities : Prefab化したいEntity郡
+		 * @param path : 保存するプレファブのパス(※ファイルパス + ファイル名 + ファイル拡張子)
+		 */
+		void CreatePrefab(
+			ecs::Registry* registry,
+			const std::vector<mapping::rename_type::Entity>& entities,
+			const std::filesystem::path& path
+		);
 
+		void AddComponent(ecs::Registry* registry, const mapping::rename_type::Entity& ent);
+		//Todo : 新Prefab Systemが作成されたら消す
 		void Save(const std::filesystem::path& path);
 		void Load(const std::filesystem::path& path);
+
+		void Save(ecs::Registry* registry, const std::filesystem::path& path);
+		void Load(ecs::Registry* registry, const std::filesystem::path& path);
 
 		[[nodiscard]]
 		std::map<mapping::rename_type::ComponentName, std::shared_ptr<ecs::ComponentAssetBase>>& GetComponentsAssets()
@@ -98,10 +124,20 @@ namespace cumulonimbus::asset
 		}
 
 	private:
+		std::map<mapping::rename_type::Entity, ComponentAsset> entity_assets{};
+		/**
+		 * @brief : Hierarchy Componentの親階層取得のためのコネクター
+		 * @remark : シーンにドロップしてオブジェクトを作成した際に
+		 *			 に以前のエンティティと作成後のエンティティを
+		 *			 繋げるためのコネクター
+		 * @remark : key -> プレファブとして保存されたエンティティID(UUID)
+		 * @remark : value -> オブジェクトとして作成されたエンティティID(UUID)
+		 */
+		std::map<mapping::rename_type::Entity, mapping::rename_type::Entity> connector{};
+
+		//Todo : 新Prefab Systemが出来次第けす
 		std::map<mapping::rename_type::ComponentName, std::shared_ptr<ecs::ComponentAssetBase>> component_assets;
 		std::set<mapping::rename_type::ComponentName> components_name;
-
-		std::map<mapping::rename_type::Entity, ComponentAsset> entity_assets{};
 		template<class T>
 		void RegistryComponent();
 	};

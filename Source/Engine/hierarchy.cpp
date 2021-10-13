@@ -83,8 +83,7 @@ namespace cumulonimbus::editor
 							continue;
 
 						//ImGui::Separator();
-						is_dragged_entity = false;
-						is_opened_context_menu = false;
+						is_dragged_entity      = false;
 						EntityTree(registry, key, registry->GetName(key));
 					}
 
@@ -112,10 +111,16 @@ namespace cumulonimbus::editor
 	{
 		if(ImGui::BeginPopup(context_id.c_str()))
 		{
-			if (ImGui::MenuItem("Create Prefab"))
-			{
-				CreatePrefab(registry, selected_entity);
+			if(!registry->HasComponent<component::HierarchyComponent>(selected_entity))
+			{// Hierarchy Component‚ğŠ‚µ‚Ä‚¢‚È‚¢ê‡ -> ˆê”Ôã‚ÌeŠK‘w‚Ìê‡Prefabì¬‚ğ‰Â”\‚É
+				if (ImGui::MenuItem("Create Prefab"))
+				{
+					std::vector<std::string> entities = sub_hierarchical_entities;
+					entities.emplace_back(selected_entity);
+					CreatePrefab(registry, entities);
+				}
 			}
+
 			ImGui::MenuItem("Delete");
 
 			ImGui::EndPopup();
@@ -128,6 +133,16 @@ namespace cumulonimbus::editor
 		const std::string&	 ent_name		= registry->GetName(selected_entity);
 		asset_manager->GetLoader<asset::PrefabLoader>()->CreatePrefab(*asset_manager, registry, selected_entity, false, ent_name);
 	}
+
+	void Hierarchy::CreatePrefab(
+		ecs::Registry* registry,
+		const std::vector<mapping::rename_type::Entity>& entities)
+	{
+		asset::AssetManager* asset_manager = locator::Locator::GetAssetManager();
+		const std::string& ent_name = registry->GetName(selected_entity);
+		asset_manager->GetLoader<asset::PrefabLoader>()->CreatePrefab(*asset_manager, registry, entities, false, ent_name);
+	}
+
 
 	void Hierarchy::EntityTree(
 		ecs::Registry* const registry,
@@ -201,9 +216,8 @@ namespace cumulonimbus::editor
 			ImGui::EndDragDropTarget();
 		}
 
-		if(!is_opened_context_menu)
+		if(ent == selected_entity)
 		{
-			is_opened_context_menu = true;
 			ContextMenu(registry);
 		}
 

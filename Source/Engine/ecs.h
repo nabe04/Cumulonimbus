@@ -708,6 +708,9 @@ namespace cumulonimbus::ecs
 			ecs::Registry* registry,
 			const mapping::rename_type::Entity& ent)	= 0;
 		virtual void Save(const std::string& file_path) = 0;
+		/**
+		 * @brief : 
+		 */
 		virtual void Load(const std::string& file_path) = 0;
 	};
 

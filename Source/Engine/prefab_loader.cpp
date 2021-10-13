@@ -190,6 +190,82 @@ namespace cumulonimbus::asset
 		return id;
 	}
 
+	mapping::rename_type::UUID PrefabLoader::CreatePrefab(
+		AssetManager& asset_manager,
+		ecs::Registry* const registry,
+		const std::vector<mapping::rename_type::Entity>& entities,
+		const bool is_once, const std::string& prefab_name)
+	{
+		std::filesystem::path save_path{};
+		if (prefab_name.empty())
+		{
+			// 保存先のパスを指定(既に存在していた場合は名前を変更する)
+			const std::string path = save_parent_path + "/" +
+				"New Prefab" + "/" +
+				"New Prefab" +
+				file_path_helper::GetPrefabExtension();
+			if (is_once)
+			{// アセットシートに既に存在していれば処理を抜ける
+				if (asset_manager.GetAssetSheetManager().GetSheet<Prefab>().sheet.contains(path))
+					return {};
+			}
+
+			// 保存するファイル名の決定
+			const std::string save_name = CompareAndReName<Prefab>(asset_manager, path).filename().replace_extension().string();
+			// 保存先のパス(ファイル名、拡張子含む)決定
+			save_path = save_parent_path + "/" +
+				save_name + "/" +
+				save_name +
+				file_path_helper::GetPrefabExtension();
+		}
+		else
+		{
+			// 保存先のパスを指定(既に存在していた場合は名前を変更する)
+			const std::string path = save_parent_path + "/" +
+				prefab_name + "/" +
+				prefab_name +
+				file_path_helper::GetPrefabExtension();
+			if (is_once)
+			{// アセットシートに既に存在していれば処理を抜ける
+				if (asset_manager.GetAssetSheetManager().GetSheet<Prefab>().sheet.contains(path))
+					return {};
+			}
+			// 保存するファイル名の決定
+			const std::string save_name = CompareAndReName<Prefab>(asset_manager, path).filename().replace_extension().string();
+			// 保存先のパス(ファイル名、拡張子含む)決定
+			save_path = save_parent_path + "/" +
+				save_name + "/" +
+				save_name +
+				file_path_helper::GetPrefabExtension();
+		}
+
+		std::unique_ptr<Prefab> prefab = std::make_unique<Prefab>();
+		// プレファブ作成(エンティティが保持しているコンポーネントの追加)
+		prefab->CreatePrefab(registry, entities, save_path);
+
+		mapping::rename_type::UUID id;
+		while (true)
+		{
+			id = utility::GenerateUUID();
+			if (asset_manager.GetAssetSheetManager().GetSheet<Prefab>().sheet.contains(id))
+				continue;
+			break;
+		}
+
+		// すでにプレファブが存在する場合は処理を抜ける
+		if (prefabs.contains(id))
+			return id;
+
+		prefabs.emplace(id, std::move(prefab));
+
+		// アセットシートの登録
+		asset_manager.GetAssetSheetManager().GetSheet<Prefab>().sheet.emplace(id, save_path.string());
+		// アセットシート(更新後)の保存
+		asset_manager.Save();
+
+		return id;
+	}
+
 	mapping::rename_type::Entity PrefabLoader::AddComponent(ecs::Registry* registry, const mapping::rename_type::UUID& prefab_id)
 	{
 		// Prefabに登録されたIDを持っていなければ処理を抜ける

@@ -21,7 +21,6 @@ namespace cumulonimbus::editor
 		std::vector<mapping::rename_type::Entity> sub_hierarchical_entities{}; // 選択されているエンティティよりも子階層のエンティティ郡
 		mapping::rename_type::Entity selected_entity{};
 		bool is_dragged_entity{ false };
-		bool is_opened_context_menu{ false };
 
 		/**
 		 * @brief : Hierarchy View上でのアセット右クリック時の操作
@@ -32,6 +31,12 @@ namespace cumulonimbus::editor
 		 * @remark : ※caution : ImGui::MenuItem内に記述すること
 		 */
 		void CreatePrefab(ecs::Registry* registry, const mapping::rename_type::Entity& ent);
+		/**
+		 * @brief : アセットのプレファブ化
+		 * @remark : ※caution : ImGui::MenuItem内に記述すること
+		 */
+		void CreatePrefab(ecs::Registry* registry, const std::vector<mapping::rename_type::Entity>& entities);
+		
 		/**
 		 * @brief : アセットの削除
 		 * @remark : ※caution : ImGui::MenuItem内に記述すること
