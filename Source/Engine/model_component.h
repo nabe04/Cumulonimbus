@@ -57,6 +57,9 @@ namespace cumulonimbus::component
 		template<class Archive>
 		void serialize(Archive&& archive);
 
+		void CommonUpdate(float dt)     override;
+		void PostCommonUpdate(float dt) override;
+
 		void SceneUpdate(float dt) override;
 
 		void PreGameUpdate(float dt) override;

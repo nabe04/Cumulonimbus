@@ -144,10 +144,6 @@ namespace cumulonimbus::scene
 		registry->AddComponent<component::HierarchyComponent>(hierarcy_comp);
 		registry->GetComponent<component::HierarchyComponent>(hierarcy_comp).SetParentEntity(ent_main_camera);
 		system->SetCurrentScenePath(filename_helper::GetNoTitled());
-		const mapping::rename_type::Entity hierarcy_comp2 = registry->CreateEntity();
-		registry->AddComponent<component::HierarchyComponent>(hierarcy_comp2);
-		registry->GetComponent<component::HierarchyComponent>(hierarcy_comp2).SetParentEntity(hierarcy_comp);
-		system->SetCurrentScenePath(filename_helper::GetNoTitled());
 
 		//const mapping::rename_type::Entity ent_main_camera = registry->CreateEntity();
 		//registry->AddComponent<component::CameraComponent>(ent_main_camera, true);

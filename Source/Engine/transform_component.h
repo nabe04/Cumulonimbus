@@ -27,6 +27,9 @@ namespace cumulonimbus::component
 
 		~TransformComponent() override = default;
 
+		void PreCommonUpdate(float dt) override;
+		void CommonUpdate(float dt) override;
+		void PostCommonUpdate(float dt) override;
 
 		void SceneUpdate(float dt) override;
 
@@ -99,26 +102,32 @@ namespace cumulonimbus::component
 		void AdjustWorldRotation_X(const float x) { angle.x += x; }
 		void AdjustWorldRotation_Y(const float y) { angle.y += y; }
 		void AdjustWorldRotation_Z(const float z) { angle.z += z; }
+		[[nodiscard]]
 		auto& GetWorldRotation() { return angle; }
+		[[nodiscard]]
 		const auto& GetWorldRotation() const { return angle; }
+		[[nodiscard]]
 		DirectX::XMFLOAT3 GetDeltaAngle() const
 		{
 			return DirectX::XMFLOAT3{ angle.x - prev_angle.x,angle.y - prev_angle.y,angle.z - prev_angle.z };
 		}
 
 		void NormalizeAngle();
-		void CreateIdentity4x4(DirectX::XMFLOAT4X4* convert);
+		void CreateIdentity4x4(DirectX::SimpleMath::Matrix& convert);
 
 		//-- World 4x4 matrix --//
-		void SetWorld4x4(DirectX::XMFLOAT4X4& mat4x4) { world_f4x4 = mat4x4; }
+		void SetWorld4x4(const DirectX::SimpleMath::Matrix& mat4x4) { world_f4x4 = mat4x4; }
+		[[nodiscard]]
 		const auto& GetWorld4x4() const { return world_f4x4; }
 
 		// Billboard
+		[[nodiscard]]
 		bool IsBillboard() const { return is_billboard; }
 		void ActiveBillboard()  { is_billboard = true; }
 		void PassiveBillboard() { is_billboard = false; }
 
 		// Quaternion
+		[[nodiscard]]
 		bool IsQuaternion() const { return is_quaternion; }
 		void ActiveQuaternion()  { is_quaternion = true; }
 		void PassiveQuaternion() { is_quaternion = false; }

@@ -60,14 +60,22 @@ namespace cumulonimbus::component
 		SetEntity(ent);
 	}
 
-	void ModelComponent::SceneUpdate(const float dt)
+	void ModelComponent::CommonUpdate(const float dt)
+	{
+		UpdateAnimState(dt);
+	}
+
+	void ModelComponent::PostCommonUpdate(float dt)
 	{
 		const auto& world_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorld4x4();
 
 		CalculateLocalTransform();
 		CalculateWorldTransform(world_transform);
+	}
 
-		UpdateAnimState(dt);
+	void ModelComponent::SceneUpdate(const float dt)
+	{
+
 	}
 
 	void ModelComponent::PreGameUpdate(const float dt)

@@ -21,7 +21,8 @@ namespace cumulonimbus::component
 		template<class Archive>
 		void serialize(Archive&& archive);
 
-		void CommonUpdate(float dt) override;
+		void CommonUpdate(float dt)    override;
+		void PreCommonUpdate(float dt) override;
 
 		void Load(ecs::Registry* registry) override;
 

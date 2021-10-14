@@ -54,9 +54,9 @@ namespace cumulonimbus::component
 		cb_transform = std::make_unique<buffer::ConstantBuffer<TransformCB>>(locator::Locator::GetDx11Device()->device.Get());
 
 		// Initialize XMFLOAT4x4
-		CreateIdentity4x4(&scaling_matrix);
-		CreateIdentity4x4(&rotation_matrix);
-		CreateIdentity4x4(&translation_matrix);
+		CreateIdentity4x4(scaling_matrix);
+		CreateIdentity4x4(rotation_matrix);
+		CreateIdentity4x4(translation_matrix);
 	}
 
 	TransformComponent::TransformComponent(ecs::Registry* registry, const mapping::rename_type::Entity ent, const TransformComponent& copy_comp)
@@ -117,21 +117,35 @@ namespace cumulonimbus::component
 		return *this;
 	}
 
-	void TransformComponent::SceneUpdate(float dt)
+	void TransformComponent::PreCommonUpdate(float dt)
 	{
 		NormalizeAngle();
 		CreateWorldTransformMatrix();
 	}
 
-	void TransformComponent::PreGameUpdate(const float dt)
+	void TransformComponent::CommonUpdate(float dt)
+	{
+
+	}
+
+	void TransformComponent::PostCommonUpdate(float dt)
 	{
 		SetOldPosition(GetPosition());
 	}
 
+	void TransformComponent::SceneUpdate(float dt)
+	{
+
+	}
+
+	void TransformComponent::PreGameUpdate(const float dt)
+	{
+
+	}
+
 	void TransformComponent::GameUpdate(const float dt)
 	{
-		NormalizeAngle();
-		CreateWorldTransformMatrix();
+
 	}
 
 	void TransformComponent::RenderImGui()
@@ -170,9 +184,9 @@ namespace cumulonimbus::component
 		cb_transform = std::make_unique<buffer::ConstantBuffer<TransformCB>>(locator::Locator::GetDx11Device()->device.Get());
 
 		// Initialize XMFLOAT4x4
-		CreateIdentity4x4(&scaling_matrix);
-		CreateIdentity4x4(&rotation_matrix);
-		CreateIdentity4x4(&translation_matrix);
+		CreateIdentity4x4(scaling_matrix);
+		CreateIdentity4x4(rotation_matrix);
+		CreateIdentity4x4(translation_matrix);
 	}
 
 	void TransformComponent::SetTransformCB(const TransformCB transform) const
@@ -208,6 +222,8 @@ namespace cumulonimbus::component
 
 	void TransformComponent::CreateRotation4x4()
 	{
+
+		
 		// Rotation
 		DirectX::XMMATRIX r = DirectX::XMMatrixIdentity();
 		if (is_billboard)
@@ -314,11 +330,9 @@ namespace cumulonimbus::component
 		}
 	}
 
-	void TransformComponent::CreateIdentity4x4(DirectX::XMFLOAT4X4* convert)
+	void TransformComponent::CreateIdentity4x4(DirectX::SimpleMath::Matrix& convert)
 	{
-		DirectX::XMMATRIX convert_matrix = DirectX::XMMatrixIdentity();
-
-		XMStoreFloat4x4(convert, convert_matrix);
+		convert = DirectX::SimpleMath::Matrix::Identity;
 	}
 
 	void TransformComponent::GetBillboardRotation(const DirectX::XMFLOAT3 billPos, const DirectX::XMFLOAT3 targetPos)
