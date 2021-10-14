@@ -4,6 +4,7 @@
 #include <filesystem>
 
 #include "component_base.h"
+#include "cereal_helper.h"
 #include "rename_type_mapping.h"
 #include "asset_manager.h"
 
@@ -23,14 +24,15 @@ namespace cumulonimbus::asset
 		 * @remark : 階層構造で保存する為に複数のエンティティ
 		 *			 を保存する必要が出てきたため
 		 */
-		struct ComponentAsset
+		struct EntityInfo
 		{
-			ComponentAsset();
+			EntityInfo();
 
 			template<class Archive>
 			void serialize(Archive&& archive)
 			{
 				archive(
+					CEREAL_NVP(entity_name),
 					CEREAL_NVP(components_name)
 				);
 			}
@@ -43,6 +45,7 @@ namespace cumulonimbus::asset
 			template<class T>
 			void RegistryComponent();
 
+			std::string entity_name{};
 			std::map<mapping::rename_type::ComponentName,
 					 std::shared_ptr<ecs::ComponentAssetBase>> component_assets{};
 			std::set<mapping::rename_type::ComponentName>      components_name{};
@@ -109,7 +112,11 @@ namespace cumulonimbus::asset
 			const std::filesystem::path& path
 		);
 
-		void AddComponent(ecs::Registry* registry, const mapping::rename_type::Entity& ent);
+		/**
+		 * @brief : プレファブのインスタンス化
+		 * @return : インスタンス化されたエンティティの親のエンティティを返す
+		 */
+		mapping::rename_type::Entity Instanciate(ecs::Registry* registry);
 		//Todo : 新Prefab Systemが作成されたら消す
 		void Save(const std::filesystem::path& path);
 		void Load(const std::filesystem::path& path);
@@ -124,7 +131,7 @@ namespace cumulonimbus::asset
 		}
 
 	private:
-		std::map<mapping::rename_type::Entity, ComponentAsset> entity_assets{};
+		std::map<mapping::rename_type::Entity, EntityInfo> entity_assets{};
 		/**
 		 * @brief : Hierarchy Componentの親階層取得のためのコネクター
 		 * @remark : シーンにドロップしてオブジェクトを作成した際に

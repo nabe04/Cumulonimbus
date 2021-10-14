@@ -9,6 +9,7 @@ namespace cumulonimbus::component
 	void HierarchyComponent::serialize(Archive&& archive)
 	{
 		archive(
+			cereal::base_class<ComponentBase>(this),
 			CEREAL_NVP(parent_entity)
 		);
 	}

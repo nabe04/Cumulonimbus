@@ -49,7 +49,7 @@ namespace cumulonimbus::asset
 			}
 		}
 		/**
-		 *
+		 * Todo : アセット名の変更
 		 */
 		void RenameAsset(const mapping::rename_type::UUID& asset_id,
 						 const std::filesystem::path& path);

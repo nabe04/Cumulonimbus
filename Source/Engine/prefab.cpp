@@ -24,7 +24,7 @@
 
 namespace cumulonimbus::asset
 {
-	Prefab::ComponentAsset::ComponentAsset()
+	Prefab::EntityInfo::EntityInfo()
 	{
 		//-- engine --//
 		// transform
@@ -55,7 +55,7 @@ namespace cumulonimbus::asset
 	}
 
 	template <class T>
-	void Prefab::ComponentAsset::RegistryComponent()
+	void Prefab::EntityInfo::RegistryComponent()
 	{
 		const mapping::rename_type::ComponentName component_name = file_path_helper::GetTypeName<T>();
 
@@ -116,9 +116,10 @@ namespace cumulonimbus::asset
 	{
 		for(const auto& ent : entities)
 		{
-			entity_assets.emplace(ent, ComponentAsset{});
+			entity_assets.emplace(ent, EntityInfo{});
 			for (auto& [comp_name, comp_asset] : entity_assets.at(ent).component_assets)
 			{
+				entity_assets.at(ent).entity_name = registry->GetName(ent);
 				if (comp_asset->RegistryComponentData(registry, ent))
 					entity_assets.at(ent).components_name.emplace(comp_name);
 			}
@@ -127,20 +128,14 @@ namespace cumulonimbus::asset
 		Save(registry, path);
 	}
 
-	void Prefab::AddComponent(ecs::Registry* const registry, const mapping::rename_type::Entity& ent)
+	mapping::rename_type::Entity Prefab::Instanciate(ecs::Registry* const registry)
 	{
-		//for (auto& [comp_name, comp_asset] : component_assets)
-		//{
-		//	if(components_name.contains(comp_name))
-		//	{
-		//		component_assets.at(comp_name)->AddComponent(registry, ent);
-		//	}
-		//}
+		mapping::rename_type::Entity return_ent{};
 
 		// シーンにドロップしてオブジェクトを作成した際に以前の
 		// エンティティと作成後のエンティティを繋げるためのコネクター
 		std::map<mapping::rename_type::Entity, mapping::rename_type::Entity> connector{};
-		for(auto& [ent,comp_asset] : entity_assets)
+		for (auto& [ent, comp_asset] : entity_assets)
 		{
 			connector.emplace(ent, registry->CreateEntity());
 		}
@@ -149,15 +144,22 @@ namespace cumulonimbus::asset
 		{
 			for (auto& [comp_name, comp] : comp_asset.component_assets)
 			{
-				comp->AddComponent(registry, connector.at(ent));
+				if (comp_asset.components_name.contains(comp_name))
+					comp->AddComponent(registry, connector.at(ent));
 			}
 
 			if(registry->HasComponent<component::HierarchyComponent>(connector.at(ent)))
 			{
 				const mapping::rename_type::Entity parent_ent = registry->GetComponent<component::HierarchyComponent>(connector.at(ent)).GetParentEntity();
-				registry->GetComponent<component::HierarchyComponent>(connector.at(ent)).SetParentEntity(parent_ent);
+				registry->GetComponent<component::HierarchyComponent>(connector.at(ent)).SetParentEntity(connector.at(parent_ent));
+			}
+			else
+			{
+				return_ent = connector.at(ent);
 			}
 		}
+
+		return return_ent;
 	}
 
 	void Prefab::Save(const std::filesystem::path& path)
@@ -247,7 +249,7 @@ namespace cumulonimbus::asset
 		{
 			for (auto& [comp_name, comp] : comp_asset.component_assets)
 			{
-				//comp->Load(load_path + "/" + comp_name);
+				comp->Load(load_path + "/" + comp_asset.entity_name);
 			}
 		}
 	}

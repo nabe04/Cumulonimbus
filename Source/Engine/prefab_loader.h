@@ -83,7 +83,7 @@ namespace cumulonimbus::asset
 		 * @return : ì¬‚³‚ê‚½
 		 */
 		[[nodiscard]]
-		mapping::rename_type::Entity AddComponent(
+		mapping::rename_type::Entity Instanciate(
 			ecs::Registry* registry,
 			const mapping::rename_type::UUID& prefab_id);
 	private:

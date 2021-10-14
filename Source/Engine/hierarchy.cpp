@@ -28,22 +28,22 @@ namespace cumulonimbus::editor
 				ImGui::EndPopup();
 			}
 
-			for (auto& [key, value] : registry->GetEntities())
-			{
-				ImGui::Selectable(value.second.c_str(), selected_entity == key);
-				//if(ImGui::IsItemHovered())
-				//{// ヒエラルキービュー上でのアイテム選択
-				//	if(ImGui::IsMouseClicked(ImGuiMouseButton_Left))
-				//	{// 左クリック時
-				//		selected_entity = key;
-				//	}
-				//	if(ImGui::IsMouseClicked(ImGuiMouseButton_Right))
-				//	{// 右クリック時
-				//		selected_entity = key;
-				//		ImGui::OpenPopup(context_id.c_str());
-				//	}
-				//}
-			}
+			//for (auto& [key, value] : registry->GetEntities())
+			//{
+			//	ImGui::Selectable(value.second.c_str(), selected_entity == key);
+			//	//if(ImGui::IsItemHovered())
+			//	//{// ヒエラルキービュー上でのアイテム選択
+			//	//	if(ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+			//	//	{// 左クリック時
+			//	//		selected_entity = key;
+			//	//	}
+			//	//	if(ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+			//	//	{// 右クリック時
+			//	//		selected_entity = key;
+			//	//		ImGui::OpenPopup(context_id.c_str());
+			//	//	}
+			//	//}
+			//}
 
 			{// 新規Hierarchy
 				std::filesystem::path current_scene_path = locator::Locator::GetSystem()->GetCurrentScenePath();

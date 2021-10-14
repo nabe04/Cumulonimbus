@@ -53,8 +53,6 @@ namespace cumulonimbus::editor
 		scene_view_camera = std::make_unique<camera::SceneViewCamera>(
 								static_cast<float>(locator::Locator::GetWindow()->Width()),
 								static_cast<float>(locator::Locator::GetWindow()->Height()));
-
-
 	}
 
 	void SceneView::Update(const float dt)
@@ -64,7 +62,7 @@ namespace cumulonimbus::editor
 	}
 
 
-	void SceneView::Render(ecs::Registry* registry, const ProjectView* project_view, const Hierarchy* hierarchy)
+	void SceneView::Render(ecs::Registry* const registry, const ProjectView* project_view, const Hierarchy* hierarchy)
 	{
 		ImVec2 mouse_pos{};
 		if (ImGui::Begin(ICON_FA_BORDER_ALL" Scene"))
@@ -263,20 +261,20 @@ namespace cumulonimbus::editor
 		return true;
 	}
 
-	void SceneView::AddModel(ecs::Registry* registry, const std::filesystem::path& file_path)
+	void SceneView::AddModel(ecs::Registry* const registry, const std::filesystem::path& file_path)
 	{
 		dragging_entity		= registry->CreateEntity();
 		const auto model_id = locator::Locator::GetAssetManager()->GetAssetSheetManager().Search<asset::Model>(file_path);
 		registry->AddComponent<component::ModelComponent>(dragging_entity, model_id);
 	}
 
-	void SceneView::AddPrefab(ecs::Registry* registry, const std::filesystem::path& file_path)
+	void SceneView::AddPrefab(ecs::Registry* const registry, const std::filesystem::path& file_path)
 	{
 		const auto prefab_id = locator::Locator::GetAssetManager()->GetAssetSheetManager().Search<asset::Prefab>(file_path);
-		dragging_entity = locator::Locator::GetAssetManager()->GetLoader<asset::PrefabLoader>()->AddComponent(registry, prefab_id);
+		dragging_entity		 = locator::Locator::GetAssetManager()->GetLoader<asset::PrefabLoader>()->Instanciate(registry, prefab_id);
 	}
 
-	void SceneView::DraggingAsset(ecs::Registry* registry) const
+	void SceneView::DraggingAsset(ecs::Registry* const registry) const
 	{
 		const DirectX::XMINT2 win_pos = ConvertWindowPos();
 		const DirectX::SimpleMath::Vector3 world_near_pos = arithmetic::ConvertScreenToWorld({ static_cast<float>(win_pos.x),static_cast<float>(win_pos.y),.0f },

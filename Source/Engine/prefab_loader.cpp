@@ -70,7 +70,7 @@ namespace cumulonimbus::asset
 		AssetManager& asset_manager,
 		const mapping::rename_type::UUID& id)
 	{
-		// すでにテクスチャが存在する場合は処理を抜ける
+		// すでにプレファブが存在する場合は処理を抜ける
 		if (prefabs.contains(id))
 			return;
 		const std::string& asset_path = asset_manager.GetAssetSheetManager().GetAssetFilename<Prefab>(id);
@@ -266,14 +266,13 @@ namespace cumulonimbus::asset
 		return id;
 	}
 
-	mapping::rename_type::Entity PrefabLoader::AddComponent(ecs::Registry* registry, const mapping::rename_type::UUID& prefab_id)
+	mapping::rename_type::Entity PrefabLoader::Instanciate(ecs::Registry* registry, const mapping::rename_type::UUID& prefab_id)
 	{
 		// Prefabに登録されたIDを持っていなければ処理を抜ける
 		if (!prefabs.contains(prefab_id))
-			assert(!"Don't have prefab(PrefabLoader::AddComponent)");
-		const mapping::rename_type::Entity ent = registry->CreateEntity();
-		prefabs.at(prefab_id)->AddComponent(registry, ent);
-		return ent;
+			assert(!"Don't have prefab(PrefabLoader::Instanciate)");
+
+		return prefabs.at(prefab_id)->Instanciate(registry);
 	}
 
 	void PrefabLoader::DeletePrefab(const mapping::rename_type::UUID& prefab_id, const std::filesystem::path& delete_path)
