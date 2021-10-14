@@ -72,7 +72,7 @@ namespace cumulonimbus::component
 			if(back_sibling.empty())
 			{// 前に兄弟階層が存在しない
 				if(!next_sibling.empty())
-				{//後に兄弟階層が存在する
+				{// 後に兄弟階層が存在する
 					auto& next_sibling_comp = registry->GetComponent<HierarchyComponent>(next_sibling);
 					// 前の階層のクリア -> 自分が「前の階層」にあたるので必要無くなる
 					next_sibling_comp.back_sibling.clear();
@@ -80,8 +80,15 @@ namespace cumulonimbus::component
 					// この階層の親階層のfirst_childが自分の後のエンティティになる -> next_sibling_compのエンティティになる
 					next_sibling_parent_comp.first_child = next_sibling_comp.GetEntity();
 				}
-				// ※後に兄弟階層が存在しない場合単一の子階層だったため
-				//   兄弟階層の後処理が必要無い
+				else
+				{// 後に兄弟階層が存在しない -> 単一の子階層
+					if (const auto& selected_parent_ent = registry->GetComponent<HierarchyComponent>(selected_ent).GetParentEntity();
+						!selected_parent_ent.empty())
+					{// 自身の親パスが空で無いなら -> その親パスのfirst_childを空にする -> 前にも後にも親の持つ子供がいないから
+						auto& selected_parent_comp = registry->GetComponent<HierarchyComponent>(selected_parent_ent);
+						selected_parent_comp.first_child = {};
+					}
+				}
 			}
 			else
 			{// 前に兄弟階層が存在する
@@ -100,6 +107,15 @@ namespace cumulonimbus::component
 					next_sibling_comp.back_sibling = back_sibling_comp.GetEntity();
 				}
 			}
+
+			// 自分のパスが元々いた兄弟階層と異なるため
+			// back_siblingとnext_siblingを空にする
+			back_sibling = {};
+			next_sibling = {};
+		}
+		else
+		{// 同じ兄弟階層に再度付けられたため設定し直す必要がない -> 早期リターン
+			return;
 		}
 
 		//-- 新規設定 --//
@@ -108,20 +124,19 @@ namespace cumulonimbus::component
 		{// 一番上の親階層処理
 			if(first_child.empty())
 			{
-				//first_child  = {};
 				next_sibling = {};
 				back_sibling = {};
 			}
 		}
 		else
 		{// 子階層処理
-			const auto& parent_first_child = registry->GetComponent<HierarchyComponent>(parent_ent).GetFirstChild();
-			if(parent_first_child.empty())
-			{
+			if(const auto& parent_first_child = registry->GetComponent<HierarchyComponent>(parent_ent).GetFirstChild();
+				parent_first_child.empty())
+			{// 現エンティティの親階層に子階層ののエンティティが存在しない時
 				registry->GetComponent<HierarchyComponent>(parent_ent).first_child = selected_ent;
 			}
 			else
-			{
+			{// 現エンティティの親階層に子階層ののエンティティが存在する時
 				if (const auto& parent_first_child_next = registry->GetComponent<HierarchyComponent>(parent_first_child).GetNextSibling();
 					parent_first_child_next.empty())
 				{// 親階層のfirst_childが次の兄弟階層(next)を持っていない場合
@@ -146,6 +161,7 @@ namespace cumulonimbus::component
 							back_sibling = sibling_hierarchy_ent;
 							break;
 						}
+						// 兄弟階層で最後の階層ではなかったため次の兄弟階層に進めてループする
 						sibling_hierarchy_ent = sibling_hierarchy_comp.GetNextSibling();
 					}
 				}
