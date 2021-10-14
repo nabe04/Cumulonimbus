@@ -151,7 +151,8 @@ namespace cumulonimbus::asset
 			if(registry->HasComponent<component::HierarchyComponent>(connector.at(ent)))
 			{
 				const mapping::rename_type::Entity parent_ent = registry->GetComponent<component::HierarchyComponent>(connector.at(ent)).GetParentEntity();
-				registry->GetComponent<component::HierarchyComponent>(connector.at(ent)).SetParentEntity(connector.at(parent_ent));
+				// Todo Hierarchy Compのコメントアウトをはずしエラーを解消する
+				//registry->GetComponent<component::HierarchyComponent>(connector.at(ent)).SetParentEntity(connector.at(parent_ent));
 			}
 			else
 			{

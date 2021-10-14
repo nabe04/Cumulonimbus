@@ -55,10 +55,12 @@ namespace cumulonimbus::editor
 					{// シーン階層に対してのエンティティドロップ処理
 						if (ImGui::AcceptDragDropPayload(dragged_id.c_str()))
 						{
-							if(registry->HasComponent<component::HierarchyComponent>(selected_entity))
-							{
-								registry->RemoveComponent<component::HierarchyComponent>(selected_entity);
-							}
+							//if(registry->HasComponent<component::HierarchyComponent>(selected_entity))
+							//{
+							//	registry->RemoveComponent<component::HierarchyComponent>(selected_entity);
+							//}
+							// 一番上の親に設定
+							registry->GetComponent<component::HierarchyComponent>(selected_entity).SetParentEntity(registry, {});
 						}
 
 						ImGui::EndDragDropTarget();
@@ -79,8 +81,11 @@ namespace cumulonimbus::editor
 					{
 						// エンティティの階層表示
 						// 初めは一番上の親階層から始める
-						if (registry->HasComponent<component::HierarchyComponent>(key))
-							continue;
+						//if (registry->HasComponent<component::HierarchyComponent>(key))
+						//	continue;
+
+						if(!registry->GetComponent<component::HierarchyComponent>(key).GetParentEntity().empty())
+							continue;;
 
 						//ImGui::Separator();
 						is_dragged_entity      = false;
@@ -97,8 +102,20 @@ namespace cumulonimbus::editor
 
 		if(ImGui::Begin("Hierarchy Data"))
 		{
+			if(registry->HasComponent<component::HierarchyComponent>(selected_entity))
+			{
+				const auto& hierarchy_comp = registry->GetComponent<component::HierarchyComponent>(selected_entity);
+				ImGui::Text("Parent Ent : %s", registry->GetName(hierarchy_comp.GetParentEntity()).c_str());
+				ImGui::Text("First Child : %s", registry->GetName(hierarchy_comp.GetFirstChild()).c_str());
+				ImGui::Text("Back Sibling : %s", registry->GetName(hierarchy_comp.GetBackSibling()).c_str());
+				ImGui::Text("Next Sibling : %s", registry->GetName(hierarchy_comp.GetNextSibling()).c_str());
+			}
+			ImGui::Separator();
+			ImGui::Text("--Selected Entity--");
 			ImGui::Text(registry->GetName(selected_entity).c_str());
-			ImGui::Text("Sub Entities");
+			ImGui::Separator();
+			ImGui::Separator();
+			ImGui::Text("--Sub Entities--");
 			for(const auto& ent : sub_hierarchical_entities)
 			{
 				ImGui::Text(registry->GetName(ent).c_str());
@@ -210,7 +227,7 @@ namespace cumulonimbus::editor
 		{
 			if (ImGui::AcceptDragDropPayload(dragged_id.c_str()))
 			{// Hierarchy Componentの親エンティティを変更
-				registry->GetOrEmplaceComponent<component::HierarchyComponent>(selected_entity).SetParentEntity(ent);
+				registry->GetOrEmplaceComponent<component::HierarchyComponent>(selected_entity).SetParentEntity(registry, ent);
 			}
 
 			ImGui::EndDragDropTarget();

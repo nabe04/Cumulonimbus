@@ -61,6 +61,7 @@ namespace cumulonimbus::ecs
 
 		CreateEntity(id);
 		AddComponent<component::TransformComponent>(id);
+		AddComponent<component::HierarchyComponent>(id);
 		return entities.at(id).first;
 	}
 

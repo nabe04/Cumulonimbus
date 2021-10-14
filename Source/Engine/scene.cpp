@@ -140,9 +140,18 @@ namespace cumulonimbus::scene
 		const mapping::rename_type::Entity ent_main_camera = registry->CreateEntity();
 		registry->AddComponent<component::CameraComponent>(ent_main_camera, true);
 		registry->Rename(ent_main_camera, filename_helper::GetMainCamera());
-		const mapping::rename_type::Entity hierarcy_comp = registry->CreateEntity();
-		registry->AddComponent<component::HierarchyComponent>(hierarcy_comp);
-		registry->GetComponent<component::HierarchyComponent>(hierarcy_comp).SetParentEntity(ent_main_camera);
+		registry->GetComponent<component::HierarchyComponent>(ent_main_camera).SetParentEntity(registry.get(), {});
+		const mapping::rename_type::Entity hierarchy_1_1_comp = registry->CreateEntity();
+		//registry->AddComponent<component::HierarchyComponent>(hierarcy_comp);
+		registry->GetComponent<component::HierarchyComponent>(hierarchy_1_1_comp).SetParentEntity(registry.get(), ent_main_camera);
+
+		const mapping::rename_type::Entity hierarchy_1_2__comp = registry->CreateEntity();
+		//registry->AddComponent<component::HierarchyComponent>(hierarcy_comp);
+		registry->GetComponent<component::HierarchyComponent>(hierarchy_1_2__comp).SetParentEntity(registry.get(), ent_main_camera);
+
+		const mapping::rename_type::Entity hierarchy_2_1__comp = registry->CreateEntity();
+		//registry->AddComponent<component::HierarchyComponent>(hierarcy_comp);
+		registry->GetComponent<component::HierarchyComponent>(hierarchy_2_1__comp).SetParentEntity(registry.get(), hierarchy_1_1_comp);
 		system->SetCurrentScenePath(filename_helper::GetNoTitled());
 
 		//const mapping::rename_type::Entity ent_main_camera = registry->CreateEntity();

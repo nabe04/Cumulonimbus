@@ -30,7 +30,8 @@ namespace cumulonimbus::component
 		void Load(ecs::Registry* registry) override;
 
 		/**
-		 * @brief :
+		 * @brief : eŠK‘w(parent_entity)AÅ‰‚ÌqŠK‘w(first_child)A
+		 *			ŒZ’íŠK‘w(next_siblingAback_sibling)‚Ì“o˜^
 		 */
 		void RegistryFamily(
 			ecs::Registry* registry,
@@ -46,10 +47,10 @@ namespace cumulonimbus::component
 		[[nodiscard]]
 		const mapping::rename_type::Entity& GetBackSibling() const { return back_sibling; }
 
-		void SetParentEntity(const mapping::rename_type::Entity& parent) { parent_entity = parent; }
-		void SetFirstChild(const mapping::rename_type::Entity& first) { first_child = first; }
-		void SetNext(const mapping::rename_type::Entity& next) { next_sibling = next; }
-		void SetBack(const mapping::rename_type::Entity& back) { back_sibling = back; }
+		void SetParentEntity(ecs::Registry* registry, const mapping::rename_type::Entity& parent);
+		//void SetFirstChild(const mapping::rename_type::Entity& first) { first_child = first; }
+		//void SetNext(const mapping::rename_type::Entity& next) { next_sibling = next; }
+		//void SetBack(const mapping::rename_type::Entity& back) { back_sibling = back; }
 	private:
 		mapping::rename_type::Entity parent_entity{}; // eŠK‘w‚ÌƒGƒ“ƒeƒBƒeƒB
 		mapping::rename_type::Entity first_child{};
