@@ -11,11 +11,25 @@
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::SpriteComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::SpriteComponent)
+CEREAL_CLASS_VERSION(cumulonimbus::component::SpriteComponent, 0)
 
 namespace cumulonimbus::component
 {
+	//template <class Archive>
+	//void SpriteComponent::serialize(Archive&& archive)
+	//{
+	//	archive(
+	//		cereal::base_class<ComponentBase>(this),
+	//		CEREAL_NVP(texture_id),
+	//		CEREAL_NVP(shader_asset_manager),
+	//		CEREAL_NVP(graphics_state),
+	//		CEREAL_NVP(pivot_type),
+	//		CEREAL_NVP(vertices)
+	//	);
+	//}
+
 	template <class Archive>
-	void SpriteComponent::serialize(Archive&& archive)
+	void SpriteComponent::load(Archive&& archive, uint32_t version)
 	{
 		archive(
 			cereal::base_class<ComponentBase>(this),
@@ -26,6 +40,22 @@ namespace cumulonimbus::component
 			CEREAL_NVP(vertices)
 		);
 	}
+
+	template <class Archive>
+	void SpriteComponent::save(Archive&& archive, uint32_t version) const
+	{
+		archive(
+			cereal::base_class<ComponentBase>(this),
+			CEREAL_NVP(texture_id),
+			CEREAL_NVP(shader_asset_manager),
+			CEREAL_NVP(graphics_state),
+			CEREAL_NVP(pivot_type),
+			CEREAL_NVP(vertices)
+		);
+
+	}
+
+
 
 	SpriteComponent::SpriteComponent()
 		:ComponentBase{}

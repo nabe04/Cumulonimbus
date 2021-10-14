@@ -59,8 +59,24 @@ namespace cumulonimbus::component
 		virtual void RenderImGui() {}
 		virtual void Load(ecs::Registry* registry) = 0;
 
-		template<typename Archive>
-		void serialize(Archive&& archive)
+		//template<typename Archive>
+		//void serialize(Archive&& archive)
+		//{
+		//	archive(
+		//		CEREAL_NVP(entity)
+		//	);
+		//}
+
+		template<class Archive>
+		void load(Archive&& archive, uint32_t version)
+		{
+			archive(
+				CEREAL_NVP(entity)
+			);
+		}
+
+		template<class Archive>
+		void save(Archive&& archive, uint32_t version) const
 		{
 			archive(
 				CEREAL_NVP(entity)
@@ -82,3 +98,5 @@ namespace cumulonimbus::component
 		mapping::rename_type::Entity entity{};
 	};
 } // cumulonimbus::component
+
+CEREAL_CLASS_VERSION(cumulonimbus::component::ComponentBase, 0)

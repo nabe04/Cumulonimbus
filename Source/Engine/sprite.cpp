@@ -14,11 +14,12 @@
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::OldSpriteComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::OldSpriteComponent)
+CEREAL_CLASS_VERSION(cumulonimbus::component::OldSpriteComponent, 0)
 
 namespace cumulonimbus::component
 {
 	template <class Archive>
-	void OldSpriteComponent::serialize(Archive&& archive)
+	void OldSpriteComponent::load(Archive&& archive, uint32_t version)
 	{
 		archive(
 			cereal::base_class<ComponentBase>(this),
@@ -36,6 +37,27 @@ namespace cumulonimbus::component
 			CEREAL_NVP(image_size)
 		);
 	}
+
+	template <class Archive>
+	void OldSpriteComponent::save(Archive&& archive, uint32_t version) const
+	{
+		archive(
+			cereal::base_class<ComponentBase>(this),
+			CEREAL_NVP(texture),
+			CEREAL_NVP(graphics_state),
+			CEREAL_NVP(sprite_shader_state),
+			CEREAL_NVP(pivot_type),
+			CEREAL_NVP(src_pivot),
+			CEREAL_NVP(src_width),
+			CEREAL_NVP(src_height),
+			CEREAL_NVP(variable_texcoords),
+			CEREAL_NVP(variable_width),
+			CEREAL_NVP(variable_height),
+			CEREAL_NVP(color),
+			CEREAL_NVP(image_size)
+		);
+	}
+
 
 	OldSpriteComponent::OldSpriteComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent,
 		ID3D11Device* device,

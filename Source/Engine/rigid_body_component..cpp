@@ -6,11 +6,50 @@
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::RigidBodyComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::RigidBodyComponent)
+CEREAL_CLASS_VERSION(cumulonimbus::component::RigidBodyComponent, 0)
 
 namespace cumulonimbus::component
 {
+	//template<class Archive>
+	//void RigidBodyComponent::serialize(Archive&& archive)
+	//{
+	//	archive(
+	//		cereal::base_class<ComponentBase>(this),
+	//		CEREAL_NVP(velocity),
+	//		CEREAL_NVP(acceleration),
+
+	//		CEREAL_NVP(mass),
+	//		CEREAL_NVP(jump_strength),
+	//		CEREAL_NVP(gravity),
+	//		CEREAL_NVP(current_gravity),
+
+	//		CEREAL_NVP(is_gravity),
+	//		CEREAL_NVP(is_landing),
+	//		CEREAL_NVP(is_jumping)
+	//	);
+	//}
+
 	template<class Archive>
-	void RigidBodyComponent::serialize(Archive&& archive)
+	void RigidBodyComponent::load(Archive&& archive, uint32_t version)
+	{
+		archive(
+			cereal::base_class<ComponentBase>(this),
+			CEREAL_NVP(velocity),
+			CEREAL_NVP(acceleration),
+
+			CEREAL_NVP(mass),
+			CEREAL_NVP(jump_strength),
+			CEREAL_NVP(gravity),
+			CEREAL_NVP(current_gravity),
+
+			CEREAL_NVP(is_gravity),
+			CEREAL_NVP(is_landing),
+			CEREAL_NVP(is_jumping)
+		);
+	}
+
+	template<class Archive>
+	void RigidBodyComponent::save(Archive&& archive, uint32_t version) const
 	{
 		archive(
 			cereal::base_class<ComponentBase>(this),

@@ -10,11 +10,12 @@
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::ModelComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::ModelComponent)
+CEREAL_CLASS_VERSION(cumulonimbus::component::ModelComponent, 0)
 
 namespace cumulonimbus::component
 {
 	template <class Archive>
-	void ModelComponent::serialize(Archive&& archive)
+	void ModelComponent::load(Archive&& archive, uint32_t version)
 	{
 		archive(
 			cereal::base_class<ComponentBase>(this),
@@ -42,6 +43,39 @@ namespace cumulonimbus::component
 			CEREAL_NVP(anim_states)
 		);
 	}
+
+	template <class Archive>
+	void ModelComponent::save(Archive&& archive, uint32_t version) const
+	{
+		archive(
+			cereal::base_class<ComponentBase>(this),
+
+			CEREAL_NVP(model_id),
+			CEREAL_NVP(material_ids),
+			CEREAL_NVP(nodes),
+			CEREAL_NVP(graphics_state),
+
+			CEREAL_NVP(prev_key_index),
+			CEREAL_NVP(current_keyframe),
+			CEREAL_NVP(prev_animation_index),
+			CEREAL_NVP(current_animation_index),
+
+			CEREAL_NVP(prev_seconds),
+			CEREAL_NVP(changer_timer),
+			CEREAL_NVP(current_seconds),
+			CEREAL_NVP(animation_switch_time),
+
+			CEREAL_NVP(is_visible),
+			CEREAL_NVP(loop_animation),
+			CEREAL_NVP(end_animation),
+
+			CEREAL_NVP(prev_animation),
+			CEREAL_NVP(anim_states)
+		);
+		
+	}
+
+
 
 	ModelComponent::ModelComponent(
 		ecs::Registry* registry, const mapping::rename_type::Entity ent,
@@ -341,9 +375,9 @@ namespace cumulonimbus::component
 		{
 			// 前のアニメーションの切り替わった時点のキーフレームを算出
 			const size_t keyframe = model_data.animations.at(prev_animation_index).num_key_frame;
-			if (prev_key_index >= keyframe)
+			if (prev_key_index >= static_cast<int>(keyframe))
 			{
-				prev_key_index = keyframe;
+				prev_key_index = static_cast<int>(keyframe);
 			}
 			prev_animation = model_data.animations.at(prev_animation_index);
 		}

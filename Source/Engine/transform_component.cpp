@@ -12,21 +12,51 @@
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::TransformComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::TransformComponent)
+CEREAL_CLASS_VERSION(cumulonimbus::component::TransformComponent, 0);
 
 namespace cumulonimbus::component
 {
 	using namespace DirectX::SimpleMath;
 
+	//template <class Archive>
+	//void TransformComponent::serialize(Archive&& archive)
+	//{
+	//	archive(
+	//		cereal::base_class<ComponentBase>(this),
+	//		CEREAL_NVP(local_position),
+	//		CEREAL_NVP(local_prev_pos),
+	//		CEREAL_NVP(local_scale),
+	//		CEREAL_NVP(local_angle),
+	//		CEREAL_NVP(local_prev_angle),
+
+	//		CEREAL_NVP(world_f4x4),
+	//		CEREAL_NVP(scaling_matrix),
+	//		CEREAL_NVP(rotation_matrix),
+	//		CEREAL_NVP(translation_matrix),
+
+	//		CEREAL_NVP(model_right),
+	//		CEREAL_NVP(model_front),
+	//		CEREAL_NVP(model_up),
+	//		CEREAL_NVP(orientation),
+
+	//		// Quaternion
+	//		CEREAL_NVP(rotation_quaternion),
+
+	//		CEREAL_NVP(is_quaternion)
+
+	//	);
+	//}
+
 	template <class Archive>
-	void TransformComponent::serialize(Archive&& archive)
+	void TransformComponent::load(Archive&& archive, uint32_t version)
 	{
 		archive(
 			cereal::base_class<ComponentBase>(this),
-			CEREAL_NVP(position),
-			CEREAL_NVP(prev_pos),
-			CEREAL_NVP(scale),
-			CEREAL_NVP(angle),
-			CEREAL_NVP(prev_angle),
+			CEREAL_NVP(local_position),
+			CEREAL_NVP(local_prev_pos),
+			CEREAL_NVP(local_scale),
+			CEREAL_NVP(local_angle),
+			CEREAL_NVP(local_prev_angle),
 
 			CEREAL_NVP(world_f4x4),
 			CEREAL_NVP(scaling_matrix),
@@ -41,12 +71,39 @@ namespace cumulonimbus::component
 			// Quaternion
 			CEREAL_NVP(rotation_quaternion),
 
-			CEREAL_NVP(is_billboard),
 			CEREAL_NVP(is_quaternion)
 
 		);
 	}
 
+	template <class Archive>
+	void TransformComponent::save(Archive&& archive, uint32_t version) const
+	{
+		archive(
+			cereal::base_class<ComponentBase>(this),
+			CEREAL_NVP(local_position),
+			CEREAL_NVP(local_prev_pos),
+			CEREAL_NVP(local_scale),
+			CEREAL_NVP(local_angle),
+			CEREAL_NVP(local_prev_angle),
+
+			CEREAL_NVP(world_f4x4),
+			CEREAL_NVP(scaling_matrix),
+			CEREAL_NVP(rotation_matrix),
+			CEREAL_NVP(translation_matrix),
+
+			CEREAL_NVP(model_right),
+			CEREAL_NVP(model_front),
+			CEREAL_NVP(model_up),
+			CEREAL_NVP(orientation),
+
+			// Quaternion
+			CEREAL_NVP(rotation_quaternion),
+
+			CEREAL_NVP(is_quaternion)
+
+		);
+	}
 
 	TransformComponent::TransformComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent)
 		: ComponentBase{ registry,ent}
@@ -69,10 +126,10 @@ namespace cumulonimbus::component
 
 	TransformComponent::TransformComponent(const TransformComponent& other)
 		:ComponentBase{other},
-		 position{other.GetPosition()},
-		 prev_pos{other.GetOldPosition()},
-		 scale{other.GetScale()},
-		 angle{other.GetWorldRotation()},
+		 local_position{other.GetPosition()},
+		 local_prev_pos{other.GetOldPosition()},
+		 local_scale{other.GetScale()},
+		 local_angle{other.GetWorldRotation()},
 		 world_f4x4{other.GetWorld4x4()},
 		 scaling_matrix{other.GetScalingMat()},
 		 rotation_matrix{other.GetRotationMat()},
@@ -80,7 +137,6 @@ namespace cumulonimbus::component
 		 orientation{DirectX::SimpleMath::Matrix::Identity},
 		 rotation_quaternion{other.GetRotationQuaternion()},
 		 rotation_result_quaternion{other.GetRotationResultQuaternion()},
-		 is_billboard{other.IsBillboard()},
 		 is_quaternion{other.IsQuaternion()}
 	{
 		if (cb_transform)
@@ -96,10 +152,10 @@ namespace cumulonimbus::component
 			return *this;
 		}
 
-		position					= other.GetPosition();
-		prev_pos					= other.GetOldPosition();
-		scale						= other.GetScale();
-		angle						= other.GetWorldRotation();
+		local_position					= other.GetPosition();
+		local_prev_pos					= other.GetOldPosition();
+		local_scale						= other.GetScale();
+		local_angle						= other.GetWorldRotation();
 		world_f4x4					= other.GetWorld4x4();
 		scaling_matrix				= other.GetScalingMat();
 		rotation_matrix				= other.GetRotationMat();
@@ -107,7 +163,6 @@ namespace cumulonimbus::component
 		orientation					= DirectX::SimpleMath::Matrix::Identity;
 		rotation_quaternion			= other.GetRotationQuaternion();
 		rotation_result_quaternion	= other.GetRotationResultQuaternion();
-		is_billboard				= other.IsBillboard();
 		is_quaternion				= other.IsQuaternion();
 
 		if (cb_transform)
@@ -130,7 +185,7 @@ namespace cumulonimbus::component
 
 	void TransformComponent::PostCommonUpdate(float dt)
 	{
-		SetOldPosition(GetPosition());
+		local_prev_pos = local_position;
 	}
 
 	void TransformComponent::SceneUpdate(float dt)
@@ -159,9 +214,9 @@ namespace cumulonimbus::component
 			DirectX::SimpleMath::Matrix proj_mat = camera.GetCamera().GetProjectionMat();
 
 			//ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, window_width, window_height);
-			IMGUI_LEFT_LABEL(ImGui::DragFloat3, "Position", reinterpret_cast<float*>(&position), 0.01f, -10000.0f, 10000.0f);
-			IMGUI_LEFT_LABEL(ImGui::DragFloat3, "Scale   ", reinterpret_cast<float*>(&scale)	 , 0.01f, -10000.0f, 10000.0f);
-			IMGUI_LEFT_LABEL(ImGui::DragFloat3, "Rotation", &angle.x	 , 0.01f, -180.0f  , 180.0f);
+			IMGUI_LEFT_LABEL(ImGui::DragFloat3, "Position", reinterpret_cast<float*>(&local_position), 0.01f, -10000.0f, 10000.0f);
+			IMGUI_LEFT_LABEL(ImGui::DragFloat3, "Scale   ", reinterpret_cast<float*>(&local_scale)	 , 0.01f, -10000.0f, 10000.0f);
+			IMGUI_LEFT_LABEL(ImGui::DragFloat3, "Rotation", &local_angle.x	 , 0.01f, -180.0f  , 180.0f);
 
 			ImGui::Text("Right X %f", model_right.x);
 			ImGui::Text("Right Y %f", model_right.y);
@@ -213,7 +268,7 @@ namespace cumulonimbus::component
 	void TransformComponent::CreateScaling4x4()
 	{
 		// Scaling
-		DirectX::XMMATRIX s = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z);
+		DirectX::XMMATRIX s = DirectX::XMMatrixScaling(local_scale.x, local_scale.y, local_scale.z);
 
 		XMStoreFloat4x4(&scaling_matrix, s);
 		// Constant Bufferのセット
@@ -223,26 +278,22 @@ namespace cumulonimbus::component
 	void TransformComponent::CreateRotation4x4()
 	{
 
-		
+
 		// Rotation
 		DirectX::XMMATRIX r = DirectX::XMMatrixIdentity();
-		if (is_billboard)
-		{
-			return;
-		}
-		else if (is_quaternion)
+		if (is_quaternion)
 		{
 			//AdjustRotationFromAxis({ 0,1,0 }, XMConvertToRadians(1));
 			rotation_quaternion.Normalize();
 			r = DirectX::XMMatrixRotationQuaternion(XMLoadFloat4(&rotation_quaternion));
-			angle   = arithmetic::QuaternionToEulerAngle(rotation_quaternion);
-			angle.x = DirectX::XMConvertToDegrees(angle.x);
-			angle.y = DirectX::XMConvertToDegrees(angle.y);
-			angle.z = DirectX::XMConvertToDegrees(angle.z);
+			local_angle   = arithmetic::QuaternionToEulerAngle(rotation_quaternion);
+			local_angle.x = DirectX::XMConvertToDegrees(local_angle.x);
+			local_angle.y = DirectX::XMConvertToDegrees(local_angle.y);
+			local_angle.z = DirectX::XMConvertToDegrees(local_angle.z);
 		}
 		else
 		{
-			r = DirectX::XMMatrixRotationRollPitchYaw(DirectX::XMConvertToRadians(angle.x), DirectX::XMConvertToRadians(angle.y), DirectX::XMConvertToRadians(angle.z));
+			r = DirectX::XMMatrixRotationRollPitchYaw(DirectX::XMConvertToRadians(local_angle.x), DirectX::XMConvertToRadians(local_angle.y), DirectX::XMConvertToRadians(local_angle.z));
 		}
 
 		XMStoreFloat4x4(&rotation_matrix, r);
@@ -256,7 +307,7 @@ namespace cumulonimbus::component
 	void TransformComponent::CreateTranslation4x4()
 	{
 		// Parallel movement
-		DirectX::XMMATRIX t = DirectX::XMMatrixTranslation(position.x, position.y, position.z);
+		DirectX::XMMATRIX t = DirectX::XMMatrixTranslation(local_position.x, local_position.y, local_position.z);
 
 		XMStoreFloat4x4(&translation_matrix, t);
 		// Constant Bufferのセット
@@ -294,60 +345,45 @@ namespace cumulonimbus::component
 		model_up	= DirectX::XMFLOAT3{ rotation_matrix._21,rotation_matrix._22,rotation_matrix._23 };
 		model_front = DirectX::XMFLOAT3{ rotation_matrix._31,rotation_matrix._32,rotation_matrix._33 };
 
-		prev_angle = angle;
+		local_prev_angle = local_angle;
 	}
 
 	void TransformComponent::NormalizeAngle()
 	{
 		// Angle X
-		if (angle.x > 180.0f)
+		if (local_angle.x > 180.0f)
 		{
-			angle.x -= 360.0f;
+			local_angle.x -= 360.0f;
 		}
-		else if (angle.x < -180.0f)
+		else if (local_angle.x < -180.0f)
 		{
-			angle.x += 360.0f;
+			local_angle.x += 360.0f;
 		}
 
 		// Angle Y
-		if (angle.y > 180.0f)
+		if (local_angle.y > 180.0f)
 		{
-			angle.y -= 360.0f;
+			local_angle.y -= 360.0f;
 		}
-		else if (angle.y < -180.0f)
+		else if (local_angle.y < -180.0f)
 		{
-			angle.y += 360.0f;
+			local_angle.y += 360.0f;
 		}
 
 		// Angle Z
-		if (angle.z > 180.0f)
+		if (local_angle.z > 180.0f)
 		{
-			angle.z -= 360.0f;
+			local_angle.z -= 360.0f;
 		}
-		else if (angle.z < -180.0f)
+		else if (local_angle.z < -180.0f)
 		{
-			angle.z += 360.0f;
+			local_angle.z += 360.0f;
 		}
 	}
 
 	void TransformComponent::CreateIdentity4x4(DirectX::SimpleMath::Matrix& convert)
 	{
 		convert = DirectX::SimpleMath::Matrix::Identity;
-	}
-
-	void TransformComponent::GetBillboardRotation(const DirectX::XMFLOAT3 billPos, const DirectX::XMFLOAT3 targetPos)
-	{
-		if (!is_billboard)
-			assert(!"Billboard passive !!");
-
-		DirectX::XMMATRIX rotatin_matrix = DirectX::XMMatrixIdentity();
-		DirectX::FXMVECTOR bill_vec = DirectX::XMVectorSet(billPos.x, billPos.y, billPos.z, 1);
-		DirectX::FXMVECTOR target_vec = DirectX::XMVectorSet(targetPos.x, targetPos.y, targetPos.z, 1);
-		rotatin_matrix = DirectX::XMMatrixLookAtLH(bill_vec, target_vec, DirectX::FXMVECTOR{ 0,1,0 });
-		rotatin_matrix = XMMatrixInverse(nullptr, rotatin_matrix);
-
-		XMStoreFloat4x4(&rotation_matrix, rotatin_matrix);
-		//rotation_f4x4._41 = rotation_f4x4._42 = rotation_f4x4._43 = rotation_f4x4._44 = 0;
 	}
 
 	void TransformComponent::SetQuaternionSlerp(const DirectX::SimpleMath::Quaternion& q1, const DirectX::SimpleMath::Quaternion& q2)
@@ -361,16 +397,16 @@ namespace cumulonimbus::component
 		rotation_quaternion = Quaternion::Slerp(rotation_prev_quaternion, rotation_result_quaternion, t);
 	}
 
-	void TransformComponent::AdjustRotationFromAxis(const DirectX::SimpleMath::Vector3& axis, const float angle)
+	void TransformComponent::AdjustRotationFromAxis(const DirectX::SimpleMath::Vector3& axis, const float local_angle)
 	{
-		const Quaternion q = Quaternion::CreateFromAxisAngle(axis, angle);
+		const Quaternion q = Quaternion::CreateFromAxisAngle(axis, local_angle);
 		rotation_quaternion *= q;
 	}
 
-	DirectX::XMMATRIX TransformComponent::GetRotationMatrix(DirectX::XMFLOAT3 axis, float angle/* degree */)
+	DirectX::XMMATRIX TransformComponent::GetRotationMatrix(DirectX::XMFLOAT3 axis, float local_angle/* degree */)
 	{
 		const DirectX::XMVECTOR axis_vec = XMLoadFloat3(&axis);
-		const DirectX::XMVECTOR calc_val = DirectX::XMQuaternionRotationAxis(axis_vec, DirectX::XMConvertToRadians(angle));
+		const DirectX::XMVECTOR calc_val = DirectX::XMQuaternionRotationAxis(axis_vec, DirectX::XMConvertToRadians(local_angle));
 
 		return DirectX::XMMatrixRotationQuaternion(calc_val);
 	}

@@ -4,6 +4,7 @@
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::RayCastComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::CollisionComponent, cumulonimbus::component::RayCastComponent)
+CEREAL_CLASS_VERSION(cumulonimbus::component::RayCastComponent, 0)
 
 namespace cumulonimbus::collision
 {
@@ -26,14 +27,33 @@ namespace cumulonimbus::collision
 
 namespace cumulonimbus::component
 {
+	//template <class Archive>
+	//void RayCastComponent::serialize(Archive&& archive)
+	//{
+	//	archive(
+	//		cereal::base_class<CollisionComponent>(this),
+	//		CEREAL_NVP(rays)
+	//	);
+	//}
+
 	template <class Archive>
-	void RayCastComponent::serialize(Archive&& archive)
+	void RayCastComponent::load(Archive&& archive, uint32_t version)
 	{
 		archive(
 			cereal::base_class<CollisionComponent>(this),
 			CEREAL_NVP(rays)
 		);
 	}
+
+	template <class Archive>
+	void RayCastComponent::save(Archive&& archive, uint32_t version) const
+	{
+		archive(
+			cereal::base_class<CollisionComponent>(this),
+			CEREAL_NVP(rays)
+		);
+	}
+
 
 	RayCastComponent::RayCastComponent(
 		ecs::Registry* registry,

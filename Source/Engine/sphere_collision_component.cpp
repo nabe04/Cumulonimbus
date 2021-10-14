@@ -11,6 +11,7 @@
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::SphereCollisionComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::CollisionComponent, cumulonimbus::component::SphereCollisionComponent)
+CEREAL_CLASS_VERSION(cumulonimbus::component::SphereCollisionComponent, 0)
 
 namespace cumulonimbus::collision
 {
@@ -32,7 +33,16 @@ namespace cumulonimbus::collision
 namespace cumulonimbus::component
 {
 	template <class Archive>
-	void SphereCollisionComponent::serialize(Archive&& archive)
+	void SphereCollisionComponent::load(Archive&& archive, uint32_t version)
+	{
+		archive(
+			cereal::base_class<CollisionComponent>(this),
+			CEREAL_NVP(spheres)
+		);
+	}
+
+	template <class Archive>
+	void SphereCollisionComponent::save(Archive&& archive, uint32_t version) const
 	{
 		archive(
 			cereal::base_class<CollisionComponent>(this),

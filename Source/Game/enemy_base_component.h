@@ -24,7 +24,10 @@ namespace cumulonimbus::component
 		void Load(ecs::Registry* registry) override;
 
 		template<class Archive>
-		void serialize(Archive&& archive);
+		void load(Archive&& archive, uint32_t version);
+
+		template<class Archive>
+		void save(Archive&& archive, uint32_t version) const;
 
 	protected:
 		/**

@@ -38,6 +38,12 @@ namespace cumulonimbus::component
 
 		void Load(ecs::Registry* registry) override;
 
+		template<class Archive>
+		void load(Archive&& archive, uint32_t version);
+
+		template<class Archive>
+		void save(Archive&& archive, uint32_t version) const;
+
 		/*
 		* brief : アニメーション指定
 		* clip : 指定位置(0スタート)
@@ -47,9 +53,6 @@ namespace cumulonimbus::component
 		[[nodiscard]] const DirectX::XMFLOAT2& GetAnimPivot() const { return anim_pivot; }
 		[[nodiscard]] const std::array<DirectX::XMFLOAT2, 4>& GetAnimTexcoord() const { return anim_texcoord; }
 		[[nodiscard]] const DirectX::XMINT2& GetNumClip() const { return num_clip; }
-
-		template <class Archive>
-		void serialize(Archive&& archive);
 	private:
 		using Texcoord = std::vector<DirectX::XMFLOAT2>;
 		std::array<Texcoord, 4>			 clip_texcoord{};	// Animation用のtexcoord(横優先)

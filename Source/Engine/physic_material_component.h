@@ -29,7 +29,10 @@ namespace cumulonimbus::component
 		~PhysicMaterialComponent() override = default;
 
 		template<class Archive>
-		void serialize(Archive&& archive);
+		void load(Archive&& archive, uint32_t  version);
+
+		template<class Archive>
+		void save(Archive&& archive, uint32_t version) const;
 
 		void GameUpdate(float dt)			override;
 		void RenderImGui()					override;

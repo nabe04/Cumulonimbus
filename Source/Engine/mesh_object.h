@@ -63,7 +63,22 @@ namespace cumulonimbus::component
 		[[nodiscard]] RenderingBufferBitset* UsingBuffer() { return &rendering_buffer; }
 
 		template<class Archive>
-		void serialize(Archive&& archive)
+		void load(Archive&& archive, uint32_t  version)
+		{
+			archive(
+				cereal::base_class<ComponentBase>(this),
+				cereal::make_nvp("blend state", blend_state),
+				cereal::make_nvp("rasterizer state", rasterizer_state),
+				cereal::make_nvp("sampler state", sampler_state),
+				cereal::make_nvp("depth stencil_state", depth_stencil_state),
+
+				cereal::make_nvp("shader state", shader_state),
+				cereal::make_nvp("rendering_buffer", rendering_buffer)
+			);
+		}
+
+		template<class Archive>
+		void save(Archive&& archive, uint32_t version) const
 		{
 			archive(
 				cereal::base_class<ComponentBase>(this),
@@ -81,3 +96,4 @@ namespace cumulonimbus::component
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::MeshObjectComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::MeshObjectComponent)
+CEREAL_CLASS_VERSION(cumulonimbus::component::MeshObjectComponent, 0)

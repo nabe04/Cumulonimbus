@@ -36,7 +36,6 @@ namespace cumulonimbus::editor
 		 * @remark : ※caution : ImGui::MenuItem内に記述すること
 		 */
 		void CreatePrefab(ecs::Registry* registry, const std::vector<mapping::rename_type::Entity>& entities);
-		
 		/**
 		 * @brief : アセットの削除
 		 * @remark : ※caution : ImGui::MenuItem内に記述すること

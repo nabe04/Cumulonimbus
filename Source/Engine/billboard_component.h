@@ -33,6 +33,12 @@ namespace cumulonimbus::component
 
 		void GameUpdate(float dt)  override;
 
+		template<class Archive>
+		void load(Archive&& archive, uint32_t  version);
+
+		template<class Archive>
+		void save(Archive&& archive, uint32_t version) const;
+
 		[[nodiscard]]
 		const EnumStateMap<render::RenderingTarget>& GetRenderingTarget() const { return rendering_target; }
 

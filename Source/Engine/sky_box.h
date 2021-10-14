@@ -39,7 +39,18 @@ namespace cumulonimbus::graphics
 		~SkyBox() = default;
 
 		template<class Archive>
-		void serialize(Archive&& archive)
+		void load(Archive&& archive, uint32_t  version)
+		{
+			archive(
+				CEREAL_NVP(file_path_and_name),
+				CEREAL_NVP(position),
+				CEREAL_NVP(scale),
+				CEREAL_NVP(angle)
+			);
+		}
+
+		template<class Archive>
+		void save(Archive&& archive, uint32_t version) const
 		{
 			archive(
 				CEREAL_NVP(file_path_and_name),
@@ -109,4 +120,6 @@ namespace cumulonimbus::graphics
 		void CreateVertexBufferAndIndexBuffer(ID3D11Device* device);
 		void CreateTextures(ID3D11Device* device, const char* filename);
 	};
-} // cumulonimbus::skybox
+} // cumulonimbus::graphics
+
+CEREAL_CLASS_VERSION(cumulonimbus::graphics::SkyBox, 0)

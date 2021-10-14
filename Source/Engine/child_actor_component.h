@@ -33,8 +33,8 @@ namespace cumulonimbus::component
 		[[nodiscard]]
 		const mapping::rename_type::Entity& GetParentEntity() const { return parent_ent; }
 
-		template<typename Archive>
-		void serialize(Archive&& archive)
+		template<class Archive>
+		void load(Archive&& archive, uint32_t  version)
 		{
 			archive(
 				cereal::base_class<MeshObjectComponent>(this),
@@ -42,6 +42,17 @@ namespace cumulonimbus::component
 				CEREAL_NVP(tag_node_name)
 			);
 		}
+
+		template<class Archive>
+		void save(Archive&& archive, uint32_t version) const
+		{
+			archive(
+				cereal::base_class<MeshObjectComponent>(this),
+				CEREAL_NVP(parent_matrix),
+				CEREAL_NVP(tag_node_name)
+			);
+		}
+
 	private:
 		mapping::rename_type::Entity parent_ent{}; // 親のエンティティ
 		//EnumStateMap<EntityTag> parent_tag{ EntityTag::Default };
@@ -53,3 +64,4 @@ namespace cumulonimbus::component
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::ChildActorComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::MeshObjectComponent, cumulonimbus::component::ChildActorComponent)
+CEREAL_CLASS_VERSION(cumulonimbus::component::ChildActorComponent, 0)

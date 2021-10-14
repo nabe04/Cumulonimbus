@@ -10,11 +10,12 @@
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::EnemyBaseComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::Actor3DComponent, cumulonimbus::component::EnemyBaseComponent)
+CEREAL_CLASS_VERSION(cumulonimbus::component::EnemyBaseComponent, 0)
 
 namespace cumulonimbus::component
 {
 	template <class Archive>
-	void EnemyBaseComponent::serialize(Archive&& archive)
+	void EnemyBaseComponent::load(Archive&& archive, uint32_t version)
 	{
 		archive(
 			cereal::base_class<Actor3DComponent>(this),
@@ -23,6 +24,15 @@ namespace cumulonimbus::component
 		);
 	}
 
+	template <class Archive>
+	void EnemyBaseComponent::save(Archive&& archive, uint32_t version) const
+	{
+		archive(
+			cereal::base_class<Actor3DComponent>(this),
+			CEREAL_NVP(transition_timer),
+			CEREAL_NVP(random_rotation_angle)
+		);
+	}
 
 	void EnemyBaseComponent::RandomFloat::SetRandomVal()
 	{

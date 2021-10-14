@@ -151,9 +151,63 @@ namespace cumulonimbus::component
 
 		void Load(ecs::Registry* registry) override;
 
-		// For cereal
-		template<typename Archive>
-		void serialize(Archive&& archive)
+		//// For cereal
+		//template<typename Archive>
+		//void serialize(Archive&& archive)
+		//{
+		//	archive(
+		//		cereal::base_class<ComponentBase>(this),
+
+		//		CEREAL_NVP(resource),
+		//		CEREAL_NVP(nodes),
+
+		//		CEREAL_NVP(current_animation_index),
+		//		CEREAL_NVP(prev_animation_index),
+		//		CEREAL_NVP(current_keyframe),
+		//		CEREAL_NVP(prev_key_index),
+
+		//		CEREAL_NVP(current_seconds),
+		//		CEREAL_NVP(prev_seconds),
+		//		CEREAL_NVP(animation_switch_time),
+		//		CEREAL_NVP(changer_timer),
+
+		//		CEREAL_NVP(loop_animation),
+		//		CEREAL_NVP(end_animation),
+
+		//		CEREAL_NVP(prev_animation),
+		//		CEREAL_NVP(anim_states)
+		//	);
+		//}
+
+		template<class Archive>
+		void load(Archive&& archive, uint32_t version)
+		{
+			archive(
+				cereal::base_class<ComponentBase>(this),
+
+				CEREAL_NVP(resource),
+				CEREAL_NVP(nodes),
+
+				CEREAL_NVP(current_animation_index),
+				CEREAL_NVP(prev_animation_index),
+				CEREAL_NVP(current_keyframe),
+				CEREAL_NVP(prev_key_index),
+
+				CEREAL_NVP(current_seconds),
+				CEREAL_NVP(prev_seconds),
+				CEREAL_NVP(animation_switch_time),
+				CEREAL_NVP(changer_timer),
+
+				CEREAL_NVP(loop_animation),
+				CEREAL_NVP(end_animation),
+
+				CEREAL_NVP(prev_animation),
+				CEREAL_NVP(anim_states)
+			);
+		}
+
+		template<class Archive>
+		void save(Archive&& archive, uint32_t version) const
 		{
 			archive(
 				cereal::base_class<ComponentBase>(this),
@@ -224,3 +278,4 @@ namespace cumulonimbus::component
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::FbxModelComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::FbxModelComponent)
+CEREAL_CLASS_VERSION(cumulonimbus::component::FbxModelComponent, 0)

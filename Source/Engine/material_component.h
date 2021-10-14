@@ -22,16 +22,24 @@ namespace cumulonimbus::component
 		void RenderImGui()		override;
 
 		void Load(ecs::Registry* registry) override;
-		
+
 	//	[[nodiscard]] const MaterialCB& GetMaterialData() const { return cb_material->data; }
 		void SetMaterialCB(const MaterialCB& material) const;
 		void BindCBuffer(bool set_in_vs = true, bool set_in_ps = true) const;
 		void SetAndBindCBuffer(const MaterialCB& material, bool set_in_vs = true, bool set_in_ps = true) const;
 		void UnbindCBuffer() const;
 
+		template<class Archive>
+		void load(Archive&& archive, uint32_t  version)
+		{
+			archive(
+				cereal::base_class<ComponentBase>(this),
+				CEREAL_NVP(cb_material->data)
+			);
+		}
 
-		template<typename Archive>
-		void serialize(Archive&& archive)
+		template<class Archive>
+		void save(Archive&& archive, uint32_t version) const
 		{
 			archive(
 				cereal::base_class<ComponentBase>(this),
@@ -45,4 +53,4 @@ namespace cumulonimbus::component
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::MaterialComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::MaterialComponent)
-
+CEREAL_CLASS_VERSION(cumulonimbus::component::MaterialComponent, 0)

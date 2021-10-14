@@ -23,9 +23,26 @@ namespace cumulonimbus::component
 		void RenderImGui()		     override{}
 
 		void Load(ecs::Registry* registry) override {}
+
+		template<class Archive>
+		void load(Archive&& archive, uint32_t version)
+		{
+			archive(
+				cereal::base_class<ComponentBase>(this)
+			);
+		}
+
+		template<class Archive>
+		void save(Archive&& archive, uint32_t version) const
+		{
+			archive(
+				cereal::base_class<ComponentBase>(this)
+			);
+		}
 	};
 } // cumulonimbus::component
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::Actor3DComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::Actor3DComponent)
+CEREAL_CLASS_VERSION(cumulonimbus::component::Actor3DComponent, 0)
 

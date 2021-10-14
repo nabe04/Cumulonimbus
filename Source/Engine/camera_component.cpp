@@ -22,6 +22,7 @@ using namespace DirectX;
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::CameraComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::CameraComponent)
+CEREAL_CLASS_VERSION(cumulonimbus::component::CameraComponent, 0)
 
 namespace cumulonimbus::camera
 {
@@ -55,8 +56,23 @@ namespace cumulonimbus::camera
 
 namespace cumulonimbus::component
 {
+	//template <class Archive>
+	//void CameraComponent::serialize(Archive&& archive)
+	//{
+	//	archive(
+	//		cereal::base_class<ComponentBase>(this),
+	//		CEREAL_NVP(camera),
+
+	//		CEREAL_NVP(attach_entity),
+	//		CEREAL_NVP(camera_length),
+	//		CEREAL_NVP(is_use_camera_for_debug),
+	//		CEREAL_NVP(is_active),
+	//		CEREAL_NVP(is_main_camera)
+	//	);
+	//}
+
 	template <class Archive>
-	void CameraComponent::serialize(Archive&& archive)
+	void CameraComponent::load(Archive&& archive, uint32_t version)
 	{
 		archive(
 			cereal::base_class<ComponentBase>(this),
@@ -69,6 +85,23 @@ namespace cumulonimbus::component
 			CEREAL_NVP(is_main_camera)
 		);
 	}
+
+	template <class Archive>
+	void CameraComponent::save(Archive&& archive, uint32_t version) const
+	{
+		archive(
+			cereal::base_class<ComponentBase>(this),
+			CEREAL_NVP(camera),
+
+			CEREAL_NVP(attach_entity),
+			CEREAL_NVP(camera_length),
+			CEREAL_NVP(is_use_camera_for_debug),
+			CEREAL_NVP(is_active),
+			CEREAL_NVP(is_main_camera)
+		);
+	}
+
+
 
 	CameraComponent::CameraComponent()
 		:ComponentBase{}

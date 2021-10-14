@@ -31,7 +31,7 @@ public:
 		states.at(current_state)(args...);
 	}
 
-	int GetNumState() const { return states.size(); }
+	size_t GetNumState() const { return states.size(); }
 	Key GetState()		{ return current_state; }
 	Key GetOldState()	{ return old_state; }
 
@@ -52,14 +52,36 @@ public:
 		is_switched = true;
 	}
 
-	template<typename Archive>
-	void serialize(Archive&& archive)
+	//template<typename Archive>
+	//void serialize(Archive&& archive)
+	//{
+	//	archive(
+	//		cereal::make_nvp("current state", current_state),
+	//		cereal::make_nvp("old state"	, old_state),
+	//		//cereal::make_nvp("states"		, states),
+	//		cereal::make_nvp("is switched"	,is_switched)
+	//	);
+	//}
+
+	template<class Archive>
+	void load(Archive&& archive)
 	{
 		archive(
 			cereal::make_nvp("current state", current_state),
-			cereal::make_nvp("old state"	, old_state),
+			cereal::make_nvp("old state", old_state),
 			//cereal::make_nvp("states"		, states),
-			cereal::make_nvp("is switched"	,is_switched)
+			cereal::make_nvp("is switched", is_switched)
+		);
+	}
+
+	template<class Archive>
+	void save(Archive&& archive) const
+	{
+		archive(
+			cereal::make_nvp("current state", current_state),
+			cereal::make_nvp("old state", old_state),
+			//cereal::make_nvp("states"		, states),
+			cereal::make_nvp("is switched", is_switched)
 		);
 	}
 private:

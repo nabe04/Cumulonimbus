@@ -47,8 +47,14 @@ namespace cumulonimbus
 
 			void Load(ecs::Registry* registry)	override;
 
+			//template<class Archive>
+			//void serialize(Archive&& archive);
+
 			template<class Archive>
-			void serialize(Archive&& archive);
+			void load(Archive&& archive, uint32_t version);
+
+			template<class Archive>
+			void save(Archive&& archive, uint32_t version) const;
 
 			void AddRay(const std::string& ray_name, const collision::Ray& ray);
 

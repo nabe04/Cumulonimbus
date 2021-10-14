@@ -4,13 +4,26 @@
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::OldAnimSpriteComponent);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::OldSpriteComponent, cumulonimbus::component::OldAnimSpriteComponent)
+CEREAL_CLASS_VERSION(cumulonimbus::component::OldAnimSpriteComponent, 0)
 
 namespace cumulonimbus::component
 {
+	//template <class Archive>
+	//void OldAnimSpriteComponent::serialize(Archive&& archive)
+	//{
+	//	archive(
+	//		cereal::base_class<OldSpriteComponent>(this),
+	//		CEREAL_NVP(clip_texcoord),
+	//		CEREAL_NVP(num_clip),
+	//		CEREAL_NVP(anim_texcoord),
+	//		CEREAL_NVP(anim_pivot)
+	//	);
+	//}
+
 	template <class Archive>
-	void OldAnimSpriteComponent::serialize(Archive&& archive)
+	void OldAnimSpriteComponent::load(Archive&& archive, uint32_t version)
 	{
-		archive(
+			archive(
 			cereal::base_class<OldSpriteComponent>(this),
 			CEREAL_NVP(clip_texcoord),
 			CEREAL_NVP(num_clip),
@@ -18,6 +31,19 @@ namespace cumulonimbus::component
 			CEREAL_NVP(anim_pivot)
 		);
 	}
+
+	template <class Archive>
+	void OldAnimSpriteComponent::save(Archive&& archive, uint32_t version) const
+	{
+			archive(
+			cereal::base_class<OldSpriteComponent>(this),
+			CEREAL_NVP(clip_texcoord),
+			CEREAL_NVP(num_clip),
+			CEREAL_NVP(anim_texcoord),
+			CEREAL_NVP(anim_pivot)
+		);
+	}
+
 
 
 	OldAnimSpriteComponent::OldAnimSpriteComponent(ecs::Registry* const registry, const  mapping::rename_type::Entity ent,

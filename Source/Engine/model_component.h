@@ -55,7 +55,10 @@ namespace cumulonimbus::component
 		~ModelComponent() override = default;
 
 		template<class Archive>
-		void serialize(Archive&& archive);
+		void load(Archive&& archive, uint32_t  version);
+
+		template<class Archive>
+		void save(Archive&& archive, uint32_t version) const;
 
 		void CommonUpdate(float dt)     override;
 		void PostCommonUpdate(float dt) override;
@@ -92,9 +95,6 @@ namespace cumulonimbus::component
 		 */
 		[[nodiscard]]
 		const mapping::rename_type::UUID& GetMaterialID(u_int material_index) const;
-		// Resource•”‚ğŒ»ID‚ª‚Âƒ‚ƒfƒ‹‚ÌQÆ‚ğ•Ô‚·‚æ‚¤‚É‚·‚é
-		//[[nodiscard]] const FbxModelResource* GetResource()	const { return resource.get(); }
-		//[[nodiscard]] Model* GetResource() { return resource.get(); }
 
 		void UpdateAnimState(const float delta_time);
 

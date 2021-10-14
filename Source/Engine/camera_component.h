@@ -27,15 +27,35 @@ namespace cumulonimbus::camera
 	 * @remark : SystemInspectorクラスでパラメータを編集して
 	 *			 全てのカメラコンポーネントのテクスチャに適用する
 	 */
-	class CameraTexture
+	class CameraTexture final
 	{
 	public:
 		CameraTexture();
 		CameraTexture(system::System& system);
 		~CameraTexture() = default;
 
+		//template<class Archive>
+		//void serialize(Archive&& archive)
+		//{
+		//	archive(
+		//		CEREAL_NVP(tex_id),
+		//		CEREAL_NVP(tex_size),
+		//		CEREAL_NVP(scaling_matrix)
+		//	);
+		//}
+
 		template<class Archive>
-		void serialize(Archive&& archive)
+		void load(Archive&& archive, uint32_t version)
+		{
+			archive(
+				CEREAL_NVP(tex_id),
+				CEREAL_NVP(tex_size),
+				CEREAL_NVP(scaling_matrix)
+			);
+		}
+
+		template<class Archive>
+		void save(Archive&& archive, uint32_t version) const
 		{
 			archive(
 				CEREAL_NVP(tex_id),
@@ -97,8 +117,14 @@ namespace cumulonimbus::component
 
 		void Load(ecs::Registry* registry) override;
 
+		//template<class Archive>
+		//void serialize(Archive&& archive);
+
 		template<class Archive>
-		void serialize(Archive&& archive);
+		void load(Archive&& archive, uint32_t version);
+
+		template<class Archive>
+		void save(Archive&& archive, uint32_t version) const;
 
 		/**
 		 * @brief						: オブジェクトカメラを使用する際の
@@ -148,5 +174,7 @@ namespace cumulonimbus::component
 	};
 
 } // cumulonimbus::component
+
+CEREAL_CLASS_VERSION(cumulonimbus::camera::CameraTexture, 0)
 
 

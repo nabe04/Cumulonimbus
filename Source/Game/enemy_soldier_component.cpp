@@ -13,6 +13,7 @@
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::EnemySoldierComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::EnemyBaseComponent, cumulonimbus::component::EnemySoldierComponent)
+CEREAL_CLASS_VERSION(cumulonimbus::component::EnemySoldierComponent, 0)
 
 // std::unordered_map<std::string, RandomFloat> transition_timerのキー値用変数
 namespace
@@ -25,7 +26,7 @@ namespace
 namespace cumulonimbus::component
 {
 	template <class Archive>
-	void EnemySoldierComponent::serialize(Archive&& archive)
+	void EnemySoldierComponent::load(Archive&& archive, uint32_t version)
 	{
 		archive(
 			cereal::base_class<EnemyBaseComponent>(this),
@@ -42,6 +43,25 @@ namespace cumulonimbus::component
 		);
 	}
 
+	template <class Archive>
+	void EnemySoldierComponent::save(Archive&& archive, uint32_t version) const
+	{
+		archive(
+			cereal::base_class<EnemyBaseComponent>(this),
+			CEREAL_NVP(soldier_state),
+			CEREAL_NVP(rotation_time_rate),
+			CEREAL_NVP(walk_speed),
+			CEREAL_NVP(tracking_speed),
+			CEREAL_NVP(tracking_interruption_distance),
+			CEREAL_NVP(attack_transition_distance),
+			CEREAL_NVP(attack_transition_angle),
+			CEREAL_NVP(tracking_transition_distance),
+			CEREAL_NVP(tracking_transition_angle),
+			CEREAL_NVP(attack_thrust_distance)
+		);
+	}
+
+	
 	EnemySoldierComponent::EnemySoldierComponent(ecs::Registry* registry, mapping::rename_type::Entity ent)
 		:EnemyBaseComponent{ registry,ent }
 	{

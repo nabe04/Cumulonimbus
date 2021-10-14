@@ -2,11 +2,12 @@
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::PhysicMaterialComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::PhysicMaterialComponent)
+CEREAL_CLASS_VERSION(cumulonimbus::component::PhysicMaterialComponent, 0)
 
 namespace cumulonimbus::component
 {
 	template <class Archive>
-	void PhysicMaterialComponent::serialize(Archive&& archive)
+	void PhysicMaterialComponent::load(Archive&& archive, uint32_t version)
 	{
 		archive(
 			cereal::base_class<ComponentBase>(this),
@@ -17,6 +18,21 @@ namespace cumulonimbus::component
 			CEREAL_NVP(bounce_combine)
 		);
 	}
+
+	template <class Archive>
+	void PhysicMaterialComponent::save(Archive&& archive, uint32_t version) const
+	{
+		archive(
+			cereal::base_class<ComponentBase>(this),
+			CEREAL_NVP(dynamic_friction),
+			CEREAL_NVP(static_friction),
+			CEREAL_NVP(bounciness),
+			CEREAL_NVP(friction_combine),
+			CEREAL_NVP(bounce_combine)
+		);
+	}
+
+
 
 	PhysicMaterialComponent::PhysicMaterialComponent(
 		ecs::Registry* registry,

@@ -12,6 +12,7 @@
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::CapsuleCollisionComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::CollisionComponent, cumulonimbus::component::CapsuleCollisionComponent)
+CEREAL_CLASS_VERSION(cumulonimbus::component::CapsuleCollisionComponent, 0)
 
 namespace cumulonimbus::collision
 {
@@ -36,7 +37,7 @@ namespace cumulonimbus::collision
 namespace cumulonimbus::component
 {
 	template <class Archive>
-	void CapsuleCollisionComponent::serialize(Archive&& archive)
+	void CapsuleCollisionComponent::load(Archive&& archive, uint32_t version)
 	{
 		archive(
 			cereal::base_class<CollisionComponent>(this),
@@ -44,6 +45,14 @@ namespace cumulonimbus::component
 		);
 	}
 
+	template <class Archive>
+	void CapsuleCollisionComponent::save(Archive&& archive, uint32_t version) const
+	{
+		archive(
+			cereal::base_class<CollisionComponent>(this),
+			CEREAL_NVP(capsules)
+		);
+	}
 
 	CapsuleCollisionComponent::CapsuleCollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, CollisionTag tag)
 		:CollisionComponent{ registry,ent,tag }
