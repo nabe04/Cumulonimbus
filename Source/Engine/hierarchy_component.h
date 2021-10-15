@@ -46,15 +46,32 @@ namespace cumulonimbus::component
 		const mapping::rename_type::Entity& GetNextSibling() const { return next_sibling; }
 		[[nodiscard]]
 		const mapping::rename_type::Entity& GetBackSibling() const { return back_sibling; }
+		[[nodiscard]]
+		bool GetIsDirty() const { return is_dirty; }
+		/**
+		 * @brief : 親階層のセット
+		 * @remark : 親階層(parent_entity)のセットと同時に初めの子階層エンティティ(first_child)、
+		 *			 次の兄弟階層のエンティティ(next_sibling)、前の兄弟階層(back_sibling)の再設定
+		 *			 も行う
+		 * @param registry :
+		 * @param parent_ent : 親階層のエンティティ(指定がない場合は一番上の階層の親をみなす)
+		 */
+		void SetParentEntity(ecs::Registry* registry, const mapping::rename_type::Entity& parent_ent = {});
+		/**
+		 * @brief : 兄弟階層のダーティフラグをTrueにする再起関数
+		 * @remark :次の兄弟階層エンティティ(next_sibling)を持たない場合再起処理を終了
+		 */
+		void ActivateDirtyFlg();
 
-		void SetParentEntity(ecs::Registry* registry, const mapping::rename_type::Entity& parent);
-		//void SetFirstChild(const mapping::rename_type::Entity& first) { first_child = first; }
-		//void SetNext(const mapping::rename_type::Entity& next) { next_sibling = next; }
-		//void SetBack(const mapping::rename_type::Entity& back) { back_sibling = back; }
+		/**
+		 * @brief : 自身のダーティフラグをFalseにする
+		 */
+		void DeactivateDirtyFlg();
 	private:
 		mapping::rename_type::Entity parent_entity{}; // 親階層のエンティティ
-		mapping::rename_type::Entity first_child{};
-		mapping::rename_type::Entity next_sibling{};
-		mapping::rename_type::Entity back_sibling{};
+		mapping::rename_type::Entity first_child{};	  // 初めの子階層エンティティ
+		mapping::rename_type::Entity next_sibling{};  // 次の兄弟階層エンティティ
+		mapping::rename_type::Entity back_sibling{};  // 前の兄弟階層エンティティ
+		bool is_dirty{ true };	// ダーティフラグ
 	};
 } // cumulonimbus::component

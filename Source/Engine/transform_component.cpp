@@ -9,6 +9,8 @@
 #include "cum_imgui_helper.h"
 #include "ecs.h"
 #include "scene.h"
+// components
+#include "hierarchy_component.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::TransformComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::TransformComponent)
@@ -18,42 +20,13 @@ namespace cumulonimbus::component
 {
 	using namespace DirectX::SimpleMath;
 
-	//template <class Archive>
-	//void TransformComponent::serialize(Archive&& archive)
-	//{
-	//	archive(
-	//		cereal::base_class<ComponentBase>(this),
-	//		CEREAL_NVP(local_position),
-	//		CEREAL_NVP(local_prev_pos),
-	//		CEREAL_NVP(local_scale),
-	//		CEREAL_NVP(local_angle),
-	//		CEREAL_NVP(local_prev_angle),
-
-	//		CEREAL_NVP(world_f4x4),
-	//		CEREAL_NVP(scaling_matrix),
-	//		CEREAL_NVP(rotation_matrix),
-	//		CEREAL_NVP(translation_matrix),
-
-	//		CEREAL_NVP(model_right),
-	//		CEREAL_NVP(model_front),
-	//		CEREAL_NVP(model_up),
-	//		CEREAL_NVP(orientation),
-
-	//		// Quaternion
-	//		CEREAL_NVP(rotation_quaternion),
-
-	//		CEREAL_NVP(is_quaternion)
-
-	//	);
-	//}
-
 	template <class Archive>
 	void TransformComponent::load(Archive&& archive, uint32_t version)
 	{
 		archive(
 			cereal::base_class<ComponentBase>(this),
 			CEREAL_NVP(local_position),
-			CEREAL_NVP(local_prev_pos),
+			CEREAL_NVP(local_prev_position),
 			CEREAL_NVP(local_scale),
 			CEREAL_NVP(local_angle),
 			CEREAL_NVP(local_prev_angle),
@@ -82,7 +55,7 @@ namespace cumulonimbus::component
 		archive(
 			cereal::base_class<ComponentBase>(this),
 			CEREAL_NVP(local_position),
-			CEREAL_NVP(local_prev_pos),
+			CEREAL_NVP(local_prev_position),
 			CEREAL_NVP(local_scale),
 			CEREAL_NVP(local_angle),
 			CEREAL_NVP(local_prev_angle),
@@ -126,18 +99,18 @@ namespace cumulonimbus::component
 
 	TransformComponent::TransformComponent(const TransformComponent& other)
 		:ComponentBase{other},
-		 local_position{other.GetPosition()},
-		 local_prev_pos{other.GetOldPosition()},
-		 local_scale{other.GetScale()},
-		 local_angle{other.GetWorldRotation()},
-		 world_f4x4{other.GetWorld4x4()},
-		 scaling_matrix{other.GetScalingMat()},
-		 rotation_matrix{other.GetRotationMat()},
-		 translation_matrix{other.GetTranslationMat()},
+		 local_position{other.local_position},
+		 local_prev_position{other.local_prev_position},
+		 local_scale{other.local_scale},
+		 local_angle{other.local_angle},
+		 world_f4x4{ other.world_f4x4 },
+		 scaling_matrix{other.scaling_matrix},
+		 rotation_matrix{ other.rotation_matrix },
+		 translation_matrix{other.translation_matrix},
 		 orientation{DirectX::SimpleMath::Matrix::Identity},
-		 rotation_quaternion{other.GetRotationQuaternion()},
-		 rotation_result_quaternion{other.GetRotationResultQuaternion()},
-		 is_quaternion{other.IsQuaternion()}
+		 rotation_quaternion{other.rotation_quaternion},
+		 rotation_result_quaternion{other.rotation_result_quaternion},
+		 is_quaternion{other.is_quaternion}
 	{
 		if (cb_transform)
 			cb_transform.reset();
@@ -152,18 +125,18 @@ namespace cumulonimbus::component
 			return *this;
 		}
 
-		local_position					= other.GetPosition();
-		local_prev_pos					= other.GetOldPosition();
-		local_scale						= other.GetScale();
-		local_angle						= other.GetWorldRotation();
-		world_f4x4					= other.GetWorld4x4();
-		scaling_matrix				= other.GetScalingMat();
-		rotation_matrix				= other.GetRotationMat();
-		translation_matrix			= other.GetTranslationMat();
+		local_position				= other.local_position;
+		local_prev_position			= other.local_prev_position;
+		local_scale					= other.local_scale;
+		local_angle					= other.local_angle;
+		world_f4x4					= other.world_f4x4;
+		scaling_matrix				= other.scaling_matrix;
+		rotation_matrix				= other.rotation_matrix;
+		translation_matrix			= other.translation_matrix;
 		orientation					= DirectX::SimpleMath::Matrix::Identity;
-		rotation_quaternion			= other.GetRotationQuaternion();
-		rotation_result_quaternion	= other.GetRotationResultQuaternion();
-		is_quaternion				= other.IsQuaternion();
+		rotation_quaternion			= other.rotation_quaternion;
+		rotation_result_quaternion	= other.rotation_result_quaternion;
+		is_quaternion				= other.is_quaternion;
 
 		if (cb_transform)
 			cb_transform.reset();
@@ -174,18 +147,23 @@ namespace cumulonimbus::component
 
 	void TransformComponent::PreCommonUpdate(float dt)
 	{
-		NormalizeAngle();
-		CreateWorldTransformMatrix();
+
 	}
 
 	void TransformComponent::CommonUpdate(float dt)
 	{
-
+		//if(GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).GetIsDirty())
+		//{
+		//	NormalizeAngle();
+		//	CreateWorldTransformMatrix();
+		//}
 	}
 
 	void TransformComponent::PostCommonUpdate(float dt)
 	{
-		local_prev_pos = local_position;
+		local_prev_position	 = local_position;
+		local_prev_scale	 = local_scale;
+		local_prev_angle	 = local_angle;
 	}
 
 	void TransformComponent::SceneUpdate(float dt)
@@ -229,6 +207,20 @@ namespace cumulonimbus::component
 			ImGui::Text("Front X %f", model_front.x);
 			ImGui::Text("Front Y %f", model_front.y);
 			ImGui::Text("Front Z %f", model_front.z);
+
+			// Transformに動きがあればダーティフラグをセット
+			if(GetDeltaPosition() != DirectX::SimpleMath::Vector3{})
+			{
+				GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+			}
+			if(GetDeltaScale() != DirectX::SimpleMath::Vector3{})
+			{
+				GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+			}
+			if(GetDeltaAngle() != DirectX::SimpleMath::Vector3{})
+			{
+				GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+			}
 		}
 	}
 
@@ -277,8 +269,6 @@ namespace cumulonimbus::component
 
 	void TransformComponent::CreateRotation4x4()
 	{
-
-
 		// Rotation
 		DirectX::XMMATRIX r = DirectX::XMMatrixIdentity();
 		if (is_quaternion)
@@ -381,9 +371,239 @@ namespace cumulonimbus::component
 		}
 	}
 
+	const DirectX::SimpleMath::Matrix& TransformComponent::GetWorld4x4()
+	{
+		auto& hierarchy_comp = GetRegistry()->GetComponent<HierarchyComponent>(GetEntity());
+		if(hierarchy_comp.GetIsDirty())
+		{
+			NormalizeAngle();
+			CreateWorldTransformMatrix();
+
+			if (!hierarchy_comp.GetParentEntity().empty())
+			{
+				const auto& parent_ent = GetRegistry()->GetComponent<TransformComponent>(hierarchy_comp.GetParentEntity()).GetWorld4x4();
+				world_f4x4 = parent_ent * world_f4x4;
+			}
+
+			hierarchy_comp.DeactivateDirtyFlg();
+		}
+
+		return world_f4x4;
+	}
+
+
 	void TransformComponent::CreateIdentity4x4(DirectX::SimpleMath::Matrix& convert)
 	{
 		convert = DirectX::SimpleMath::Matrix::Identity;
+	}
+
+	void TransformComponent::SetPosition(const DirectX::SimpleMath::Vector3& pos)
+	{
+		local_position = pos;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::SetPositionX(const float x)
+	{
+		local_position.x = x;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::SetPositionY(float y)
+	{
+		local_position.y = y;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::SetPositionZ(float z)
+	{
+		local_position.z = z;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::AdjustPosition(const DirectX::SimpleMath::Vector3& adjust_val)
+	{
+		local_position += adjust_val;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::AdjustPositionX(float x)
+	{
+		local_position.x += x;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::AdjustPositionY(float y)
+	{
+		local_position.y += y;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::AdjustPositionZ(float z)
+	{
+		local_position.z += z;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::SetScale(const DirectX::SimpleMath::Vector3& scale)
+	{
+		local_scale = scale;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::SetScale(const float scale)
+	{
+		local_scale.x = local_scale.y = local_scale.z = scale;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::SetScaleX(const float x)
+	{
+		local_scale.x = x;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::SetScaleY(const float y)
+	{
+		local_scale.y = y;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::SetScaleZ(const float z)
+	{
+		local_scale.z = z;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::AdjustScale(const DirectX::SimpleMath::Vector3& adjust_val)
+	{
+		local_scale += adjust_val;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::AdjustScale(const float adjust_val)
+	{
+		local_scale.x += adjust_val;
+		local_scale.y += adjust_val;
+		local_scale.z += adjust_val;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::AdjustScaleX(float x)
+	{
+		local_scale.x += x;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::AdjustScaleY(float y)
+	{
+		local_scale.y += y;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::AdjustScaleZ(float z)
+	{
+		local_scale.z += z;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::SetWorldRotation(const DirectX::XMFLOAT3& angle)
+	{
+		local_angle = angle;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::SetWorldRotation(const float angle)
+	{
+		local_angle.x = local_angle.y = local_angle.z = angle;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::SetWorldRotation_X(const float x)
+	{
+		local_angle.x = x;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::SetWorldRotation_Y(const float y)
+	{
+		local_angle.y = y;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::SetWorldRotation_Z(const float z)
+	{
+		local_angle.z = z;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::AdjustWorldRotation(const DirectX::XMFLOAT3& adjust_val)
+	{
+		local_angle += adjust_val;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::AdjustWorldRotation(const float adjust_val)
+	{
+		local_angle.x += adjust_val;
+		local_angle.y += adjust_val;
+		local_angle.z += adjust_val;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::AdjustWorldRotation_X(const float x)
+	{
+		local_angle.x += x;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::AdjustWorldRotation_Y(const float y)
+	{
+		local_angle.y += y;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::AdjustWorldRotation_Z(const float z)
+	{
+		local_angle.z += z;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+	}
+
+	void TransformComponent::SetWorld4x4(const DirectX::SimpleMath::Matrix& mat4x4)
+	{
+		world_f4x4 = mat4x4;
+		// Constant Bufferのセット
+		cb_transform->data.transform_matrix = world_f4x4;
+		// ダーティフラグをセット
+		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
 	}
 
 	void TransformComponent::SetQuaternionSlerp(const DirectX::SimpleMath::Quaternion& q1, const DirectX::SimpleMath::Quaternion& q2)

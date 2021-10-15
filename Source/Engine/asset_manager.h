@@ -21,7 +21,15 @@ namespace cumulonimbus::asset
 		AssetManager();
 
 		template<class Archive>
-		void serialize(Archive&& archive)
+		void save(Archive&& archive, std::uint32_t version) const
+		{
+			archive(
+				CEREAL_NVP(sheet_manager)
+			);
+		}
+
+		template<class Archive>
+		void load(Archive&& archive, std::uint32_t version)
 		{
 			archive(
 				CEREAL_NVP(sheet_manager)
@@ -184,3 +192,5 @@ namespace cumulonimbus::asset
 		void AssetLoad();
  	};
 } // cumulonimbus::asset
+
+CEREAL_CLASS_VERSION(cumulonimbus::asset::AssetManager, 0);
