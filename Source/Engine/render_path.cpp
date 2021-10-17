@@ -477,7 +477,7 @@ namespace cumulonimbus::renderer
 			}
 			else
 			{
-				transform.bone_transforms[0] = registry->GetComponent<component::TransformComponent>(entity).GetWorld4x4();
+				transform.bone_transforms[0] = registry->GetComponent<component::TransformComponent>(entity).GetWorldMatrix();
 			}
 
 			registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
@@ -633,7 +633,7 @@ namespace cumulonimbus::renderer
 		component::SpriteComponent* sprite_comp)
 	{
 		TransformCB transform{};
-		transform.transform_matrix = registry->GetComponent<component::TransformComponent>(entity).GetWorld4x4();
+		transform.transform_matrix = registry->GetComponent<component::TransformComponent>(entity).GetWorldMatrix();
 		//auto m = DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&transform.transform_matrix));
 		//DirectX::XMStoreFloat4x4(&transform.transform_matrix, m);
 
@@ -765,10 +765,10 @@ namespace cumulonimbus::renderer
 													 TexSlot_BaseColorMap);
 
 		// 2Dに必要ない値のリセット
-		transform.SetPositionZ(0.0f);
-		transform.SetScaleZ(1.f);
-		transform.SetWorldRotation_X(.0f);
-		transform.SetWorldRotation_Y(.0f);
+		transform.SetPosition_Z(0.0f);
+		transform.SetScale_Z(1.f);
+		transform.SetEulerAngle_X(.0f);
+		transform.SetEulerAngle_Y(.0f);
 
 		std::array<DirectX::XMFLOAT2, 4> pos{};
 		// Left top
@@ -785,8 +785,8 @@ namespace cumulonimbus::renderer
 		pos[3].y = static_cast<float>(anim_sprite.VariableHeight() / anim_sprite.GetNumClip().y);
 
 
-		const float sin_val = sinf(DirectX::XMConvertToRadians(transform.GetWorldRotation().z));
-		const float cos_val = cosf(DirectX::XMConvertToRadians(transform.GetWorldRotation().z));
+		const float sin_val = sinf(DirectX::XMConvertToRadians(transform.GetEulerAngles().z));
+		const float cos_val = cosf(DirectX::XMConvertToRadians(transform.GetEulerAngles().z));
 
 		for (auto& p : pos)
 		{// Rotate with the pivot as the origin
@@ -895,12 +895,12 @@ namespace cumulonimbus::renderer
 			{
 				const component::TransformComponent& transform_comp = registry->GetComponent<component::TransformComponent>(entity);
 				const DirectX::SimpleMath::Matrix& camera_scaling_mat = locator::Locator::GetSystem()->GetCameraTexture().GetScalingMatrix();
-				DirectX::SimpleMath::Matrix transform_mat = transform_comp.GetScalingMat() * camera_scaling_mat * transform_comp.GetTranslationMat();
+				DirectX::SimpleMath::Matrix transform_mat = transform_comp.GetScalingMatrix() * camera_scaling_mat * transform_comp.GetTranslationMatrix();
 				transform.transform_matrix =  transform_mat * inv_view_mat;
 			}
 			else
 			{
-				transform.transform_matrix = registry->GetComponent<component::TransformComponent>(entity).GetWorld4x4() * inv_view_mat;
+				transform.transform_matrix = registry->GetComponent<component::TransformComponent>(entity).GetWorldMatrix() * inv_view_mat;
 			}
 			registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
 		}

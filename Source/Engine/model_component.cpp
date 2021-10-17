@@ -101,7 +101,7 @@ namespace cumulonimbus::component
 
 	void ModelComponent::PostCommonUpdate(float dt)
 	{
-		const auto& world_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorld4x4();
+		const auto& world_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorldMatrix();
 
 		CalculateLocalTransform();
 		CalculateWorldTransform(world_transform);

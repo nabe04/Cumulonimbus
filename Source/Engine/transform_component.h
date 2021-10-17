@@ -55,13 +55,13 @@ namespace cumulonimbus::component
 
 		//-- Position --//
 		void SetPosition(const DirectX::SimpleMath::Vector3& pos);
-		void SetPositionX(float x);
-		void SetPositionY(float y);
-		void SetPositionZ(float z);
+		void SetPosition_X(float x);
+		void SetPosition_Y(float y);
+		void SetPosition_Z(float z);
 		void AdjustPosition(const DirectX::SimpleMath::Vector3& adjust_val);
-		void AdjustPositionX(float x);
-		void AdjustPositionY(float y);
-		void AdjustPositionZ(float z);
+		void AdjustPosition_X(float x);
+		void AdjustPosition_Y(float y);
+		void AdjustPosition_Z(float z);
 
 		[[nodiscard]]
 		const DirectX::SimpleMath::Vector3& GetPosition()   const
@@ -82,14 +82,14 @@ namespace cumulonimbus::component
 		//-- Scale --//
 		void SetScale(const DirectX::SimpleMath::Vector3& scale);
 		void SetScale(float scale);
-		void SetScaleX(float x);
-		void SetScaleY(float y);
-		void SetScaleZ(float z);
+		void SetScale_X(float x);
+		void SetScale_Y(float y);
+		void SetScale_Z(float z);
 		void AdjustScale(const DirectX::SimpleMath::Vector3& adjust_val);
 		void AdjustScale(float adjust_val);
-		void AdjustScaleX(float x);
-		void AdjustScaleY(float y);
-		void AdjustScaleZ(float z);
+		void AdjustScale_X(float x);
+		void AdjustScale_Y(float y);
+		void AdjustScale_Z(float z);
 		[[nodiscard]]
 		const DirectX::SimpleMath::Vector3& GetScale() const
 		{
@@ -101,40 +101,53 @@ namespace cumulonimbus::component
 			return local_scale - local_prev_scale;
 		}
 
-		//-- Angle --//
-		void SetWorldRotation(const DirectX::SimpleMath::Vector3& angle);
-		void SetWorldRotation(float angle);
-		void SetWorldRotation_X(float x);
-		void SetWorldRotation_Y(float y);
-		void SetWorldRotation_Z(float z);
-		void AdjustWorldRotation(const DirectX::SimpleMath::Vector3& adjust_val);
-		void AdjustWorldRotation(float adjust_val);
-		void AdjustWorldRotation_X(float x);
-		void AdjustWorldRotation_Y(float y);
-		void AdjustWorldRotation_Z(float z);
+		//-- Rotation --//
+
+		void SetRotation(const DirectX::SimpleMath::Quaternion& q);
+		void SetRotation(float x, float y, float z, float w);
+		void SetEulerAngles(const DirectX::SimpleMath::Vector3& angle);
+		void SetEulerAngles(float x, float y, float z);
+		void SetEulerAngle_X(float x);
+		void SetEulerAngle_Y(float y);
+		void SetEulerAngle_Z(float z);
+		void AdjustEulerAngles(const DirectX::SimpleMath::Vector3& adjust_val);
+		void AdjustEulerAngles(float adjust_x, float adjust_y, float adjust_z);
 		[[nodiscard]]
-		auto& GetWorldRotation() { return local_angle; }
+		const DirectX::SimpleMath::Quaternion& GetRotation() const;
 		[[nodiscard]]
-		const auto& GetWorldRotation() const { return local_angle; }
+		DirectX::SimpleMath::Vector3 GetEulerAngles() const;
 		[[nodiscard]]
-		DirectX::SimpleMath::Vector3 GetDeltaAngle() const
-		{
-			return local_angle - local_prev_angle;
-		}
+		DirectX::SimpleMath::Vector3 GetDeltaEulerAngles() const;
+
+		//void SetWorldRotation(const DirectX::SimpleMath::Vector3& angle);
+		//void SetWorldRotation(float angle);
+		//void SetWorldRotation_X(float x);
+		//void SetWorldRotation_Y(float y);
+		//void SetWorldRotation_Z(float z);
+		//void AdjustWorldRotation(const DirectX::SimpleMath::Vector3& adjust_val);
+		//void AdjustWorldRotation(float adjust_val);
+		//void AdjustWorldRotation_X(float x);
+		//void AdjustWorldRotation_Y(float y);
+		//void AdjustWorldRotation_Z(float z);
+		//[[nodiscard]]
+		//auto& GetWorldRotation() { return local_angle; }
+		//[[nodiscard]]
+		//const auto& GetWorldRotation() const { return local_angle; }
+		//[[nodiscard]]
+		//DirectX::SimpleMath::Vector3 GetDeltaAngle() const
+		//{
+		//	return local_angle - local_prev_angle;
+		//}
 
 		void NormalizeAngle();
 		void CreateIdentity4x4(DirectX::SimpleMath::Matrix& convert);
 
 		//-- World 4x4 matrix --//
-		void SetWorld4x4(const DirectX::SimpleMath::Matrix& mat4x4);
+		void SetWorldMatrix(const DirectX::SimpleMath::Matrix& mat);
 		[[nodiscard]]
-		const DirectX::SimpleMath::Matrix& GetWorld4x4();
+		const DirectX::SimpleMath::Matrix& GetWorldMatrix();
 
 		// Quaternion
-		[[nodiscard]]
-		bool IsQuaternion() const { return is_quaternion; }
-		void ActiveQuaternion()  { is_quaternion = true; }
-		void PassiveQuaternion() { is_quaternion = false; }
 		/**
 		 * @brief : 球面線形補間で使用する値の設定
 		 * @param q1 : 補完前のベクトル
@@ -146,12 +159,6 @@ namespace cumulonimbus::component
 		 * @param t : 補間制御係数(t == 0 : rotation_prev_quaternion、 t == 1 : rotation_result_quaternion)
 		 */
 		void QuaternionSlerp(float t);
-		void SetRotationQuaternion(const DirectX::SimpleMath::Quaternion& q)		{ rotation_quaternion = q; }
-		void SetRotationResultQuaternion(const DirectX::SimpleMath::Quaternion& q)	{ rotation_result_quaternion = q; }
-		[[nodiscard]]
-		const auto& GetRotationQuaternion()		const { return rotation_quaternion; }
-		[[nodiscard]]
-		const auto& GetRotationResultQuaternion() const { return rotation_result_quaternion; }
 
 		/**
 		 * @brief	    : モデルの任意軸回転(クォータニオン)
@@ -161,11 +168,11 @@ namespace cumulonimbus::component
 		void AdjustRotationFromAxis(const DirectX::SimpleMath::Vector3& axis, float local_angle);
 
 		[[nodiscard]]
-		const DirectX::SimpleMath::Matrix& GetRotationMat()	 const { return rotation_matrix; }
+		const DirectX::SimpleMath::Matrix& GetRotationMatrix()	 const { return rotation_matrix; }
 		[[nodiscard]]
-		const DirectX::SimpleMath::Matrix& GetScalingMat()	 const { return scaling_matrix; }
+		const DirectX::SimpleMath::Matrix& GetScalingMatrix()	 const { return scaling_matrix; }
 		[[nodiscard]]
-		const DirectX::SimpleMath::Matrix& GetTranslationMat()   const { return translation_matrix; }
+		const DirectX::SimpleMath::Matrix& GetTranslationMatrix()   const { return translation_matrix; }
 
 		[[nodiscard]]
 		const DirectX::SimpleMath::Vector3& GetModelRight()const { return model_right; }
@@ -177,21 +184,21 @@ namespace cumulonimbus::component
 	private:
 		std::unique_ptr<buffer::ConstantBuffer<TransformCB>> cb_transform{};
 
-		DirectX::SimpleMath::Vector3  local_position	  { 0.0f,0.0f,0.0f };
-		DirectX::SimpleMath::Vector3  local_scale		  { 1.0f,1.0f,1.0f };
-		DirectX::SimpleMath::Vector3  local_angle		  { 0.0f,0.0f,0.0f };
-		DirectX::SimpleMath::Vector3  local_prev_position {};
-		DirectX::SimpleMath::Vector3  local_prev_scale	  {};
-		DirectX::SimpleMath::Vector3  local_prev_angle	  {};
+		DirectX::SimpleMath::Vector3	 local_position		  { 0.0f,0.0f,0.0f };
+		DirectX::SimpleMath::Quaternion  local_rotation		  { 0.0f,0.0f,0.0f,1.0f };
+		DirectX::SimpleMath::Vector3	 local_scale		  { 1.0f,1.0f,1.0f };
+		DirectX::SimpleMath::Vector3	 local_prev_position  {};
+		DirectX::SimpleMath::Quaternion	 local_prev_rotation  {};
+		DirectX::SimpleMath::Vector3	 local_prev_scale	  {};
 
-		DirectX::SimpleMath::Matrix world_f4x4			{ DirectX::SimpleMath::Matrix::Identity };
+		DirectX::SimpleMath::Matrix world_matrix		{ DirectX::SimpleMath::Matrix::Identity };
 		DirectX::SimpleMath::Matrix scaling_matrix		{ DirectX::SimpleMath::Matrix::Identity };
 		DirectX::SimpleMath::Matrix rotation_matrix		{ DirectX::SimpleMath::Matrix::Identity };
 		DirectX::SimpleMath::Matrix translation_matrix	{ DirectX::SimpleMath::Matrix::Identity };
 
-		const DirectX::SimpleMath::Vector3 right { 1.0f,0.0f,0.0f };
-		const DirectX::SimpleMath::Vector3 up	 { 0.0f,1.0f,0.0f };
-		const DirectX::SimpleMath::Vector3 front { 0.0f,0.0f,1.0f };
+		//const DirectX::SimpleMath::Vector3 right { 1.0f,0.0f,0.0f };
+		//const DirectX::SimpleMath::Vector3 up	 { 0.0f,1.0f,0.0f };
+		//const DirectX::SimpleMath::Vector3 front { 0.0f,0.0f,1.0f };
 
 		// Orientation vector
 		DirectX::SimpleMath::Vector3 model_right { 1.0f,0.0f,0.0f };
@@ -200,16 +207,15 @@ namespace cumulonimbus::component
 
 		DirectX::SimpleMath::Matrix orientation{ DirectX::SimpleMath::Matrix::Identity };
 
-		// Quaternion
-		DirectX::SimpleMath::Quaternion rotation_quaternion{};
-		DirectX::SimpleMath::Quaternion rotation_prev_quaternion{};		// Slerp時の変形前のクォータニオン値
-		DirectX::SimpleMath::Quaternion rotation_result_quaternion{};	// Slerp時の変形後のクォータニオン値
+		// その他の回転パラメータ
+		DirectX::SimpleMath::Vector3 model_euler_angle{};
+		DirectX::SimpleMath::Vector3 model_prev_euler_angle{};
+		DirectX::SimpleMath::Quaternion rotation_before{};	// Slerp時の変形前のクォータニオン値
+		DirectX::SimpleMath::Quaternion rotation_after{};	// Slerp時の変形後のクォータニオン値
 
-		bool is_quaternion{ false };
-
-		void CreateScaling4x4();
-		void CreateRotation4x4();
-		void CreateTranslation4x4();
+		void CreateScalingMatrix();
+		void CreateRotationMatrix();
+		void CreateTranslationMatrix();
 		void CalcModelCoordinateAxis(const DirectX::XMFLOAT4X4& orientation);	// モデルの座標軸計算
 
 		DirectX::XMMATRIX GetRotationMatrix(DirectX::XMFLOAT3 axis, float local_angle/* degree */);

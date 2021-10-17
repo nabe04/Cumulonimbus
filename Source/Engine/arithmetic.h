@@ -89,6 +89,24 @@ namespace arithmetic
 													  const DirectX::SimpleMath::Matrix& projection_mat);
 
 	/**
+	 * @brief : クォータニオンからオイラー角の算出
+	 * @param q : オイラー角を求めたいクォータニオン
+	 * @return : 算出されたオイラー角
+	 */
+	[[nodiscard]]
+	DirectX::SimpleMath::Vector3 ConvertQuaternionToEuler(const DirectX::SimpleMath::Quaternion& q);
+
+	/**
+	 * @brief : 行列をtranslation,rotation,scalingに分解
+	 */
+	[[nodiscard]]
+	bool DecomposeMatrix(
+		DirectX::SimpleMath::Vector3&    translation,
+		DirectX::SimpleMath::Quaternion& rotation,
+		DirectX::SimpleMath::Vector3&    scaling,
+		const DirectX::SimpleMath::Matrix matrix);
+
+	/**
 	 * @brief : 2点からベクトルを作成
 	 */
 	[[nodiscard]]

@@ -91,7 +91,7 @@ namespace cumulonimbus::component
 				if (sphere.second.bone_name.empty())
 				{
 					// モデルが持つワールド変換行列
-					DirectX::SimpleMath::Matrix world_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorld4x4();
+					DirectX::SimpleMath::Matrix world_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorldMatrix();
 					world_transform._11 = world_transform._22 = world_transform._33 = world_transform._44 = 1.0f;
 					sphere.second.world_transform_matrix = model_local_matrix * world_transform;
 				}

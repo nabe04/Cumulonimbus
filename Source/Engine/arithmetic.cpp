@@ -97,6 +97,55 @@ namespace arithmetic
 		return world_pos;
 	}
 
+	DirectX::SimpleMath::Vector3 ConvertQuaternionToEuler(const DirectX::SimpleMath::Quaternion& q)
+	{
+		SimpleMath::Vector3 r{};
+		SimpleMath::Matrix m = DirectX::SimpleMath::Matrix::CreateFromQuaternion(q);
+
+		if(m._32 > 1.f)
+		{
+			r.x = XM_PIDIV2;
+			r.y = .0f;
+			r.z = atan2f(m._21, m._11);
+		}
+		else if(m._32 <= -1.f)
+		{
+			r.x = -XM_PIDIV2;
+			r.y = .0f;
+			r.z = atan2f(m._21, m._11);
+		}
+		else
+		{
+			r.x = asinf(-m._32);
+			r.y = atan2f(m._31, m._33);
+			r.z = atan2f(m._12, m._22);
+		}
+
+		r.x = XMConvertToDegrees(r.x);
+		r.y = XMConvertToDegrees(r.y);
+		r.z = XMConvertToDegrees(r.z);
+		return r;
+	}
+
+	bool DecomposeMatrix(
+		DirectX::SimpleMath::Vector3&    translation,
+		DirectX::SimpleMath::Quaternion& rotation,
+		DirectX::SimpleMath::Vector3&    scaling,
+		const DirectX::SimpleMath::Matrix matrix)
+	{
+		XMVECTOR s, r, t;
+
+		if (!XMMatrixDecompose(&s, &r, &t, matrix))
+			return false;
+
+		XMStoreFloat3(&translation, t);
+		XMStoreFloat4(&rotation, r);
+		XMStoreFloat3(&scaling, s);
+
+		return true;
+	}
+
+
 	//-- Create a vector of directions from point2 to point1 (point1 - point2) --//
 	XMFLOAT2 CalcVecFromTwoPositions(XMFLOAT2 point1, XMFLOAT2 point2)
 	{

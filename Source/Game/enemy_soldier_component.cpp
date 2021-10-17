@@ -154,7 +154,6 @@ namespace cumulonimbus::component
 		{
 			// アニメーションセット(AnimationData::Walk)
 			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Walk));
-			transform_comp.ActiveQuaternion();
 			{// モデル回転の初期設定
 				random_rotation_angle.SetRandomVal();
 				random_rotation_angle.current_time = 0;

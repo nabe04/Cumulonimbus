@@ -23,9 +23,9 @@ namespace cumulonimbus::component
 	void ChildActorComponent::GameUpdate(const float delta_time)
 	{
 		Link(tag_node_name);
-		SimpleMath::Matrix ent_matrix = GetRegistry()->GetComponent<component::TransformComponent>(GetEntity()).GetWorld4x4();
+		SimpleMath::Matrix ent_matrix = GetRegistry()->GetComponent<component::TransformComponent>(GetEntity()).GetWorldMatrix();
 		ent_matrix *= parent_matrix;
-		GetRegistry()->GetComponent<component::TransformComponent>(GetEntity()).SetWorld4x4(ent_matrix);
+		GetRegistry()->GetComponent<component::TransformComponent>(GetEntity()).SetWorldMatrix(ent_matrix);
 	}
 
 	void ChildActorComponent::RenderImGui()

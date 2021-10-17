@@ -68,7 +68,7 @@ namespace cumulonimbus::component
 
 	void FbxModelComponent::GameUpdate(const float delta_time)
 	{
-		const auto& world_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorld4x4();
+		const auto& world_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorldMatrix();
 
 		CalculateLocalTransform();
 		CalculateWorldTransform(world_transform);

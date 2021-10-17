@@ -1,5 +1,6 @@
 #include "hierarchy_component.h"
 
+#include "arithmetic.h"
 #include "transform_component.h"
 
 #include <ImGuizmo/ImGuizmo.h>
@@ -183,24 +184,33 @@ namespace cumulonimbus::component
 			{
 				HierarchyComponent& hierarchy_comp = GetRegistry()->GetComponent<HierarchyComponent>(ent);
 				if (hierarchy_comp.GetParentEntity().empty())
-					return GetRegistry()->GetComponent<TransformComponent>(hierarchy_comp.GetEntity()).GetWorldRotation();
+					return GetRegistry()->GetComponent<TransformComponent>(hierarchy_comp.GetEntity()).GetEulerAngles();
 
-				return GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorldRotation() - RecalculationRotation(hierarchy_comp.GetParentEntity());
+				return GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetEulerAngles() - RecalculationRotation(hierarchy_comp.GetParentEntity());
 			};
 
-			DirectX::SimpleMath::Matrix m{ registry->GetComponent<TransformComponent>(parent_entity).GetWorld4x4().Invert() * GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorld4x4()};
-			DirectX::SimpleMath::Vector3 t;
-			DirectX::SimpleMath::Vector3 s;
-			DirectX::SimpleMath::Vector3 r;
+			TransformComponent& my_transform_comp = registry->GetComponent<TransformComponent>(GetEntity());
+			const DirectX::SimpleMath::Matrix m{ registry->GetComponent<TransformComponent>(parent_entity).GetWorldMatrix().Invert() * GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorldMatrix()};
+			DirectX::SimpleMath::Vector3    t{};
+			DirectX::SimpleMath::Quaternion r{};
+			DirectX::SimpleMath::Vector3    s{};
 
-			DirectX::XMVECTOR t_v, s_v, r_v;
-			DirectX::XMMatrixDecompose(&s_v, &r_v, &t_v, m);
-			ImGuizmo::DecomposeMatrixToComponents(reinterpret_cast<float*>(&m), reinterpret_cast<float*>(&t), reinterpret_cast<float*>(&r), reinterpret_cast<float*>(&s));
+			if(arithmetic::DecomposeMatrix(t, r, s, m))
+			{
+				my_transform_comp.SetPosition(t);
+				my_transform_comp.SetScale(s);
+				my_transform_comp.SetRotation(r);
+				const DirectX::SimpleMath::Vector3 euler = arithmetic::ConvertQuaternionToEuler(r);
+				my_transform_comp.SetEulerAngles(euler);
+			}
+			//DirectX::XMVECTOR t_v, s_v, r_v;
+			//DirectX::XMMatrixDecompose(&s_v, &r_v, &t_v, m);
+			//ImGuizmo::DecomposeMatrixToComponents(reinterpret_cast<float*>(&m), reinterpret_cast<float*>(&t), reinterpret_cast<float*>(&r), reinterpret_cast<float*>(&s));
 			//DirectX::SimpleMath::Quaternion::R
 			//DirectX::SimpleMath::Matrix::CreateFromQuaternion()
 
 			TransformComponent& parent_transform_comp = registry->GetComponent<TransformComponent>(parent_entity);
-			TransformComponent& my_transform_comp	  = registry->GetComponent<TransformComponent>(GetEntity());
+
 
 			//const DirectX::SimpleMath::Matrix&  inv_parent_world_mat = parent_transform_comp.GetWorld4x4().Invert();
 			//const DirectX::SimpleMath::Vector3& parent_scale		 = parent_transform_comp.GetScale();
@@ -213,12 +223,12 @@ namespace cumulonimbus::component
 			//const DirectX::SimpleMath::Vector3& parent_rotation = RecalculationRotation(GetEntity());
 			//const DirectX::SimpleMath::Vector3& parents_angle;
 
-			my_transform_comp.SetPosition(t);
-			my_transform_comp.SetScale(s);
-			//my_transform_comp.SetScale(DirectX::SimpleMath::Vector3{ result_mat._11 ,
-			//														 result_mat._22 ,
-			//														 result_mat._33});
-			my_transform_comp.SetWorldRotation(r);
+			//my_transform_comp.SetPosition(t);
+			//my_transform_comp.SetScale(s);
+			////my_transform_comp.SetScale(DirectX::SimpleMath::Vector3{ result_mat._11 ,
+			////														 result_mat._22 ,
+			////														 result_mat._33});
+			//my_transform_comp.SetEulerAngles(r);
 
 			//registry->GetComponent<TransformComponent>(GetEntity()).SetWorld4x4(parent_world_mat.Invert()* my_world_mat);
 		}
