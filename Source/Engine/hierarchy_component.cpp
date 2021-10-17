@@ -118,8 +118,7 @@ namespace cumulonimbus::component
 		}
 
 		//-- 新規設定 --//
-		parent_entity = parent_ent;
-		if (parent_entity.empty())
+		if (parent_ent.empty())
 		{// 一番上の親階層処理
 			if (first_child.empty())
 			{
@@ -168,29 +167,10 @@ namespace cumulonimbus::component
 		}
 
 		//-- 位置の再計算 --//
-		if(!parent_entity.empty())
-		{// 親を持っていれば
-
-			std::function<DirectX::SimpleMath::Vector3(const mapping::rename_type::Entity& ent)> RecalculationScale = [&](const mapping::rename_type::Entity& ent) -> DirectX::SimpleMath::Vector3
-			{
-				HierarchyComponent& hierarchy_comp = GetRegistry()->GetComponent<HierarchyComponent>(ent);
-				if (hierarchy_comp.GetParentEntity().empty())
-					return GetRegistry()->GetComponent<TransformComponent>(hierarchy_comp.GetEntity()).GetScale();
-
-				return GetRegistry()->GetComponent<TransformComponent>(ent).GetScale() / RecalculationScale(hierarchy_comp.GetParentEntity());
-			};
-
-			std::function<DirectX::SimpleMath::Vector3(const mapping::rename_type::Entity& ent)> RecalculationRotation = [&](const mapping::rename_type::Entity& ent) -> DirectX::SimpleMath::Vector3
-			{
-				HierarchyComponent& hierarchy_comp = GetRegistry()->GetComponent<HierarchyComponent>(ent);
-				if (hierarchy_comp.GetParentEntity().empty())
-					return GetRegistry()->GetComponent<TransformComponent>(hierarchy_comp.GetEntity()).GetEulerAngles();
-
-				return GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetEulerAngles() - RecalculationRotation(hierarchy_comp.GetParentEntity());
-			};
-
+		if(!parent_ent.empty())
+		{// 現在セットしようとしている親を持っていれば
 			TransformComponent& my_transform_comp = registry->GetComponent<TransformComponent>(GetEntity());
-			const DirectX::SimpleMath::Matrix m{ registry->GetComponent<TransformComponent>(parent_entity).GetWorldMatrix().Invert() * GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorldMatrix()};
+			const DirectX::SimpleMath::Matrix m{ registry->GetComponent<TransformComponent>(parent_ent).GetWorldMatrix().Invert() * GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorldMatrix()};
 			DirectX::SimpleMath::Vector3    t{};
 			DirectX::SimpleMath::Quaternion r{};
 			DirectX::SimpleMath::Vector3    s{};
@@ -203,35 +183,30 @@ namespace cumulonimbus::component
 				const DirectX::SimpleMath::Vector3 euler = arithmetic::ConvertQuaternionToEuler(r);
 				my_transform_comp.SetEulerAngles(euler);
 			}
-			//DirectX::XMVECTOR t_v, s_v, r_v;
-			//DirectX::XMMatrixDecompose(&s_v, &r_v, &t_v, m);
-			//ImGuizmo::DecomposeMatrixToComponents(reinterpret_cast<float*>(&m), reinterpret_cast<float*>(&t), reinterpret_cast<float*>(&r), reinterpret_cast<float*>(&s));
-			//DirectX::SimpleMath::Quaternion::R
-			//DirectX::SimpleMath::Matrix::CreateFromQuaternion()
-
-			TransformComponent& parent_transform_comp = registry->GetComponent<TransformComponent>(parent_entity);
-
-
-			//const DirectX::SimpleMath::Matrix&  inv_parent_world_mat = parent_transform_comp.GetWorld4x4().Invert();
-			//const DirectX::SimpleMath::Vector3& parent_scale		 = parent_transform_comp.GetScale();
-			//const DirectX::SimpleMath::Vector3& my_scale			 = my_transform_comp.GetScale();
-			//const DirectX::SimpleMath::Vector3& parent_angle		 = parent_transform_comp.GetWorldRotation();
-			//const DirectX::SimpleMath::Vector3& my_angle			 = my_transform_comp.GetWorldRotation();
-
-			//const DirectX::SimpleMath::Matrix& result_mat		= inv_parent_world_mat * my_transform_comp.GetWorld4x4();
-			//const DirectX::SimpleMath::Vector3& parents_scale	= RecalculationScale(GetEntity());
-			//const DirectX::SimpleMath::Vector3& parent_rotation = RecalculationRotation(GetEntity());
-			//const DirectX::SimpleMath::Vector3& parents_angle;
-
-			//my_transform_comp.SetPosition(t);
-			//my_transform_comp.SetScale(s);
-			////my_transform_comp.SetScale(DirectX::SimpleMath::Vector3{ result_mat._11 ,
-			////														 result_mat._22 ,
-			////														 result_mat._33});
-			//my_transform_comp.SetEulerAngles(r);
-
-			//registry->GetComponent<TransformComponent>(GetEntity()).SetWorld4x4(parent_world_mat.Invert()* my_world_mat);
 		}
+		else
+		{// 一番上の親階層になったとき
+			if(!parent_entity.empty())
+			{// 以前に親を持っていれば
+				TransformComponent& transform_comp	  = registry->GetComponent<TransformComponent>(GetEntity());
+				const DirectX::SimpleMath::Matrix m{ transform_comp.GetWorldMatrix() };
+				DirectX::SimpleMath::Vector3    t{};
+				DirectX::SimpleMath::Quaternion r{};
+				DirectX::SimpleMath::Vector3    s{};
+
+				if (arithmetic::DecomposeMatrix(t, r, s, m))
+				{
+					transform_comp.SetPosition(t);
+					transform_comp.SetScale(s);
+					transform_comp.SetRotation(r);
+					const DirectX::SimpleMath::Vector3 euler = arithmetic::ConvertQuaternionToEuler(r);
+					transform_comp.SetEulerAngles(euler);
+				}
+			}
+
+		}
+
+		parent_entity = parent_ent;
 	}
 
 	void HierarchyComponent::ActivateDirtyFlg()

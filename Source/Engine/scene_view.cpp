@@ -82,25 +82,27 @@ namespace cumulonimbus::editor
 
 			helper::imgui::Image(*scene_view_camera->GetCamera().GetFrameBufferSRV_Address(), { image_size.x,image_size.y });
 
-			//{// ImGuizmoを使ってのギズモ処理
-			//	auto* transform_comp = registry->TryGetComponent<component::TransformComponent>(hierarchy->GetSelectedEntity());
-			//	if(transform_comp)
-			//	{
-			//		auto& camera = scene_view_camera->GetCamera();
+			{// ImGuizmoを使ってのギズモ処理
+				auto* transform_comp = registry->TryGetComponent<component::TransformComponent>(hierarchy->GetSelectedEntity());
+				if(transform_comp)
+				{
+					auto& camera = scene_view_camera->GetCamera();
 
-			//		DirectX::SimpleMath::Matrix world_mat = transform_comp->GetWorld4x4();
-			//		DirectX::SimpleMath::Matrix view_mat = camera.GetViewMat();
-			//		DirectX::SimpleMath::Matrix proj_mat = camera.GetProjectionMat();
-			//		ImGuiIO& io = ImGui::GetIO();
-			//		ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
-			//		ImGuizmo::Manipulate(reinterpret_cast<float*>(&view_mat),
-			//							 reinterpret_cast<float*>(&proj_mat),
-			//							 ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::MODE::WORLD,
-			//							 reinterpret_cast<float*>(&world_mat));
+					DirectX::SimpleMath::Matrix world_mat = transform_comp->GetWorldMatrix();
+					DirectX::SimpleMath::Matrix view_mat = camera.GetViewMat();
+					DirectX::SimpleMath::Matrix proj_mat = camera.GetProjectionMat();
+					ImGuiIO& io = ImGui::GetIO();
+					ImGuizmo::SetRect(window_pos.x, window_pos.y, window_size.x, window_size.y);
+					ImGuizmo::SetDrawlist();
 
-			//		transform_comp->SetWorld4x4(world_mat);
-			//	}
-			//}
+					ImGuizmo::Manipulate(reinterpret_cast<float*>(&view_mat),
+										 reinterpret_cast<float*>(&proj_mat),
+										 ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::MODE::WORLD,
+										 reinterpret_cast<float*>(&world_mat));
+
+					transform_comp->SetWorldMatrix(world_mat);
+				}
+			}
 
 			if (ImGui::IsWindowHovered())
 			{// 画面内にカーソルがあるときに

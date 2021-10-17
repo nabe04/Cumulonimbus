@@ -565,7 +565,7 @@ namespace cumulonimbus::camera
 	{
 		const float v = -velocity * camera_speed.y;
 
-		focus_position += right_vec * velocity;
+		focus_position += front_vec * velocity;
 		eye_position += front_vec * v;
 	}
 

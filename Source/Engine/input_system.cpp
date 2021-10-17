@@ -86,6 +86,12 @@ int MouseState::ScrollWheelValue() const
 {
     return scroll_wheel_value;
 }
+
+int MouseState::DeltaScrollWheelValue() const
+{
+    return delta_scroll_wheel_value;
+}
+
 #pragma endregion Mouse
 
 //---------------< GamePadState >-----------------------------------------------------------
@@ -172,7 +178,7 @@ void InputSystem::UpdateStates() {
     {
         keyboard->old_key_values = keyboard->key_values;
         keyboard->key_values = 0;
-        if (keyboard->keyboard->IsConnected()) 
+        if (keyboard->keyboard->IsConnected())
         {
             const auto s = keyboard->keyboard->GetState();
             auto& v = keyboard->key_values;
@@ -265,7 +271,9 @@ void InputSystem::UpdateStates() {
             mouse->y = s.y;
             mouse->delta_x = mouse->x - mouse->old_x;
             mouse->delta_y = mouse->y - mouse->old_y;
-            mouse->scroll_wheel_value = s.scrollWheelValue;
+            mouse->old_scroll_wheel_value   = mouse->scroll_wheel_value;
+            mouse->scroll_wheel_value       = s.scrollWheelValue;
+            mouse->delta_scroll_wheel_value = mouse->scroll_wheel_value - mouse->old_scroll_wheel_value;
         }
     }
 

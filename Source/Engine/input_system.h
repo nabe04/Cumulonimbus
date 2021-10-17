@@ -159,14 +159,23 @@ public:
     MouseState(const HWND hwnd);
     ~MouseState() = default;
 
-    [[nodiscard]] bool GetValue(const MouseButton buttons) const;
-    [[nodiscard]] ButtonState GetState(const MouseButton button) const;
+    [[nodiscard]]
+	bool GetValue(const MouseButton buttons) const;
+    [[nodiscard]]
+	ButtonState GetState(const MouseButton button) const;
 
-    [[nodiscard]] int PosX() const;
-    [[nodiscard]] int PosY() const;
-    [[nodiscard]] int DeltaX() const;
-    [[nodiscard]] int DeltaY() const;
-    [[nodiscard]] int ScrollWheelValue() const;
+    [[nodiscard]]
+	int PosX() const;
+    [[nodiscard]]
+	int PosY() const;
+    [[nodiscard]]
+	int DeltaX() const;
+    [[nodiscard]]
+	int DeltaY() const;
+    [[nodiscard]]
+	int ScrollWheelValue() const;
+	[[nodiscard]]
+    int DeltaScrollWheelValue() const;
 
 private:
     std::unique_ptr<DirectX::Mouse> mouse = {};
@@ -174,13 +183,15 @@ private:
     std::bitset<static_cast<size_t>(MouseButton::End)> button_values = {};
     std::bitset<static_cast<size_t>(MouseButton::End)> old_button_values = {};
 
-    int x = {};
-    int y = {};
-    int old_x = {};
-    int old_y = {};
-    int delta_x = {};
-    int delta_y = {};
-    int scroll_wheel_value = {};
+    int x   {};
+    int y   {};
+    int old_x   {};
+    int old_y   {};
+    int delta_x {};
+    int delta_y {};
+    int scroll_wheel_value    {};
+    int old_scroll_wheel_value{};
+    int delta_scroll_wheel_value{};
 };
 
 class GamePadState final

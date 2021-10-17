@@ -45,20 +45,6 @@ namespace cumulonimbus::camera
 			camera->Track(static_cast<float>(mouse.DeltaX()), camera->GetCameraRight());
 			camera->Crane(static_cast<float>(-mouse.DeltaY()), { 0,1,0 });
 		}
-		else if (mouse.GetState(MouseButton::Left) == ButtonState::Held)
-		{
-			camera->DollyInOut(static_cast<float>(mouse.DeltaY()));
-			camera->Pan(static_cast<float>(mouse.DeltaX()));
-
-			if (key.GetState(Keycode::D) == ButtonState::Held)
-				camera->Track(camera->GetCameraSpeed().x, camera->GetCameraRight());
-			if (key.GetState(Keycode::A) == ButtonState::Held)
-				camera->Track(-camera->GetCameraSpeed().x, camera->GetCameraRight());
-			if (key.GetState(Keycode::W) == ButtonState::Held)
-				camera->Crane(camera->GetCameraSpeed().y, camera->GetCameraFront());
-			if (key.GetState(Keycode::S) == ButtonState::Held)
-				camera->Crane(-camera->GetCameraSpeed().y, camera->GetCameraFront());
-		}
 		else if (mouse.GetState(MouseButton::Right) == ButtonState::Held)
 		{
 			camera->Pan(static_cast<float>(mouse.DeltaX()));
@@ -72,6 +58,10 @@ namespace cumulonimbus::camera
 				camera->Crane(camera->GetCameraSpeed().y, camera->GetCameraFront());
 			if (key.GetState(Keycode::S) == ButtonState::Held)
 				camera->Crane(-camera->GetCameraSpeed().y, camera->GetCameraFront());
+		}
+		else if (mouse.DeltaScrollWheelValue() != 0)
+		{
+			camera->DollyInOut(static_cast<float>(-mouse.DeltaScrollWheelValue()) / 30.f);
 		}
 	}
 

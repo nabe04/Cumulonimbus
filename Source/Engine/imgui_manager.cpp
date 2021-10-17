@@ -111,8 +111,8 @@ namespace imgui
 		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
-		//ImGuizmo::BeginFrame();
-		//ImGuizmo::Enable(true);
+		ImGuizmo::BeginFrame();
+		ImGuizmo::Enable(true);
 
 		static bool flg = true;
 		static bool opt_fullscreen = true;

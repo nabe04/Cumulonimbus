@@ -120,6 +120,8 @@ namespace cumulonimbus::editor
 			{
 				ImGui::Text(registry->GetName(ent).c_str());
 			}
+
+			ImGui::Text("Scroll %d", locator::Locator::GetInput()->Mouse().DeltaScrollWheelValue());
 		}
 		ImGui::End();
 	}

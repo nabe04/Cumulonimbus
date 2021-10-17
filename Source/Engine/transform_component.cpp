@@ -301,25 +301,6 @@ namespace cumulonimbus::component
 		XMStoreFloat4x4(&rotation_matrix, r);
 		// Constant Bufferのセット
 		cb_transform->data.rotation_matrix = rotation_matrix;
-		//if (is_quaternion)
-		//{
-		//	//AdjustRotationFromAxis({ 0,1,0 }, XMConvertToRadians(1));
-		//	rotation_quaternion.Normalize();
-		//	r = DirectX::XMMatrixRotationQuaternion(XMLoadFloat4(&rotation_quaternion));
-		//	local_angle   = arithmetic::QuaternionToEulerAngle(rotation_quaternion);
-		//	local_angle.x = DirectX::XMConvertToDegrees(local_angle.x);
-		//	local_angle.y = DirectX::XMConvertToDegrees(local_angle.y);
-		//	local_angle.z = DirectX::XMConvertToDegrees(local_angle.z);
-		//}
-		//else
-		//{
-		//	r = DirectX::XMMatrixRotationRollPitchYaw(DirectX::XMConvertToRadians(local_angle.x), DirectX::XMConvertToRadians(local_angle.y), DirectX::XMConvertToRadians(local_angle.z));
-		//}
-
-		//DirectX::XMMatrix
-		//DirectX::S
-		//rotation_matrix.
-
 	}
 
 	void TransformComponent::CreateTranslationMatrix()
@@ -350,7 +331,7 @@ namespace cumulonimbus::component
 		const DirectX::XMMATRIX s = XMLoadFloat4x4(&scaling_matrix);
 		// Rotation
 		const DirectX::XMMATRIX r = XMLoadFloat4x4(&rotation_matrix);
-		// Parallel movement
+		// Translation
 		const DirectX::XMMATRIX t = XMLoadFloat4x4(&translation_matrix);
 
 		// Matrix synthesis
@@ -727,6 +708,18 @@ namespace cumulonimbus::component
 	void TransformComponent::SetWorldMatrix(const DirectX::SimpleMath::Matrix& mat)
 	{
 		world_matrix = mat;
+		DirectX::SimpleMath::Vector3    t{};
+		DirectX::SimpleMath::Quaternion r{};
+		DirectX::SimpleMath::Vector3    s{};
+
+		if (arithmetic::DecomposeMatrix(t, r, s, world_matrix))
+		{
+			SetPosition(t);
+			SetScale(s);
+			SetRotation(r);
+			const DirectX::SimpleMath::Vector3 euler = arithmetic::ConvertQuaternionToEuler(r);
+			SetEulerAngles(euler);
+		}
 		// ダーティフラグをセット
 		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
 	}
