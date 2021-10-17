@@ -102,12 +102,12 @@ namespace cumulonimbus::component
 		}
 
 		//-- Angle --//
-		void SetWorldRotation(const DirectX::XMFLOAT3& angle);
+		void SetWorldRotation(const DirectX::SimpleMath::Vector3& angle);
 		void SetWorldRotation(float angle);
 		void SetWorldRotation_X(float x);
 		void SetWorldRotation_Y(float y);
 		void SetWorldRotation_Z(float z);
-		void AdjustWorldRotation(const DirectX::XMFLOAT3& adjust_val);
+		void AdjustWorldRotation(const DirectX::SimpleMath::Vector3& adjust_val);
 		void AdjustWorldRotation(float adjust_val);
 		void AdjustWorldRotation_X(float x);
 		void AdjustWorldRotation_Y(float y);

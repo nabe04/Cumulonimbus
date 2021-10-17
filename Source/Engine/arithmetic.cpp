@@ -1,6 +1,7 @@
 #include "arithmetic.h"
 
 #include <random>
+#include <limits>
 
 #include "locator.h"
 
@@ -8,24 +9,25 @@ using namespace DirectX;
 
 namespace arithmetic
 {
-	SimpleMath::Vector2 CalcWindowSize(const XMUINT2& aspect_ratio,
-									   const int width, const int height)
+	SimpleMath::Vector2 CalcWindowSize(
+		const XMUINT2& aspect_ratio,
+		const int width, const int height)
 	{
 		SimpleMath::Vector2 result{};
 
 		// 横幅のサイズを元に計算
 		// aspect_ratio.x : aspect_ratio.y = width : Y
-		result.y = (width * aspect_ratio.y) / aspect_ratio.x;
-		if(result.y < height)
+		result.y = (static_cast<float>(width) * static_cast<float>(aspect_ratio.y)) / static_cast<float>(aspect_ratio.x);
+		if (result.y < static_cast<float>(height))
 		{
-			result.x = width;
+			result.x = static_cast<float>(width);
 			return result;
 		}
 
 		// 縦幅のサイズを元に計算
 		// aspect_ratio.x : aspect_ratio.y = X : height
-		result.x = (height * aspect_ratio.x) / aspect_ratio.y;
-		result.y = height;
+		result.x = (static_cast<float>(height) * static_cast<float>(aspect_ratio.x)) / static_cast<float>(aspect_ratio.y);
+		result.y = static_cast<float>(height);
 		return result;
 	}
 
@@ -42,8 +44,9 @@ namespace arithmetic
 		return n;
 	}
 
-	SimpleMath::Vector2 ConvertScreenToNDC(const SimpleMath::Vector3& screen_pos,
-										   const float window_width, const float window_height)
+	SimpleMath::Vector2 ConvertScreenToNDC(
+		const SimpleMath::Vector3& screen_pos,
+		const float window_width, const float window_height)
 	{
 		const SimpleMath::Vector2 result =
 		{
@@ -54,8 +57,9 @@ namespace arithmetic
 		return result;
 	}
 
-	SimpleMath::Vector2 ConvertScreenToNDC(const SimpleMath::Vector2& screen_pos,
-										   const float window_width, const float window_height)
+	SimpleMath::Vector2 ConvertScreenToNDC(
+		const SimpleMath::Vector2& screen_pos,
+		const float window_width, const float window_height)
 	{
 		const SimpleMath::Vector2 result =
 		{
@@ -66,9 +70,10 @@ namespace arithmetic
 		return result;
 	}
 
-	SimpleMath::Vector3 ConvertScreenToWorld(SimpleMath::Vector3 screen_pos,
-											 const SimpleMath::Matrix&  view_mat,
-											 const SimpleMath::Matrix&  projection_mat)
+	SimpleMath::Vector3 ConvertScreenToWorld(
+		SimpleMath::Vector3 screen_pos,
+		const SimpleMath::Matrix& view_mat,
+		const SimpleMath::Matrix& projection_mat)
 	{
 		using namespace cumulonimbus::locator;
 
@@ -82,12 +87,12 @@ namespace arithmetic
 
 		XMFLOAT3 world_pos{};
 		const XMVECTOR result = XMVector3Unproject(XMLoadFloat3(&screen_pos),
-												   viewport_x, viewport_y,
-												   viewport_w,viewport_h,
-												   viewport_min_z, viewport_max_z,
-												   projection_mat,
-												   view_mat,
-												   XMMatrixIdentity());
+			viewport_x, viewport_y,
+			viewport_w, viewport_h,
+			viewport_min_z, viewport_max_z,
+			projection_mat,
+			view_mat,
+			XMMatrixIdentity());
 		XMStoreFloat3(&world_pos, result);
 		return world_pos;
 	}
@@ -112,7 +117,6 @@ namespace arithmetic
 
 		return vec;
 	}
-
 
 	XMFLOAT3 SphereLinear(const XMVECTOR& v1, const XMVECTOR& v2, float s)
 	{
@@ -184,7 +188,9 @@ namespace arithmetic
 		return normalize_angle;
 	}
 
-	float CalcAngleFromTwoVec(const DirectX::SimpleMath::Vector3& v0, const DirectX::SimpleMath::Vector3& v1)
+	float CalcAngleFromTwoVec(
+		const DirectX::SimpleMath::Vector3& v0,
+		const DirectX::SimpleMath::Vector3& v1)
 	{
 		float dot = v0.Dot(v1);
 		if (dot > 1.0f)
@@ -194,6 +200,79 @@ namespace arithmetic
 			dot = -1.0f;
 
 		return acosf(dot);
+	}
+
+	DirectX::SimpleMath::Vector3 CalcAngleFromMatrix(
+		const DirectX::SimpleMath::Matrix& m,
+		const AxisFlags axis_flags,
+		const bool is_returned_radian)
+	{
+		const float q_nan = std::numeric_limits<float>::quiet_NaN();
+		// 算出された角度を格納
+		DirectX::SimpleMath::Vector3 result{ q_nan ,q_nan ,q_nan };
+
+		if(axis_flags ==  UseAllAxis)
+		{
+			result.x = CalcAngle_X(m, is_returned_radian);
+			result.y = CalcAngle_Y(m, is_returned_radian);
+			result.z = CalcAngle_Z(m, is_returned_radian);
+			return result;
+		}
+
+		if(axis_flags | Axis_X)
+		{
+			result.x = CalcAngle_X(m, is_returned_radian);
+		}
+		if(axis_flags | Axis_Y)
+		{
+			result.y = CalcAngle_Y(m, is_returned_radian);
+		}
+		if(axis_flags | Axis_Z)
+		{
+			result.z = CalcAngle_Z(m, is_returned_radian);
+		}
+		return result;
+	}
+
+	float CalcAngle_X(const DirectX::SimpleMath::Matrix& m, const bool is_returned_radian)
+	{
+		DirectX::SimpleMath::Matrix t_m{};
+		m.Transpose(t_m);
+		// mの1行目とx軸の規定ベクトルからラジアン値を算出
+		const float radian = atan2(t_m._32, t_m._33);
+
+		if (is_returned_radian)
+			return radian;
+
+		return DirectX::XMConvertToDegrees(radian);
+	}
+
+	float CalcAngle_Y(const DirectX::SimpleMath::Matrix& m, const bool is_returned_radian)
+	{
+		DirectX::SimpleMath::Matrix t_m{};
+		m.Transpose(t_m);
+		// mの2行目とy軸の規定ベクトルからラジアン値を算出
+		//const float radian = CalcAngleFromTwoVec(SimpleMath::Vector3{ 1,0,0 }, SimpleMath::Vector3{ m._21,m._22,m._23 });
+		const float radian = atan2(-t_m._31, sqrtf((powf(t_m._32, 2) + powf(t_m._33, 2))));
+
+		if (is_returned_radian)
+			return radian;
+
+		return DirectX::XMConvertToDegrees(radian);
+	}
+
+	float CalcAngle_Z(const DirectX::SimpleMath::Matrix& m, const bool is_returned_radian)
+	{
+		DirectX::SimpleMath::Matrix t_m{};
+		m.Transpose(t_m);
+		// mの3行目とz軸の規定ベクトルからラジアン値を算出
+		//const float radian = CalcAngleFromTwoVec(SimpleMath::Vector3{ 1,0,0 }, SimpleMath::Vector3{ m._31,m._32,m._33 });
+		const float radian = atan2(t_m._21, t_m._11);
+
+		if (is_returned_radian)
+			return radian;
+
+		return DirectX::XMConvertToDegrees(radian);
 	}
 
 

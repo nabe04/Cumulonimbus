@@ -168,7 +168,30 @@ namespace cumulonimbus::component
 
 	void TransformComponent::SceneUpdate(float dt)
 	{
+		//using namespace DirectX::SimpleMath;
+		//// 90,-60,30
+		//const auto& rotation_x = Matrix::CreateRotationX(DirectX::XMConvertToRadians(-129));
+		//const auto& rotation_y = Matrix::CreateRotationY(DirectX::XMConvertToRadians(35));
+		//const auto& rotation_z = Matrix::CreateRotationZ(DirectX::XMConvertToRadians(150));
+		//const auto& srt_mat = Matrix::CreateScale(1, 1, 1) * rotation_z * rotation_y * rotation_x * Matrix::CreateTranslation(0, 0, 0);
+		//const Matrix& mat = { Matrix::Identity };
+		////DirectX::XMMatrixRotationRollPitchYawFromVector()
 
+		//const auto& m = mat * srt_mat;
+
+		//Vector3 v_after = { m._11,m._12,m._13 };
+		//Vector3 v_before{ 1,0,0 };
+		//ImGui::TreeNodeEx("", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow);
+		//arithmetic::AxisFlags flg{ arithmetic::Axis_X | arithmetic::Axis_Y };
+		//auto result_xyz = arithmetic::CalcAngleFromMatrix(m, arithmetic::UseAllAxis);
+		//auto result_xy = arithmetic::CalcAngleFromMatrix(m, arithmetic::Axis_X | arithmetic::Axis_Y);
+		//auto result_yz = arithmetic::CalcAngleFromMatrix(m, arithmetic::Axis_Z | arithmetic::Axis_Y);
+
+		//float d = v_after.Dot(v_before);
+		//float cos = acosf(d);
+		//float angle = DirectX::XMConvertToDegrees(cos);
+		//int a;
+		//a = 0;
 	}
 
 	void TransformComponent::PreGameUpdate(const float dt)
@@ -373,8 +396,8 @@ namespace cumulonimbus::component
 
 	const DirectX::SimpleMath::Matrix& TransformComponent::GetWorld4x4()
 	{
-		auto& hierarchy_comp = GetRegistry()->GetComponent<HierarchyComponent>(GetEntity());
-		if(hierarchy_comp.GetIsDirty())
+		if(auto& hierarchy_comp = GetRegistry()->GetComponent<HierarchyComponent>(GetEntity());
+			hierarchy_comp.GetIsDirty())
 		{
 			NormalizeAngle();
 			CreateWorldTransformMatrix();
@@ -525,7 +548,7 @@ namespace cumulonimbus::component
 		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
 	}
 
-	void TransformComponent::SetWorldRotation(const DirectX::XMFLOAT3& angle)
+	void TransformComponent::SetWorldRotation(const DirectX::SimpleMath::Vector3& angle)
 	{
 		local_angle = angle;
 		// ダーティフラグをセット
@@ -560,7 +583,7 @@ namespace cumulonimbus::component
 		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
 	}
 
-	void TransformComponent::AdjustWorldRotation(const DirectX::XMFLOAT3& adjust_val)
+	void TransformComponent::AdjustWorldRotation(const DirectX::SimpleMath::Vector3& adjust_val)
 	{
 		local_angle += adjust_val;
 		// ダーティフラグをセット
@@ -599,11 +622,15 @@ namespace cumulonimbus::component
 
 	void TransformComponent::SetWorld4x4(const DirectX::SimpleMath::Matrix& mat4x4)
 	{
+		NormalizeAngle();
+		CreateWorldTransformMatrix();
+
 		world_f4x4 = mat4x4;
 		// Constant Bufferのセット
 		cb_transform->data.transform_matrix = world_f4x4;
-		// ダーティフラグをセット
-		GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
+
+		//// ダーティフラグをセット
+		//GetRegistry()->GetComponent<HierarchyComponent>(GetEntity()).ActivateDirtyFlg();
 	}
 
 	void TransformComponent::SetQuaternionSlerp(const DirectX::SimpleMath::Quaternion& q1, const DirectX::SimpleMath::Quaternion& q2)

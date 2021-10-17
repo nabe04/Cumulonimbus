@@ -135,7 +135,7 @@ namespace cumulonimbus::scene
 
 		collision_manager = std::make_unique<collision::CollisionManager>(*system.get());
 
-		//CreateScene();
+		CreateScene();
 
 		//const mapping::rename_type::Entity ent_main_camera = registry->CreateEntity();
 		//registry->AddComponent<component::CameraComponent>(ent_main_camera, true);

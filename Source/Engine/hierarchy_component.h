@@ -29,15 +29,6 @@ namespace cumulonimbus::component
 
 		void Load(ecs::Registry* registry) override;
 
-		/**
-		 * @brief : 親階層(parent_entity)、最初の子階層(first_child)、
-		 *			兄弟階層(next_sibling、back_sibling)の登録
-		 */
-		void RegistryFamily(
-			ecs::Registry* registry,
-			const mapping::rename_type::Entity& parent_ent,
-			const mapping::rename_type::Entity& selected_ent);
-
 		[[nodiscard]]
 		const mapping::rename_type::Entity& GetParentEntity() const { return parent_entity; }
 		[[nodiscard]]
@@ -73,5 +64,10 @@ namespace cumulonimbus::component
 		mapping::rename_type::Entity next_sibling{};  // 次の兄弟階層エンティティ
 		mapping::rename_type::Entity back_sibling{};  // 前の兄弟階層エンティティ
 		bool is_dirty{ true };	// ダーティフラグ
+
+		[[nodiscard]]
+		DirectX::SimpleMath::Vector3 GetParentsScale(const mapping::rename_type::Entity& ent) const;
+		//[[nodiscard]]
+		//DirectX::SimpleMath::Vector3 Get
 	};
 } // cumulonimbus::component

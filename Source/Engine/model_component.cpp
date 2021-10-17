@@ -72,7 +72,7 @@ namespace cumulonimbus::component
 			CEREAL_NVP(prev_animation),
 			CEREAL_NVP(anim_states)
 		);
-		
+
 	}
 
 
@@ -118,12 +118,7 @@ namespace cumulonimbus::component
 
 	void ModelComponent::GameUpdate(const float dt)
 	{
-		//const auto& world_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorld4x4();
 
-		//CalculateLocalTransform();
-		//CalculateWorldTransform(world_transform);
-
-		//UpdateAnimState(dt);
 	}
 
 	void ModelComponent::RenderImGui()

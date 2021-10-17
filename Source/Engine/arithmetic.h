@@ -7,6 +7,16 @@
 
 namespace arithmetic
 {
+	typedef uint32_t AxisFlags;
+
+	enum AxisFlags_ : uint32_t
+	{
+		UseAllAxis	= 0,
+		Axis_X		= 1 << 0,
+		Axis_Y		= 1 << 2,
+		Axis_Z		= 1 << 3
+	};
+
 	/**
 	 * @brief : 直線の定義
 	 */
@@ -78,6 +88,9 @@ namespace arithmetic
 													  const DirectX::SimpleMath::Matrix& view_mat,
 													  const DirectX::SimpleMath::Matrix& projection_mat);
 
+	/**
+	 * @brief : 2点からベクトルを作成
+	 */
 	[[nodiscard]]
 	DirectX::XMFLOAT2 CalcVecFromTwoPositions(DirectX::XMFLOAT2 vec1, DirectX::XMFLOAT2 vec2);
 	[[nodiscard]]
@@ -136,11 +149,60 @@ namespace arithmetic
 		const DirectX::SimpleMath::Vector3& v1);
 
 	/**
+	 * @brief : 行列から任意の軸の角度を算出
+	 * @remark : AxisFlagsでシフト演算を組み合わせることで算出したい軸の角度を指定できる
+	 * @remark : 指定されなかった角度にはnanを返す
+	 * @param m : 求めたい角度の行列
+	 * @param axis_flags : 求めたい角度の指定(シフト演算を使用しての組み合わせ可能)
+	 * @param is_returned_radian : 計算結果をラジアンで返すか(デフォルトはfalse)
+	 * @return : 算出されたそれぞれの角度
+	 */
+	[[nodiscard]]
+	DirectX::SimpleMath::Vector3 CalcAngleFromMatrix(
+		const DirectX::SimpleMath::Matrix& m,
+		AxisFlags axis_flags,
+		bool is_returned_radian = false);
+
+	/**
+	 * @brief : 行列からX軸の角度を算出
+	 * @param m : 求めたい角度の行列
+	 * @param is_returned_radian : 計算結果をラジアンで返すか(デフォルトはfalse)
+	 * @return : 算出された角度
+	 */
+	[[nodiscard]]
+	float CalcAngle_X(
+		const DirectX::SimpleMath::Matrix& m,
+		bool is_returned_radian = false);
+	/**
+	 * @brief : 行列からY軸の角度を算出
+	 * @param m : 求めたい角度の行列
+	 * @param is_returned_radian : 計算結果をラジアンで返すか(デフォルトはfalse)
+	 * @return : 算出された角度
+	 */
+	[[nodiscard]]
+	float CalcAngle_Y(
+		const DirectX::SimpleMath::Matrix& m,
+		bool is_returned_radian = false);
+	/**
+	 * @brief : 行列からZ軸の角度を算出
+	 * @param m : 求めたい角度の行列
+	 * @param is_returned_radian : 計算結果をラジアンで返すか(デフォルトはfalse)
+	 * @return : 算出された角度
+	 */
+	[[nodiscard]]
+	float CalcAngle_Z(
+		const DirectX::SimpleMath::Matrix& m,
+		bool is_returned_radian = false);
+
+	/**
 	 * @brief : 左手座標系を基底にした時のそれぞれの角度
 	 */
-	[[nodiscard]] float CalcAngle_X(const DirectX::SimpleMath::Vector3& v);
-	[[nodiscard]] float CalcAngle_Y(const DirectX::SimpleMath::Vector3& v);
-	[[nodiscard]] float CalcAngle_Z(const DirectX::SimpleMath::Vector3& v);
+	[[nodiscard]]
+	float CalcAngle_X(const DirectX::SimpleMath::Vector3& v);
+	[[nodiscard]]
+	float CalcAngle_Y(const DirectX::SimpleMath::Vector3& v);
+	[[nodiscard]]
+	float CalcAngle_Z(const DirectX::SimpleMath::Vector3& v);
 
 	/**
 	 * @brief : クォータニオンからオイラー角の算出
