@@ -20,13 +20,16 @@
 #include "ecs.h"
 #include "light.h"
 #include "camera_component.h"
+#include "sky_box.h"
+
+#include "prefab_loader.h"
 
 // Components
 #include "anim_sprite.h"
 #include "mesh_object.h"
 #include "transform_component.h"
 #include "hierarchy_component.h"
-#include "sky_box.h"
+#include "player_component.h"
 
 namespace cumulonimbus::scene
 {
@@ -134,6 +137,15 @@ namespace cumulonimbus::scene
 		locator::Locator::Provide<asset::AssetManager>(asset_manager);
 
 		collision_manager = std::make_unique<collision::CollisionManager>(*system.get());
+
+		{// 初期作成のプレファブ
+			//const auto& player_base =  registry->CreateEntity();
+			//registry->Rename(player_base, "player_base");
+			//registry->AddComponent<component::PlayerComponent>(player_base);
+			//asset_manager->GetLoader<asset::PrefabLoader>()->CreatePrefab(*asset_manager.get(), registry.get(),
+			//															  std::vector<mapping::rename_type::Entity>{player_base},
+			//															  true, "player_base");
+		}
 
 		CreateScene();
 

@@ -457,7 +457,7 @@ namespace cumulonimbus::renderer
 
 		BindGraphicsState(immediate_context, model_comp->GetGraphicsState());
 
-		for (const auto& mesh : model_data.meshes)
+		for (const auto& mesh : model_data.GetMeshes())
 		{
 			// メッシュ単位コンスタントバッファ更新
 			TransformCB transform{};

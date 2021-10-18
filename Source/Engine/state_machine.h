@@ -14,6 +14,9 @@ class StateMachine
 public:
 	~StateMachine() = default;
 
+	/**
+	 * @brief : StateMachine‚Å“®‚©‚·ŠÖ”‚Ì’Ç‰Á
+	 */
 	void AddState(Key state, std::function<ReturnVal(Args...)> callback)
 	{
 		if (states.contains(state))
@@ -22,6 +25,17 @@ public:
 		states.insert(std::make_pair(state, callback));
 	}
 
+	/**
+	 * @brief : StateMachine‚É“o˜^‚³‚ê‚Ä‚¢‚éó‘Ô‚Ìíœ
+	 */
+	void ClearState()
+	{
+		states.clear();
+	}
+
+	/**
+	 * @breif : Œ»İ‚Ìó‘Ô‚ÌŠÖ”Às
+	 */
 	void Update(Args... args)
 	{
 		if (!states.contains(current_state))
@@ -31,13 +45,17 @@ public:
 		states.at(current_state)(args...);
 	}
 
+	[[nodiscard]]
 	size_t GetNumState() const { return states.size(); }
+	[[nodiscard]]
 	Key GetState()		{ return current_state; }
+	[[nodiscard]]
 	Key GetOldState()	{ return old_state; }
 
 	/*
 	 * brief : State‚ªØ‚è‘Ö‚í‚Á‚½‚Ì‰‚ß‚ÌƒtƒŒ[ƒ€‚Ì‚İ“ü‚éˆ—
 	 */
+	[[nodiscard]]
 	bool GetInitialize()
 	{
 		if (!is_switched) return false;
@@ -51,17 +69,6 @@ public:
 		current_state = state;
 		is_switched = true;
 	}
-
-	//template<typename Archive>
-	//void serialize(Archive&& archive)
-	//{
-	//	archive(
-	//		cereal::make_nvp("current state", current_state),
-	//		cereal::make_nvp("old state"	, old_state),
-	//		//cereal::make_nvp("states"		, states),
-	//		cereal::make_nvp("is switched"	,is_switched)
-	//	);
-	//}
 
 	template<class Archive>
 	void load(Archive&& archive)

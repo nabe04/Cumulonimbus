@@ -93,8 +93,6 @@ namespace cumulonimbus::component
 		);
 	}
 
-
-
 	PlayerComponent::PlayerComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent)
 		:Actor3DComponent{ registry, ent }
 	{
@@ -147,30 +145,30 @@ namespace cumulonimbus::component
 		// 初期stateの設定(Idle)
 		player_state.SetState(PlayerState::Idle);
 
-		// アニメーションの最終キーフレームの設定
-		SetAdjustKeyFrame("walk_front"				, 32);
-		SetAdjustKeyFrame("avoid_dash_begin"		, 24);
-		SetAdjustKeyFrame("avoid_dash_end"			, 10);
-		SetAdjustKeyFrame("dash"					, 16);
-		SetAdjustKeyFrame("attack_normal_01"		, 40);
-		SetAdjustKeyFrame("attack_normal_02"		, 36);
-		SetAdjustKeyFrame("attack_normal_04_begin"	, 4);
-		SetAdjustKeyFrame("attacking_normal_04"		, 4);
-		SetAdjustKeyFrame("attack_strong_01"		, 27);
-		SetAdjustKeyFrame("attack_strong_02"		, 22);
-		SetAdjustKeyFrame("attack_strong_03"		, 22);
-		SetAdjustKeyFrame("attack_strong_04"		, 22);
-		SetAdjustKeyFrame("jump_start"				, 13);
-		SetAdjustKeyFrame("jump_loop"				, 46);
-		SetAdjustKeyFrame("jump_end"				, 17);
-		SetAdjustKeyFrame("attacking_jump_01"		, 18);
-		SetAdjustKeyFrame("attacking_jump_02"		, 16);
-		SetAdjustKeyFrame("attacking_jump_03"		, 18);
-		SetAdjustKeyFrame("attacking_jump_04"		, 18);
-		SetAdjustKeyFrame("attack_jump_01_end"		, 36);
-		SetAdjustKeyFrame("attack_jump_02_end"		, 36);
-		SetAdjustKeyFrame("attack_jump_03_end"		, 34);
-		SetAdjustKeyFrame("attack_jump_04_end"		, 32);
+		//// アニメーションの最終キーフレームの設定
+		//SetAdjustKeyFrame("walk_front"				, 32);
+		//SetAdjustKeyFrame("avoid_dash_begin"		, 24);
+		//SetAdjustKeyFrame("avoid_dash_end"			, 10);
+		//SetAdjustKeyFrame("dash"					, 16);
+		//SetAdjustKeyFrame("attack_normal_01"		, 40);
+		//SetAdjustKeyFrame("attack_normal_02"		, 36);
+		//SetAdjustKeyFrame("attack_normal_04_begin"	, 4);
+		//SetAdjustKeyFrame("attacking_normal_04"		, 4);
+		//SetAdjustKeyFrame("attack_strong_01"		, 27);
+		//SetAdjustKeyFrame("attack_strong_02"		, 22);
+		//SetAdjustKeyFrame("attack_strong_03"		, 22);
+		//SetAdjustKeyFrame("attack_strong_04"		, 22);
+		//SetAdjustKeyFrame("jump_start"				, 13);
+		//SetAdjustKeyFrame("jump_loop"				, 46);
+		//SetAdjustKeyFrame("jump_end"				, 17);
+		//SetAdjustKeyFrame("attacking_jump_01"		, 18);
+		//SetAdjustKeyFrame("attacking_jump_02"		, 16);
+		//SetAdjustKeyFrame("attacking_jump_03"		, 18);
+		//SetAdjustKeyFrame("attacking_jump_04"		, 18);
+		//SetAdjustKeyFrame("attack_jump_01_end"		, 36);
+		//SetAdjustKeyFrame("attack_jump_02_end"		, 36);
+		//SetAdjustKeyFrame("attack_jump_03_end"		, 34);
+		//SetAdjustKeyFrame("attack_jump_04_end"		, 32);
 
 		// 先行入力によるアニメーションの中断フレームの設定
 		SetAnimationBreakFrame(AnimationData::Attack_Normal_01 , 16);
@@ -229,6 +227,11 @@ namespace cumulonimbus::component
 		}
 		registry->GetComponent<CameraComponent>(ent).GetCamera()->SetCameraSpeed({ 0.05f,0.05f });
 		registry->GetComponent<CameraComponent>(ent).GetCamera()->SetFocusOffset({ 0.0f,50.0f,0.0f });
+	}
+
+	void PlayerComponent::Initialize(ecs::Registry* registry, mapping::rename_type::Entity ent)
+	{// Prefabからオブジェクトが作成された時の初期化処理
+
 	}
 
 	void PlayerComponent::PreGameUpdate(float dt)

@@ -165,8 +165,8 @@ namespace cumulonimbus::asset
 			}
 		};
 
-		template<typename Archive>
-		void serialize(Archive&& archive)
+		template<class Archive>
+		void save(Archive&& archive,const uint32_t version) const
 		{
 			archive(
 				CEREAL_NVP(nodes),
@@ -177,20 +177,76 @@ namespace cumulonimbus::asset
 			);
 		}
 
-		std::vector<Node>		nodes{};
-		std::vector<Mesh>		meshes{};
-		std::vector<Animation>  animations{};
-		std::vector<mapping::rename_type::UUID>	materials_id{}; // このIDを元にMaterialLoaderのmaterialsを取得
-		int	root_motion_node_index{-1};
+		template<class Archive>
+		void load(Archive&& archive,const uint32_t version)
+		{
+			archive(
+				CEREAL_NVP(nodes),
+				CEREAL_NVP(materials_id),
+				CEREAL_NVP(meshes),
+				CEREAL_NVP(animations),
+				CEREAL_NVP(root_motion_node_index)
+			);
+		}
+
+		/**
+		 * @brief					: ModelData::animations(std::vector)の要素番号から
+		 *							  アニメーションのキーフレーム数を指定
+		 * @param animation_index	: ModelData::animations(std::vector)の要素番号
+		 * @param frames			: 新しいキーフレーム数
+		 * @attention				: 設定したキーフレームが最終フレームになる
+		 */
+		void SetAnimationKeyFrame(u_int animation_index, u_int frames);
+		/**
+		 * @brief					: ModelData::animations(std::vector)のアニメーション名から
+		 *							  アニメーションのキーフレーム数を指定
+		 * @param animation_name	: モデルが持つアニメーション名
+		 *							  (ModelData::Animation::animation_name)
+		 * @param frames			: 新しいキーフレーム数
+		 * @attention				: 設定したキーフレームが最終フレームになる
+		 * @attention				: animation_nameの名前が一致しない場合アサーションで処理が落ちる
+		 */
+		void SetAnimationKeyFrame(const std::string& animation_name, u_int frames);
+
+		/**
+		 * @brief					: ModelData::animations(std::vector)の要素番号から
+		 *							  アニメーションの再生速度を指定(倍率)
+		 * @param animation_index   : ModelData::animations(std::vector)の要素番号
+		 * @param playback_speed    : 再生速度(倍率)
+		 */
+		void SetAnimationPlaybackSpeed(u_int animation_index, float playback_speed);
+		/**
+		 * @brief					: ModelData::animations(std::vector)のアニメーション名から
+		 *							  アニメーションのキーフレーム数を指定
+		 * @param animation_name    : モデルが持つアニメーション名
+		 * @param playback_speed    : 再生速度(倍率)
+		 * @attention				: animation_nameの名前が一致しない場合アサーションで処理が落ちる
+		 */
+		void SetAnimationPlaybackSpeed(const std::string& animation_name, float playback_speed);
 
 		[[nodiscard]]
 		const std::vector<Node>& GetNodes()	 const { return nodes; }
 		[[nodiscard]]
+		std::vector<Node>& GetNodes()			   { return nodes; }
+		[[nodiscard]]
 		const std::vector<Mesh>& GetMeshes() const { return meshes; }
 		[[nodiscard]]
-		const std::vector<mapping::rename_type::UUID>& GetMaterialsID()	  const { return materials_id; }
+		std::vector<Mesh>& GetMeshes()			   { return meshes; }
+		[[nodiscard]]
+		const std::vector<mapping::rename_type::UUID>& GetMaterialsID() const { return materials_id; }
+		[[nodiscard]]
+		std::vector<mapping::rename_type::UUID>& GetMaterialsID() { return materials_id; }
 		[[nodiscard]]
 		const std::vector<Animation>& GetAnimations() const { return animations; }
+		[[nodiscard]]
+		std::vector<Animation>& GetAnimations() { return animations; }
+	private:
+		std::vector<Node>		nodes{};
+		std::vector<Mesh>		meshes{};
+		std::vector<Animation>  animations{};
+		std::vector<mapping::rename_type::UUID>	materials_id{}; // このIDを元にMaterialLoaderのmaterialsを取得
+		int	root_motion_node_index{ -1 };
+
 	};
 
 	/**
@@ -221,3 +277,5 @@ namespace cumulonimbus::asset
 		void Load(const std::filesystem::path& path);
 	};
 } // cumulonimbus::asset
+
+CEREAL_CLASS_VERSION(cumulonimbus::asset::ModelData, 0)

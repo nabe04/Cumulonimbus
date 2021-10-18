@@ -318,7 +318,7 @@ namespace cumulonimbus::asset
 		}
 
 		// 再帰的に子ノードを処理する
-		parent_node_index = static_cast<int>(model.GetModelData().nodes.size() - 1);
+		parent_node_index = static_cast<int>(model.GetModelData().GetNodes().size() - 1);
 		for (int i = 0; i < fbx_node->GetChildCount(); ++i)
 		{
 			BuildNodes(model, fbx_node->GetChild(i), parent_node_index);
@@ -343,7 +343,7 @@ namespace cumulonimbus::asset
 		node.rotate			= FbxDouble4ToFloat4(fbx_local_transform.GetQ());
 		node.translate		= FbxDouble4ToFloat3(fbx_local_transform.GetT());
 
-		model.GetModelData().nodes.emplace_back(node);
+		model.GetModelData().GetNodes().emplace_back(node);
 	}
 
 	void ModelLoader::BuildMeshes(Model& model, FbxNode* fbx_node)
@@ -379,8 +379,8 @@ namespace cumulonimbus::asset
 		int fbx_material_count = fbx_node->GetMaterialCount(); // マテリアル数取得
 		int fbx_polygon_count = fbx_mesh->GetPolygonCount();  // ポリゴン数取得
 
-		model.GetModelData().meshes.emplace_back(ModelData::Mesh());
-		ModelData::Mesh& mesh = model.GetModelData().meshes.back();
+		model.GetModelData().GetMeshes().emplace_back(ModelData::Mesh());
+		ModelData::Mesh& mesh = model.GetModelData().GetMeshes().back();
 		mesh.mesh_name = fbx_node->GetName();		// mesh名取得
 		mesh.material_count = fbx_material_count;
 		mesh.subsets.resize(fbx_material_count > 0 ? fbx_material_count : 1);
@@ -616,7 +616,7 @@ namespace cumulonimbus::asset
 		else
 		{
 			// デフォルトマテリアルの使用
-			model.GetModelData().materials_id.emplace_back("");
+			model.GetModelData().GetMaterialsID().emplace_back("");
 		}
 	}
 
@@ -665,7 +665,7 @@ namespace cumulonimbus::asset
 		auto mat_id = asset_manager.GetLoader<MaterialLoader>()->CreateMaterial(
 																	asset_manager, parent_path,
 																	material, std::filesystem::path{ texture_path }.filename().replace_extension().string());
-		model.GetModelData().materials_id.emplace_back(mat_id);
+		model.GetModelData().GetMaterialsID().emplace_back(mat_id);
 	}
 
 	void ModelLoader::BuildAnimations(Model& model, FbxScene* fbx_scene)
@@ -677,8 +677,8 @@ namespace cumulonimbus::asset
 		int fbx_animation_count = fbx_anim_stack_names.Size();
 		for (int fbx_animation_index = 0; fbx_animation_index < fbx_animation_count; ++fbx_animation_index)
 		{
-			model.GetModelData().animations.emplace_back(ModelData::Animation());
-			ModelData::Animation& animation = model.GetModelData().animations.back();
+			model.GetModelData().GetAnimations().emplace_back(ModelData::Animation());
+			ModelData::Animation& animation = model.GetModelData().GetAnimations().back();
 
 			// アニメーションデータのサンプリング設定
 			FbxTime::EMode fbx_time_mode = fbx_scene->GetGlobalSettings().GetTimeMode();
@@ -715,7 +715,7 @@ namespace cumulonimbus::asset
 			// アニメーションの対象となるノードを列挙する
 			std::vector<FbxNode*> fbx_nodes;
 			FbxNode* fbx_root_node = fbx_scene->GetRootNode();
-			for (ModelData::Node& node : model.GetModelData().nodes)
+			for (ModelData::Node& node : model.GetModelData().GetNodes())
 			{
 				FbxNode* fbx_node = fbx_root_node->FindChild(node.name.c_str());
 				fbx_nodes.emplace_back(fbx_node);
@@ -740,7 +740,7 @@ namespace cumulonimbus::asset
 					if (fbx_node == nullptr)
 					{
 						// アニメーション対象のノードがなかったのでダミーデータを設定
-						ModelData::Node& node = model.GetModelData().nodes.at(fbx_node_index);
+						ModelData::Node& node = model.GetModelData().GetNodes().at(fbx_node_index);
 						key_data.scale = node.scale;
 						key_data.rotate = node.rotate;
 						key_data.translate = node.translate;
@@ -748,7 +748,7 @@ namespace cumulonimbus::asset
 					else if (fbx_node_index == -1)
 					{
 						// ルートモーションは無視する
-						ModelData::Node& node = model.GetModelData().nodes.at(fbx_node_index);
+						ModelData::Node& node = model.GetModelData().GetNodes().at(fbx_node_index);
 						key_data.scale = DirectX::XMFLOAT3(1, 1, 1);
 						key_data.rotate = DirectX::XMFLOAT4(0, 0, 0, 1);
 						key_data.translate = DirectX::XMFLOAT3(0, 0, 0);
@@ -776,9 +776,9 @@ namespace cumulonimbus::asset
 
 	int ModelLoader::FindNodeIndex(Model& model, const char* name)
 	{
-		for (size_t i = 0; i < model.GetModelData().nodes.size(); ++i)
+		for (size_t i = 0; i < model.GetModelData().GetNodes().size(); ++i)
 		{
-			if (model.GetModelData().nodes[i].name == name)
+			if (model.GetModelData().GetNodes()[i].name == name)
 			{
 				return static_cast<int>(i);
 			}

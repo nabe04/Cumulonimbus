@@ -70,7 +70,14 @@ namespace cumulonimbus::asset
 		 * @param id : 取得したいマテリアルのID(UUID)
 		 * @return : 取得したマテリアルの参照
 		 */
-		Material& GetMaterial(const mapping::rename_type::UUID& id);
+		Material& GetMaterial(const mapping::rename_type::UUID& mat_id);
+		/**
+		 * @brief : マテリアル名の取得
+		 * @param mat_id : 取得したいマテリアルID(UUID)
+		 * @return : 指定されたマテリアル名(IDが存在しない場合空文字""を返す)
+		 */
+		[[nodiscard]]
+		std::string GetMaterialName(const mapping::rename_type::UUID& mat_id) const;
 	private:
 		std::map<mapping::rename_type::UUID, std::unique_ptr<Material>> materials{};
 		std::unique_ptr<Material> dummy_material{};

@@ -48,6 +48,8 @@ namespace cumulonimbus::asset
 		 */
 		void Load(const std::filesystem::path& path);
 
+		void RenderImGui();
+
 		/**
 		 * マテリアルの持つテクスチャ、パラメータをシェーダーにバインド
 		 */

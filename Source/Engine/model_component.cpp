@@ -5,7 +5,10 @@
 #include "ecs.h"
 #include "cum_imgui_helper.h"
 #include "locator.h"
+// loaders and  assets
+#include "material_loader.h"
 #include "model_loader.h"
+// components
 #include "transform_component.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::ModelComponent)
@@ -123,13 +126,16 @@ namespace cumulonimbus::component
 
 	void ModelComponent::RenderImGui()
 	{
-		if (ImGui::CollapsingHeader("Model Component", ImGuiTreeNodeFlags_DefaultOpen))
+		const ImGuiTreeNodeFlags tree_flg{ ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth };
+
+		if (ImGui::CollapsingHeader("Model Component", tree_flg))
 		{
-			auto& asset_sheet_manager = locator::Locator::GetAssetManager()->GetAssetSheetManager();
+			auto& asset_manager = *locator::Locator::GetAssetManager();
+			auto& asset_sheet_manager = asset_manager.GetAssetSheetManager();
+			auto* model_loader = locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>();
 			std::filesystem::path current_path{};
 			static std::string current_item{};
-			auto* model_loader = locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>();
-			if(model_loader->HasModel(model_id))
+			if (model_loader->HasModel(model_id))
 			{
 				current_path = asset_sheet_manager.GetAssetFilename<asset::Model>(model_id);
 				current_item = current_path.filename().string();
@@ -144,13 +150,13 @@ namespace cumulonimbus::component
 				items.emplace_back(items_path.back().filename().string());
 			}
 			// Combo内でアイテム選択時
-			if(helper::imgui::Combo("Model", current_item, items))
+			if (helper::imgui::Combo("Model", current_item, items))
 			{
 				for (const auto& [key, value] : asset_sheet_manager.GetSheet<asset::Model>().sheet)
 				{
 					if (current_item != std::filesystem::path{ value }.filename().string())
 						continue;
-					if(model_id != key)
+					if (model_id != key)
 					{
 						/*
 						 * 選択されたモデルが現在保持しているモデルと違う場合
@@ -160,9 +166,76 @@ namespace cumulonimbus::component
 					}
 				}
 			}
-		}
 
-		graphics_state.RenderImGui();
+			// モデルがなければ処理を抜ける
+			if (!model_loader->HasModel(model_id))
+				return;
+
+			// マテリアル編集処理
+			if (ImGui::TreeNodeEx("Materials", tree_flg))
+			{
+				for (auto& mesh : asset_manager.GetLoader<asset::ModelLoader>()->GetModel(model_id).GetModelData().GetMeshes())
+				{
+					if (ImGui::TreeNodeEx(mesh.mesh_name.c_str(), tree_flg))
+					{// メッシュ毎のマテリアル
+						for (const asset::ModelData::Subset& subset : mesh.subsets)
+						{// メッシュが持つマテリアル郡
+							if (const auto& material_id = GetMaterialID(subset.material_index);
+								ImGui::TreeNodeEx(asset_manager.GetLoader<asset::MaterialLoader>()->GetMaterialName(material_id).c_str(), tree_flg))
+							{
+								// マテリアルの編集処理実装部
+								locator::Locator::GetAssetManager()->GetLoader<asset::MaterialLoader>()->GetMaterial(material_id).RenderImGui();
+
+								ImGui::TreePop();
+							}
+						}
+						ImGui::TreePop();
+					}
+				}
+				ImGui::TreePop();
+			}
+
+			// アニメーション編集処理
+			if (ImGui::TreeNodeEx("Animations", tree_flg))
+			{
+				if (ImGui::Button("Save Animation Data"))
+				{
+					std::filesystem::path save_path = asset_sheet_manager.GetAssetFilename<asset::Model>(model_id);
+					model_loader->GetModel(model_id).Save(save_path.replace_extension());
+				}
+
+				ImGui::Text("Current Keyframe : %d", current_keyframe);
+				ImGui::Text("Current Anim Index %d", current_animation_index);
+
+				for (int animation_index = 0; animation_index < model_loader->GetModel(model_id).GetModelData().GetAnimations().size(); ++animation_index)
+				{
+					ImGui::PushID(animation_index);
+					asset::ModelData& model_data = model_loader->GetModel(model_id).GetModelData();
+					auto& animation = model_data.GetAnimations().at(animation_index);
+					if (ImGui::TreeNode(animation.animation_name.c_str()))
+					{
+						ImGui::Text("Seconds Length : %f", animation.seconds_length);
+						ImGui::Text("Sampling Rate : %f" , animation.sampling_rate);
+						ImGui::Text("Sampling Time : %f" , animation.sampling_time);
+
+						ImGui::InputInt("End Frame", &animation.num_key_frame);
+						ImGui::DragFloat("Playback Speed", &animation.playback_speed, 0.01f, 0.01f, 10.0f);
+						if (ImGui::Button("Switch Animation"))
+						{
+							SwitchAnimation(animation_index, true);
+						}
+						model_data.SetAnimationKeyFrame(animation_index, animation.num_key_frame);
+
+						ImGui::TreePop();
+					}
+
+					ImGui::PopID();
+				}
+				ImGui::TreePop();
+			}
+
+			graphics_state.RenderImGui();
+		}
 	}
 
 	void ModelComponent::Load(ecs::Registry* registry)
@@ -173,7 +246,7 @@ namespace cumulonimbus::component
 	bool ModelComponent::IsPlayAnimation() const
 	{
 		const asset::ModelData::Animation& animation
-			= locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>()->GetModel(model_id).GetModelData().animations.at(current_animation_index);
+			= locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>()->GetModel(model_id).GetModelData().GetAnimations().at(current_animation_index);
 
 		return current_keyframe < (animation.num_key_frame - 1);
 	}
@@ -273,7 +346,7 @@ namespace cumulonimbus::component
 			locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>()->GetModel(model_id);
 
 		// ノード
-		const std::vector<asset::ModelData::Node>& res_nodes = model.GetModelData().nodes;
+		const std::vector<asset::ModelData::Node>& res_nodes = model.GetModelData().GetNodes();
 		nodes.resize(res_nodes.size());
 		for (size_t node_index = 0; node_index < nodes.size(); ++node_index)
 		{// ModelResource::Node と Model::Nodeを結び付ける
@@ -303,7 +376,7 @@ namespace cumulonimbus::component
 		const asset::ModelData& model_data =
 			locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>()->GetModel(model_id).GetModelData();
 
-		const asset::ModelData::Animation& prev_animation = model_data.animations.at(prev_animation_index);
+		const asset::ModelData::Animation& prev_animation = model_data.GetAnimations().at(prev_animation_index);
 
 		const std::vector<asset::ModelData::Keyframe>& keyframes = prev_animation.keyframes;
 
@@ -369,18 +442,18 @@ namespace cumulonimbus::component
 		if (anim_states.GetInitialize())
 		{
 			// 前のアニメーションの切り替わった時点のキーフレームを算出
-			const size_t keyframe = model_data.animations.at(prev_animation_index).num_key_frame;
+			const size_t keyframe = model_data.GetAnimations().at(prev_animation_index).num_key_frame;
 			if (prev_key_index >= static_cast<int>(keyframe))
 			{
 				prev_key_index = static_cast<int>(keyframe);
 			}
-			prev_animation = model_data.animations.at(prev_animation_index);
+			prev_animation = model_data.GetAnimations().at(prev_animation_index);
 		}
 
 		float rate = changer_timer / animation_switch_time;
 
 		const asset::ModelData::Keyframe& prev_keyframe = prev_animation.keyframes.at(prev_key_index);
-		const asset::ModelData::Keyframe& current_keyframe = model_data.animations.at(current_animation_index).keyframes.at(0);
+		const asset::ModelData::Keyframe& current_keyframe = model_data.GetAnimations().at(current_animation_index).keyframes.at(0);
 
 		const int node_count = static_cast<int>(nodes.size());
 		for (int node_index = 0; node_index < node_count; ++node_index)
@@ -423,18 +496,30 @@ namespace cumulonimbus::component
 		const asset::ModelData& model_data =
 			locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>()->GetModel(model_id).GetModelData();
 
-		if (model_data.animations.empty())
+		if (model_data.GetAnimations().empty())
 			return;
 
-		const asset::ModelData::Animation& animation = model_data.animations.at(current_animation_index);
+		const asset::ModelData::Animation& animation = model_data.GetAnimations().at(current_animation_index);
 
 		const std::vector<asset::ModelData::Keyframe>& keyframes = animation.keyframes;
 
-		for (size_t key_index = 0; key_index < animation.num_key_frame; ++key_index)
+		for (size_t key = 0; key < animation.num_key_frame; ++key)
 		{
+			if(key >= keyframes.size() - 1)
+			{
+				int a;
+				a = 0;
+			}
+			if(key >= keyframes.size())
+			{
+				int a;
+				a = 0;
+			}
+			const size_t key_index = (key < keyframes.size() - 1 ? key : keyframes.size() - 2);
 			// 現在の時間がどのキーフレームの間にいるか判定する
 			const asset::ModelData::Keyframe& keyframe0 = keyframes.at(key_index);
 			const asset::ModelData::Keyframe& keyframe1 = keyframes.at(key_index + static_cast<size_t>(1));
+
 			if (current_seconds >= keyframe0.seconds && current_seconds < keyframe1.seconds)
 			{
 				prev_key_index	 = current_keyframe;

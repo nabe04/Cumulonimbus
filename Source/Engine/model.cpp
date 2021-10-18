@@ -9,6 +9,46 @@
 
 namespace cumulonimbus::asset
 {
+	void ModelData::SetAnimationKeyFrame(const u_int animation_index, const u_int frames)
+	{
+		animations.at(animation_index).num_key_frame = frames;
+		// 1モーション間のキーフレームの長さ(秒)調整
+		animations.at(animation_index).seconds_length = frames * animations.at(animation_index).sampling_time;
+	}
+
+	void ModelData::SetAnimationKeyFrame(const std::string& animation_name, u_int frames)
+	{
+		for (auto& animation : animations)
+		{// animations(std::vector)から指定のアニメーションを検索
+			if (animation.animation_name == animation_name)
+			{
+				animation.num_key_frame = frames;
+				// 1モーション間のキーフレームの長さ(秒)調整
+				animation.seconds_length = frames * animation.sampling_time;
+				return;
+			}
+		}
+		assert(!"Animation names did not match(FbxModelResource::SetAnimationKeyFrame)");
+	}
+
+	void ModelData::SetAnimationPlaybackSpeed(const u_int animation_index, const float playback_speed)
+	{
+		animations.at(animation_index).playback_speed = playback_speed;
+	}
+
+	void ModelData::SetAnimationPlaybackSpeed(const std::string& animation_name, const float playback_speed)
+	{
+		for (auto& animation : animations)
+		{// animations(std::vector)から指定のアニメーションを検索
+			if (animation.animation_name == animation_name)
+			{
+				animation.playback_speed = playback_speed;
+				return;
+			}
+		}
+		assert(!"Animation names did not match(FbxModelResource::SetAnimationPlaybackSpeed)");
+	}
+
 	template <class Archive>
 	void Model::serialize(Archive&& archive)
 	{
@@ -20,9 +60,6 @@ namespace cumulonimbus::asset
 	Model::Model(const std::filesystem::path& path)
 	{
 		Load(path);
-
-		int a;
-		a = 0;
 	}
 
 	void Model::Save(const std::filesystem::path& path)
@@ -48,7 +85,7 @@ namespace cumulonimbus::asset
 			input_archive(*this);
 		}
 
-		for (auto& mesh : model_data.meshes)
+		for (auto& mesh : model_data.GetMeshes())
 		{
 			// 頂点バッファ
 			{
@@ -91,10 +128,6 @@ namespace cumulonimbus::asset
 					assert(!"CreateBuffer(Index) error of FbxModelResource class ");
 			}
 		}
-
-		auto m = GetModelData();
-		int a;
-		a = 0;
 	}
 
 } // cumulonimbus::asset

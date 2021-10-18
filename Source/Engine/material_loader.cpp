@@ -2,6 +2,7 @@
 
 #include "asset_sheet_manager.h"
 #include "file_path_helper.h"
+#include "locator.h"
 
 namespace
 {
@@ -152,13 +153,24 @@ namespace cumulonimbus::asset
 		return id;
 	}
 
-	Material& MaterialLoader::GetMaterial(const mapping::rename_type::UUID& id)
+	Material& MaterialLoader::GetMaterial(const mapping::rename_type::UUID& mat_id)
 	{
-		if (!materials.contains(id))
+		if (!materials.contains(mat_id))
 			return *dummy_material.get();
 			//assert(!"Not found material id(MaterialLoader::GetMaterial)");
-		return *materials.at(id).get();
+		return *materials.at(mat_id).get();
 	}
+
+	std::string MaterialLoader::GetMaterialName(const mapping::rename_type::UUID& mat_id) const
+	{
+		if (!materials.contains(mat_id))
+			return { "" };
+
+		std::filesystem::path mat_path = locator::Locator::GetAssetManager()->GetAssetSheetManager().GetAssetFilename<Material>(mat_id);
+
+		return mat_path.filename().replace_extension().string();
+	}
+
 
 	void MaterialLoader::DeleteMaterial(const mapping::rename_type::UUID& mat_id, const std::filesystem::path& delete_path)
 	{

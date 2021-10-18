@@ -65,6 +65,11 @@ namespace cumulonimbus::asset
 		input_archive(*this);
 	}
 
+	void Material::RenderImGui()
+	{
+
+	}
+
 	void Material::BindMaterial(const mapping::graphics::ShaderStage shader_stage) const
 	{
 		TextureLoader* loader = locator::Locator::GetAssetManager()->GetLoader<TextureLoader>();
