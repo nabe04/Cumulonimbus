@@ -89,18 +89,21 @@ namespace cumulonimbus::editor
 					auto& camera = scene_view_camera->GetCamera();
 
 					DirectX::SimpleMath::Matrix world_mat = transform_comp->GetWorldMatrix();
-					DirectX::SimpleMath::Matrix view_mat = camera.GetViewMat();
-					DirectX::SimpleMath::Matrix proj_mat = camera.GetProjectionMat();
+					DirectX::SimpleMath::Matrix view_mat  = camera.GetViewMat();
+					DirectX::SimpleMath::Matrix proj_mat  = camera.GetProjectionMat();
 					ImGuiIO& io = ImGui::GetIO();
 					ImGuizmo::SetRect(window_pos.x, window_pos.y, window_size.x, window_size.y);
 					ImGuizmo::SetDrawlist();
 
-					ImGuizmo::Manipulate(reinterpret_cast<float*>(&view_mat),
+					if(ImGuizmo::Manipulate(reinterpret_cast<float*>(&view_mat),
 										 reinterpret_cast<float*>(&proj_mat),
 										 ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::MODE::WORLD,
-										 reinterpret_cast<float*>(&world_mat));
+										 reinterpret_cast<float*>(&world_mat)))
+					{
+						transform_comp->SetWorldMatrix(world_mat);
+					}
 
-					transform_comp->SetWorldMatrix(world_mat);
+					//
 				}
 			}
 

@@ -78,8 +78,6 @@ namespace cumulonimbus::component
 
 	}
 
-
-
 	ModelComponent::ModelComponent(
 		ecs::Registry* registry, const mapping::rename_type::Entity ent,
 		const mapping::rename_type::UUID& model_id)
@@ -126,9 +124,8 @@ namespace cumulonimbus::component
 
 	void ModelComponent::RenderImGui()
 	{
-		const ImGuiTreeNodeFlags tree_flg{ ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth };
-
-		if (ImGui::CollapsingHeader("Model Component", tree_flg))
+		if (const ImGuiTreeNodeFlags tree_flg{ ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth };
+			ImGui::CollapsingHeader("Model Component", tree_flg))
 		{
 			auto& asset_manager = *locator::Locator::GetAssetManager();
 			auto& asset_sheet_manager = asset_manager.GetAssetSheetManager();
@@ -505,16 +502,6 @@ namespace cumulonimbus::component
 
 		for (size_t key = 0; key < animation.num_key_frame; ++key)
 		{
-			if(key >= keyframes.size() - 1)
-			{
-				int a;
-				a = 0;
-			}
-			if(key >= keyframes.size())
-			{
-				int a;
-				a = 0;
-			}
 			const size_t key_index = (key < keyframes.size() - 1 ? key : keyframes.size() - 2);
 			// 現在の時間がどのキーフレームの間にいるか判定する
 			const asset::ModelData::Keyframe& keyframe0 = keyframes.at(key_index);

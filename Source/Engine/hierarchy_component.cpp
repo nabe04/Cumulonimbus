@@ -167,14 +167,31 @@ namespace cumulonimbus::component
 		}
 
 		//-- 位置の再計算 --//
+		// 以前に親を持っていれば
+		TransformComponent& transform_comp = registry->GetComponent<TransformComponent>(GetEntity());
+		const DirectX::SimpleMath::Matrix m{ transform_comp.GetWorldMatrix() };
+		DirectX::SimpleMath::Vector3    t{};
+		DirectX::SimpleMath::Quaternion r{};
+		DirectX::SimpleMath::Vector3    s{};
+
+		if (arithmetic::DecomposeMatrix(t, r, s, m))
+		{
+			transform_comp.SetPosition(t);
+			transform_comp.SetScale(s);
+			transform_comp.SetRotation(r);
+			const DirectX::SimpleMath::Vector3 euler = arithmetic::ConvertQuaternionToEuler(r);
+			transform_comp.SetEulerAngles(euler);
+			transform_comp.CreateWorldTransformMatrix();
+		}
+
 		if(!parent_ent.empty())
 		{// 現在セットしようとしている親を持っていれば
 			TransformComponent& my_transform_comp = registry->GetComponent<TransformComponent>(GetEntity());
-			const DirectX::SimpleMath::Matrix m{ registry->GetComponent<TransformComponent>(parent_ent).GetWorldMatrix().Invert() * GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorldMatrix()};
+			const DirectX::SimpleMath::Matrix m{ my_transform_comp.GetLocalMatrix() *  registry->GetComponent<TransformComponent>(parent_ent).GetWorldMatrix().Invert()};
 			DirectX::SimpleMath::Vector3    t{};
 			DirectX::SimpleMath::Quaternion r{};
 			DirectX::SimpleMath::Vector3    s{};
-
+			my_transform_comp.SetWorldMatrix(m);
 			if(arithmetic::DecomposeMatrix(t, r, s, m))
 			{
 				my_transform_comp.SetPosition(t);
@@ -184,27 +201,27 @@ namespace cumulonimbus::component
 				my_transform_comp.SetEulerAngles(euler);
 			}
 		}
-		else
-		{// 一番上の親階層になったとき
-			if(!parent_entity.empty())
-			{// 以前に親を持っていれば
-				TransformComponent& transform_comp	  = registry->GetComponent<TransformComponent>(GetEntity());
-				const DirectX::SimpleMath::Matrix m{ transform_comp.GetWorldMatrix() };
-				DirectX::SimpleMath::Vector3    t{};
-				DirectX::SimpleMath::Quaternion r{};
-				DirectX::SimpleMath::Vector3    s{};
+		//else
+		//{// 一番上の親階層になったとき
+		//	if(!parent_entity.empty())
+		//	{// 以前に親を持っていれば
+		//		TransformComponent& transform_comp	  = registry->GetComponent<TransformComponent>(GetEntity());
+		//		const DirectX::SimpleMath::Matrix m{ transform_comp.GetWorldMatrix() };
+		//		DirectX::SimpleMath::Vector3    t{};
+		//		DirectX::SimpleMath::Quaternion r{};
+		//		DirectX::SimpleMath::Vector3    s{};
 
-				if (arithmetic::DecomposeMatrix(t, r, s, m))
-				{
-					transform_comp.SetPosition(t);
-					transform_comp.SetScale(s);
-					transform_comp.SetRotation(r);
-					const DirectX::SimpleMath::Vector3 euler = arithmetic::ConvertQuaternionToEuler(r);
-					transform_comp.SetEulerAngles(euler);
-				}
-			}
+		//		if (arithmetic::DecomposeMatrix(t, r, s, m))
+		//		{
+		//			transform_comp.SetPosition(t);
+		//			transform_comp.SetScale(s);
+		//			transform_comp.SetRotation(r);
+		//			const DirectX::SimpleMath::Vector3 euler = arithmetic::ConvertQuaternionToEuler(r);
+		//			transform_comp.SetEulerAngles(euler);
+		//		}
+		//	}
 
-		}
+		//}
 
 		parent_entity = parent_ent;
 	}

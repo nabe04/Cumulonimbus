@@ -146,6 +146,8 @@ namespace cumulonimbus::component
 		void SetWorldMatrix(const DirectX::SimpleMath::Matrix& mat);
 		[[nodiscard]]
 		const DirectX::SimpleMath::Matrix& GetWorldMatrix();
+		[[nodiscard]]
+		const DirectX::SimpleMath::Matrix& GetLocalMatrix() const { return local_matrix; }
 
 		// Quaternion
 		/**
@@ -192,6 +194,7 @@ namespace cumulonimbus::component
 		DirectX::SimpleMath::Vector3	 local_prev_scale	  {};
 
 		DirectX::SimpleMath::Matrix world_matrix		{ DirectX::SimpleMath::Matrix::Identity };
+		DirectX::SimpleMath::Matrix local_matrix		{ DirectX::SimpleMath::Matrix::Identity };
 		DirectX::SimpleMath::Matrix scaling_matrix		{ DirectX::SimpleMath::Matrix::Identity };
 		DirectX::SimpleMath::Matrix rotation_matrix		{ DirectX::SimpleMath::Matrix::Identity };
 		DirectX::SimpleMath::Matrix translation_matrix	{ DirectX::SimpleMath::Matrix::Identity };
@@ -212,6 +215,11 @@ namespace cumulonimbus::component
 		DirectX::SimpleMath::Vector3 model_prev_euler_angle{};
 		DirectX::SimpleMath::Quaternion rotation_before{};	// Slerp時の変形前のクォータニオン値
 		DirectX::SimpleMath::Quaternion rotation_after{};	// Slerp時の変形後のクォータニオン値
+
+		// local transform(local_position,local_rotation,local_scale)変更時のフラグ
+		static constexpr uint8_t Local_Transform_Changed{ 1 << 0 };
+		// ダーティフラグ用変数
+		uint8_t dirty_flg{};
 
 		void CreateScalingMatrix();
 		void CreateRotationMatrix();

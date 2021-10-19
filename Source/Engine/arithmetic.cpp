@@ -102,17 +102,22 @@ namespace arithmetic
 		SimpleMath::Vector3 r{};
 		SimpleMath::Matrix m = DirectX::SimpleMath::Matrix::CreateFromQuaternion(q);
 
-		if(m._32 > 1.f)
-		{
-			r.x = XM_PIDIV2;
-			r.y = .0f;
-			r.z = atan2f(m._21, m._11);
-		}
-		else if(m._32 <= -1.f)
+		if(m._32 >= 1.f - 0.0001f)
 		{
 			r.x = -XM_PIDIV2;
-			r.y = .0f;
-			r.z = atan2f(m._21, m._11);
+		//	r.y = .0f;
+		//	r.z = atan2f(m._21, m._11);
+			r.y = -atan2f(m._21, m._11);
+			r.z = .0f;
+		}
+		else if(m._32 <= -1.f + 0.0001f)
+		{
+			r.x = XM_PIDIV2;
+		//	r.y = .0f;
+		//	r.z = atan2f(m._21, m._11);
+
+			r.y = atan2f(m._21, m._11);
+			r.z = .0f;
 		}
 		else
 		{
