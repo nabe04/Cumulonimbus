@@ -92,8 +92,8 @@ namespace cumulonimbus::editor
 		if(ImGui::MenuItem("Save","Ctrl+S"))
 		{
 			// シーン名が「NoTitled」(シーンが保存されていない)の場合
-			const std::string& current_scene_path = locator::Locator::GetSystem()->GetCurrentScenePath();
-			if(current_scene_path == filename_helper::GetNoTitled())
+			if(const std::string& current_scene_path = locator::Locator::GetSystem()->GetCurrentScenePath();
+			   current_scene_path == filename_helper::GetNoTitled())
 			{// シーンを名前を付けて保存
 				const auto destination = pfd::save_file("Save", "", {}, pfd::opt::none).result();
 				if (destination.empty())
@@ -105,7 +105,7 @@ namespace cumulonimbus::editor
 			}
 			else
 			{// 現在のシーンパスで保存
-				//locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->Save(*registry->GetScene(), current_scene_path);
+				locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->Save(*registry->GetScene(), current_scene_path);
 			}
 		}
 		if(ImGui::MenuItem("Save As...","Ctrl+Shift+S"))
@@ -115,7 +115,7 @@ namespace cumulonimbus::editor
 				return;
 
 			const std::filesystem::path path = destination;
-			const std::string relative_path = utility::ConvertAbsolutePathToRelativePath(path.string());
+			const std::string relative_path  = utility::ConvertAbsolutePathToRelativePath(path.string());
 			locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->SaveAs(*registry->GetScene(), relative_path);
 		}
 	}
@@ -156,22 +156,25 @@ namespace cumulonimbus::editor
 
 			if (ImGui::Button("Save", ImVec2(140, 0)))
 			{
-				const std::string& current_scene_path = system.GetCurrentScenePath();
 				// 現在のシーン名が「NoTitled」(シーン名が存在しない)の場合
-				if(current_scene_path == filename_helper::GetNoTitled())
+				if(const std::string& current_scene_path = system.GetCurrentScenePath();
+					current_scene_path == filename_helper::GetNoTitled())
 				{// シーンを名前を付けて保存
 					const auto destination = pfd::save_file("Save", "", {}, pfd::opt::none).result();
 					if (destination.empty())
 						ImGui::CloseCurrentPopup();
 
 					const std::filesystem::path path = destination;
-					const std::string relative_path = utility::ConvertAbsolutePathToRelativePath(path.string());
+					const std::string relative_path  = utility::ConvertAbsolutePathToRelativePath(path.string());
 					locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->SaveAs(*registry->GetScene(), relative_path);
+				}
+				else
+				{// シーン名が存在している
+					locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->Save(*registry->GetScene(), current_scene_path);
 				}
 				locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->CreateScene(*registry->GetScene());
 				ImGui::CloseCurrentPopup();
 			}
-			//ImGui::SetItemDefaultFocus();
 			ImGui::SameLine();
 			if (ImGui::Button("Don't Save", ImVec2(140, 0)))
 			{

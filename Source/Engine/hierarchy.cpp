@@ -28,75 +28,47 @@ namespace cumulonimbus::editor
 				ImGui::EndPopup();
 			}
 
-			//for (auto& [key, value] : registry->GetEntities())
-			//{
-			//	ImGui::Selectable(value.second.c_str(), selected_entity == key);
-			//	//if(ImGui::IsItemHovered())
-			//	//{// ヒエラルキービュー上でのアイテム選択
-			//	//	if(ImGui::IsMouseClicked(ImGuiMouseButton_Left))
-			//	//	{// 左クリック時
-			//	//		selected_entity = key;
-			//	//	}
-			//	//	if(ImGui::IsMouseClicked(ImGuiMouseButton_Right))
-			//	//	{// 右クリック時
-			//	//		selected_entity = key;
-			//	//		ImGui::OpenPopup(context_id.c_str());
-			//	//	}
-			//	//}
-			//}
-
-			{// 新規Hierarchy
-				std::filesystem::path current_scene_path = locator::Locator::GetSystem()->GetCurrentScenePath();
-				if (ImGui::TreeNodeEx(std::string{ ICON_FA_CLOUD_SUN + current_scene_path.filename().replace_extension().string() }.c_str(),
-									  ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen))
-				{
-					//-- シーン階層へのドラッグ & ドロップ処理 --//
-					if (ImGui::BeginDragDropTarget())
-					{// シーン階層に対してのエンティティドロップ処理
-						if (ImGui::AcceptDragDropPayload(dragged_id.c_str()))
-						{
-							//if(registry->HasComponent<component::HierarchyComponent>(selected_entity))
-							//{
-							//	registry->RemoveComponent<component::HierarchyComponent>(selected_entity);
-							//}
-							// 一番上の親に設定
-							registry->GetComponent<component::HierarchyComponent>(selected_entity).SetParentEntity(registry, {});
-						}
-
-						ImGui::EndDragDropTarget();
-					}
-
-					{//-- 現在選択されているエンティティの小階層エンティティを取得 --//
-						sub_hierarchical_entities.clear();
-						for (const auto& hierarchy_comp : registry->GetArray<component::HierarchyComponent>().GetComponents())
-						{
-							if (HasParentEntity(registry, selected_entity, hierarchy_comp.GetEntity()))
-							{
-								sub_hierarchical_entities.emplace_back(hierarchy_comp.GetEntity());
-							}
-						}
-					}
-
-					for (auto& [key, value] : registry->GetEntities())
+			if (const std::filesystem::path current_scene_path = locator::Locator::GetSystem()->GetCurrentScenePath();
+				ImGui::TreeNodeEx(std::string{ ICON_FA_CLOUD_SUN + current_scene_path.filename().replace_extension().string() }.c_str(),
+				ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen))
+			{
+				//-- シーン階層へのドラッグ & ドロップ処理 --//
+				if (ImGui::BeginDragDropTarget())
+				{// シーン階層に対してのエンティティドロップ処理
+					if (ImGui::AcceptDragDropPayload(dragged_id.c_str()))
 					{
-						// エンティティの階層表示
-						// 初めは一番上の親階層から始める
-						//if (registry->HasComponent<component::HierarchyComponent>(key))
-						//	continue;
-
-						if(!registry->GetComponent<component::HierarchyComponent>(key).GetParentEntity().empty())
-							continue;;
-
-						//ImGui::Separator();
-						is_dragged_entity      = false;
-						EntityTree(registry, key, registry->GetName(key));
+						// 一番上の親に設定
+						registry->GetComponent<component::HierarchyComponent>(selected_entity).SetParentEntity(registry, {});
 					}
 
-					//ContextMenu(registry);
-					ImGui::TreePop();
+					ImGui::EndDragDropTarget();
 				}
 
+				{//-- 現在選択されているエンティティの小階層エンティティを取得 --//
+					sub_hierarchical_entities.clear();
+					for (const auto& hierarchy_comp : registry->GetArray<component::HierarchyComponent>().GetComponents())
+					{
+						if (HasParentEntity(registry, selected_entity, hierarchy_comp.GetEntity()))
+						{
+							sub_hierarchical_entities.emplace_back(hierarchy_comp.GetEntity());
+						}
+					}
+				}
+
+				for (auto& [key, value] : registry->GetEntities())
+				{
+					// エンティティの階層表示
+					// 初めは一番上の親階層から始める
+					if (!registry->GetComponent<component::HierarchyComponent>(key).GetParentEntity().empty())
+						continue;;
+
+					//ImGui::Separator();
+					is_dragged_entity = false;
+					EntityTree(registry, key, registry->GetName(key));
+				}
+				ImGui::TreePop();
 			}
+
 		}
 		ImGui::End();
 
