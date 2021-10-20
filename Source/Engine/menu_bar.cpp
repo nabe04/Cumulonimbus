@@ -101,11 +101,11 @@ namespace cumulonimbus::editor
 
 				const std::filesystem::path path = destination;
 				const std::string relative_path  = utility::ConvertAbsolutePathToRelativePath(path.string());
-				locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->Save(*registry->GetScene(), relative_path);
+				locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->SaveAs(*registry->GetScene(), relative_path);
 			}
 			else
 			{// 現在のシーンパスで保存
-				locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->Save(*registry->GetScene(), current_scene_path);
+				//locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->Save(*registry->GetScene(), current_scene_path);
 			}
 		}
 		if(ImGui::MenuItem("Save As...","Ctrl+Shift+S"))
@@ -116,7 +116,7 @@ namespace cumulonimbus::editor
 
 			const std::filesystem::path path = destination;
 			const std::string relative_path = utility::ConvertAbsolutePathToRelativePath(path.string());
-			locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->Save(*registry->GetScene(), relative_path);
+			locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->SaveAs(*registry->GetScene(), relative_path);
 		}
 	}
 
@@ -141,7 +141,7 @@ namespace cumulonimbus::editor
 			ImGui::OpenPopup(popup_new_scene.c_str());
 		}
 
-		// Always center this window when appearing
+		// 画面の位置算出
 		const ImVec2 center = ImGui::GetMainViewport()->GetCenter();
 		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 
@@ -166,7 +166,7 @@ namespace cumulonimbus::editor
 
 					const std::filesystem::path path = destination;
 					const std::string relative_path = utility::ConvertAbsolutePathToRelativePath(path.string());
-					locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->Save(*registry->GetScene(), relative_path);
+					locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->SaveAs(*registry->GetScene(), relative_path);
 				}
 				locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->CreateScene(*registry->GetScene());
 				ImGui::CloseCurrentPopup();

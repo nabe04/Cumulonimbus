@@ -103,7 +103,7 @@ namespace cumulonimbus::helper::imgui
 		asset::Texture& texture		, const char* label,
 		IMButtonState& button_state	, const ImVec2& image_size,
 		const ImVec2& uv0			, const ImVec2& uv1,
-		int frame_padding,
+		const int frame_padding,
 		const ImVec4& bg_col		, const ImVec4& tint_col)
 	{
 		ImageButtonWithText(texture.GetShaderResourceView(), label, button_state, image_size, uv0, uv1, frame_padding, bg_col, tint_col);

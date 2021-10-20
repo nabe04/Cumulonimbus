@@ -55,6 +55,7 @@ namespace cumulonimbus::editor
 		bool									is_dragged{ false }; // File and Folder List内でモデルがドラッグされているか
 		bool									is_rename{ false }; // アセットのリネームフラグ
 		bool									is_rename_win_open{ false };
+		bool									is_change_scene{ false }; // シーン切替時のポップアップフラグ
 		std::string								rename{};			// アセットリネーム時の名前格納場所
 		std::string								rename_exe{};		// アセットリネーム時の拡張子
 		mapping::rename_type::UUID				rename_id{};		// リネーム対象のアセットID
@@ -102,5 +103,10 @@ namespace cumulonimbus::editor
 		 * @brief : Navigation Pane で選択された項目の表示
 		 */
 		std::filesystem::path ShowFileAndFolderList(asset::AssetManager& asset_manager);
+
+		/**
+		 * @brief : シーン切替時のポップアップメニュー
+		 */
+		void PopupOpenScene(const ecs::Registry* registry) const;
 	};
 } // cumulonimbus::editor

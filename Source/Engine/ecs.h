@@ -454,6 +454,8 @@ namespace cumulonimbus::ecs
 
 			entities.clear();
 			component_arrays.clear();
+
+			RegisterComponentName();
 		}
 
 		template <typename T>
@@ -709,7 +711,7 @@ namespace cumulonimbus::ecs
 			const mapping::rename_type::Entity& ent)	= 0;
 		virtual void Save(const std::string& file_path) = 0;
 		/**
-		 * @brief : 
+		 * @brief :
 		 */
 		virtual void Load(const std::string& file_path) = 0;
 	};

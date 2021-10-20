@@ -32,27 +32,6 @@ namespace adjust_key_frame
 
 namespace cumulonimbus::component
 {
-	//template <class Archive>
-	//void PlayerComponent::serialize(Archive&& archive)
-	//{
-	//	archive(
-	//		cereal::base_class<Actor3DComponent>(this),
-	//		CEREAL_NVP(player_state),
-	//		CEREAL_NVP(precede_input),
-	//		CEREAL_NVP(adjust_keyframe_map),
-	//		CEREAL_NVP(animation_break_frame),
-	//		CEREAL_NVP(walk_speed),
-	//		CEREAL_NVP(dash_speed),
-	//		CEREAL_NVP(attack_04_speed),
-	//		CEREAL_NVP(avoid_dash_speed),
-	//		CEREAL_NVP(jump_movement_speed),
-	//		CEREAL_NVP(threshold),
-	//		CEREAL_NVP(long_press_time),
-	//		CEREAL_NVP(long_press_slot),
-	//		CEREAL_NVP(attack_04_jump_strength)
-	//	);
-	//}
-
 	template <class Archive>
 	void PlayerComponent::load(Archive&& archive, uint32_t version)
 	{
@@ -259,12 +238,6 @@ namespace cumulonimbus::component
 
 	void PlayerComponent::RenderImGui()
 	{
-		//using namespace locator;
-		//DirectX::XMFLOAT2 stick = Locator::GetInput()->GamePad().LeftThumbStick(0);
-
-		//ImGui::Text("Stick X : %f", stick.x);
-		//ImGui::Text("Stick Y : %f", stick.y);
-
 		if (ImGui::TreeNode("PlayerComponent"))
 		{
 			ImGui::DragFloat("Walk Speed"		, &walk_speed		, 0.5f, 0.1f, 100000);

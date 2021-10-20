@@ -108,6 +108,9 @@ namespace cumulonimbus::scene
 		cereal::BinaryInputArchive i_archive(ifs);
 		i_archive(*this);
 
+		// CollisionManagerƒNƒ‰ƒX‚ÌSystem“o˜^ŠÖ”‚ÌÄ“o˜^
+		system->RegisterRenderFunction(utility::GetHash<collision::CollisionManager>(),
+									   [&](ecs::Registry* registry) {collision_manager->RenderImGui(registry); });
 		light->Load();
 
 		registry->Load(file_dir);

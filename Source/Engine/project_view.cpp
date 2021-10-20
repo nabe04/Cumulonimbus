@@ -20,12 +20,14 @@
 #include "prefab.h"
 #include "prefab_loader.h"
 #include "scene_loader.h"
+#include "filename_helper.h"
 
 
 namespace
 {
 	const std::string viewer_dir{ "./Data/Assets" };
 	const std::string context_id{ "context_menu" }; // ImGui::OpenPopup,BeginPopupのコンテキストメニューID
+	const std::string popup_new_scene{ "Create New Scene" }; // 「New Scene」が選択された時のImGui::Popup ID
 }
 
 namespace cumulonimbus::editor
@@ -54,6 +56,8 @@ namespace cumulonimbus::editor
 
 	void ProjectView::Render(const ecs::Registry* registry)
 	{
+		// ポップアップ用フラグのリセット
+		is_change_scene = false;
 		static ImGuiTableFlags flags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_Resizable | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable;
 
 		if (ImGui::Begin(ICON_FA_FOLDER" Project"))
@@ -74,6 +78,7 @@ namespace cumulonimbus::editor
 				{// File and Folder List
 					ImGui::TableSetColumnIndex(1);
 					ShowFileAndFolderList(*locator::Locator::GetAssetManager());
+					PopupOpenScene(registry);
 				}
 				ImGui::EndTable();
 			}
@@ -347,6 +352,15 @@ namespace cumulonimbus::editor
 					{
 						ImGui::OpenPopup(context_id.c_str());
 					}
+
+					if(ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+					{// シーンを開く処理
+						if(selected_file.extension() == file_path_helper::GetSceneExtension())
+						{
+							is_change_scene = true;
+
+						}
+					}
 				}
 				// OpenPopup時コンテキストメニューの表示
 				ContextMenu();
@@ -388,5 +402,62 @@ namespace cumulonimbus::editor
 		}
 
 		return {};
+	}
+
+	void ProjectView::PopupOpenScene(const ecs::Registry* registry) const
+	{
+		if (is_change_scene)
+		{
+			ImGui::OpenPopup(popup_new_scene.c_str());
+		}
+
+		// Always center this window when appearing
+		const ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+		if (ImGui::BeginPopupModal(popup_new_scene.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			const system::System& system = *locator::Locator::GetSystem();
+			const std::string window_text{ "Do you want to save the changes you made in the scene.\n" +
+											system.GetCurrentScenePath() + "\n\n" +
+											"Your changes will be lost if you don't save them." };
+			ImGui::Text(window_text.c_str());
+			ImGui::Separator();
+
+			if (ImGui::Button("Save", ImVec2(140, 0)))
+			{
+				// 現在のシーン名が「NoTitled」(シーン名が存在しない)の場合
+				if (const std::string& current_scene_path = system.GetCurrentScenePath();
+					current_scene_path == filename_helper::GetNoTitled())
+				{// シーンを名前を付けて保存(確認画面を取る)
+					const auto destination = pfd::save_file("Save", "", {}, pfd::opt::none).result();
+					if (destination.empty())
+						ImGui::CloseCurrentPopup();
+
+					const std::filesystem::path path = destination;
+					const std::string relative_path  = utility::ConvertAbsolutePathToRelativePath(path.string());
+					locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->SaveAs(*registry->GetScene(), relative_path);
+				}
+				else
+				{// 現在のシーン名で保存(確認画面なし)
+					locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->Save(*registry->GetScene(), current_scene_path);
+				}
+				locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->OpenScene(*registry->GetScene(), selected_file);
+				ImGui::CloseCurrentPopup();
+			}
+			//ImGui::SetItemDefaultFocus();
+			ImGui::SameLine();
+			if (ImGui::Button("Don't Save", ImVec2(140, 0)))
+			{
+				locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->OpenScene(*registry->GetScene(), selected_file);
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel", ImVec2(140, 0)))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
 	}
 } // cumulonimbus::editor
