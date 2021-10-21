@@ -141,14 +141,7 @@ namespace cumulonimbus::scene
 
 		collision_manager = std::make_unique<collision::CollisionManager>(*system.get());
 
-		{// 初期作成のプレファブ
-			//const auto& player_base =  registry->CreateEntity();
-			//registry->Rename(player_base, "player_base");
-			//registry->AddComponent<component::PlayerComponent>(player_base);
-			//asset_manager->GetLoader<asset::PrefabLoader>()->CreatePrefab(*asset_manager.get(), registry.get(),
-			//															  std::vector<mapping::rename_type::Entity>{player_base},
-			//															  true, "player_base");
-		}
+		InitialCreatePrefab();
 
 		CreateScene();
 
@@ -249,5 +242,17 @@ namespace cumulonimbus::scene
 		editor_manager->RenderEditor(this, registry.get());
 #endif // _DEBUG
 	}
+
+	void Scene::InitialCreatePrefab() const
+	{
+		const auto& player_base =  registry->CreateEntity();
+		registry->Rename(player_base, "player_base");
+		auto& transform = registry->GetComponent<component::TransformComponent>(player_base);
+		registry->AddComponent<component::PlayerComponent>(player_base);
+		asset_manager->GetLoader<asset::PrefabLoader>()->CreatePrefab(*asset_manager.get(), registry.get(),
+																	   std::vector<mapping::rename_type::Entity>{player_base},
+																	   true, "player_base");
+	}
+
 
 } // cumulonimbus::scene

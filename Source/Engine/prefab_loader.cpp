@@ -227,7 +227,7 @@ namespace cumulonimbus::asset
 				file_path_helper::GetPrefabExtension();
 			if (is_once)
 			{// アセットシートに既に存在していれば処理を抜ける
-				if (asset_manager.GetAssetSheetManager().GetSheet<Prefab>().sheet.contains(path))
+				if (!asset_manager.GetAssetSheetManager().Search<asset::Prefab>(path).empty())
 					return {};
 			}
 			// 保存するファイル名の決定

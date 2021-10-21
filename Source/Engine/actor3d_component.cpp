@@ -8,7 +8,11 @@ namespace cumulonimbus::component
 
 	}
 
-	Actor3DComponent::Actor3DComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const Actor3DComponent& copy_comp)
+	Actor3DComponent::Actor3DComponent(
+		ecs::Registry* registry,
+		const mapping::rename_type::Entity ent,
+		const Actor3DComponent& copy_comp)
+		: ComponentBase{ registry,ent }
 	{
 		*this = copy_comp;
 		SetRegistry(registry);

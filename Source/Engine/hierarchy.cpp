@@ -92,8 +92,6 @@ namespace cumulonimbus::editor
 			{
 				ImGui::Text(registry->GetName(ent).c_str());
 			}
-
-			ImGui::Text("Scroll %d", locator::Locator::GetInput()->Mouse().DeltaScrollWheelValue());
 		}
 		ImGui::End();
 	}
@@ -102,12 +100,20 @@ namespace cumulonimbus::editor
 	{
 		if(ImGui::BeginPopup(context_id.c_str()))
 		{
-			if(!registry->HasComponent<component::HierarchyComponent>(selected_entity))
+			if(registry->HasComponent<component::HierarchyComponent>(selected_entity))
 			{// Hierarchy Componentを所持していない場合 -> 一番上の親階層の場合Prefab作成を可能に
 				if (ImGui::MenuItem("Create Prefab"))
 				{
 					std::vector<std::string> entities = sub_hierarchical_entities;
 					entities.emplace_back(selected_entity);
+
+					if(auto& selected_hierarchy_comp = registry->GetComponent<component::HierarchyComponent>(selected_entity);
+					   !selected_hierarchy_comp.GetParentEntity().empty())
+					{// 選択されたエンティティが親のエンティティを保持していれば
+						// 一番上の階層の親にするために親階層をなくす
+						selected_hierarchy_comp.SetParentEntity({});
+					}
+
 					CreatePrefab(registry, entities);
 				}
 			}

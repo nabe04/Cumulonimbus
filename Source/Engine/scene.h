@@ -84,6 +84,12 @@ namespace cumulonimbus::scene
 		void UnInitialize();
 		void Update(float dt);
 		void Render();
+
+		// Todo : スクリプト機能が出来れば消す
+		/**
+		 * @brief : プレファブの初期作成
+		 */
+		void InitialCreatePrefab() const;
 	};
 } // cumulonimbus::scene
 

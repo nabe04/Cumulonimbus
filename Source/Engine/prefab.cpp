@@ -144,19 +144,34 @@ namespace cumulonimbus::asset
 		{
 			for (auto& [comp_name, comp] : comp_asset.component_assets)
 			{
-				if (comp_asset.components_name.contains(comp_name))
-					comp->AddComponent(registry, connector.at(ent));
+				if (!comp_asset.components_name.contains(comp_name))
+					continue;
+
+				comp->AddComponent(registry, connector.at(ent));
+				comp->OnDeserialize(registry, connector.at(ent), connector);
 			}
 
 			if(registry->HasComponent<component::HierarchyComponent>(connector.at(ent)))
 			{
-				const mapping::rename_type::Entity parent_ent = registry->GetComponent<component::HierarchyComponent>(connector.at(ent)).GetParentEntity();
-				// Todo Hierarchy Compのコメントアウトをはずしエラーを解消する
-				//registry->GetComponent<component::HierarchyComponent>(connector.at(ent)).SetParentEntity(connector.at(parent_ent));
-			}
-			else
-			{
-				return_ent = connector.at(ent);
+				auto& hierarchy_comp = registry->GetComponent<component::HierarchyComponent>(connector.at(ent));
+				if(const auto& old_parent_ent = hierarchy_comp.GetParentEntity();
+					old_parent_ent.empty())
+				{//
+					return_ent = connector.at(ent);
+				}
+				//else
+				//{
+				////	hierarchy_comp.SetParentEntity(registry, connector.at(old_parent_ent), true);
+				//}
+
+				//if(const auto& old_first_child_ent = hierarchy_comp.GetFirstChild();
+				//	!old_first_child_ent.empty())
+				//{
+
+				//}
+				//const mapping::rename_type::Entity parent_ent = registry->GetComponent<component::HierarchyComponent>(connector.at(ent)).GetParentEntity();
+				//// Todo Hierarchy Compのコメントアウトをはずしエラーを解消する
+				////registry->GetComponent<component::HierarchyComponent>(connector.at(ent)).SetParentEntity(connector.at(parent_ent));
 			}
 		}
 

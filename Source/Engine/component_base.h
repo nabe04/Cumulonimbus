@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
-
-//#include <cereal/cereal.hpp>
+#include <map>
 
 #include "rename_type_mapping.h"
 #include "component_tag_mapping.h"
@@ -43,6 +42,16 @@ namespace cumulonimbus::component
 		 *			追加時に引数を指定できない場合に使用
 		 */
 		virtual void Initialize(ecs::Registry* registry, mapping::rename_type::Entity ent) {}
+
+		/**
+		 * @brief : エンティティの所有権が変更された時に使用
+		 *		    例)プレファブからオブジェクトを作成する時
+		 * @param registry :
+		 * @param connector : 昔のエンティティと今のエンティティとを繋ぐもの(コネクター)
+		 */
+		virtual void OnDeserialize(
+			ecs::Registry* registry,
+			const std::map<mapping::rename_type::Entity, mapping::rename_type::Entity>& connector) {}
 
 		virtual void PreCommonUpdate(float dt) {}
 		virtual void CommonUpdate(float dt) {}

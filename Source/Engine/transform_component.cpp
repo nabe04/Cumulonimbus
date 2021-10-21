@@ -130,6 +130,7 @@ namespace cumulonimbus::component
 			return *this;
 		}
 
+		ComponentBase::operator=(other);
 		local_position				= other.local_position;
 		local_rotation				= other.local_rotation;
 		local_scale					= other.local_scale;

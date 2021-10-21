@@ -225,6 +225,22 @@ namespace cumulonimbus::ecs
 			return  &components.at(index);
 		}
 
+		T& AddOrReplaceComponent(class Registry* registry, const mapping::rename_type::Entity entity, const T& replace_comp)
+		{
+			if (entity_id.contains(entity))
+			{
+				const size_t index = static_cast<size_t>(entity_id.at(entity));
+				components.at(index) = replace_comp;
+				return components.at(index);
+			}
+
+			components.emplace_back(T{ registry, entity ,replace_comp });
+
+			const size_t index = static_cast<size_t>(entity_id.emplace(entity, components.size() - 1).first->second);
+
+			return  components.at(index);
+		}
+
 		void RemoveComponent(const mapping::rename_type::Entity entity)
 		{
 			// entity‚ªcomponent‚ğ‚Á‚Ä‚¢‚È‚¢ê‡‚Í‰½‚à‚µ‚È‚¢
@@ -496,6 +512,15 @@ namespace cumulonimbus::ecs
 			return array.GetComponent(entity);
 		}
 
+		template<typename T>
+		T& AddOrReplaceComponent(const mapping::rename_type::Entity entity,const T& replace_comp)
+		{
+			ComponentArray<T>& array = GetArray<T>();
+			array.AddOrReplaceComponent(this, entity, replace_comp);
+
+			return array.GetComponent(entity);
+		}
+
 		/**
 		 * @brief : TŒ^‚ÌComponent‚ÌEntity‚ğíœ
 		 */
@@ -706,6 +731,10 @@ namespace cumulonimbus::ecs
 		virtual void AddComponent(
 			ecs::Registry* registry,
 			const mapping::rename_type::Entity& ent) = 0;
+		virtual void OnDeserialize(
+			ecs::Registry* registry,
+			const mapping::rename_type::Entity& ent,
+			const std::map<mapping::rename_type::Entity, mapping::rename_type::Entity>& connector) = 0;
 		virtual bool RegistryComponentData(
 			ecs::Registry* registry,
 			const mapping::rename_type::Entity& ent)	= 0;
@@ -733,10 +762,20 @@ namespace cumulonimbus::ecs
 
 		void AddComponent(ecs::Registry* registry,const mapping::rename_type::Entity& ent) override
 		{
-			auto& comp = registry->AddComponent<T>(ent, component_data);
+			//auto& comp = registry->AddComponent<T>(ent, component_data);
+			auto& comp = registry->AddOrReplaceComponent<T>(ent, component_data);
 			//comp		= component_data;
 			comp.SetEntity(ent);
 			comp.SetRegistry(registry);
+		}
+
+		void OnDeserialize(
+			ecs::Registry* registry,
+			const mapping::rename_type::Entity& ent,
+			const std::map<mapping::rename_type::Entity, mapping::rename_type::Entity>& connector) override
+		{
+			auto& comp = registry->GetComponent<T>(ent);
+			comp.OnDeserialize(registry, connector);
 		}
 
 		/**

@@ -16,7 +16,10 @@ namespace cumulonimbus::component
 	{
 		archive(
 			cereal::base_class<ComponentBase>(this),
-			CEREAL_NVP(parent_entity)
+			CEREAL_NVP(parent_entity),
+			CEREAL_NVP(first_child),
+			CEREAL_NVP(next_sibling),
+			CEREAL_NVP(back_sibling)
 		);
 	}
 
@@ -25,7 +28,10 @@ namespace cumulonimbus::component
 	{
 		archive(
 			cereal::base_class<ComponentBase>(this),
-			CEREAL_NVP(parent_entity)
+			CEREAL_NVP(parent_entity),
+			CEREAL_NVP(first_child),
+			CEREAL_NVP(next_sibling),
+			CEREAL_NVP(back_sibling)
 		);
 	}
 
@@ -35,6 +41,7 @@ namespace cumulonimbus::component
 	}
 
 	HierarchyComponent::HierarchyComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent, const HierarchyComponent& copy_comp)
+		:ComponentBase{registry, ent}
 	{
 		*this = copy_comp;
 		SetRegistry(registry);
@@ -57,6 +64,30 @@ namespace cumulonimbus::component
 
 	void HierarchyComponent::Load(ecs::Registry* registry)
 	{
+		SetRegistry(registry);
+	}
+
+	void HierarchyComponent::OnDeserialize(
+		ecs::Registry* registry,
+		const std::map<mapping::rename_type::Entity, mapping::rename_type::Entity>& connector)
+	{
+		// 以前保持していたエンティティを現在のエンティティに更新する
+		if(!parent_entity.empty())
+		{
+			parent_entity = connector.at(parent_entity);
+		}
+		if(!first_child.empty())
+		{
+			first_child = connector.at(first_child);
+		}
+		if(!next_sibling.empty())
+		{
+			next_sibling = connector.at(next_sibling);
+		}
+		if(!back_sibling.empty())
+		{
+			back_sibling = connector.at(back_sibling);
+		}
 
 	}
 

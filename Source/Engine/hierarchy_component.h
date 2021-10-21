@@ -29,6 +29,10 @@ namespace cumulonimbus::component
 
 		void Load(ecs::Registry* registry) override;
 
+		void OnDeserialize(
+			ecs::Registry* registry,
+			const std::map<mapping::rename_type::Entity, mapping::rename_type::Entity>& connector) override;
+
 		[[nodiscard]]
 		const mapping::rename_type::Entity& GetParentEntity() const { return parent_entity; }
 		[[nodiscard]]
@@ -47,7 +51,9 @@ namespace cumulonimbus::component
 		 * @param registry :
 		 * @param parent_ent : 親階層のエンティティ(指定がない場合は一番上の階層の親をみなす)
 		 */
-		void SetParentEntity(ecs::Registry* registry, const mapping::rename_type::Entity& parent_ent = {});
+		void SetParentEntity(
+			ecs::Registry* registry,
+			const mapping::rename_type::Entity& parent_ent = {});
 		/**
 		 * @brief : 兄弟階層のダーティフラグをTrueにする再起関数
 		 * @remark :次の兄弟階層エンティティ(next_sibling)を持たない場合再起処理を終了
