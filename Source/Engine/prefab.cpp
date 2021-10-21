@@ -67,46 +67,7 @@ namespace cumulonimbus::asset
 
 	Prefab::Prefab()
 	{
-		//-- engine --//
-		// transform
-		RegistryComponent<component::TransformComponent>();
-		// actor
-		RegistryComponent<component::Actor3DComponent>();
-		// model
-		RegistryComponent<component::ModelComponent>();
-		//sprite
-		RegistryComponent<component::SpriteComponent>();
-		RegistryComponent<component::BillboardComponent>();
-		// physics
-		RegistryComponent<component::SphereCollisionComponent>();
-		RegistryComponent<component::CollisionComponent>();
-		RegistryComponent<component::RayCastComponent>();
-		RegistryComponent<component::CapsuleCollisionComponent>();
-		RegistryComponent<component::PhysicMaterialComponent>();
-		RegistryComponent<component::RigidBodyComponent>();
-		// camera
-		RegistryComponent<component::CameraComponent>();
-		// sky box
-		//RegistryComponent<component::SkyBoxComponent>();
-		//-- game --//
-		// player
-		RegistryComponent<component::PlayerComponent>();
-		//// enemy
-		RegistryComponent<component::EnemyBaseComponent>();
-		RegistryComponent<component::EnemySoldierComponent>();
-	}
-
-	void Prefab::CreatePrefab(
-		ecs::Registry* registry, const mapping::rename_type::Entity& ent,
-		const std::filesystem::path& path)
-	{
-		for(auto& [comp_name, comp_asset] : component_assets)
-		{
-			if(comp_asset->RegistryComponentData(registry, ent))
-				components_name.emplace(comp_name);
-		}
-		// プレファブの保存(シリアライズ)
-		Save(path);
+	
 	}
 
 	void Prefab::CreatePrefab(
@@ -128,7 +89,7 @@ namespace cumulonimbus::asset
 		Save(registry, path);
 	}
 
-	mapping::rename_type::Entity Prefab::Instanciate(ecs::Registry* const registry)
+	mapping::rename_type::Entity Prefab::Instantiate(ecs::Registry* const registry)
 	{
 		mapping::rename_type::Entity return_ent{};
 
@@ -156,46 +117,33 @@ namespace cumulonimbus::asset
 				auto& hierarchy_comp = registry->GetComponent<component::HierarchyComponent>(connector.at(ent));
 				if(const auto& old_parent_ent = hierarchy_comp.GetParentEntity();
 					old_parent_ent.empty())
-				{//
+				{// 一番上の親階層を返す(SceneView上に出した時の位置取得に使用)
 					return_ent = connector.at(ent);
 				}
-				//else
-				//{
-				////	hierarchy_comp.SetParentEntity(registry, connector.at(old_parent_ent), true);
-				//}
-
-				//if(const auto& old_first_child_ent = hierarchy_comp.GetFirstChild();
-				//	!old_first_child_ent.empty())
-				//{
-
-				//}
-				//const mapping::rename_type::Entity parent_ent = registry->GetComponent<component::HierarchyComponent>(connector.at(ent)).GetParentEntity();
-				//// Todo Hierarchy Compのコメントアウトをはずしエラーを解消する
-				////registry->GetComponent<component::HierarchyComponent>(connector.at(ent)).SetParentEntity(connector.at(parent_ent));
 			}
 		}
 
 		return return_ent;
 	}
 
-	void Prefab::Save(const std::filesystem::path& path)
-	{
-		if (path.extension().compare(file_path_helper::GetPrefabExtension()) != 0)
-			assert(!"The file extension is not 「.prefab」");
-		std::filesystem::create_directory(path.parent_path());
-		{// 「.prefab」拡張子のファイルの保存
-			std::ofstream ofs(path, std::ios_base::binary);
-			if (!ofs)
-				assert(!"Not open file(Prefab::Save)");
-			cereal::BinaryOutputArchive output_archive(ofs);
-			output_archive(*this);
-		}
+	//void Prefab::Save(const std::filesystem::path& path)
+	//{
+	//	if (path.extension().compare(file_path_helper::GetPrefabExtension()) != 0)
+	//		assert(!"The file extension is not 「.prefab」");
+	//	std::filesystem::create_directory(path.parent_path());
+	//	{// 「.prefab」拡張子のファイルの保存
+	//		std::ofstream ofs(path, std::ios_base::binary);
+	//		if (!ofs)
+	//			assert(!"Not open file(Prefab::Save)");
+	//		cereal::BinaryOutputArchive output_archive(ofs);
+	//		output_archive(*this);
+	//	}
 
-		for(auto& comp : component_assets)
-		{// コンポーネントのデータをファイルに保存(シリアライズ)
-			comp.second->Save(path.parent_path().string());
-		}
-	}
+	//	for(auto& comp : component_assets)
+	//	{// コンポーネントのデータをファイルに保存(シリアライズ)
+	//		comp.second->Save(path.parent_path().string());
+	//	}
+	//}
 
 	void Prefab::Save(ecs::Registry* const registry, const std::filesystem::path& path)
 	{
@@ -269,41 +217,4 @@ namespace cumulonimbus::asset
 			}
 		}
 	}
-
-	void Prefab::Load(ecs::Registry* registry, const std::filesystem::path& path)
-	{
-		{// プレファブの読み込み
-			std::ifstream ifs(path);
-			if (!ifs)
-				assert(!"Not open file(Prefab::Load)");
-			cereal::BinaryInputArchive input_archive(ifs);
-			input_archive(*this);
-		}
-
-		for (auto& [ent, comp_asset] : entity_assets)
-		{
-			for (auto& [comp_name, comp] : comp_asset.component_assets)
-			{
-				comp->Load(std::filesystem::path{path}.replace_extension().string());
-			}
-		}
-
-		//for (auto& comp : component_assets)
-		//{// コンポーネントのデータをファイルから読み込み(デシリアライズ)
-		//	comp.second->Load(path.parent_path().string());
-		//}
-	}
-
-
-	template <class T>
-	void Prefab::RegistryComponent()
-	{
-		const mapping::rename_type::ComponentName component_name = file_path_helper::GetTypeName<T>();
-
-		if (component_assets.contains(component_name))
-			return;
-
-		component_assets.emplace(component_name, std::make_shared<ecs::ComponentAsset<T>>());
-	}
-
 } // cumulonimbus::asset

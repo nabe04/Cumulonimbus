@@ -276,7 +276,7 @@ namespace cumulonimbus::editor
 	void SceneView::AddPrefab(ecs::Registry* const registry, const std::filesystem::path& file_path)
 	{
 		const auto prefab_id = locator::Locator::GetAssetManager()->GetAssetSheetManager().Search<asset::Prefab>(file_path);
-		dragging_entity		 = locator::Locator::GetAssetManager()->GetLoader<asset::PrefabLoader>()->Instanciate(registry, prefab_id);
+		dragging_entity		 = locator::Locator::GetAssetManager()->GetLoader<asset::PrefabLoader>()->Instantiate(registry, prefab_id);
 	}
 
 	void SceneView::DraggingAsset(ecs::Registry* const registry) const

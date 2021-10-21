@@ -165,7 +165,7 @@ namespace cumulonimbus::asset
 
 		std::unique_ptr<Prefab> prefab = std::make_unique<Prefab>();
 		// プレファブ作成(エンティティが保持しているコンポーネントの追加)
-		prefab->CreatePrefab(registry, ent, save_path);
+		//prefab->CreatePrefab(registry, ent, save_path);
 
 		mapping::rename_type::UUID id;
 		while (true)
@@ -266,13 +266,13 @@ namespace cumulonimbus::asset
 		return id;
 	}
 
-	mapping::rename_type::Entity PrefabLoader::Instanciate(ecs::Registry* registry, const mapping::rename_type::UUID& prefab_id)
+	mapping::rename_type::Entity PrefabLoader::Instantiate(ecs::Registry* registry, const mapping::rename_type::UUID& prefab_id)
 	{
 		// Prefabに登録されたIDを持っていなければ処理を抜ける
 		if (!prefabs.contains(prefab_id))
 			assert(!"Don't have prefab(PrefabLoader::Instanciate)");
 
-		return prefabs.at(prefab_id)->Instanciate(registry);
+		return prefabs.at(prefab_id)->Instantiate(registry);
 	}
 
 	void PrefabLoader::DeletePrefab(const mapping::rename_type::UUID& prefab_id, const std::filesystem::path& delete_path)

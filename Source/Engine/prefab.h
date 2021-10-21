@@ -88,16 +88,16 @@ namespace cumulonimbus::asset
 			);
 		}
 
-		/**
-		 * @brief : Prefabの作成
-		 * @remark : Hierarchy View上でEntityをPrefab化したい時に使用
-		 * @param registry :
-		 * @param ent : Prefab化したいEntity
-		 * @param path : 保存するプレファブのパス(※ファイルパス + ファイル名 + ファイル拡張子)
-		 */
-		void CreatePrefab(
-			ecs::Registry* registry, const mapping::rename_type::Entity& ent,
-			const std::filesystem::path& path);
+		///**
+		// * @brief : Prefabの作成
+		// * @remark : Hierarchy View上でEntityをPrefab化したい時に使用
+		// * @param registry :
+		// * @param ent : Prefab化したいEntity
+		// * @param path : 保存するプレファブのパス(※ファイルパス + ファイル名 + ファイル拡張子)
+		// */
+		//void CreatePrefab(
+		//	ecs::Registry* registry, const mapping::rename_type::Entity& ent,
+		//	const std::filesystem::path& path);
 
 		/**
 		 * @brief : Prefabの作成
@@ -116,19 +116,10 @@ namespace cumulonimbus::asset
 		 * @brief : プレファブのインスタンス化
 		 * @return : インスタンス化されたエンティティの親のエンティティを返す
 		 */
-		mapping::rename_type::Entity Instanciate(ecs::Registry* registry);
-		//Todo : 新Prefab Systemが作成されたら消す
-		void Save(const std::filesystem::path& path);
+		mapping::rename_type::Entity Instantiate(ecs::Registry* registry);
+
 		void Load(const std::filesystem::path& path);
-
 		void Save(ecs::Registry* registry, const std::filesystem::path& path);
-		void Load(ecs::Registry* registry, const std::filesystem::path& path);
-
-		[[nodiscard]]
-		std::map<mapping::rename_type::ComponentName, std::shared_ptr<ecs::ComponentAssetBase>>& GetComponentsAssets()
-		{
-			return component_assets;
-		}
 
 	private:
 		std::map<mapping::rename_type::Entity, EntityInfo> entity_assets{};
@@ -141,12 +132,6 @@ namespace cumulonimbus::asset
 		 * @remark : value -> オブジェクトとして作成されたエンティティID(UUID)
 		 */
 		std::map<mapping::rename_type::Entity, mapping::rename_type::Entity> connector{};
-
-		//Todo : 新Prefab Systemが出来次第けす
-		std::map<mapping::rename_type::ComponentName, std::shared_ptr<ecs::ComponentAssetBase>> component_assets;
-		std::set<mapping::rename_type::ComponentName> components_name;
-		template<class T>
-		void RegistryComponent();
 	};
 } // cumulonimbus::asset
 
