@@ -189,6 +189,18 @@ namespace cumulonimbus::scene
 	{
 		auto a = locator::Locator::GetSystem()->GetCurrentScenePath();
 
+		editor_manager->Update(dt);
+		if (editor_manager->GetToolBar().GetToolBarButton().GetButtonState(editor::ToolBar::Button::Play) ==
+			ButtonState::Press)
+		{
+			SaveScene(file_path_helper::GetSaveSceneViewFilePathAndName(), "test");
+		}
+		if (editor_manager->GetToolBar().GetToolBarButton().GetButtonState(editor::ToolBar::Button::Play) ==
+			ButtonState::Release)
+		{
+			LoadScene(file_path_helper::GetSaveSceneViewFilePathAndName(), "test" + file_path_helper::GetSceneExtension());
+		}
+
 		// ‹¤’Ê‚ÌXVˆ—
 		registry->PreCommonUpdate(dt);
 		registry->CommonUpdate(dt);
@@ -216,17 +228,17 @@ namespace cumulonimbus::scene
 				light->Update(&camera_comp);
 		}
 
-		editor_manager->Update(dt);
-		if( editor_manager->GetToolBar().GetToolBarButton().GetButtonState(editor::ToolBar::Button::Play) ==
-			ButtonState::Press)
-		{
-			SaveScene(file_path_helper::GetSaveSceneViewFilePathAndName(), "test");
-		}
-		if (editor_manager->GetToolBar().GetToolBarButton().GetButtonState(editor::ToolBar::Button::Play) ==
-			ButtonState::Release)
-		{
-			LoadScene(file_path_helper::GetSaveSceneViewFilePathAndName(), "test" + file_path_helper::GetSceneExtension());
-		}
+		//editor_manager->Update(dt);
+		//if( editor_manager->GetToolBar().GetToolBarButton().GetButtonState(editor::ToolBar::Button::Play) ==
+		//	ButtonState::Press)
+		//{
+		//	SaveScene(file_path_helper::GetSaveSceneViewFilePathAndName(), "test");
+		//}
+		//if (editor_manager->GetToolBar().GetToolBarButton().GetButtonState(editor::ToolBar::Button::Play) ==
+		//	ButtonState::Release)
+		//{
+		//	LoadScene(file_path_helper::GetSaveSceneViewFilePathAndName(), "test" + file_path_helper::GetSceneExtension());
+		//}
 	}
 
 	void Scene::Render()

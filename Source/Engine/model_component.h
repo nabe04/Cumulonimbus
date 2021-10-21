@@ -132,8 +132,17 @@ namespace cumulonimbus::component
 		StateMachine<AnimationState, void, const float>	anim_states{};
 		asset::ModelData::Animation prev_animation{};
 
+		/**
+		 * @brief : メンバ変数の初期化
+		 */
 		void InitializeParameter();
-		// ModelのIDから情報を取得
+		/**
+		 * @brief : anim_statesの初期化 & 再設定
+		 */
+		void InitializeAnimState(ecs::Registry* registry, mapping::rename_type::Entity ent);
+		/**
+		 * @brief : ModelのIDから情報を取得
+		 */
 		void Initialize(ecs::Registry* registry, mapping::rename_type::Entity ent, const mapping::rename_type::UUID& model_id);
 
 		// 前のアニメーションのキーフレームを算出

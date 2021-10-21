@@ -77,6 +77,106 @@ namespace cumulonimbus::component
 	PlayerComponent::PlayerComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent)
 		:Actor3DComponent{ registry, ent }
 	{
+		InitializeMoveState(registry, ent);
+
+		//// アニメーションの最終キーフレームの設定
+		//SetAdjustKeyFrame("walk_front"				, 32);
+		//SetAdjustKeyFrame("avoid_dash_begin"		, 24);
+		//SetAdjustKeyFrame("avoid_dash_end"			, 10);
+		//SetAdjustKeyFrame("dash"					, 16);
+		//SetAdjustKeyFrame("attack_normal_01"		, 40);
+		//SetAdjustKeyFrame("attack_normal_02"		, 36);
+		//SetAdjustKeyFrame("attack_normal_04_begin"	, 4);
+		//SetAdjustKeyFrame("attacking_normal_04"		, 4);
+		//SetAdjustKeyFrame("attack_strong_01"		, 27);
+		//SetAdjustKeyFrame("attack_strong_02"		, 22);
+		//SetAdjustKeyFrame("attack_strong_03"		, 22);
+		//SetAdjustKeyFrame("attack_strong_04"		, 22);
+		//SetAdjustKeyFrame("jump_start"				, 13);
+		//SetAdjustKeyFrame("jump_loop"				, 46);
+		//SetAdjustKeyFrame("jump_end"				, 17);
+		//SetAdjustKeyFrame("attacking_jump_01"		, 18);
+		//SetAdjustKeyFrame("attacking_jump_02"		, 16);
+		//SetAdjustKeyFrame("attacking_jump_03"		, 18);
+		//SetAdjustKeyFrame("attacking_jump_04"		, 18);
+		//SetAdjustKeyFrame("attack_jump_01_end"		, 36);
+		//SetAdjustKeyFrame("attack_jump_02_end"		, 36);
+		//SetAdjustKeyFrame("attack_jump_03_end"		, 34);
+		//SetAdjustKeyFrame("attack_jump_04_end"		, 32);
+
+		// 先行入力によるアニメーションの中断フレームの設定
+		SetAnimationBreakFrame(AnimationData::Attack_Normal_01 , 16);
+		SetAnimationBreakFrame(AnimationData::Attack_Normal_02 , 20);
+		SetAnimationBreakFrame(AnimationData::Attack_Normal_03 , 37);
+		SetAnimationBreakFrame(AnimationData::Attacking_Jump_01, 15);
+		SetAnimationBreakFrame(AnimationData::Attacking_Jump_02, 14);
+		SetAnimationBreakFrame(AnimationData::Attacking_Jump_03, 16);
+
+		registry->GetOrEmplaceComponent<RigidBodyComponent>(ent);
+		// レイキャストに関する設定
+		if (!registry->TryGetComponent<RayCastComponent>(ent))
+		{
+			registry->AddComponent<RayCastComponent>(ent, CollisionTag::Player);
+		}
+		// 床(floor)用rayの追加 & 設定
+		registry->GetComponent<RayCastComponent>(ent).AddRay(mapping::collision_name::ray::ForFloor(), {});
+		registry->GetComponent<RayCastComponent>(ent).SetRayOffset(mapping::collision_name::ray::ForFloor(), { 0.0f,20.0f,0.0f });
+		// 壁(wall)用rayの追加 & 設定
+		registry->GetComponent<RayCastComponent>(ent).AddRay(mapping::collision_name::ray::ForWall(), {});
+		registry->GetComponent<RayCastComponent>(ent).SetRayOffset(mapping::collision_name::ray::ForWall(), { 0.0f,20.0f,0.0f });
+
+		// カメラに関する設定
+		if (!registry->TryGetComponent<CameraComponent>(ent))
+		{
+			registry->AddComponent<CameraComponent>(ent, true);
+		}
+		registry->GetComponent<CameraComponent>(ent).GetCamera()->SetCameraSpeed({ 0.05f,0.05f });
+		registry->GetComponent<CameraComponent>(ent).GetCamera()->SetFocusOffset({ 0.0f,50.0f,0.0f });
+	}
+
+	PlayerComponent::PlayerComponent(
+		ecs::Registry* registry,
+		const mapping::rename_type::Entity ent,
+		const PlayerComponent& copy_comp)
+		:Actor3DComponent{registry,ent}
+	{
+		*this = copy_comp;
+		SetRegistry(registry);
+		SetEntity(ent);
+
+		InitializeMoveState(registry, ent);
+
+		registry->GetOrEmplaceComponent<RigidBodyComponent>(ent);
+		// レイキャストに関する設定
+		if (!registry->TryGetComponent<RayCastComponent>(ent))
+		{
+			registry->AddComponent<RayCastComponent>(ent, CollisionTag::Player);
+		}
+		// 床(floor)用rayの追加 & 設定
+		registry->GetComponent<RayCastComponent>(ent).AddRay(mapping::collision_name::ray::ForFloor(), {});
+		registry->GetComponent<RayCastComponent>(ent).SetRayOffset(mapping::collision_name::ray::ForFloor(), { 0.0f,20.0f,0.0f });
+		// 壁(wall)用rayの追加 & 設定
+		registry->GetComponent<RayCastComponent>(ent).AddRay(mapping::collision_name::ray::ForWall(), {});
+		registry->GetComponent<RayCastComponent>(ent).SetRayOffset(mapping::collision_name::ray::ForWall(), { 0.0f,20.0f,0.0f });
+
+		// カメラに関する設定
+		if (!registry->TryGetComponent<CameraComponent>(ent))
+		{
+			registry->AddComponent<CameraComponent>(ent, true);
+		}
+		registry->GetComponent<CameraComponent>(ent).GetCamera()->SetCameraSpeed({ 0.05f,0.05f });
+		registry->GetComponent<CameraComponent>(ent).GetCamera()->SetFocusOffset({ 0.0f,50.0f,0.0f });
+	}
+
+	void PlayerComponent::Initialize(ecs::Registry* registry, mapping::rename_type::Entity ent)
+	{// Prefabからオブジェクトが作成された時の初期化処理
+
+	}
+
+	void PlayerComponent::InitializeMoveState(ecs::Registry* registry, const mapping::rename_type::Entity& ent)
+	{
+		// stateのリセット
+		player_state.ClearState();
 		// stateに応じての処理の登録
 		player_state.AddState(PlayerState::T_Pose						, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).TPose(dt); });
 		player_state.AddState(PlayerState::Idle							, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).Idle(dt); });
@@ -122,98 +222,8 @@ namespace cumulonimbus::component
 		player_state.AddState(PlayerState::Attacking_Jump_Strong		, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingJumpStrong(dt); });
 		player_state.AddState(PlayerState::Attack_Jump_Strong_End		, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJumpStrongEnd(dt); });
 		player_state.AddState(PlayerState::Dash_Attack					, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).DashAttack(dt); });
-
 		// 初期stateの設定(Idle)
 		player_state.SetState(PlayerState::Idle);
-
-		//// アニメーションの最終キーフレームの設定
-		//SetAdjustKeyFrame("walk_front"				, 32);
-		//SetAdjustKeyFrame("avoid_dash_begin"		, 24);
-		//SetAdjustKeyFrame("avoid_dash_end"			, 10);
-		//SetAdjustKeyFrame("dash"					, 16);
-		//SetAdjustKeyFrame("attack_normal_01"		, 40);
-		//SetAdjustKeyFrame("attack_normal_02"		, 36);
-		//SetAdjustKeyFrame("attack_normal_04_begin"	, 4);
-		//SetAdjustKeyFrame("attacking_normal_04"		, 4);
-		//SetAdjustKeyFrame("attack_strong_01"		, 27);
-		//SetAdjustKeyFrame("attack_strong_02"		, 22);
-		//SetAdjustKeyFrame("attack_strong_03"		, 22);
-		//SetAdjustKeyFrame("attack_strong_04"		, 22);
-		//SetAdjustKeyFrame("jump_start"				, 13);
-		//SetAdjustKeyFrame("jump_loop"				, 46);
-		//SetAdjustKeyFrame("jump_end"				, 17);
-		//SetAdjustKeyFrame("attacking_jump_01"		, 18);
-		//SetAdjustKeyFrame("attacking_jump_02"		, 16);
-		//SetAdjustKeyFrame("attacking_jump_03"		, 18);
-		//SetAdjustKeyFrame("attacking_jump_04"		, 18);
-		//SetAdjustKeyFrame("attack_jump_01_end"		, 36);
-		//SetAdjustKeyFrame("attack_jump_02_end"		, 36);
-		//SetAdjustKeyFrame("attack_jump_03_end"		, 34);
-		//SetAdjustKeyFrame("attack_jump_04_end"		, 32);
-
-		// 先行入力によるアニメーションの中断フレームの設定
-		SetAnimationBreakFrame(AnimationData::Attack_Normal_01 , 16);
-		SetAnimationBreakFrame(AnimationData::Attack_Normal_02 , 20);
-		SetAnimationBreakFrame(AnimationData::Attack_Normal_03 , 37);
-		SetAnimationBreakFrame(AnimationData::Attacking_Jump_01, 15);
-		SetAnimationBreakFrame(AnimationData::Attacking_Jump_02, 14);
-		SetAnimationBreakFrame(AnimationData::Attacking_Jump_03, 16);
-
-		// レイキャストに関する設定
-		if (!registry->TryGetComponent<RayCastComponent>(ent))
-		{
-			registry->AddComponent<RayCastComponent>(ent, CollisionTag::Player);
-		}
-		// 床(floor)用rayの追加 & 設定
-		registry->GetComponent<RayCastComponent>(ent).AddRay(mapping::collision_name::ray::ForFloor(), {});
-		registry->GetComponent<RayCastComponent>(ent).SetRayOffset(mapping::collision_name::ray::ForFloor(), { 0.0f,20.0f,0.0f });
-		// 壁(wall)用rayの追加 & 設定
-		registry->GetComponent<RayCastComponent>(ent).AddRay(mapping::collision_name::ray::ForWall(), {});
-		registry->GetComponent<RayCastComponent>(ent).SetRayOffset(mapping::collision_name::ray::ForWall(), { 0.0f,20.0f,0.0f });
-
-		// カメラに関する設定
-		if (!registry->TryGetComponent<CameraComponent>(ent))
-		{
-			registry->AddComponent<CameraComponent>(ent, true);
-		}
-		registry->GetComponent<CameraComponent>(ent).GetCamera()->SetCameraSpeed({ 0.05f,0.05f });
-		registry->GetComponent<CameraComponent>(ent).GetCamera()->SetFocusOffset({ 0.0f,50.0f,0.0f });
-	}
-
-	PlayerComponent::PlayerComponent(
-		ecs::Registry* registry,
-		const mapping::rename_type::Entity ent,
-		const PlayerComponent& copy_comp)
-		:Actor3DComponent{registry,ent}
-	{
-		*this = copy_comp;
-		SetRegistry(registry);
-		SetEntity(ent);
-
-		// レイキャストに関する設定
-		if (!registry->TryGetComponent<RayCastComponent>(ent))
-		{
-			registry->AddComponent<RayCastComponent>(ent, CollisionTag::Player);
-		}
-		// 床(floor)用rayの追加 & 設定
-		registry->GetComponent<RayCastComponent>(ent).AddRay(mapping::collision_name::ray::ForFloor(), {});
-		registry->GetComponent<RayCastComponent>(ent).SetRayOffset(mapping::collision_name::ray::ForFloor(), { 0.0f,20.0f,0.0f });
-		// 壁(wall)用rayの追加 & 設定
-		registry->GetComponent<RayCastComponent>(ent).AddRay(mapping::collision_name::ray::ForWall(), {});
-		registry->GetComponent<RayCastComponent>(ent).SetRayOffset(mapping::collision_name::ray::ForWall(), { 0.0f,20.0f,0.0f });
-
-		// カメラに関する設定
-		if (!registry->TryGetComponent<CameraComponent>(ent))
-		{
-			registry->AddComponent<CameraComponent>(ent, true);
-		}
-		registry->GetComponent<CameraComponent>(ent).GetCamera()->SetCameraSpeed({ 0.05f,0.05f });
-		registry->GetComponent<CameraComponent>(ent).GetCamera()->SetFocusOffset({ 0.0f,50.0f,0.0f });
-	}
-
-	void PlayerComponent::Initialize(ecs::Registry* registry, mapping::rename_type::Entity ent)
-	{// Prefabからオブジェクトが作成された時の初期化処理
-
 	}
 
 	void PlayerComponent::PreGameUpdate(float dt)
@@ -253,6 +263,7 @@ namespace cumulonimbus::component
 	void PlayerComponent::Load(ecs::Registry* registry)
 	{
 		SetRegistry(registry);
+		InitializeMoveState(registry, GetEntity());
 	}
 
 	int PlayerComponent::GetAnimDataIndex(AnimationData anim_state) const

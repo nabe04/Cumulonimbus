@@ -67,7 +67,7 @@ namespace cumulonimbus::asset
 
 	Prefab::Prefab()
 	{
-	
+
 	}
 
 	void Prefab::CreatePrefab(
@@ -126,25 +126,6 @@ namespace cumulonimbus::asset
 		return return_ent;
 	}
 
-	//void Prefab::Save(const std::filesystem::path& path)
-	//{
-	//	if (path.extension().compare(file_path_helper::GetPrefabExtension()) != 0)
-	//		assert(!"The file extension is not 「.prefab」");
-	//	std::filesystem::create_directory(path.parent_path());
-	//	{// 「.prefab」拡張子のファイルの保存
-	//		std::ofstream ofs(path, std::ios_base::binary);
-	//		if (!ofs)
-	//			assert(!"Not open file(Prefab::Save)");
-	//		cereal::BinaryOutputArchive output_archive(ofs);
-	//		output_archive(*this);
-	//	}
-
-	//	for(auto& comp : component_assets)
-	//	{// コンポーネントのデータをファイルに保存(シリアライズ)
-	//		comp.second->Save(path.parent_path().string());
-	//	}
-	//}
-
 	void Prefab::Save(ecs::Registry* const registry, const std::filesystem::path& path)
 	{
 		if (path.extension().compare(file_path_helper::GetPrefabExtension()) != 0)
@@ -168,30 +149,6 @@ namespace cumulonimbus::asset
 
 	void Prefab::Load(const std::filesystem::path& path)
 	{
-		//if (path.extension().compare(file_path_helper::GetPrefabExtension()) != 0)
-		//	assert(!"The file extension is not 「.prefab」");
-
-		//// パラメータのリセット
-		//if (!component_assets.empty())
-		//	component_assets.clear();
-		//if (!components_name.empty())
-		//	components_name.clear();
-
-		//{// プレファブの読み込み
-		//	std::ifstream ifs(path);
-		//	if (!ifs)
-		//		assert("!Not open file(Prefab::Load)");
-		//	cereal::BinaryInputArchive input_archive(ifs);
-		//	input_archive(*this);
-		//}
-
-		//for (auto& comp : component_assets)
-		//{// コンポーネントのデータをファイルから読み込み(デシリアライズ)
-		//	comp.second->Load(path.parent_path().string());
-		//}
-
-
-
 		if (path.extension().compare(file_path_helper::GetPrefabExtension()) != 0)
 			assert(!"The file extension is not 「.prefab」");
 

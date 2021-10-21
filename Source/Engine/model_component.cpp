@@ -238,6 +238,8 @@ namespace cumulonimbus::component
 	void ModelComponent::Load(ecs::Registry* registry)
 	{
 		SetRegistry(registry);
+		//InitializeParameter();
+		InitializeAnimState(registry, GetEntity());
 	}
 
 	bool ModelComponent::IsPlayAnimation() const
@@ -275,7 +277,6 @@ namespace cumulonimbus::component
 		if (material_index >= material_ids.size())
 			assert(!"You are trying to access more than the number of elements(ModelComponent::GetMaterialID)");
 		return material_ids.at(material_index);
-		//return { 0 };
 	}
 
 	const DirectX::SimpleMath::Matrix& ModelComponent::GetNodeMatrix(const char* node_name)
@@ -334,6 +335,15 @@ namespace cumulonimbus::component
 		loop_animation	= false;
 	}
 
+	void ModelComponent::InitializeAnimState(ecs::Registry* registry, mapping::rename_type::Entity ent)
+	{
+		anim_states.ClearState();
+		anim_states.AddState(AnimationState::Switch, [ent, registry](const float dt) { registry->GetComponent<ModelComponent>(ent).BlendNextAnimation(dt); });
+		anim_states.AddState(AnimationState::Update, [ent, registry](const float dt) { registry->GetComponent<ModelComponent>(ent).UpdateAnimation(dt); });
+		// アニメーションの初期値をセット
+		SwitchAnimation(0, false, 0.0f);
+	}
+
 	void ModelComponent::Initialize(ecs::Registry* registry, mapping::rename_type::Entity ent,
 		const mapping::rename_type::UUID& model_id)
 	{
@@ -361,11 +371,7 @@ namespace cumulonimbus::component
 		const auto& mat_vec = model.GetModelData().GetMaterialsID();
 		std::copy(mat_vec.begin(), mat_vec.end(), std::back_inserter(material_ids));
 
-		anim_states.AddState(AnimationState::Switch, [ent, registry](const float dt) { registry->GetComponent<ModelComponent>(ent).BlendNextAnimation(dt); });
-		anim_states.AddState(AnimationState::Update, [ent, registry](const float dt) { registry->GetComponent<ModelComponent>(ent).UpdateAnimation(dt); });
-
-		// アニメーションの初期値をセット
-		SwitchAnimation(0, false, 0.0f);
+		InitializeAnimState(registry, ent);
 	}
 
 	int ModelComponent::CalcPrevKeyframe() const
@@ -431,6 +437,12 @@ namespace cumulonimbus::component
 			locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>()->GetModel(model_id).GetModelData();
 
 		if (prev_animation_index < 0)
+		{
+			anim_states.SetState(AnimationState::Update);
+			return;
+		}
+
+		if(prev_animation_index == current_animation_index)
 		{
 			anim_states.SetState(AnimationState::Update);
 			return;

@@ -239,21 +239,30 @@ namespace cumulonimbus::component
 		 *			に遷移して良いかの判定関数。
 		 *			long_press_timeの時間で判断
 		 */
-		[[nodiscard]] bool IsNextAnimationLongPressAttack() const;
+		[[nodiscard]]
+		bool IsNextAnimationLongPressAttack() const;
 
 		/**
 		 * @brief  : 入力がデッドゾーン内にあるかどうか判定
 		 * @return : true : デッドゾーン内にある
 		 */
-		[[nodiscard]] bool IsDeadZone() const;
+		[[nodiscard]]
+		bool IsDeadZone() const;
 
 		/**
 		 * @brief			: 現アニメーションキーフレームが"animation_break_frame"で設定したフレームを超えているか
 		 * @param state		: "animation_break_frame"に登録されているAnimationState
 		 * @return			: true -> 超えている
 		 */
-		[[nodiscard]] bool IsBreakAnimationFrame(AnimationData state) const;
+		[[nodiscard]]
+		bool IsBreakAnimationFrame(AnimationData state) const;
 
+		/**
+		 * @brief : StateMachineの初期化
+		 * @param registry :
+		 * @param ent : 自分のエンティティ
+		 */
+		void InitializeMoveState(ecs::Registry* registry, const mapping::rename_type::Entity& ent);
 		/**
 		 * @brief : StateMachineクラスで管理するプレイヤーの状態関数
 		 */

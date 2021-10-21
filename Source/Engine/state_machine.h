@@ -1,6 +1,6 @@
 #pragma once
 
-#include <assert.h>
+#include <cassert>
 #include <functional>
 #include <map>
 
@@ -31,6 +31,9 @@ public:
 	void ClearState()
 	{
 		states.clear();
+		current_state	= {};
+		old_state		= {};
+		is_switched		= false;
 	}
 
 	/**
