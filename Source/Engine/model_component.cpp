@@ -238,7 +238,7 @@ namespace cumulonimbus::component
 	void ModelComponent::Load(ecs::Registry* registry)
 	{
 		SetRegistry(registry);
-		//InitializeParameter();
+		// StateMachine‚ÌÄ“o˜^
 		InitializeAnimState(registry, GetEntity());
 	}
 

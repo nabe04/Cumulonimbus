@@ -101,6 +101,13 @@ namespace cumulonimbus::component
 
 	protected:
 		mapping::component_tag::ComponentTag component_tag{ mapping::component_tag::ComponentTag::NoTag };
+		/**
+		 * @brief : 各々のコンポーネントをImGuiで表示する際に
+		 *			メニュー表示用のボタンを追加する
+		 */
+		void MenuPopup(
+			const mapping::rename_type::Entity& ent,
+			bool& is_removed_component) const;
 
 	private:
 		ecs::Registry* registry{};

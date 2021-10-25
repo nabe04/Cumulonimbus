@@ -200,32 +200,7 @@ namespace cumulonimbus::component
 
 	void CameraComponent::SceneUpdate(const float dt)
 	{
-		////if (is_use_camera_for_debug)
-		////{
-		////	camera->CalcCameraDirectionalVector();
-		////	camera->CalcCameraAngle();
-		////	camera->UpdateDefaultCamera(dt);
-		////	//CalcCameraDirectionalVector();
-		////	//CalcCameraAngle(); //オイラー角で(現在)計算しているので今は使わない
-		////	//UpdateDefaultCamera(dt);
-		////}
-		////else
-		////{
-		//	UpdateObjectCamera(dt);
-		////}
 
-		//{// TODO : クォータニオンテスト
-		//	SimpleMath::Quaternion q;
-		//	q = q.CreateFromAxisAngle({ 0,1,0 }, XMConvertToRadians(90));
-		//	SimpleMath::Quaternion p = { 1,0,0,0 };
-		//	SimpleMath::Quaternion inv_q;
-		//	q.Inverse(inv_q);
-		//	SimpleMath::Quaternion qp = q * p * inv_q;
-		//	SimpleMath::Vector3 v{ 1,0,0 };
-		//	SimpleMath::Vector3::Transform(v, q, v);
-		//}
-
-		//camera->Update(dt);
 	}
 
 	void CameraComponent::GameUpdate(float dt)
@@ -235,12 +210,45 @@ namespace cumulonimbus::component
 
 	void CameraComponent::RenderImGui()
 	{
-		if (ImGui::TreeNode("CameraComponent"))
+		if (GetRegistry()->CollapsingHeader<CameraComponent>(GetEntity(), "Camera"))
 		{
 			ImGui::DragFloat("Camera Length", &camera_length, 0.1f, 0.1f, 1000.0f);
-
-			ImGui::TreePop();
 		}
+
+		//if (bool is_removed_component = false;
+		//	CollapsingHeader("Camera",is_removed_component))
+		//{
+		//	if (is_removed_component)
+		//	{
+		//		GetRegistry()->RemoveComponent<CameraComponent>(GetEntity());
+		//	}
+		//}
+
+		//ImGui::PushID(GetEntity().c_str());
+		//if (ImGui::Button(ICON_FA_ELLIPSIS_V))
+		//{
+		//	ImGui::OpenPopup("context_id");
+		//}
+		//ImGui::PopID();
+		//if (ImGui::BeginPopup("context_id"))
+		//{
+		//	if (ImGui::MenuItem("Remove Component"))
+		//	{
+		//		GetRegistry()->RemoveComponent<CameraComponent>(GetEntity());
+		//	}
+		//	ImGui::EndPopup();
+		//}
+		//ImGui::SameLine();
+		//if (ImGui::TreeNode("CameraComponent"))
+		//{
+		//	if (ImGui::Button(ICON_FA_ELLIPSIS_V))
+		//	{
+		//		ImGui::OpenPopup("context_id");
+		//	}
+		//	ImGui::DragFloat("Camera Length", &camera_length, 0.1f, 0.1f, 1000.0f);
+
+		//	ImGui::TreePop();
+		//}
 	}
 
 	void CameraComponent::Load(ecs::Registry* registry)

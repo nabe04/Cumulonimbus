@@ -200,6 +200,7 @@
     <ClCompile Include="Source\Engine\child_actor_component.cpp" />
     <ClCompile Include="Source\Engine\collision_component.cpp" />
     <ClCompile Include="Source\Engine\collision_manager.cpp" />
+    <ClCompile Include="Source\Engine\component_base.cpp" />
     <ClCompile Include="Source\Engine\component_list.cpp" />
     <ClCompile Include="Source\Engine\content_brawser.cpp" />
     <ClCompile Include="Source\Engine\cum_imgui_helper.cpp" />

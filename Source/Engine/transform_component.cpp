@@ -197,7 +197,7 @@ namespace cumulonimbus::component
 
 	void TransformComponent::RenderImGui()
 	{
-		if (ImGui::CollapsingHeader("TransformComponent", ImGuiTreeNodeFlags_DefaultOpen))
+		if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			DirectX::SimpleMath::Vector3 angle = GetEulerAngles();
 

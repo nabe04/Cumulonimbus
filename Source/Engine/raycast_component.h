@@ -76,7 +76,7 @@ namespace cumulonimbus
 			void SetIsBlockHit(const std::string& ray_name, bool flg);
 
 		private:
-			std::unordered_map< std::string, collision::Ray> rays;
+			std::unordered_map< std::string, collision::Ray> rays{};
 		};
 	} // component
 } // cumulonimbus

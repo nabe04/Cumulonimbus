@@ -27,15 +27,6 @@ namespace cumulonimbus::collision
 
 namespace cumulonimbus::component
 {
-	//template <class Archive>
-	//void RayCastComponent::serialize(Archive&& archive)
-	//{
-	//	archive(
-	//		cereal::base_class<CollisionComponent>(this),
-	//		CEREAL_NVP(rays)
-	//	);
-	//}
-
 	template <class Archive>
 	void RayCastComponent::load(Archive&& archive, uint32_t version)
 	{
@@ -57,7 +48,7 @@ namespace cumulonimbus::component
 
 	RayCastComponent::RayCastComponent(
 		ecs::Registry* registry,
-		const mapping::rename_type::Entity ent, 
+		const mapping::rename_type::Entity ent,
 		const CollisionTag tag)
 		: CollisionComponent{ registry,ent,tag }
 	{
@@ -65,8 +56,8 @@ namespace cumulonimbus::component
 	}
 
 	RayCastComponent::RayCastComponent(
-		ecs::Registry* registry, 
-		const mapping::rename_type::Entity ent, 
+		ecs::Registry* registry,
+		const mapping::rename_type::Entity ent,
 		const RayCastComponent& copy_comp)
 	{
 		*this = copy_comp;

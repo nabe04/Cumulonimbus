@@ -438,6 +438,53 @@ namespace cumulonimbus::ecs
 		void RenderImGui();
 
 		/**
+		 * @brief        : T型のComponentArrayを登録
+		 * ※caution(1)  : namespaceが含まれている場合クラス名のみ保存される
+		 * ※caution(2)  :「class 」が含まれる場合もクラス名のみ保存される
+		 * ※caution(3)  : 上記以外の場合はtypeid(T).name()が保存される
+		 */
+		template <typename T>
+		void RegistryComponent()
+		{
+			const mapping::rename_type::ComponentName component_name = file_path_helper::GetTypeName<T>();
+
+			if (component_arrays.contains(component_name))
+				return;
+
+			component_arrays.emplace(component_name, std::make_unique<ComponentArray<T>>());
+		}
+
+		/**
+		 * @brief				: entitiesとcomponent_arraysのファイルSave用関数
+		 * @param filename		: 保存する場所までのファイルパス
+		 * @param scene_name	: 保存するシーン名
+		 * @remark : ※caution(1)「.json」と「.bin」で書き出される
+		 * @remark : ※caution(2) 拡張子の指定は必要なし
+		 * @remark : ※caution(3) ファイルパスは最後「/」の必要はなし
+		 */
+		void Save(const std::string& filename, const std::string& scene_name);
+
+		/**
+		 * @brief : entitiesとcomponent_arraysのファイルLoad用関数
+		 * @param file_path		: 「./Assets/Scenes/任意のシーン名」までのパス
+		 * @remark ※caution(1)	: ファイル名のみで良い(ファイルパスなどの記述の必要なし)
+		 *				例) OK	: 「ファイル名
+		 *					NG	:  ./Contents/「ファイル名」
+		 * @remark ※caution(2)	:	現在のentitiesとcomponent_arraysは消去される
+		 * @remark ※caution(3)	:	component_arraysのキー値に型の名前が登録されていない場合
+		 *							assertionが発生するためResisterComponentName関数を呼ぶか、
+		 *							RegisterComponent関数で型を登録する必要あり
+		 *							(ResisterComponentName関数は内部で行っているので、
+		 *							assertionが発生した場合はRegisterComponentName関数を確認すれば良い)
+		 */
+		void Load(const std::string& file_path);
+
+		/**
+		 * @brief : Entityの作成
+		 */
+		mapping::rename_type::Entity CreateEntity();
+
+		/**
 		 * @brief : 指定のEntityの削除
 		 *          Entityに含まれるコンポーネントも削除
 		 */
@@ -474,6 +521,29 @@ namespace cumulonimbus::ecs
 			RegisterComponentName();
 		}
 
+		/**
+		 * @brief : Componentの追加
+		 *          すでにComponentを所持していた場合
+		 *          新しく追加せず、所持しているComponentを返す
+		 */
+		template <typename T, typename... Args>
+		T& AddComponent(const mapping::rename_type::Entity entity, Args... args)
+		{
+			ComponentArray<T>& array = GetArray<T>();
+			array.AddComponent(this, entity, args...);
+
+			return array.GetComponent(entity);
+		}
+
+		template<typename T>
+		T& AddOrReplaceComponent(const mapping::rename_type::Entity entity, const T& replace_comp)
+		{
+			ComponentArray<T>& array = GetArray<T>();
+			array.AddOrReplaceComponent(this, entity, replace_comp);
+
+			return array.GetComponent(entity);
+		}
+
 		template <typename T>
 		[[nodiscard]] T& GetComponent(const mapping::rename_type::Entity entity)
 		{
@@ -499,26 +569,21 @@ namespace cumulonimbus::ecs
 		}
 
 		/**
-		 * @brief : Componentの追加
-		 *          すでにComponentを所持していた場合
-		 *          新しく追加せず、所持しているComponentを返す
+		 * @brief : コンポーネントがあれば持っているコンポーネントを返し
+		 *          なければ、コンポーネントを作る
 		 */
-		template <typename T, typename... Args>
-		T& AddComponent(const mapping::rename_type::Entity entity, Args... args)
+		template<typename T, typename... Args>
+		T& GetOrEmplaceComponent(mapping::rename_type::Entity entity, Args... args)
 		{
-			ComponentArray<T>& array = GetArray<T>();
-			array.AddComponent(this, entity, args...);
+			T* t = TryGetComponent<T>(entity);
+			if (t)
+			{
+				return *t;
+			}
 
-			return array.GetComponent(entity);
-		}
+			// 追加処理
+			return AddComponent<T>(entity, args...);
 
-		template<typename T>
-		T& AddOrReplaceComponent(const mapping::rename_type::Entity entity,const T& replace_comp)
-		{
-			ComponentArray<T>& array = GetArray<T>();
-			array.AddOrReplaceComponent(this, entity, replace_comp);
-
-			return array.GetComponent(entity);
 		}
 
 		/**
@@ -546,36 +611,6 @@ namespace cumulonimbus::ecs
 			}
 
 			return static_cast<ComponentArray<T>&>(*component_arrays.at(component_name).get());
-		}
-
-		/**
-		 * @brief : コンポーネントがあれば持っているコンポーネントを返し
-		 *          なければ、コンポーネントを作る
-		 */
-		template<typename T, typename... Args>
-		T& GetOrEmplaceComponent(mapping::rename_type::Entity entity, Args... args)
-		{
-			T* t = TryGetComponent<T>(entity);
-			if (t)
-			{
-				return *t;
-			}
-
-			// 追加処理
-			return AddComponent<T>(entity, args...);
-
-		}
-
-		[[nodiscard]]
-		std::unordered_map<mapping::rename_type::Entity, std::pair<mapping::rename_type::Entity, mapping::rename_type::EntityName>>& GetEntities()
-		{
-			return entities;
-		}
-
-		[[nodiscard]]
-		std::unordered_map<mapping::rename_type::ComponentName, std::unique_ptr<ComponentArrayBase>>& GetComponentArrays()
-		{
-			return component_arrays;
 		}
 
 		/**
@@ -635,51 +670,47 @@ namespace cumulonimbus::ecs
 		}
 
 		/**
-		 * @brief : Entityの作成
+		 * @brief : T型のコンポーネントのポップアップメニュー
+		 * @param ent : 自分のエンティティ
+		 * @param header_name : ImGui::CollapsingHeaderに表示する名前
 		 */
-		mapping::rename_type::Entity CreateEntity();
-
-		/**
-		 * @brief        : T型のComponentArrayを登録
-		 * ※caution(1)  : namespaceが含まれている場合クラス名のみ保存される
-		 * ※caution(2)  :「class 」が含まれる場合もクラス名のみ保存される
-		 * ※caution(3)  : 上記以外の場合はtypeid(T).name()が保存される
-		 */
-		template <typename T>
-		void RegistryComponent()
+		template<class T>
+		bool CollapsingHeader(
+			const mapping::rename_type::Entity& ent,
+			const std::string& header_name)
 		{
-			const mapping::rename_type::ComponentName component_name = file_path_helper::GetTypeName<T>();
+			const std::string id = ent + header_name;
+			ImGui::PushID(id.c_str());
+			if (ImGui::Button(ICON_FA_ELLIPSIS_V))
+			{
+				ImGui::OpenPopup("popup");
+			}
+			if (ImGui::BeginPopup("popup"))
+			{
+				if (ImGui::MenuItem("Remove Component"))
+				{
+					RemoveComponent<T>(ent);
+				}
+				ImGui::EndPopup();
+			}
+			ImGui::PopID();
+			ImGui::SameLine();
+			const bool ret_val = ImGui::CollapsingHeader(header_name.c_str());
 
-			if (component_arrays.contains(component_name))
-				return;
-
-			component_arrays.emplace(component_name, std::make_unique<ComponentArray<T>>());
+			return ret_val;
 		}
 
-		/**
-		 * @brief				: entitiesとcomponent_arraysのファイルSave用関数
-		 * @param filename		: 保存する場所までのファイルパス
-		 * @param scene_name	: 保存するシーン名
-		 * @remark : ※caution(1)「.json」と「.bin」で書き出される
-		 * @remark : ※caution(2) 拡張子の指定は必要なし
-		 * @remark : ※caution(3) ファイルパスは最後「/」の必要はなし
-		 */
-		void Save(const std::string& filename,const std::string& scene_name);
+		[[nodiscard]]
+		std::unordered_map<mapping::rename_type::Entity, std::pair<mapping::rename_type::Entity, mapping::rename_type::EntityName>>& GetEntities()
+		{
+			return entities;
+		}
 
-		/**
-		 * @brief : entitiesとcomponent_arraysのファイルLoad用関数
-		 * @param file_path		: 「./Assets/Scenes/任意のシーン名」までのパス
-		 * @remark ※caution(1)	: ファイル名のみで良い(ファイルパスなどの記述の必要なし)
-		 *				例) OK	: 「ファイル名
-		 *					NG	:  ./Contents/「ファイル名」
-		 * @remark ※caution(2)	:	現在のentitiesとcomponent_arraysは消去される
-		 * @remark ※caution(3)	:	component_arraysのキー値に型の名前が登録されていない場合
-		 *							assertionが発生するためResisterComponentName関数を呼ぶか、
-		 *							RegisterComponent関数で型を登録する必要あり
-		 *							(ResisterComponentName関数は内部で行っているので、
-		 *							assertionが発生した場合はRegisterComponentName関数を確認すれば良い)
-		 */
-		void Load(const std::string& file_path);
+		[[nodiscard]]
+		std::unordered_map<mapping::rename_type::ComponentName, std::unique_ptr<ComponentArrayBase>>& GetComponentArrays()
+		{
+			return component_arrays;
+		}
 
 		void SetScene(scene::Scene* scene)		  { this->scene = scene; }
 		[[nodiscard]] scene::Scene*   GetScene()   const { return scene; }

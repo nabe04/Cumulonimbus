@@ -1,6 +1,6 @@
 #include "blend.h"
 
-#include <assert.h>
+#include <cassert>
 
 Blend::Blend(ID3D11Device* device)
 {

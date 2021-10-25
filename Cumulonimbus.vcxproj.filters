@@ -573,6 +573,9 @@
     <ClCompile Include="Source\Engine\hierarchy_component.cpp">
       <Filter>Source\Engine\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\component_base.cpp">
+      <Filter>Source\Engine\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">

@@ -228,7 +228,6 @@ namespace cumulonimbus::component
 
 	void PlayerComponent::PreGameUpdate(float dt)
 	{
-		//GetRegistry()->GetComponent<TransformComponent>(GetEntity()).AdjustPositionY(-2.f * dt);
 	}
 
 	void PlayerComponent::GameUpdate(float dt)
@@ -243,7 +242,7 @@ namespace cumulonimbus::component
 		// ƒJƒƒ‰ƒ[ƒN
 		CameraWork();
 		// ˆÚ“®
-		//Movement(dt);
+		Movement(dt);
 		Rotation(dt);
 	}
 
@@ -307,6 +306,14 @@ namespace cumulonimbus::component
 
 	void PlayerComponent::Movement(float dt)
 	{
+		if(auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
+		   transform_comp.GetPosition().y <= 0)
+		{
+			auto& rigid_body_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
+			rigid_body_comp.GravityStop(true);
+			transform_comp.SetPosition_Y(.0f);
+		}
+
 		//auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 		//transform_comp.AdjustPosition(velocity * dt);
 

@@ -72,9 +72,8 @@ namespace cumulonimbus::collision
 		}
 
 		// 地形とモデルとの判定(レイキャスト)
-		auto& ray_cast_array = registry->GetArray<component::RayCastComponent>();
-
-		for (auto& ray_comp : ray_cast_array.GetComponents())
+		for (auto& ray_cast_array = registry->GetArray<component::RayCastComponent>();
+			 auto& ray_comp : ray_cast_array.GetComponents())
 		{
 			mapping::rename_type::Entity ent = ray_comp.GetEntity();
 

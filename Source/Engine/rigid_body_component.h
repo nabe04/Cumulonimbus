@@ -72,13 +72,13 @@ namespace cumulonimbus::component
 		DirectX::SimpleMath::Vector3 velocity{};
 		DirectX::SimpleMath::Vector3 acceleration{};
 
-		float mass			  = 1.0f; // 質量
-		float jump_strength   = 500;  // ジャンプ強度
-		float gravity		  = -20;  // 重力
-		float current_gravity = 0;
+		float mass				{ 1.0f };	// 質量
+		float jump_strength		{ 500.f };  // ジャンプ強度
+		float gravity			{ -20.f };  // 重力
+		float current_gravity	{ .0f };	// 現在の重力
 
-		bool is_gravity = true;	// 重力フラグ
-		bool is_landing;		// 地面フラグ
-		bool is_jumping;		// ジャンプフラグ
+		bool is_gravity{ true };	// 重力フラグ
+		bool is_landing{ false };	// 地面フラグ
+		bool is_jumping{ false };	// ジャンプフラグ
 	};
 } // cumulonimbus::component

@@ -10,25 +10,6 @@ CEREAL_CLASS_VERSION(cumulonimbus::component::RigidBodyComponent, 0)
 
 namespace cumulonimbus::component
 {
-	//template<class Archive>
-	//void RigidBodyComponent::serialize(Archive&& archive)
-	//{
-	//	archive(
-	//		cereal::base_class<ComponentBase>(this),
-	//		CEREAL_NVP(velocity),
-	//		CEREAL_NVP(acceleration),
-
-	//		CEREAL_NVP(mass),
-	//		CEREAL_NVP(jump_strength),
-	//		CEREAL_NVP(gravity),
-	//		CEREAL_NVP(current_gravity),
-
-	//		CEREAL_NVP(is_gravity),
-	//		CEREAL_NVP(is_landing),
-	//		CEREAL_NVP(is_jumping)
-	//	);
-	//}
-
 	template<class Archive>
 	void RigidBodyComponent::load(Archive&& archive, uint32_t version)
 	{
@@ -67,13 +48,18 @@ namespace cumulonimbus::component
 		);
 	}
 
-	RigidBodyComponent::RigidBodyComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent)
+	RigidBodyComponent::RigidBodyComponent(
+		ecs::Registry* const registry,
+		const mapping::rename_type::Entity ent)
 		:ComponentBase{ registry ,ent }
 	{
 
 	}
 
-	RigidBodyComponent::RigidBodyComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const RigidBodyComponent& copy_comp)
+	RigidBodyComponent::RigidBodyComponent(
+		ecs::Registry* const registry,
+		const mapping::rename_type::Entity ent,
+		const RigidBodyComponent& copy_comp)
 	{
 		*this = copy_comp;
 		SetRegistry(registry);
@@ -97,18 +83,6 @@ namespace cumulonimbus::component
 
 	void RigidBodyComponent::PostGameUpdate(float dt)
 	{
-		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
-		if (transform_comp.GetPosition().y < 0)
-		{
-			//transform_comp.SetPositionY(0);
-			//current_gravity = 0;
-		}
-		//if (is_gravity)
-		//{
-		//	current_gravity += gravity;
-		//	AddForce({ 0,current_gravity,0 });
-		//}
-
 		Integrate(dt);
 	}
 
@@ -167,7 +141,6 @@ namespace cumulonimbus::component
 			is_gravity = true;
 		}
 	}
-
 
 	void RigidBodyComponent::Integrate(const float dt)
 	{
