@@ -54,6 +54,13 @@ namespace cumulonimbus::component
 		void SetParentEntity(
 			ecs::Registry* registry,
 			const mapping::rename_type::Entity& parent_ent = {});
+
+		/**
+		 * @brief : 削除時にこのエンティティを持つ親子関係のエンティティの再設定
+		 * @remark : このコンポーネントが削除される前に使用
+		 */
+		void OnDestroyed(ecs::Registry* registry) const;
+
 		/**
 		 * @brief : 兄弟階層のダーティフラグをTrueにする再起関数
 		 * @remark :次の兄弟階層エンティティ(next_sibling)を持たない場合再起処理を終了

@@ -66,6 +66,7 @@ namespace cumulonimbus::editor
 					is_dragged_entity = false;
 					EntityTree(registry, key, registry->GetName(key));
 				}
+				DeleteEntity(registry);
 				ImGui::TreePop();
 			}
 
@@ -81,6 +82,22 @@ namespace cumulonimbus::editor
 				ImGui::Text("First Child : %s", registry->GetName(hierarchy_comp.GetFirstChild()).c_str());
 				ImGui::Text("Back Sibling : %s", registry->GetName(hierarchy_comp.GetBackSibling()).c_str());
 				ImGui::Text("Next Sibling : %s", registry->GetName(hierarchy_comp.GetNextSibling()).c_str());
+				if(!hierarchy_comp.GetParentEntity().empty())
+				{
+					ImGui::Text("Parent Ent Exist");
+				}
+				if (!hierarchy_comp.GetFirstChild().empty())
+				{
+					ImGui::Text("First Child Ent Exist");
+				}
+				if (!hierarchy_comp.GetNextSibling().empty())
+				{
+					ImGui::Text("Next Sibling Ent Exist");
+				}
+				if (!hierarchy_comp.GetBackSibling().empty())
+				{
+					ImGui::Text("Back Sibling Ent Exist");
+				}
 			}
 			ImGui::Separator();
 			ImGui::Text("--Selected Entity--");
@@ -118,7 +135,12 @@ namespace cumulonimbus::editor
 				}
 			}
 
-			ImGui::MenuItem("Delete");
+			if(ImGui::MenuItem("Delete"))
+			{// エンティティの削除
+				destroyed_entity = selected_entity;
+				//registry->Destroy(selected_entity);
+				//selected_entity = "";
+			}
 
 			ImGui::EndPopup();
 		}
@@ -138,6 +160,25 @@ namespace cumulonimbus::editor
 		asset::AssetManager* asset_manager = locator::Locator::GetAssetManager();
 		const std::string& ent_name = registry->GetName(selected_entity);
 		asset_manager->GetLoader<asset::PrefabLoader>()->CreatePrefab(*asset_manager, registry, entities, false, ent_name);
+	}
+
+	void Hierarchy::DeleteEntity(ecs::Registry* registry)
+	{
+		if (destroyed_entity.empty())
+			return;
+		registry->GetComponent<component::HierarchyComponent>(destroyed_entity).OnDestroyed(registry);
+		for(const auto& sub_ent : sub_hierarchical_entities)
+		{
+			registry->GetComponent<component::HierarchyComponent>(sub_ent).OnDestroyed(registry);
+		}
+
+		registry->Destroy(destroyed_entity);
+		for (const auto& sub_ent : sub_hierarchical_entities)
+		{
+			registry->Destroy(sub_ent);
+		}
+		destroyed_entity = "";
+		selected_entity  = "";
 	}
 
 

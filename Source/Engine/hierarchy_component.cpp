@@ -257,6 +257,38 @@ namespace cumulonimbus::component
 		parent_entity = parent_ent;
 	}
 
+	void HierarchyComponent::OnDestroyed(ecs::Registry* registry) const
+	{
+		if(!parent_entity.empty())
+		{/* 親のエンティティのfirst_childが自分だった場合親のfirst_child
+		    をnext_siblingに変更する*/
+
+			if(auto& parent_hierarchy = registry->GetComponent<HierarchyComponent>(parent_entity);
+				GetEntity() == parent_hierarchy.GetFirstChild())
+			{
+				parent_hierarchy.first_child = next_sibling;
+			}
+		}
+		if(!back_sibling.empty())
+		{
+			auto& back_hierarchy = registry->GetComponent<HierarchyComponent>(back_sibling);
+			back_hierarchy.next_sibling = "";
+		}
+		if(!next_sibling.empty())
+		{
+			auto& next_hierarchy = registry->GetComponent<HierarchyComponent>(next_sibling);
+			next_hierarchy.back_sibling = "";
+		}
+		if(!back_sibling.empty()  && !next_sibling.empty())
+		{/*	兄弟ヒエラルキーの中間にいる場合back_siblingとnext_siblingを繋ぐ */
+			auto& back_hierarchy = registry->GetComponent<HierarchyComponent>(back_sibling);
+			auto& next_hierarchy = registry->GetComponent<HierarchyComponent>(next_sibling);
+
+			back_hierarchy.next_sibling = next_hierarchy.GetEntity();
+			next_hierarchy.back_sibling = back_hierarchy.GetEntity();
+		}
+	}
+
 	void HierarchyComponent::ActivateDirtyFlg()
 	{
 		is_dirty = true;

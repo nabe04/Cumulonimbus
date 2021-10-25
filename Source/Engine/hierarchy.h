@@ -20,6 +20,7 @@ namespace cumulonimbus::editor
 	private:
 		std::vector<mapping::rename_type::Entity> sub_hierarchical_entities{}; // 選択されているエンティティよりも子階層のエンティティ郡
 		mapping::rename_type::Entity selected_entity{};
+		mapping::rename_type::Entity destroyed_entity{};
 		bool is_dragged_entity{ false };
 
 		/**
@@ -40,7 +41,7 @@ namespace cumulonimbus::editor
 		 * @brief : アセットの削除
 		 * @remark : ※caution : ImGui::MenuItem内に記述すること
 		 */
-		//void DeleteAsset();
+		void DeleteEntity(ecs::Registry* registry);
 
 		/**
 		 * @brief : エンティティの親子階層の表示
