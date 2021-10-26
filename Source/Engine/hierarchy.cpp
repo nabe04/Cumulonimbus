@@ -138,8 +138,6 @@ namespace cumulonimbus::editor
 			if(ImGui::MenuItem("Delete"))
 			{// エンティティの削除
 				destroyed_entity = selected_entity;
-				//registry->Destroy(selected_entity);
-				//selected_entity = "";
 			}
 
 			ImGui::EndPopup();

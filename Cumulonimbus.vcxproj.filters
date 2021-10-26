@@ -576,6 +576,12 @@
     <ClCompile Include="Source\Engine\component_base.cpp">
       <Filter>Source\Engine\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\wave_loader.cpp">
+      <Filter>Source\Engine\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\scene_manager.cpp">
+      <Filter>Source\Engine\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -1046,6 +1052,15 @@
     <ClInclude Include="Source\Engine\hierarchy_component.h">
       <Filter>Header\Engine\Components</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\wave_loader.h">
+      <Filter>Header\Engine\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\wave.h">
+      <Filter>Header\Engine\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\scene_manager.h">
+      <Filter>Header\Engine\Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Cumulonimbus.rc" />
@@ -1215,6 +1230,12 @@
     </Filter>
     <Filter Include="Source\Engine\Helper">
       <UniqueIdentifier>{334f6bc4-557b-4d65-a850-2872d175b01d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Game\System">
+      <UniqueIdentifier>{f9bede24-08b9-44d5-9327-aad2412279d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Game\System">
+      <UniqueIdentifier>{0ee8cb65-a758-4342-a4ba-dd4ebf85d686}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

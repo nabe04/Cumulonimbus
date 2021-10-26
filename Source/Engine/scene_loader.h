@@ -11,7 +11,7 @@ namespace cumulonimbus::asset
 {
 	struct SceneAsset
 	{
-		std::filesystem::path scene_file_path; // 「.scene」ファイルまでのパス
+		std::filesystem::path scene_file_path{}; // 「.scene」ファイルまでのパス
 	};
 
 	class SceneLoader final : public Loader

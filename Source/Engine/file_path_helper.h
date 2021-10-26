@@ -66,8 +66,19 @@ namespace cumulonimbus::file_path_helper
 	[[nodiscard]]
 	std::string GetMaterialExtension();
 
+	/**
+	 * @brief : 「.prefab」を返す
+	 * @return : .prefab
+	 */
 	[[nodiscard]]
 	std::string GetPrefabExtension();
+
+	/**
+	 * @brief : 「.wave」を返す
+	 * @return : .wave
+	 */
+	[[nodiscard]]
+	std::string GetWaveExtension();
 
 	/**
 	 * @brief  : 「Contents」を返す

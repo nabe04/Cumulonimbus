@@ -13,6 +13,7 @@
 #include "texture_loader.h"
 #include "scene_loader.h"
 #include "prefab_loader.h"
+#include "wave_loader.h"
 
 namespace
 {
@@ -29,6 +30,7 @@ namespace cumulonimbus::asset
 		RegisterLoader<Texture	 , TextureLoader>();
 		RegisterLoader<Prefab	 , PrefabLoader>();
 		RegisterLoader<SceneAsset, SceneLoader>();
+		RegisterLoader<WaveAsset , WaveLoader>();
 
 		// デフォルトパスからのロード
 		Load();

@@ -54,6 +54,11 @@ namespace cumulonimbus::file_path_helper
 		return { ".prefab" };
 	}
 
+	std::string GetWaveExtension()
+	{
+		return { ".wave" };
+	}
+
 	std::string GetContentsFilename()
 	{
 		return { "Contents" };

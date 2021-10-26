@@ -14,7 +14,8 @@
 #include "gaussian_blur.h"
 
 
-bool Framework::Initialize()
+Framework::Framework(const std::shared_ptr<Window>& window)
+	:window(window)
 {
 	dx11_configurator = std::make_shared<Dx11Device>(window->GetHWND());
 	dx11_configurator->Initialize(window->GetHWND(), device.GetAddressOf(), immediate_context.GetAddressOf(), window->Width(), window->Height());
@@ -36,7 +37,32 @@ bool Framework::Initialize()
 	//-- Setting of frame rate --//
 	hr_timer.setFrameRate(frame_fate);
 	hr_timer.start();
+}
 
+
+bool Framework::Initialize()
+{
+//	dx11_configurator = std::make_shared<Dx11Device>(window->GetHWND());
+//	dx11_configurator->Initialize(window->GetHWND(), device.GetAddressOf(), immediate_context.GetAddressOf(), window->Width(), window->Height());
+//	cumulonimbus::locator::Locator::Provide<Dx11Device>(dx11_configurator);
+//
+//	cumulonimbus::locator::Locator::Provide<Window>(window);
+//	input_system = std::make_shared<InputSystem>(window->GetHWND());
+//	input_system->Initialize(window->GetHWND());
+//	cumulonimbus::locator::Locator::Provide<InputSystem>(input_system);
+//
+//	// TextureManager Initialization
+//	TextureManager::GetInstance()->Initialize(device.Get());
+//
+//#ifdef _DEBUG
+//	// Initialization of ImGui
+//	imgui::Initialize(window->GetHWND(), device.Get(), immediate_context.Get());
+//#endif
+//
+//	//-- Setting of frame rate --//
+//	hr_timer.setFrameRate(frame_fate);
+//	hr_timer.start();
+//
 	return true;
 }
 

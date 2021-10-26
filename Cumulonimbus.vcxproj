@@ -124,6 +124,7 @@
     <ClInclude Include="Source\Engine\sampler_mapping.h" />
     <ClInclude Include="Source\Engine\sample_shader.h" />
     <ClInclude Include="Source\Engine\scene_loader.h" />
+    <ClInclude Include="Source\Engine\scene_manager.h" />
     <ClInclude Include="Source\Engine\scene_view.h" />
     <ClInclude Include="Source\Engine\scene_view_camera.h" />
     <ClInclude Include="Source\Engine\shader_asset.h" />
@@ -168,6 +169,8 @@
     <ClInclude Include="Source\Engine\vertex_buffer.h" />
     <ClInclude Include="Source\Engine\vertex_shader.h" />
     <ClInclude Include="Source\Engine\camera_component.h" />
+    <ClInclude Include="Source\Engine\wave.h" />
+    <ClInclude Include="Source\Engine\wave_loader.h" />
     <ClInclude Include="Source\Engine\window.h" />
     <ClInclude Include="Source\Game\enemy_base_component.h" />
     <ClInclude Include="Source\Game\enemy_forest_demon_component.h" />
@@ -277,6 +280,7 @@
     <ClCompile Include="Source\Engine\scene_game.cpp" />
     <ClCompile Include="Source\Engine\scene_load.cpp" />
     <ClCompile Include="Source\Engine\scene_loader.cpp" />
+    <ClCompile Include="Source\Engine\scene_manager.cpp" />
     <ClCompile Include="Source\Engine\scene_view.cpp" />
     <ClCompile Include="Source\Engine\scene_view_camera.cpp" />
     <ClCompile Include="Source\Engine\shader.cpp" />
@@ -308,6 +312,7 @@
     <ClCompile Include="Source\Engine\vertex_shader.cpp" />
     <ClCompile Include="Source\Engine\camera_component.cpp" />
     <ClCompile Include="Source\Engine\toon.cpp" />
+    <ClCompile Include="Source\Engine\wave_loader.cpp" />
     <ClCompile Include="Source\Engine\window.cpp" />
     <ClCompile Include="Source\Game\enemy_base_component.cpp" />
     <ClCompile Include="Source\Game\enemy_forest_demon_component.cpp" />

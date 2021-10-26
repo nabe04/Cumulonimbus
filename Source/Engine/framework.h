@@ -17,6 +17,31 @@ extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam
 
 class Framework final
 {
+public:
+	explicit Framework(const std::shared_ptr<Window>& window);
+	~Framework() = default;
+
+	[[nodiscard]]
+	int Run();
+	[[nodiscard]]
+	bool ProcessLoop();
+	void DrawBegin();
+	void DrawEnd();
+
+	[[nodiscard]]
+	LRESULT CALLBACK HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+
+	[[nodiscard]]
+	auto* GetDevice()				const { return device.Get(); }
+	[[nodiscard]]
+	auto* GetDeviceContext()		const { return immediate_context.Get(); }
+	[[nodiscard]]
+	auto GetHighResolutionTimer()	const { return hr_timer; }
+	[[nodiscard]]
+	const auto& GetWindow()			const { return window; }
+	[[nodiscard]]
+	bool getDebugMode()				const { return debug_mode; }
+
 private:
 	Microsoft::WRL::ComPtr<ID3D11Device>		device;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> immediate_context;
@@ -30,27 +55,8 @@ private:
 
 	bool debug_mode = false;
 
-private:
 	bool Initialize();
 	bool UnInitialize();
 	void CalculateFrameStates();
-
-public:
-	explicit Framework(const std::shared_ptr<Window>& w)
-		:window{ w } {}
-	~Framework() = default;
-
-	[[nodiscard]] int Run();
-	[[nodiscard]] bool ProcessLoop();
-	void DrawBegin();
-	void DrawEnd();
-
-	[[nodiscard]] LRESULT CALLBACK HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
-
-	[[nodiscard]] auto*		  GetDevice()				const{ return device.Get(); }
-	[[nodiscard]] auto*		  GetDeviceContext()		const{ return immediate_context.Get(); }
-	[[nodiscard]] auto		  GetHighResolutionTimer()	const{ return hr_timer; }
-	[[nodiscard]] const auto& GetWindow()				const { return window; }
-	[[nodiscard]] bool		  getDebugMode()			const { return debug_mode; }
 };
 

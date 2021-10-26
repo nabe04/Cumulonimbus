@@ -30,7 +30,7 @@ namespace cumulonimbus::camera
 		Camera& GetCamera() const { return *camera.get(); }
 
 		/**
-		 * @brief : SceneView中のカメラワーク
+		 * @brief : SceneView上のカメラワーク
 		 */
 		void EditCamera(ImGuiWindow* window) const;
 	private:

@@ -5,6 +5,7 @@
 #include "texture.h"
 #include "prefab.h"
 #include "scene_loader.h"
+#include "wave_loader.h"
 
 namespace cumulonimbus::asset
 {
@@ -15,6 +16,7 @@ namespace cumulonimbus::asset
 		Register<Texture>();
 		Register<Prefab>();
 		Register<SceneAsset>();
+		Register<WaveAsset>();
 	}
 
 	std::string AssetSheetManager::GetAssetFilename(const mapping::rename_type::UUID& id) const

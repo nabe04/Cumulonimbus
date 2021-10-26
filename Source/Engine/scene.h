@@ -12,7 +12,6 @@
 #include "render_path.h"
 #include "system.h"
 
-class GeometricPrimitiveResource;
 namespace cumulonimbus
 {
 	namespace asset
