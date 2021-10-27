@@ -19,7 +19,7 @@ class Framework final
 {
 public:
 	explicit Framework(const std::shared_ptr<Window>& window);
-	~Framework() = default;
+	~Framework();
 
 	[[nodiscard]]
 	int Run();

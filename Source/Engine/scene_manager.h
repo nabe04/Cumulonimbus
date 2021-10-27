@@ -32,6 +32,16 @@ namespace cumulonimbus::scene
 		explicit SceneManager(const std::shared_ptr<Window>& window);
 		~SceneManager() = default;
 
+		void Run();
+
+		/**
+		 * @brief : 新規シーンの作成
+		 * @remark : 現在開かれているシーンを全て削除して
+		 *			 新しいシーンを作成する
+		 */
+		void CreateNewScene();
+
+		//-- ゲッター --//
 		[[nodiscard]]
 		Framework* GetFramework() const
 		{
@@ -47,16 +57,20 @@ namespace cumulonimbus::scene
 		{
 			return active_scenes.at(scene_id).get();
 		}
-
-		void Run();
-
 	private:
+		// 現在開かれているシーン
 		std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<Scene>> active_scenes{};
+		// フレームワーク
 		std::unique_ptr<Framework>			  framework{};
+		// 描画処理を担う
 		std::unique_ptr<renderer::RenderPath> render_path{};
+		// エディター全体で統一の設定
 		std::shared_ptr<system::System>		  system{};
-		// Manager's
+
+		//-- Manager's --//
+		// アセットシート管理用マネジャー
 		std::shared_ptr<asset::AssetManager>	asset_manager{};
+		// エディター(GUI)管理用マネジャー
 		std::unique_ptr<editor::EditorManager>	editor_manager{};
 
 		void Execute();

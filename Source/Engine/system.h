@@ -83,8 +83,6 @@ namespace cumulonimbus::system
 		void SetCurrentScenePath(const std::string& scene_path)
 		{
 			current_scene_path = scene_path;
-			int a;
-			a = 0;
 		}
 	private:
 		// “o˜^‚³‚ê‚½Œ^‚ÌRenderŠÖ”‚Ì•Û

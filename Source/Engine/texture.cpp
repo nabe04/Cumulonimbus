@@ -162,50 +162,50 @@ void TextureResource::CreateTexture(ID3D11Device* device, const char* tex_filena
 	//const auto tex = texture_resources.insert(std::make_pair(strFilename, texture_data));
 }
 
-//-----------------------------------------
+////-----------------------------------------
+////
+////	TextureManager class
+////
+////-----------------------------------------
 //
-//	TextureManager class
+//void TextureManager::Initialize(ID3D11Device* device)
+//{
+//	dummy_texture_white = std::make_unique<cumulonimbus::asset::DummyTexture>(device, DirectX::XMFLOAT4{ 1.f,1.f,1.f,1.f });
+//}
 //
-//-----------------------------------------
-
-void TextureManager::Initialize(ID3D11Device* device)
-{
-	dummy_texture_white = std::make_unique<cumulonimbus::asset::DummyTexture>(device, DirectX::XMFLOAT4{ 1.f,1.f,1.f,1.f });
-}
-
-//-- Creating a texture from a file name --//
-TextureResource* TextureManager::CreateTexture(ID3D11Device* device, const std::string_view tex_filename)
-{
-	const auto find = textures.find(tex_filename.data());
-	if (find != textures.end())
-	{// Already loaded
-		IncrementRefCount(tex_filename);
-		return find->second.first.get();
-	}
-
-	const std::string strFilename = string_helper::toString(tex_filename);
-	const auto tex = textures.insert(std::make_pair(strFilename, std::make_pair(std::make_unique<TextureResource>(device, strFilename.c_str()), 1)));
-	return tex.first->second.first.get();
-}
-
-//-- Increase the reference count --//
-void TextureManager::IncrementRefCount(const std::string_view tex_filename)
-{
-	++textures.find(tex_filename.data())->second.second;
-}
-
-//-- Reduce the reference count --//
-void TextureManager::DecrementRefCount(const std::string_view tex_filename)
-{
-	if (--textures.find(tex_filename.data())->second.second <= 0)
-	{
-		// Release texture as reference count reaches 0
-		RemoveTexture(tex_filename);
-	}
-}
-
-// Release texture
-void TextureManager::RemoveTexture(const std::string_view tex_filename)
-{
-	textures.erase(tex_filename.data());
-}
+////-- Creating a texture from a file name --//
+//TextureResource* TextureManager::CreateTexture(ID3D11Device* device, const std::string_view tex_filename)
+//{
+//	const auto find = textures.find(tex_filename.data());
+//	if (find != textures.end())
+//	{// Already loaded
+//		IncrementRefCount(tex_filename);
+//		return find->second.first.get();
+//	}
+//
+//	const std::string strFilename = string_helper::toString(tex_filename);
+//	const auto tex = textures.insert(std::make_pair(strFilename, std::make_pair(std::make_unique<TextureResource>(device, strFilename.c_str()), 1)));
+//	return tex.first->second.first.get();
+//}
+//
+////-- Increase the reference count --//
+//void TextureManager::IncrementRefCount(const std::string_view tex_filename)
+//{
+//	++textures.find(tex_filename.data())->second.second;
+//}
+//
+////-- Reduce the reference count --//
+//void TextureManager::DecrementRefCount(const std::string_view tex_filename)
+//{
+//	if (--textures.find(tex_filename.data())->second.second <= 0)
+//	{
+//		// Release texture as reference count reaches 0
+//		RemoveTexture(tex_filename);
+//	}
+//}
+//
+//// Release texture
+//void TextureManager::RemoveTexture(const std::string_view tex_filename)
+//{
+//	textures.erase(tex_filename.data());
+//}

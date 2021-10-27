@@ -12,8 +12,6 @@
 #include "pixel_shader.h"
 #include "graphics_mapping.h"
 
-class Scene;
-
 namespace shader
 {
 	HRESULT CreateVertexShaderFromCSO(ID3D11Device* device, const char* cso_name, ID3D11VertexShader** vertex_shader, ID3D11InputLayout** inputLayout, D3D11_INPUT_ELEMENT_DESC* inputElementDesc, UINT numElements);

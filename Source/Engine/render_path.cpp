@@ -1,6 +1,5 @@
 #include "render_path.h"
 
-#include "cum_imgui_helper.h"
 #include "debug_collision.h"
 #include "gbuffer.h"
 #include "gaussian_blur.h"
@@ -56,6 +55,142 @@ namespace cumulonimbus::renderer
 	}
 
 	void RenderPath::RenderScene(
+		ID3D11DeviceContext* immediate_context,
+		std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& scenes,
+		const camera::Camera& camera)
+	{
+		RenderBegin(immediate_context);
+		camera.ClearFrameBuffer();
+
+		for (auto& [scene_id, scene] : scenes)
+		{// シーン分のShadowMap作成
+			if(ecs::Registry& registry = *scene->GetRegistry();
+			   registry.GetArray<component::ModelComponent>().GetComponents().size() > 0)
+			{// ShadowMap作成
+				RenderShadow_Begin(immediate_context);
+				RenderShadow(immediate_context, &registry, &camera, scene->GetLight());
+				RenderShadow_End(immediate_context);
+			}
+		}
+
+		// Todo : SkyBoxにそもそもLightのパラメータが不要かもしれない
+		//        不要の場合for文を省く事ができる
+		for (auto& [scene_id, scene] : scenes)
+		{
+			// SkyBoxの描画
+			RenderSkyBox_Begin(immediate_context, &camera);
+			RenderSkyBox(immediate_context, &camera, scene->GetLight());
+			RenderSkyBox_End(immediate_context, &camera);
+			return;
+		}
+
+		for(auto& [scene_id,scene] : scenes)
+		{
+			if (ecs::Registry& registry = *scene->GetRegistry();
+				registry.GetArray<component::ModelComponent>().GetComponents().size() > 0)
+			{
+				// GBufferへの描画処理
+				Render3DToGBuffer_Begin(immediate_context);
+				Render3DToGBuffer(immediate_context, &registry, &camera, scene->GetLight());
+				Render3DToGBuffer_End(immediate_context, &camera);
+
+				// 当たり判定の描画
+				RenderCollision_Begin(immediate_context, &camera);
+				RenderCollision(immediate_context, &registry);
+				RenderCollision_End(immediate_context, &camera);
+			}
+		}
+
+		for (auto& [scene_id, scene] : scenes)
+		{
+			if (ecs::Registry& registry = *scene->GetRegistry();
+				registry.GetArray<component::ModelComponent>().GetComponents().size() > 0)
+			{// 2Dスプライトの描画
+				Render2D(immediate_context, &registry, &camera, true);
+			}
+		}
+
+		RenderEnd(immediate_context);
+	}
+
+	void RenderPath::RenderGame(
+		ID3D11DeviceContext* immediate_context,
+		std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& scenes)
+	{
+		RenderBegin(immediate_context);
+
+		for(auto& [scene_id,scene] : scenes)
+		{
+			ecs::Registry& registry = *scene->GetRegistry();
+			for(auto& camera_comp : registry.GetArray<component::CameraComponent>().GetComponents())
+			{
+				if(!camera_comp.GetIsActive())
+					continue;
+				camera_comp.GetCamera()->ClearFrameBuffer();
+
+				if(registry.GetArray<component::ModelComponent>().GetComponents().size() > 0)
+				{// ShadowMap作成
+					RenderShadow_Begin(immediate_context);
+					RenderShadow(immediate_context, &registry, camera_comp.GetCamera(), scene->GetLight());
+					RenderShadow_End(immediate_context);
+				}
+			}
+		}
+
+		for (auto& [scene_id, scene] : scenes)
+		{
+			for (ecs::Registry& registry = *scene->GetRegistry();
+				 auto& camera_comp : registry.GetArray<component::CameraComponent>().GetComponents())
+			{
+				// SkyBoxの描画
+				RenderSkyBox_Begin(immediate_context, camera_comp.GetCamera());
+				RenderSkyBox(immediate_context, camera_comp.GetCamera(), scene->GetLight());
+				RenderSkyBox_End(immediate_context, camera_comp.GetCamera());
+			}
+		}
+
+		for (auto& [scene_id, scene] : scenes)
+		{
+			for (ecs::Registry& registry = *scene->GetRegistry();
+				auto & camera_comp : registry.GetArray<component::CameraComponent>().GetComponents())
+			{
+				if (!camera_comp.GetIsActive())
+					continue;
+
+				if (registry.GetArray<component::ModelComponent>().GetComponents().size() > 0)
+				{
+					// GBufferへの描画処理
+					Render3DToGBuffer_Begin(immediate_context);
+					Render3DToGBuffer(immediate_context, &registry, camera_comp.GetCamera(), scene->GetLight());
+					Render3DToGBuffer_End(immediate_context, camera_comp.GetCamera());
+
+					// 当たり判定の描画
+					RenderCollision_Begin(immediate_context, camera_comp.GetCamera());
+					RenderCollision(immediate_context, &registry);
+					RenderCollision_End(immediate_context, camera_comp.GetCamera());
+				}
+			}
+		}
+
+		for (auto& [scene_id, scene] : scenes)
+		{
+			for (ecs::Registry& registry = *scene->GetRegistry();
+				auto & camera_comp : registry.GetArray<component::CameraComponent>().GetComponents())
+			{
+				if (!camera_comp.GetIsActive())
+					continue;
+
+				// 2Dスプライトの描画
+				Render2D(immediate_context, &registry, camera_comp.GetCamera(), false);
+			}
+		}
+
+		RenderEnd(immediate_context);
+	}
+
+
+
+	void RenderPath::RenderScene(
 		ID3D11DeviceContext* immediate_context,ecs::Registry* registry,
 		const camera::Camera* camera, const Light* light)
 	{
@@ -72,7 +207,7 @@ namespace cumulonimbus::renderer
 
 		// SkyBoxの描画
 		RenderSkyBox_Begin(immediate_context, camera);
-		RenderSkyBox(immediate_context, registry, camera, light);
+		RenderSkyBox(immediate_context, camera, light);
 		RenderSkyBox_End(immediate_context, camera);
 
 		if (registry->GetArray<component::ModelComponent>().GetComponents().size() > 0)
@@ -118,7 +253,7 @@ namespace cumulonimbus::renderer
 
 			// SkyBoxの描画
 			RenderSkyBox_Begin(immediate_context, camera_comp.GetCamera());
-			RenderSkyBox(immediate_context, registry, camera_comp.GetCamera(), light);
+			RenderSkyBox(immediate_context, camera_comp.GetCamera(), light);
 			RenderSkyBox_End(immediate_context, camera_comp.GetCamera());
 
 			if (registry->GetArray<component::ModelComponent>().GetComponents().size() > 0)
@@ -219,7 +354,6 @@ namespace cumulonimbus::renderer
 
 	void RenderPath::RenderSkyBox(
 		ID3D11DeviceContext* immediate_context,
-		ecs::Registry* registry,
 		const camera::Camera* camera,
 		const Light* light)
 	{
@@ -354,7 +488,7 @@ namespace cumulonimbus::renderer
 		// ライトパラメータをコンスタントバッファにバインド
 		light->BindCBuffer();
 
-		RenderSkyBox(immediate_context, registry, camera, light);
+		RenderSkyBox(immediate_context, camera, light);
 
 		// Skyマップをpixel shaderのshader resource viewにバインド
 		locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, sky_box_srv.GetAddressOf(), TexSlot_SkyMap);

@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <unordered_map>
 
 #include <d3d11.h>
 #include <DirectXMath.h>
@@ -62,6 +63,14 @@ namespace cumulonimbus::renderer
 	{
 	public:
 		explicit RenderPath(ID3D11Device* device);
+
+		void RenderScene(
+			ID3D11DeviceContext* immediate_context,
+			std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& scenes,
+			const camera::Camera& camera);
+		void RenderGame(
+			ID3D11DeviceContext* immediate_context,
+			std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& scenes);
 
 		/**
 		 * @brief : Scene View‚Ì•`‰æ
@@ -140,7 +149,6 @@ namespace cumulonimbus::renderer
 				const camera::Camera*	camera);
 		void RenderSkyBox(
 				ID3D11DeviceContext*  immediate_context,
-				ecs::Registry*		  registry,
 				const camera::Camera* camera,
 				const Light*		 light);
 		void RenderSkyBox_End(

@@ -28,7 +28,7 @@ namespace cumulonimbus::component
 	//
 
 
-	// Todo : 消す
+	// Todo : 現Spriteの描画が完了次第消す
 	//-- 旧コンポーネント --//
 	class OldSpriteComponent : public ComponentBase
 	{

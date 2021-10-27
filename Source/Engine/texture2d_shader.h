@@ -4,7 +4,7 @@
 
 namespace shader
 {
-	// Todo : Á‚·
+	// Todo : •`‰æˆ—‚ªŒÅ‚Ü‚èŸ‘æÁ‚·
 	class Texture2DShader final :public Shader<Empty>
 	{
 	private:

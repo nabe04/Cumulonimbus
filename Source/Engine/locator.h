@@ -27,6 +27,15 @@ namespace cumulonimbus::locator
 			dx11_configurator		 = nullptr;
 			texture_resource_manager = nullptr;
 		}
+		static void UnInitialize()
+		{
+			input.reset();
+			window.reset();
+			system.reset();
+			resource_manager.reset();
+			dx11_configurator.reset();
+			texture_resource_manager.reset();
+		}
 		~Locator() = default;
 
 		static Window*			GetWindow()				{ return window.get(); }

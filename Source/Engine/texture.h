@@ -162,35 +162,35 @@ private:
 };
 
 
-class TextureManager final
-{
-private:
-	std::map<std::string, std::pair<std::unique_ptr<TextureResource>, int>> textures = {};
-	std::unique_ptr<cumulonimbus::asset::DummyTexture> dummy_texture_white = {};
-
-private:
-	TextureManager()
-	{
-		//dummy_texture_white = std::make_unique<DummyTexture>(std::string{}, nullptr);
-	}
-
-	void RemoveTexture(const std::string_view tex_filename);
-
-public:
-	~TextureManager() = default;
-
-	// Singleton used
-	static TextureManager* GetInstance()
-	{
-		static TextureManager instance{};
-		return &instance;
-	}
-
-	void Initialize(ID3D11Device* device);
-
-	TextureResource* CreateTexture(ID3D11Device* device,const std::string_view tex_filename);
-
-	// Reference count
-	void IncrementRefCount(const std::string_view tex_filename);
-	void DecrementRefCount(const std::string_view tex_filename);
-};
+//class TextureManager final
+//{
+//private:
+//	std::map<std::string, std::pair<std::unique_ptr<TextureResource>, int>> textures = {};
+//	std::unique_ptr<cumulonimbus::asset::DummyTexture> dummy_texture_white = {};
+//
+//private:
+//	TextureManager()
+//	{
+//		//dummy_texture_white = std::make_unique<DummyTexture>(std::string{}, nullptr);
+//	}
+//
+//	void RemoveTexture(const std::string_view tex_filename);
+//
+//public:
+//	~TextureManager() = default;
+//
+//	// Singleton used
+//	static TextureManager* GetInstance()
+//	{
+//		static TextureManager instance{};
+//		return &instance;
+//	}
+//
+//	void Initialize(ID3D11Device* device);
+//
+//	TextureResource* CreateTexture(ID3D11Device* device,const std::string_view tex_filename);
+//
+//	// Reference count
+//	void IncrementRefCount(const std::string_view tex_filename);
+//	void DecrementRefCount(const std::string_view tex_filename);
+//};

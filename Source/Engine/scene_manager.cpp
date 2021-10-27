@@ -3,6 +3,7 @@
 #include "loader.h"
 #include "editor_manager.h"
 #include "gaussian_blur.h"
+#include "render_path.h"
 #include "sky_box.h"
 
 namespace cumulonimbus::scene
@@ -22,7 +23,7 @@ namespace cumulonimbus::scene
 		locator::Locator::Provide<asset::AssetManager>(asset_manager);
 
 		SetWindowLongPtr(window->GetHWND(), GWLP_USERDATA, reinterpret_cast<LONG_PTR>(&framework));
-
+		CreateNewScene();
 	}
 
 	void SceneManager::Run()
@@ -32,6 +33,18 @@ namespace cumulonimbus::scene
 		Execute();
 
 		UnInitialize();
+	}
+
+	void SceneManager::CreateNewScene()
+	{
+		//-- 現在開かれているシーンの削除 --//
+		if(active_scenes.size() > 0)
+		{
+			active_scenes.clear();
+		}
+
+		//-- 新規シーンの作成 --//
+		active_scenes.emplace(utility::GenerateUUID(), std::make_unique<scene::Scene>());
 	}
 
 	void SceneManager::Execute()
@@ -57,16 +70,47 @@ namespace cumulonimbus::scene
 
 	void SceneManager::UnInitialize()
 	{
+		active_scenes.clear();
+		//framework->Un
 	}
 
-	void SceneManager::Update(float dt)
+	void SceneManager::Update(const float dt)
 	{// シーン毎の更新処理
+		editor_manager->Update(dt);
+		// ボタンが押された時の保存
+		//if (editor_manager->GetToolBar().GetToolBarButton().GetButtonState(editor::ToolBar::Button::Play) ==
+		//	ButtonState::Press)
+		//{
+		//	SaveScene(file_path_helper::GetSaveSceneViewFilePathAndName(), "test");
+		//}
+		//if (editor_manager->GetToolBar().GetToolBarButton().GetButtonState(editor::ToolBar::Button::Play) ==
+		//	ButtonState::Release)
+		//{
+		//	LoadScene(file_path_helper::GetSaveSceneViewFilePathAndName(), "test" + file_path_helper::GetSceneExtension());
+		//}
 
+		for(auto& [scene_id, scene] : active_scenes)
+		{
+			scene->CommonUpdate(dt);
+			scene->SceneUpdate(dt);
+			if(editor_manager->GetToolBar().IsPlaybackState(editor::ToolBar::Button::Play))
+			{
+				scene->GameUpdate(dt);
+			}
+		}
+
+		system->Update(dt);
 	}
 
 	void SceneManager::Render()
 	{// シーン毎の描画処理
-
+		auto* immediate_context = framework->GetDeviceContext();
+		render_path->RenderScene(immediate_context, active_scenes, editor_manager->GetSceneView().GetSceneViewCamera().GetCamera());
+		render_path->RenderGame(immediate_context, active_scenes);
+#ifdef _DEBUG
+		// Todo : 複数シーン読み込み対応後現在選択されているシーンがわかれば第1,2引数を変更する
+		editor_manager->RenderEditor(active_scenes.begin()->second.get(), active_scenes.begin()->second->GetRegistry());
+#endif // _DEBUG
 	}
 
 	void SceneManager::InitialCreatePrefab() const

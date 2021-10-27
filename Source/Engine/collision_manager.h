@@ -69,9 +69,9 @@ namespace cumulonimbus::collision
 
 		[[nodiscard]]
 		bool IntersectRayVsDragModel(ecs::Registry* registry,
-									const DirectX::SimpleMath::Vector3& ray_start,
-									const DirectX::SimpleMath::Vector3& ray_end,
-									DirectX::SimpleMath::Vector3* hit_pos);
+									 const DirectX::SimpleMath::Vector3& ray_start,
+									 const DirectX::SimpleMath::Vector3& ray_end,
+									 DirectX::SimpleMath::Vector3* hit_pos);
 
 		/**
 		 * @brief : レイキャスト対象のモデルが存在するか

@@ -11,6 +11,7 @@
 #include "imgui_manager.h"
 #include "input_manager.h"
 #include "texture.h"
+#include "render_path.h"
 #include "gaussian_blur.h"
 
 
@@ -26,18 +27,23 @@ Framework::Framework(const std::shared_ptr<Window>& window)
 	input_system->Initialize(window->GetHWND());
 	cumulonimbus::locator::Locator::Provide<InputSystem>(input_system);
 
-	// TextureManager Initialization
-	TextureManager::GetInstance()->Initialize(device.Get());
-
 #ifdef _DEBUG
 	// Initialization of ImGui
 	imgui::Initialize(window->GetHWND(), device.Get(), immediate_context.Get());
-#endif
+#endif // _DEBUG
 
 	//-- Setting of frame rate --//
 	hr_timer.setFrameRate(frame_fate);
 	hr_timer.start();
 }
+
+Framework::~Framework()
+{
+#ifdef _DEBUG
+	imgui::Release();
+#endif // _DEBUG
+}
+
 
 
 bool Framework::Initialize()
@@ -54,10 +60,10 @@ bool Framework::Initialize()
 //	// TextureManager Initialization
 //	TextureManager::GetInstance()->Initialize(device.Get());
 //
-//#ifdef _DEBUG
+#ifdef _DEBUG
 //	// Initialization of ImGui
-//	imgui::Initialize(window->GetHWND(), device.Get(), immediate_context.Get());
-//#endif
+	imgui::Initialize(window->GetHWND(), device.Get(), immediate_context.Get());
+#endif
 //
 //	//-- Setting of frame rate --//
 //	hr_timer.setFrameRate(frame_fate);
@@ -68,7 +74,6 @@ bool Framework::Initialize()
 
 bool Framework::UnInitialize()
 {
-	//pad_input::Reset();
 #ifdef _DEBUG
 	imgui::Release();
 #endif
@@ -94,7 +99,8 @@ int Framework::Run()
 
 void Framework::DrawBegin()
 {
-	cumulonimbus::locator::Locator::GetDx11Device()->Clear();
+	//cumulonimbus::locator::Locator::GetDx11Device()->Clear();
+	dx11_configurator->Clear();
 }
 
 void Framework::DrawEnd()
@@ -104,7 +110,8 @@ void Framework::DrawEnd()
 #endif
 
 	// Screen flip
-	cumulonimbus::locator::Locator::GetDx11Device()->Flip(1);
+	//cumulonimbus::locator::Locator::GetDx11Device()->Flip(1);
+	dx11_configurator->Flip(1);
 }
 
 LRESULT Framework::HandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
@@ -179,16 +186,12 @@ bool Framework::ProcessLoop()
 			return false;
 		}
 	}
-
+//
 #ifdef _DEBUG
 	imgui::Update();
 #endif
 	//InputSystem::Instance()->UpdateStates();
 	cumulonimbus::locator::Locator::GetInput()->UpdateStates();
-
-	//key_input::KeyUpdate();
-	//mouse_input::MouseUpdate();
-	//pad_input::Update();
 
 	if (cumulonimbus::locator::Locator::GetInput()->Keyboard().GetState(Keycode::Esc) == ButtonState::Press)
 	{

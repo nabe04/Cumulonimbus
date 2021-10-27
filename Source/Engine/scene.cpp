@@ -44,6 +44,13 @@ namespace cumulonimbus::scene
 
 	cumulonimbus::scene::Scene::Scene()
 	{
+		light = std::make_unique<Light>(locator::Locator::GetDx11Device()->device.Get());
+		light->SetLightDir(XMFLOAT3{ .0f,.0f,1.f, });
+
+		registry = std::make_unique<ecs::Registry>();
+		registry->SetScene(this);
+
+		CreateScene();
 	}
 
 	void Scene::Execute(Framework* framework)
@@ -67,6 +74,36 @@ namespace cumulonimbus::scene
 		UnInitialize();
 	}
 
+	void Scene::CommonUpdate(const float dt)
+	{// 共通の更新処理
+		registry->PreCommonUpdate(dt);
+		registry->CommonUpdate(dt);
+		registry->PostCommonUpdate(dt);
+
+		// Todo : Light Componentが出来次第消す
+		// light update
+		for (const auto& camera_comp : registry->GetArray<cumulonimbus::component::CameraComponent>().GetComponents())
+		{
+			if (camera_comp.GetIsMainCamera())
+				light->Update(&camera_comp);
+		}
+	}
+
+	void Scene::SceneUpdate(const float dt)
+	{// Scene Viewの更新処理
+		registry->PreSceneUpdate(dt);
+		registry->SceneUpdate(dt);
+		registry->PostSceneUpdate(dt);
+	}
+
+	void Scene::GameUpdate(const float dt)
+	{// Game Viewの更新処理
+		registry->PreGameUpdate(dt);
+		registry->GameUpdate(dt);
+		registry->PostGameUpdate(dt);
+	}
+
+
 	void Scene::CreateScene() const
 	{
 		// 現在存在する全てのエンティティを削除
@@ -81,7 +118,8 @@ namespace cumulonimbus::scene
 		// ライト
 
 		// シーン名が決まって無いので"NoTitled"をセットする
-		system->SetCurrentScenePath(filename_helper::GetNoTitled());
+		locator::Locator::GetSystem()->SetCurrentScenePath(filename_helper::GetNoTitled());
+		//system->SetCurrentScenePath(filename_helper::GetNoTitled());
 	}
 
 	void Scene::SaveScene(const std::string& file_dir, const std::string& scene_name)

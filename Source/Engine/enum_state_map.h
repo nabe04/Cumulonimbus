@@ -45,7 +45,7 @@ public:
 
 	[[nodiscard]] unsigned int NumState() const { return state_map.size(); }
 	[[nodiscard]] const std::map<std::string, T>& GetStateMap() const { return state_map; }
-	[[nodiscard]] const std::vector<std::string>  GetStateNames() const { return state_names; }
+	[[nodiscard]] const std::vector<std::string>&  GetStateNames() const { return state_names; }
 
 	[[nodiscard]] const T& GetCurrentState() const { return current_state; }
 	[[nodiscard]] std::string GetCurrentStateName() { return nameof::nameof_enum(current_state).data(); }

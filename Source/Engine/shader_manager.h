@@ -28,11 +28,6 @@
 #include "standard_sprite.h"
 #include "texture2d_shader.h"
 
-class Scene;
-//namespace cumulonimbus::shader_system
-//{
-//	class
-//}
 
 namespace shader
 {

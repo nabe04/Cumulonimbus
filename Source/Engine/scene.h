@@ -9,7 +9,7 @@
 #include "framework.h"
 #include "input_manager.h"
 #include "light.h"
-#include "render_path.h"
+//#include "render_path.h"
 #include "system.h"
 
 namespace cumulonimbus
@@ -44,6 +44,10 @@ namespace cumulonimbus::scene
 
 		void Execute(Framework* framework);
 
+		void CommonUpdate(float dt);
+		void SceneUpdate(float dt);
+		void GameUpdate(float dt);
+
 		/**
 		 * @brief : êVãKÉVÅ[ÉìÇÃçÏê¨
 		 */
@@ -67,7 +71,11 @@ namespace cumulonimbus::scene
 		editor::EditorManager* GetEditorManager() const { return editor_manager.get(); }
 		[[nodiscard]]
 		collision::CollisionManager* GetCollisionManager() const { return collision_manager.get(); }
+		[[nodiscard]]
+		Light* GetLight() const { return light.get(); }
 
+		[[nodiscard]]
+		ecs::Registry* GetRegistry() const { return registry.get(); }
 	private:
 		Framework*							  framework{};
 		std::unique_ptr<Light>				  light{}; // Todo : å„Ç…ComponentâªÇ∑ÇÈó\íË
