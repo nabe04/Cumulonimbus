@@ -14,6 +14,9 @@ namespace cumulonimbus::editor
 	class Hierarchy final
 	{
 	public:
+		void Render(
+			mapping::rename_type::UUID& selected_scene_id,
+			const std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& active_scenes);
 		void Render(ecs::Registry* registry);
 		[[nodiscard]]
 		mapping::rename_type::Entity GetSelectedEntity() const { return selected_entity; }
@@ -46,11 +49,15 @@ namespace cumulonimbus::editor
 		/**
 		 * @brief : エンティティの親子階層の表示
 		 * @param registry :
+		 * @param selected_scene_id : 選択されているシーン変更時格納用変数
+		 * @param current_scene_id : 現在開かれているシーン(シーン変更時にこの値が適用される)
 		 * @param ent : 現在選択されているエンティティ
 		 * @param entity_name : 現在選択されているエンティティ名
 		 */
 		void EntityTree(
 			ecs::Registry* registry,
+			mapping::rename_type::UUID& selected_scene_id,
+			const mapping::rename_type::UUID& current_scene_id,
 			const mapping::rename_type::Entity& ent,
 			const std::string& entity_name);
 

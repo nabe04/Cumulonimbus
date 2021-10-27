@@ -24,6 +24,13 @@ namespace cumulonimbus::scene
 
 		SetWindowLongPtr(window->GetHWND(), GWLP_USERDATA, reinterpret_cast<LONG_PTR>(&framework));
 		CreateNewScene();
+
+		//-- 新規シーンの作成 --//
+		active_scenes.emplace(utility::GenerateUUID(), std::make_unique<scene::Scene>());
+		active_scenes.emplace(utility::GenerateUUID(), std::make_unique<scene::Scene>());
+
+		// エディター側で操作するシーンのセット(最初に追加されたシーンをセットする)
+		editor_manager->SetSelectedSceneId(active_scenes.begin()->first);
 	}
 
 	void SceneManager::Run()
@@ -109,7 +116,10 @@ namespace cumulonimbus::scene
 		render_path->RenderGame(immediate_context, active_scenes);
 #ifdef _DEBUG
 		// Todo : 複数シーン読み込み対応後現在選択されているシーンがわかれば第1,2引数を変更する
-		editor_manager->RenderEditor(active_scenes.begin()->second.get(), active_scenes.begin()->second->GetRegistry());
+		//editor_manager->RenderEditor(active_scenes.begin()->second.get(), active_scenes.begin()->second->GetRegistry());
+
+		// 複数シーン対応版
+		editor_manager->RenderEditor(active_scenes);
 #endif // _DEBUG
 	}
 

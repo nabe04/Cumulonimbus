@@ -81,7 +81,7 @@ namespace cumulonimbus::renderer
 			RenderSkyBox_Begin(immediate_context, &camera);
 			RenderSkyBox(immediate_context, &camera, scene->GetLight());
 			RenderSkyBox_End(immediate_context, &camera);
-			return;
+			break;
 		}
 
 		for(auto& [scene_id,scene] : scenes)
@@ -146,6 +146,7 @@ namespace cumulonimbus::renderer
 				RenderSkyBox_Begin(immediate_context, camera_comp.GetCamera());
 				RenderSkyBox(immediate_context, camera_comp.GetCamera(), scene->GetLight());
 				RenderSkyBox_End(immediate_context, camera_comp.GetCamera());
+				break;
 			}
 		}
 

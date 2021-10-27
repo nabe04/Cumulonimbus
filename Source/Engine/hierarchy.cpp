@@ -1,9 +1,13 @@
 #include "hierarchy.h"
 
+#include <ranges>
+
 #include "ecs.h"
 #include "locator.h"
 #include "prefab_loader.h"
 #include "hierarchy_component.h"
+#include "scene.h"
+#include "filename_helper.h"
 
 namespace
 {
@@ -13,32 +17,56 @@ namespace
 
 namespace cumulonimbus::editor
 {
-	void Hierarchy::Render(ecs::Registry* const registry)
+	void Hierarchy::Render(
+		mapping::rename_type::UUID& selected_scene_id,
+		const std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& active_scenes)
 	{
+		scene::Scene& selected_scene = *active_scenes.at(selected_scene_id).get();
+
 		if (ImGui::Begin(ICON_FA_ALIGN_RIGHT" Hierarchy"))
 		{
+			//-- エンティティ追加処理 --//
 			if (ImGui::Button(ICON_FA_PLUS, { 30,30 }))
 				ImGui::OpenPopup("my_file_popup");
 			if (ImGui::BeginPopup("my_file_popup"))
 			{
-				if (ImGui::MenuItem("Create Empty"))
+				if (ecs::Registry& registry = *selected_scene.GetRegistry();
+					ImGui::MenuItem("Create Empty"))
 				{
-					registry->CreateEntity();
+					// 現在選択されているシーンへのエンティティ追加
+					registry.CreateEntity();
 				}
 				ImGui::EndPopup();
 			}
+		}
 
-			if (const std::filesystem::path current_scene_path = locator::Locator::GetSystem()->GetCurrentScenePath();
-				ImGui::TreeNodeEx(std::string{ ICON_FA_CLOUD_SUN + current_scene_path.filename().replace_extension().string() }.c_str(),
-				ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen))
+		//-- 開かれているシーン分のエンティティ表示 & 編集 --//
+		for (const auto& [scene_id, scene] : active_scenes)
+		{
+			auto& registry = *scene->GetRegistry();
+			std::string scene_name = scene->GetSceneName();
+			if (scene->GetSceneName().empty())
 			{
+				scene_name = filename_helper::GetNoTitled();
+			}
+
+			ImGui::PushID(scene_id.c_str());
+			if (const std::filesystem::path current_scene_path = locator::Locator::GetSystem()->GetCurrentScenePath();
+				ImGui::TreeNodeEx(std::string{ ICON_FA_CLOUD_SUN + scene_name }.c_str(),
+					ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen))
+			{
+				if(ImGui::IsItemClicked(ImGuiMouseButton_Left))
+				{// 選択されているシーンの変更
+					selected_scene_id = scene_id;
+				}
+
 				//-- シーン階層へのドラッグ & ドロップ処理 --//
 				if (ImGui::BeginDragDropTarget())
 				{// シーン階層に対してのエンティティドロップ処理
 					if (ImGui::AcceptDragDropPayload(dragged_id.c_str()))
 					{
 						// 一番上の親に設定
-						registry->GetComponent<component::HierarchyComponent>(selected_entity).SetParentEntity(registry, {});
+						registry.GetComponent<component::HierarchyComponent>(selected_entity).SetParentEntity(&registry, {});
 					}
 
 					ImGui::EndDragDropTarget();
@@ -46,32 +74,95 @@ namespace cumulonimbus::editor
 
 				{//-- 現在選択されているエンティティの小階層エンティティを取得 --//
 					sub_hierarchical_entities.clear();
-					for (const auto& hierarchy_comp : registry->GetArray<component::HierarchyComponent>().GetComponents())
+					for (const auto& hierarchy_comp : registry.GetArray<component::HierarchyComponent>().GetComponents())
 					{
-						if (HasParentEntity(registry, selected_entity, hierarchy_comp.GetEntity()))
+						if (HasParentEntity(&registry, selected_entity, hierarchy_comp.GetEntity()))
 						{
 							sub_hierarchical_entities.emplace_back(hierarchy_comp.GetEntity());
 						}
 					}
 				}
 
-				for (auto& [key, value] : registry->GetEntities())
+				for (const auto& key : registry.GetEntities() | std::views::keys)
 				{
 					// エンティティの階層表示
 					// 初めは一番上の親階層から始める
-					if (!registry->GetComponent<component::HierarchyComponent>(key).GetParentEntity().empty())
+					if (!registry.GetComponent<component::HierarchyComponent>(key).GetParentEntity().empty())
 						continue;;
 
 					//ImGui::Separator();
 					is_dragged_entity = false;
-					EntityTree(registry, key, registry->GetName(key));
+					EntityTree(&registry, selected_scene_id, scene_id, key, registry.GetName(key));
 				}
-				DeleteEntity(registry);
+				DeleteEntity(&registry);
 				ImGui::TreePop();
 			}
-
+			ImGui::PopID();
 		}
+
 		ImGui::End();
+	}
+
+
+	void Hierarchy::Render(ecs::Registry* const registry)
+	{
+		//if (ImGui::Begin(ICON_FA_ALIGN_RIGHT" Hierarchy"))
+		//{
+		//	if (ImGui::Button(ICON_FA_PLUS, { 30,30 }))
+		//		ImGui::OpenPopup("my_file_popup");
+		//	if (ImGui::BeginPopup("my_file_popup"))
+		//	{
+		//		if (ImGui::MenuItem("Create Empty"))
+		//		{
+		//			registry->CreateEntity();
+		//		}
+		//		ImGui::EndPopup();
+		//	}
+
+		//	if (const std::filesystem::path current_scene_path = locator::Locator::GetSystem()->GetCurrentScenePath();
+		//		ImGui::TreeNodeEx(std::string{ ICON_FA_CLOUD_SUN + current_scene_path.filename().replace_extension().string() }.c_str(),
+		//		ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen))
+		//	{
+		//		//-- シーン階層へのドラッグ & ドロップ処理 --//
+		//		if (ImGui::BeginDragDropTarget())
+		//		{// シーン階層に対してのエンティティドロップ処理
+		//			if (ImGui::AcceptDragDropPayload(dragged_id.c_str()))
+		//			{
+		//				// 一番上の親に設定
+		//				registry->GetComponent<component::HierarchyComponent>(selected_entity).SetParentEntity(registry, {});
+		//			}
+
+		//			ImGui::EndDragDropTarget();
+		//		}
+
+		//		{//-- 現在選択されているエンティティの小階層エンティティを取得 --//
+		//			sub_hierarchical_entities.clear();
+		//			for (const auto& hierarchy_comp : registry->GetArray<component::HierarchyComponent>().GetComponents())
+		//			{
+		//				if (HasParentEntity(registry, selected_entity, hierarchy_comp.GetEntity()))
+		//				{
+		//					sub_hierarchical_entities.emplace_back(hierarchy_comp.GetEntity());
+		//				}
+		//			}
+		//		}
+
+		//		for (auto& [key, value] : registry->GetEntities())
+		//		{
+		//			// エンティティの階層表示
+		//			// 初めは一番上の親階層から始める
+		//			if (!registry->GetComponent<component::HierarchyComponent>(key).GetParentEntity().empty())
+		//				continue;;
+
+		//			//ImGui::Separator();
+		//			is_dragged_entity = false;
+		//			EntityTree(registry, key, registry->GetName(key));
+		//		}
+		//		DeleteEntity(registry);
+		//		ImGui::TreePop();
+		//	}
+
+		//}
+		//ImGui::End();
 
 		if(ImGui::Begin("Hierarchy Data"))
 		{
@@ -182,6 +273,8 @@ namespace cumulonimbus::editor
 
 	void Hierarchy::EntityTree(
 		ecs::Registry* const registry,
+		mapping::rename_type::UUID& selected_scene_id,
+		const mapping::rename_type::UUID& current_scene_id,
 		const mapping::rename_type::Entity& ent,
 		const std::string& entity_name)
 	{
@@ -214,6 +307,7 @@ namespace cumulonimbus::editor
 			if (!is_selectable && is_dragged_entity)
 				ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImGuiCol_TextDisabled));
 		}
+		ImGui::PushID(ent.c_str());
 		// ノード作成
 		const bool is_opened = ImGui::TreeNodeEx(std::string{ ICON_FA_CUBE + entity_name }.c_str(),
 												 node_flg);
@@ -226,6 +320,7 @@ namespace cumulonimbus::editor
 			if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 			{// 左クリック時
 				selected_entity = ent;
+				selected_scene_id = current_scene_id;
 			}
 			if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
 			{// 右クリック時
@@ -265,10 +360,11 @@ namespace cumulonimbus::editor
 					continue;
 
 				is_last = false;
-				EntityTree(registry, hierarchy_comp.GetEntity(), registry->GetName(hierarchy_comp.GetEntity()));
+				EntityTree(registry, selected_scene_id, current_scene_id , hierarchy_comp.GetEntity(), registry->GetName(hierarchy_comp.GetEntity()));
 			}
 			ImGui::TreePop();
 		}
+		ImGui::PopID();
 	}
 
 	bool Hierarchy::HasParentEntity(

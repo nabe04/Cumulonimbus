@@ -159,7 +159,7 @@ namespace cumulonimbus::scene
 #ifdef _DEBUG
 		if (!this->editor_manager)
 		{
-			editor_manager = std::make_unique<editor::EditorManager>();
+			//editor_manager = std::make_unique<editor::EditorManager>();
 		}
 #endif // _DEBUG
 

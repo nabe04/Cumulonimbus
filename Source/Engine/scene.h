@@ -75,11 +75,15 @@ namespace cumulonimbus::scene
 		Light* GetLight() const { return light.get(); }
 
 		[[nodiscard]]
+		const std::string& GetSceneName() const { return scene_name; }
+		[[nodiscard]]
 		ecs::Registry* GetRegistry() const { return registry.get(); }
 	private:
+		std::string						scene_name{};
+		std::unique_ptr<ecs::Registry>	registry{};
+
 		Framework*							  framework{};
 		std::unique_ptr<Light>				  light{}; // Todo : Œã‚ÉComponent‰»‚·‚é—\’è
-		std::unique_ptr<ecs::Registry>		  registry{};
 		std::unique_ptr<renderer::RenderPath> render_path{};
 		std::shared_ptr<system::System>		  system{};
 		// Manager's
