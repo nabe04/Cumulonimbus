@@ -12,6 +12,7 @@
 #include "scene_loader.h"
 #include "generic.h"
 #include "filename_helper.h"
+#include "scene_manager.h"
 
 namespace
 {
@@ -21,7 +22,7 @@ namespace
 namespace cumulonimbus::editor
 {
 	void MenuBar::Render(
-		const mapping::rename_type::UUID& selected_scene_id,
+		mapping::rename_type::UUID& selected_scene_id,
 		std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& active_scenes)
 	{
 		// ポップアップ用フラグのリセット
@@ -36,7 +37,6 @@ namespace cumulonimbus::editor
 		//-- メニューバー --//
 		if (ImGui::Begin("Menu Bar", nullptr, window_flags))
 		{
-			ecs::Registry& registry = *active_scenes.at(selected_scene_id)->GetRegistry();
 			if (ImGui::BeginMenuBar())
 			{
 				if (ImGui::BeginMenu("File"))
@@ -62,7 +62,9 @@ namespace cumulonimbus::editor
 				ImGui::EndMenuBar();
 			}
 
-			PopupCreateScene(&registry);
+			scene::SceneManager& scene_manager	= *active_scenes.at(selected_scene_id)->GetSceneManager();
+			ecs::Registry& registry				= *active_scenes.at(selected_scene_id)->GetRegistry();
+			PopupCreateScene(selected_scene_id, registry, scene_manager);
 
 		}
 		ImGui::End();
@@ -71,53 +73,53 @@ namespace cumulonimbus::editor
 			MenuSetting();
 	}
 
-
+	// Todo : 複数シーン対応後削除予定
 	void MenuBar::Render(ecs::Registry* registry)
 	{
-		// ポップアップ用フラグのリセット
-		is_create_new_scene = false;
+		//// ポップアップ用フラグのリセット
+		//is_create_new_scene = false;
 
-		//-- ウィンドウ設定 --//
-		ImGuiWindowFlags window_flags = 0;
-        if (no_titlebar)        window_flags |= ImGuiWindowFlags_NoTitleBar;
-        if (no_move)            window_flags |= ImGuiWindowFlags_NoMove;
-		window_flags |= ImGuiWindowFlags_MenuBar;
+		////-- ウィンドウ設定 --//
+		//ImGuiWindowFlags window_flags = 0;
+  //      if (no_titlebar)        window_flags |= ImGuiWindowFlags_NoTitleBar;
+  //      if (no_move)            window_flags |= ImGuiWindowFlags_NoMove;
+		//window_flags |= ImGuiWindowFlags_MenuBar;
 
-		//-- メニューバー --//
-		if (ImGui::Begin("Menu Bar", nullptr, window_flags))
-		{
-			if (ImGui::BeginMenuBar())
-			{
-				if (ImGui::BeginMenu("File"))
-				{
-					FileMenu(registry);
-					ImGui::EndMenu();
-				}
+		////-- メニューバー --//
+		//if (ImGui::Begin("Menu Bar", nullptr, window_flags))
+		//{
+		//	if (ImGui::BeginMenuBar())
+		//	{
+		//		if (ImGui::BeginMenu("File"))
+		//		{
+		//			FileMenu(registry);
+		//			ImGui::EndMenu();
+		//		}
 
-				if (ImGui::BeginMenu("Window"))
-				{
-					if (ImGui::MenuItem("Menu Setting"))
-						is_menu_open = true;
+		//		if (ImGui::BeginMenu("Window"))
+		//		{
+		//			if (ImGui::MenuItem("Menu Setting"))
+		//				is_menu_open = true;
 
-					ImGui::EndMenu();
-				}
+		//			ImGui::EndMenu();
+		//		}
 
-				if (ImGui::BeginMenu("Help"))
-				{
+		//		if (ImGui::BeginMenu("Help"))
+		//		{
 
-					ImGui::EndMenu();;
-				}
+		//			ImGui::EndMenu();;
+		//		}
 
-				ImGui::EndMenuBar();
-			}
+		//		ImGui::EndMenuBar();
+		//	}
 
-			PopupCreateScene(registry);
+		//	PopupCreateScene(registry);
 
-		}
-		ImGui::End();
+		//}
+		//ImGui::End();
 
-		if (is_menu_open)
-			MenuSetting();
+		//if (is_menu_open)
+		//	MenuSetting();
 	}
 
 	void MenuBar::FileMenu(
@@ -140,8 +142,9 @@ namespace cumulonimbus::editor
 			if (selection.empty())
 				return;
 			const std::filesystem::path path = selection.at(0);
-			const std::string relative_path = utility::ConvertAbsolutePathToRelativePath(path.string());
-			//locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->OpenScene(*registry->GetScene(), relative_path);
+			const std::string relative_path  = utility::ConvertAbsolutePathToRelativePath(path.string());
+			scene::SceneManager& scene_manager = *active_scenes.begin()->second->GetSceneManager();
+			locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->OpenScene(scene_manager, relative_path);
 		}
 		ImGui::Separator();
 		if (ImGui::MenuItem("Save", "Ctrl+S"))
@@ -156,7 +159,7 @@ namespace cumulonimbus::editor
 						continue;
 
 					const std::filesystem::path path = destination;
-					const std::string relative_path = utility::ConvertAbsolutePathToRelativePath(path.string());
+					const std::string relative_path  = utility::ConvertAbsolutePathToRelativePath(path.string());
 					locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->SaveAs(*scene.get(), relative_path);
 				}
 				else
@@ -172,64 +175,64 @@ namespace cumulonimbus::editor
 				return;
 
 			const std::filesystem::path path = destination;
-			const std::string relative_path = utility::ConvertAbsolutePathToRelativePath(path.string());
-			// Todo : SceneManager対応版に変更
-			//locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->SaveAs(*registry->GetScene(), relative_path);
+			const std::string relative_path  = utility::ConvertAbsolutePathToRelativePath(path.string());
+			scene::Scene& save_scene = *active_scenes.at(selected_scene_id).get();
+			// SceneManager対応版に変更
+			locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->SaveAs(save_scene, relative_path);
 		}
 	}
 
-
 	void MenuBar::FileMenu(ecs::Registry* registry)
 	{
-		if(ImGui::MenuItem("New Scene","Ctrl+Shift"))
-		{
-			is_create_new_scene = true;
-		}
+		//if(ImGui::MenuItem("New Scene","Ctrl+Shift"))
+		//{
+		//	is_create_new_scene = true;
+		//}
 
-		if(ImGui::MenuItem("Open Scene","Ctrl+O"))
-		{
-			const auto selection = pfd::open_file(
-				"Open Scene",
-				"",
-				{ "Scene Files","*.scene" },
-				pfd::opt::none).result();
+		//if(ImGui::MenuItem("Open Scene","Ctrl+O"))
+		//{
+		//	const auto selection = pfd::open_file(
+		//		"Open Scene",
+		//		"",
+		//		{ "Scene Files","*.scene" },
+		//		pfd::opt::none).result();
 
-			if (selection.empty())
-				return;
-			const std::filesystem::path path = selection.at(0);
-			const std::string relative_path  = utility::ConvertAbsolutePathToRelativePath(path.string());
-			locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->OpenScene(*registry->GetScene(), relative_path);
-		}
-		ImGui::Separator();
-		if(ImGui::MenuItem("Save","Ctrl+S"))
-		{
-			// シーン名が「NoTitled」(シーンが保存されていない)の場合
-			if(const std::string& current_scene_path = locator::Locator::GetSystem()->GetCurrentScenePath();
-			   current_scene_path == filename_helper::GetNoTitled())
-			{// シーンを名前を付けて保存
-				const auto destination = pfd::save_file("Save", "", {}, pfd::opt::none).result();
-				if (destination.empty())
-					return;
+		//	if (selection.empty())
+		//		return;
+		//	const std::filesystem::path path = selection.at(0);
+		//	const std::string relative_path  = utility::ConvertAbsolutePathToRelativePath(path.string());
+		//	locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->OpenScene(*registry->GetScene(), relative_path);
+		//}
+		//ImGui::Separator();
+		//if(ImGui::MenuItem("Save","Ctrl+S"))
+		//{
+		//	// シーン名が「NoTitled」(シーンが保存されていない)の場合
+		//	if(const std::string& current_scene_path = locator::Locator::GetSystem()->GetCurrentScenePath();
+		//	   current_scene_path == filename_helper::GetNoTitled())
+		//	{// シーンを名前を付けて保存
+		//		const auto destination = pfd::save_file("Save", "", {}, pfd::opt::none).result();
+		//		if (destination.empty())
+		//			return;
 
-				const std::filesystem::path path = destination;
-				const std::string relative_path  = utility::ConvertAbsolutePathToRelativePath(path.string());
-				locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->SaveAs(*registry->GetScene(), relative_path);
-			}
-			else
-			{// 現在のシーンパスで保存
-				locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->Save(*registry->GetScene(), current_scene_path);
-			}
-		}
-		if(ImGui::MenuItem("Save As...","Ctrl+Shift+S"))
-		{
-			const auto destination = pfd::save_file("Save", "", {}, pfd::opt::none).result();
-			if (destination.empty())
-				return;
+		//		const std::filesystem::path path = destination;
+		//		const std::string relative_path  = utility::ConvertAbsolutePathToRelativePath(path.string());
+		//		locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->SaveAs(*registry->GetScene(), relative_path);
+		//	}
+		//	else
+		//	{// 現在のシーンパスで保存
+		//		locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->Save(*registry->GetScene(), current_scene_path);
+		//	}
+		//}
+		//if(ImGui::MenuItem("Save As...","Ctrl+Shift+S"))
+		//{
+		//	const auto destination = pfd::save_file("Save", "", {}, pfd::opt::none).result();
+		//	if (destination.empty())
+		//		return;
 
-			const std::filesystem::path path = destination;
-			const std::string relative_path  = utility::ConvertAbsolutePathToRelativePath(path.string());
-			locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->SaveAs(*registry->GetScene(), relative_path);
-		}
+		//	const std::filesystem::path path = destination;
+		//	const std::string relative_path  = utility::ConvertAbsolutePathToRelativePath(path.string());
+		//	locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->SaveAs(*registry->GetScene(), relative_path);
+		//}
 	}
 
 	void MenuBar::MenuSetting()
@@ -246,7 +249,10 @@ namespace cumulonimbus::editor
 		ImGui::End();
 	}
 
-	void MenuBar::PopupCreateScene(ecs::Registry* registry)
+	void MenuBar::PopupCreateScene(
+		mapping::rename_type::UUID& selected_scene_id,
+		ecs::Registry& registry,
+		scene::SceneManager& scene_manager)
 	{
 		if (is_create_new_scene)
 		{
@@ -278,19 +284,21 @@ namespace cumulonimbus::editor
 
 					const std::filesystem::path path = destination;
 					const std::string relative_path  = utility::ConvertAbsolutePathToRelativePath(path.string());
-					locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->SaveAs(*registry->GetScene(), relative_path);
+					locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->SaveAs(*registry.GetScene(), relative_path);
 				}
 				else
 				{// シーン名が存在している
-					locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->Save(*registry->GetScene(), current_scene_path);
+					locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->Save(*registry.GetScene(), current_scene_path);
 				}
-				locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->CreateScene(*registry->GetScene());
+				locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->CreateScene(scene_manager);
+				selected_scene_id = scene_manager.GetActiveScenes()->begin()->first;
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Don't Save", ImVec2(140, 0)))
 			{
-				locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->CreateScene(*registry->GetScene());
+				locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->CreateScene(scene_manager);
+				selected_scene_id = scene_manager.GetActiveScenes()->begin()->first;
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::SameLine();

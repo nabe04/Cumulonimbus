@@ -6,6 +6,11 @@ namespace cumulonimbus
 	{
 		class Registry;
 	} // ecs
+
+	namespace scene
+	{
+		class SceneManager;
+	} // scene
 } // cumulonimbus
 
 namespace cumulonimbus::editor
@@ -18,11 +23,12 @@ namespace cumulonimbus::editor
 
 		/**
 		 * @brief : GUI描画処理
-		 * @param selected_scene_id : 現在選択されているシーンID
+		 * @param selected_scene_id : 現在選択されているシーンID]
+		 * @param registry : 現在開かれているシーンのレジストリ
 		 * @param active_scenes : 現在開かれていいるシーン(SceneManager::active_scenes)
 		 */
 		void Render(
-			const mapping::rename_type::UUID& selected_scene_id,
+			mapping::rename_type::UUID& selected_scene_id,
 			std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& active_scenes);
 		void Render(ecs::Registry* registry);
 
@@ -40,7 +46,8 @@ namespace cumulonimbus::editor
 		void FileMenu(
 			const mapping::rename_type::UUID& selected_scene_id,
 			std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& active_scenes);
-		
+
+		// Todo : 複数シーン対応後削除予定
 		/**
 		 * @brief : 「File」内項目と詳細
 		 */
@@ -55,6 +62,9 @@ namespace cumulonimbus::editor
 		 * @brief : 「New Scene」が選択され新規シーンの
 		 *			 作成時に表示するポップアップ
 		 */
-		void PopupCreateScene(ecs::Registry* registry);
+		void PopupCreateScene(
+			mapping::rename_type::UUID& selected_scene_id, 
+			ecs::Registry& registry, 
+			scene::SceneManager& scene_manager);
 	};
 } // cumulonimbus::editor

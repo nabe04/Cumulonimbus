@@ -104,9 +104,27 @@ namespace cumulonimbus::asset
 		AddScene(scene_manager, add_scene_id, add_scene_path);
 	}
 
-	void SceneLoader::CreateScene(scene::Scene& scene)
+	void SceneLoader::CreateScene(scene::SceneManager& scene_manager)
 	{
-		scene.CreateScene();
+		scene_manager.DeleteAllScene();
+		scene_manager.CreateNewScene();
+	}
+
+	void SceneLoader::OpenScene(
+		scene::SceneManager& scene_manager,
+		const std::filesystem::path& path)
+	{
+		// 選択されたファイルパスがアセットに存在していない場合登録する
+		if (AssetManager& asset_manager = *locator::Locator::GetAssetManager();
+			asset_manager.GetAssetSheetManager().Search<SceneAsset>(path).empty())
+		{
+			Load(asset_manager, path);
+		}
+
+		scene_manager.DeleteAllScene();
+		scene_manager.CreateNewScene();
+		scene::Scene& open_scene = *scene_manager.GetActiveScenes()->begin()->second.get();
+		open_scene.LoadScene(path.parent_path().string(), path.filename().string());
 	}
 
 	void SceneLoader::OpenScene(

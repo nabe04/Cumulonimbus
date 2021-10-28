@@ -38,26 +38,25 @@ namespace cumulonimbus::editor
 		content_browser->Render(&selected_scene);
 		hierarchy->Render(selected_scene_id, active_scenes, *project_view.get());
 		inspector->Render(&registry, hierarchy->GetSelectedEntity());
-		menu_bar->Render(selected_scene_id, active_scenes);
-		//menu_bar->Render(&registry);
 		game_view->Render(&registry);
 		scene_view->Render(&registry, project_view.get(), hierarchy.get()); // ドラッグ & ドロップの関係上 scene_viewとproject_viewの順番を変えてはならない
 		project_view->Render(&registry);
 		system_inspector->Render(&registry);
 		tool_bar->Render(&registry);
+		menu_bar->Render(selected_scene_id, active_scenes);
 	}
 
 	void EditorManager::RenderEditor(scene::Scene* scene, ecs::Registry* registry) const
 	{
-		content_browser->Render(scene);
-		hierarchy->Render(registry);
-		inspector->Render(registry, hierarchy->GetSelectedEntity());
-		menu_bar->Render(registry);
-		game_view->Render(registry);
-		scene_view->Render(registry, project_view.get(), hierarchy.get()); // ドラッグ & ドロップの関係上 scene_viewとproject_viewの順番を変えてはならない
-		project_view->Render(registry);
-		system_inspector->Render(registry);
-		tool_bar->Render(registry);
+		//content_browser->Render(scene);
+		//hierarchy->Render(registry);
+		//inspector->Render(registry, hierarchy->GetSelectedEntity());
+		//menu_bar->Render(registry);
+		//game_view->Render(registry);
+		//scene_view->Render(registry, project_view.get(), hierarchy.get()); // ドラッグ & ドロップの関係上 scene_viewとproject_viewの順番を変えてはならない
+		//project_view->Render(registry);
+		//system_inspector->Render(registry);
+		//tool_bar->Render(registry);
 	}
 } // cumulonimbus::editor
 

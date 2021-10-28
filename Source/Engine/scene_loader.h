@@ -88,7 +88,15 @@ namespace cumulonimbus::asset
 			scene::SceneManager& scene_manager,
 			const std::filesystem::path& add_scene_path);
 
-		void CreateScene(scene::Scene& scene);
+		void CreateScene(scene::SceneManager& scene_manager);
+
+		/**
+		 * @brief : ファイルからのシーン読み込み
+		 * @param scene_manager : シーン管理クラス
+		 * @param path : 「.scene」までのファイルパス
+		 */
+		void OpenScene(scene::SceneManager& scene_manager, const std::filesystem::path& path);
+
 		void OpenScene(scene::Scene& scene, const std::filesystem::path& path);
 
 		void Delete(AssetManager& asset_manager, const std::filesystem::path& path) override;

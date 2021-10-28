@@ -83,8 +83,8 @@ namespace cumulonimbus::editor
 			helper::imgui::Image(*scene_view_camera->GetCamera().GetFrameBufferSRV_Address(), { image_size.x,image_size.y });
 
 			{// ImGuizmo‚ðŽg‚Á‚Ä‚ÌƒMƒYƒ‚ˆ—
-				auto* transform_comp = registry->TryGetComponent<component::TransformComponent>(hierarchy->GetSelectedEntity());
-				if(transform_comp)
+				if(auto* transform_comp = registry->TryGetComponent<component::TransformComponent>(hierarchy->GetSelectedEntity());
+					transform_comp)
 				{
 					auto& camera = scene_view_camera->GetCamera();
 

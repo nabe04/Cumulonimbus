@@ -42,7 +42,7 @@ namespace cumulonimbus::scene
 		UnInitialize();
 	}
 
-	void SceneManager::CreateNewScene()
+	scene::Scene& SceneManager::CreateNewScene()
 	{
 		//-- 現在開かれているシーンの削除 --//
 		if(active_scenes.size() > 0)
@@ -51,7 +51,11 @@ namespace cumulonimbus::scene
 		}
 
 		//-- 新規シーンの作成 --//
-		active_scenes.emplace(utility::GenerateUUID(), std::make_unique<scene::Scene>(this));
+		const mapping::rename_type::UUID& new_scene_id = utility::GenerateUUID();
+		active_scenes.emplace(new_scene_id, std::make_unique<scene::Scene>(this));
+		// エディターマネージャ側の選択されているシーンIDも再設定
+		editor_manager->SetSelectedSceneId(new_scene_id);
+		return *active_scenes.begin()->second.get();
 	}
 
 	void SceneManager::AddScene()
@@ -73,6 +77,21 @@ namespace cumulonimbus::scene
 		active_scenes.at(scene_id)->LoadScene(scene_file_path.parent_path().string(),scene_file_path.filename().string());
 	}
 
+	void SceneManager::DeleteScene(const mapping::rename_type::UUID& scene_id)
+	{
+		// 削除したいシーンが存在しない場合処理を抜ける
+		if (!active_scenes.contains(scene_id))
+			return;
+
+		// シーンの削除
+		active_scenes.erase(scene_id);
+	}
+
+	void SceneManager::DeleteAllScene()
+	{
+		// シーンの全削除
+		active_scenes.clear();
+	}
 
 	void SceneManager::Execute()
 	{

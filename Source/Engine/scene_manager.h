@@ -39,7 +39,7 @@ namespace cumulonimbus::scene
 		 * @remark : 現在開かれているシーンを全て削除して
 		 *			 新しいシーンを作成する
 		 */
-		void CreateNewScene();
+		scene::Scene& CreateNewScene();
 
 		/**
 		 * @brief : シーンの追加読み込み
@@ -59,6 +59,19 @@ namespace cumulonimbus::scene
 		 */
 		void AddScene(const mapping::rename_type::UUID& scene_id,const std::filesystem::path& scene_file_path);
 
+		/**
+		 * @brief : シーンの削除
+		 * @remark : この関数では削除時に「保存するか」などの確認を行わないため注意
+		 * @remark : 削除するIDが存在しない場合早期リターンする(例外処理などは出さない)
+		 * @param scene_id : 削除するシーンID
+		 */
+		void DeleteScene(const mapping::rename_type::UUID& scene_id);
+
+		/**
+		 * @brief : 全シーンの削除
+		 */
+		void DeleteAllScene();
+
 		//-- ゲッター --//
 		[[nodiscard]]
 		Framework* GetFramework() const
@@ -69,6 +82,11 @@ namespace cumulonimbus::scene
 		editor::EditorManager* GetEditorManager() const
 		{
 			return editor_manager.get();
+		}
+		[[nodiscard]]
+		std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<Scene>>* GetActiveScenes()
+		{
+			return &active_scenes;
 		}
 		[[nodiscard]]
 		Scene* GetScene(const mapping::rename_type::UUID& scene_id)
