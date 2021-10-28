@@ -41,6 +41,24 @@ namespace cumulonimbus::scene
 		 */
 		void CreateNewScene();
 
+		/**
+		 * @brief : シーンの追加読み込み
+		 * @remark : 現在開かれているシーンに追加して
+		 *			 新しいシーンを作成する
+		 * @remark : 初期シーン名は「NoTitled」
+		 */
+		void AddScene();
+
+		/**
+		 * @brief : シーンの追加読み込み
+		 * @remark : 現在開かれているシーンに追加して
+		 *			 新しいシーンを作成する
+		 * @remark : 既存のシーンを読み込んで追加する
+		 * @param scene_id : 追加するシーンのID
+		 * @param scene_file_path : 読み込むシーン(拡張子「.scene」)までのファイルパス
+		 */
+		void AddScene(const mapping::rename_type::UUID& scene_id,const std::filesystem::path& scene_file_path);
+
 		//-- ゲッター --//
 		[[nodiscard]]
 		Framework* GetFramework() const

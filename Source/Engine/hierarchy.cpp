@@ -7,6 +7,8 @@
 #include "prefab_loader.h"
 #include "hierarchy_component.h"
 #include "scene.h"
+#include "scene_manager.h"
+#include "scene_loader.h"
 #include "filename_helper.h"
 
 namespace
@@ -19,12 +21,18 @@ namespace cumulonimbus::editor
 {
 	void Hierarchy::Render(
 		mapping::rename_type::UUID& selected_scene_id,
-		const std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& active_scenes)
+		const std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& active_scenes,
+		const ProjectView& project_view)
 	{
 		scene::Scene& selected_scene = *active_scenes.at(selected_scene_id).get();
 
 		if (ImGui::Begin(ICON_FA_ALIGN_RIGHT" Hierarchy"))
 		{
+			//-- ウィンドウパラメータの設定 --//
+			window_pos = DirectX::SimpleMath::Vector2{ ImGui::GetCurrentWindow()->Pos.x,ImGui::GetCurrentWindow()->Pos.y + title_bar_height };
+			window_size = DirectX::SimpleMath::Vector2{ ImGui::GetContentRegionAvail().x ,ImGui::GetContentRegionAvail().y };
+			title_bar_height = ImGui::GetCurrentWindow()->TitleBarHeight();
+
 			//-- エンティティ追加処理 --//
 			if (ImGui::Button(ICON_FA_PLUS, { 30,30 }))
 				ImGui::OpenPopup("my_file_popup");
@@ -97,12 +105,26 @@ namespace cumulonimbus::editor
 				DeleteEntity(&registry);
 				ImGui::TreePop();
 			}
+
+			//-- ドラッグ & ドロップでのシーン追加読み込み --//
+			std::filesystem::path selected_asset = ""; // アセットのリセット
+			if (IsWindowHovered())
+			{
+				if (project_view.DraggingAsset(selected_asset))
+				{
+					if(ImGui::IsMouseReleased(ImGuiMouseButton_Left) &&
+					   (selected_asset.extension().string() == file_path_helper::GetSceneExtension()))
+					{
+						scene::SceneManager& scene_manager = *active_scenes.begin()->second->GetSceneManager();
+						locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->AddScene(scene_manager, selected_asset);
+					}
+				}
+			}
 			ImGui::PopID();
 		}
 
 		ImGui::End();
 	}
-
 
 	void Hierarchy::Render(ecs::Registry* const registry)
 	{
@@ -234,6 +256,21 @@ namespace cumulonimbus::editor
 			ImGui::EndPopup();
 		}
 	}
+
+	bool Hierarchy::IsWindowHovered() const
+	{
+		if (const ImVec2 cursor_pos = ImGui::GetMousePos();
+			cursor_pos.x < window_pos.x ||
+			cursor_pos.x > window_pos.x + window_size.x ||
+			cursor_pos.y < window_pos.y ||
+			cursor_pos.y > window_pos.y + window_size.y)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
 
 	void Hierarchy::CreatePrefab(ecs::Registry* const registry, const mapping::rename_type::Entity& ent)
 	{

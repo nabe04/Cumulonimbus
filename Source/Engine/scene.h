@@ -19,6 +19,11 @@ namespace cumulonimbus
 		class AssetManager;
 	} // asset
 
+	namespace scene
+	{
+		class SceneManager;
+	}// scene
+
 	namespace renderer
 	{
 		class RenderPath;
@@ -37,6 +42,7 @@ namespace cumulonimbus::scene
 	{
 	public:
 		explicit Scene();
+		explicit Scene(scene::SceneManager* scene_manager);
 		~Scene() = default;
 
 		template<class Archive>
@@ -75,12 +81,18 @@ namespace cumulonimbus::scene
 		Light* GetLight() const { return light.get(); }
 
 		[[nodiscard]]
-		const std::string& GetSceneName() const { return scene_name; }
+		const std::string& GetSceneName()		const { return scene_name; }
 		[[nodiscard]]
-		ecs::Registry* GetRegistry() const { return registry.get(); }
+		ecs::Registry* GetRegistry()			const { return registry.get(); }
+		[[nodiscard]]
+		scene::SceneManager* GetSceneManager()	const { return scene_manager; }
 	private:
+		// シーン名
 		std::string						scene_name{};
+		// コンポーネントの管理などを行う
 		std::unique_ptr<ecs::Registry>	registry{};
+		// シーン全体の管理
+		scene::SceneManager*			scene_manager{};
 
 		Framework*							  framework{};
 		std::unique_ptr<Light>				  light{}; // Todo : 後にComponent化する予定

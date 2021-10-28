@@ -25,9 +25,9 @@ namespace cumulonimbus::scene
 		SetWindowLongPtr(window->GetHWND(), GWLP_USERDATA, reinterpret_cast<LONG_PTR>(&framework));
 		CreateNewScene();
 
-		//-- 新規シーンの作成 --//
-		active_scenes.emplace(utility::GenerateUUID(), std::make_unique<scene::Scene>());
-		active_scenes.emplace(utility::GenerateUUID(), std::make_unique<scene::Scene>());
+		////-- 新規シーンの作成 --//
+		//active_scenes.emplace(utility::GenerateUUID(), std::make_unique<scene::Scene>());
+		//active_scenes.emplace(utility::GenerateUUID(), std::make_unique<scene::Scene>());
 
 		// エディター側で操作するシーンのセット(最初に追加されたシーンをセットする)
 		editor_manager->SetSelectedSceneId(active_scenes.begin()->first);
@@ -51,8 +51,28 @@ namespace cumulonimbus::scene
 		}
 
 		//-- 新規シーンの作成 --//
-		active_scenes.emplace(utility::GenerateUUID(), std::make_unique<scene::Scene>());
+		active_scenes.emplace(utility::GenerateUUID(), std::make_unique<scene::Scene>(this));
 	}
+
+	void SceneManager::AddScene()
+	{
+		// シーンの追加
+		active_scenes.emplace(utility::GenerateUUID(), std::make_unique<scene::Scene>(this));
+	}
+
+	void SceneManager::AddScene(
+		const mapping::rename_type::UUID& scene_id,
+		const std::filesystem::path& scene_file_path)
+	{
+		// 既に追加したいシーンを開いた場合処理を抜ける
+		if (active_scenes.contains(scene_id))
+			return;
+
+		// シーンの追加
+		active_scenes.emplace(scene_id, std::make_unique<scene::Scene>(this));
+		active_scenes.at(scene_id)->LoadScene(scene_file_path.parent_path().string(),scene_file_path.filename().string());
+	}
+
 
 	void SceneManager::Execute()
 	{

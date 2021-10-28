@@ -33,7 +33,7 @@ namespace cumulonimbus::editor
 		 * @brief : Editor部分の描画
 		 * @param active_scenes : 現在開いているシーン(SceneManagerのパラメータ)
 		 */
-		void RenderEditor(const std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& active_scenes);
+		void RenderEditor(std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& active_scenes);
 		// Todo : 複数シーン用のRenderEditorを作成した際に消す
 		void RenderEditor(scene::Scene* scene, ecs::Registry* registry) const;
 

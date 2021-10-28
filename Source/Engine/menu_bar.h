@@ -16,6 +16,14 @@ namespace cumulonimbus::editor
 		explicit MenuBar()  = default;
 		~MenuBar() = default;
 
+		/**
+		 * @brief : GUI描画処理
+		 * @param selected_scene_id : 現在選択されているシーンID
+		 * @param active_scenes : 現在開かれていいるシーン(SceneManager::active_scenes)
+		 */
+		void Render(
+			const mapping::rename_type::UUID& selected_scene_id,
+			std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& active_scenes);
 		void Render(ecs::Registry* registry);
 
 	private:
@@ -24,6 +32,15 @@ namespace cumulonimbus::editor
 		bool no_titlebar		 = true;
 		bool no_move			 = true;
 
+		/**
+		 * @brief : 「File」内項目と詳細
+		 * @param selected_scene_id : 現在選択されているシーンID
+		 * @param active_scenes : 現在開かれていいるシーン(SceneManager::active_scenes)
+		 */
+		void FileMenu(
+			const mapping::rename_type::UUID& selected_scene_id,
+			std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& active_scenes);
+		
 		/**
 		 * @brief : 「File」内項目と詳細
 		 */

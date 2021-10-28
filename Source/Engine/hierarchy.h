@@ -7,6 +7,11 @@ namespace cumulonimbus
 	{
 		class Registry;
 	} // ecs
+
+	namespace editor
+	{
+		class ProjectView;
+	} // editor
 } // cumulonimbus
 
 namespace cumulonimbus::editor
@@ -16,7 +21,8 @@ namespace cumulonimbus::editor
 	public:
 		void Render(
 			mapping::rename_type::UUID& selected_scene_id,
-			const std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& active_scenes);
+			const std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& active_scenes,
+			const ProjectView& project_view);
 		void Render(ecs::Registry* registry);
 		[[nodiscard]]
 		mapping::rename_type::Entity GetSelectedEntity() const { return selected_entity; }
@@ -24,7 +30,17 @@ namespace cumulonimbus::editor
 		std::vector<mapping::rename_type::Entity> sub_hierarchical_entities{}; // 選択されているエンティティよりも子階層のエンティティ郡
 		mapping::rename_type::Entity selected_entity{};
 		mapping::rename_type::Entity destroyed_entity{};
+		float title_bar_height{}; // Hierarchy Viewのウィンドウタイトルバー高さ
+		DirectX::SimpleMath::Vector2 window_pos{};  // Hierarchy Viewのウィンドウ位置
+		DirectX::SimpleMath::Vector2 window_size{}; // Hierarchy Viewのウィンドウサイズ
 		bool is_dragged_entity{ false };
+
+		/**
+		 * @brief : マウスカーソルがHierarchy Viewウィンドウ
+		 *			内にあるか判別
+		 * @return : ウィンドウ内に存在
+		 */
+		bool IsWindowHovered() const;
 
 		/**
 		 * @brief : Hierarchy View上でのアセット右クリック時の操作

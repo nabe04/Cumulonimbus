@@ -4,6 +4,7 @@
 #include <Windows.h>
 
 #include <portable-file-dialogs.h>
+#include <ranges>
 
 #include "scene.h"
 #include "ecs.h"
@@ -19,6 +20,58 @@ namespace
 
 namespace cumulonimbus::editor
 {
+	void MenuBar::Render(
+		const mapping::rename_type::UUID& selected_scene_id,
+		std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& active_scenes)
+	{
+		// ポップアップ用フラグのリセット
+		is_create_new_scene = false;
+
+		//-- ウィンドウ設定 --//
+		ImGuiWindowFlags window_flags = 0;
+		if (no_titlebar)   window_flags |= ImGuiWindowFlags_NoTitleBar;
+		if (no_move)       window_flags |= ImGuiWindowFlags_NoMove;
+		window_flags |= ImGuiWindowFlags_MenuBar;
+
+		//-- メニューバー --//
+		if (ImGui::Begin("Menu Bar", nullptr, window_flags))
+		{
+			ecs::Registry& registry = *active_scenes.at(selected_scene_id)->GetRegistry();
+			if (ImGui::BeginMenuBar())
+			{
+				if (ImGui::BeginMenu("File"))
+				{
+					FileMenu(selected_scene_id, active_scenes);
+					ImGui::EndMenu();
+				}
+
+				if (ImGui::BeginMenu("Window"))
+				{
+					if (ImGui::MenuItem("Menu Setting"))
+						is_menu_open = true;
+
+					ImGui::EndMenu();
+				}
+
+				if (ImGui::BeginMenu("Help"))
+				{
+
+					ImGui::EndMenu();;
+				}
+
+				ImGui::EndMenuBar();
+			}
+
+			PopupCreateScene(&registry);
+
+		}
+		ImGui::End();
+
+		if (is_menu_open)
+			MenuSetting();
+	}
+
+
 	void MenuBar::Render(ecs::Registry* registry)
 	{
 		// ポップアップ用フラグのリセット
@@ -66,6 +119,65 @@ namespace cumulonimbus::editor
 		if (is_menu_open)
 			MenuSetting();
 	}
+
+	void MenuBar::FileMenu(
+		const mapping::rename_type::UUID& selected_scene_id,
+		std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& active_scenes)
+	{
+		if (ImGui::MenuItem("New Scene", "Ctrl+Shift"))
+		{
+			is_create_new_scene = true;
+		}
+
+		if (ImGui::MenuItem("Open Scene", "Ctrl+O"))
+		{
+			const auto selection = pfd::open_file(
+				"Open Scene",
+				"",
+				{ "Scene Files","*.scene" },
+				pfd::opt::none).result();
+
+			if (selection.empty())
+				return;
+			const std::filesystem::path path = selection.at(0);
+			const std::string relative_path = utility::ConvertAbsolutePathToRelativePath(path.string());
+			//locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->OpenScene(*registry->GetScene(), relative_path);
+		}
+		ImGui::Separator();
+		if (ImGui::MenuItem("Save", "Ctrl+S"))
+		{
+			for(const auto& [scene_id, scene] : active_scenes)
+			{
+				// アセットシートに保存対象のIDが含まれていない場合
+				if (!locator::Locator::GetAssetManager()->GetAssetSheetManager().GetSheet<asset::SceneAsset>().sheet.contains(scene_id))
+				{// シーンを名前を付けて保存
+					const auto destination = pfd::save_file("Save", "", {}, pfd::opt::none).result();
+					if (destination.empty())
+						continue;
+
+					const std::filesystem::path path = destination;
+					const std::string relative_path = utility::ConvertAbsolutePathToRelativePath(path.string());
+					locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->SaveAs(*scene.get(), relative_path);
+				}
+				else
+				{// 現在のシーンパスで保存
+					locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->Save(active_scenes, scene_id);
+				}
+			}
+		}
+		if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
+		{
+			const auto destination = pfd::save_file("Save", "", {}, pfd::opt::none).result();
+			if (destination.empty())
+				return;
+
+			const std::filesystem::path path = destination;
+			const std::string relative_path = utility::ConvertAbsolutePathToRelativePath(path.string());
+			// Todo : SceneManager対応版に変更
+			//locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->SaveAs(*registry->GetScene(), relative_path);
+		}
+	}
+
 
 	void MenuBar::FileMenu(ecs::Registry* registry)
 	{

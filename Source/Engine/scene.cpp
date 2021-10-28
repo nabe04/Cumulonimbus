@@ -37,12 +37,11 @@ namespace cumulonimbus::scene
 	void Scene::serialize(Archive&& archive)
 	{
 		archive(
-			CEREAL_NVP(collision_manager),
-			CEREAL_NVP(light)
+			CEREAL_NVP(scene_name)
 		);
 	}
 
-	cumulonimbus::scene::Scene::Scene()
+	Scene::Scene()
 	{
 		light = std::make_unique<Light>(locator::Locator::GetDx11Device()->device.Get());
 		light->SetLightDir(XMFLOAT3{ .0f,.0f,1.f, });
@@ -52,6 +51,19 @@ namespace cumulonimbus::scene
 
 		CreateScene();
 	}
+
+	Scene::Scene(scene::SceneManager* scene_manager)
+		:scene_manager{ scene_manager }
+	{
+		light = std::make_unique<Light>(locator::Locator::GetDx11Device()->device.Get());
+		light->SetLightDir(XMFLOAT3{ .0f,.0f,1.f, });
+
+		registry = std::make_unique<ecs::Registry>();
+		registry->SetScene(this);
+
+		CreateScene();
+	}
+
 
 	void Scene::Execute(Framework* framework)
 	{
@@ -124,6 +136,7 @@ namespace cumulonimbus::scene
 
 	void Scene::SaveScene(const std::string& file_dir, const std::string& scene_name)
 	{
+		this->scene_name = scene_name;
 		registry->Save(file_dir, scene_name);
 
 		// Scenes‚Ü‚Å‚ÌƒpƒX/ƒV[ƒ“–¼
@@ -146,10 +159,10 @@ namespace cumulonimbus::scene
 		cereal::BinaryInputArchive i_archive(ifs);
 		i_archive(*this);
 
-		// CollisionManagerƒNƒ‰ƒX‚ÌSystem“o˜^ŠÖ”‚ÌÄ“o˜^
-		system->RegisterRenderFunction(utility::GetHash<collision::CollisionManager>(),
-									   [&](ecs::Registry* registry) {collision_manager->RenderImGui(registry); });
-		light->Load();
+		//// CollisionManagerƒNƒ‰ƒX‚ÌSystem“o˜^ŠÖ”‚ÌÄ“o˜^
+		//system->RegisterRenderFunction(utility::GetHash<collision::CollisionManager>(),
+		//							   [&](ecs::Registry* registry) {collision_manager->RenderImGui(registry); });
+		//light->Load();
 
 		registry->Load(file_dir);
 	}

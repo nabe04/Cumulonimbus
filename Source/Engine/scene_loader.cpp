@@ -1,6 +1,7 @@
 #include "scene_loader.h"
 
 #include "scene.h"
+#include "scene_manager.h"
 
 namespace
 {
@@ -66,6 +67,42 @@ namespace cumulonimbus::asset
 		scene.SaveScene(scene_file_dir.parent_path().string(), scene_file_dir.filename().replace_extension().string());
 	}
 
+	void SceneLoader::Save(
+		std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& active_scenes,
+		const mapping::rename_type::UUID& save_scene_id)
+	{
+		if (!active_scenes.contains(save_scene_id))
+			assert(!"Don't have scene(SceneLoader::Save)");
+		if(!scenes.contains(save_scene_id))
+			assert(!"Don't have scene(SceneLoader::Save)");
+		// 保存対象のシーンが保存されているファイルまでのパスを取得
+		const std::filesystem::path& scene_file_dir = scenes.at(save_scene_id).scene_file_path;
+		// シーン保存
+		active_scenes.at(save_scene_id)->SaveScene(scene_file_dir.parent_path().string(), scene_file_dir.filename().replace_extension().string());
+	}
+
+	void SceneLoader::AddScene(
+		scene::SceneManager& scene_manager,
+		const mapping::rename_type::UUID& add_scene_id,
+		const std::filesystem::path& add_scene_path)
+	{
+		scene_manager.AddScene(add_scene_id, add_scene_path);
+	}
+
+	void SceneLoader::AddScene(
+		scene::SceneManager& scene_manager,
+		const mapping::rename_type::UUID& add_scene_id)
+	{
+		const std::filesystem::path& add_scene_path = scenes.at(add_scene_id).scene_file_path;
+		AddScene(scene_manager, add_scene_id, add_scene_path);
+	}
+	void SceneLoader::AddScene(
+		scene::SceneManager& scene_manager,
+		const std::filesystem::path& add_scene_path)
+	{
+		const mapping::rename_type::UUID add_scene_id = locator::Locator::GetAssetManager()->GetAssetSheetManager().Search<asset::SceneAsset>(add_scene_path);
+		AddScene(scene_manager, add_scene_id, add_scene_path);
+	}
 
 	void SceneLoader::CreateScene(scene::Scene& scene)
 	{

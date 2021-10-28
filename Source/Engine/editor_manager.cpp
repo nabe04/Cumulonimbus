@@ -25,7 +25,7 @@ namespace cumulonimbus::editor
 		system_inspector->Update(dt);
 	}
 
-	void EditorManager::RenderEditor(const std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& active_scenes)
+	void EditorManager::RenderEditor(std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& active_scenes)
 	{
 		if(!active_scenes.contains(selected_scene_id))
 		{
@@ -36,9 +36,10 @@ namespace cumulonimbus::editor
 		ecs::Registry& registry = *selected_scene.GetRegistry();
 
 		content_browser->Render(&selected_scene);
-		hierarchy->Render(selected_scene_id, active_scenes);
+		hierarchy->Render(selected_scene_id, active_scenes, *project_view.get());
 		inspector->Render(&registry, hierarchy->GetSelectedEntity());
-		menu_bar->Render(&registry);
+		menu_bar->Render(selected_scene_id, active_scenes);
+		//menu_bar->Render(&registry);
 		game_view->Render(&registry);
 		scene_view->Render(&registry, project_view.get(), hierarchy.get()); // ドラッグ & ドロップの関係上 scene_viewとproject_viewの順番を変えてはならない
 		project_view->Render(&registry);
