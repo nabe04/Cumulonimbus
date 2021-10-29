@@ -74,6 +74,16 @@ namespace cumulonimbus::scene
 
 		//-- ゲッター --//
 		[[nodiscard]]
+		std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<Scene>>* GetActiveScenes()
+		{
+			return &active_scenes;
+		}
+		[[nodiscard]]
+		Scene* GetScene(const mapping::rename_type::UUID& scene_id)
+		{
+			return active_scenes.at(scene_id).get();
+		}
+		[[nodiscard]]
 		Framework* GetFramework() const
 		{
 			return framework.get();
@@ -84,15 +94,11 @@ namespace cumulonimbus::scene
 			return editor_manager.get();
 		}
 		[[nodiscard]]
-		std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<Scene>>* GetActiveScenes()
+		collision::CollisionManager* GetCollisionManager() const
 		{
-			return &active_scenes;
+			return collision_manager.get();
 		}
-		[[nodiscard]]
-		Scene* GetScene(const mapping::rename_type::UUID& scene_id)
-		{
-			return active_scenes.at(scene_id).get();
-		}
+
 	private:
 		// 現在開かれているシーン
 		std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<Scene>> active_scenes{};
@@ -108,6 +114,8 @@ namespace cumulonimbus::scene
 		std::shared_ptr<asset::AssetManager>	asset_manager{};
 		// エディター(GUI)管理用マネジャー
 		std::unique_ptr<editor::EditorManager>	editor_manager{};
+		// 当たり判定管理用マネジャー
+		std::unique_ptr<collision::CollisionManager> collision_manager{};
 
 		void Execute();
 		void Initialize();

@@ -13,6 +13,7 @@
 // components
 #include "model_component.h"
 #include "scene.h"
+#include "scene_manager.h"
 #include "transform_component.h"
 
 DirectX::SimpleMath::Vector3 w_pos;
@@ -289,7 +290,7 @@ namespace cumulonimbus::editor
 																							GetSceneViewCamera().GetCamera().GetViewMat(),
 																							GetSceneViewCamera().GetCamera().GetProjectionMat());
 		DirectX::SimpleMath::Vector3 hit_pos{};
-		if(registry->GetScene()->GetCollisionManager()->IntersectRayVsDragModel(registry,world_near_pos,world_far_pos,&hit_pos))
+		if(registry->GetScene()->GetSceneManager()->GetCollisionManager()->IntersectRayVsDragModel(registry,world_near_pos,world_far_pos,&hit_pos))
 		{
 			registry->GetComponent<component::TransformComponent>(dragging_entity).SetPosition(hit_pos);
 		}

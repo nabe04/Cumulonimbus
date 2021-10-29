@@ -63,8 +63,8 @@ namespace cumulonimbus::editor
 		 *			 作成時に表示するポップアップ
 		 */
 		void PopupCreateScene(
-			mapping::rename_type::UUID& selected_scene_id, 
-			ecs::Registry& registry, 
+			mapping::rename_type::UUID& selected_scene_id,
+			ecs::Registry& registry,
 			scene::SceneManager& scene_manager);
 	};
 } // cumulonimbus::editor

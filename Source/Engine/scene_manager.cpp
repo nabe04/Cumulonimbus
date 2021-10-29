@@ -22,6 +22,8 @@ namespace cumulonimbus::scene
 		locator::Locator::Provide<system::System>(system);
 		locator::Locator::Provide<asset::AssetManager>(asset_manager);
 
+		collision_manager = std::make_unique<collision::CollisionManager>(*system.get());
+		
 		SetWindowLongPtr(window->GetHWND(), GWLP_USERDATA, reinterpret_cast<LONG_PTR>(&framework));
 		CreateNewScene();
 
