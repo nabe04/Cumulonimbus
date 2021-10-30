@@ -116,29 +116,30 @@ namespace cumulonimbus::editor
 			}
 
 			//-- ドラッグ & ドロップでのモデル追加 --//
-			std::filesystem::path selected_asset = ""; // アセットのリセット
-			if (IsWindowHovered())
+			if (std::filesystem::path selected_asset = ""; // アセットのリセット
+				IsWindowHovered())
 			{
 				if (project_view->DraggingAsset(selected_asset))
 				{
 					// 「.model」形式をドラッグしているか判別
-					const bool is_model  = (selected_asset.extension().string() == file_path_helper::GetModelExtension());
+					const bool is_model = (selected_asset.extension().string() == file_path_helper::GetModelExtension());
 					// 「.prefab」形式をドラッグしているか判別
 					const bool is_prefab = (selected_asset.extension().string() == file_path_helper::GetPrefabExtension());
 					if (mouse_hover.event == MouseHoverEvent::Begin_Hovered)
 					{
-						if(is_model)
+						if (is_model)
 						{
 							// エンティティとコンポーネント(Model)の追加
 							AddModel(registry, selected_asset);
 						}
-						if(is_prefab)
+						if (is_prefab)
 						{
 							// プレファブからコンポーネントの追加
 							AddPrefab(registry, selected_asset);
 						}
 					}
-					if (mouse_hover.event == MouseHoverEvent::Hovering)
+					if ((is_model || is_prefab) &&
+						(mouse_hover.event == MouseHoverEvent::Hovering))
 					{
 						DraggingAsset(registry);
 					}
@@ -148,8 +149,10 @@ namespace cumulonimbus::editor
 			{
 				if (project_view->DraggingAsset(selected_asset))
 				{
-					const bool is_model = (selected_asset.extension().string() == file_path_helper::GetModelExtension());
-					if (mouse_hover.event == MouseHoverEvent::Hovering)
+					// 選択されているアセットが「.model」か「.prefab」形式である時
+					if (((selected_asset.extension().string() == file_path_helper::GetModelExtension()) ||
+						 (selected_asset.extension().string() == file_path_helper::GetPrefabExtension())) &&
+						(mouse_hover.event == MouseHoverEvent::Hovering))
 					{
 						// エンティティとコンポーネント(Model)の削除
 						registry->Destroy(dragging_entity);
