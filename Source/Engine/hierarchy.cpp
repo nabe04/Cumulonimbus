@@ -88,8 +88,12 @@ namespace cumulonimbus::editor
 							registry.GetComponent<component::HierarchyComponent>(selected_entity).SetParentEntity(&registry, {});
 						}
 						else
-						{// シーン間の移動エンティティ(親のみ)のセット
-							scene_transfer_entity = selected_entity;
+						{
+							// シーン間の移動エンティティ(親のみ)のセット
+							scene_transfer_entity	  = selected_entity;
+							// 遷移先の親エンティティのセット
+							// -> 一番上の親階層になるため空で良い
+							destination_parent_entity = {};
 						}
 					}
 
@@ -97,12 +101,15 @@ namespace cumulonimbus::editor
 				}
 
 				{//-- 現在選択されているエンティティの小階層エンティティを取得 --//
-					sub_hierarchical_entities.clear();
-					for (const auto& hierarchy_comp : registry.GetArray<component::HierarchyComponent>().GetComponents())
+					if(selected_scene_id == scene_id)
 					{
-						if (HasParentEntity(&registry, selected_entity, hierarchy_comp.GetEntity()))
+						sub_hierarchical_entities.clear();
+						for (const auto& hierarchy_comp : registry.GetArray<component::HierarchyComponent>().GetComponents())
 						{
-							sub_hierarchical_entities.emplace_back(hierarchy_comp.GetEntity());
+							if (HasParentEntity(&registry, selected_entity, hierarchy_comp.GetEntity()))
+							{
+								sub_hierarchical_entities.emplace_back(hierarchy_comp.GetEntity());
+							}
 						}
 					}
 				}
@@ -150,6 +157,46 @@ namespace cumulonimbus::editor
 			ImGui::PopID();
 		}
 
+		ImGui::End();
+
+		if (ImGui::Begin("Hierarchy Data"))
+		{
+			ecs::Registry* registry = selected_scene.GetRegistry();
+			if (registry->HasComponent<component::HierarchyComponent>(selected_entity))
+			{
+				const auto& hierarchy_comp = registry->GetComponent<component::HierarchyComponent>(selected_entity);
+				ImGui::Text("Parent Ent : %s", registry->GetName(hierarchy_comp.GetParentEntity()).c_str());
+				ImGui::Text("First Child : %s", registry->GetName(hierarchy_comp.GetFirstChild()).c_str());
+				ImGui::Text("Back Sibling : %s", registry->GetName(hierarchy_comp.GetBackSibling()).c_str());
+				ImGui::Text("Next Sibling : %s", registry->GetName(hierarchy_comp.GetNextSibling()).c_str());
+				if (!hierarchy_comp.GetParentEntity().empty())
+				{
+					ImGui::Text("Parent Ent Exist");
+				}
+				if (!hierarchy_comp.GetFirstChild().empty())
+				{
+					ImGui::Text("First Child Ent Exist");
+				}
+				if (!hierarchy_comp.GetNextSibling().empty())
+				{
+					ImGui::Text("Next Sibling Ent Exist");
+				}
+				if (!hierarchy_comp.GetBackSibling().empty())
+				{
+					ImGui::Text("Back Sibling Ent Exist");
+				}
+			}
+			ImGui::Separator();
+			ImGui::Text("--Selected Entity--");
+			ImGui::Text(registry->GetName(selected_entity).c_str());
+			ImGui::Separator();
+			ImGui::Separator();
+			ImGui::Text("--Sub Entities--");
+			for (const auto& ent : sub_hierarchical_entities)
+			{
+				ImGui::Text(registry->GetName(ent).c_str());
+			}
+		}
 		ImGui::End();
 	}
 
@@ -333,10 +380,10 @@ namespace cumulonimbus::editor
 		entities.emplace_back(scene_transfer_entity);
 
 		// プレハブとして一時保存するファイルパス
-		const std::string ent_name = transition_source_registry.GetName(scene_transfer_entity);
-		const std::string save_path = transfer_scene_path + "/" +
-									  ent_name + "/" +
-									  ent_name + file_path_helper::GetPrefabExtension();
+		const std::string			ent_name  = transition_source_registry.GetName(scene_transfer_entity);
+		const std::filesystem::path save_path = transfer_scene_path + "/" +
+												ent_name + "/" +
+												ent_name + file_path_helper::GetPrefabExtension();
 
 		//-- 遷移先で遷移させたいエンティティ分のエンティティ作成 --//
 		// プレハブとして一時保存
@@ -351,10 +398,20 @@ namespace cumulonimbus::editor
 		}
 
 		// 遷移先のレジストリにインスタンスを作成
-		transition_ent_prefab.Instantiate(&destination_registry);
+		// ent : 遷移先でプレハブから作成された親エンティティ
+		const mapping::rename_type::Entity parent_ent = transition_ent_prefab.Instantiate(&destination_registry);
+
+		// 遷移対象のエンティティが遷移先で子エンティティになる時
+		if(!destination_parent_entity.empty())
+		{
+			destination_registry.GetComponent<component::HierarchyComponent>(parent_ent).SetParentEntity(&destination_registry, destination_parent_entity);
+			destination_parent_entity.clear();
+		}
 
 		// 遷移対象エンティティのリセット
 		scene_transfer_entity.clear();
+		// 一時保存したファイルの削除
+		std::filesystem::remove_all(save_path.parent_path());
 	}
 
 	void Hierarchy::DeleteEntity(ecs::Registry* registry)
@@ -460,8 +517,11 @@ namespace cumulonimbus::editor
 					registry->GetOrEmplaceComponent<component::HierarchyComponent>(selected_entity).SetParentEntity(registry, ent);
 				}
 				else
-				{// シーン間の移動エンティティ(親のみ)のセット
-					scene_transfer_entity = selected_entity;
+				{
+					// シーン間の移動エンティティ(親のみ)のセット
+					scene_transfer_entity	   = selected_entity;
+					// 遷移先の親エンティティのセット
+					destination_parent_entity  = ent;
 				}
 			}
 

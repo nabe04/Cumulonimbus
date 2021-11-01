@@ -36,8 +36,10 @@ namespace cumulonimbus::editor
 		std::vector<mapping::rename_type::Entity> sub_hierarchical_entities{};
 		// 現在選択されているエンティティ
 		mapping::rename_type::Entity selected_entity{};
-		// シーンを超えての移動エンティティ
+		// シーンを超えての移動対象元エンティティ
 		mapping::rename_type::Entity scene_transfer_entity{};
+		// シーンを超えての移動対象先(親子付の際使用)エンティティ
+		mapping::rename_type::Entity destination_parent_entity{};
 		// 削除対象のエンティティ
 		mapping::rename_type::Entity destroyed_entity{};
 		// Hierarchy Viewのウィンドウタイトルバー高さ

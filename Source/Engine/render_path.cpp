@@ -189,8 +189,6 @@ namespace cumulonimbus::renderer
 		RenderEnd(immediate_context);
 	}
 
-
-
 	void RenderPath::RenderScene(
 		ID3D11DeviceContext* immediate_context,ecs::Registry* registry,
 		const camera::Camera* camera, const Light* light)
