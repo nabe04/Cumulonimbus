@@ -242,6 +242,14 @@ namespace cumulonimbus::component
 		InitializeAnimState(registry, GetEntity());
 	}
 
+	void ModelComponent::OnDeserialize(ecs::Registry* registry, const std::map<mapping::rename_type::Entity, mapping::rename_type::Entity>& connector)
+	{
+		SetRegistry(registry);
+		// StateMachineÇÃçƒìoò^
+		InitializeAnimState(registry, GetEntity());
+	}
+
+
 	bool ModelComponent::IsPlayAnimation() const
 	{
 		const asset::ModelData::Animation& animation

@@ -13,8 +13,12 @@
 
 namespace
 {
-	const std::string context_id{ "context_menu" };	// ImGui::PopupのコンテキストメニューID
+	// ImGui::PopupのコンテキストメニューID
+	const std::string context_id{ "context_menu" };
+	// ImGui::Popupのドラッグ中のエンティティID
 	const std::string dragged_id{ "dragged_entity" };
+	// シーン間のエンティティ移動時の一時保存ファイルパス
+	const std::string transfer_scene_path{ "./Data/TransferScene" };
 }
 
 namespace cumulonimbus::editor
@@ -29,8 +33,8 @@ namespace cumulonimbus::editor
 		if (ImGui::Begin(ICON_FA_ALIGN_RIGHT" Hierarchy"))
 		{
 			//-- ウィンドウパラメータの設定 --//
-			window_pos = DirectX::SimpleMath::Vector2{ ImGui::GetCurrentWindow()->Pos.x,ImGui::GetCurrentWindow()->Pos.y + title_bar_height };
-			window_size = DirectX::SimpleMath::Vector2{ ImGui::GetContentRegionAvail().x ,ImGui::GetContentRegionAvail().y };
+			window_pos		 = DirectX::SimpleMath::Vector2{ ImGui::GetCurrentWindow()->Pos.x,ImGui::GetCurrentWindow()->Pos.y + title_bar_height };
+			window_size		 = DirectX::SimpleMath::Vector2{ ImGui::GetContentRegionAvail().x ,ImGui::GetContentRegionAvail().y };
 			title_bar_height = ImGui::GetCurrentWindow()->TitleBarHeight();
 
 			//-- エンティティ追加処理 --//
@@ -61,20 +65,32 @@ namespace cumulonimbus::editor
 			ImGui::PushID(scene_id.c_str());
 			if (const std::filesystem::path current_scene_path = locator::Locator::GetSystem()->GetCurrentScenePath();
 				ImGui::TreeNodeEx(std::string{ ICON_FA_CLOUD_SUN + scene_name }.c_str(),
-					ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen))
+								  ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen))
 			{
 				if(ImGui::IsItemClicked(ImGuiMouseButton_Left))
-				{// 選択されているシーンの変更
-					selected_scene_id = scene_id;
+				{
+					// 選択されているシーンの変更
+					selected_scene_id		= scene_id;
+					// 遷移元のシーン変更(ヒエラルキーの変更に使用)
+					transition_source_scene = scene.get();
 				}
 
 				//-- シーン階層へのドラッグ & ドロップ処理 --//
 				if (ImGui::BeginDragDropTarget())
-				{// シーン階層に対してのエンティティドロップ処理
+				{
+					// 遷移先のシーン更新
+					destination_scene = scene.get();
+					// シーン階層に対してのエンティティドロップ処理
 					if (ImGui::AcceptDragDropPayload(dragged_id.c_str()))
 					{
-						// 一番上の親に設定
-						registry.GetComponent<component::HierarchyComponent>(selected_entity).SetParentEntity(&registry, {});
+						if(transition_source_scene == destination_scene)
+						{	// 一番上の親に設定
+							registry.GetComponent<component::HierarchyComponent>(selected_entity).SetParentEntity(&registry, {});
+						}
+						else
+						{// シーン間の移動エンティティ(親のみ)のセット
+							scene_transfer_entity = selected_entity;
+						}
 					}
 
 					ImGui::EndDragDropTarget();
@@ -98,17 +114,28 @@ namespace cumulonimbus::editor
 					if (!registry.GetComponent<component::HierarchyComponent>(key).GetParentEntity().empty())
 						continue;;
 
-					//ImGui::Separator();
 					is_dragged_entity = false;
 					EntityTree(&registry, selected_scene_id, scene_id, key, registry.GetName(key));
 				}
-				DeleteEntity(&registry);
+
+				if (!scene_transfer_entity.empty())
+				{// シーン間の遷移を行いたいエンティティ(scene_transfer_entity)
+				 // が存在した場合のエンティティ削除処理
+					SceneTransferEntity();
+				}
+
+				if(!destroyed_entity.empty())
+				{// 削除したいエンティティ(destroyed_entity)
+				 // が存在した場合のエンティティ削除処理
+					DeleteEntity(&registry);
+				}
+
 				ImGui::TreePop();
 			}
 
 			//-- ドラッグ & ドロップでのシーン追加読み込み --//
-			std::filesystem::path selected_asset = ""; // アセットのリセット
-			if (IsWindowHovered())
+			if (std::filesystem::path selected_asset = ""; // アセットのリセット
+				IsWindowHovered())
 			{
 				if (project_view.DraggingAsset(selected_asset))
 				{
@@ -272,7 +299,9 @@ namespace cumulonimbus::editor
 	}
 
 
-	void Hierarchy::CreatePrefab(ecs::Registry* const registry, const mapping::rename_type::Entity& ent)
+	void Hierarchy::CreatePrefab(
+		ecs::Registry* const registry,
+		const mapping::rename_type::Entity& ent) const
 	{
 		asset::AssetManager* asset_manager	= locator::Locator::GetAssetManager();
 		const std::string&	 ent_name		= registry->GetName(selected_entity);
@@ -281,17 +310,55 @@ namespace cumulonimbus::editor
 
 	void Hierarchy::CreatePrefab(
 		ecs::Registry* registry,
-		const std::vector<mapping::rename_type::Entity>& entities)
+		const std::vector<mapping::rename_type::Entity>& entities) const
 	{
 		asset::AssetManager* asset_manager = locator::Locator::GetAssetManager();
 		const std::string& ent_name = registry->GetName(selected_entity);
 		asset_manager->GetLoader<asset::PrefabLoader>()->CreatePrefab(*asset_manager, registry, entities, false, ent_name);
 	}
 
+	void Hierarchy::SceneTransferEntity()
+	{
+		// 遷移元のレジストリ
+		ecs::Registry& transition_source_registry = *transition_source_scene->GetRegistry();
+		// 遷移先のレジストリ
+		ecs::Registry& destination_registry		  = *destination_scene->GetRegistry();
+
+		// 遷移したいエンティティ(scene_transfer_entity)を一番上の親階層に持ってくる
+		// -> Hierarchy Componentのparent、first_child、next_sibling、back_siblingの再設定が必要なため
+		transition_source_registry.GetComponent<component::HierarchyComponent>(scene_transfer_entity).SetParentEntity(&transition_source_registry, {});
+
+		// 移動したいエンティティ郡
+		std::vector<std::string> entities = sub_hierarchical_entities;
+		entities.emplace_back(scene_transfer_entity);
+
+		// プレハブとして一時保存するファイルパス
+		const std::string ent_name = transition_source_registry.GetName(scene_transfer_entity);
+		const std::string save_path = transfer_scene_path + "/" +
+									  ent_name + "/" +
+									  ent_name + file_path_helper::GetPrefabExtension();
+
+		//-- 遷移先で遷移させたいエンティティ分のエンティティ作成 --//
+		// プレハブとして一時保存
+		asset::Prefab transition_ent_prefab{};
+		// 遷移元のレジストリとして保存
+		transition_ent_prefab.CreatePrefab(&transition_source_registry, entities, save_path);
+
+		// 遷移元の移動対象エンティティの削除
+		for(const auto& ent : entities)
+		{
+			transition_source_registry.Destroy(ent);
+		}
+
+		// 遷移先のレジストリにインスタンスを作成
+		transition_ent_prefab.Instantiate(&destination_registry);
+
+		// 遷移対象エンティティのリセット
+		scene_transfer_entity.clear();
+	}
+
 	void Hierarchy::DeleteEntity(ecs::Registry* registry)
 	{
-		if (destroyed_entity.empty())
-			return;
 		registry->GetComponent<component::HierarchyComponent>(destroyed_entity).OnDestroyed(registry);
 		for(const auto& sub_ent : sub_hierarchical_entities)
 		{
@@ -356,12 +423,18 @@ namespace cumulonimbus::editor
 		{// ヒエラルキービュー上でのアイテム選択
 			if (ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 			{// 左クリック時
+				// 選択されているエンティティの更新
 				selected_entity = ent;
+				// 選択されているシーンの更新
 				selected_scene_id = current_scene_id;
+				// 遷移元のシーン更新
+				transition_source_scene = registry->GetScene();
 			}
 			if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
 			{// 右クリック時
+				// 選択されているエンティティの更新
 				selected_entity = ent;
+				// ポップアップルメニュー(ContextMenu)を開く前処理
 				ImGui::OpenPopup(context_id.c_str());
 			}
 		}
@@ -376,9 +449,20 @@ namespace cumulonimbus::editor
 		}
 		if (ImGui::BeginDragDropTarget() && is_selectable)
 		{
+			// 遷移先のシーン更新
+			destination_scene = registry->GetScene();
+			// アセットがドロップされた時
 			if (ImGui::AcceptDragDropPayload(dragged_id.c_str()))
-			{// Hierarchy Componentの親エンティティを変更
-				registry->GetOrEmplaceComponent<component::HierarchyComponent>(selected_entity).SetParentEntity(registry, ent);
+			{
+				// 遷移元のシーンと遷移先のシーンが同じ時
+				if(transition_source_scene == destination_scene)
+				{// Hierarchy Componentの親エンティティを変更
+					registry->GetOrEmplaceComponent<component::HierarchyComponent>(selected_entity).SetParentEntity(registry, ent);
+				}
+				else
+				{// シーン間の移動エンティティ(親のみ)のセット
+					scene_transfer_entity = selected_entity;
+				}
 			}
 
 			ImGui::EndDragDropTarget();

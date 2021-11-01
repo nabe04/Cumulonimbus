@@ -12,6 +12,11 @@ namespace cumulonimbus
 	{
 		class ProjectView;
 	} // editor
+
+	namespace scene
+	{
+		class Scene;
+	}
 } // cumulonimbus
 
 namespace cumulonimbus::editor
@@ -27,19 +32,32 @@ namespace cumulonimbus::editor
 		[[nodiscard]]
 		mapping::rename_type::Entity GetSelectedEntity() const { return selected_entity; }
 	private:
-		std::vector<mapping::rename_type::Entity> sub_hierarchical_entities{}; // 選択されているエンティティよりも子階層のエンティティ郡
+		// 選択されているエンティティよりも子階層のエンティティ郡
+		std::vector<mapping::rename_type::Entity> sub_hierarchical_entities{};
+		// 現在選択されているエンティティ
 		mapping::rename_type::Entity selected_entity{};
+		// シーンを超えての移動エンティティ
+		mapping::rename_type::Entity scene_transfer_entity{};
+		// 削除対象のエンティティ
 		mapping::rename_type::Entity destroyed_entity{};
-		float title_bar_height{}; // Hierarchy Viewのウィンドウタイトルバー高さ
-		DirectX::SimpleMath::Vector2 window_pos{};  // Hierarchy Viewのウィンドウ位置
-		DirectX::SimpleMath::Vector2 window_size{}; // Hierarchy Viewのウィンドウサイズ
+		// Hierarchy Viewのウィンドウタイトルバー高さ
+		float title_bar_height{};
+		// Hierarchy Viewのウィンドウ位置
+		DirectX::SimpleMath::Vector2 window_pos{};
+		// Hierarchy Viewのウィンドウサイズ
+		DirectX::SimpleMath::Vector2 window_size{};
+		// エンティティがドラッグされているか(ヒエラルキーの移動に使用)
 		bool is_dragged_entity{ false };
-
+		// 遷移元のシーン
+		scene::Scene* transition_source_scene{};
+		// 遷移先のシーン
+		scene::Scene* destination_scene{};
 		/**
 		 * @brief : マウスカーソルがHierarchy Viewウィンドウ
 		 *			内にあるか判別
 		 * @return : ウィンドウ内に存在
 		 */
+		[[nodiscard]]
 		bool IsWindowHovered() const;
 
 		/**
@@ -50,12 +68,17 @@ namespace cumulonimbus::editor
 		 * @brief : アセットのプレファブ化
 		 * @remark : ※caution : ImGui::MenuItem内に記述すること
 		 */
-		void CreatePrefab(ecs::Registry* registry, const mapping::rename_type::Entity& ent);
+		void CreatePrefab(ecs::Registry* registry, const mapping::rename_type::Entity& ent) const;
 		/**
 		 * @brief : アセットのプレファブ化
 		 * @remark : ※caution : ImGui::MenuItem内に記述すること
 		 */
-		void CreatePrefab(ecs::Registry* registry, const std::vector<mapping::rename_type::Entity>& entities);
+		void CreatePrefab(ecs::Registry* registry, const std::vector<mapping::rename_type::Entity>& entities) const;
+		/**
+		 * @brief : シーン間のエンティティ移動
+		 * @remark : 対象のエンティティの子エンティティも遷移する
+		 */
+		void SceneTransferEntity();
 		/**
 		 * @brief : アセットの削除
 		 * @remark : ※caution : ImGui::MenuItem内に記述すること

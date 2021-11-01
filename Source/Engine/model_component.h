@@ -70,6 +70,7 @@ namespace cumulonimbus::component
 		void RenderImGui() override;
 
 		void Load(ecs::Registry* registry) override;
+		void OnDeserialize(ecs::Registry* registry, const std::map<mapping::rename_type::Entity, mapping::rename_type::Entity>& connector) override;
 
 		// アニメーション
 		[[nodiscard]] bool IsPlayAnimation() const;

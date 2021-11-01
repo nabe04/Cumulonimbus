@@ -1,9 +1,12 @@
 #include "prefab.h"
 
+#include <ranges>
+
 #include "ecs.h"
 #include "file_path_helper.h"
 #include "file_path_helper.h"
 #include "generic.h"
+#include "prefab.h"
 // components(engine)
 #include "actor3d_component.h"
 #include "billboard_component.h"
@@ -96,7 +99,7 @@ namespace cumulonimbus::asset
 		// シーンにドロップしてオブジェクトを作成した際に以前の
 		// エンティティと作成後のエンティティを繋げるためのコネクター
 		std::map<mapping::rename_type::Entity, mapping::rename_type::Entity> connector{};
-		for (auto& [ent, comp_asset] : entity_assets)
+		for (const auto& ent : entity_assets | std::views::keys)
 		{
 			connector.emplace(ent, registry->CreateEntity());
 		}
