@@ -86,6 +86,10 @@ namespace cumulonimbus::scene
 		ecs::Registry* GetRegistry()			const { return registry.get(); }
 		[[nodiscard]]
 		scene::SceneManager* GetSceneManager()	const { return scene_manager; }
+		[[nodiscard]]
+		bool GetIsVisible()						const { return is_visible; }
+
+		void SetIsVisible(const bool flg)			  { is_visible = flg; }
 	private:
 		// シーン名
 		std::string						scene_name{};
@@ -93,6 +97,8 @@ namespace cumulonimbus::scene
 		std::unique_ptr<ecs::Registry>	registry{};
 		// シーン全体の管理
 		scene::SceneManager*			scene_manager{};
+		// 現シーンのオブジェクト表示
+		bool							is_visible{ true };
 
 		Framework*							  framework{};
 		std::unique_ptr<Light>				  light{}; // Todo : 後にComponent化する予定

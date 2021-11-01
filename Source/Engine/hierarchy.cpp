@@ -57,12 +57,27 @@ namespace cumulonimbus::editor
 		{
 			auto& registry = *scene->GetRegistry();
 			std::string scene_name = scene->GetSceneName();
+
+			ImGui::PushID(scene_id.c_str());
 			if (scene->GetSceneName().empty())
 			{
 				scene_name = filename_helper::GetNoTitled();
 			}
 
-			ImGui::PushID(scene_id.c_str());
+			std::string button_name{};
+			if(scene->GetIsVisible())
+			{
+				button_name = ICON_FA_EYE;
+			}
+			else
+			{
+				button_name = ICON_FA_EYE_SLASH;
+			}
+			if(ImGui::Button(button_name.c_str()))
+			{
+				scene->SetIsVisible(!scene->GetIsVisible());
+			}
+			ImGui::SameLine();
 			if (const std::filesystem::path current_scene_path = locator::Locator::GetSystem()->GetCurrentScenePath();
 				ImGui::TreeNodeEx(std::string{ ICON_FA_CLOUD_SUN + scene_name }.c_str(),
 								  ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen))

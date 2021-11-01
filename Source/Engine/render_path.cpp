@@ -1,5 +1,7 @@
 #include "render_path.h"
 
+#include <ranges>
+
 #include "debug_collision.h"
 #include "gbuffer.h"
 #include "gaussian_blur.h"
@@ -62,8 +64,12 @@ namespace cumulonimbus::renderer
 		RenderBegin(immediate_context);
 		camera.ClearFrameBuffer();
 
-		for (auto& [scene_id, scene] : scenes)
+		for (auto& scene : scenes | std::views::values)
 		{// シーン分のShadowMap作成
+			// シーンがアクティブで無いのなら描画しない
+			if (!scene->GetIsVisible())
+				continue;
+
 			if(ecs::Registry& registry = *scene->GetRegistry();
 			   registry.GetArray<component::ModelComponent>().GetComponents().size() > 0)
 			{// ShadowMap作成
@@ -84,8 +90,12 @@ namespace cumulonimbus::renderer
 			break;
 		}
 
-		for(auto& [scene_id,scene] : scenes)
+		for(auto& scene : scenes | std::views::values)
 		{
+			// シーンがアクティブで無いのなら描画しない
+			if (!scene->GetIsVisible())
+				continue;
+
 			if (ecs::Registry& registry = *scene->GetRegistry();
 				registry.GetArray<component::ModelComponent>().GetComponents().size() > 0)
 			{
@@ -101,8 +111,11 @@ namespace cumulonimbus::renderer
 			}
 		}
 
-		for (auto& [scene_id, scene] : scenes)
+		for (auto& scene : scenes | std::views::values)
 		{
+			// シーンがアクティブで無いのなら描画しない
+			if (!scene->GetIsVisible())
+				continue;
 			if (ecs::Registry& registry = *scene->GetRegistry();
 				registry.GetArray<component::ModelComponent>().GetComponents().size() > 0)
 			{// 2Dスプライトの描画
@@ -119,8 +132,11 @@ namespace cumulonimbus::renderer
 	{
 		RenderBegin(immediate_context);
 
-		for(auto& [scene_id,scene] : scenes)
+		for(auto& scene : scenes | std::views::values)
 		{
+			// シーンがアクティブで無いのなら描画しない
+			if (!scene->GetIsVisible())
+				continue;
 			ecs::Registry& registry = *scene->GetRegistry();
 			for(auto& camera_comp : registry.GetArray<component::CameraComponent>().GetComponents())
 			{
@@ -150,8 +166,11 @@ namespace cumulonimbus::renderer
 			}
 		}
 
-		for (auto& [scene_id, scene] : scenes)
+		for (auto& scene : scenes | std::views::values)
 		{
+			// シーンがアクティブで無いのなら描画しない
+			if (!scene->GetIsVisible())
+				continue;
 			for (ecs::Registry& registry = *scene->GetRegistry();
 				auto & camera_comp : registry.GetArray<component::CameraComponent>().GetComponents())
 			{
@@ -173,8 +192,11 @@ namespace cumulonimbus::renderer
 			}
 		}
 
-		for (auto& [scene_id, scene] : scenes)
+		for (auto& scene : scenes | std::views::values)
 		{
+			// シーンがアクティブで無いのなら描画しない
+			if (!scene->GetIsVisible())
+				continue;
 			for (ecs::Registry& registry = *scene->GetRegistry();
 				auto & camera_comp : registry.GetArray<component::CameraComponent>().GetComponents())
 			{
