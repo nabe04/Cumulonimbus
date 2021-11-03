@@ -24,16 +24,18 @@ namespace cumulonimbus::graphics
 	SkyBox::SkyBox(system::System& system, ID3D11Device* device, const std::string& filename)
 	{
 		CreateVertexBufferAndIndexBuffer(device);
-		if (filename.empty())
-		{
-			file_path_and_name = sky_box_file_path;
-			CreateTextures(device, sky_box_file_path.c_str());
-		}
-		else
-		{
-			file_path_and_name = filename;
-			CreateTextures(device, filename.c_str());
-		}
+		//if (filename.empty())
+		//{
+		//	file_path_and_name = sky_box_file_path;
+		//	CreateTextures(device, sky_box_file_path.c_str());
+		//}
+		//else
+		//{
+		//	file_path_and_name = filename;
+		//	CreateTextures(device, filename.c_str());
+		//}
+
+		CreateCubeTexture(device, "./Data/Assets/cubemap/Mars/mars.dds");
 
 		cb_transform  = std::make_unique<::buffer::ConstantBuffer<TransformCB>>(device);
 
@@ -41,8 +43,7 @@ namespace cumulonimbus::graphics
 		pixel_shader  = std::make_unique<shader::PixelShader>( device, mapping::shader_filename::ps::SkyBox_PS().c_str());
 
 		// System::Renderì‡Ç≈é¿çsÇ∑ÇÈä÷êîÇÃìoò^
-		system.RegisterRenderFunction(utility::GetHash<SkyBox>(),
-															  [&](ecs::Registry* registry) {RenderImGui(registry); });
+		system.RegisterRenderFunction(utility::GetHash<SkyBox>(), [&](ecs::Registry* registry) {RenderImGui(registry); });
 	}
 
 	void SkyBox::Update(const float dt)
@@ -77,6 +78,7 @@ namespace cumulonimbus::graphics
 		ID3D11Device* device = locator::Locator::GetDx11Device()->device.Get();
 		CreateVertexBufferAndIndexBuffer(device);
 		CreateTextures(device, file_path_and_name.c_str());
+		CreateCubeTexture(device, "./Data/Assets/cubemap/Mars/mars.dds");
 
 		cb_transform  = std::make_unique<::buffer::ConstantBuffer<TransformCB>>(device);
 
@@ -179,6 +181,12 @@ namespace cumulonimbus::graphics
 				assert(!"Create Index buffer error(sky box)");
 		}
 	}
+
+	void SkyBox::CreateCubeTexture(ID3D11Device* device, const std::string& filepath_and_name)
+	{
+		cube_texture = std::make_unique<asset::Texture>(device, filepath_and_name.c_str());
+	}
+
 
 	void SkyBox::CreateTextures(ID3D11Device* device, const char* filename)
 	{

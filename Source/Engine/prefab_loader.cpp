@@ -1,5 +1,7 @@
 #include "prefab_loader.h"
 
+#include <ranges>
+
 #include "ecs.h"
 #include "arithmetic.h"
 #include "generic.h"
@@ -80,6 +82,48 @@ namespace cumulonimbus::asset
 
 		prefabs.emplace(id, std::move(prefab));
 		// アセットシート(更新後)の保存
+		asset_manager.Save();
+	}
+
+	void PrefabLoader::Rename(AssetManager& asset_manager, const mapping::rename_type::UUID& asset_id, const std::string& changed_name)
+	{
+		// アセットが存在しない場合処理を抜ける
+		if (!prefabs.contains(asset_id))
+			return;
+
+		// 変更前のファイルパス(拡張子を含まない)   ./Data/Assets/Prefabs/"変更前のプレハブ名"/"変更前のプレハブ名"
+		const std::filesystem::path	before_path = std::filesystem::path{ asset_manager.GetAssetSheetManager().GetAssetFilename<Prefab>(asset_id) }.replace_extension();
+		// 変更前の親ファイルパス(拡張子を含まない) ./Data/Assets/Prefabs/"変更前のプレハブ名"
+		const std::filesystem::path before_parent_path = before_path.parent_path();
+		// 変更後のファイルパス(拡張子を含まない)   ./Data/Assets/Prefabs/"変更後のプレハブ名"/"変更後のプレハブ名"
+		const std::filesystem::path after_path = before_parent_path.parent_path().string() + "/" + changed_name + "/" + changed_name;
+
+		// -- ファイル & フォルダ名の変更 --//
+		// 「.prefab」ファイルのファイル名変更
+		// 例 : ./Data/Assets/Prefabs/"変更前のプレハブ名"/"変更前のプレハブ名.prefab" -> ./Data/Assets/Prefabs/"変更前のプレハブ名"/"変更後のプレハブ名".prefab
+		std::filesystem::rename(before_path.string()		+ file_path_helper::GetPrefabExtension(),
+								before_parent_path.string() + changed_name + file_path_helper::GetPrefabExtension());
+		// フォルダ名の変更(プレハブフォルダ)
+		// 例 : ./Data/Assets/"変更前のプレハブ名" -> ./Data/Assets/"変更後のプレハブ名"
+		std::filesystem::rename(before_parent_path, after_path.parent_path());
+		// フォルダ名の変更(プレハブフォルダ内の同名エンティティ名フォルダ)
+		// 例 : ./Data/Assets/"変更後のプレハブ名"/"変更前のプレハブ名" -> ./Data/Assets/"変更後のプレハブ名"/"変更後のプレハブ名"
+		std::filesystem::rename(after_path.parent_path().string() + before_path.filename().string(), after_path);
+
+		// Prefab::EntityInfo::entity_nameの変更
+		// -> 次回読み込む時のフォルダ名に使用するため
+		for(auto& ent_info : prefabs.at(asset_id)->GetEntityAssets() | std::views::values)
+		{
+			if(ent_info.entity_name == before_path.filename().string())
+			{
+				ent_info.entity_name = after_path.filename().string();
+				break;
+			}
+		}
+
+		// アセットシート側のファイルパス変更(例 : ./Data/Materials/"変更後のプレハブ名"/"変更後のプレハブ名.mat")
+		asset_manager.GetAssetSheetManager().GetSheet<Prefab>().sheet.at(asset_id) = after_path.string() + file_path_helper::GetPrefabExtension();
+		// アセットシートの保存
 		asset_manager.Save();
 	}
 
@@ -245,7 +289,7 @@ namespace cumulonimbus::asset
 
 		mapping::rename_type::UUID id;
 		while (true)
-		{
+		{// アセットIDの重複を防ぐ
 			id = utility::GenerateUUID();
 			if (asset_manager.GetAssetSheetManager().GetSheet<Prefab>().sheet.contains(id))
 				continue;

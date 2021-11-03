@@ -31,6 +31,35 @@ namespace cumulonimbus::asset
 		Load(asset_manager, id);
 	}
 
+	void MaterialLoader::Rename(AssetManager& asset_manager, const mapping::rename_type::UUID& asset_id, const std::string& changed_name)
+	{
+		// アセットが存在しない場合処理を抜ける
+		if (!materials.contains(asset_id))
+			return;
+
+		// 変更前のファイルパス(拡張子を含まない)   ./Data/Materials/"変更前のマテリアル名"
+		const std::filesystem::path before_path			= std::filesystem::path{ asset_manager.GetAssetSheetManager().GetAssetFilename<asset::Material>(asset_id) }.replace_extension();
+		// 変更前の親ファイルパス(拡張子を含まない) ./Data/Materials/
+		const std::filesystem::path before_parent_path	= before_path.parent_path();
+		// 変更後のファイルパス(拡張子を含まない)   ./Data/Materials/"変更後のマテリアル名"
+		const std::filesystem::path after_path			= before_parent_path.string() + "/" + changed_name;
+
+		// -- ファイル名の変更 --//
+		// 「.mat」ファイルのファイル名変更
+		//  例 : ./Data/Materials/"変更前のマテリアル名.mat" ->  ./Data/Materials/"変更後のマテリアル名.mat"
+		std::filesystem::rename(before_path.string() + file_path_helper::GetMaterialExtension(),
+								after_path.string()  + file_path_helper::GetMaterialExtension());
+		// 「.json」ファイルのファイル名変更
+		// 例 : ./Data/Materials/"変更前のマテリアル名.json" ->  ./Data/Materials/"変更後のマテリアル名.json"
+		std::filesystem::rename(before_path.string() + file_path_helper::GetJsonExtension(),
+								after_path.string()  + file_path_helper::GetJsonExtension());
+
+		// アセットシート側のファイルパス変更(例 : ./Data/Materials/"変更後のマテリアル名"/"変更後のマテリアル名.mat")
+		asset_manager.GetAssetSheetManager().GetSheet<Material>().sheet.at(asset_id) = after_path.string() + file_path_helper::GetMaterialExtension();
+		// アセットシートの保存
+		asset_manager.Save();
+	}
+
 	void MaterialLoader::Delete(AssetManager& asset_manager, const std::filesystem::path& path)
 	{
 		const mapping::rename_type::UUID mat_id = asset_manager.GetAssetSheetManager().Search<asset::Material>(path);

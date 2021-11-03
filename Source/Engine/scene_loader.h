@@ -21,9 +21,57 @@ namespace cumulonimbus::asset
 		explicit SceneLoader()  = default;
 		~SceneLoader() override = default;
 
+		/**
+		 * @brief : アセットのロード
+		 * @param asset_manager : AssetManagerクラスの参照
+		 * @param path : ロードされたモデルのファイルパス
+		 */
 		void Load(AssetManager& asset_manager, const std::filesystem::path& path) override;
+		/**
+		 * @brief : アセットのロード
+		 * @param asset_manager : AssetManagerクラスの参照
+		 * @param from: ロードされたモデルのファイルパス
+		 * @param to : コピー先のファイルパス
+		 */
 		void Load(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to) override;
+		/**
+		 * @brief : オーバーロードされているLoad関数の共通処理記述部
+		 */
 		void Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id) override;
+
+		/**
+		 * @brief : アセットの名前変更
+		 * @remark : 変更先のクラスでasset_idが存在しない場合処理を抜ける
+		 * @remark : シーンのアセットは「.scene」と「.json」ファイルとシーン名の
+		 *			 フォルダが存在するのでこれらのファイル名も名前を変更する
+		 * @param asset_manager : AssetManagerクラスの参照
+		 * @param asset_id : リネーム対象のアセットID
+		 * @param changed_name : 変更後のファイル名(※ファイルパスや拡張子は含まない)
+		 */
+		void Rename(AssetManager& asset_manager,const mapping::rename_type::UUID& asset_id, const std::string& changed_name) override;
+
+		/**
+		 * @brief : アセットの削除
+		 * @remark : ※caution : 削除したいパスが存在しない場合処理を飛ばす
+		 * @param asset_manager : AssetManagerクラスの参照
+		 * @param path : 削除したいファイルパス
+		 */
+		void Delete(AssetManager& asset_manager, const std::filesystem::path& path) override;
+		/**
+		 * @breief : アセットの削除
+		 * @remark :  ※caution : 削除したいIDが存在しない場合処理を飛ばす
+		 * @param asset_manager : AssetManagerクラスの参照
+		 * @param asset_id : 削除したいアセットのID(UUID)
+		 */
+		void Delete(AssetManager& asset_manager, const mapping::rename_type::UUID& asset_id) override;
+
+		/**
+		 * @brief : 指定された拡張子はロード可能か
+		 * @param extension : ファイルの拡張子
+		 * @return	: true -> サポートしている
+		 * @return  : false -> サポートしていない
+		 */
+		bool Supported(std::filesystem::path extension) override;
 
 		/**
 		 * @brief : シーンの名前を付けての保存
@@ -98,11 +146,6 @@ namespace cumulonimbus::asset
 		void OpenScene(scene::SceneManager& scene_manager, const std::filesystem::path& path);
 
 		void OpenScene(scene::Scene& scene, const std::filesystem::path& path);
-
-		void Delete(AssetManager& asset_manager, const std::filesystem::path& path) override;
-		void Delete(AssetManager& asset_manager, const mapping::rename_type::UUID& asset_id) override;
-
-		bool Supported(std::filesystem::path extension) override;
 
 	private:
 		std::map<mapping::rename_type::UUID, SceneAsset> scenes{};

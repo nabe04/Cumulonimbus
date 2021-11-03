@@ -44,6 +44,72 @@ namespace cumulonimbus::asset
 		asset_manager.Save();
 	}
 
+	void SceneLoader::Rename(AssetManager& asset_manager, const mapping::rename_type::UUID& asset_id, const std::string& changed_name)
+	{
+		// アセットが存在しない場合処理を抜ける
+		if (!scenes.contains(asset_id))
+			return;
+
+		// 変更前のファイルパス(拡張子を含まない)   ./Data/Scenes/"変更前のシーン名"/"変更前のシーン名"
+		const std::filesystem::path	before_path			= std::filesystem::path{ scenes.at(asset_id).scene_file_path }.replace_extension();
+		// 変更前の親ファイルパス(拡張子を含まない) ./Data/Scenes/"変更前のシーン名"
+		const std::filesystem::path before_parent_path	= before_path.parent_path();
+		// 変更後のファイルパス(拡張子を含まない)   ./Data/Scenes/"変更後のシーン名"/"変更後のシーン名"
+		const std::filesystem::path after_path			= before_parent_path.parent_path().string() + "/" + changed_name + "/" + changed_name;
+
+		// -- ファイル & フォルダ名の変更 --//
+		// 「.scene」ファイルのファイル名変更
+		// 例 : ./Data/Scenes/"変更前のシーン名"/"変更前のシーン名.scene" -> ./Data/Scenes/"変更前のシーン名"/"変更後のシーン名.scene"
+		std::filesystem::rename(before_path.string()		+ file_path_helper::GetSceneExtension(),
+								before_parent_path.string() + changed_name + file_path_helper::GetSceneExtension());
+		// 「.json」ファイルのファイル名変更
+		// 例 : ./Data/Scenes/"変更前のシーン名"/"変更前のシーン名.json" -> ./Data/Scenes/"変更前のシーン名"/"変更後のシーン名.json"
+		std::filesystem::rename(before_path.string()		+ file_path_helper::GetJsonExtension(),
+								before_parent_path.string() + changed_name + file_path_helper::GetJsonExtension());
+		// フォルダ名の変更
+		// 例 : ./Data/Scenes/"変更前のシーン名" -> ./Data/Scenes/"変更後のシーン名"
+		std::filesystem::rename(before_parent_path, after_path.parent_path());
+
+		// SceneAssetのファイルパス変更( ./Data/Scenes/"変更後のシーン名"/"変更後のシーン名.scene")
+		scenes.at(asset_id).scene_file_path = after_path.string() + file_path_helper::GetSceneExtension();
+		// アセットシート側のファイルパス変更(例 :  ./Data/Scenes/"変更後のシーン名"/"変更後のシーン名.scene")
+		asset_manager.GetAssetSheetManager().GetSheet<SceneAsset>().sheet.at(asset_id) = after_path.string() + file_path_helper::GetSceneExtension();
+		// アセットシートの保存
+		asset_manager.Save();
+	}
+
+	void SceneLoader::Delete(AssetManager& asset_manager, const std::filesystem::path& path)
+	{
+		const mapping::rename_type::UUID scene_id = asset_manager.GetAssetSheetManager().Search<SceneAsset>(path);
+		// アセット(ID)が存在していなければ処理を抜ける
+		if (!scenes.contains(scene_id))
+			return;
+
+		DeleteScene(scene_id, path);
+		asset_manager.Save();
+	}
+
+	void SceneLoader::Delete(AssetManager& asset_manager, const mapping::rename_type::UUID& asset_id)
+	{
+		const std::filesystem::path delete_path = asset_manager.GetAssetSheetManager().GetAssetFilename<SceneAsset>(asset_id);
+		// アセット(ID)が存在していなければ処理を抜ける
+		if (!scenes.contains(asset_id))
+			return;
+
+		DeleteScene(asset_id, delete_path);
+		asset_manager.Save();
+	}
+
+	bool SceneLoader::Supported(const std::filesystem::path extension)
+	{
+		static const std::set<std::filesystem::path> extensions
+		{
+			file_path_helper::GetSceneExtension()
+		};
+
+		return extensions.contains(extension);
+	}
+
 	void SceneLoader::SaveAs(
 		scene::Scene& scene,
 		const std::filesystem::path& path)
@@ -140,38 +206,6 @@ namespace cumulonimbus::asset
 		// システムに現在のシーン名を登録
 		locator::Locator::GetSystem()->SetCurrentScenePath(path.string());
 		scene.LoadScene(path.parent_path().string(), path.filename().string());
-	}
-
-	void SceneLoader::Delete(AssetManager& asset_manager, const std::filesystem::path& path)
-	{
-		const mapping::rename_type::UUID scene_id = asset_manager.GetAssetSheetManager().Search<SceneAsset>(path);
-		// アセット(ID)が存在していなければ処理を抜ける
-		if (!scenes.contains(scene_id))
-			return;
-
-		DeleteScene(scene_id, path);
-		asset_manager.Save();
-	}
-
-	void SceneLoader::Delete(AssetManager& asset_manager, const mapping::rename_type::UUID& asset_id)
-	{
-		const std::filesystem::path delete_path = asset_manager.GetAssetSheetManager().GetAssetFilename<SceneAsset>(asset_id);
-		// アセット(ID)が存在していなければ処理を抜ける
-		if (!scenes.contains(asset_id))
-			return;
-
-		DeleteScene(asset_id, delete_path);
-		asset_manager.Save();
-	}
-
-	bool SceneLoader::Supported(const std::filesystem::path extension)
-	{
-		static const std::set<std::filesystem::path> extensions
-		{
-			file_path_helper::GetSceneExtension()
-		};
-
-		return extensions.contains(extension);
 	}
 
 	mapping::rename_type::UUID SceneLoader::Convert(

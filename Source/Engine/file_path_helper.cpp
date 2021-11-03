@@ -13,6 +13,11 @@ namespace cumulonimbus::file_path_helper
 		return { ".json" };
 	}
 
+	std::string GetFbxExtension()
+	{
+		return { ".fbx" };
+	}
+
 	std::string GetFbmExtension()
 	{
 		return { ".fbm" };

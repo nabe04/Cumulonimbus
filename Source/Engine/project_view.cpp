@@ -209,19 +209,15 @@ namespace cumulonimbus::editor
 				if (!rename.empty())
 				{// 変更したい名前が空でない場合リネーム
 					const std::filesystem::path prev_path	= asset_manager.GetAssetSheetManager().GetAssetFilename(rename_id);
-					std::filesystem::path		parent_path	= prev_path.parent_path();
+					const std::filesystem::path	parent_path	= prev_path.parent_path();
 					std::filesystem::path		cur_name	= rename;
 					cur_name.replace_extension();
-					asset_manager.RenameAsset(rename_id,
-											  parent_path.string() + "/" +
-											  cur_name.string() + rename_exe);
+					asset_manager.RenameAsset(rename_id, cur_name.string(), rename_exe);
 					// リネームパラメータのリセット
 					rename_id.clear();
 					rename_exe.clear();
 					rename.clear();
 				}
-
-				//std::filesystem::path rename_path =
 
 				is_rename = false;
 			}
@@ -266,7 +262,6 @@ namespace cumulonimbus::editor
 		if (is_folder_open.at(path))
 			icon = ICON_FA_FOLDER_OPEN;
 		const std::string path_name = path.filename().string();
-		bool is_open = false;
 
 		if(selected_path == path)
 		{
@@ -274,6 +269,7 @@ namespace cumulonimbus::editor
 		}
 
 		{
+			bool is_open = false;
 			ImGui::Text(icon);
 			ImGui::SameLine();
 			is_open = ImGui::TreeNodeEx(path_name.c_str(), node_flags);

@@ -576,9 +576,6 @@
     <ClCompile Include="Source\Engine\component_base.cpp">
       <Filter>Source\Engine\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\wave_loader.cpp">
-      <Filter>Source\Engine\System</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Engine\scene_manager.cpp">
       <Filter>Source\Engine\Scene</Filter>
     </ClCompile>
@@ -1051,9 +1048,6 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\hierarchy_component.h">
       <Filter>Header\Engine\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\wave_loader.h">
-      <Filter>Header\Engine\Loader</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\wave.h">
       <Filter>Header\Engine\System</Filter>

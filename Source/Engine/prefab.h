@@ -88,17 +88,6 @@ namespace cumulonimbus::asset
 			);
 		}
 
-		///**
-		// * @brief : Prefabの作成
-		// * @remark : Hierarchy View上でEntityをPrefab化したい時に使用
-		// * @param registry :
-		// * @param ent : Prefab化したいEntity
-		// * @param path : 保存するプレファブのパス(※ファイルパス + ファイル名 + ファイル拡張子)
-		// */
-		//void CreatePrefab(
-		//	ecs::Registry* registry, const mapping::rename_type::Entity& ent,
-		//	const std::filesystem::path& path);
-
 		/**
 		 * @brief : Prefabの作成
 		 * @remark : Hierarchy View上でEntityをPrefab化したい時に使用
@@ -120,6 +109,18 @@ namespace cumulonimbus::asset
 
 		void Load(const std::filesystem::path& path);
 		void Save(ecs::Registry* registry, const std::filesystem::path& path);
+
+		[[nodiscard]]
+		std::map<mapping::rename_type::Entity, EntityInfo>& GetEntityAssets()
+		{
+			return entity_assets;
+		}
+
+		[[nodiscard]]
+		const std::map<mapping::rename_type::Entity, EntityInfo>& GetEntityAssets() const
+		{
+			return entity_assets;
+		}
 
 	private:
 		std::map<mapping::rename_type::Entity, EntityInfo> entity_assets{};

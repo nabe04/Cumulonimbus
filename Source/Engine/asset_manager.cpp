@@ -4,16 +4,15 @@
 #include <fstream>
 #include <set>
 
-#include "texture.h"
 #include "file_path_helper.h"
+#include "texture.h"
 // Loaders
 #include "loader.h"
 #include "material_loader.h"
 #include "model_loader.h"
-#include "texture_loader.h"
-#include "scene_loader.h"
 #include "prefab_loader.h"
-#include "wave_loader.h"
+#include "scene_loader.h"
+#include "texture_loader.h"
 
 namespace
 {
@@ -30,7 +29,6 @@ namespace cumulonimbus::asset
 		RegisterLoader<Texture	 , TextureLoader>();
 		RegisterLoader<Prefab	 , PrefabLoader>();
 		RegisterLoader<SceneAsset, SceneLoader>();
-		RegisterLoader<WaveAsset , WaveLoader>();
 
 		// デフォルトパスからのロード
 		Load();
@@ -48,28 +46,44 @@ namespace cumulonimbus::asset
 
 	void AssetManager::AddAsset(const std::filesystem::path& path)
 	{
-		for (auto&& [key, value] : loaders)
+		for (auto& value : loaders | std::views::values)
 		{
 			if (value->Supported(path.extension()))
 				value->Load(*this, path);
 		}
 	}
 
-	void AssetManager::RenameAsset(const mapping::rename_type::UUID& asset_id, const std::filesystem::path& path)
+	void AssetManager::RenameAsset(
+		const mapping::rename_type::UUID& asset_id,
+		const std::string& changed_name, const std::string& extension)
 	{
-		for (auto& [hash, asset_sheet] : sheet_manager->GetSheets())
+		for(auto& loader : loaders | std::views::values)
 		{
-			for (auto& [uuid, asset_path] : asset_sheet.sheet)
-			{
-				if(uuid == asset_id)
-				{
-					std::filesystem::rename(asset_path, path);
-					asset_path = path.string();
-					Save();
-					return;
-				}
-			}
+			// 保存したいファイルの拡張子とローダーがサポートしている
+			// 拡張子が一致すれば名前変更処理を行う
+			if (!loader->Supported(extension))
+				continue;
+
+			loader->Rename(*this, asset_id, changed_name);
+			break;
 		}
+
+		//for (auto& asset_sheet : sheet_manager->GetSheets() | std::views::values)
+		//{
+		//	for (auto& [uuid, asset_path] : asset_sheet.sheet)
+		//	{
+		//		if(uuid == asset_id)
+		//		{
+		//			// ファイル名の変更
+		//			std::filesystem::rename(asset_path, path);
+		//			// アセットシートにあるパスも変更
+		//			asset_path = path.string();
+		//			// 変更されたのでアセットシートを保存
+		//			Save();
+		//			return;
+		//		}
+		//	}
+		//}
 	}
 
 	void AssetManager::DeleteAssetAndLoader(const std::filesystem::path& path)
@@ -80,11 +94,10 @@ namespace cumulonimbus::asset
 
 	void AssetManager::DeleteAsset(const std::filesystem::path& path) const
 	{
-		// pathとアセットシートに登録されているパスが一致した場合trueになる
-		bool is_hit{ false };
-
-		for (auto& [hash, asset_sheet] : sheet_manager->GetSheets())
+		for (auto& asset_sheet : sheet_manager->GetSheets() | std::views::values)
 		{
+			// pathとアセットシートに登録されているパスが一致した場合trueになる
+			bool is_hit{ false };
 			for(auto& [uuid,asset_path] : asset_sheet.sheet)
 			{
 				if(path == asset_path)
@@ -101,7 +114,7 @@ namespace cumulonimbus::asset
 
 	void AssetManager::DeleteLoader(const std::filesystem::path& path)
 	{
-		for (auto& [hash, loader] : loaders)
+		for (auto& loader : loaders | std::views::values)
 		{
 			loader->Delete(*this, path);
 		}
@@ -182,7 +195,7 @@ namespace cumulonimbus::asset
 			 * asset_id : アセットID(UUID)
 			 * asset_path : アセットIDの指すアセットのパス
 			 */
-			for (const auto& [asset_id, asset_path] : sheets.sheet)
+			for (const auto& asset_id : sheets.sheet | std::views::keys)
 			{
 				auto h = connector.at(hash);
 				loaders.at(connector.at(hash))->Load(*this, asset_id);

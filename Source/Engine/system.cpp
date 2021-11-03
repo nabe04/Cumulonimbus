@@ -74,7 +74,7 @@ namespace cumulonimbus::system
 	System::System()
 	{
 		camera_texture	= std::make_unique<camera::CameraTexture>(*this);
-		sky_box			= std::make_unique<graphics::SkyBox>(*this, locator::Locator::GetDx11Device()->device.Get());
+		sky_box			= std::make_unique<graphics::SkyBox>(*this, locator::Locator::GetDx11Device()->device.Get(),".Data/Assets/cubemap/Table_Mountain/table_mountain.dds");
 	}
 
 	void System::Save(const std::filesystem::path& save_path)

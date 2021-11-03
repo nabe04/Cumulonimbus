@@ -17,6 +17,7 @@
 #include "rigid_body_component.h"
 #include "raycast_component.h"
 #include "scene.h"
+#include "scene_manager.h"
 #include "transform_component.h"
 #include "collision_name_mapping.h"
 
@@ -437,7 +438,7 @@ namespace cumulonimbus::component
 
 	bool PlayerComponent::IsNextAnimationLongPressAttack() const
 	{
-		const float frame_rate = GetRegistry()->GetScene()->GetFramework()->GetHighResolutionTimer().GetFrameRate();
+		const float frame_rate = GetRegistry()->GetScene()->GetSceneManager()->GetFramework()->GetHighResolutionTimer().GetFrameRate();
 		const float fps = 1 / frame_rate;
 		return long_press_time > (fps * static_cast<float>(long_press_slot)) ? true : false;
 	}

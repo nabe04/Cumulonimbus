@@ -90,6 +90,30 @@ namespace cumulonimbus::asset
 		asset_manager.Save();
 	}
 
+	void TextureLoader::Rename(AssetManager& asset_manager, const mapping::rename_type::UUID& asset_id, const std::string& changed_name)
+	{
+		// アセットが存在しない場合処理を抜ける
+		if (!textures.contains(asset_id))
+			return;
+
+		// テクスチャ拡張子
+		const std::string extension				= std::filesystem::path{ asset_manager.GetAssetSheetManager().GetAssetFilename<asset::Texture>(asset_id) }.extension().string();
+		// 変更前のファイルパス(拡張子を含まない)   ./Data/Textures/"変更前のテクスチャ名"
+		const std::filesystem::path before_path	= std::filesystem::path{ asset_manager.GetAssetSheetManager().GetAssetFilename<asset::Texture>(asset_id) }.replace_extension();
+		// 変更後のファイルパス(拡張子を含まない)   ./Data/Textures/"変更後のテクスチャ名"
+		const std::filesystem::path after_path	= before_path.parent_path().string() + "/" + changed_name;
+
+		// ファイル名の変更
+		// 例 : ./Data/Textures/"変更前のテクスチャ名" -> ./Data/Textures/"変更後のテクスチャ名"
+		std::filesystem::rename(before_path.string() + extension,
+								after_path.string()  + extension);
+
+		// アセットシート側のファイルパス変更(例 : ./Data/Materials/"変更後のマテリアル名"/"変更後のマテリアル名.mat")
+		asset_manager.GetAssetSheetManager().GetSheet<Texture>().sheet.at(asset_id) = after_path.string() + extension;
+		// アセットシートの保存
+		asset_manager.Save();
+	}
+
 	void TextureLoader::Delete(AssetManager& asset_manager, const std::filesystem::path& path)
 	{
 		const mapping::rename_type::UUID tex_id = asset_manager.GetAssetSheetManager().Search<Texture>(path);

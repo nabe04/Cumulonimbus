@@ -29,11 +29,19 @@ namespace cumulonimbus::asset
 		 * @param to : コピー先のファイルパス
 		 */
 		virtual void Load(AssetManager& asset_manager, const std::filesystem::path& from, const std::filesystem::path& to) = 0;
-
 		/**
 		 * @brief : オーバーロードされているLoad関数の共通処理記述部
 		 */
 		virtual void Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id) = 0;
+
+		/**
+		 * @brief : アセットの名前変更
+		 * @remark : 変更先のクラスでasset_idが存在しない場合処理を抜ける
+		 * @param asset_manager : AssetManagerクラスの参照
+		 * @param asset_id : リネーム対象のアセットID
+		 * @param changed_name : 変更後のファイル名(※ファイルパスや拡張子は含まない)
+		 */
+		virtual void Rename(AssetManager& asset_manager,const mapping::rename_type::UUID& asset_id, const std::string& changed_name) = 0;
 
 		/**
 		 * @brief : アセットの削除

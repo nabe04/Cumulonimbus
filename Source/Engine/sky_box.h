@@ -90,15 +90,18 @@ namespace cumulonimbus::graphics
 		ID3D11Buffer** GetIndexBufferAddress() { return index_buffer.GetAddressOf(); }
 
 		[[nodiscard]]
-		ID3D11ShaderResourceView* GetShaderResourceView() const { return texture_view.Get(); }
+		ID3D11ShaderResourceView* GetShaderResourceView() const { return cube_texture->GetShaderResourceView(); }
 		[[nodiscard]]
-		ID3D11ShaderResourceView** GetShaderResourceViewAddress() { return texture_view.GetAddressOf(); }
+		ID3D11ShaderResourceView** GetShaderResourceViewAddress() { return cube_texture->GetShaderResourceViewAddress(); }
 
 		[[nodiscard]]
 		const DirectX::SimpleMath::Matrix& GetWorldMatrix() const { return world_mat; }
 	private:
+		// ‘O
 		std::array<std::unique_ptr<asset::Texture>, 6>		   cube_textures{};
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	   texture_view{};
+
+		std::unique_ptr<asset::Texture>						   cube_texture{};
 		std::unique_ptr<::buffer::ConstantBuffer<TransformCB>> cb_transform{};
 
 		Microsoft::WRL::ComPtr<ID3D11Buffer>  vertex_buffer{};
@@ -118,6 +121,8 @@ namespace cumulonimbus::graphics
 		DirectX::SimpleMath::Matrix translation_mat	{ DirectX::SimpleMath::Matrix::Identity };
 
 		void CreateVertexBufferAndIndexBuffer(ID3D11Device* device);
+		void CreateCubeTexture(ID3D11Device* device, const std::string& filepath_and_name);
+		// ‘O
 		void CreateTextures(ID3D11Device* device, const char* filename);
 	};
 } // cumulonimbus::graphics

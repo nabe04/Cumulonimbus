@@ -64,24 +64,41 @@ namespace cumulonimbus::editor
 				scene_name = filename_helper::GetNoTitled();
 			}
 
-			std::string button_name{};
+			//-- 「表示」、「非表示」ボタン --//
+			std::string eye_button_name{};
 			if(scene->GetIsVisible())
 			{
-				button_name = ICON_FA_EYE;
+				eye_button_name = ICON_FA_EYE;
 			}
 			else
 			{
-				button_name = ICON_FA_EYE_SLASH;
+				eye_button_name = ICON_FA_EYE_SLASH;
 			}
-			if(ImGui::Button(button_name.c_str()))
-			{
+			if(ImGui::Button(eye_button_name.c_str()))
+			{// シーン表示内容の反転
 				scene->SetIsVisible(!scene->GetIsVisible());
 			}
 			ImGui::SameLine();
-			if (const std::filesystem::path current_scene_path = locator::Locator::GetSystem()->GetCurrentScenePath();
-				ImGui::TreeNodeEx(std::string{ ICON_FA_CLOUD_SUN + scene_name }.c_str(),
-								  ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen))
+
+			ImGuiTreeNodeFlags tree_flg = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen;
+			if(selected_scene_id == scene_id)
 			{
+				tree_flg |= ImGuiTreeNodeFlags_Selected;
+				ImGui::PushStyleColor(ImGuiCol_TableRowBg, ImVec4{ 1,0,1,1 });
+			}
+			else
+			{
+				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{ 100.f / 255.f,100.f / 255.f,100.f / 255.f,1 });
+			}
+
+			//-- シーン単位でのヒエラルキー表示 --//
+			if (const std::filesystem::path current_scene_path = locator::Locator::GetSystem()->GetCurrentScenePath();
+				ImGui::TreeNodeEx(std::string{ ICON_FA_CLOUD_SUN + scene_name }.c_str(),tree_flg))
+			{
+
+					ImGui::PopStyleColor();
+
+
 				if(ImGui::IsItemClicked(ImGuiMouseButton_Left))
 				{
 					// 選択されているシーンの変更

@@ -1,10 +1,11 @@
 #pragma once
-#include <memory>
 #include <filesystem>
+#include <memory>
+#include <ranges>
 
 #include "asset_sheet_manager.h"
-#include "rename_type_mapping.h"
 #include "generic.h"
+#include "rename_type_mapping.h"
 //#include "loader.h"
 
 namespace cumulonimbus::asset
@@ -42,26 +43,45 @@ namespace cumulonimbus::asset
 		void AddAsset(const std::filesystem::path& path);
 
 		/**
-		 *
+		 * @brief : アセット名の変更
+		 * @param asset_id : アセットID
+		 * @param changed_name : 変更後の名前
+		 * @param extension : 変更対象の拡張子
 		 */
 		template<class Sheet>
-		void RenameAsset(const mapping::rename_type::UUID& asset_id,
-						 const std::filesystem::path& path)
+		void RenameAsset(
+			const mapping::rename_type::UUID& asset_id,
+			const std::string& changed_name, const std::string& extension)
 		{
-			if(sheet_manager->GetSheet<Sheet>().sheet.contains(asset_id))
+			for (auto& loader : loaders | std::views::values)
 			{
-				auto& sheet = sheet_manager->GetSheet<Sheet>().sheet.at(asset_id);
-				std::filesystem::rename(sheet, path);
-				sheet_manager->GetSheet<Sheet>().sheet.at(asset_id) = path;
-				Save();
-			}
-		}
-		/**
-		 * Todo : アセット名の変更
-		 */
-		void RenameAsset(const mapping::rename_type::UUID& asset_id,
-						 const std::filesystem::path& path);
+				// 保存したいファイルの拡張子とローダーがサポートしている
+				// 拡張子が一致すれば名前変更処理を行う
+				if (!loader->Supported(extension))
+					continue;
 
+				loader->Rename(*this, asset_id, changed_name);
+				break;
+			}
+			
+			//if(sheet_manager->GetSheet<Sheet>().sheet.contains(asset_id))
+			//{
+			//	auto& sheet = sheet_manager->GetSheet<Sheet>().sheet.at(asset_id);
+			//	std::filesystem::rename(sheet, path);
+			//	sheet_manager->GetSheet<Sheet>().sheet.at(asset_id) = path;
+			//	Save();
+			//}
+		}
+
+		/**
+		 * @brief : アセット名の変更
+		 * @param asset_id : アセットID
+		 * @param changed_name : 変更後の名前
+		 * @param extension : 変更対象の拡張子
+		 */
+		void RenameAsset(
+			const mapping::rename_type::UUID& asset_id, 
+			const std::string& changed_name, const std::string& extension);
 
 		/**
 		 * @brief : AssetSheetとLoader両方のアセット情報削除

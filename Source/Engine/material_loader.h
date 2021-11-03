@@ -29,6 +29,17 @@ namespace cumulonimbus::asset
 		void Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id) override;
 
 		/**
+		 * @brief : アセットの名前変更
+		 * @remark : 変更先のクラスでasset_idが存在しない場合処理を抜ける
+		 * @remark : マテリアルのアセットには「.mat」と「.json」ファイルが
+		 *			 存在するのでこれらのファイル名を変更する
+		 * @param asset_manager : AssetManagerクラスの参照
+		 * @param asset_id : リネーム対象のアセットID
+		 * @param changed_name : 変更後のファイル名(※ファイルパスや拡張子は含まない)
+		 */
+		void Rename(AssetManager& asset_manager, const mapping::rename_type::UUID& asset_id, const std::string& changed_name) override;
+
+		/**
 		 * @brief : アセットの削除
 		 * @remark : ※caution : 削除したいパスが存在しない場合処理を飛ばす
 		 * @param asset_manager : AssetManagerクラスの参照
@@ -67,7 +78,7 @@ namespace cumulonimbus::asset
 
 		/**
 		 * @brief : 取得したいマテリアルのID(UUID)を元にマテリアルを取得
-		 * @param id : 取得したいマテリアルのID(UUID)
+		 * @param mat_id : 取得したいマテリアルのID(UUID)
 		 * @return : 取得したマテリアルの参照
 		 */
 		Material& GetMaterial(const mapping::rename_type::UUID& mat_id);
