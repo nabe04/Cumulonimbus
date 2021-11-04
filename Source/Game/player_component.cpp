@@ -4,22 +4,21 @@
 #include <DirectXMath.h>
 #include <SimpleMath.h>
 
+#include "arithmetic.h"
+#include "collision_name_mapping.h"
 #include "cum_imgui_helper.h"
 #include "ecs.h"
 #include "locator.h"
-#include "collision_name_mapping.h"
-
-#include "arithmetic.h"
 #include "model_loader.h"
 // components
 #include "camera_component.h"
+#include "collision_name_mapping.h"
 #include "model_component.h"
-#include "rigid_body_component.h"
 #include "raycast_component.h"
+#include "rigid_body_component.h"
 #include "scene.h"
 #include "scene_manager.h"
 #include "transform_component.h"
-#include "collision_name_mapping.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::PlayerComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::Actor3DComponent, cumulonimbus::component::PlayerComponent)
@@ -239,7 +238,7 @@ namespace cumulonimbus::component
 		player_state.Update(dt);
 
 		// レイキャストに使用するパラメータの設定
-		SetRayCastParameter(dt);
+		//SetRayCastParameter(dt);
 		// カメラワーク
 		CameraWork();
 		// 移動
@@ -376,11 +375,6 @@ namespace cumulonimbus::component
 		if(ray_cast_comp->GetIsBlockHit(mapping::collision_name::ray::ForFloor()))
 		{
 			rigid_body_comp->SetCurrentGravity(0);
-		}
-		else
-		{
-			int a;
-			a = 0;
 		}
 	}
 
@@ -597,6 +591,7 @@ namespace cumulonimbus::component
 
 		// 状態遷移(PlayerState::Jump_Loop)
 		player_state.SetState(PlayerState::Jump_Loop);
+		GetRegistry()->GetComponent<component::RigidBodyComponent>(GetEntity()).GravityStop(false);
 	}
 
 	void PlayerComponent::JumpLoop(float dt)

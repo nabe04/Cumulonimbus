@@ -100,18 +100,18 @@ namespace cumulonimbus::asset
 		const std::string extension				= std::filesystem::path{ asset_manager.GetAssetSheetManager().GetAssetFilename<asset::Texture>(asset_id) }.extension().string();
 		// 変更前のファイルパス(拡張子を含まない)   ./Data/Textures/"変更前のテクスチャ名"
 		const std::filesystem::path before_path	= std::filesystem::path{ asset_manager.GetAssetSheetManager().GetAssetFilename<asset::Texture>(asset_id) }.replace_extension();
+
+		const std::string asset_name = CompareAndReName<Texture>(asset_manager,
+																 before_path.parent_path().string() + "/" + changed_name + extension
+																 ).filename().replace_extension().string();
+
 		// 変更後のファイルパス(拡張子を含まない)   ./Data/Textures/"変更後のテクスチャ名"
-		const std::filesystem::path after_path	= before_path.parent_path().string() + "/" + changed_name;
+		const std::filesystem::path after_path	= before_path.parent_path().string() + "/" + asset_name;
 
 		// ファイル名の変更
 		// 例 : ./Data/Textures/"変更前のテクスチャ名".拡張子 -> ./Data/Textures/"変更後のテクスチャ名".拡張子
-		// std::filesystem::rename(before_path.string() + extension,
-		//						after_path.string()  + extension);
-		std::error_code ec;
-		std::filesystem::rename("./Data/Assets/Textures/coffee_256.png",
-			"./Data/Assets/Textures/coffee_256_2.png", ec);
-		assert(std::filesystem::exists("./Data/Assets/Textures/coffee_256.png"));
-		auto m = ec.message();
+		 std::filesystem::rename(before_path.string() + extension,
+								 after_path.string()  + extension);
 
 		// アセットシート側のファイルパス変更(例 : ./Data/Materials/"変更後のマテリアル名"/"変更後のマテリアル名.mat")
 		asset_manager.GetAssetSheetManager().GetSheet<Texture>().sheet.at(asset_id) = after_path.string() + extension;

@@ -21,6 +21,8 @@
 #include "prefab_loader.h"
 #include "scene_loader.h"
 #include "filename_helper.h"
+#include "scene.h"
+#include "scene_manager.h"
 
 
 namespace
@@ -438,14 +440,14 @@ namespace cumulonimbus::editor
 				{// 現在のシーン名で保存(確認画面なし)
 					locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->Save(*registry->GetScene(), current_scene_path);
 				}
-				locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->OpenScene(*registry->GetScene(), selected_file);
+				locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->OpenScene(*registry->GetScene()->GetSceneManager(), selected_file);
 				ImGui::CloseCurrentPopup();
 			}
 			//ImGui::SetItemDefaultFocus();
 			ImGui::SameLine();
 			if (ImGui::Button("Don't Save", ImVec2(140, 0)))
 			{
-				locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->OpenScene(*registry->GetScene(), selected_file);
+				locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->OpenScene(*registry->GetScene()->GetSceneManager(), selected_file);
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::SameLine();

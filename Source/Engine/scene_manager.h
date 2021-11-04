@@ -47,6 +47,15 @@ namespace cumulonimbus::scene
 		scene::Scene& CreateNewScene();
 
 		/**
+		 * @brief : 既存シーンの読み込み
+		 * @remark : 現在開かれているシーンを全て削除して
+		 *			既存シーンの読み込む
+		 * @param scene_id : 読み込みたいシーンID
+		 * @param scene_file_path : 読み込むシーン(拡張子「.scene」)までのファイルパス
+		 */
+		void OpenScene(const mapping::rename_type::UUID & scene_id, const std::filesystem::path& scene_file_path);
+
+		/**
 		 * @brief : シーンの追加読み込み
 		 * @remark : 現在開かれているシーンに追加して
 		 *			 新しいシーンを作成する
@@ -62,7 +71,7 @@ namespace cumulonimbus::scene
 		 * @param scene_id : 追加するシーンのID
 		 * @param scene_file_path : 読み込むシーン(拡張子「.scene」)までのファイルパス
 		 */
-		void AddScene(const mapping::rename_type::UUID& scene_id,const std::filesystem::path& scene_file_path);
+		void AddScene(const mapping::rename_type::UUID& scene_id, const std::filesystem::path& scene_file_path);
 
 		/**
 		 * @brief : シーンの削除
@@ -143,6 +152,6 @@ namespace cumulonimbus::scene
 		/**
 		 * @brief : プレファブの初期作成
 		 */
-		void InitialCreatePrefab() const;
+		void InitialCreatePrefab();
 	};
 } // cumulonimbus::scene

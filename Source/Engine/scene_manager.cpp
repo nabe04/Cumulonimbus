@@ -6,9 +6,18 @@
 #include "filename_helper.h"
 #include "gaussian_blur.h"
 #include "loader.h"
+#include "prefab_loader.h"
 #include "render_path.h"
 #include "sky_box.h"
+// components
+#include "player_component.h"
 
+
+namespace cumulonimbus {
+	namespace asset {
+		struct SceneAsset;
+	}
+}
 
 CEREAL_CLASS_VERSION(cumulonimbus::scene::SceneManager, 0)
 
@@ -95,6 +104,18 @@ namespace cumulonimbus::scene
 		return *active_scenes.begin()->second.get();
 	}
 
+	void SceneManager::OpenScene(
+		const mapping::rename_type::UUID& scene_id,
+		const std::filesystem::path& scene_file_path)
+	{
+		DeleteAllScene();
+		active_scenes.emplace(scene_id, std::make_unique<scene::Scene>(this));
+		// シーン読み込み処理
+		active_scenes.begin()->second->LoadScene(scene_file_path.parent_path().string(), scene_file_path.filename().string());
+		// エディターマネージャ側の選択されているシーンIDも再設定
+		editor_manager->SetSelectedSceneId(scene_id);
+	}
+
 	void SceneManager::AddScene()
 	{
 		// シーンの追加
@@ -148,13 +169,11 @@ namespace cumulonimbus::scene
 	void SceneManager::Initialize()
 	{
 		InitialCreatePrefab();
-		//CreateScene();
 	}
 
 	void SceneManager::UnInitialize()
 	{
 		active_scenes.clear();
-		//framework->Un
 	}
 
 	void SceneManager::Update(const float dt)
@@ -221,7 +240,17 @@ namespace cumulonimbus::scene
 		}
 	}
 
-	void SceneManager::InitialCreatePrefab() const
+	void SceneManager::InitialCreatePrefab()
 	{
+		//-- プレイヤーの基となるプレハブの作成 --//
+		ecs::Registry& registry = *active_scenes.begin()->second->GetRegistry();
+		const mapping::rename_type::Entity& player_base = registry.CreateEntity();
+		registry.AddComponent<component::PlayerComponent>(player_base);
+		// プレハブの作成
+		asset_manager->GetLoader<asset::PrefabLoader>()->CreatePrefab(*asset_manager.get(), &registry,
+																	  std::vector<mapping::rename_type::Entity>{player_base},
+																	  true, "Player_Base");
+		// 作成したエンティティの削除(プレハブへの登録のみが目的の為)
+		registry.Destroy(player_base);
 	}
 } // cumulonimbus::scene

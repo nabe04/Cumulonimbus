@@ -3,6 +3,7 @@
 #include "ecs.h"
 #include "transform_component.h"
 #include "locator.h"
+#include "cum_imgui_helper.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::RigidBodyComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::RigidBodyComponent)
@@ -92,6 +93,7 @@ namespace cumulonimbus::component
 		{
 			ImGui::Checkbox("Use Gravity", &is_gravity);
 			ImGui::Text("Current Gravity : %f", current_gravity);
+			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Gravity", &gravity, .5f);
 
 			ImGui::TreePop();
 		}

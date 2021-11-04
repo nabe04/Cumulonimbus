@@ -196,10 +196,18 @@ namespace cumulonimbus::asset
 			Load(asset_manager, path);
 		}
 
-		scene_manager.DeleteAllScene();
-		scene_manager.CreateNewScene();
-		scene::Scene& open_scene = *scene_manager.GetActiveScenes()->begin()->second.get();
-		open_scene.LoadScene(path.parent_path().string(), path.filename().string());
+		// “Ç‚Ýž‚Ýæ‚ÌƒV[ƒ“ID‚ÌŽæ“¾
+		const mapping::rename_type::UUID scene_id = locator::Locator::GetAssetManager()->GetAssetSheetManager().Search<SceneAsset>(path);
+		if (scene_id.empty())
+			assert(!"Don't have scene id(SceneLoader::OpenScene)");
+		scene_manager.OpenScene(scene_id, path);
+		
+		//scene_manager.DeleteAllScene();
+		//scene_manager.CreateNewScene();
+		//scene::Scene& open_scene = *scene_manager.GetActiveScenes()->begin()->second.get();
+		//mapping::rename_type::UUID scene_id = locator::Locator::GetAssetManager()->GetAssetSheetManager().Search<SceneAsset>(path);
+		//open_scene.LoadScene(path.parent_path().string(), path.filename().string());
+		//scene_id = scene_manager.GetActiveScenes()->begin()->first;
 	}
 
 	void SceneLoader::OpenScene(

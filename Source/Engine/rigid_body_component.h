@@ -57,13 +57,41 @@ namespace cumulonimbus::component
 		 */
 		void GravityStop(bool flg);
 
-		[[nodiscard]] const DirectX::SimpleMath::Vector3& GetVelocity()     const { return velocity; }
-		[[nodiscard]] const DirectX::SimpleMath::Vector3& GetAcceleration() const { return acceleration; }
-		[[nodiscard]] float GetJumpStrength()								const { return jump_strength; }
-		[[nodiscard]] float GetGravity()									const { return gravity; }
-		[[nodiscard]] float GetCurrentGravity()								const { return current_gravity; }
-		[[nodiscard]] float GetMass()										const { return mass; }
-		[[nodiscard]] bool  GetIsGravity()									const { return is_gravity; }
+		[[nodiscard]]
+		const DirectX::SimpleMath::Vector3& GetVelocity()  const
+		{
+			return velocity;
+		}
+		[[nodiscard]]
+		const DirectX::SimpleMath::Vector3& GetAcceleration() const
+		{
+			return acceleration;
+		}
+		[[nodiscard]]
+		float GetJumpStrength() const
+		{
+			return jump_strength;
+		}
+		[[nodiscard]]
+		float GetGravity() const
+		{
+			return gravity;
+		}
+		[[nodiscard]]
+		float GetCurrentGravity() const
+		{
+			return current_gravity;
+		}
+		[[nodiscard]]
+		float GetMass()	const
+		{
+			return mass;
+		}
+		[[nodiscard]]
+		bool  GetIsGravity() const
+		{
+			return is_gravity;
+		}
 
 		void SetCurrentGravity(const float gravity)	{ current_gravity = gravity; }
 
