@@ -1,26 +1,48 @@
 #include "scene_manager.h"
 
-#include "loader.h"
+#include <ranges>
+
 #include "editor_manager.h"
+#include "filename_helper.h"
 #include "gaussian_blur.h"
+#include "loader.h"
 #include "render_path.h"
 #include "sky_box.h"
+
+
+CEREAL_CLASS_VERSION(cumulonimbus::scene::SceneManager, 0)
+
+namespace
+{
+	using namespace cumulonimbus;
+	// 「Play」ボタンが押された時のシーン保存パス ./Data/ProjectSetting/TemporarySave/
+	const std::string save_path{ "./" + filename_helper::GetData() + "/" + filename_helper::GetProjectSetting() + "/" + filename_helper::GetTemporarySave() + "/"};
+}
 
 namespace cumulonimbus::scene
 {
 	template <class Archive>
-	void SceneManager::load(Archive&& archive)
+	void SceneManager::load(Archive&& archive, uint32_t version)
 	{
-		
+		if(version == 0)
+		{
+			archive(
+				CEREAL_NVP(active_scenes)
+			);
+		}
 	}
 
 	template <class Archive>
-	void SceneManager::save(Archive&& archive) const
+	void SceneManager::save(Archive&& archive, uint32_t version) const
 	{
-		
+		if (version == 0)
+		{
+			archive(
+				CEREAL_NVP(active_scenes)
+			);
+		}
 	}
 
-	
 	SceneManager::SceneManager(const std::shared_ptr<Window>& window)
 	{
 		// インスタンス化
@@ -36,7 +58,7 @@ namespace cumulonimbus::scene
 		locator::Locator::Provide<asset::AssetManager>(asset_manager);
 
 		collision_manager = std::make_unique<collision::CollisionManager>(*system.get());
-		
+
 		SetWindowLongPtr(window->GetHWND(), GWLP_USERDATA, reinterpret_cast<LONG_PTR>(&framework));
 		CreateNewScene();
 
@@ -139,16 +161,16 @@ namespace cumulonimbus::scene
 	{// シーン毎の更新処理
 		editor_manager->Update(dt);
 		// ボタンが押された時の保存
-		//if (editor_manager->GetToolBar().GetToolBarButton().GetButtonState(editor::ToolBar::Button::Play) ==
-		//	ButtonState::Press)
-		//{
-		//	SaveScene(file_path_helper::GetSaveSceneViewFilePathAndName(), "test");
-		//}
-		//if (editor_manager->GetToolBar().GetToolBarButton().GetButtonState(editor::ToolBar::Button::Play) ==
-		//	ButtonState::Release)
-		//{
-		//	LoadScene(file_path_helper::GetSaveSceneViewFilePathAndName(), "test" + file_path_helper::GetSceneExtension());
-		//}
+		if (editor_manager->GetToolBar().GetToolBarButton().GetButtonState(editor::ToolBar::Button::Play) ==
+			ButtonState::Press)
+		{
+			BeginGame();
+		}
+		if (editor_manager->GetToolBar().GetToolBarButton().GetButtonState(editor::ToolBar::Button::Play) ==
+			ButtonState::Release)
+		{
+			EndGame();
+		}
 
 		for(auto& [scene_id, scene] : active_scenes)
 		{
@@ -175,6 +197,28 @@ namespace cumulonimbus::scene
 		// 複数シーン対応版
 		editor_manager->RenderEditor(active_scenes);
 #endif // _DEBUG
+	}
+
+	void SceneManager::BeginGame()
+	{
+		for(auto& scene : active_scenes | std::views::values)
+		{
+			std::string scene_name = scene->GetSceneName();
+			if (scene_name.empty())
+				scene_name = filename_helper::GetNoTitled();
+			scene->SaveScene(save_path + "/" + scene_name, scene->GetSceneName());
+		}
+	}
+
+	void SceneManager::EndGame()
+	{
+		for(auto& scene : active_scenes | std::views::values)
+		{
+			std::string scene_name = scene->GetSceneName();
+			if (scene_name.empty())
+				scene_name = filename_helper::GetNoTitled();
+			scene->LoadScene(save_path + "/" + scene_name, scene->GetSceneName() + file_path_helper::GetSceneExtension());
+		}
 	}
 
 	void SceneManager::InitialCreatePrefab() const

@@ -11,18 +11,39 @@ namespace cumulonimbus::filename_helper
 	std::string GetMyLibName();
 
 	/**
-	 * @brief : 「NoTitled」を返す
-	 * @return : NoTitled
+	 * @brief : 「Data」を返す
+	 * @return : Data
 	 */
 	[[nodiscard]]
-	std::string GetNoTitled();
+	std::string GetData();
 
 	/**
-	 * @brief : 「Main Camera」を返す
-	 * @return : Main Camera
+	 * @brief : 「Assets」を返す
+	 * @return : Assets
 	 */
 	[[nodiscard]]
-	std::string GetMainCamera();
+	std::string GetAssets();
+
+	/**
+	 * @brief : 「AssetSheet」を返す
+	 * @return : AssetSheet
+	 */
+	[[nodiscard]]
+	std::string GetAssetSheet();
+
+	/**
+	 * @brief : 「ProjectSetting」を返す
+	 * @return : ProjectSetting
+	 */
+	[[nodiscard]]
+	std::string GetProjectSetting();
+
+	/**
+	 * @brief : 「System」を返す
+	 * @return : System
+	 */
+	[[nodiscard]]
+	std::string GetSystem();
 
 	/**
 	 * @brief : 「Materials」を返す
@@ -37,4 +58,26 @@ namespace cumulonimbus::filename_helper
 	 */
 	[[nodiscard]]
 	std::string GetTextures();
+
+	/**
+	 * @brief : 「TemporarySave」を返す
+	 * @return : TemporarySave
+	 */
+	[[nodiscard]]
+	std::string GetTemporarySave();
+
+	/**
+	 * @brief : 「NoTitled」を返す
+	 * @return : NoTitled
+	 */
+	[[nodiscard]]
+	std::string GetNoTitled();
+
+	/**
+	 * @brief : 「Main Camera」を返す
+	 * @return : Main Camera
+	 */
+	[[nodiscard]]
+	std::string GetMainCamera();
+
 } // cumulonimbus::filename_helper

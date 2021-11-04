@@ -33,9 +33,9 @@ namespace cumulonimbus::scene
 		~SceneManager() = default;
 
 		template<class Archive>
-		void load(Archive&& archive);
+		void load(Archive&& archive, uint32_t version);
 		template<class Archive>
-		void save(Archive&& archive) const;
+		void save(Archive&& archive, uint32_t version) const;
 
 		void Run();
 

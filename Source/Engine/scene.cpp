@@ -136,7 +136,15 @@ namespace cumulonimbus::scene
 
 	void Scene::SaveScene(const std::string& file_dir, const std::string& scene_name)
 	{
-		this->scene_name = scene_name;
+
+		if(scene_name.empty())
+		{
+			this->scene_name = filename_helper::GetNoTitled();
+		}
+		else
+		{
+			this->scene_name = scene_name;
+		}
 		registry->Save(file_dir, scene_name);
 
 		// Scenesまでのパス/シーン名

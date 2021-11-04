@@ -7,14 +7,29 @@ namespace cumulonimbus::filename_helper
 		return { "Cumulonimbus" };
 	}
 
-	std::string GetNoTitled()
+	std::string GetData()
 	{
-		return { "NoTitled" };
+		return { "Data" };
 	}
 
-	std::string GetMainCamera()
+	std::string GetAssets()
 	{
-		return { "Main Camera" };
+		return { "Assets" };
+	}
+
+	std::string GetAssetSheet()
+	{
+		return { "AssetSheet" };
+	}
+
+	std::string GetProjectSetting()
+	{
+		return { "ProjectSetting" };
+	}
+
+	std::string GetSystem()
+	{
+		return { "System" };
 	}
 
 	std::string GetMaterials()
@@ -27,4 +42,18 @@ namespace cumulonimbus::filename_helper
 		return { "Textures" };
 	}
 
+	std::string GetTemporarySave()
+	{
+		return { "TemporarySave" };
+	}
+
+	std::string GetNoTitled()
+	{
+		return { "NoTitled" };
+	}
+
+	std::string GetMainCamera()
+	{
+		return { "Main Camera" };
+	}
 } // cumulonimbus::filename_helper

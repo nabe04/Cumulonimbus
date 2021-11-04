@@ -68,14 +68,6 @@ namespace cumulonimbus::component
 		virtual void RenderImGui() {}
 		virtual void Load(ecs::Registry* registry) = 0;
 
-		//template<typename Archive>
-		//void serialize(Archive&& archive)
-		//{
-		//	archive(
-		//		CEREAL_NVP(entity)
-		//	);
-		//}
-
 		template<class Archive>
 		void load(Archive&& archive, uint32_t version)
 		{
