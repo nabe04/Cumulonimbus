@@ -23,4 +23,18 @@ namespace cumulonimbus::filename_helper
 	 */
 	[[nodiscard]]
 	std::string GetMainCamera();
+
+	/**
+	 * @brief : 「Materials」を返す
+	 * @return : Materials
+	 */
+	[[nodiscard]]
+	std::string GetMaterials();
+
+	/**
+	 * @brief : 「Textures」を返す
+	 * @return : Textures
+	 */
+	[[nodiscard]]
+	std::string GetTextures();
 } // cumulonimbus::filename_helper

@@ -33,18 +33,16 @@ namespace cumulonimbus::asset
 		 */
 		void Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id) override;
 
-
 		/**
 		 * @brief : アセットの名前変更
 		 * @remark : 変更先のクラスでasset_idが存在しない場合処理を抜ける
-		 * @remark : モデルアセットには「.model」と「.fbx」ファイルとモデル名の
-		 *			 フォルダが存在するのでこれらのファイル名を変更する
+		 * @remark : モデルアセットには「.model」と「.fbx」ファイルのファイル名を変更する
 		 * @param asset_manager : AssetManagerクラスの参照
 		 * @param asset_id : リネーム対象のアセットID
 		 * @param changed_name : 変更後のファイル名(※ファイルパスや拡張子は含まない)
 		 */
 		void Rename(AssetManager& asset_manager, const mapping::rename_type::UUID& asset_id, const std::string& changed_name) override;
-		
+
 		/**
 		 * @brief : モデルアセットの削除
 		 */

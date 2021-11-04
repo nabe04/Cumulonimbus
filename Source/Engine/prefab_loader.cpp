@@ -95,31 +95,26 @@ namespace cumulonimbus::asset
 		const std::filesystem::path	before_path = std::filesystem::path{ asset_manager.GetAssetSheetManager().GetAssetFilename<Prefab>(asset_id) }.replace_extension();
 		// 変更前の親ファイルパス(拡張子を含まない) ./Data/Assets/Prefabs/"変更前のプレハブ名"
 		const std::filesystem::path before_parent_path = before_path.parent_path();
-		// 変更後のファイルパス(拡張子を含まない)   ./Data/Assets/Prefabs/"変更後のプレハブ名"/"変更後のプレハブ名"
-		const std::filesystem::path after_path = before_parent_path.parent_path().string() + "/" + changed_name + "/" + changed_name;
 
+		// 重複確認済みのファイル名取得(拡張子を含まない)
+		// asset_name = 重複確認済みのシーン名(ファイル名のみ、拡張子を含まない)
+		const std::string asset_name = CompareAndReName<Prefab>(asset_manager,
+																before_parent_path.parent_path().string() + "/" +
+																changed_name + "/" + changed_name +
+																file_path_helper::GetPrefabExtension()
+																).filename().replace_extension().string();
+
+		// 変更後のファイルパス(拡張子を含まない)   ./Data/Assets/Prefabs/"変更後のプレハブ名"/"変更後のプレハブ名"
+		const std::filesystem::path after_path = before_parent_path.parent_path().string() + "/" + asset_name + "/" + asset_name;
+		//
 		// -- ファイル & フォルダ名の変更 --//
 		// 「.prefab」ファイルのファイル名変更
 		// 例 : ./Data/Assets/Prefabs/"変更前のプレハブ名"/"変更前のプレハブ名.prefab" -> ./Data/Assets/Prefabs/"変更前のプレハブ名"/"変更後のプレハブ名".prefab
 		std::filesystem::rename(before_path.string()		+ file_path_helper::GetPrefabExtension(),
-								before_parent_path.string() + changed_name + file_path_helper::GetPrefabExtension());
+								before_parent_path.string() + "/" + asset_name + file_path_helper::GetPrefabExtension());
 		// フォルダ名の変更(プレハブフォルダ)
 		// 例 : ./Data/Assets/"変更前のプレハブ名" -> ./Data/Assets/"変更後のプレハブ名"
 		std::filesystem::rename(before_parent_path, after_path.parent_path());
-		// フォルダ名の変更(プレハブフォルダ内の同名エンティティ名フォルダ)
-		// 例 : ./Data/Assets/"変更後のプレハブ名"/"変更前のプレハブ名" -> ./Data/Assets/"変更後のプレハブ名"/"変更後のプレハブ名"
-		std::filesystem::rename(after_path.parent_path().string() + before_path.filename().string(), after_path);
-
-		// Prefab::EntityInfo::entity_nameの変更
-		// -> 次回読み込む時のフォルダ名に使用するため
-		for(auto& ent_info : prefabs.at(asset_id)->GetEntityAssets() | std::views::values)
-		{
-			if(ent_info.entity_name == before_path.filename().string())
-			{
-				ent_info.entity_name = after_path.filename().string();
-				break;
-			}
-		}
 
 		// アセットシート側のファイルパス変更(例 : ./Data/Materials/"変更後のプレハブ名"/"変更後のプレハブ名.mat")
 		asset_manager.GetAssetSheetManager().GetSheet<Prefab>().sheet.at(asset_id) = after_path.string() + file_path_helper::GetPrefabExtension();
@@ -153,7 +148,7 @@ namespace cumulonimbus::asset
 	{
 		static const std::set<std::filesystem::path> extensions
 		{
-			file_path_helper::GetJsonExtension()
+			file_path_helper::GetPrefabExtension()
 		};
 
 		return extensions.contains(extension);

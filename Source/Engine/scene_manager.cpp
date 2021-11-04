@@ -8,6 +8,19 @@
 
 namespace cumulonimbus::scene
 {
+	template <class Archive>
+	void SceneManager::load(Archive&& archive)
+	{
+		
+	}
+
+	template <class Archive>
+	void SceneManager::save(Archive&& archive) const
+	{
+		
+	}
+
+	
 	SceneManager::SceneManager(const std::shared_ptr<Window>& window)
 	{
 		// インスタンス化

@@ -16,4 +16,15 @@ namespace cumulonimbus::filename_helper
 	{
 		return { "Main Camera" };
 	}
+
+	std::string GetMaterials()
+	{
+		return { "Materials" };
+	}
+
+	std::string GetTextures()
+	{
+		return { "Textures" };
+	}
+
 } // cumulonimbus::filename_helper

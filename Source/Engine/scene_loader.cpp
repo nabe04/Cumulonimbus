@@ -54,18 +54,27 @@ namespace cumulonimbus::asset
 		const std::filesystem::path	before_path			= std::filesystem::path{ scenes.at(asset_id).scene_file_path }.replace_extension();
 		// 変更前の親ファイルパス(拡張子を含まない) ./Data/Scenes/"変更前のシーン名"
 		const std::filesystem::path before_parent_path	= before_path.parent_path();
+
+		// 重複確認済みのファイル名取得(拡張子を含まない)
+		// asset_name = 重複確認済みのシーン名(ファイル名のみ、拡張子を含まない)
+		const std::string asset_name = CompareAndReName<SceneAsset>(asset_manager,
+																	before_parent_path.parent_path().string() + "/" +
+																	changed_name + "/" + changed_name +
+																	file_path_helper::GetSceneExtension()
+																	).filename().replace_extension().string();
+
 		// 変更後のファイルパス(拡張子を含まない)   ./Data/Scenes/"変更後のシーン名"/"変更後のシーン名"
-		const std::filesystem::path after_path			= before_parent_path.parent_path().string() + "/" + changed_name + "/" + changed_name;
+		const std::filesystem::path after_path = before_parent_path.parent_path().string() + "/" + asset_name + "/" + asset_name;
 
 		// -- ファイル & フォルダ名の変更 --//
 		// 「.scene」ファイルのファイル名変更
 		// 例 : ./Data/Scenes/"変更前のシーン名"/"変更前のシーン名.scene" -> ./Data/Scenes/"変更前のシーン名"/"変更後のシーン名.scene"
 		std::filesystem::rename(before_path.string()		+ file_path_helper::GetSceneExtension(),
-								before_parent_path.string() + changed_name + file_path_helper::GetSceneExtension());
+								before_parent_path.string() + "/" + asset_name + file_path_helper::GetSceneExtension());
 		// 「.json」ファイルのファイル名変更
 		// 例 : ./Data/Scenes/"変更前のシーン名"/"変更前のシーン名.json" -> ./Data/Scenes/"変更前のシーン名"/"変更後のシーン名.json"
 		std::filesystem::rename(before_path.string()		+ file_path_helper::GetJsonExtension(),
-								before_parent_path.string() + changed_name + file_path_helper::GetJsonExtension());
+								before_parent_path.string() + "/" + asset_name + file_path_helper::GetJsonExtension());
 		// フォルダ名の変更
 		// 例 : ./Data/Scenes/"変更前のシーン名" -> ./Data/Scenes/"変更後のシーン名"
 		std::filesystem::rename(before_parent_path, after_path.parent_path());

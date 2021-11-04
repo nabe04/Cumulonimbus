@@ -41,8 +41,16 @@ namespace cumulonimbus::asset
 		const std::filesystem::path before_path			= std::filesystem::path{ asset_manager.GetAssetSheetManager().GetAssetFilename<asset::Material>(asset_id) }.replace_extension();
 		// 変更前の親ファイルパス(拡張子を含まない) ./Data/Materials/
 		const std::filesystem::path before_parent_path	= before_path.parent_path();
+
+		// 重複確認済みのファイル名取得(拡張子を含まない)
+		// asset_name = 重複確認済みのマテリアル名(ファイル名のみ、拡張子を含まない)
+		const std::string asset_name = CompareAndReName<Material>(asset_manager,
+																  before_parent_path.string() + "/" +
+																  changed_name +file_path_helper::GetMaterialExtension()
+																  ).filename().replace_extension().string();
+
 		// 変更後のファイルパス(拡張子を含まない)   ./Data/Materials/"変更後のマテリアル名"
-		const std::filesystem::path after_path			= before_parent_path.string() + "/" + changed_name;
+		const std::filesystem::path after_path			= before_parent_path.string() + "/" + asset_name;
 
 		// -- ファイル名の変更 --//
 		// 「.mat」ファイルのファイル名変更

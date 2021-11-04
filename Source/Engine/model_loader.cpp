@@ -6,6 +6,7 @@
 #include "asset_sheet_manager.h"
 #include "cereal_helper.h"
 #include "file_path_helper.h"
+#include "filename_helper.h"
 #include "material_loader.h"
 #include "texture.h"
 #include "texture_loader.h"
@@ -169,21 +170,26 @@ namespace cumulonimbus::asset
 		const std::filesystem::path	before_path			= std::filesystem::path{ asset_manager.GetAssetSheetManager().GetAssetFilename<Model>(asset_id) }.replace_extension();
 		// 変更前の親ファイルパス(拡張子を含まない) ./Data/Assets/Models/"変更前のモデル名"
 		const std::filesystem::path before_parent_path	= before_path.parent_path();
-		// 変更後のファイルパス(拡張子を含まない)   ./Data/Assets/Models/"変更後のモデル名"/"変更後のモデル名"
-		const std::filesystem::path after_path			= before_parent_path.parent_path().string() + "/" + changed_name + "/" + changed_name;
+
+		// 重複確認済みのファイル名取得(拡張子を含まない)
+		// asset_name = 重複確認済みのシーン名(ファイル名のみ、拡張子を含まない)
+		const std::string asset_name = CompareAndReName<Model>(asset_manager,
+															   before_parent_path.string() + "/" +
+															   changed_name + file_path_helper::GetModelExtension()
+															   ).filename().replace_extension().string();
+
+		// 変更後のファイルパス(拡張子を含まない)   ./Data/Assets/Models/"変更前のモデル名"/"変更後のモデル名"
+		const std::filesystem::path after_path	= before_parent_path.string() + "/" + asset_name;
 
 		// -- ファイル & フォルダ名の変更 --//
 		// 「.model」ファイルのファイル名変更
 		// 例 : ./Data/Assets/"変更前のモデル名"/"変更前のモデル名.model" -> ./Data/Assets/"変更前のモデル名"/"変更後のモデル名.model"
 		std::filesystem::rename(before_path.string()	    + file_path_helper::GetModelExtension(),
-								before_parent_path.string() + changed_name + file_path_helper::GetModelExtension());
+								before_parent_path.string() + "/" + asset_name + file_path_helper::GetModelExtension());
 		// 「.fbx」ファイルのファイル名変更
 		// 例 : ./Data/Assets/"変更前のモデル名"/"変更前のモデル名.fbx" -> ./Data/Assets/"変更前のモデル名"/"変更後のモデル名.fbx"
 		std::filesystem::rename(before_path.string()		+ file_path_helper::GetFbxExtension(),
-								before_parent_path.string() + changed_name + file_path_helper::GetFbxExtension());
-		// フォルダ名の変更
-		// 例 : ./Data/Assets/"変更前のモデル名" -> ./Data/Assets/Models/"変更後のモデル名"
-		std::filesystem::rename(before_parent_path, after_path.parent_path());
+								before_parent_path.string() + "/" + asset_name + file_path_helper::GetFbxExtension());
 
 		// アセットシート側のファイルパス変更(例 :  ./Data/Assets/Models/"変更後のモデル名"/"変更後のモデル名".model")
 		asset_manager.GetAssetSheetManager().GetSheet<Model>().sheet.at(asset_id) = after_path.string() + file_path_helper::GetModelExtension();

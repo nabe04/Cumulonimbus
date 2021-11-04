@@ -104,9 +104,14 @@ namespace cumulonimbus::asset
 		const std::filesystem::path after_path	= before_path.parent_path().string() + "/" + changed_name;
 
 		// ファイル名の変更
-		// 例 : ./Data/Textures/"変更前のテクスチャ名" -> ./Data/Textures/"変更後のテクスチャ名"
-		std::filesystem::rename(before_path.string() + extension,
-								after_path.string()  + extension);
+		// 例 : ./Data/Textures/"変更前のテクスチャ名".拡張子 -> ./Data/Textures/"変更後のテクスチャ名".拡張子
+		// std::filesystem::rename(before_path.string() + extension,
+		//						after_path.string()  + extension);
+		std::error_code ec;
+		std::filesystem::rename("./Data/Assets/Textures/coffee_256.png",
+			"./Data/Assets/Textures/coffee_256_2.png", ec);
+		assert(std::filesystem::exists("./Data/Assets/Textures/coffee_256.png"));
+		auto m = ec.message();
 
 		// アセットシート側のファイルパス変更(例 : ./Data/Materials/"変更後のマテリアル名"/"変更後のマテリアル名.mat")
 		asset_manager.GetAssetSheetManager().GetSheet<Texture>().sheet.at(asset_id) = after_path.string() + extension;

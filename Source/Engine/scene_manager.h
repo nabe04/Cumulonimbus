@@ -32,6 +32,11 @@ namespace cumulonimbus::scene
 		explicit SceneManager(const std::shared_ptr<Window>& window);
 		~SceneManager() = default;
 
+		template<class Archive>
+		void load(Archive&& archive);
+		template<class Archive>
+		void save(Archive&& archive) const;
+
 		void Run();
 
 		/**
@@ -122,6 +127,17 @@ namespace cumulonimbus::scene
 		void UnInitialize();
 		void Update(float dt);
 		void Render();
+
+		/**
+		 * @brief : ゲーム開始時処理
+		 * @remark : 「Play」ボタンが押された時の処理
+		 */
+		void BeginGame();
+		/**
+		 * @brief : ゲーム終了時処理
+		 * @remark : 「Play」ボタンが離された時の処理
+		 */
+		void EndGame();
 
 		// Todo : スクリプト機能が出来れば消す
 		/**

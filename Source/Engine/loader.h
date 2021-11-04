@@ -84,16 +84,18 @@ namespace cumulonimbus::asset
 		 *			という形にする
 		 * @param asset_manager :  AssetManagerクラスの参照
 		 * @param path : ファイルパス(拡張子を含む)
+		 * @return : 重複確認がとれたファイルパス(拡張子を含む)
 		 */
 		template<class T>
 		[[nodiscard]]
 		std::filesystem::path CompareAndReName(const AssetManager& asset_manager, std::filesystem::path path) const
 		{
-			int no = 0;
+			int no		 = 0;
 			bool is_loop = true;
-			const std::string exe = path.extension().string();
 			std::filesystem::path copy_path = path;
-			std::string filename = copy_path.replace_extension().string();
+			std::string			  filename	= copy_path.replace_extension().string();
+			const std::string	  exe	    = path.extension().string();
+			// T型のアセットシートが空の場合そのままのパスで返す
 			if(asset_manager.GetAssetSheetManager().GetSheet<T>().sheet.size() == 0)
 			{
 				return path;
@@ -101,23 +103,24 @@ namespace cumulonimbus::asset
 
 			while(is_loop)
 			{
+				// 登録されているアセット分比較し、重複しなければ処理を抜ける
 				for(const auto&[key,value] : asset_manager.GetAssetSheetManager().GetSheet<T>().sheet)
 				{
 					if (std::filesystem::path{ value }.replace_extension().compare(filename) != 0)
-					{
+					{// 重複していないので次の名前比較に移る
 						is_loop = false;
-						filename += exe;
 					}
 					else
-					{
+					{// 重複したので"名前(番号)"を付けてもう一度処理をやり直す
 						is_loop = true;
 						filename = copy_path.string();
-						filename += "(" + std::to_string(++no) + ")" + exe;
+						filename += "(" + std::to_string(++no) + ")";
 						break;
 					}
 				}
 			}
 
+			filename += exe;
 			return filename;
 		}
 	};
