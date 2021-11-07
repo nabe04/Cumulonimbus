@@ -307,11 +307,12 @@ namespace cumulonimbus::component
 	void PlayerComponent::Movement(float dt)
 	{
 		if(auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
-		   transform_comp.GetPosition().y <= 0)
+		   transform_comp.GetPosition().y < 0)
 		{
 			auto& rigid_body_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
-			rigid_body_comp.GravityStop(true);
+			rigid_body_comp.SetCurrentGravity(0);
 			transform_comp.SetPosition_Y(.0f);
+			is_jumping = false;
 		}
 
 		//auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
@@ -579,10 +580,11 @@ namespace cumulonimbus::component
 			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Jump_Begin), false);
 		}
 
-		if (model_comp.CurrentKeyframe() > 4)
+		if (model_comp.CurrentKeyframe() > 4 && !is_jumping)
 		{
-			auto& movement_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
-			movement_comp.Jump();
+			auto& rigid_body_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
+			rigid_body_comp.Jump();
+			is_jumping = true;
 		}
 
 		// ƒAƒjƒ[ƒVƒ‡ƒ“Ä¶’†‚È‚çˆ—‚ğ’†’f
@@ -637,7 +639,9 @@ namespace cumulonimbus::component
 		}
 
 		auto& ray_cast_comp = GetRegistry()->GetComponent<RayCastComponent>(GetEntity());
-		if (ray_cast_comp.GetIsBlockHit(mapping::collision_name::ray::ForFloor()))
+		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
+		if (ray_cast_comp.GetIsBlockHit(mapping::collision_name::ray::ForFloor()) ||
+			transform_comp.GetPosition().y <= 0)
 		{
 			// ó‘Ô‘JˆÚ(PlayerState::Jump_End)
 			player_state.SetState(PlayerState::Jump_End);
@@ -861,6 +865,7 @@ namespace cumulonimbus::component
 		auto& model_comp	  = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
 		auto& ray_cast_comp   = GetRegistry()->GetComponent<RayCastComponent>(GetEntity());
 		auto& rigid_body_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
+		auto& transform_comp  = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 		if (player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
@@ -871,7 +876,8 @@ namespace cumulonimbus::component
 		rigid_body_comp.AddForce({ attack_04_speed,0,attack_04_speed });
 
 		// ’n–Ê‚É‚Â‚¢‚Ä‚¢‚È‚¯‚ê‚Îˆ—‚ğ’†’f
-		if (!ray_cast_comp.GetIsBlockHit(mapping::collision_name::ray::ForFloor()))
+		if (!ray_cast_comp.GetIsBlockHit(mapping::collision_name::ray::ForFloor()) ||
+			transform_comp.GetPosition().y >= 0)
 			return;
 
 		// ó‘Ô‘JˆÚ(PlayerState::Attack_Normal_04_End)

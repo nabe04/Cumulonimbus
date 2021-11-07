@@ -55,8 +55,8 @@ public:
 	[[nodiscard]]
 	Key GetOldState()	{ return old_state; }
 
-	/*
-	 * brief : Stateが切り替わった時の初めのフレームのみ入る処理
+	/**
+	 * @brief : Stateが切り替わった時の初めのフレームのみ入る処理
 	 */
 	[[nodiscard]]
 	bool GetInitialize()

@@ -145,6 +145,7 @@ namespace cumulonimbus::scene
 		{
 			this->scene_name = scene_name;
 		}
+		// レジストリの保存
 		registry->Save(file_dir, scene_name);
 
 		// Scenesまでのパス/シーン名
