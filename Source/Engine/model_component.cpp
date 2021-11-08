@@ -456,6 +456,12 @@ namespace cumulonimbus::component
 			return;
 		}
 
+		if(animation_switch_time <= 0.0f)
+		{
+			anim_states.SetState(AnimationState::Update);
+			return;
+		}
+
 		if (anim_states.GetInitialize())
 		{
 			// 前のアニメーションの切り替わった時点のキーフレームを算出

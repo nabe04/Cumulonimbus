@@ -248,14 +248,15 @@ namespace cumulonimbus::component
 
 	void PlayerComponent::RenderImGui()
 	{
-		if (ImGui::TreeNode("PlayerComponent"))
+		if (GetRegistry()->CollapsingHeader<PlayerComponent>(GetEntity(), "Player"))
 		{
-			ImGui::DragFloat("Walk Speed"		, &walk_speed		, 0.5f, 0.1f, 100000);
-			ImGui::DragFloat("Dash Speed"		, &dash_speed		, 0.5f, 0.1f, 100000);
-			ImGui::DragFloat("Avoid Dash  Speed", &avoid_dash_speed	, 0.5f, 0.1f, 100000);
-			ImGui::DragFloat("Dead zone value of pad input", &threshold, 0.01f, 0.0f, 1.0f);
-
-			ImGui::TreePop();
+			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Dead zone value of pad input", &threshold		, 0.01f	, 0.0f, 1.);
+			ImGui::Separator();
+			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Walk Speed		"	, &walk_speed		, 0.5f	, 0.1f, FLT_MAX);
+			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Dash Speed		"	, &dash_speed		, 0.5f	, 0.1f, FLT_MAX);
+			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Avoid Dash Speed"	, &avoid_dash_speed , 0.5f	, 0.1f, FLT_MAX);
+			ImGui::Separator();
+			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Attack_04_Jump_Strength", &attack_04_jump_strength, 0.5f, 0.1f, FLT_MAX);
 		}
 	}
 
@@ -314,11 +315,6 @@ namespace cumulonimbus::component
 			transform_comp.SetPosition_Y(.0f);
 			is_jumping = false;
 		}
-
-		//auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
-		//transform_comp.AdjustPosition(velocity * dt);
-
-		//velocity = SimpleMath::Vector3{ 0,0,0 };
 	}
 
 	void PlayerComponent::Rotation(float dt)
@@ -580,11 +576,24 @@ namespace cumulonimbus::component
 			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Jump_Begin), false);
 		}
 
-		if (model_comp.CurrentKeyframe() > 4 && !is_jumping)
+		if (model_comp.CurrentKeyframe() > 4)
 		{
-			auto& rigid_body_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
-			rigid_body_comp.Jump();
-			is_jumping = true;
+			if(!is_jumping)
+			{
+				auto& rigid_body_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
+				rigid_body_comp.Jump();
+				is_jumping = true;
+			}
+
+			using namespace locator;
+			if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
+			{// ó‘Ô‘JˆÚ(PlayerState::Attacking_Jump_01)
+				player_state.SetState(PlayerState::Attacking_Jump_01);
+			}
+			else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
+			{// ó‘Ô‘JˆÚ(PlayerState::Attack_Jumping_Strong_Begin)
+				player_state.SetState(PlayerState::Attack_Jumping_Strong_Begin);
+			}
 		}
 
 		// ƒAƒjƒ[ƒVƒ‡ƒ“Ä¶’†‚È‚çˆ—‚ð’†’f
@@ -625,8 +634,8 @@ namespace cumulonimbus::component
 				player_state.SetState(PlayerState::Attacking_Jump_01);
 			}
 			else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
-			{// ó‘Ô‘JˆÚ(PlayerState::Attacking_Jump_Strong)
-				player_state.SetState(PlayerState::Attacking_Jump_Strong);
+			{// ó‘Ô‘JˆÚ(PlayerState::Attack_Jumping_Strong_Begin)
+				player_state.SetState(PlayerState::Attack_Jumping_Strong_Begin);
 			}
 		}
 	}
@@ -683,7 +692,7 @@ namespace cumulonimbus::component
 
 	}
 
-	void PlayerComponent::AttackingNormal01(float dt)
+	void PlayerComponent::AttackingNormal01(const float dt)
 	{
 		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
 		if (player_state.GetInitialize())
@@ -876,7 +885,7 @@ namespace cumulonimbus::component
 		rigid_body_comp.AddForce({ attack_04_speed,0,attack_04_speed });
 
 		// ’n–Ê‚É‚Â‚¢‚Ä‚¢‚È‚¯‚ê‚Îˆ—‚ð’†’f
-		if (!ray_cast_comp.GetIsBlockHit(mapping::collision_name::ray::ForFloor()) ||
+		if (!ray_cast_comp.GetIsBlockHit(mapping::collision_name::ray::ForFloor()) &&
 			transform_comp.GetPosition().y >= 0)
 			return;
 
@@ -1225,8 +1234,7 @@ namespace cumulonimbus::component
 			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Jump_03_End), false);
 		}
 
-		if (!model_comp.IsPlayAnimation() ||
-			IsBreakAnimationFrame(AnimationData::Attack_Jump_03_End))
+		if (!model_comp.IsPlayAnimation())
 		{
 			// d—Íˆ— On
 			GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity()).GravityStop(false);
@@ -1292,10 +1300,11 @@ namespace cumulonimbus::component
 		GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity()).GravityStop(false);
 	}
 
-	void PlayerComponent::AttackingJumpStrong(float dt)
+	void PlayerComponent::AttackingJumpStrong(const float dt)
 	{
 		auto& model_comp	 = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
 		auto& ray_cast_comp  = GetRegistry()->GetComponent<RayCastComponent>(GetEntity());
+		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 		if (player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
@@ -1304,14 +1313,15 @@ namespace cumulonimbus::component
 		}
 
 		// ’n–Ê‚É‚Â‚¢‚Ä‚¢‚È‚¯‚ê‚Îˆ—‚ð’†’f
-		if (!ray_cast_comp.GetIsBlockHit(mapping::collision_name::ray::ForFloor()))
+		if (!ray_cast_comp.GetIsBlockHit(mapping::collision_name::ray::ForFloor()) &&
+			transform_comp.GetPosition().y >= 0)
 			return;
 
 		// ó‘Ô‘JˆÚ(PlayerState::Attack_Jump_Strong_End)
 		player_state.SetState(PlayerState::Attack_Jump_Strong_End);
 	}
 
-	void PlayerComponent::AttackJumpStrongEnd(float dt)
+	void PlayerComponent::AttackJumpStrongEnd(const float dt)
 	{
 		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
 		if (player_state.GetInitialize())

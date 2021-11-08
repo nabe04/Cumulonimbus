@@ -2,29 +2,35 @@
 
 #include "arithmetic.h"
 #include "transform_component.h"
-
-#include <ImGuizmo/ImGuizmo.h>
+#include "model_component.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::HierarchyComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::HierarchyComponent)
-CEREAL_CLASS_VERSION(cumulonimbus::component::HierarchyComponent, 0)
+CEREAL_CLASS_VERSION(cumulonimbus::component::HierarchyComponent::ParentNodeData, 0)
+CEREAL_CLASS_VERSION(cumulonimbus::component::HierarchyComponent, 1)
 
 namespace cumulonimbus::component
 {
 	template <class Archive>
-	void HierarchyComponent::load(Archive&& archive, uint32_t version)
+	void HierarchyComponent::ParentNodeData::load(Archive&& archive, uint32_t version)
 	{
 		archive(
-			cereal::base_class<ComponentBase>(this),
-			CEREAL_NVP(parent_entity),
-			CEREAL_NVP(first_child),
-			CEREAL_NVP(next_sibling),
-			CEREAL_NVP(back_sibling)
+			CEREAL_NVP(node_index),
+			CEREAL_NVP(node_name)
 		);
 	}
 
 	template <class Archive>
-	void HierarchyComponent::save(Archive&& archive, uint32_t version) const
+	void HierarchyComponent::ParentNodeData::save(Archive&& archive, uint32_t version) const
+	{
+		archive(
+			CEREAL_NVP(node_index),
+			CEREAL_NVP(node_name)
+		);
+	}
+
+	template <class Archive>
+	void HierarchyComponent::load(Archive&& archive, const uint32_t version)
 	{
 		archive(
 			cereal::base_class<ComponentBase>(this),
@@ -33,6 +39,31 @@ namespace cumulonimbus::component
 			CEREAL_NVP(next_sibling),
 			CEREAL_NVP(back_sibling)
 		);
+		if(version == 1)
+		{
+			archive(
+				CEREAL_NVP(parent_node_data)
+			);
+		}
+	}
+
+	template <class Archive>
+	void HierarchyComponent::save(Archive&& archive, const uint32_t version) const
+	{
+		archive(
+			cereal::base_class<ComponentBase>(this),
+			CEREAL_NVP(parent_entity),
+			CEREAL_NVP(first_child),
+			CEREAL_NVP(next_sibling),
+			CEREAL_NVP(back_sibling)
+		);
+
+		if(version >= 0)
+		{
+			archive(
+				CEREAL_NVP(parent_node_data)
+			);
+		}
 	}
 
 	HierarchyComponent::HierarchyComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent)
@@ -60,6 +91,24 @@ namespace cumulonimbus::component
 	void HierarchyComponent::PreCommonUpdate(float dt)
 	{
 
+	}
+
+	void HierarchyComponent::RenderImGui()
+	{
+		if (ImGui::CollapsingHeader("Hierarchy", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			if (auto* model_comp = GetRegistry()->TryGetComponent<ModelComponent>(parent_entity);
+				model_comp)
+			{
+				auto& parent_transform = GetRegistry()->GetComponent<TransformComponent>(parent_entity);
+				for(u_int node_no = 0;
+					const auto& node : model_comp->GetNodes())
+				{
+					ImGui::Text(node.name.c_str());
+					++node_no;
+				}
+			}
+		}
 	}
 
 	void HierarchyComponent::Load(ecs::Registry* registry)
@@ -289,22 +338,22 @@ namespace cumulonimbus::component
 		}
 	}
 
-	void HierarchyComponent::ActivateDirtyFlg()
-	{
-		is_dirty = true;
-		// ŽŸ‚ÌŒZ’íŠK‘w‚ª‚È‚¯‚ê‚Îˆ—‚ð”²‚¯‚é
-		if (!next_sibling.empty())
-			GetRegistry()->GetComponent<HierarchyComponent>(next_sibling).ActivateDirtyFlg();
-		if (!first_child.empty())
-			GetRegistry()->GetComponent<HierarchyComponent>(first_child).ActivateDirtyFlg();
+	//void HierarchyComponent::ActivateDirtyFlg()
+	//{
+	//	is_dirty = true;
+	//	// ŽŸ‚ÌŒZ’íŠK‘w‚ª‚È‚¯‚ê‚Îˆ—‚ð”²‚¯‚é
+	//	if (!next_sibling.empty())
+	//		GetRegistry()->GetComponent<HierarchyComponent>(next_sibling).ActivateDirtyFlg();
+	//	if (!first_child.empty())
+	//		GetRegistry()->GetComponent<HierarchyComponent>(first_child).ActivateDirtyFlg();
 
-		return;
-	}
+	//	return;
+	//}
 
-	void HierarchyComponent::DeactivateDirtyFlg()
-	{
-		is_dirty = false;
-	}
+	//void HierarchyComponent::DeactivateDirtyFlg()
+	//{
+	//	is_dirty = false;
+	//}
 
 	DirectX::SimpleMath::Vector3 HierarchyComponent::GetParentsScale(const mapping::rename_type::Entity& ent) const
 	{

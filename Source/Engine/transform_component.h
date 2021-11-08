@@ -119,26 +119,6 @@ namespace cumulonimbus::component
 		[[nodiscard]]
 		DirectX::SimpleMath::Vector3 GetDeltaEulerAngles() const;
 
-		//void SetWorldRotation(const DirectX::SimpleMath::Vector3& angle);
-		//void SetWorldRotation(float angle);
-		//void SetWorldRotation_X(float x);
-		//void SetWorldRotation_Y(float y);
-		//void SetWorldRotation_Z(float z);
-		//void AdjustWorldRotation(const DirectX::SimpleMath::Vector3& adjust_val);
-		//void AdjustWorldRotation(float adjust_val);
-		//void AdjustWorldRotation_X(float x);
-		//void AdjustWorldRotation_Y(float y);
-		//void AdjustWorldRotation_Z(float z);
-		//[[nodiscard]]
-		//auto& GetWorldRotation() { return local_angle; }
-		//[[nodiscard]]
-		//const auto& GetWorldRotation() const { return local_angle; }
-		//[[nodiscard]]
-		//DirectX::SimpleMath::Vector3 GetDeltaAngle() const
-		//{
-		//	return local_angle - local_prev_angle;
-		//}
-
 		void NormalizeAngle();
 		void CreateIdentity4x4(DirectX::SimpleMath::Matrix& convert);
 
@@ -198,10 +178,6 @@ namespace cumulonimbus::component
 		DirectX::SimpleMath::Matrix scaling_matrix		{ DirectX::SimpleMath::Matrix::Identity };
 		DirectX::SimpleMath::Matrix rotation_matrix		{ DirectX::SimpleMath::Matrix::Identity };
 		DirectX::SimpleMath::Matrix translation_matrix	{ DirectX::SimpleMath::Matrix::Identity };
-
-		//const DirectX::SimpleMath::Vector3 right { 1.0f,0.0f,0.0f };
-		//const DirectX::SimpleMath::Vector3 up	 { 0.0f,1.0f,0.0f };
-		//const DirectX::SimpleMath::Vector3 front { 0.0f,0.0f,1.0f };
 
 		// Orientation vector
 		DirectX::SimpleMath::Vector3 model_right { 1.0f,0.0f,0.0f };

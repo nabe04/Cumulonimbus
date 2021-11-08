@@ -673,11 +673,14 @@ namespace cumulonimbus::ecs
 		 * @brief : T型のコンポーネントのポップアップメニュー
 		 * @param ent : 自分のエンティティ
 		 * @param header_name : ImGui::CollapsingHeaderに表示する名前
+		 * @param tree_node_flags : ImGui::CollapsingHeaderでのノードフラグ
+									(デフォルト : ImGuiTreeNodeFlags_DefaultOpen)
 		 */
 		template<class T>
 		bool CollapsingHeader(
 			const mapping::rename_type::Entity& ent,
-			const std::string& header_name)
+			const std::string& header_name,
+			const ImGuiTreeNodeFlags tree_node_flags = ImGuiTreeNodeFlags_DefaultOpen)
 		{
 			const std::string id = ent + header_name;
 			ImGui::PushID(id.c_str());
@@ -695,7 +698,7 @@ namespace cumulonimbus::ecs
 			}
 			ImGui::PopID();
 			ImGui::SameLine();
-			const bool ret_val = ImGui::CollapsingHeader(header_name.c_str());
+			const bool ret_val = ImGui::CollapsingHeader(header_name.c_str(), tree_node_flags);
 
 			return ret_val;
 		}

@@ -11,11 +11,24 @@ namespace cumulonimbus::component
 	class HierarchyComponent final : public ComponentBase
 	{
 	public:
+		/**
+		 * @brief : 親のボーン位置にアタッチ時に使用するパラメータ
+		 */
+		struct ParentNodeData
+		{
+			u_int		node_index{0};
+			std::string node_name{};
+
+			template<class Archive>
+			void load(Archive&& archive, uint32_t version);
+			template<class Archive>
+			void save(Archive&& archive, uint32_t version) const;
+		};
+
+	public:
 		explicit HierarchyComponent() = default; // for cereal
 		explicit HierarchyComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
 		explicit HierarchyComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const HierarchyComponent& copy_comp); // プレファブからの追加用
-		//HierarchyComponent(const HierarchyComponent& other);
-		//HierarchyComponent& operator=(const HierarchyComponent& other);
 		~HierarchyComponent() override = default;
 
 		template<class Archive>
@@ -26,6 +39,8 @@ namespace cumulonimbus::component
 
 		void CommonUpdate(float dt)    override;
 		void PreCommonUpdate(float dt) override;
+
+		void RenderImGui() override;
 
 		void Load(ecs::Registry* registry) override;
 
@@ -42,7 +57,7 @@ namespace cumulonimbus::component
 		[[nodiscard]]
 		const mapping::rename_type::Entity& GetBackSibling() const { return back_sibling; }
 		[[nodiscard]]
-		bool GetIsDirty() const { return is_dirty; }
+		//bool GetIsDirty() const { return is_dirty; }
 		/**
 		 * @brief : 親階層のセット
 		 * @remark : 親階層(parent_entity)のセットと同時に初めの子階層エンティティ(first_child)、
@@ -65,22 +80,21 @@ namespace cumulonimbus::component
 		 * @brief : 兄弟階層のダーティフラグをTrueにする再起関数
 		 * @remark :次の兄弟階層エンティティ(next_sibling)を持たない場合再起処理を終了
 		 */
-		void ActivateDirtyFlg();
+		//void ActivateDirtyFlg();
 
 		/**
 		 * @brief : 自身のダーティフラグをFalseにする
 		 */
-		void DeactivateDirtyFlg();
+		//void DeactivateDirtyFlg();
 	private:
 		mapping::rename_type::Entity parent_entity{}; // 親階層のエンティティ
 		mapping::rename_type::Entity first_child{};	  // 初めの子階層エンティティ
 		mapping::rename_type::Entity next_sibling{};  // 次の兄弟階層エンティティ
 		mapping::rename_type::Entity back_sibling{};  // 前の兄弟階層エンティティ
-		bool is_dirty{ true };	// ダーティフラグ
+		ParentNodeData parent_node_data{};
+		//bool is_dirty{ true };	// ダーティフラグ
 
 		[[nodiscard]]
 		DirectX::SimpleMath::Vector3 GetParentsScale(const mapping::rename_type::Entity& ent) const;
-		//[[nodiscard]]
-		//DirectX::SimpleMath::Vector3 Get
 	};
 } // cumulonimbus::component

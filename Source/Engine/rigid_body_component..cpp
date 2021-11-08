@@ -96,14 +96,6 @@ namespace cumulonimbus::component
 			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Gravity", &gravity, .5f);
 			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Jump Strength", &jump_strength, .5f);
 		}
-		//if (ImGui::TreeNode("RigidBodyComponent"))
-		//{
-		//	ImGui::Checkbox("Use Gravity", &is_gravity);
-		//	ImGui::Text("Current Gravity : %f", current_gravity);
-		//	IMGUI_LEFT_LABEL(ImGui::DragFloat, "Gravity", &gravity, .5f);
-
-		//	ImGui::TreePop();
-		//}
 	}
 
 	void RigidBodyComponent::Load(ecs::Registry* registry)
