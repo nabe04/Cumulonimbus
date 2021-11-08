@@ -67,6 +67,13 @@ namespace cumulonimbus::filename_helper
 	std::string GetTemporarySave();
 
 	/**
+	 * @brief : 「None」を返す
+	 * @return : None
+	 */
+	[[nodiscard]]
+	std::string GetNone();
+	
+	/**
 	 * @brief : 「NoTitled」を返す
 	 * @return : NoTitled
 	 */

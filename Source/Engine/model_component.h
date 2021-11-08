@@ -72,8 +72,6 @@ namespace cumulonimbus::component
 		void Load(ecs::Registry* registry) override;
 		void OnDeserialize(ecs::Registry* registry, const std::map<mapping::rename_type::Entity, mapping::rename_type::Entity>& connector) override;
 
-		// アニメーション
-		[[nodiscard]] bool IsPlayAnimation() const;
 		/**
 		 * @brief					: アニメーションの遷移
 		 * @param animation_index	: 格納されているアニメーションの要素番号
@@ -82,6 +80,26 @@ namespace cumulonimbus::component
 		 */
 		void SwitchAnimation(int animation_index, bool loop = false, float switch_time = 0.1f);
 
+		void UpdateAnimState(const float delta_time);
+
+
+		[[nodiscard]]
+		bool IsPlayAnimation() const;
+		/**
+		 * @brief : ノード名からノードのインデック番号を取得する
+		 * @remark : 存在しない場合-1を返す
+		 * @param node_name : 取得したいインデックス番号のノード名
+		 * @return : 存在する : 取得したノードのインデックス番号
+		 * @return : 存在しない : -1
+		 */
+		[[nodiscard]]
+		int GetNodeIndexFromName(const std::string& node_name);
+		/**
+		 * @brief : アセットの持つマテリアルを取得
+		 * @param material_index : Subsetのもつmaterial_indexを指定
+		 */
+		[[nodiscard]]
+		const mapping::rename_type::UUID& GetMaterialID(u_int material_index) const;
 		[[nodiscard]]
 		const DirectX::SimpleMath::Matrix& GetNodeMatrix(const char* node_name);
 		[[nodiscard]]
@@ -90,18 +108,9 @@ namespace cumulonimbus::component
 		const std::vector<Node>& GetNodes()	const { return nodes; }
 		[[nodiscard]]
 		std::vector<Node>& GetNodes() { return nodes; }
-		/**
-		 * @brief : アセットの持つマテリアルを取得
-		 * @param material_index : Subsetのもつmaterial_indexを指定
-		 */
-		[[nodiscard]]
-		const mapping::rename_type::UUID& GetMaterialID(u_int material_index) const;
-
-		void UpdateAnimState(const float delta_time);
-
 		// 現在のキーフレーム
-		[[nodiscard]] int CurrentKeyframe() const { return current_keyframe; }
-
+		[[nodiscard]]
+		int CurrentKeyframe() const { return current_keyframe; }
 		[[nodiscard]]
 		const mapping::rename_type::UUID& GetModelID() const { return model_id; }
 		[[nodiscard]]

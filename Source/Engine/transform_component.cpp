@@ -11,6 +11,7 @@
 #include "scene.h"
 // components
 #include "hierarchy_component.h"
+#include "model_component.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::TransformComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::TransformComponent)
@@ -315,6 +316,11 @@ namespace cumulonimbus::component
 		model_front = DirectX::XMFLOAT3{ rotation_matrix._31,rotation_matrix._32,rotation_matrix._33 };
 	}
 
+	void TransformComponent::SetDirtyFlg(const DirtyFlg flg)
+	{
+		dirty_flg |= flg;
+	}
+
 	void TransformComponent::NormalizeAngle()
 	{
 		//// Angle X
@@ -350,27 +356,63 @@ namespace cumulonimbus::component
 
 	const DirectX::SimpleMath::Matrix& TransformComponent::GetWorldMatrix()
 	{
-		if (auto& hierarchy_comp = GetRegistry()->GetComponent<HierarchyComponent>(GetEntity());
-			dirty_flg | Local_Transform_Changed)
+		auto& hierarchy_comp = GetRegistry()->GetComponent<HierarchyComponent>(GetEntity());
+		if (dirty_flg | DirtyFlg::Local_Transform_Changed)
 		{
 			NormalizeAngle();
 			CreateWorldTransformMatrix();
 
 			if (!hierarchy_comp.GetParentEntity().empty())
 			{
-				const auto& parent_ent = GetRegistry()->GetComponent<TransformComponent>(hierarchy_comp.GetParentEntity()).GetWorldMatrix();
-				world_matrix = local_matrix * parent_ent;
+				if (auto* model_comp = GetRegistry()->TryGetComponent<ModelComponent>(hierarchy_comp.GetParentEntity());
+					model_comp)
+				{
+					if (const auto& [node_index, node_name] = hierarchy_comp.GetParentNodeData();
+						node_index >= 0 &&
+						model_comp->GetNodeIndexFromName(node_name) >= 0)
+					{// 親のボーン位置にアタッチしているのでアタッチされている位置から子供位置を算出する
+						const auto& parent_matrix = model_comp->GetNodes().at(node_index).world_transform;
+						world_matrix = local_matrix * parent_matrix;
+					}
+					else
+					{// 親のボーン位置にアタッチされていない、もしくわ取得に失敗したため親のトランスフォーム行列から位置を算出する
+						const auto& parent_matrix = GetRegistry()->GetComponent<TransformComponent>(hierarchy_comp.GetParentEntity()).GetWorldMatrix();
+						world_matrix = local_matrix * parent_matrix;
+					}
+				}
+				else
+				{
+					const auto& parent_matrix = GetRegistry()->GetComponent<TransformComponent>(hierarchy_comp.GetParentEntity()).GetWorldMatrix();
+					world_matrix = local_matrix * parent_matrix;
+				}
 			}
 			else
-			{
+			{// 親が存在しないので自分ワールドトランスフォームを使用
 				world_matrix = local_matrix;
 			}
-			dirty_flg &= ~Local_Transform_Changed;
+			dirty_flg &= ~DirtyFlg::Local_Transform_Changed;
+		}
+
+		if(dirty_flg | DirtyFlg::Animation_Changed)
+		{
+			NormalizeAngle();
+			CreateWorldTransformMatrix();
+			auto* parent_model_comp = GetRegistry()->TryGetComponent<ModelComponent>(hierarchy_comp.GetParentEntity());
+			if(parent_model_comp)
+			{
+				if (const auto& [node_index, node_name] = hierarchy_comp.GetParentNodeData();
+					node_index >= 0 &&
+					parent_model_comp->GetNodeIndexFromName(node_name) >= 0)
+				{// 親のボーン位置にアタッチしているのでアタッチされている位置から子供位置を算出する
+					const auto& parent_matrix = parent_model_comp->GetNodes().at(node_index).world_transform;
+					world_matrix = local_matrix * parent_matrix;
+				}
+			}
+			dirty_flg &= ~DirtyFlg::Animation_Changed;
 		}
 
 		return world_matrix;
 	}
-
 
 	void TransformComponent::CreateIdentity4x4(DirectX::SimpleMath::Matrix& convert)
 	{
@@ -381,98 +423,98 @@ namespace cumulonimbus::component
 	{
 		local_position = pos;
 		// ダーティフラグをセット
-		dirty_flg |= Local_Transform_Changed;
+		dirty_flg |= DirtyFlg::Local_Transform_Changed;
 	}
 
 	void TransformComponent::SetPosition_X(const float x)
 	{
 		local_position.x = x;
 		// ダーティフラグをセット
-		dirty_flg |= Local_Transform_Changed;
+		dirty_flg |= DirtyFlg::Local_Transform_Changed;
 	}
 
 	void TransformComponent::SetPosition_Y(float y)
 	{
 		local_position.y = y;
 		// ダーティフラグをセット
-		dirty_flg |= Local_Transform_Changed;
+		dirty_flg |= DirtyFlg::Local_Transform_Changed;
 	}
 
 	void TransformComponent::SetPosition_Z(float z)
 	{
 		local_position.z = z;
 		// ダーティフラグをセット
-		dirty_flg |= Local_Transform_Changed;
+		dirty_flg |= DirtyFlg::Local_Transform_Changed;
 	}
 
 	void TransformComponent::AdjustPosition(const DirectX::SimpleMath::Vector3& adjust_val)
 	{
 		local_position += adjust_val;
 		// ダーティフラグをセット
-		dirty_flg |= Local_Transform_Changed;
+		dirty_flg |= DirtyFlg::Local_Transform_Changed;
 	}
 
 	void TransformComponent::AdjustPosition_X(float x)
 	{
 		local_position.x += x;
 		// ダーティフラグをセット
-		dirty_flg |= Local_Transform_Changed;
+		dirty_flg |= DirtyFlg::Local_Transform_Changed;
 	}
 
 	void TransformComponent::AdjustPosition_Y(float y)
 	{
 		local_position.y += y;
 		// ダーティフラグをセット
-		dirty_flg |= Local_Transform_Changed;
+		dirty_flg |= DirtyFlg::Local_Transform_Changed;
 	}
 
 	void TransformComponent::AdjustPosition_Z(float z)
 	{
 		local_position.z += z;
 		// ダーティフラグをセット
-		dirty_flg |= Local_Transform_Changed;
+		dirty_flg |= DirtyFlg::Local_Transform_Changed;
 	}
 
 	void TransformComponent::SetScale(const DirectX::SimpleMath::Vector3& scale)
 	{
 		local_scale = scale;
 		// ダーティフラグをセット
-		dirty_flg |= Local_Transform_Changed;
+		dirty_flg |= DirtyFlg::Local_Transform_Changed;
 	}
 
 	void TransformComponent::SetScale(const float scale)
 	{
 		local_scale.x = local_scale.y = local_scale.z = scale;
 		// ダーティフラグをセット
-		dirty_flg |= Local_Transform_Changed;
+		dirty_flg |= DirtyFlg::Local_Transform_Changed;
 	}
 
 	void TransformComponent::SetScale_X(const float x)
 	{
 		local_scale.x = x;
 		// ダーティフラグをセット
-		dirty_flg |= Local_Transform_Changed;
+		dirty_flg |= DirtyFlg::Local_Transform_Changed;
 	}
 
 	void TransformComponent::SetScale_Y(const float y)
 	{
 		local_scale.y = y;
 		// ダーティフラグをセット
-		dirty_flg |= Local_Transform_Changed;
+		dirty_flg |= DirtyFlg::Local_Transform_Changed;
 	}
 
 	void TransformComponent::SetScale_Z(const float z)
 	{
 		local_scale.z = z;
 		// ダーティフラグをセット
-		dirty_flg |= Local_Transform_Changed;
+		dirty_flg |= DirtyFlg::Local_Transform_Changed;
 	}
 
 	void TransformComponent::AdjustScale(const DirectX::SimpleMath::Vector3& adjust_val)
 	{
 		local_scale += adjust_val;
 		// ダーティフラグをセット
-		dirty_flg |= Local_Transform_Changed;
+		dirty_flg |= DirtyFlg::Local_Transform_Changed;
 	}
 
 	void TransformComponent::AdjustScale(const float adjust_val)
@@ -481,35 +523,35 @@ namespace cumulonimbus::component
 		local_scale.y += adjust_val;
 		local_scale.z += adjust_val;
 		// ダーティフラグをセット
-		dirty_flg |= Local_Transform_Changed;
+		dirty_flg |= DirtyFlg::Local_Transform_Changed;
 	}
 
 	void TransformComponent::AdjustScale_X(float x)
 	{
 		local_scale.x += x;
 		// ダーティフラグをセット
-		dirty_flg |= Local_Transform_Changed;
+		dirty_flg |= DirtyFlg::Local_Transform_Changed;
 	}
 
 	void TransformComponent::AdjustScale_Y(float y)
 	{
 		local_scale.y += y;
 		// ダーティフラグをセット
-		dirty_flg |= Local_Transform_Changed;
+		dirty_flg |= DirtyFlg::Local_Transform_Changed;
 	}
 
 	void TransformComponent::AdjustScale_Z(float z)
 	{
 		local_scale.z += z;
 		// ダーティフラグをセット
-		dirty_flg |= Local_Transform_Changed;
+		dirty_flg |= DirtyFlg::Local_Transform_Changed;
 	}
 
 	void TransformComponent::SetRotation(const DirectX::SimpleMath::Quaternion& q)
 	{
 		local_rotation = q;
 		// ダーティフラグをセット
-		dirty_flg |= Local_Transform_Changed;
+		dirty_flg |= DirtyFlg::Local_Transform_Changed;
 	}
 
 	void TransformComponent::SetRotation(float x, float y, float z, float w)
@@ -517,7 +559,7 @@ namespace cumulonimbus::component
 		const DirectX::SimpleMath::Quaternion q = { x,y,z,w };
 		local_rotation = q;
 		// ダーティフラグをセット
-		dirty_flg |= Local_Transform_Changed;
+		dirty_flg |= DirtyFlg::Local_Transform_Changed;
 	}
 
 	void TransformComponent::SetEulerAngle_X(const float x)
@@ -547,7 +589,7 @@ namespace cumulonimbus::component
 		                             DirectX::XMConvertToRadians(angle.z));
 		SetRotation(q);
 		// ダーティフラグをセット
-		dirty_flg |= Local_Transform_Changed;
+		dirty_flg |= DirtyFlg::Local_Transform_Changed;
 	}
 
 	void TransformComponent::SetEulerAngles(const float x, const float y, const float z)
@@ -559,7 +601,7 @@ namespace cumulonimbus::component
 									 DirectX::XMConvertToRadians(z));
 		SetRotation(q);
 		// ダーティフラグをセット
-		dirty_flg |= Local_Transform_Changed;
+		dirty_flg |= DirtyFlg::Local_Transform_Changed;
 	}
 
 	void TransformComponent::AdjustEulerAngles(const DirectX::SimpleMath::Vector3& adjust_val)
@@ -567,7 +609,7 @@ namespace cumulonimbus::component
 		const DirectX::SimpleMath::Vector3 r = arithmetic::ConvertQuaternionToEuler(local_rotation);
 		SetEulerAngles(r + adjust_val);
 		// ダーティフラグをセット
-		dirty_flg |= Local_Transform_Changed;
+		dirty_flg |= DirtyFlg::Local_Transform_Changed;
 	}
 
 	void TransformComponent::AdjustEulerAngles(float adjust_x, float adjust_y, float adjust_z)
@@ -575,7 +617,7 @@ namespace cumulonimbus::component
 		const DirectX::SimpleMath::Vector3 r = arithmetic::ConvertQuaternionToEuler(local_rotation);
 		SetEulerAngles(r.x + adjust_x, r.y + adjust_y, r.z + adjust_z);
 		// ダーティフラグをセット
-		dirty_flg |= Local_Transform_Changed;
+		dirty_flg |= DirtyFlg::Local_Transform_Changed;
 	}
 
 	const DirectX::SimpleMath::Quaternion& TransformComponent::GetRotation() const
@@ -617,14 +659,14 @@ namespace cumulonimbus::component
 		rotation_before = q1;
 		rotation_after  = q2;
 		// ダーティフラグをセット
-		dirty_flg |= Local_Transform_Changed;
+		dirty_flg |= DirtyFlg::Local_Transform_Changed;
 	}
 
 	void TransformComponent::QuaternionSlerp(const float t)
 	{
 		local_rotation = Quaternion::Slerp(rotation_before, rotation_after, t);
 		// ダーティフラグをセット
-		dirty_flg |= Local_Transform_Changed;
+		dirty_flg |= DirtyFlg::Local_Transform_Changed;
 	}
 
 	void TransformComponent::AdjustRotationFromAxis(const DirectX::SimpleMath::Vector3& axis, const float local_angle)
@@ -632,7 +674,7 @@ namespace cumulonimbus::component
 		const Quaternion q = Quaternion::CreateFromAxisAngle(axis, local_angle);
 		local_rotation *= q;
 		// ダーティフラグをセット
-		dirty_flg |= Local_Transform_Changed;
+		dirty_flg |= DirtyFlg::Local_Transform_Changed;
 	}
 
 	DirectX::XMMATRIX TransformComponent::GetRotationMatrix(DirectX::XMFLOAT3 axis, float local_angle/* degree */)

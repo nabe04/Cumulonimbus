@@ -16,7 +16,7 @@ namespace cumulonimbus::component
 		 */
 		struct ParentNodeData
 		{
-			u_int		node_index{0};
+			int			node_index{-1};
 			std::string node_name{};
 
 			template<class Archive>
@@ -57,7 +57,7 @@ namespace cumulonimbus::component
 		[[nodiscard]]
 		const mapping::rename_type::Entity& GetBackSibling() const { return back_sibling; }
 		[[nodiscard]]
-		//bool GetIsDirty() const { return is_dirty; }
+		const ParentNodeData& GetParentNodeData() const { return parent_node_data; }
 		/**
 		 * @brief : 親階層のセット
 		 * @remark : 親階層(parent_entity)のセットと同時に初めの子階層エンティティ(first_child)、

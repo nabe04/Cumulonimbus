@@ -15,6 +15,15 @@ namespace cumulonimbus::component
 	class TransformComponent final :public ComponentBase
 	{
 	public:
+		//-- ダーティフラグ設定用パラメータ --//
+		enum DirtyFlg : uint8_t
+		{
+			// ローカルトランスフォーム変更時のフラグ
+			Local_Transform_Changed = 1 << 0,
+			Animation_Changed		= 1 << 1
+		};
+
+	public:
 		explicit TransformComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
 		explicit TransformComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const TransformComponent& copy_comp); // プレファブからの追加用
 		explicit TransformComponent()
@@ -52,6 +61,8 @@ namespace cumulonimbus::component
 
 		//-- Creating a World Transformation Matrix --//
 		void CreateWorldTransformMatrix();
+
+		void SetDirtyFlg(DirtyFlg flg);
 
 		//-- Position --//
 		void SetPosition(const DirectX::SimpleMath::Vector3& pos);
@@ -179,21 +190,21 @@ namespace cumulonimbus::component
 		DirectX::SimpleMath::Matrix rotation_matrix		{ DirectX::SimpleMath::Matrix::Identity };
 		DirectX::SimpleMath::Matrix translation_matrix	{ DirectX::SimpleMath::Matrix::Identity };
 
-		// Orientation vector
+		//-- Orientation vector --//
 		DirectX::SimpleMath::Vector3 model_right { 1.0f,0.0f,0.0f };
 		DirectX::SimpleMath::Vector3 model_up	 { 0.0f,1.0f,0.0f };
 		DirectX::SimpleMath::Vector3 model_front { 0.0f,0.0f,1.0f };
 
 		DirectX::SimpleMath::Matrix orientation{ DirectX::SimpleMath::Matrix::Identity };
 
-		// その他の回転パラメータ
+		//-- その他の回転パラメータ --//
 		DirectX::SimpleMath::Vector3 model_euler_angle{};
 		DirectX::SimpleMath::Vector3 model_prev_euler_angle{};
-		DirectX::SimpleMath::Quaternion rotation_before{};	// Slerp時の変形前のクォータニオン値
-		DirectX::SimpleMath::Quaternion rotation_after{};	// Slerp時の変形後のクォータニオン値
+		// Slerp時の変形前のクォータニオン値
+		DirectX::SimpleMath::Quaternion rotation_before{};
+		// Slerp時の変形後のクォータニオン値
+		DirectX::SimpleMath::Quaternion rotation_after{};
 
-		// local transform(local_position,local_rotation,local_scale)変更時のフラグ
-		static constexpr uint8_t Local_Transform_Changed{ 1 << 0 };
 		// ダーティフラグ用変数
 		uint8_t dirty_flg{};
 

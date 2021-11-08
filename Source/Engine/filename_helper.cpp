@@ -47,6 +47,11 @@ namespace cumulonimbus::filename_helper
 		return { "TemporarySave" };
 	}
 
+	std::string GetNone()
+	{
+		return { "None" };
+	}
+
 	std::string GetNoTitled()
 	{
 		return { "NoTitled" };

@@ -1,6 +1,9 @@
 #include "hierarchy_component.h"
 
 #include "arithmetic.h"
+#include "cum_imgui_helper.h"
+#include "filename_helper.h"
+// Components
 #include "transform_component.h"
 #include "model_component.h"
 
@@ -81,10 +84,6 @@ namespace cumulonimbus::component
 
 	void HierarchyComponent::CommonUpdate(const float dt)
 	{
-		using namespace DirectX::SimpleMath;
-		auto rotation_m = Matrix::CreateRotationY(DirectX::XMConvertToRadians(90));
-		auto inv_m = rotation_m.Invert();
-
 
 	}
 
@@ -97,15 +96,31 @@ namespace cumulonimbus::component
 	{
 		if (ImGui::CollapsingHeader("Hierarchy", ImGuiTreeNodeFlags_DefaultOpen))
 		{
+			//-- 親ボーン位置にアタッチする場所の設定 --//
 			if (auto* model_comp = GetRegistry()->TryGetComponent<ModelComponent>(parent_entity);
 				model_comp)
 			{
-				auto& parent_transform = GetRegistry()->GetComponent<TransformComponent>(parent_entity);
-				for(u_int node_no = 0;
-					const auto& node : model_comp->GetNodes())
+				// ImGui::Comboで表示用の
+				std::vector<std::string> node_name_items{};
+				node_name_items.reserve(model_comp->GetNodes().size() + 1);
+				node_name_items.emplace_back(filename_helper::GetNone());
+				for(const auto& node : model_comp->GetNodes())
 				{
-					ImGui::Text(node.name.c_str());
-					++node_no;
+					node_name_items.emplace_back(node.name);
+				}
+				if (helper::imgui::Combo("Parent Socket", parent_node_data.node_name, node_name_items))
+				{// 親のボーン位置が変更されたので変更されたパラメータの再設定
+					for(int node_index = 0; node_index < node_name_items.size();++node_index)
+					{
+						// 選択されたいるノード名と現在のノード名が一致するまで処理を飛ばす
+						if (node_name_items.at(node_index) != parent_node_data.node_name)
+							continue;
+						// 「None」+ ノードの名郡なので実際のノード位置は -> node_index - 1
+						// 「None」の場合は-1になるが親のボーン計算時に0未満はワールドトランスフォームを掛けるようにする
+						parent_node_data.node_index = node_index - 1;
+						GetRegistry()->GetComponent<TransformComponent>(GetEntity()).SetDirtyFlg(TransformComponent::Animation_Changed);
+						break;
+					}
 				}
 			}
 		}
@@ -281,27 +296,6 @@ namespace cumulonimbus::component
 				my_transform_comp.SetEulerAngles(euler);
 			}
 		}
-		//else
-		//{// 一番上の親階層になったとき
-		//	if(!parent_entity.empty())
-		//	{// 以前に親を持っていれば
-		//		TransformComponent& transform_comp	  = registry->GetComponent<TransformComponent>(GetEntity());
-		//		const DirectX::SimpleMath::Matrix m{ transform_comp.GetWorldMatrix() };
-		//		DirectX::SimpleMath::Vector3    t{};
-		//		DirectX::SimpleMath::Quaternion r{};
-		//		DirectX::SimpleMath::Vector3    s{};
-
-		//		if (arithmetic::DecomposeMatrix(t, r, s, m))
-		//		{
-		//			transform_comp.SetPosition(t);
-		//			transform_comp.SetScale(s);
-		//			transform_comp.SetRotation(r);
-		//			const DirectX::SimpleMath::Vector3 euler = arithmetic::ConvertQuaternionToEuler(r);
-		//			transform_comp.SetEulerAngles(euler);
-		//		}
-		//	}
-
-		//}
 
 		parent_entity = parent_ent;
 	}

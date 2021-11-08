@@ -131,7 +131,7 @@ namespace cumulonimbus::component
 			auto& asset_sheet_manager = asset_manager.GetAssetSheetManager();
 			auto* model_loader = locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>();
 			std::filesystem::path current_path{};
-			static std::string current_item{};
+			std::string current_item{};
 			if (model_loader->HasModel(model_id))
 			{
 				current_path = asset_sheet_manager.GetAssetFilename<asset::Model>(model_id);
@@ -141,7 +141,7 @@ namespace cumulonimbus::component
 			std::vector<std::string> items{};
 			items_path.reserve(asset_sheet_manager.GetSheet<asset::Model>().sheet.size());
 			items.reserve(asset_sheet_manager.GetSheet<asset::Model>().sheet.size());
-			for (const auto& [key, value] : asset_sheet_manager.GetSheet<asset::Model>().sheet)
+			for (const auto& value : asset_sheet_manager.GetSheet<asset::Model>().sheet | std::views::values)
 			{
 				items_path.emplace_back(value);
 				items.emplace_back(items_path.back().filename().string());
@@ -256,6 +256,20 @@ namespace cumulonimbus::component
 			= locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>()->GetModel(model_id).GetModelData().GetAnimations().at(current_animation_index);
 
 		return current_keyframe < (animation.num_key_frame - 1);
+	}
+
+	int ModelComponent::GetNodeIndexFromName(const std::string& node_name)
+	{
+		for(u_int node_index = 0; node_index < nodes.size();++node_index)
+		{
+			if(nodes.at(node_index).name.compare(node_name) == 0)
+			{// ノード名が見つかったので現在のインデックス番号を返す
+				return node_index;
+			}
+		}
+
+		// ノード名が見つからなかったので-1(インデックスで存在しない番号)を返す
+		return -1;
 	}
 
 	void ModelComponent::SwitchAnimation(
@@ -504,6 +518,7 @@ namespace cumulonimbus::component
 		}
 
 		changer_timer += dt;
+		GetRegistry()->GetComponent<TransformComponent>(GetEntity()).SetDirtyFlg(TransformComponent::Animation_Changed);
 		if (animation_switch_time <= changer_timer)
 		{
 			changer_timer = 0;
@@ -570,6 +585,7 @@ namespace cumulonimbus::component
 			}
 		}
 
+		GetRegistry()->GetComponent<TransformComponent>(GetEntity()).SetDirtyFlg(TransformComponent::Animation_Changed);
 		// 最終フレーム処理
 		if (end_animation)
 		{
