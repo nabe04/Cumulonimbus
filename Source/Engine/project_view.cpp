@@ -356,7 +356,6 @@ namespace cumulonimbus::editor
 						if(selected_file.extension() == file_path_helper::GetSceneExtension())
 						{
 							is_change_scene = true;
-
 						}
 					}
 				}

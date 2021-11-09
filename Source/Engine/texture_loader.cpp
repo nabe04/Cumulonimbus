@@ -132,11 +132,11 @@ namespace cumulonimbus::asset
 
 	void TextureLoader::Delete(AssetManager& asset_manager, const mapping::rename_type::UUID& asset_id)
 	{
-		const std::filesystem::path path = asset_manager.GetAssetSheetManager().GetAssetFilename<asset::Texture>(asset_id);
 		// アセット(ID)が存在していなければ処理を抜ける
 		if (!textures.contains(asset_id))
 			return;
 
+		const std::filesystem::path path = asset_manager.GetAssetSheetManager().GetAssetFilename<asset::Texture>(asset_id);
 		DeleteTexture(asset_id, path);
 		asset_manager.Save();
 	}
@@ -153,9 +153,14 @@ namespace cumulonimbus::asset
 		return extensions.contains(extension);
 	}
 
+	bool TextureLoader::HasTexture(const mapping::rename_type::UUID& tex_id) const
+	{
+		return textures.contains(tex_id);
+	}
+
 	void TextureLoader::CreateTexture(AssetManager& asset_manager, const std::filesystem::path& path)
 	{
-		for (const auto& [key, value] : asset_manager.GetAssetSheetManager().GetSheet<Texture>().sheet)
+		for (const auto& value : asset_manager.GetAssetSheetManager().GetSheet<Texture>().sheet | std::views::values)
 		{
 			if (path.compare(value) == 0)
 				return;
@@ -257,6 +262,7 @@ namespace cumulonimbus::asset
 
 	void TextureLoader::DeleteTexture(const mapping::rename_type::UUID& tex_id, const std::filesystem::path& delete_path)
 	{
+		// テクスチャアセットの削除
 		textures.erase(tex_id);
 		// ファイルの削除
 		std::filesystem::remove(delete_path);

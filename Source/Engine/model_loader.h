@@ -100,14 +100,13 @@ namespace cumulonimbus::asset
 
 		/**
 		 * @brief : モデルアセットの削除処理
-		 * @remark : モデルが所持するマテリアル、テクスチャも同時に削除する
 		 * @param model_id : 削除するモデルID
-		 * @param parent_path : 「.model」ファイルを持つフォルダ名
-		 *						例 : ./Data/Models/SampleModel/SampleModel.model -> ./Data/Models/SampleModel
+		 * @param path : 「.model」ファイルまでのパス
+		 *				  例 : ./Data/Models/SampleModel/SampleModel.model
 		 */
 		void DeleteModel(
 			const mapping::rename_type::UUID& model_id,
-			const std::filesystem::path& parent_path);
+			const std::filesystem::path& path);
 
 		/***************************
 		 *	モデルの読み込み関数群

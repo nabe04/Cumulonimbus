@@ -73,6 +73,14 @@ namespace cumulonimbus::asset
 		bool Supported(std::filesystem::path extension) override;
 
 		/**
+		 * @brief : テクスチャアセットを保持しているかを
+		 *			テクスチャIDから判別
+		 * @param tex_id : テクスチャID
+		 */
+		[[nodiscard]]
+		bool HasTexture(const mapping::rename_type::UUID& tex_id) const;
+
+		/**
 		 * @brief : ファイルパスからテクスチャの作成
 		 * @remark : ※Load関数との違い
 		 * @remark : フォルダのコピーを行わずpathに指定された

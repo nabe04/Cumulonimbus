@@ -67,23 +67,6 @@ namespace cumulonimbus::asset
 			loader->Rename(*this, asset_id, changed_name);
 			break;
 		}
-
-		//for (auto& asset_sheet : sheet_manager->GetSheets() | std::views::values)
-		//{
-		//	for (auto& [uuid, asset_path] : asset_sheet.sheet)
-		//	{
-		//		if(uuid == asset_id)
-		//		{
-		//			// ファイル名の変更
-		//			std::filesystem::rename(asset_path, path);
-		//			// アセットシートにあるパスも変更
-		//			asset_path = path.string();
-		//			// 変更されたのでアセットシートを保存
-		//			Save();
-		//			return;
-		//		}
-		//	}
-		//}
 	}
 
 	void AssetManager::DeleteAssetAndLoader(const std::filesystem::path& path)

@@ -206,6 +206,9 @@ namespace cumulonimbus::asset
 		// アセット(ID)が存在していなければ処理を抜ける
 		if (!models.contains(model_id))
 			return;
+
+		DeleteModel(model_id, path);
+		asset_manager.Save();
 	}
 
 	void ModelLoader::Delete(AssetManager& asset_manager, const mapping::rename_type::UUID& asset_id)
@@ -215,7 +218,8 @@ namespace cumulonimbus::asset
 			return;
 
 		const std::filesystem::path path = asset_manager.GetAssetSheetManager().GetAssetFilename<Model>(asset_id);
-
+		DeleteModel(asset_id, path);
+		asset_manager.Save();
 	}
 
 	bool ModelLoader::Supported(const std::filesystem::path extension)
@@ -282,19 +286,52 @@ namespace cumulonimbus::asset
 		return {};
 	}
 
-	void ModelLoader::DeleteModel(const mapping::rename_type::UUID& model_id, const std::filesystem::path& parent_path)
+	void ModelLoader::DeleteModel(const mapping::rename_type::UUID& model_id, const std::filesystem::path& path)
 	{
-		// parent_path以下の全てのファイル名を取得
-		const std::vector<std::filesystem::path> sub_directories_file_path = utility::GetAllSubDirectoryFilePath(parent_path.string());
-		// sub_directories_file_pathが持つテクスチャファイル名郡
-		std::vector<std::filesystem::path> texture_files{};
-		// sub_directories_file_pathが持つマテリアルファイル名郡
-		std::vector<std::filesystem::path> material_files{};
-		for(const auto& sub_directory_file_path : sub_directories_file_path)
-		{
-			asset::AssetManager& asset_manager = *locator::Locator::GetAssetManager();
+		//asset::AssetManager& asset_manager = *locator::Locator::GetAssetManager();
+		//const auto& material_loader = asset_manager.GetLoader<MaterialLoader>();
+		//const auto& texture_loader = asset_manager.GetLoader<TextureLoader>();
 
-		}
+		//// parent_path以下の全てのファイル名を取得
+		//const std::vector<std::filesystem::path> sub_directories_file_path = utility::GetAllSubDirectoryFilePath(parent_path.string());
+		//// sub_directories_file_pathが持つテクスチャファイル名郡
+		//std::vector<std::filesystem::path> texture_files{};
+		//// sub_directories_file_pathが持つマテリアルファイル名郡
+		//std::vector<std::filesystem::path> material_files{};
+
+		////-- 取得されたparent_path以下の全てのファイル名を分別していく --//
+		//for(const auto& sub_directory_file_path : sub_directories_file_path)
+		//{
+		//	const std::string extension = sub_directory_file_path.extension().string();
+		//	// マテリアルファイル(「.mat」)
+		//	if (material_loader->Supported(extension))
+		//	{
+		//		material_files.emplace_back(sub_directory_file_path);
+
+		//		if(const mapping::rename_type::UUID mat_id = asset_manager.GetAssetSheetManager().Search<Material>(sub_directory_file_path);
+		//		   !mat_id.empty())
+		//		{// マテリアルアセットが存在したので削除する
+		//			material_loader->Delete(asset_manager, mat_id);
+		//		}
+		//	}
+
+		//	// テクスチャファイル(「.png」、「.jpeg」、「.tga」、「.dds」)
+		//	if (texture_loader->Supported(extension))
+		//	{
+		//		texture_files.emplace_back(sub_directory_file_path);
+
+		//		if(const mapping::rename_type::UUID tex_id = asset_manager.GetAssetSheetManager().Search<Texture>(sub_directory_file_path);
+		//		   !tex_id.empty())
+		//		{// テクスチャアセットが存在したので削除する
+		//			texture_loader->Delete(asset_manager, tex_id);
+		//		}
+		//	}
+		//}
+
+		// モデルアセットの削除
+		models.erase(model_id);
+		// ファイルの削除
+		std::filesystem::remove(path);
 	}
 
 	std::filesystem::path ModelLoader::BuildModel(
