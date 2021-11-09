@@ -1,25 +1,26 @@
 #pragma once
+#include <vector>
+#include <filesystem>
+#include <string>
+
 #include <DirectXMath.h>
-#include <cassert>
+
 #include <../../Libraries/stduuid/uuid.h>
+
 #include "rename_type_mapping.h"
-
-#define SAFE_RELEASE(p)  if(p) { (p)->Release(); (p)=nullptr; }
-
-static float(* const ToRadian)(float) = DirectX::XMConvertToRadians;	 // 角度をラジアンに
-static float(* const ToDegree)(float) = DirectX::XMConvertToDegrees;	 // ラジアンを角度に
-
-template<class T>
-bool CheckEqual(T lhs,T rhs)
-{
-	if((lhs - rhs) < FLT_EPSILON)
-		return true;
-
-	return false;
-}
 
 namespace cumulonimbus::utility
 {
+	template<class T>
+	bool CheckEqual(T lhs, T rhs)
+	{
+		if ((lhs - rhs) < FLT_EPSILON)
+			return true;
+
+		return false;
+	}
+
+
 	template<class T>
 	mapping::rename_type::Hash GetHash()
 	{
@@ -52,4 +53,12 @@ namespace cumulonimbus::utility
 	 */
 	[[nodiscard]]
 	std::string ConvertAbsolutePathToRelativePath(const std::string& path);
+
+	/**
+	 * @brief : 指定されたファイルパス以下のファイル名を取得する
+	 * @return : 指定されたファイルパスが存在しない場合空のパスを返す
+	 * @return : 指定されたパス以下のファイル名
+	 */
+	[[nodiscard]]
+	std::vector<std::filesystem::path> GetAllSubDirectoryFilePath(const std::string& path);
 } // cumulonimbus::utility

@@ -77,6 +77,7 @@ namespace cumulonimbus::asset
 		/**
 		 * @brief : フォルダのコピーとモデル読み込み
 		 * @remark : 「.fbx」形式の場合選択されたモデルを含むフォルダごとコピーする
+		 * @param asset_manager :
 		 * @param from : 選択されたモデルまでのパス(拡張子を含む)
 		 * @param to : コピー先のフォルダまでのパス
 		 */
@@ -96,6 +97,17 @@ namespace cumulonimbus::asset
 		std::filesystem::path SearchTextureFilePath(
 			const std::filesystem::path& parent_path,
 			const std::filesystem::path& filename) const;
+
+		/**
+		 * @brief : モデルアセットの削除処理
+		 * @remark : モデルが所持するマテリアル、テクスチャも同時に削除する
+		 * @param model_id : 削除するモデルID
+		 * @param parent_path : 「.model」ファイルを持つフォルダ名
+		 *						例 : ./Data/Models/SampleModel/SampleModel.model -> ./Data/Models/SampleModel
+		 */
+		void DeleteModel(
+			const mapping::rename_type::UUID& model_id,
+			const std::filesystem::path& parent_path);
 
 		/***************************
 		 *	モデルの読み込み関数群

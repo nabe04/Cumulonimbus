@@ -1,12 +1,14 @@
 #include "model_loader.h"
 
-#include <set>
 #include <filesystem>
+#include <set>
 
 #include "asset_sheet_manager.h"
 #include "cereal_helper.h"
-#include "file_path_helper.h"
 #include "filename_helper.h"
+#include "file_path_helper.h"
+#include "generic.h"
+#include "locator.h"
 #include "material_loader.h"
 #include "texture.h"
 #include "texture_loader.h"
@@ -197,13 +199,22 @@ namespace cumulonimbus::asset
 		asset_manager.Save();
 	}
 
-	void ModelLoader::Delete(AssetManager& asset_manager, const mapping::rename_type::UUID& asset_id)
-	{
-
-	}
 
 	void ModelLoader::Delete(AssetManager& asset_manager, const std::filesystem::path& path)
 	{
+		const mapping::rename_type::UUID model_id = asset_manager.GetAssetSheetManager().Search<Model>(path);
+		// アセット(ID)が存在していなければ処理を抜ける
+		if (!models.contains(model_id))
+			return;
+	}
+
+	void ModelLoader::Delete(AssetManager& asset_manager, const mapping::rename_type::UUID& asset_id)
+	{
+		// アセット(ID)が存在していなければ処理を抜ける
+		if (!models.contains(asset_id))
+			return;
+
+		const std::filesystem::path path = asset_manager.GetAssetSheetManager().GetAssetFilename<Model>(asset_id);
 
 	}
 
@@ -269,6 +280,21 @@ namespace cumulonimbus::asset
 
 		assert(!"Not found file path(ModelLoader::GetTextureFilePath)");
 		return {};
+	}
+
+	void ModelLoader::DeleteModel(const mapping::rename_type::UUID& model_id, const std::filesystem::path& parent_path)
+	{
+		// parent_path以下の全てのファイル名を取得
+		const std::vector<std::filesystem::path> sub_directories_file_path = utility::GetAllSubDirectoryFilePath(parent_path.string());
+		// sub_directories_file_pathが持つテクスチャファイル名郡
+		std::vector<std::filesystem::path> texture_files{};
+		// sub_directories_file_pathが持つマテリアルファイル名郡
+		std::vector<std::filesystem::path> material_files{};
+		for(const auto& sub_directory_file_path : sub_directories_file_path)
+		{
+			asset::AssetManager& asset_manager = *locator::Locator::GetAssetManager();
+
+		}
 	}
 
 	std::filesystem::path ModelLoader::BuildModel(
