@@ -15,6 +15,7 @@
 #include "scene.h"
 #include "scene_manager.h"
 #include "transform_component.h"
+#include "hierarchy_component.h"
 
 DirectX::SimpleMath::Vector3 w_pos;
 
@@ -88,23 +89,43 @@ namespace cumulonimbus::editor
 					transform_comp)
 				{
 					auto& camera = scene_view_camera->GetCamera();
-
-					DirectX::SimpleMath::Matrix world_mat = transform_comp->GetWorldMatrix();
+					auto& hierarchy_comp = registry->GetComponent<component::HierarchyComponent>(hierarchy->GetSelectedEntity());
 					DirectX::SimpleMath::Matrix view_mat  = camera.GetViewMat();
 					DirectX::SimpleMath::Matrix proj_mat  = camera.GetProjectionMat();
-					ImGuiIO& io = ImGui::GetIO();
 					ImGuizmo::SetRect(window_pos.x, window_pos.y, window_size.x, window_size.y);
 					ImGuizmo::SetDrawlist();
 
-					if(ImGuizmo::Manipulate(reinterpret_cast<float*>(&view_mat),
-										 reinterpret_cast<float*>(&proj_mat),
-										 ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::MODE::WORLD,
-										 reinterpret_cast<float*>(&world_mat)))
+					DirectX::SimpleMath::Matrix world_mat = transform_comp->GetWorldMatrix();
+					if (ImGuizmo::Manipulate(reinterpret_cast<float*>(&view_mat),
+						reinterpret_cast<float*>(&proj_mat),
+						ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::MODE::WORLD,
+						reinterpret_cast<float*>(&world_mat)))
 					{
 						transform_comp->SetWorldMatrix(world_mat);
 					}
 
-					//
+					//if(hierarchy_comp.GetParentEntity().empty())
+					//{
+					//	DirectX::SimpleMath::Matrix world_mat = transform_comp->GetWorldMatrix();
+					//	if (ImGuizmo::Manipulate(reinterpret_cast<float*>(&view_mat),
+					//		reinterpret_cast<float*>(&proj_mat),
+					//		ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::MODE::WORLD,
+					//		reinterpret_cast<float*>(&world_mat)))
+					//	{
+					//		transform_comp->SetWorldMatrix(world_mat);
+					//	}
+					//}
+					//else
+					//{
+					//	DirectX::SimpleMath::Matrix local_mat = transform_comp->GetWorldMatrix();
+					//	if (ImGuizmo::Manipulate(reinterpret_cast<float*>(&view_mat),
+					//		reinterpret_cast<float*>(&proj_mat),
+					//		ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::MODE::WORLD,
+					//		reinterpret_cast<float*>(&local_mat)))
+					//	{
+					//		transform_comp->SetLocalMatrix(local_mat);
+					//	}
+					//}
 				}
 			}
 

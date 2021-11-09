@@ -371,8 +371,8 @@ namespace cumulonimbus::component
 						node_index >= 0 &&
 						model_comp->GetNodeIndexFromName(node_name) >= 0)
 					{// 親のボーン位置にアタッチしているのでアタッチされている位置から子供位置を算出する
-						const auto& parent_matrix = model_comp->GetNodes().at(node_index).world_transform;
-						world_matrix = local_matrix * parent_matrix;
+						const auto& parent_bone_matrix = model_comp->GetNodes().at(node_index).world_transform;
+						world_matrix = local_matrix * parent_bone_matrix;
 					}
 					else
 					{// 親のボーン位置にアタッチされていない、もしくわ取得に失敗したため親のトランスフォーム行列から位置を算出する
@@ -397,8 +397,9 @@ namespace cumulonimbus::component
 		{
 			NormalizeAngle();
 			CreateWorldTransformMatrix();
-			auto* parent_model_comp = GetRegistry()->TryGetComponent<ModelComponent>(hierarchy_comp.GetParentEntity());
-			if(parent_model_comp)
+
+			if(auto* parent_model_comp = GetRegistry()->TryGetComponent<ModelComponent>(hierarchy_comp.GetParentEntity());
+			   parent_model_comp)
 			{
 				if (const auto& [node_index, node_name] = hierarchy_comp.GetParentNodeData();
 					node_index >= 0 &&
@@ -643,16 +644,73 @@ namespace cumulonimbus::component
 		DirectX::SimpleMath::Quaternion r{};
 		DirectX::SimpleMath::Vector3    s{};
 
-		if (arithmetic::DecomposeMatrix(t, r, s, world_matrix))
+		if(auto& hierarchy_comp = GetRegistry()->GetComponent<HierarchyComponent>(GetEntity());
+		   !hierarchy_comp.GetParentEntity().empty())
 		{
-			auto l = local_rotation;
+			if (auto* model_comp = GetRegistry()->TryGetComponent<ModelComponent>(hierarchy_comp.GetParentEntity());
+				model_comp)
+			{
+				if (const auto& [node_index, node_name] = hierarchy_comp.GetParentNodeData();
+					node_index >= 0 &&
+					model_comp->GetNodeIndexFromName(node_name) >= 0)
+				{// 親のボーン位置にアタッチしているのでアタッチされている位置から子供位置を算出する
+					const auto& parent_bone_matrix = model_comp->GetNodes().at(node_index).world_transform;
+					local_matrix = world_matrix * parent_bone_matrix.Invert();
+				}
+				else
+				{// 親のボーン位置にアタッチされていない、もしくは取得に失敗したため親のトランスフォーム行列から位置を算出する
+					const auto& parent_matrix = GetRegistry()->GetComponent<TransformComponent>(hierarchy_comp.GetParentEntity()).GetWorldMatrix();
+					local_matrix = world_matrix * parent_matrix.Invert();
+				}
+			}
+			else
+			{
+				const auto& parent_matrix = GetRegistry()->GetComponent<TransformComponent>(hierarchy_comp.GetParentEntity()).GetWorldMatrix();
+				local_matrix = world_matrix * parent_matrix.Invert();
+			}
+
+			if (arithmetic::DecomposeMatrix(t, r, s, local_matrix))
+			{
+				SetPosition(t);
+				SetScale(s);
+				SetRotation(r);
+				const DirectX::SimpleMath::Vector3 euler = arithmetic::ConvertQuaternionToEuler(r);
+				SetEulerAngles(euler);
+			}
+		}
+		else
+		{
+			local_matrix = world_matrix;
+			if (arithmetic::DecomposeMatrix(t, r, s, world_matrix))
+			{
+				SetPosition(t);
+				SetScale(s);
+				SetRotation(r);
+				const DirectX::SimpleMath::Vector3 euler = arithmetic::ConvertQuaternionToEuler(r);
+				SetEulerAngles(euler);
+			}
+		}
+	}
+
+	void TransformComponent::SetLocalMatrix(const DirectX::SimpleMath::Matrix& mat)
+	{
+		local_matrix = mat;
+		//dirty_flg |= DirtyFlg::Local_Transform_Changed;
+		DirectX::SimpleMath::Vector3    t{};
+		DirectX::SimpleMath::Quaternion r{};
+		DirectX::SimpleMath::Vector3    s{};
+
+		if (arithmetic::DecomposeMatrix(t, r, s, local_matrix))
+		{
 			SetPosition(t);
 			SetScale(s);
 			SetRotation(r);
 			const DirectX::SimpleMath::Vector3 euler = arithmetic::ConvertQuaternionToEuler(r);
 			SetEulerAngles(euler);
+			//dirty_flg |= DirtyFlg::Local_Transform_Changed;
 		}
 	}
+
 
 	void TransformComponent::SetQuaternionSlerp(const DirectX::SimpleMath::Quaternion& q1, const DirectX::SimpleMath::Quaternion& q2)
 	{

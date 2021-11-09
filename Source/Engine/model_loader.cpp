@@ -240,7 +240,7 @@ namespace cumulonimbus::asset
 		// ファイル拡張子
 		const std::string exe		= filename.extension().string();
 		// ファイル名(拡張子除く)
-		const std::string name_only = std::filesystem::path{ filename }.replace_extension().string();
+		const std::string name_only = std::filesystem::path{ parent_path }.filename().replace_extension().string();
 		std::error_code ec{};
 
 		std::filesystem::path result{};
@@ -669,6 +669,7 @@ namespace cumulonimbus::asset
 
 		// ディフューズカラー
 		const FbxProperty fbx_diffuse_property = fbx_surface_material->FindProperty(FbxSurfaceMaterial::sDiffuse);
+		const FbxProperty fbx_normal_property = fbx_surface_material->FindProperty(FbxSurfaceMaterial::sNormalMap);
 		const FbxProperty fbx_diffuse_factor_property = fbx_surface_material->FindProperty(FbxSurfaceMaterial::sDiffuseFactor);
 		if (fbx_diffuse_property.IsValid() && fbx_diffuse_factor_property.IsValid())
 		{// .IsValid()でFbxPropertyの有無を確認
@@ -696,6 +697,20 @@ namespace cumulonimbus::asset
 				asset_manager.GetLoader<TextureLoader>()->CreateTexture(asset_manager, texture_path);
 				const mapping::rename_type::UUID id = asset_manager.GetAssetSheetManager().Search<Texture>(texture_path);
 				material.albedo_id = id;
+			}
+		}
+		if(fbx_normal_property.IsValid())
+		{
+			const int fbx_texture_count = fbx_normal_property.GetSrcObjectCount<FbxFileTexture>();
+			if (fbx_texture_count > 0)
+			{
+				FbxFileTexture* fbx_texture = fbx_normal_property.GetSrcObject<FbxFileTexture>();
+				const std::string texture_filename = std::filesystem::path{ fbx_texture->GetFileName() }.filename().string();
+				texture_path = SearchTextureFilePath(parent_path, texture_filename);
+				// テクスチャロード
+				asset_manager.GetLoader<TextureLoader>()->CreateTexture(asset_manager, texture_path);
+				const mapping::rename_type::UUID id = asset_manager.GetAssetSheetManager().Search<Texture>(texture_path);
+				material.normal_id = id;
 			}
 		}
 

@@ -135,6 +135,7 @@ namespace cumulonimbus::component
 
 		//-- World 4x4 matrix --//
 		void SetWorldMatrix(const DirectX::SimpleMath::Matrix& mat);
+		void SetLocalMatrix(const DirectX::SimpleMath::Matrix& mat);
 		[[nodiscard]]
 		const DirectX::SimpleMath::Matrix& GetWorldMatrix();
 		[[nodiscard]]

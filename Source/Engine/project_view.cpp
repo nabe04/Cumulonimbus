@@ -126,7 +126,7 @@ namespace cumulonimbus::editor
 					return;
 				}
 				// アセットロード(モデル)
-				asset_manager.AddAsset(selection.at(0));
+				asset_manager.AddAsset(reinterpret_cast<const char8_t*>(selection.at(0).c_str()));
 			}
 			ImGui::Separator();
 			if(ImGui::MenuItem("Material"))
