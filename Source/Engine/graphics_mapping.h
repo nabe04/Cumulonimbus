@@ -23,4 +23,4 @@ namespace cumulonimbus::mapping::graphics
 
 		End
 	};
-}
+} // cumulonimbus::mapping::graphics

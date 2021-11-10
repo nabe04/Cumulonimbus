@@ -40,6 +40,7 @@
     <ClInclude Include="Source\Engine\bloom.h" />
     <ClInclude Include="Source\Engine\camera.h" />
     <ClInclude Include="Source\Engine\capsule_collison_component.h" />
+    <ClInclude Include="Source\Engine\cbuffer_manager.h" />
     <ClInclude Include="Source\Engine\cereal_helper.h" />
     <ClInclude Include="Source\Engine\child_actor_component.h" />
     <ClInclude Include="Source\Engine\collision_component.h" />
@@ -53,6 +54,8 @@
     <ClInclude Include="Source\Engine\content_browser.h" />
     <ClInclude Include="Source\Engine\cum_imgui_helper.h" />
     <ClInclude Include="Source\Engine\debug_collision.h" />
+    <ClInclude Include="Source\Engine\debug_primitive.h" />
+    <ClInclude Include="Source\Engine\debug_primitive_shader.h" />
     <ClInclude Include="Source\Engine\depth_map.h" />
     <ClInclude Include="Source\Engine\depth_stencil.h" />
     <ClInclude Include="Source\Engine\diffuse.h" />
@@ -199,6 +202,7 @@
     <ClCompile Include="Source\Engine\bloom.cpp" />
     <ClCompile Include="Source\Engine\camera.cpp" />
     <ClCompile Include="Source\Engine\capsule_collison_component.cpp" />
+    <ClCompile Include="Source\Engine\cbuffer_manager.cpp" />
     <ClCompile Include="Source\Engine\child_actor_component.cpp" />
     <ClCompile Include="Source\Engine\collision_component.cpp" />
     <ClCompile Include="Source\Engine\collision_manager.cpp" />

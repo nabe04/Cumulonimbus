@@ -30,7 +30,7 @@ namespace cumulonimbus
 		public:
 			explicit ReflectionMappingAsset();
 			~ReflectionMappingAsset() override = default;
-			
+
 			void BindCBuffer()	 override {}
 			void UnbindCBuffer() override {}
 			void RenderImGui()   override {}
@@ -38,20 +38,20 @@ namespace cumulonimbus
 	}
 }
 
-namespace shader
-{
-	class ReflectionMapping : public Shader<Empty>
-	{
-	private:
-		const char* vs_name = "./Shader/cso/reflection_mapping_vs.cso";
-		const char* ps_name = "./Shader/cso/reflection_mapping_ps.cso";
-
-	public:
-		explicit ReflectionMapping(ID3D11Device* device);
-
-		void Activate(ID3D11DeviceContext* immediate_context) override;
-		void Deactivate(ID3D11DeviceContext* immediate_context) override;
-	};
-}
+//namespace shader
+//{
+//	class ReflectionMapping : public Shader<Empty>
+//	{
+//	private:
+//		const char* vs_name = "./Shader/cso/reflection_mapping_vs.cso";
+//		const char* ps_name = "./Shader/cso/reflection_mapping_ps.cso";
+//
+//	public:
+//		explicit ReflectionMapping(ID3D11Device* device);
+//
+//		void Activate(ID3D11DeviceContext* immediate_context) override;
+//		void Deactivate(ID3D11DeviceContext* immediate_context) override;
+//	};
+//}
 
 #endif // REFLECTION_MAPPING_H

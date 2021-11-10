@@ -5,6 +5,7 @@
 #include "frame_buffer.h"
 #include "vertex_shader.h"
 #include "pixel_shader.h"
+#include "texture_resource_mapping.h"
 
 namespace cumulonimbus::graphics::buffer
 {

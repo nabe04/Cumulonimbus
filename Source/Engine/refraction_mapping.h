@@ -71,39 +71,39 @@ namespace cumulonimbus
 CEREAL_REGISTER_TYPE(cumulonimbus::shader_asset::RefractionMappingAsset)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::shader_asset::ShaderAsset, cumulonimbus::shader_asset::RefractionMappingAsset)
 
-namespace shader
-{
-	struct M_Refraction
-	{// (b6)
-		DirectX::XMFLOAT4 refractive_index;	// 屈折率(x成分のみ仕様)(0.0 ～ 1.0)
-
-		void EditParam()
-		{
-			ImGui::DragFloat("RefractieIndex", &refractive_index.x, 0.005f, 0.0f, 1.0f);
-		}
-
-		template<typename Archive>
-		void serialize(Archive&& archive)
-		{
-			archive(
-				cereal::make_nvp("refractive_index", refractive_index)
-			);
-		}
-	};
-
-	class RefractionMapping final :public Shader<M_Refraction>
-	{
-	private:
-		const char* vs_name = "./Shader/cso/refraction_mapping_vs.cso";
-		const char* ps_name = "./Shader/cso/refraction_mapping_ps.cso";
-
-	public:
-		explicit RefractionMapping(ID3D11Device* device);
-
-		void Activate(ID3D11DeviceContext* immediate_context) override;
-		void Deactivate(ID3D11DeviceContext* immediate_context) override;
-	};
-}
+//namespace shader
+//{
+//	struct M_Refraction
+//	{// (b6)
+//		DirectX::XMFLOAT4 refractive_index;	// 屈折率(x成分のみ仕様)(0.0 ～ 1.0)
+//
+//		void EditParam()
+//		{
+//			ImGui::DragFloat("RefractieIndex", &refractive_index.x, 0.005f, 0.0f, 1.0f);
+//		}
+//
+//		template<typename Archive>
+//		void serialize(Archive&& archive)
+//		{
+//			archive(
+//				cereal::make_nvp("refractive_index", refractive_index)
+//			);
+//		}
+//	};
+//
+//	class RefractionMapping final :public Shader<M_Refraction>
+//	{
+//	private:
+//		const char* vs_name = "./Shader/cso/refraction_mapping_vs.cso";
+//		const char* ps_name = "./Shader/cso/refraction_mapping_ps.cso";
+//
+//	public:
+//		explicit RefractionMapping(ID3D11Device* device);
+//
+//		void Activate(ID3D11DeviceContext* immediate_context) override;
+//		void Deactivate(ID3D11DeviceContext* immediate_context) override;
+//	};
+//}
 
 #endif // __cplusplus
 

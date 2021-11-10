@@ -18,7 +18,7 @@ ShadowMap::ShadowMap(ID3D11Device* device, int width, int height)
 	variance_shadow_depth_extraction_fb = std::make_unique<FrameBuffer>(device, 2048, 2048, false, 1, DXGI_FORMAT_R32G32_FLOAT);
 
 	// Shader & Constant buffer
-	constant_buffer = std::make_unique<buffer::ConstantBuffer<M_ShadowMap>>(device);
+	constant_buffer = std::make_unique<cumulonimbus::buffer::ConstantBuffer<M_ShadowMap>>(device);
 	normal_shadow_depth_extraction_vs	= std::make_unique<shader::VertexShader>(device, "./Shader/cso/normal_shadow_depth_extraction_vs.cso");
 	normal_shadow_depth_extraction_ps	= std::make_unique<shader::PixelShader>(device, "./Shader/cso/normal_shadow_depth_extraction_ps.cso");
 	variance_shadow_depth_extraction_vs = std::make_unique<shader::VertexShader>(device, "./Shader/cso/variance_shadow_depth_extraction_vs.cso");

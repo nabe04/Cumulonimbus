@@ -32,7 +32,7 @@ SorbelFilter::SorbelFilter(ID3D11Device* device, unsigned int width, unsigned in
 	sorbel_filter_convolution_ps = std::make_unique<shader::PixelShader>(device, sorbel_filter_convolution_filename);
 
 	//-- Constatnt buffer --//
-	cb_sorbel_filter = std::make_unique<buffer::ConstantBuffer<CB_SorbelFilter>>(device);
+	cb_sorbel_filter = std::make_unique<cumulonimbus::buffer::ConstantBuffer<CB_SorbelFilter>>(device);
 
 	//-- Sampler state--//
 	samplers.at(static_cast<int>(SorbelFilterSamplerState::Linear_Wrap)) = std::make_unique<Sampler>(

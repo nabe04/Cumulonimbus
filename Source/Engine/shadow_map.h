@@ -58,7 +58,7 @@ public:
 
 	[[nodiscard]] FrameBuffer* GetNormalShadowDepthExtractionFB() const { return normal_shadow_depth_extraction_fb.get(); }
 	[[nodiscard]] FrameBuffer* GetVarianceShadowDepthExtractionFB() const { return variance_shadow_depth_extraction_fb.get(); }
-	[[nodiscard]] buffer::ConstantBuffer<M_ShadowMap>* GetConstantBuffer() const {return constant_buffer.get(); }
+	[[nodiscard]] cumulonimbus::buffer::ConstantBuffer<M_ShadowMap>* GetConstantBuffer() const {return constant_buffer.get(); }
 
 	void Begin(ID3D11DeviceContext* immediate_context)
 	{
@@ -77,7 +77,7 @@ public:
 	StateMachine<RenderProcess, void, ID3D11DeviceContext*>* GetEndRenderingState() { return &end_rendering_states; }
 
 private:
-	std::unique_ptr<buffer::ConstantBuffer<M_ShadowMap>> constant_buffer{};
+	std::unique_ptr<cumulonimbus::buffer::ConstantBuffer<M_ShadowMap>> constant_buffer{};
 
 	std::array<std::unique_ptr<Sampler>, static_cast<int>(ShadowMapSamplerStates::End)> samplers{};
 	std::unique_ptr<Blend> blend{};

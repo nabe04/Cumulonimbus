@@ -39,5 +39,5 @@ namespace cumulonimbus
 		}
 
 	} // shader_asset
-	
+
 } // cumulonimbus

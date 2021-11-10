@@ -216,7 +216,7 @@ namespace cumulonimbus::ecs
 		RegistryComponent<component::PlayerComponent>();
 		// enemy
 		RegistryComponent<component::EnemyBaseComponent>();
-		RegistryComponent<component::EnemySoldierComponent>();
+		//RegistryComponent<component::EnemySoldierComponent>();
 	}
 
 	void Registry::Save(const std::string& filename, const std::string& scene_name)

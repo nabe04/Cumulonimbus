@@ -61,7 +61,7 @@ private:
 	std::unique_ptr<shader::PixelShader> outline_extraction_ps;
 	std::unique_ptr<shader::PixelShader> sorbel_filter_convolution_ps;
 
-	std::unique_ptr<buffer::ConstantBuffer<CB_SorbelFilter>> cb_sorbel_filter;
+	std::unique_ptr<cumulonimbus::buffer::ConstantBuffer<CB_SorbelFilter>> cb_sorbel_filter;
 
 	const char* monochrome_ps_filename				= "./Shader/cso/monochrome_ps.cso";
 	const char* outline_extraction_ps_filename		= "./Shader/cso/outline_extraction_ps.cso";

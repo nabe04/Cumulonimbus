@@ -21,7 +21,6 @@ namespace cumulonimbus
 
 	namespace component
 	{
-		class FbxModelComponent;
 		class ModelComponent;
 		class SphereCollisionComponent;
 		class CapsuleCollisionComponent;
@@ -119,7 +118,7 @@ namespace cumulonimbus::collision
 		 */
 		bool IntersectRayVsModel(float dt,
 								 ecs::Registry* registry,
-								 const component::FbxModelComponent& model,
+								 const component::ModelComponent& model,
 								 component::RayCastComponent& ray_cast_comp
 		);
 

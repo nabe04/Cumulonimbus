@@ -5,7 +5,7 @@
 #include <wrl.h>
 #include <cereal/cereal.hpp>
 
-namespace buffer
+namespace cumulonimbus::buffer
 {
 	// TODO: public ƒƒ“ƒo•Ï”‚ÌÁ‹
 	template <class T>

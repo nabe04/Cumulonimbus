@@ -8,6 +8,7 @@
 #include "texture.h"
 #include "texture_loader.h"
 #include "locator.h"
+#include "texture_resource_mapping.h"
 
 namespace cumulonimbus::asset
 {

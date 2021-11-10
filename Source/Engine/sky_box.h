@@ -102,7 +102,7 @@ namespace cumulonimbus::graphics
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>	   texture_view{};
 
 		std::unique_ptr<asset::Texture>						   cube_texture{};
-		std::unique_ptr<::buffer::ConstantBuffer<TransformCB>> cb_transform{};
+		std::unique_ptr<cumulonimbus::buffer::ConstantBuffer<TransformCB>> cb_transform{};
 
 		Microsoft::WRL::ComPtr<ID3D11Buffer>  vertex_buffer{};
 		Microsoft::WRL::ComPtr<ID3D11Buffer>  index_buffer{};

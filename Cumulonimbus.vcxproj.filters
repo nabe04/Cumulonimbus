@@ -579,6 +579,9 @@
     <ClCompile Include="Source\Engine\scene_manager.cpp">
       <Filter>Source\Engine\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\cbuffer_manager.cpp">
+      <Filter>Source\Engine\Shader%28.cpp%29\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -1054,6 +1057,15 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\scene_manager.h">
       <Filter>Header\Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\debug_primitive.h">
+      <Filter>Header\Engine\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\cbuffer_manager.h">
+      <Filter>Header\Engine\Shader%28.h%29\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\debug_primitive_shader.h">
+      <Filter>Header\Engine\Shader%28.h%29</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

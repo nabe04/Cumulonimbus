@@ -11,14 +11,16 @@ namespace cumulonimbus::mapping::shader_assets
 	 */
 	enum class ShaderAsset3D : int
 	{
-		SampleShader,
-		Diffuse,
-		Phong,
-		Metal,
-		Toon,
-		ReflectionMapping,
-		RefractionMapping,
-		SingleColor,
+		//SampleShader,
+		//Diffuse,
+		//Phong,
+		//Metal,
+		//Toon,
+		//ReflectionMapping,
+		//RefractionMapping,
+		//SingleColor,
+
+		Collision,
 
 		End
 	};

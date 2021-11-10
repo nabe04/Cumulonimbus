@@ -11,7 +11,7 @@ using namespace DirectX;
 
 Light::Light(ID3D11Device* device)
 {
-	cb_light		= std::make_unique<buffer::ConstantBuffer<LightCB>>(device);
+	cb_light		= std::make_unique<cumulonimbus::buffer::ConstantBuffer<LightCB>>(device);
 	// ƒ‰ƒCƒg‚Ì‰ŠúÝ’è
 	cb_light->data.light_position			= { 10.0f,20.0f,-10.0f };
 	cb_light->data.light_direction			= { 0.0f,-1.0f,1.0f };

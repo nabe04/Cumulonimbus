@@ -12,7 +12,7 @@
 // Components
 #include "transform_component.h"
 #include "capsule_collison_component.h"
-#include "fbx_model_component.h"
+#include "model_component.h"
 #include "model_component.h"
 #include "physic_material_component.h"
 #include "raycast_component.h"
@@ -80,7 +80,7 @@ namespace cumulonimbus::collision
 			// ent_terrainsとRayCastComponentを持つモデルでレイキャストの判定を行う
 			for (const auto& ent_terrain : ent_terrains)
 			{
-				const auto& model = registry->GetComponent<component::FbxModelComponent>(ent_terrain);
+				const auto& model = registry->GetComponent<component::ModelComponent>(ent_terrain);
 				IntersectRayVsModel(dt, registry, model, ray_comp);
 			}
 		}
@@ -418,177 +418,177 @@ namespace cumulonimbus::collision
 	bool CollisionManager::IntersectRayVsModel(
 		const float dt,
 		ecs::Registry* registry,
-		const component::FbxModelComponent& model,
+		const component::ModelComponent& model,
 		component::RayCastComponent& ray_cast_comp)
 	{
 		bool hit = false;
-		const FbxModelResource* resource = model.GetResource();
-		for (auto& ray : ray_cast_comp.GetRays())
-		{
-			DirectX::XMVECTOR WorldStart = DirectX::XMLoadFloat3(&ray.second.ray_start);
-			DirectX::XMVECTOR WorldEnd = DirectX::XMLoadFloat3(&ray.second.ray_end);
-			DirectX::XMVECTOR WorldRayVec = DirectX::XMVectorSubtract(WorldEnd, WorldStart);
-			DirectX::XMVECTOR WorldRayLength = DirectX::XMVector3Length(WorldRayVec);
-			ray.second.hit_result.is_hit = false;
-			ray.second.is_block_hit		 = false;
-			ray.second.terrain_attribute = utility::TerrainAttribute::NotAttribute;
+		//const FbxModelResource* resource = model.GetResource();
+		//for (auto& ray : ray_cast_comp.GetRays())
+		//{
+		//	DirectX::XMVECTOR WorldStart = DirectX::XMLoadFloat3(&ray.second.ray_start);
+		//	DirectX::XMVECTOR WorldEnd = DirectX::XMLoadFloat3(&ray.second.ray_end);
+		//	DirectX::XMVECTOR WorldRayVec = DirectX::XMVectorSubtract(WorldEnd, WorldStart);
+		//	DirectX::XMVECTOR WorldRayLength = DirectX::XMVector3Length(WorldRayVec);
+		//	ray.second.hit_result.is_hit = false;
+		//	ray.second.is_block_hit		 = false;
+		//	ray.second.terrain_attribute = utility::TerrainAttribute::NotAttribute;
 
-			// ワールド空間のレイの長さ
-			DirectX::XMStoreFloat(&ray.second.hit_result.distance, WorldRayLength);
+		//	// ワールド空間のレイの長さ
+		//	DirectX::XMStoreFloat(&ray.second.hit_result.distance, WorldRayLength);
 
-			for (const ModelData::Mesh& mesh : resource->GetModelData().GetMeshes())
-			{
-				const component::FbxModelComponent::Node node = model.GetNodes().at(mesh.node_index);
+		//	for (const ModelData::Mesh& mesh : resource->GetModelData().GetMeshes())
+		//	{
+		//		const component::FbxModelComponent::Node node = model.GetNodes().at(mesh.node_index);
 
-				// レイをワールド空間からローカル空間へ変換
-				DirectX::XMMATRIX WorldTransform = DirectX::XMLoadFloat4x4(&node.world_transform);
-				DirectX::XMMATRIX InverseWorldTransform = DirectX::XMMatrixInverse(nullptr, WorldTransform);
+		//		// レイをワールド空間からローカル空間へ変換
+		//		DirectX::XMMATRIX WorldTransform = DirectX::XMLoadFloat4x4(&node.world_transform);
+		//		DirectX::XMMATRIX InverseWorldTransform = DirectX::XMMatrixInverse(nullptr, WorldTransform);
 
-				DirectX::XMVECTOR Start = DirectX::XMVector3TransformCoord(WorldStart, InverseWorldTransform);
-				DirectX::XMVECTOR End = DirectX::XMVector3TransformCoord(WorldEnd, InverseWorldTransform);
-				DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(End, Start);
-				DirectX::XMVECTOR Dir = DirectX::XMVector3Normalize(Vec);
-				DirectX::XMVECTOR Length = DirectX::XMVector3Length(Vec);
+		//		DirectX::XMVECTOR Start = DirectX::XMVector3TransformCoord(WorldStart, InverseWorldTransform);
+		//		DirectX::XMVECTOR End = DirectX::XMVector3TransformCoord(WorldEnd, InverseWorldTransform);
+		//		DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(End, Start);
+		//		DirectX::XMVECTOR Dir = DirectX::XMVector3Normalize(Vec);
+		//		DirectX::XMVECTOR Length = DirectX::XMVector3Length(Vec);
 
-				// レイの長さ
-				float neart;
-				DirectX::XMStoreFloat(&neart, Length);
+		//		// レイの長さ
+		//		float neart;
+		//		DirectX::XMStoreFloat(&neart, Length);
 
-				// 三角形(面)との交差判定
-				const std::vector<ModelData::Vertex>& vertices = mesh.vertices;
-				const std::vector<UINT> indices = mesh.indices;
+		//		// 三角形(面)との交差判定
+		//		const std::vector<ModelData::Vertex>& vertices = mesh.vertices;
+		//		const std::vector<UINT> indices = mesh.indices;
 
-				int materialIndex = -1;
-				DirectX::XMVECTOR HitPosition;
-				DirectX::XMVECTOR HitNormal;
-				for (const ModelData::Subset& subset : mesh.subsets)
-				{
-					for (UINT i = 0; i < subset.index_count; i += 3)
-					{
-						UINT index = subset.start_index + i;
-						// 三角形の頂点を抽出
-						const ModelData::Vertex& a = vertices.at(indices.at(index));
-						const ModelData::Vertex& b = vertices.at(indices.at(index + 1));
-						const ModelData::Vertex& c = vertices.at(indices.at(index + 2));
+		//		int materialIndex = -1;
+		//		DirectX::XMVECTOR HitPosition;
+		//		DirectX::XMVECTOR HitNormal;
+		//		for (const ModelData::Subset& subset : mesh.subsets)
+		//		{
+		//			for (UINT i = 0; i < subset.index_count; i += 3)
+		//			{
+		//				UINT index = subset.start_index + i;
+		//				// 三角形の頂点を抽出
+		//				const ModelData::Vertex& a = vertices.at(indices.at(index));
+		//				const ModelData::Vertex& b = vertices.at(indices.at(index + 1));
+		//				const ModelData::Vertex& c = vertices.at(indices.at(index + 2));
 
-						DirectX::XMVECTOR A = DirectX::XMLoadFloat4(&a.position);
-						DirectX::XMVECTOR B = DirectX::XMLoadFloat4(&b.position);
-						DirectX::XMVECTOR C = DirectX::XMLoadFloat4(&c.position);
+		//				DirectX::XMVECTOR A = DirectX::XMLoadFloat4(&a.position);
+		//				DirectX::XMVECTOR B = DirectX::XMLoadFloat4(&b.position);
+		//				DirectX::XMVECTOR C = DirectX::XMLoadFloat4(&c.position);
 
-						// 三角形の三辺ベクトルを算出
-						DirectX::XMVECTOR AB = DirectX::XMVectorSubtract(B, A);
-						DirectX::XMVECTOR BC = DirectX::XMVectorSubtract(C, B);
-						DirectX::XMVECTOR CA = DirectX::XMVectorSubtract(A, C);
+		//				// 三角形の三辺ベクトルを算出
+		//				DirectX::XMVECTOR AB = DirectX::XMVectorSubtract(B, A);
+		//				DirectX::XMVECTOR BC = DirectX::XMVectorSubtract(C, B);
+		//				DirectX::XMVECTOR CA = DirectX::XMVectorSubtract(A, C);
 
-						//三角形の法線ベクトルを算出
-						DirectX::XMVECTOR Normal = DirectX::XMVector3Cross(AB, BC);
+		//				//三角形の法線ベクトルを算出
+		//				DirectX::XMVECTOR Normal = DirectX::XMVector3Cross(AB, BC);
 
-						// 内積の結果がプラスならば裏向き
-						DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(Dir, Normal);
-						float dot;
-						DirectX::XMStoreFloat(&dot, Dot);
-						if (dot >= 0)continue;
+		//				// 内積の結果がプラスならば裏向き
+		//				DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(Dir, Normal);
+		//				float dot;
+		//				DirectX::XMStoreFloat(&dot, Dot);
+		//				if (dot >= 0)continue;
 
-						// レイとの平面の交点を算出
-						DirectX::XMVECTOR V = DirectX::XMVectorSubtract(A, Start);
-						DirectX::XMVECTOR T = DirectX::XMVectorDivide(DirectX::XMVector3Dot(Normal, V), Dot);
-						float t;
-						DirectX::XMStoreFloat(&t, T);
-						// 交点までの距離が今までに計算した最近距離より大きい時はスキップ
-						if (t<0.0f || t>neart)continue;
+		//				// レイとの平面の交点を算出
+		//				DirectX::XMVECTOR V = DirectX::XMVectorSubtract(A, Start);
+		//				DirectX::XMVECTOR T = DirectX::XMVectorDivide(DirectX::XMVector3Dot(Normal, V), Dot);
+		//				float t;
+		//				DirectX::XMStoreFloat(&t, T);
+		//				// 交点までの距離が今までに計算した最近距離より大きい時はスキップ
+		//				if (t<0.0f || t>neart)continue;
 
-						DirectX::XMVECTOR Position = Position = DirectX::XMVectorAdd(DirectX::XMVectorMultiply(Dir, T), Start);
+		//				DirectX::XMVECTOR Position = Position = DirectX::XMVectorAdd(DirectX::XMVectorMultiply(Dir, T), Start);
 
-						// 交点が三角形の内側にあるか判定
-						// １つめ
-						DirectX::XMVECTOR V1 = DirectX::XMVectorSubtract(A, Position);
-						DirectX::XMVECTOR Cross1 = DirectX::XMVector3Cross(V1, AB);
-						DirectX::XMVECTOR Dot1 = DirectX::XMVector3Dot(Cross1, Normal);
-						float dot1;
-						DirectX::XMStoreFloat(&dot1, Dot1);
-						if (dot1 < 0.0f)continue;
+		//				// 交点が三角形の内側にあるか判定
+		//				// １つめ
+		//				DirectX::XMVECTOR V1 = DirectX::XMVectorSubtract(A, Position);
+		//				DirectX::XMVECTOR Cross1 = DirectX::XMVector3Cross(V1, AB);
+		//				DirectX::XMVECTOR Dot1 = DirectX::XMVector3Dot(Cross1, Normal);
+		//				float dot1;
+		//				DirectX::XMStoreFloat(&dot1, Dot1);
+		//				if (dot1 < 0.0f)continue;
 
-						// ２つめ
-						DirectX::XMVECTOR V2 = DirectX::XMVectorSubtract(B, Position);
-						DirectX::XMVECTOR Cross2 = DirectX::XMVector3Cross(V2, BC);
-						DirectX::XMVECTOR Dot2 = DirectX::XMVector3Dot(Cross2, Normal);
-						float dot2;
-						DirectX::XMStoreFloat(&dot2, Dot2);
-						if (dot2 < 0.0f)continue;
+		//				// ２つめ
+		//				DirectX::XMVECTOR V2 = DirectX::XMVectorSubtract(B, Position);
+		//				DirectX::XMVECTOR Cross2 = DirectX::XMVector3Cross(V2, BC);
+		//				DirectX::XMVECTOR Dot2 = DirectX::XMVector3Dot(Cross2, Normal);
+		//				float dot2;
+		//				DirectX::XMStoreFloat(&dot2, Dot2);
+		//				if (dot2 < 0.0f)continue;
 
-						// ３つめ
-						DirectX::XMVECTOR V3 = DirectX::XMVectorSubtract(C, Position);
-						DirectX::XMVECTOR Cross3 = DirectX::XMVector3Cross(V3, CA);
-						DirectX::XMVECTOR Dot3 = DirectX::XMVector3Dot(Cross3, Normal);
-						float dot3;
-						DirectX::XMStoreFloat(&dot3, Dot3);
-						if (dot3 < 0.0f)continue;
+		//				// ３つめ
+		//				DirectX::XMVECTOR V3 = DirectX::XMVectorSubtract(C, Position);
+		//				DirectX::XMVECTOR Cross3 = DirectX::XMVector3Cross(V3, CA);
+		//				DirectX::XMVECTOR Dot3 = DirectX::XMVector3Dot(Cross3, Normal);
+		//				float dot3;
+		//				DirectX::XMStoreFloat(&dot3, Dot3);
+		//				if (dot3 < 0.0f)continue;
 
-						// 最近距離を更新
-						neart = t;
+		//				// 最近距離を更新
+		//				neart = t;
 
-						// 交点と法線を更新
-						HitPosition		= Position;
-						HitNormal		= Normal;
-						materialIndex	= subset.material_index;
-						break;
-					}
-				}
-				if (materialIndex >= 0)
-				{
-					// ローカル空間からワールド空間へ変換
-					DirectX::XMVECTOR WorldPosition		= DirectX::XMVector3TransformCoord(HitPosition, WorldTransform);
-					DirectX::XMVECTOR WorldCrossVec		= DirectX::XMVectorSubtract(WorldPosition, WorldStart);
-					DirectX::XMVECTOR WorldCrossLength	= DirectX::XMVector3Length(WorldCrossVec);
-					float distance;
-					DirectX::XMStoreFloat(&distance, WorldCrossLength);
-					utility::MaterialDiscrimination material_discrimination{};
+		//				// 交点と法線を更新
+		//				HitPosition		= Position;
+		//				HitNormal		= Normal;
+		//				materialIndex	= subset.material_index;
+		//				break;
+		//			}
+		//		}
+		//		if (materialIndex >= 0)
+		//		{
+		//			// ローカル空間からワールド空間へ変換
+		//			DirectX::XMVECTOR WorldPosition		= DirectX::XMVector3TransformCoord(HitPosition, WorldTransform);
+		//			DirectX::XMVECTOR WorldCrossVec		= DirectX::XMVectorSubtract(WorldPosition, WorldStart);
+		//			DirectX::XMVECTOR WorldCrossLength	= DirectX::XMVector3Length(WorldCrossVec);
+		//			float distance;
+		//			DirectX::XMStoreFloat(&distance, WorldCrossLength);
+		//			utility::MaterialDiscrimination material_discrimination{};
 
-					// ヒット情報保存
-					if (ray.second.hit_result.distance > distance)
-					{
-						DirectX::XMVECTOR WorldNormal			= DirectX::XMVector3Transform(HitNormal, WorldTransform);
-						ray.second.hit_result.distance			= distance;
-						ray.second.hit_result.material_index	= materialIndex;
-						ray.second.hit_result.is_hit			= true;
-						DirectX::XMStoreFloat3(&ray.second.hit_result.position, WorldPosition);
-						DirectX::XMStoreFloat3(&ray.second.hit_result.normal, DirectX::XMVector3Normalize(WorldNormal));
-						ray_cast_comp.SetTerrainAttribute(ray.first,material_discrimination.GetTerrainAttribute(model.GetResource()->GetModelData().GetMaterials().at(materialIndex).texture_name)); // マテリアルのテクスチャ名からマテリアルの属性を取
-						hit = true;
-					}
+		//			// ヒット情報保存
+		//			if (ray.second.hit_result.distance > distance)
+		//			{
+		//				DirectX::XMVECTOR WorldNormal			= DirectX::XMVector3Transform(HitNormal, WorldTransform);
+		//				ray.second.hit_result.distance			= distance;
+		//				ray.second.hit_result.material_index	= materialIndex;
+		//				ray.second.hit_result.is_hit			= true;
+		//				DirectX::XMStoreFloat3(&ray.second.hit_result.position, WorldPosition);
+		//				DirectX::XMStoreFloat3(&ray.second.hit_result.normal, DirectX::XMVector3Normalize(WorldNormal));
+		//				ray_cast_comp.SetTerrainAttribute(ray.first,material_discrimination.GetTerrainAttribute(model.GetResource()->GetModelData().GetMaterials().at(materialIndex).texture_name)); // マテリアルのテクスチャ名からマテリアルの属性を取
+		//				hit = true;
+		//			}
 
-					{// 押出し処理
-						// 押出し処理を行わない場合は処理を抜ける(次のレイとの処理に移る)
-						if(!ray.second.is_block)
-							break;
+		//			{// 押出し処理
+		//				// 押出し処理を行わない場合は処理を抜ける(次のレイとの処理に移る)
+		//				if(!ray.second.is_block)
+		//					break;
 
-						//-- 押出し方法 --//
-						/*
-						 * Rayのブロック位置から地形の位置までのベクトルを作成しrayベクトル
-						 * と方向が逆(角度が90度以上)なら押し出し処理を行う
-						 */
+		//				//-- 押出し方法 --//
+		//				/*
+		//				 * Rayのブロック位置から地形の位置までのベクトルを作成しrayベクトル
+		//				 * と方向が逆(角度が90度以上)なら押し出し処理を行う
+		//				 */
 
-						// Rayの始点から地形の位置までのベクトル
-						const DirectX::SimpleMath::Vector3 v1{ ray.second.hit_result.position - ray.second.block_pos };
-						DirectX::SimpleMath::Vector3 v1_n = v1;
-						v1_n.Normalize();
-						// Rayベクトル
-						const DirectX::SimpleMath::Vector3 v2{ ray.second.ray_end - ray.second.ray_start };
-						DirectX::SimpleMath::Vector3 v2_n = v2;
-						v2_n.Normalize();
-						float dot = v1.Dot(v2);
-						// ベクトル間の角度が90度未満なら処理を抜ける(次のレイとの処理に移る)
-						if (v1_n.Dot(v2_n) > 0)
-							break;
+		//				// Rayの始点から地形の位置までのベクトル
+		//				const DirectX::SimpleMath::Vector3 v1{ ray.second.hit_result.position - ray.second.block_pos };
+		//				DirectX::SimpleMath::Vector3 v1_n = v1;
+		//				v1_n.Normalize();
+		//				// Rayベクトル
+		//				const DirectX::SimpleMath::Vector3 v2{ ray.second.ray_end - ray.second.ray_start };
+		//				DirectX::SimpleMath::Vector3 v2_n = v2;
+		//				v2_n.Normalize();
+		//				float dot = v1.Dot(v2);
+		//				// ベクトル間の角度が90度未満なら処理を抜ける(次のレイとの処理に移る)
+		//				if (v1_n.Dot(v2_n) > 0)
+		//					break;
 
-						auto& transform_comp = registry->GetComponent<component::TransformComponent>(ray_cast_comp.GetEntity());
-						transform_comp.AdjustPosition(v1);
-						ray.second.is_block_hit = true;
-						break;
-					}
-				}
-			}
-		}
+		//				auto& transform_comp = registry->GetComponent<component::TransformComponent>(ray_cast_comp.GetEntity());
+		//				transform_comp.AdjustPosition(v1);
+		//				ray.second.is_block_hit = true;
+		//				break;
+		//			}
+		//		}
+		//	}
+		//}
 		return hit;
 	}
 

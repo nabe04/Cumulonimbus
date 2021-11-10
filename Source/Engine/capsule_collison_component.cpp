@@ -74,43 +74,44 @@ namespace cumulonimbus::component
 	{
 	}
 
+	//Todo : コリジョン関係
 	void CapsuleCollisionComponent::PostGameUpdate(float dt)
 	{
-		// 判定用(カプセル)データの更新
-		for(auto& capsule : capsules)
-		{
-			// Scaling
-			const DirectX::SimpleMath::Matrix s = DirectX::XMMatrixScaling(capsule.second.radius, capsule.second.length * 0.5f, capsule.second.radius);
-			//const DirectX::SimpleMath::Matrix s = DirectX::SimpleMath::Matrix::Identity;
-			// Rotation
-			DirectX::SimpleMath::Vector3 radian = { arithmetic::NormalizeAngle(capsule.second.rotation.x), arithmetic::NormalizeAngle(capsule.second.rotation.y),arithmetic::NormalizeAngle(capsule.second.rotation.z) };
-			radian.x = DirectX::XMConvertToRadians(radian.x);
-			radian.y = DirectX::XMConvertToRadians(radian.y);
-			radian.z = DirectX::XMConvertToRadians(radian.z);
-			const DirectX::SimpleMath::Matrix r = DirectX::XMMatrixRotationRollPitchYawFromVector(radian);
-			//const DirectX::SimpleMath::Matrix r = DirectX::SimpleMath::Matrix::Identity;
-			// Parallel movement
-			const DirectX::SimpleMath::Matrix t = DirectX::XMMatrixTranslation(capsule.second.offset.x, capsule.second.offset.y, capsule.second.offset.z);
-			// Local matrix
-			const DirectX::SimpleMath::Matrix model_local_matrix = s * r * t;
-			if (capsule.second.bone_name.empty())
-			{
-				// モデルが持つ回転 × 平行移動行列から行列を作成(モデルの拡縮は考慮しない)
-				DirectX::SimpleMath::Matrix st_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetRotationMatrix() * GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetTranslationMatrix();
-				//world_transform._11 = world_transform._22   = world_transform._33 = world_transform._44 = 1.0f;
-				capsule.second.world_transform_matrix	    = model_local_matrix * st_transform;
-			}
-			else
-			{
-				capsule.second.world_transform_matrix = model_local_matrix * GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).GetNodeMatrix(capsule.second.bone_name.c_str());
-			}
+		//// 判定用(カプセル)データの更新
+		//for(auto& capsule : capsules)
+		//{
+		//	// Scaling
+		//	const DirectX::SimpleMath::Matrix s = DirectX::XMMatrixScaling(capsule.second.radius, capsule.second.length * 0.5f, capsule.second.radius);
+		//	//const DirectX::SimpleMath::Matrix s = DirectX::SimpleMath::Matrix::Identity;
+		//	// Rotation
+		//	DirectX::SimpleMath::Vector3 radian = { arithmetic::NormalizeAngle(capsule.second.rotation.x), arithmetic::NormalizeAngle(capsule.second.rotation.y),arithmetic::NormalizeAngle(capsule.second.rotation.z) };
+		//	radian.x = DirectX::XMConvertToRadians(radian.x);
+		//	radian.y = DirectX::XMConvertToRadians(radian.y);
+		//	radian.z = DirectX::XMConvertToRadians(radian.z);
+		//	const DirectX::SimpleMath::Matrix r = DirectX::XMMatrixRotationRollPitchYawFromVector(radian);
+		//	//const DirectX::SimpleMath::Matrix r = DirectX::SimpleMath::Matrix::Identity;
+		//	// Parallel movement
+		//	const DirectX::SimpleMath::Matrix t = DirectX::XMMatrixTranslation(capsule.second.offset.x, capsule.second.offset.y, capsule.second.offset.z);
+		//	// Local matrix
+		//	const DirectX::SimpleMath::Matrix model_local_matrix = s * r * t;
+		//	if (capsule.second.bone_name.empty())
+		//	{
+		//		// モデルが持つ回転 × 平行移動行列から行列を作成(モデルの拡縮は考慮しない)
+		//		DirectX::SimpleMath::Matrix st_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetRotationMatrix() * GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetTranslationMatrix();
+		//		//world_transform._11 = world_transform._22   = world_transform._33 = world_transform._44 = 1.0f;
+		//		capsule.second.world_transform_matrix	    = model_local_matrix * st_transform;
+		//	}
+		//	else
+		//	{
+		//		capsule.second.world_transform_matrix = model_local_matrix * GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).GetNodeMatrix(capsule.second.bone_name.c_str());
+		//	}
 
-			DirectX::SimpleMath::Vector3 up = capsule.second.world_transform_matrix.Up();
-			up.Normalize();
-			const DirectX::SimpleMath::Vector3 reference_point = capsule.second.world_transform_matrix.Translation();
-			capsule.second.start = reference_point + up * -(capsule.second.length * 0.5f);
-			capsule.second.end   = reference_point + up *  (capsule.second.length * 0.5f);
-		}
+		//	DirectX::SimpleMath::Vector3 up = capsule.second.world_transform_matrix.Up();
+		//	up.Normalize();
+		//	const DirectX::SimpleMath::Vector3 reference_point = capsule.second.world_transform_matrix.Translation();
+		//	capsule.second.start = reference_point + up * -(capsule.second.length * 0.5f);
+		//	capsule.second.end   = reference_point + up *  (capsule.second.length * 0.5f);
+		//}
 	}
 
 	void CapsuleCollisionComponent::RenderImGui()

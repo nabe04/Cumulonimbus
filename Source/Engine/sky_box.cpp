@@ -37,7 +37,7 @@ namespace cumulonimbus::graphics
 
 		CreateCubeTexture(device, "./Data/Assets/cubemap/Mars/mars.dds");
 
-		cb_transform  = std::make_unique<::buffer::ConstantBuffer<TransformCB>>(device);
+		cb_transform  = std::make_unique<buffer::ConstantBuffer<TransformCB>>(device);
 
 		vertex_shader = std::make_unique<shader::VertexShader>(device, mapping::shader_filename::vs::SkyBox_VS().c_str());
 		pixel_shader  = std::make_unique<shader::PixelShader>( device, mapping::shader_filename::ps::SkyBox_PS().c_str());
@@ -80,7 +80,7 @@ namespace cumulonimbus::graphics
 		CreateTextures(device, file_path_and_name.c_str());
 		CreateCubeTexture(device, "./Data/Assets/cubemap/Mars/mars.dds");
 
-		cb_transform  = std::make_unique<::buffer::ConstantBuffer<TransformCB>>(device);
+		cb_transform  = std::make_unique<buffer::ConstantBuffer<TransformCB>>(device);
 
 		vertex_shader = std::make_unique<shader::VertexShader>(device, mapping::shader_filename::vs::SkyBox_VS().c_str());
 		pixel_shader  = std::make_unique<shader::PixelShader>( device, mapping::shader_filename::ps::SkyBox_PS().c_str());

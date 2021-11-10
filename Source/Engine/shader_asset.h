@@ -69,8 +69,8 @@ namespace cumulonimbus::shader_asset
 		}
 
 		/*
-		* brief : コンスタントバッファをGPUに送信したい場合に使用
-		*	       (シェーダーが持つパラメータのセット)
+		 * brief : コンスタントバッファをGPUに送信したい場合に使用
+		 *	       (シェーダーが持つパラメータのセット)
 		 */
 		virtual void BindCBuffer() {}
 		/*
@@ -87,7 +87,7 @@ namespace cumulonimbus::shader_asset
 		 * brief : 使用したテクスチャのスロットのリセット(アンバインド)
 		 */
 		virtual void UnbindTexture() {}
-		
+
 		/*
 		 * brief : 各々のシェーダーが持つパラメータ(constant buffer)の編集
 		 */
@@ -116,7 +116,7 @@ namespace cumulonimbus::shader_asset
 		void serialize(Archive&& archive){}
 	protected:
 		MaterialPath material_path;
-		
+
 		/*
 		 * brief			 : ImGui上でのシェーダーが使用するテクスチャの変更処理
 		 * material_filename : MaterialPathのメンバ変数が持つテクスチャのファイル名を渡す

@@ -912,106 +912,106 @@ namespace cumulonimbus::renderer
 	void RenderPath::RenderAnimSprite(ID3D11DeviceContext* immediate_context,
 									  ecs::Registry* const registry, const mapping::rename_type::Entity entity)
 	{
-		component::OldAnimSpriteComponent& anim_sprite = registry->GetComponent<component::OldAnimSpriteComponent>(entity);
-		component::TransformComponent&  transform	= registry->GetComponent<component::TransformComponent>(entity);
+		//component::OldAnimSpriteComponent& anim_sprite = registry->GetComponent<component::OldAnimSpriteComponent>(entity);
+		//component::TransformComponent&  transform	= registry->GetComponent<component::TransformComponent>(entity);
 
-		locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
-													 anim_sprite.GetTexture(),
-													 TexSlot_BaseColorMap);
+		//locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
+		//											 anim_sprite.GetTexture(),
+		//											 TexSlot_BaseColorMap);
 
-		// 2Dに必要ない値のリセット
-		transform.SetPosition_Z(0.0f);
-		transform.SetScale_Z(1.f);
-		transform.SetEulerAngle_X(.0f);
-		transform.SetEulerAngle_Y(.0f);
+		//// 2Dに必要ない値のリセット
+		//transform.SetPosition_Z(0.0f);
+		//transform.SetScale_Z(1.f);
+		//transform.SetEulerAngle_X(.0f);
+		//transform.SetEulerAngle_Y(.0f);
 
-		std::array<DirectX::XMFLOAT2, 4> pos{};
-		// Left top
-		pos[0].x = 0.0f;
-		pos[0].y = 0.0f;
-		// Right top
-		pos[1].x = static_cast<float>(anim_sprite.VariableWidth() / anim_sprite.GetNumClip().x);
-		pos[1].y = 0.0f;
-		// Left bottom
-		pos[2].x = 0.0f;
-		pos[2].y = static_cast<float>(anim_sprite.VariableHeight() / anim_sprite.GetNumClip().y);
-		// Right bottom
-		pos[3].x = static_cast<float>(anim_sprite.VariableWidth() / anim_sprite.GetNumClip().x);
-		pos[3].y = static_cast<float>(anim_sprite.VariableHeight() / anim_sprite.GetNumClip().y);
+		//std::array<DirectX::XMFLOAT2, 4> pos{};
+		//// Left top
+		//pos[0].x = 0.0f;
+		//pos[0].y = 0.0f;
+		//// Right top
+		//pos[1].x = static_cast<float>(anim_sprite.VariableWidth() / anim_sprite.GetNumClip().x);
+		//pos[1].y = 0.0f;
+		//// Left bottom
+		//pos[2].x = 0.0f;
+		//pos[2].y = static_cast<float>(anim_sprite.VariableHeight() / anim_sprite.GetNumClip().y);
+		//// Right bottom
+		//pos[3].x = static_cast<float>(anim_sprite.VariableWidth() / anim_sprite.GetNumClip().x);
+		//pos[3].y = static_cast<float>(anim_sprite.VariableHeight() / anim_sprite.GetNumClip().y);
 
 
-		const float sin_val = sinf(DirectX::XMConvertToRadians(transform.GetEulerAngles().z));
-		const float cos_val = cosf(DirectX::XMConvertToRadians(transform.GetEulerAngles().z));
+		//const float sin_val = sinf(DirectX::XMConvertToRadians(transform.GetEulerAngles().z));
+		//const float cos_val = cosf(DirectX::XMConvertToRadians(transform.GetEulerAngles().z));
 
-		for (auto& p : pos)
-		{// Rotate with the pivot as the origin
+		//for (auto& p : pos)
+		//{// Rotate with the pivot as the origin
 
-			// Pivot adjustment
-			p.x -=  anim_sprite.GetAnimPivot().x;
-			p.y -=  anim_sprite.GetAnimPivot().y;
+		//	// Pivot adjustment
+		//	p.x -=  anim_sprite.GetAnimPivot().x;
+		//	p.y -=  anim_sprite.GetAnimPivot().y;
 
-			// Scale ajustment
-			p.x *= (transform.GetScale().x);
-			p.y *= (transform.GetScale().y);
+		//	// Scale ajustment
+		//	p.x *= (transform.GetScale().x);
+		//	p.y *= (transform.GetScale().y);
 
-			// Rotate
-			const float oldX = p.x;
-			p.x = p.x * cos_val - p.y * sin_val;
-			p.y = oldX * sin_val + p.y * cos_val;
+		//	// Rotate
+		//	const float oldX = p.x;
+		//	p.x = p.x * cos_val - p.y * sin_val;
+		//	p.y = oldX * sin_val + p.y * cos_val;
 
-			// Move back in position
-			p.x += transform.GetPosition().x;
-			p.y += transform.GetPosition().y;
-		}
+		//	// Move back in position
+		//	p.x += transform.GetPosition().x;
+		//	p.y += transform.GetPosition().y;
+		//}
 
-		{
-			RECT rec{};
-			const HWND desc_wnd_handle = registry->GetScene()->GetFramework()->GetWindow()->GetHWND();
+		//{
+		//	RECT rec{};
+		//	const HWND desc_wnd_handle = registry->GetScene()->GetFramework()->GetWindow()->GetHWND();
 
-			GetClientRect(desc_wnd_handle, &rec);
+		//	GetClientRect(desc_wnd_handle, &rec);
 
-			// No off-screen sprites are drawn
-			for (int i = 0; i < 4; ++i)
-			{
-				if ((pos[i].x >= 0 && pos[i].x <= rec.right) && (pos[i].y >= 0 && pos[i].y <= rec.bottom))
-				{
-					break;
-				}
-				if (i == 4)
-				{
-					return;
-				}
-			}
+		//	// No off-screen sprites are drawn
+		//	for (int i = 0; i < 4; ++i)
+		//	{
+		//		if ((pos[i].x >= 0 && pos[i].x <= rec.right) && (pos[i].y >= 0 && pos[i].y <= rec.bottom))
+		//		{
+		//			break;
+		//		}
+		//		if (i == 4)
+		//		{
+		//			return;
+		//		}
+		//	}
 
-			// NDC transform
-			{
-				for (auto& p : pos)
-				{
-					p.x = p.x * 2.0f / rec.right - 1.0f;
-					p.y = -p.y * 2.0f / rec.bottom + 1.0f;
-				}
-			}
-		}
+		//	// NDC transform
+		//	{
+		//		for (auto& p : pos)
+		//		{
+		//			p.x = p.x * 2.0f / rec.right - 1.0f;
+		//			p.y = -p.y * 2.0f / rec.bottom + 1.0f;
+		//		}
+		//	}
+		//}
 
-		// Update vertex buffer
-		std::array<shader::VertexSprite, 4> vertex{};
-		vertex.at(0).position	= DirectX::XMFLOAT4{ pos[0].x,pos[0].y,.0f,1.f };
-		vertex.at(1).position	= DirectX::XMFLOAT4{ pos[1].x,pos[1].y,.0f,1.f };
-		vertex.at(2).position	= DirectX::XMFLOAT4{ pos[2].x,pos[2].y,.0f,1.f };
-		vertex.at(3).position	= DirectX::XMFLOAT4{ pos[3].x,pos[3].y,.0f,1.f };
-		vertex.at(0).texcoord	= anim_sprite.GetAnimTexcoord().at(component::OldAnimSpriteComponent::TexSide::LeftTop);
-		vertex.at(1).texcoord	= anim_sprite.GetAnimTexcoord().at(component::OldAnimSpriteComponent::TexSide::RightTop);
-		vertex.at(2).texcoord	= anim_sprite.GetAnimTexcoord().at(component::OldAnimSpriteComponent::TexSide::LeftBottom);
-		vertex.at(3).texcoord	= anim_sprite.GetAnimTexcoord().at(component::OldAnimSpriteComponent::TexSide::RightBottom);
+		//// Update vertex buffer
+		//std::array<shader::VertexSprite, 4> vertex{};
+		//vertex.at(0).position	= DirectX::XMFLOAT4{ pos[0].x,pos[0].y,.0f,1.f };
+		//vertex.at(1).position	= DirectX::XMFLOAT4{ pos[1].x,pos[1].y,.0f,1.f };
+		//vertex.at(2).position	= DirectX::XMFLOAT4{ pos[2].x,pos[2].y,.0f,1.f };
+		//vertex.at(3).position	= DirectX::XMFLOAT4{ pos[3].x,pos[3].y,.0f,1.f };
+		//vertex.at(0).texcoord	= anim_sprite.GetAnimTexcoord().at(component::OldAnimSpriteComponent::TexSide::LeftTop);
+		//vertex.at(1).texcoord	= anim_sprite.GetAnimTexcoord().at(component::OldAnimSpriteComponent::TexSide::RightTop);
+		//vertex.at(2).texcoord	= anim_sprite.GetAnimTexcoord().at(component::OldAnimSpriteComponent::TexSide::LeftBottom);
+		//vertex.at(3).texcoord	= anim_sprite.GetAnimTexcoord().at(component::OldAnimSpriteComponent::TexSide::RightBottom);
 
-		immediate_context->UpdateSubresource(anim_sprite.GetVertexBuffer(), 0, NULL, vertex.data(), 0, 0);
+		//immediate_context->UpdateSubresource(anim_sprite.GetVertexBuffer(), 0, NULL, vertex.data(), 0, 0);
 
-		// Set of Vertex Buffers
-		UINT stride = sizeof(shader::VertexSprite);
-		UINT offset = 0;
-		immediate_context->IASetVertexBuffers(0, 1, anim_sprite.GetVertexBufferAddress(), &stride, &offset);
+		//// Set of Vertex Buffers
+		//UINT stride = sizeof(shader::VertexSprite);
+		//UINT offset = 0;
+		//immediate_context->IASetVertexBuffers(0, 1, anim_sprite.GetVertexBufferAddress(), &stride, &offset);
 
-		immediate_context->Draw(4, 0);
+		//immediate_context->Draw(4, 0);
 	}
 
 	void RenderPath::CombinationGBuffer() const

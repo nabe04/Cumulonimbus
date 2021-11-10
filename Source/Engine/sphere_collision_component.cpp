@@ -72,63 +72,64 @@ namespace cumulonimbus::component
 
 	}
 
+	// Todo : コリジョン関係
 	void SphereCollisionComponent::PostGameUpdate(float dt)
 	{
-		// 判定用(球)データの更新
-		for (auto& sphere : spheres)
-		{
-			{// ワールド変換行列の作成１
-				// Scaling
-				const DirectX::SimpleMath::Matrix s = DirectX::XMMatrixScaling(sphere.second.radius, sphere.second.radius, sphere.second.radius);
-				// Rotation
-				const DirectX::SimpleMath::Matrix r = DirectX::XMMatrixIdentity();
-				// Parallel movement
-				DirectX::SimpleMath::Matrix t = DirectX::SimpleMath::Matrix::Identity;
-				t.Translation(sphere.second.offset);
-				// Local matrix
-				const DirectX::SimpleMath::Matrix model_local_matrix = s * r * t;
+		//// 判定用(球)データの更新
+		//for (auto& sphere : spheres)
+		//{
+		//	{// ワールド変換行列の作成１
+		//		// Scaling
+		//		const DirectX::SimpleMath::Matrix s = DirectX::XMMatrixScaling(sphere.second.radius, sphere.second.radius, sphere.second.radius);
+		//		// Rotation
+		//		const DirectX::SimpleMath::Matrix r = DirectX::XMMatrixIdentity();
+		//		// Parallel movement
+		//		DirectX::SimpleMath::Matrix t = DirectX::SimpleMath::Matrix::Identity;
+		//		t.Translation(sphere.second.offset);
+		//		// Local matrix
+		//		const DirectX::SimpleMath::Matrix model_local_matrix = s * r * t;
 
-				if (sphere.second.bone_name.empty())
-				{
-					// モデルが持つワールド変換行列
-					DirectX::SimpleMath::Matrix world_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorldMatrix();
-					world_transform._11 = world_transform._22 = world_transform._33 = world_transform._44 = 1.0f;
-					sphere.second.world_transform_matrix = model_local_matrix * world_transform;
-				}
-				else
-				{
-					sphere.second.world_transform_matrix = model_local_matrix * GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).GetNodeMatrix(sphere.second.bone_name.c_str());
-				}
-			}
+		//		if (sphere.second.bone_name.empty())
+		//		{
+		//			// モデルが持つワールド変換行列
+		//			DirectX::SimpleMath::Matrix world_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorldMatrix();
+		//			world_transform._11 = world_transform._22 = world_transform._33 = world_transform._44 = 1.0f;
+		//			sphere.second.world_transform_matrix = model_local_matrix * world_transform;
+		//		}
+		//		else
+		//		{
+		//			sphere.second.world_transform_matrix = model_local_matrix * GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).GetNodeMatrix(sphere.second.bone_name.c_str());
+		//		}
+		//	}
 
-			{// HitEventの更新
-				sphere.second.hit_result.is_old_hit = sphere.second.hit_result.is_hit;
+		//	{// HitEventの更新
+		//		sphere.second.hit_result.is_old_hit = sphere.second.hit_result.is_hit;
 
-				if(sphere.second.hit_result.is_hit)
-				{
-					if(sphere.second.hit_result.is_old_hit)
-					{// 他のCollisionに触れている間
-						sphere.second.hit_result.hit_event = collision::HitEvent::OnCollisionStay;
-					}
-					else
-					{// 他のCollisionに触れたとき
-						sphere.second.hit_result.hit_event = collision::HitEvent::OnCollisionEnter;
-					}
-				}
-				else
-				{
-					if (sphere.second.hit_result.is_old_hit)
-					{// 他のCollisionに触れるのをやめたとき
-						sphere.second.hit_result.hit_event = collision::HitEvent::OnCollisionExit;
-					}
-					else
-					{// 他のどのCollisionにも触れていない間
-						sphere.second.hit_result.hit_event = collision::HitEvent::None;
-					}
-				}
+		//		if(sphere.second.hit_result.is_hit)
+		//		{
+		//			if(sphere.second.hit_result.is_old_hit)
+		//			{// 他のCollisionに触れている間
+		//				sphere.second.hit_result.hit_event = collision::HitEvent::OnCollisionStay;
+		//			}
+		//			else
+		//			{// 他のCollisionに触れたとき
+		//				sphere.second.hit_result.hit_event = collision::HitEvent::OnCollisionEnter;
+		//			}
+		//		}
+		//		else
+		//		{
+		//			if (sphere.second.hit_result.is_old_hit)
+		//			{// 他のCollisionに触れるのをやめたとき
+		//				sphere.second.hit_result.hit_event = collision::HitEvent::OnCollisionExit;
+		//			}
+		//			else
+		//			{// 他のどのCollisionにも触れていない間
+		//				sphere.second.hit_result.hit_event = collision::HitEvent::None;
+		//			}
+		//		}
 
-			}
-		}
+		//	}
+		//}
 	}
 
 

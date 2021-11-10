@@ -59,7 +59,7 @@ public:
 	void WriteImGui() const;
 
 private:
-	std::unique_ptr<buffer::ConstantBuffer<LightCB>> cb_light{};
+	std::unique_ptr<cumulonimbus::buffer::ConstantBuffer<LightCB>> cb_light{};
 
 	DirectX::SimpleMath::Vector3 view_right{ 1.f,.0f,.0f };
 	DirectX::SimpleMath::Vector3 view_up{ .0f,1.f,.0f };

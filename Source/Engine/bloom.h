@@ -47,7 +47,7 @@ public:
 #endif // __cplusplus
 	};
 
-	std::unique_ptr<buffer::ConstantBuffer<M_Bloom>> constant_buffer;
+	std::unique_ptr<cumulonimbus::buffer::ConstantBuffer<M_Bloom>> constant_buffer;
 
 private:
 	std::array<std::unique_ptr<Sampler>, BloomSamplerStates::End> samplers;

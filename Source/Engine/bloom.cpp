@@ -7,7 +7,7 @@
 Bloom::Bloom(ID3D11Device* device, unsigned int width, unsigned int height)
 	:FullscreenQuad{ device }
 {
-	constant_buffer = std::make_unique<buffer::ConstantBuffer<M_Bloom>>(device);
+	constant_buffer = std::make_unique<cumulonimbus::buffer::ConstantBuffer<M_Bloom>>(device);
 
 	glow_extraction = std::make_unique<FrameBuffer>(device, width, height, false/*enable_msaa*/, 1/*subsamples*/,
 		DXGI_FORMAT_R16G16B16A16_FLOAT, DXGI_FORMAT_UNKNOWN,

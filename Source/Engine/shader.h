@@ -207,33 +207,33 @@ namespace shader
 		void Deactivate(ID3D11DeviceContext* immediate_context);
 	};
 
-	//--------------------------------
-	//
-	// Shader class
-	//
-	//--------------------------------
-	template <class T>
-	class Shader
-	{
-	protected:
-		std::unique_ptr<VertexShader>	vertex_shader = nullptr;
-		std::unique_ptr<PixelShader>	pixel_shader  = nullptr;
+	////--------------------------------
+	////
+	//// Shader class
+	////
+	////--------------------------------
+	//template <class T>
+	//class Shader
+	//{
+	//protected:
+	//	std::unique_ptr<VertexShader>	vertex_shader = nullptr;
+	//	std::unique_ptr<PixelShader>	pixel_shader  = nullptr;
 
-		std::unique_ptr<buffer::ConstantBuffer<T>> material_data;
-	public:
-		explicit Shader(ID3D11Device* device)
-		{
-			material_data = std::make_unique<buffer::ConstantBuffer<T>>(device);
-		}
-		virtual ~Shader() = default;
+	//	std::unique_ptr<buffer::ConstantBuffer<T>> material_data;
+	//public:
+	//	explicit Shader(ID3D11Device* device)
+	//	{
+	//		material_data = std::make_unique<buffer::ConstantBuffer<T>>(device);
+	//	}
+	//	virtual ~Shader() = default;
 
-		// Each set of shader
-		virtual void Activate(ID3D11DeviceContext* immediate_context)   = 0;
+	//	// Each set of shader
+	//	virtual void Activate(ID3D11DeviceContext* immediate_context)   = 0;
 
-		virtual void Deactivate(ID3D11DeviceContext* immediate_context) = 0;
+	//	virtual void Deactivate(ID3D11DeviceContext* immediate_context) = 0;
 
-		[[nodiscard]] buffer::ConstantBuffer<T>* GetMaterial() const { return material_data.get(); }
-	};
+	//	[[nodiscard]] buffer::ConstantBuffer<T>* GetMaterial() const { return material_data.get(); }
+	//};
 }
 
 namespace cumulonimbus::shader_system
@@ -266,7 +266,7 @@ namespace cumulonimbus::shader_system
 		std::unique_ptr<shader_system::VertexShader> vertex_shader{nullptr};
 		std::unique_ptr<shader_system::PixelShader>  pixel_shader {nullptr};
 	};
-}
+} // cumulonimbus::shader_system
 
 
 

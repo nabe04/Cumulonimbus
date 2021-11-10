@@ -54,7 +54,7 @@ namespace cumulonimbus::asset
 		RegistryComponent<component::PlayerComponent>();
 		//// enemy
 		RegistryComponent<component::EnemyBaseComponent>();
-		RegistryComponent<component::EnemySoldierComponent>();
+		//RegistryComponent<component::EnemySoldierComponent>();
 	}
 
 	template <class T>
