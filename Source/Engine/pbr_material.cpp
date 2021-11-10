@@ -8,7 +8,7 @@ namespace cumulonimbus::shader_asset
 	PBRMaterial::PBRMaterial()
 	{
 		cb_pbr_material = std::make_unique<buffer::ConstantBuffer<MaterialCB>>(locator::Locator::GetDx11Device()->device.Get());
-		cb_pbr_material->data.material.material_use_custom = true;
+		cb_pbr_material->GetData().material.material_use_custom = true;
 
 		SetDefaultMaterialFilename();
 		SetCustomMaterial(true);
@@ -70,18 +70,18 @@ namespace cumulonimbus::shader_asset
 	void PBRMaterial::RenderImGui()
 	{
 		ImGui::Checkbox("Custom Parameter", &use_custom_parameter);
-		cb_pbr_material->data.material.material_use_custom = use_custom_parameter;
+		cb_pbr_material->GetData().material.material_use_custom = use_custom_parameter;
 
 		if(use_custom_parameter)
 		{
 			if (ImGui::TreeNode("PBR Material Parameter"))
 			{
 				ImGui::Checkbox(  "Custom Parameter", &use_custom_parameter);
-				ImGui::ColorEdit3("Base Color"		, (float*)&cb_pbr_material->data.material.base_color);
-				ImGui::ColorEdit3("Emissive Color"	, (float*)&cb_pbr_material->data.material.emissive_color);
-				ImGui::DragFloat( "Roughness"		, &cb_pbr_material->data.material.roughness   , 0.01f, 0.0f, 1.0f);
-				ImGui::DragFloat( "Metalness;"		, &cb_pbr_material->data.material.metalness	  , 0.01f, 0.0f, 1.0f);
-				ImGui::DragFloat( "Reflectance;"	, &cb_pbr_material->data.material.reflectance , 0.01f, 0.0f, 1.0f);
+				ImGui::ColorEdit3("Base Color"		, (float*)&cb_pbr_material->GetData().material.base_color);
+				ImGui::ColorEdit3("Emissive Color"	, (float*)&cb_pbr_material->GetData().material.emissive_color);
+				ImGui::DragFloat( "Roughness"		, &cb_pbr_material->GetData().material.roughness   , 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat( "Metalness;"		, &cb_pbr_material->GetData().material.metalness	  , 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat( "Reflectance;"	, &cb_pbr_material->GetData().material.reflectance , 0.01f, 0.0f, 1.0f);
 
 				ImGui::TreePop();
 			}
@@ -95,7 +95,7 @@ namespace cumulonimbus::shader_asset
 
 	void PBRMaterial::SetCustomMaterial(bool flg) const
 	{
-		cb_pbr_material->data.material.material_use_custom = flg;
+		cb_pbr_material->GetData().material.material_use_custom = flg;
 	}
 
 }  // cumulonimbus::shader_asset

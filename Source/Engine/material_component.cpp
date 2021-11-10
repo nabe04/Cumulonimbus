@@ -16,11 +16,11 @@ namespace cumulonimbus::component
 	{
 		cb_material = std::make_shared<buffer::ConstantBuffer<MaterialCB>>(locator::Locator::GetDx11Device()->device.Get());
 
-		cb_material->data.material.base_color = {0,0,0,0};
-		cb_material->data.material.emissive_color = { 0,0,0,0 };
-		cb_material->data.material.roughness = 1;
-		cb_material->data.material.reflectance = 1;
-		cb_material->data.material.metalness = 0;
+		cb_material->GetData().material.base_color = {0,0,0,0};
+		cb_material->GetData().material.emissive_color = { 0,0,0,0 };
+		cb_material->GetData().material.roughness = 1;
+		cb_material->GetData().material.reflectance = 1;
+		cb_material->GetData().material.metalness = 0;
 	}
 
 	void MaterialComponent::GameUpdate(float dt)
@@ -31,7 +31,7 @@ namespace cumulonimbus::component
 
 	void MaterialComponent::RenderImGui()
 	{
-		cb_material->data.material.metalness = 0;
+		cb_material->GetData().material.metalness = 0;
 
 		int a;
 		a = 0;
@@ -58,7 +58,7 @@ namespace cumulonimbus::component
 
 	void MaterialComponent::SetMaterialCB(const MaterialCB& material) const
 	{
-		cb_material->data = material;
+		cb_material->GetData() = material;
 	}
 
 	void MaterialComponent::BindCBuffer(bool set_in_vs, bool set_in_ps) const

@@ -38,7 +38,7 @@ namespace cumulonimbus
 
 		void MetalAsset::RenderImGui()
 		{
-			ImGui::DragFloat("Roughness", &cb_metal->data.metal_roughness, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Roughness", &cb_metal->GetData().metal_roughness, 0.01f, 0.0f, 1.0f);
 		}
 
 	}

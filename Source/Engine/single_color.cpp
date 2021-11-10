@@ -24,7 +24,7 @@ namespace cumulonimbus
 			cb_single_color = std::make_unique<buffer::ConstantBuffer<SingleColorCB>>(locator::Locator::GetDx11Device()->device.Get());
 
 			// 初期設定
-			cb_single_color->data.single_color = { 1.f,1.f,1.f,1.f };
+			cb_single_color->GetData().single_color = { 1.f,1.f,1.f,1.f };
 		}
 
 		void SingleColorAsset::BindCBuffer()
@@ -39,7 +39,7 @@ namespace cumulonimbus
 
 		void SingleColorAsset::RenderImGui()
 		{
-			ImGui::ColorEdit4("Color", (float*)&cb_single_color->data.single_color);
+			ImGui::ColorEdit4("Color", (float*)&cb_single_color->GetData().single_color);
 		}
 	} // shader_asset
 } // cumulonimbus

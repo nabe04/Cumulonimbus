@@ -105,6 +105,7 @@
     <ClInclude Include="Source\Engine\physic_material_component.h" />
     <ClInclude Include="Source\Engine\prefab.h" />
     <ClInclude Include="Source\Engine\prefab_loader.h" />
+    <ClInclude Include="Source\Engine\primitive_data.h" />
     <ClInclude Include="Source\Engine\project_view.h" />
     <ClInclude Include="Source\Engine\rigid_body_component.h" />
     <ClInclude Include="Source\Engine\normal_map_resource.h" />
@@ -211,6 +212,7 @@
     <ClCompile Include="Source\Engine\content_brawser.cpp" />
     <ClCompile Include="Source\Engine\cum_imgui_helper.cpp" />
     <ClCompile Include="Source\Engine\debug_collision.cpp" />
+    <ClCompile Include="Source\Engine\debug_primitive.cpp" />
     <ClCompile Include="Source\Engine\depth_map.cpp" />
     <ClCompile Include="Source\Engine\depth_stencil.cpp" />
     <ClCompile Include="Source\Engine\diffuse.cpp" />
@@ -255,6 +257,7 @@
     <ClCompile Include="Source\Engine\physic_material_component.cpp" />
     <ClCompile Include="Source\Engine\prefab.cpp" />
     <ClCompile Include="Source\Engine\prefab_loader.cpp" />
+    <ClCompile Include="Source\Engine\primitive_data.cpp" />
     <ClCompile Include="Source\Engine\project_view.cpp" />
     <ClCompile Include="Source\Engine\rigid_body_component..cpp" />
     <ClCompile Include="Source\Engine\metal.cpp" />

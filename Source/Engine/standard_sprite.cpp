@@ -36,7 +36,7 @@ namespace cumulonimbus
 			cb_sprite = std::make_unique<buffer::ConstantBuffer<SpriteCB>>(locator::Locator::GetDx11Device()->device.Get());
 
 			// ‰ŠúÝ’è
-			cb_sprite->data.sprite_offset = DirectX::SimpleMath::Vector2{};
+			cb_sprite->GetData().sprite_offset = DirectX::SimpleMath::Vector2{};
 		}
 
 		void StandardSpriteAsset::BindCBuffer()

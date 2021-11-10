@@ -26,7 +26,7 @@ namespace cumulonimbus
 			cb_refraction = std::make_unique<buffer::ConstantBuffer<RefractionCB>>(locator::Locator::GetDx11Device()->device.Get());
 
 			// ‰ŠúÝ’è
-			cb_refraction->data.refraction_refractive_index = 0.5f;
+			cb_refraction->GetData().refraction_refractive_index = 0.5f;
 		}
 
 		void RefractionMappingAsset::BindCBuffer()
@@ -41,7 +41,7 @@ namespace cumulonimbus
 
 		void RefractionMappingAsset::RenderImGui()
 		{
-			ImGui::DragFloat("RefractieIndex", &cb_refraction->data.refraction_refractive_index, 0.005f, 0.0f, 1.0f);
+			ImGui::DragFloat("RefractieIndex", &cb_refraction->GetData().refraction_refractive_index, 0.005f, 0.0f, 1.0f);
 		}
 	}
 }

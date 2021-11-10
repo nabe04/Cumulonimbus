@@ -44,6 +44,13 @@ namespace arithmetic
 		return n;
 	}
 
+	float Distance(const DirectX::SimpleMath::Vector3& v1, const DirectX::SimpleMath::Vector3& v2)
+	{
+		const DirectX::SimpleMath::Vector3 vector_sub = XMVectorSubtract(v1, v2);
+
+		return vector_sub.Length();
+	}
+
 	SimpleMath::Vector2 ConvertScreenToNDC(
 		const SimpleMath::Vector3& screen_pos,
 		const float window_width, const float window_height)

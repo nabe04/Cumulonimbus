@@ -34,7 +34,7 @@ namespace cumulonimbus::component
 		{
 			archive(
 				cereal::base_class<ComponentBase>(this),
-				CEREAL_NVP(cb_material->data)
+				CEREAL_NVP(cb_material->GetData())
 			);
 		}
 
@@ -43,7 +43,7 @@ namespace cumulonimbus::component
 		{
 			archive(
 				cereal::base_class<ComponentBase>(this),
-				CEREAL_NVP(cb_material->data)
+				CEREAL_NVP(cb_material->GetData())
 			);
 		}
 	private:

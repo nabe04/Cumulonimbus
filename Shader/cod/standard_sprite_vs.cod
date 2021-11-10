@@ -49,42 +49,20 @@
 // TEXCOORD                 0   xy          1     NONE   float   xy  
 //
 vs_5_0
-dcl_globalFlags refactoringAllowed | skipOptimization
+dcl_globalFlags refactoringAllowed
 dcl_constantbuffer CB3[516], immediateIndexed
 dcl_constantbuffer CB10[1], immediateIndexed
 dcl_input v0.xyzw
 dcl_input v1.xy
 dcl_output_siv o0.xyzw, position
 dcl_output o1.xy
-dcl_temps 2
-//
-// Initial variable locations:
-//   v0.x <- vin.position.x; v0.y <- vin.position.y; v0.z <- vin.position.z; v0.w <- vin.position.w; 
-//   v1.x <- vin.texcoord0.x; v1.y <- vin.texcoord0.y; 
-//   o1.x <- <main return value>.texcoord0.x; o1.y <- <main return value>.texcoord0.y; 
-//   o0.x <- <main return value>.position.x; o0.y <- <main return value>.position.y; o0.z <- <main return value>.position.z; o0.w <- <main return value>.position.w
-//
-#line 11 "D:\Desktop\Cumulonimbus\Shader\standard_sprite_vs.hlsl"
-add r0.xy, v0.xyxx, cb10[0].xyxx  // r0.x <- vin.position.x; r0.y <- vin.position.y
-
-#line 12
-mul r0.xzw, r0.xxxx, cb3[512].xxyz
-mul r1.xyz, r0.yyyy, cb3[513].xyzx
-add r0.xyz, r0.xzwx, r1.xyzx
-mul r1.xyz, v0.zzzz, cb3[514].xyzx
-add r0.xyz, r0.xyzx, r1.xyzx
-mul r1.xyz, v0.wwww, cb3[515].xyzx
-add r0.xyz, r0.xyzx, r1.xyzx  // r0.x <- ndc_pos.x; r0.y <- ndc_pos.y; r0.z <- ndc_pos.z
-
-#line 17
-mov r0.xyz, r0.xyzx  // r0.x <- vout.position.x; r0.y <- vout.position.y; r0.z <- vout.position.z
-mov r0.w, l(1.000000)  // r0.w <- vout.position.w
-
-#line 18
-mov r1.xy, v1.xyxx  // r1.x <- vout.texcoord0.x; r1.y <- vout.texcoord0.y
-
-#line 19
-mov o0.xyzw, r0.xyzw
-mov o1.xy, r1.xyxx
+dcl_temps 1
+add r0.xy, v0.xyxx, cb10[0].xyxx
+mul r0.yzw, r0.yyyy, cb3[513].xxyz
+mad r0.xyz, cb3[512].xyzx, r0.xxxx, r0.yzwy
+mad r0.xyz, cb3[514].xyzx, v0.zzzz, r0.xyzx
+mad o0.xyz, cb3[515].xyzx, v0.wwww, r0.xyzx
+mov o0.w, l(1.000000)
+mov o1.xy, v1.xyxx
 ret 
-// Approximately 14 instruction slots used
+// Approximately 8 instruction slots used

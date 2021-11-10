@@ -33,12 +33,17 @@ public:
 	void Clear(DWORD color = 0x00000000);
 	void Flip(int n = 0);
 
-	[[nodiscard]] int GetScreenWidth()  const { return screen_width; }
-	[[nodiscard]] int GetScreenHeight() const { return screen_height; }
+	[[nodiscard]]
+	int GetScreenWidth()  const { return screen_width; }
+	[[nodiscard]]
+	int GetScreenHeight() const { return screen_height; }
 
-	[[nodiscard]] ID3D11DepthStencilView*   GetDepthStencilView()	const { return depth_stencil_view.Get(); }
-	[[nodiscard]] ID3D11RenderTargetView*   GetBackBufferRTV()		const { return back_buffer.Get(); }
-	[[nodiscard]] ID3D11ShaderResourceView* GetShaderResourceView() const { return shader_resource_view.Get(); }
+	[[nodiscard]]
+	ID3D11DepthStencilView*   GetDepthStencilView()	const { return depth_stencil_view.Get(); }
+	[[nodiscard]]
+	ID3D11RenderTargetView*   GetBackBufferRTV()		const { return back_buffer.Get(); }
+	[[nodiscard]]
+	ID3D11ShaderResourceView* GetShaderResourceView() const { return shader_resource_view.Get(); }
 
 	/*
 	 * brief									: depth_stencil_view�̍쐬

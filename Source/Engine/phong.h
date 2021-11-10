@@ -20,7 +20,7 @@ CBUFFER(PhongCB, CBSlot_Phong)
 	float phong_padding;
 
 #ifdef __cplusplus
-	template <typename Archive>
+	template <class Archive>
 	void serialize(Archive&& archive)
 	{
 		archive(

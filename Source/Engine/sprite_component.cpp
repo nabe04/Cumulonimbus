@@ -125,7 +125,7 @@ namespace cumulonimbus::component
 	void SpriteComponent::CommonUpdate(const float dt)
 	{
 		ConvertScreenToNDC();
-		auto& cb_data = shader_asset_manager.GetShaderAsset<shader_asset::StandardSpriteAsset>()->GetCBuffer()->data;
+		auto& cb_data = shader_asset_manager.GetShaderAsset<shader_asset::StandardSpriteAsset>()->GetCBuffer()->GetData();
 	}
 
 	void SpriteComponent::Load(ecs::Registry* registry)
@@ -181,7 +181,7 @@ namespace cumulonimbus::component
 																					  win_half_height + static_cast<float>(texture.GetHeight()) },
 																					  static_cast<float>(window->Width()),
 																					  static_cast<float>(window->Height()));
-		auto& cb_data = shader_asset_manager.GetShaderAsset<shader_asset::StandardSpriteAsset>()->GetCBuffer()->data;
+		auto& cb_data = shader_asset_manager.GetShaderAsset<shader_asset::StandardSpriteAsset>()->GetCBuffer()->GetData();
 		pivot_type = pivot;
 
 		switch(pivot_type)

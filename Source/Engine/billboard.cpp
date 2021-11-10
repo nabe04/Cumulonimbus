@@ -35,7 +35,7 @@ namespace cumulonimbus
 			cb_billboard = std::make_unique<buffer::ConstantBuffer<BillboardCB>>(locator::Locator::GetDx11Device()->device.Get());
 
 			// ‰ŠúÝ’è
-			cb_billboard->data.billboard_offset = DirectX::SimpleMath::Vector2{};
+			cb_billboard->GetData().billboard_offset = DirectX::SimpleMath::Vector2{};
 		}
 
 		void BillboardAsset::BindCBuffer()

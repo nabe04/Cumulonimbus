@@ -34,15 +34,9 @@
 // SV_TARGET                0   xyzw        0   TARGET   float   xyzw
 //
 ps_5_0
-dcl_globalFlags refactoringAllowed | skipOptimization
+dcl_globalFlags refactoringAllowed
 dcl_constantbuffer CB10[1], immediateIndexed
 dcl_output o0.xyzw
-//
-// Initial variable locations:
-//   v0.x <- pin.position.x; v0.y <- pin.position.y; v0.z <- pin.position.z; v0.w <- pin.position.w; 
-//   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
-//
-#line 16 "D:\Desktop\Cumulonimbus\Shader\debug_collision_ps.hlsl"
 mov o0.xyzw, cb10[0].xyzw
 ret 
 // Approximately 2 instruction slots used

@@ -55,7 +55,7 @@ namespace cumulonimbus::graphics
 
 		world_mat = scaling_mat * rotation_mat * translation_mat;
 
-		cb_transform->data.bone_transforms[0] = world_mat;
+		cb_transform->GetData().bone_transforms[0] = world_mat;
 	}
 
 	void SkyBox::RenderImGui(ecs::Registry* registry)
@@ -121,26 +121,26 @@ namespace cumulonimbus::graphics
 		{// Create vertex buffer
 			constexpr float side = 1.0f / 2.0f;
 
-			std::array<shader::Vertex, 8> verteies{};
-			verteies.at(0).position = DirectX::XMFLOAT4{ -side,-side,-side,1.0f };
-			verteies.at(1).position = DirectX::XMFLOAT4{ side,-side,-side,1.0f };
-			verteies.at(2).position = DirectX::XMFLOAT4{ -side, side,-side,1.0f };
-			verteies.at(3).position = DirectX::XMFLOAT4{ side, side,-side,1.0f };
-			verteies.at(4).position = DirectX::XMFLOAT4{ -side,-side, side,1.0f };
-			verteies.at(5).position = DirectX::XMFLOAT4{ side,-side, side,1.0f };
-			verteies.at(6).position = DirectX::XMFLOAT4{ -side, side, side,1.0f };
-			verteies.at(7).position = DirectX::XMFLOAT4{ side, side, side,1.0f };
+			std::array<shader::Vertex, 8> vertices{};
+			vertices.at(0).position = DirectX::XMFLOAT4{ -side,-side,-side,1.0f };
+			vertices.at(1).position = DirectX::XMFLOAT4{ side,-side,-side,1.0f };
+			vertices.at(2).position = DirectX::XMFLOAT4{ -side, side,-side,1.0f };
+			vertices.at(3).position = DirectX::XMFLOAT4{ side, side,-side,1.0f };
+			vertices.at(4).position = DirectX::XMFLOAT4{ -side,-side, side,1.0f };
+			vertices.at(5).position = DirectX::XMFLOAT4{ side,-side, side,1.0f };
+			vertices.at(6).position = DirectX::XMFLOAT4{ -side, side, side,1.0f };
+			vertices.at(7).position = DirectX::XMFLOAT4{ side, side, side,1.0f };
 
 			D3D11_BUFFER_DESC vertex_buffer_desc{};
 			vertex_buffer_desc.Usage			   = D3D11_USAGE_DEFAULT;
-			vertex_buffer_desc.ByteWidth		   = sizeof(shader::Vertex) * static_cast<u_int>(verteies.size());
+			vertex_buffer_desc.ByteWidth		   = sizeof(shader::Vertex) * static_cast<u_int>(vertices.size());
 			vertex_buffer_desc.BindFlags		   = D3D11_BIND_VERTEX_BUFFER;
 			vertex_buffer_desc.CPUAccessFlags	   = 0;
 			vertex_buffer_desc.MiscFlags		   = 0;
 			vertex_buffer_desc.StructureByteStride = 0;
 
 			D3D11_SUBRESOURCE_DATA init_data{};
-			init_data.pSysMem			= verteies.data();
+			init_data.pSysMem			= vertices.data();
 			init_data.SysMemPitch		= 0;
 			init_data.SysMemSlicePitch	= 0;
 

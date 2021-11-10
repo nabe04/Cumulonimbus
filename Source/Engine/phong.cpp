@@ -24,9 +24,9 @@ namespace cumulonimbus
 			cb_phong = std::make_unique<buffer::ConstantBuffer<PhongCB>>(locator::Locator::GetDx11Device()->device.Get());
 
 			// ‰ŠúÝ’è
-			cb_phong->data.phong_specular = 1.0f;
-			cb_phong->data.phong_ref_coefficient = 1.0f;
-			cb_phong->data.phong_pow_value = 1.0f;
+			cb_phong->GetData().phong_specular = 1.0f;
+			cb_phong->GetData().phong_ref_coefficient = 1.0f;
+			cb_phong->GetData().phong_pow_value = 1.0f;
 		}
 
 		void PhongAsset::BindCBuffer()
@@ -41,9 +41,9 @@ namespace cumulonimbus
 
 		void PhongAsset::RenderImGui()
 		{
-			ImGui::DragFloat("Specular"					, &cb_phong->data.phong_specular		, 0.005f, 0.0f, 1.0f);
-			ImGui::DragFloat("Reflection coefficient"	, &cb_phong->data.phong_ref_coefficient	, 0.005f, 0.0f, 1.0f);
-			ImGui::DragFloat("Power"					, &cb_phong->data.phong_pow_value		, 0.5f	, 1.0f, 100.0f);
+			ImGui::DragFloat("Specular"					, &cb_phong->GetData().phong_specular		, 0.005f, 0.0f, 1.0f);
+			ImGui::DragFloat("Reflection coefficient"	, &cb_phong->GetData().phong_ref_coefficient	, 0.005f, 0.0f, 1.0f);
+			ImGui::DragFloat("Power"					, &cb_phong->GetData().phong_pow_value		, 0.5f	, 1.0f, 100.0f);
 		}
 	} // shader_asset
 } // cumulonimbus

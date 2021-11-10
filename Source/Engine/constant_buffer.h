@@ -7,13 +7,10 @@
 
 namespace cumulonimbus::buffer
 {
-	// TODO: public ƒƒ“ƒo•Ï”‚ÌÁ‹
 	template <class T>
 	class ConstantBuffer
 	{
 	public:
-		T data;
-
 		explicit ConstantBuffer(ID3D11Device* const device)
 		{
 			CreateCBuffer(device);
@@ -48,13 +45,17 @@ namespace cumulonimbus::buffer
 			buffer_desc.CPUAccessFlags = 0;
 			buffer_desc.MiscFlags = 0;
 			buffer_desc.StructureByteStride = 0;
-			HRESULT hr = device->CreateBuffer(&buffer_desc, 0, buffer_object.GetAddressOf());
+			const HRESULT hr = device->CreateBuffer(&buffer_desc, 0, buffer_object.GetAddressOf());
 			if (FAILED(hr))
 				assert(!"CreateBuffer error(Constant buffer)");
 		}
 
 		void Activate(ID3D11DeviceContext* const immediate_context, int slot, bool set_in_vs = true, bool set_in_ps = true)
 		{
+			if (!dirty_flg)
+				return;
+
+			dirty_flg = false;
 			immediate_context->UpdateSubresource(buffer_object.Get(), 0, NULL, &data, 0, 0);
 
 			using_slot = slot;
@@ -71,7 +72,18 @@ namespace cumulonimbus::buffer
 			immediate_context->PSSetConstantBuffers(using_slot, 1, &null_buffer);
 		}
 
-		void SetData(const T& data) { this->data = data; }
+		void SetData(const T& data)
+		{
+			dirty_flg = true;
+			this->data = data;
+		}
+
+		T& GetData()
+		{
+			dirty_flg = true;
+			return data;
+		}
+		const T& GetData() const { return data; }
 
 		template<typename Archive>
 		void serialize(Archive&& archive)
@@ -81,8 +93,10 @@ namespace cumulonimbus::buffer
 				CEREAL_NVP(using_slot));
 		}
 	private:
+		T data;
 		unsigned int using_slot{};
 		Microsoft::WRL::ComPtr<ID3D11Buffer> buffer_object{};
+		bool dirty_flg{ true };
 	};
 
 } // buffer

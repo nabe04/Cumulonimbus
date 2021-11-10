@@ -55,6 +55,9 @@ namespace arithmetic
 	[[nodiscard]]
 	float Clamp(float n, float min, float max);
 
+	[[nodiscard]]
+	float Distance(const DirectX::SimpleMath::Vector3& v1, const DirectX::SimpleMath::Vector3& v2);
+
 	/**
 	 * @brief : スクリーン座標からNDC座標への変換
 	 * @param screen_pos : スクリーン位置(Z値は無視される)

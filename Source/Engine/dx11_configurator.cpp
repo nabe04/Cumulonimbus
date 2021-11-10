@@ -304,7 +304,7 @@ void Dx11Device::SetViewPort(int width, int height) const
 /*
  * brief : Primitive Topology ‚ÌƒZƒbƒg
  */
-void Dx11Device::BindPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology) const
+void Dx11Device::BindPrimitiveTopology(const D3D_PRIMITIVE_TOPOLOGY topology) const
 {
 	immediate_context->IASetPrimitiveTopology(topology);
 }

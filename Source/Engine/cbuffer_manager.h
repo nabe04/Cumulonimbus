@@ -21,14 +21,23 @@ namespace cumulonimbus::buffer
 	class ConstantBufferAsset final : public ConstantBufferAssetBase
 	{
 	public:
-		explicit ConstantBufferAsset()  = default;
+		explicit ConstantBufferAsset(ID3D11Device* device)
+		{
+			cbuffer = std::make_unique<ConstantBuffer<T>>(device);
+		}
 		~ConstantBufferAsset() override = default;
 
-		void BindCBuffer()   override;
-		void UnBindCBuffer() override;
+		void BindCBuffer()   override
+		{
+
+		}
+		void UnBindCBuffer() override
+		{
+
+		}
 
 	private:
-		ConstantBuffer<T> cbuffer{};
+		std::unique_ptr<ConstantBuffer<T>> cbuffer{};
 	};
 
 	class ConstantBufferManager

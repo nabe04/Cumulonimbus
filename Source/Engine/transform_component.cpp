@@ -237,7 +237,7 @@ namespace cumulonimbus::component
 
 	void TransformComponent::SetTransformCB(const TransformCB transform) const
 	{
-		cb_transform->data = transform;
+		cb_transform->SetData(transform);
 	}
 
 	void TransformComponent::BindCBuffer(bool set_in_vs, bool set_in_ps) const
@@ -263,7 +263,7 @@ namespace cumulonimbus::component
 
 		XMStoreFloat4x4(&scaling_matrix, s);
 		// Constant Bufferのセット
-		cb_transform->data.scaling_matrix = scaling_matrix;
+		cb_transform->GetData().scaling_matrix = scaling_matrix;
 	}
 
 	void TransformComponent::CreateRotationMatrix()
@@ -273,7 +273,7 @@ namespace cumulonimbus::component
 		r = DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&local_rotation));
 		XMStoreFloat4x4(&rotation_matrix, r);
 		// Constant Bufferのセット
-		cb_transform->data.rotation_matrix = rotation_matrix;
+		cb_transform->GetData().rotation_matrix = rotation_matrix;
 	}
 
 	void TransformComponent::CreateTranslationMatrix()
@@ -283,7 +283,7 @@ namespace cumulonimbus::component
 
 		XMStoreFloat4x4(&translation_matrix, t);
 		// Constant Bufferのセット
-		cb_transform->data.translation_matrix = translation_matrix;
+		cb_transform->GetData().translation_matrix = translation_matrix;
 	}
 
 	void TransformComponent::CalcModelCoordinateAxis(const DirectX::XMFLOAT4X4& orientation)

@@ -39,9 +39,9 @@ namespace cumulonimbus
 
 		void ToonAsset::RenderImGui()
 		{
-			ImGui::SliderInt("Tone"					 , &cb_toon->data.toon_tones		, 1		, 32);
-			ImGui::DragFloat("Reflection coefficient", &cb_toon->data.toon_reflectance	, 0.005f, 0.0f, 1.0f);
-			ImGui::DragFloat("Power"				 , &cb_toon->data.toon_power		, 0.5f, 1.0f, 100.0f);
+			ImGui::SliderInt("Tone"					 , &cb_toon->GetData().toon_tones		, 1		, 32);
+			ImGui::DragFloat("Reflection coefficient", &cb_toon->GetData().toon_reflectance	, 0.005f, 0.0f, 1.0f);
+			ImGui::DragFloat("Power"				 , &cb_toon->GetData().toon_power		, 0.5f, 1.0f, 100.0f);
 		}
 	}
 }

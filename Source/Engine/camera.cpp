@@ -14,23 +14,23 @@ namespace cumulonimbus::camera
 
 		Initialize();
 
-		cb_camera->data.camera_position = { .0f,.0f,.0f };
-		cb_camera->data.camera_at		= { 0.0f,0.0f,1.0f };
-		cb_camera->data.camera_far_z	= 1.0f;
-		cb_camera->data.camera_near_z	= 0.0f;
-		cb_camera->data.camera_right	= { 1.0f,0.0f,0.0f };
-		cb_camera->data.camera_up		= { 0.0f,1.0f,0.0f };
-		cb_camera->data.camera_front	= { cb_camera->data.camera_at.x - cb_camera->data.camera_position.x,
-											cb_camera->data.camera_at.y - cb_camera->data.camera_position.y,
-											cb_camera->data.camera_at.z - cb_camera->data.camera_position.z };
-		cb_camera->data.camera_fov		= 0.0f;
-		cb_camera->data.camera_aspect	= 0.0f;
-		cb_camera->data.camera_width	= locator::Locator::GetWindow()->Width();
-		cb_camera->data.camera_height	= locator::Locator::GetWindow()->Height();
-		cb_camera->data.camera_view_matrix = { 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
-		cb_camera->data.camera_view_projection_matrix = { 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
+		cb_camera->GetData().camera_position = { .0f,.0f,.0f };
+		cb_camera->GetData().camera_at		= { 0.0f,0.0f,1.0f };
+		cb_camera->GetData().camera_far_z	= 1.0f;
+		cb_camera->GetData().camera_near_z	= 0.0f;
+		cb_camera->GetData().camera_right	= { 1.0f,0.0f,0.0f };
+		cb_camera->GetData().camera_up		= { 0.0f,1.0f,0.0f };
+		cb_camera->GetData().camera_front	= { cb_camera->GetData().camera_at.x - cb_camera->GetData().camera_position.x,
+											    cb_camera->GetData().camera_at.y - cb_camera->GetData().camera_position.y,
+											    cb_camera->GetData().camera_at.z - cb_camera->GetData().camera_position.z };
+		cb_camera->GetData().camera_fov		= 0.0f;
+		cb_camera->GetData().camera_aspect	= 0.0f;
+		cb_camera->GetData().camera_width	= locator::Locator::GetWindow()->Width();
+		cb_camera->GetData().camera_height	= locator::Locator::GetWindow()->Height();
+		cb_camera->GetData().camera_view_matrix = { 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
+		cb_camera->GetData().camera_view_projection_matrix = { 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
 
-		SetViewInfo(cb_camera->data.camera_position, cb_camera->data.camera_at, cb_camera->data.camera_up);
+		SetViewInfo(cb_camera->GetData().camera_position, cb_camera->GetData().camera_at, cb_camera->GetData().camera_up);
 		SetProjection(DirectX::XM_PI / 8.0f, static_cast<float>(locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
 	}
 
@@ -62,23 +62,23 @@ namespace cumulonimbus::camera
 	{
 		Initialize();
 
-		cb_camera->data.camera_position = eye_position;
-		cb_camera->data.camera_at		= focus_position;
-		cb_camera->data.camera_far_z	= far_z;
-		cb_camera->data.camera_near_z	= near_z;
-		cb_camera->data.camera_right	= right_vec;
-		cb_camera->data.camera_up		= up_vec;
-		cb_camera->data.camera_front	= { cb_camera->data.camera_at.x - cb_camera->data.camera_position.x,
-											cb_camera->data.camera_at.y - cb_camera->data.camera_position.y,
-											cb_camera->data.camera_at.z - cb_camera->data.camera_position.z };
-		cb_camera->data.camera_fov		= fov;
-		cb_camera->data.camera_aspect	= aspect;
-		cb_camera->data.camera_width	= width;
-		cb_camera->data.camera_height	= height;
-		cb_camera->data.camera_view_matrix = view_mat;
-		cb_camera->data.camera_view_projection_matrix = view_projection_mat;
+		cb_camera->GetData().camera_position = eye_position;
+		cb_camera->GetData().camera_at		= focus_position;
+		cb_camera->GetData().camera_far_z	= far_z;
+		cb_camera->GetData().camera_near_z	= near_z;
+		cb_camera->GetData().camera_right	= right_vec;
+		cb_camera->GetData().camera_up		= up_vec;
+		cb_camera->GetData().camera_front	= { cb_camera->GetData().camera_at.x - cb_camera->GetData().camera_position.x,
+											    cb_camera->GetData().camera_at.y - cb_camera->GetData().camera_position.y,
+											    cb_camera->GetData().camera_at.z - cb_camera->GetData().camera_position.z };
+		cb_camera->GetData().camera_fov		= fov;
+		cb_camera->GetData().camera_aspect	= aspect;
+		cb_camera->GetData().camera_width	= width;
+		cb_camera->GetData().camera_height	= height;
+		cb_camera->GetData().camera_view_matrix = view_mat;
+		cb_camera->GetData().camera_view_projection_matrix = view_projection_mat;
 
-		SetViewInfo(cb_camera->data.camera_position, cb_camera->data.camera_at, cb_camera->data.camera_up);
+		SetViewInfo(cb_camera->GetData().camera_position, cb_camera->GetData().camera_at, cb_camera->GetData().camera_up);
 		SetProjection(DirectX::XM_PI / 8.0f, static_cast<float>(locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
 	}
 
@@ -116,23 +116,23 @@ namespace cumulonimbus::camera
 
 		Initialize();
 
-		cb_camera->data.camera_position = eye_position;
-		cb_camera->data.camera_at		= focus_position;
-		cb_camera->data.camera_far_z	= far_z;
-		cb_camera->data.camera_near_z	= near_z;
-		cb_camera->data.camera_right	= right_vec;
-		cb_camera->data.camera_up		= up_vec;
-		cb_camera->data.camera_front	= { cb_camera->data.camera_at.x - cb_camera->data.camera_position.x,
-											cb_camera->data.camera_at.y - cb_camera->data.camera_position.y,
-											cb_camera->data.camera_at.z - cb_camera->data.camera_position.z };
-		cb_camera->data.camera_fov		= fov;
-		cb_camera->data.camera_aspect	= aspect;
-		cb_camera->data.camera_width	= width;
-		cb_camera->data.camera_height	= height;
-		cb_camera->data.camera_view_matrix = view_mat;
-		cb_camera->data.camera_view_projection_matrix = view_projection_mat;
+		cb_camera->GetData().camera_position = eye_position;
+		cb_camera->GetData().camera_at		= focus_position;
+		cb_camera->GetData().camera_far_z	= far_z;
+		cb_camera->GetData().camera_near_z	= near_z;
+		cb_camera->GetData().camera_right	= right_vec;
+		cb_camera->GetData().camera_up		= up_vec;
+		cb_camera->GetData().camera_front	= { cb_camera->GetData().camera_at.x - cb_camera->GetData().camera_position.x,
+											    cb_camera->GetData().camera_at.y - cb_camera->GetData().camera_position.y,
+											    cb_camera->GetData().camera_at.z - cb_camera->GetData().camera_position.z };
+		cb_camera->GetData().camera_fov		= fov;
+		cb_camera->GetData().camera_aspect	= aspect;
+		cb_camera->GetData().camera_width	= width;
+		cb_camera->GetData().camera_height	= height;
+		cb_camera->GetData().camera_view_matrix = view_mat;
+		cb_camera->GetData().camera_view_projection_matrix = view_projection_mat;
 
-		SetViewInfo(cb_camera->data.camera_position, cb_camera->data.camera_at, cb_camera->data.camera_up);
+		SetViewInfo(cb_camera->GetData().camera_position, cb_camera->GetData().camera_at, cb_camera->GetData().camera_up);
 		SetProjection(DirectX::XM_PI / 8.0f, static_cast<float>(locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
 
 		return *this;
@@ -183,7 +183,7 @@ namespace cumulonimbus::camera
 
 	void Camera::RenderImGui()
 	{
-		auto& camera = cb_camera->data;
+		auto& camera = cb_camera->GetData();
 		helper::imgui::Image(*off_screen->GetRenderTargetSRV(), { 160,100 });
 		ImGui::Text("-----------------------");
 		ImGui::Text("Camera Pos X %f", camera.camera_position.x);
@@ -440,7 +440,7 @@ namespace cumulonimbus::camera
 
 	void Camera::SetCBufferParam() const
 	{
-		auto& camera_data = cb_camera->data;
+		auto& camera_data = cb_camera->GetData();
 		camera_data.camera_view_matrix				= view_mat;
 		camera_data.camera_projection_matrix		= projection_mat;
 		camera_data.camera_view_projection_matrix	= view_projection_mat;

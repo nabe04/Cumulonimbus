@@ -30,5 +30,6 @@
 
 // その他のシェーダー
 #define CBSlot_DebugCollision		CBSlot_OnDemand0
+#define CBSlot_DebugPrimitive		CBSlot_OnDemand0
 
 #endif // CONSTANT_BUFFER_MAPPING_H

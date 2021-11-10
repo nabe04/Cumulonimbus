@@ -188,7 +188,7 @@ namespace cumulonimbus::camera
 		/**
 		 * @brief : Ž‹–ìŠp(fov)‚ÌÝ’è
 		 */
-		void SetFov(const float fov) const { cb_camera->data.camera_fov = fov; }
+		void SetFov(const float fov) const { cb_camera->GetData().camera_fov = fov; }
 
 		void SetCameraSpeed(const DirectX::SimpleMath::Vector2& speed) { camera_speed = speed; }
 
