@@ -28,16 +28,49 @@
 // SV_TARGET                0   xyzw        0   TARGET   float   xyzw
 //
 ps_5_0
-dcl_globalFlags refactoringAllowed
+dcl_globalFlags refactoringAllowed | skipOptimization
 dcl_sampler s0, mode_default
 dcl_resource_texture2d (float,float,float,float) t0
 dcl_input_ps linear v2.xyz
 dcl_output o0.xyzw
 dcl_temps 1
-sample_indexable(texture2d)(float,float,float,float) r0.x, v2.xyxx, t0.xyzw, s0
-add r0.x, -r0.x, v2.z
-lt r0.x, l(0.001000), r0.x
-movc o0.xyz, r0.xxxx, l(0.600000,0.600000,0.600000,0), l(1.000000,1.000000,1.000000,0)
-mov o0.w, l(1.000000)
+//
+// Initial variable locations:
+//   v0.x <- pin.position.x; v0.y <- pin.position.y; v0.z <- pin.position.z; v0.w <- pin.position.w; 
+//   v1.x <- pin.ndc_wvp_position.x; v1.y <- pin.ndc_wvp_position.y; v1.z <- pin.ndc_wvp_position.z; v1.w <- pin.ndc_wvp_position.w; 
+//   v2.x <- pin.texture_position.x; v2.y <- pin.texture_position.y; v2.z <- pin.texture_position.z; 
+//   v3.x <- pin.normal.x; v3.y <- pin.normal.y; v3.z <- pin.normal.z; 
+//   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
+//
+#line 11 "D:\Desktop\Cumulonimbus\Shader\shadow_map_ps.hlsl"
+mov r0.x, l(0.001000)  // r0.x <- bias
+
+#line 13
+mov r0.y, l(0.600000)  // r0.y <- shadow_color.z
+
+#line 15
+nop 
+nop 
+nop 
+mov r0.z, v2.z
+mov r0.y, r0.y
+mov r0.x, r0.x
+
+#line 40 "D:\Desktop\Cumulonimbus\Shader\shadow_map.hlsli"
+sample_indexable(texture2d)(float,float,float,float) r0.w, v2.xyxx, t0.yzwx, s0
+mov r0.w, r0.w  // r0.w <- d
+
+#line 43
+mov r0.w, -r0.w
+add r0.z, r0.w, r0.z
+lt r0.x, r0.x, r0.z
+movc r0.xyz, r0.xxxx, r0.yyyy, l(1.000000,1.000000,1.000000,0)  // r0.z <- shadow_color.z
+
+#line 46
+mov r0.xyz, r0.xyzx  // r0.z <- <GetShadow return value>.z
+
+#line 15 "D:\Desktop\Cumulonimbus\Shader\shadow_map_ps.hlsl"
+itof o0.w, l(1)
+mov o0.xyz, r0.xyzx
 ret 
-// Approximately 6 instruction slots used
+// Approximately 18 instruction slots used

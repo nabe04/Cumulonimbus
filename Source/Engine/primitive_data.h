@@ -79,7 +79,7 @@ namespace cumulonimbus::primitive
 		Capsule() = default;
 		Capsule(
 			const DirectX::SimpleMath::Vector3& base,
-			const DirectX::SimpleMath::Vector3& tip, float radius)
+			const DirectX::SimpleMath::Vector3& tip, const float radius)
 		:base(base), tip(tip), radius(radius) {}
 		Capsule(const Sphere& sphere, const float height)
 			:base(DirectX::SimpleMath::Vector3(sphere.center.x, sphere.center.y - sphere.radius, sphere.center.z)),

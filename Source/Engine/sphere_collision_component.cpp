@@ -6,17 +6,19 @@
 #include "ecs.h"
 // components
 #include "fbx_model_component.h"
+#include "model_component.h"
 #include "fbx_model_resource.h"
 #include "transform_component.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::SphereCollisionComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::CollisionComponent, cumulonimbus::component::SphereCollisionComponent)
 CEREAL_CLASS_VERSION(cumulonimbus::component::SphereCollisionComponent, 0)
+CEREAL_CLASS_VERSION(cumulonimbus::collision::Sphere, 0)
 
 namespace cumulonimbus::collision
 {
 	template <class Archive>
-	void Sphere::serialize(Archive&& archive)
+	void Sphere::load(Archive&& archive, uint32_t version)
 	{
 		archive(
 			CEREAL_NVP(world_transform_matrix),
@@ -24,9 +26,27 @@ namespace cumulonimbus::collision
 			CEREAL_NVP(bone_name),
 			CEREAL_NVP(radius),
 			CEREAL_NVP(hit_result),
-			CEREAL_NVP(collision_preset)
+			CEREAL_NVP(collision_preset),
+			CEREAL_NVP(base_color),
+			CEREAL_NVP(hit_color)
 		);
 	}
+
+	template <class Archive>
+	void Sphere::save(Archive&& archive, uint32_t version) const
+	{
+		archive(
+			CEREAL_NVP(world_transform_matrix),
+			CEREAL_NVP(offset),
+			CEREAL_NVP(bone_name),
+			CEREAL_NVP(radius),
+			CEREAL_NVP(hit_result),
+			CEREAL_NVP(collision_preset),
+			CEREAL_NVP(base_color),
+			CEREAL_NVP(hit_color)
+		);
+	}
+
 
 } // cumulonimbus::collision
 
@@ -72,64 +92,89 @@ namespace cumulonimbus::component
 
 	}
 
-	// Todo : コリジョン関係
 	void SphereCollisionComponent::PostGameUpdate(float dt)
 	{
-		//// 判定用(球)データの更新
-		//for (auto& sphere : spheres)
-		//{
-		//	{// ワールド変換行列の作成１
-		//		// Scaling
-		//		const DirectX::SimpleMath::Matrix s = DirectX::XMMatrixScaling(sphere.second.radius, sphere.second.radius, sphere.second.radius);
-		//		// Rotation
-		//		const DirectX::SimpleMath::Matrix r = DirectX::XMMatrixIdentity();
-		//		// Parallel movement
-		//		DirectX::SimpleMath::Matrix t = DirectX::SimpleMath::Matrix::Identity;
-		//		t.Translation(sphere.second.offset);
-		//		// Local matrix
-		//		const DirectX::SimpleMath::Matrix model_local_matrix = s * r * t;
+		auto DefaultTransform = [&](collision::Sphere& sphere, const DirectX::SimpleMath::Matrix& local_mat)
+		{
+			// モデルが持つワールド変換行列
+			DirectX::SimpleMath::Matrix world_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorldMatrix();
+			world_transform._11 = world_transform._22 = world_transform._33 = world_transform._44 = 1.0f;
+			sphere.world_transform_matrix = local_mat * world_transform;
+		};
 
-		//		if (sphere.second.bone_name.empty())
-		//		{
-		//			// モデルが持つワールド変換行列
-		//			DirectX::SimpleMath::Matrix world_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorldMatrix();
-		//			world_transform._11 = world_transform._22 = world_transform._33 = world_transform._44 = 1.0f;
-		//			sphere.second.world_transform_matrix = model_local_matrix * world_transform;
-		//		}
-		//		else
-		//		{
-		//			sphere.second.world_transform_matrix = model_local_matrix * GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).GetNodeMatrix(sphere.second.bone_name.c_str());
-		//		}
-		//	}
+		// 判定用(球)データの更新
+		for (auto& sphere : spheres | std::views::values)
+		{
+			{// ワールド変換行列の作成１
+				// Scaling
+				const DirectX::SimpleMath::Matrix s = DirectX::XMMatrixScaling(sphere.radius, sphere.radius, sphere.radius);
+				// Rotation
+				const DirectX::SimpleMath::Matrix r = DirectX::XMMatrixIdentity();
+				// Parallel movement
+				DirectX::SimpleMath::Matrix t = DirectX::SimpleMath::Matrix::Identity;
+				t.Translation(sphere.offset);
+				// Local matrix
+				const DirectX::SimpleMath::Matrix model_local_matrix = s * r * t;
 
-		//	{// HitEventの更新
-		//		sphere.second.hit_result.is_old_hit = sphere.second.hit_result.is_hit;
+				if (sphere.bone_name.empty())
+				{
+					//// モデルが持つワールド変換行列
+					//DirectX::SimpleMath::Matrix world_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorldMatrix();
+					//world_transform._11 = world_transform._22 = world_transform._33 = world_transform._44 = 1.0f;
+					//sphere.world_transform_matrix = model_local_matrix * world_transform;
+					DefaultTransform(sphere, model_local_matrix);
+				}
+				else
+				{
+					if(auto* model_comp = GetRegistry()->TryGetComponent<component::ModelComponent>(GetEntity());
+					   model_comp)
+					{
+						if(model_comp->HasNodeFromName(sphere.bone_name.c_str()))
+						{
+							sphere.world_transform_matrix = model_comp->GetNodeMatrix(sphere.bone_name.c_str());
+						}
+						else
+						{
+							DefaultTransform(sphere, model_local_matrix);
+						}
+					}
+					else
+					{
+						DefaultTransform(sphere, model_local_matrix);
+					}
+					// 旧方式
+					//sphere.second.world_transform_matrix = model_local_matrix * GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).GetNodeMatrix(sphere.second.bone_name.c_str());
+				}
+			}
 
-		//		if(sphere.second.hit_result.is_hit)
-		//		{
-		//			if(sphere.second.hit_result.is_old_hit)
-		//			{// 他のCollisionに触れている間
-		//				sphere.second.hit_result.hit_event = collision::HitEvent::OnCollisionStay;
-		//			}
-		//			else
-		//			{// 他のCollisionに触れたとき
-		//				sphere.second.hit_result.hit_event = collision::HitEvent::OnCollisionEnter;
-		//			}
-		//		}
-		//		else
-		//		{
-		//			if (sphere.second.hit_result.is_old_hit)
-		//			{// 他のCollisionに触れるのをやめたとき
-		//				sphere.second.hit_result.hit_event = collision::HitEvent::OnCollisionExit;
-		//			}
-		//			else
-		//			{// 他のどのCollisionにも触れていない間
-		//				sphere.second.hit_result.hit_event = collision::HitEvent::None;
-		//			}
-		//		}
+			{// HitEventの更新
+				sphere.hit_result.is_old_hit = sphere.hit_result.is_hit;
 
-		//	}
-		//}
+				if(sphere.hit_result.is_hit)
+				{
+					if(sphere.hit_result.is_old_hit)
+					{// 他のCollisionに触れている間
+						sphere.hit_result.hit_event = collision::HitEvent::OnCollisionStay;
+					}
+					else
+					{// 他のCollisionに触れたとき
+						sphere.hit_result.hit_event = collision::HitEvent::OnCollisionEnter;
+					}
+				}
+				else
+				{
+					if (sphere.hit_result.is_old_hit)
+					{// 他のCollisionに触れるのをやめたとき
+						sphere.hit_result.hit_event = collision::HitEvent::OnCollisionExit;
+					}
+					else
+					{// 他のどのCollisionにも触れていない間
+						sphere.hit_result.hit_event = collision::HitEvent::None;
+					}
+				}
+
+			}
+		}
 	}
 
 

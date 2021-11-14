@@ -34,16 +34,6 @@ namespace cumulonimbus::camera
 		CameraTexture(system::System& system);
 		~CameraTexture() = default;
 
-		//template<class Archive>
-		//void serialize(Archive&& archive)
-		//{
-		//	archive(
-		//		CEREAL_NVP(tex_id),
-		//		CEREAL_NVP(tex_size),
-		//		CEREAL_NVP(scaling_matrix)
-		//	);
-		//}
-
 		template<class Archive>
 		void load(Archive&& archive, uint32_t version)
 		{

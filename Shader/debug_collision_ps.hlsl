@@ -11,7 +11,9 @@
 #include "../Source/Engine/debug_collision.h"
 
 
-float4 main(PS_Input pin) : SV_TARGET
+PS_Output main(PS_Input pin)
 {
-    return collider_color;
+    PS_Output pout = (PS_Output) 0;
+    pout.color = collider_color;
+    return pout;
 }

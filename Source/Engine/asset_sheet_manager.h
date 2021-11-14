@@ -129,6 +129,36 @@ namespace cumulonimbus::asset
 		std::string GetAssetFilename(const mapping::rename_type::UUID& id) const;
 
 		/**
+		 * @brief : 任意のクラスのアセットシートに登録ファイル名のみ(拡張子除く)を取得
+		 * @remark : 引数のidはAssetSheetのsheet(std::map)のキー値になる
+		 * @remark : idが存在しない場合処理を中断する
+		 * @param id : アセットのUUID値
+		 * @return : アセットのファイル名(拡張子なし)
+		 */
+		template<class T>
+		[[nodiscard]]
+		std::string GetAssetName(const mapping::rename_type::UUID& id)
+		{
+			const auto hash = utility::GetHash<T>();
+			if (!sheets.contains(hash))
+				assert(!"Not registered sheet(AssetSheet::GetAssetFilename)");
+
+			return std::filesystem::path{ sheets.at(hash).sheet.at(id) }.filename().replace_extension().string();
+		}
+
+		/**
+		 * @brief : 任意のクラスのアセットシートに登録されているファイル名(拡張子なし)の取得
+		 * @remark : 引数のidはAssetSheetのsheet(std::map)のキー値になる
+		 * @remark : idが存在しない場合処理を中断する
+		 * @remark : 型を全てのアセットシートに検索をかけるので型情報が
+		 *			 わかっている場合はテンプレート版のGetAssetFilenameを使うべし
+		 * @param id : アセットのUUID値
+		 * @return : アセットのファイル名(拡張子なし)
+		 */
+		[[nodiscard]]
+		std::string GetAssetName(const mapping::rename_type::UUID& id);
+
+		/**
 		 * @brief : アセットシートに登録しているパスからIDを検索
 		 * @remark : パスがヒットしなかった場合でも例外処理は出ない
 		 * @remark : パスがヒットしなかった場合「""」を返す

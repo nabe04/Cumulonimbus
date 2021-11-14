@@ -38,7 +38,6 @@ namespace cumulonimbus::camera
 									  [&](ecs::Registry* registry) {RenderImGui(registry); });
 	}
 
-
 	void CameraTexture::RenderImGui(ecs::Registry* registry)
 	{
 		if (ImGui::CollapsingHeader(ICON_FA_VIDEO"Camera Setting", ImGuiTreeNodeFlags_DefaultOpen))

@@ -1,6 +1,7 @@
 #include "collision_manager.h"
 
 #include "arithmetic.h"
+#include "asset_manager.h"
 #include "cum_imgui_helper.h"
 #include "ecs.h"
 #include "locator.h"
@@ -21,6 +22,64 @@
 
 namespace cumulonimbus::collision
 {
+	CollisionPrimitiveAsset::CollisionPrimitiveAsset(system::System& system)
+	{
+		// System::Render関数内で使用する関数の登録
+		system.RegisterRenderFunction(utility::GetHash<CollisionPrimitiveAsset>(),
+									  [&](ecs::Registry* registry) {RenderImGui(registry); });
+	}
+
+	void CollisionPrimitiveAsset::RenderImGui(ecs::Registry* registry)
+	{
+		auto& asset_manager = *locator::Locator::GetAssetManager();
+		auto& asset_sheet_manager = asset_manager.GetAssetSheetManager();
+
+		const size_t model_asset_size = asset_manager.GetAssetSheetManager().GetSheet<asset::Model>().sheet.size();
+
+		// 全てのモデルのファイルパス(拡張子を含む)
+		std::vector<std::filesystem::path> items_path{};
+		items_path.reserve(model_asset_size);
+		// 全てのモデルのモデル名(拡張子を含まない)
+		std::vector<std::string> items_name{};
+		items_name.reserve(model_asset_size);
+		for(const auto& asset_path : asset_manager.GetAssetSheetManager().GetSheet<asset::Model>().sheet | std::views::values)
+		{
+			// アセットファイルパスの追加
+			items_path.emplace_back(asset_path);
+			// アセットファイル名(拡張子を含まない)の追加
+			items_name.emplace_back(std::filesystem::path{ asset_path }.filename().replace_extension().string());
+		}
+
+		std::string current_sphere_name {};
+		std::string current_sphere_path{};
+		if(asset_manager.GetLoader<asset::ModelLoader>()->HasModel(sphere_id))
+		{
+			current_sphere_name = asset_sheet_manager.GetAssetName<asset::Model>(sphere_id);
+			current_sphere_path = asset_sheet_manager.GetAssetFilename<asset::Model>(sphere_id);
+		}
+
+		if (const ImGuiTreeNodeFlags tree_flg{ ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth };
+			ImGui::CollapsingHeader("Collision Asset", tree_flg))
+		{
+			if (helper::imgui::Combo("Sphere Model", current_sphere_name, items_name))
+			{// ImGui::Combo内でアイテム選択時
+				// 登録されているモデルアセットデータから選択されたアセットを探す
+				for (const auto& [asset_id, asset_path] : asset_sheet_manager.GetSheet<asset::Model>().sheet)
+				{
+					// 選択されているアセット名と登録されている名が違う場合処理を飛ばす
+					if (current_sphere_name != asset_sheet_manager.GetAssetName<asset::Model>(asset_id))
+						continue;
+					// 別のアセットが選択された場合にsphere_idに代入する
+					if (asset_id != sphere_id)
+					{
+						sphere_id = asset_id;
+					}
+				}
+			}
+		}
+
+	}
+
 	CollisionManager::CollisionManager(system::System& system)
 	{
 		// System::Render関数内で使用する関数の登録

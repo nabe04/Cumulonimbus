@@ -93,7 +93,14 @@ namespace cumulonimbus::component
 		 * @return : 存在しない : -1
 		 */
 		[[nodiscard]]
-		int GetNodeIndexFromName(const std::string& node_name);
+		int GetNodeIndexFromName(const std::string& node_name) const;
+		/**
+		 * @brief : 指定のノード名が存在するかの判別
+		 * @param node_name : 判別対象のノード名
+		 */
+		[[nodiscard]]
+		bool HasNodeFromName(const std::string& node_name) const;
+		
 		/**
 		 * @brief : アセットの持つマテリアルを取得
 		 * @param material_index : Subsetのもつmaterial_indexを指定

@@ -17,6 +17,11 @@ namespace cumulonimbus
 		class CameraTexture;
 	} // camera
 
+	namespace collision
+	{
+		class CollisionPrimitiveAsset;
+	} // collision
+
 	namespace graphics
 	{
 		class SkyBox;
@@ -74,6 +79,8 @@ namespace cumulonimbus::system
 		[[nodiscard]]
 		camera::CameraTexture& GetCameraTexture() const;
 		[[nodiscard]]
+		collision::CollisionPrimitiveAsset& GetCollisionPrimitive() const;
+ 		[[nodiscard]]
 		graphics::SkyBox& GetSkyBox() const;
 		[[nodiscard]]
 		const std::string& GetCurrentScenePath() const { return current_scene_path; }
@@ -89,6 +96,7 @@ namespace cumulonimbus::system
 		std::map<mapping::rename_type::Hash, std::function<void(ecs::Registry* registry)>> render_functions{};
 
 		std::unique_ptr<camera::CameraTexture> camera_texture{};
+		std::unique_ptr<collision::CollisionPrimitiveAsset> collision_primitive{};
 		std::unique_ptr<graphics::SkyBox>	   sky_box{};
 
 		std::string current_scene_path{};  // Œ»İŠJ‚©‚ê‚Ä‚¢‚éƒV[ƒ“(cereal‚ªstd::filesystem–¢‘Î‰‚Ì‚½‚ßstd::string‚É‚µ‚Ä‚¢‚é)

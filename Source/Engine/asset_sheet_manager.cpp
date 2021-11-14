@@ -19,7 +19,7 @@ namespace cumulonimbus::asset
 
 	std::string AssetSheetManager::GetAssetFilename(const mapping::rename_type::UUID& id) const
 	{
-		for (const auto& [hash, asset_sheet] : sheets)
+		for (const auto& asset_sheet : sheets | std::views::values)
 		{
 			for (const auto& [asset_id, asset_path] : asset_sheet.sheet)
 			{
@@ -31,9 +31,25 @@ namespace cumulonimbus::asset
 		return "";
 	}
 
+	std::string AssetSheetManager::GetAssetName(const mapping::rename_type::UUID& id)
+	{
+		for (const auto& asset_sheet : sheets | std::views::values)
+		{
+			for (const auto& [asset_id, asset_path] : asset_sheet.sheet)
+			{
+				if (asset_sheet.sheet.contains(id))
+					return std::filesystem::path{ asset_sheet.sheet.at(id) }.filename().relative_path().string();
+			}
+		}
+
+		assert(!"Don't have asset id(AssetSheetManager::GetAssetName)");
+		return "";
+	}
+
+
 	mapping::rename_type::UUID AssetSheetManager::Search(const std::filesystem::path& path) const
 	{
-		for(const auto&[hash,asset_sheet] : sheets)
+		for(const auto& asset_sheet : sheets | std::views::values)
 		{
 			for(const auto&[id,asset_path] : asset_sheet.sheet)
 			{

@@ -263,7 +263,15 @@ namespace cumulonimbus::asset
 		void serialize(Archive&& archive);
 
 		[[nodiscard]]
-		ModelData& GetModelData() { return model_data; }
+		ModelData& GetModelData()
+		{
+			return model_data;
+		}
+		[[nodiscard]]
+		const ModelData& GetModelData() const
+		{
+			return model_data;
+		}
 
 		/**
 		 * @brief : 「.model」形式としての保存(シリアライズ)

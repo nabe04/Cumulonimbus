@@ -5,13 +5,15 @@
 
 #include "shader.h"
 #include "shader_asset.h"
+
 #endif // __cplusplus
 
 #include "shader_interop_renderer.h"
 
 CBUFFER(DebugPrimitiveCB, CBSlot_DebugPrimitive)
 {
-	DirectX::SimpleMath::Vector4 color{ 1.f,1.f,1.f,1.f };
+	float4x4  primitive_world_transform_mat;
+	float4	  color;
 
 #ifdef __cplusplus
 	template <class Archive>

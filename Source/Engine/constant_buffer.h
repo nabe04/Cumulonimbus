@@ -52,11 +52,11 @@ namespace cumulonimbus::buffer
 
 		void Activate(ID3D11DeviceContext* const immediate_context, int slot, bool set_in_vs = true, bool set_in_ps = true)
 		{
-			if (!dirty_flg)
-				return;
-
-			dirty_flg = false;
-			immediate_context->UpdateSubresource(buffer_object.Get(), 0, NULL, &data, 0, 0);
+			if (dirty_flg)
+			{
+				dirty_flg = false;
+				immediate_context->UpdateSubresource(buffer_object.Get(), 0, NULL, &data, 0, 0);
+			}
 
 			using_slot = slot;
 

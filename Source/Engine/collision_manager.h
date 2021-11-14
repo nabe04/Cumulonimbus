@@ -39,12 +39,71 @@ namespace cumulonimbus
 
 namespace cumulonimbus::collision
 {
+	class CollisionPrimitiveAsset final
+	{
+	public:
+		explicit CollisionPrimitiveAsset(system::System& system);
+		explicit CollisionPrimitiveAsset()									= default;
+		~CollisionPrimitiveAsset()											= default;
+		CollisionPrimitiveAsset(CollisionPrimitiveAsset&)					= delete;
+		CollisionPrimitiveAsset(CollisionPrimitiveAsset&&)					= delete;
+		CollisionPrimitiveAsset(const CollisionPrimitiveAsset&)				= delete;
+		CollisionPrimitiveAsset(const CollisionPrimitiveAsset&&)			= delete;
+		CollisionPrimitiveAsset& operator=(CollisionPrimitiveAsset&)		= delete;
+		CollisionPrimitiveAsset& operator=(CollisionPrimitiveAsset&&)		= delete;
+		CollisionPrimitiveAsset& operator=(const CollisionPrimitiveAsset&)	= delete;
+		CollisionPrimitiveAsset& operator=(const CollisionPrimitiveAsset&&) = delete;
+
+		template<class Archive>
+		void load(Archive&& archive,uint32_t version)
+		{
+			archive(
+				CEREAL_NVP(sphere_id),
+				CEREAL_NVP(capsule_id)
+			);
+		}
+
+		template<class Archive>
+		void save(Archive&& archive,uint32_t version) const
+		{
+			archive(
+				CEREAL_NVP(sphere_id),
+				CEREAL_NVP(capsule_id)
+			);
+		}
+
+		void RenderImGui(ecs::Registry* registry);
+
+		[[nodiscard]]
+		const mapping::rename_type::UUID& GetSphereId() const
+		{
+			return sphere_id;
+		}
+
+		[[nodiscard]]
+		const mapping::rename_type::UUID& GetCapsuleId() const
+		{
+			return capsule_id;
+		}
+	private:
+		mapping::rename_type::UUID sphere_id{};
+		mapping::rename_type::UUID capsule_id{};
+	};
+
 	class CollisionManager final
 	{
 	public:
-		explicit CollisionManager() = default; // for cereal
 		explicit CollisionManager(system::System& system);
-		~CollisionManager()			= default;
+		explicit CollisionManager()								= default; // for cereal
+		~CollisionManager()										= default;
+		CollisionManager(CollisionManager&)						= delete;
+		CollisionManager(CollisionManager&&)					= delete;
+		CollisionManager(const CollisionManager&)				= delete;
+		CollisionManager(const CollisionManager&&)				= delete;
+		CollisionManager& operator=(CollisionManager&)			= delete;
+		CollisionManager& operator=(CollisionManager&&)			= delete;
+		CollisionManager& operator=(const CollisionManager&)	= delete;
+		CollisionManager& operator=(const CollisionManager&&)	= delete;
 
 		template<class Archive>
 		void serialize(Archive&& archive)
@@ -83,13 +142,13 @@ namespace cumulonimbus::collision
 		// レイキャストの判定を行う際の判定が行われる(地形)データ群
 		std::vector<mapping::rename_type::Entity> ent_terrains{};
 
-
 		/**
 		 * @brief	: 反発係数の算出
 		 * @return	: 反発係数(0～1)
 		 */
-		float CalculateRestitution(const component::PhysicMaterialComponent* physic_material_comp_1,
-								   const component::PhysicMaterialComponent* physic_material_comp_2);
+		float CalculateRestitution(
+			const component::PhysicMaterialComponent* physic_material_comp_1,
+			const component::PhysicMaterialComponent* physic_material_comp_2);
 
 		/**
 		 * @brief						: 押出し処理
@@ -103,53 +162,54 @@ namespace cumulonimbus::collision
 		 * @param collision_preset_2	: コリジョンプリセット(2)
 		 * @param penetration			: めり込み具合
 		 */
-		void Extrude(float dt,
-					 ecs::Registry* registry,
-					 mapping::rename_type::Entity ent_1,
-					 mapping::rename_type::Entity ent_2,
-					 const DirectX::SimpleMath::Vector3& mass_point_1,
-					 const DirectX::SimpleMath::Vector3& mass_point_2,
-					 CollisionPreset collision_preset_1,
-					 CollisionPreset collision_preset_2,
-					 float penetration);
+		void Extrude(
+			float dt,
+			ecs::Registry* registry,
+			mapping::rename_type::Entity ent_1,
+			mapping::rename_type::Entity ent_2,
+			const DirectX::SimpleMath::Vector3& mass_point_1,
+			const DirectX::SimpleMath::Vector3& mass_point_2,
+			CollisionPreset collision_preset_1,
+			CollisionPreset collision_preset_2,
+			float penetration);
 
 		/**
 		 * @brief : レイとモデルの衝突判定
 		 */
-		bool IntersectRayVsModel(float dt,
-								 ecs::Registry* registry,
-								 const component::ModelComponent& model,
-								 component::RayCastComponent& ray_cast_comp
-		);
+		bool IntersectRayVsModel(
+			float dt,
+			ecs::Registry* registry,
+			const component::ModelComponent& model,
+			component::RayCastComponent& ray_cast_comp);
 
 		/**
 		 * @brief : 球と球の当たり判定
 		 *	        SphereCollisionComponentが持つSphere分処理を回す
 		 */
-		bool IntersectSphereVsSphere(float dt,
-									 ecs::Registry* registry,
-									 component::SphereCollisionComponent& sphere_1,
-									 component::SphereCollisionComponent& sphere_2
-		);
+		bool IntersectSphereVsSphere(
+			float dt,
+			ecs::Registry* registry,
+			component::SphereCollisionComponent& sphere_1,
+			component::SphereCollisionComponent& sphere_2);
 
 		/**
 		 * @brief : カプセルとカプセルの当たり判定
 		 */
-		bool IntersectCapsuleVsCapsule(float dt,
-									   ecs::Registry* registry,
-									   component::CapsuleCollisionComponent& capsule_1,
-									   component::CapsuleCollisionComponent& capsule_2
-		);
+		bool IntersectCapsuleVsCapsule(
+			float dt,
+			ecs::Registry* registry,
+			component::CapsuleCollisionComponent& capsule_1,
+			component::CapsuleCollisionComponent& capsule_2);
 
 		/**
 		 * @brief     : 球とカプセルの当たり判定
 		 * @attention : 同じエンティティ内での球とカプセルの判定は行わない
 		 */
-		bool IntersectSphereVsCapsule(float dt,
-									  ecs::Registry* registry,
-									  component::SphereCollisionComponent&  sphere,
-									  component::CapsuleCollisionComponent& capsule
-		);
+		bool IntersectSphereVsCapsule(
+			float dt,
+			ecs::Registry* registry,
+			component::SphereCollisionComponent& sphere,
+			component::CapsuleCollisionComponent& capsule);
 	};
 
 } // cumulonimbus::collision

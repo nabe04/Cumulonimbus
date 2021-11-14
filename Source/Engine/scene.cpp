@@ -26,10 +26,12 @@
 
 // Components
 #include "anim_sprite.h"
+#include "collision_component.h"
 #include "mesh_object.h"
 #include "transform_component.h"
 #include "hierarchy_component.h"
 #include "player_component.h"
+#include "sphere_collision_component.h"
 
 namespace cumulonimbus::scene
 {
@@ -128,6 +130,10 @@ namespace cumulonimbus::scene
 		registry->Rename(ent_main_camera, filename_helper::GetMainCamera());
 		// Todo : ライトコンポーネントを作成すれば...
 		// ライト
+
+		const mapping::rename_type::Entity test_ent = registry->CreateEntity();
+		registry->AddComponent<component::SphereCollisionComponent>(test_ent, CollisionTag::Player);
+		registry->GetComponent<component::SphereCollisionComponent>(test_ent).AddSphere();
 
 		// シーン名が決まって無いので"NoTitled"をセットする
 		locator::Locator::GetSystem()->SetCurrentScenePath(filename_helper::GetNoTitled());

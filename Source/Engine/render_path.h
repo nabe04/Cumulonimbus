@@ -218,8 +218,16 @@ namespace cumulonimbus::renderer
 			const component::ModelComponent* model_comp,
 			const camera::Camera* camera, const Light* light);
 
-		/*
-		 * brief : “–‚½‚è”»’è‚Ì•`‰æ
+		/**
+		 * @brief : ‘S‚Ä‚Ì“–‚½‚è”»’è‚Ì•`‰æ
+		 */
+		void RenderCollisions(
+			ID3D11DeviceContext* immediate_context, ecs::Registry* registry);
+		void RendereSphereCollision(ID3D11DeviceContext* immediate_context,
+			ecs::Registry* registry, const mapping::rename_type::Entity& entity);
+
+		/**
+		 * @brief : “–‚½‚è”»’è‚Ì•`‰æ
 		 */
 		void RenderCollision_Begin(
 				ID3D11DeviceContext* immediate_context,

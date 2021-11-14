@@ -132,7 +132,7 @@ namespace cumulonimbus::helper::imgui
 		{
 			for (int n = 0; n < items.size(); ++n)
 			{
-				bool is_selected = (current_item == items[n]);
+				const bool is_selected = (current_item == items[n]);
 				if (ImGui::Selectable(items[n].c_str(), is_selected))
 				{
 					current_item = items[n];

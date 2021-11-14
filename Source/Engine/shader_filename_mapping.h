@@ -18,6 +18,7 @@ namespace cumulonimbus::mapping::shader_filename
 		inline std::string SingleColor_VS()						{ return { "./Shader/cso/single_color_vs.cso" }; }
 		inline std::string SampleShader_VS()					{ return { "./Shader/cso/sample_shader_vs.cso" }; }
 		inline std::string DebugCollision_VS()					{ return { "./Shader/cso/debug_collision_vs.cso" }; }
+		inline std::string DebugPrimitive_VS()					{ return { "./Shader/cso/debug_primitive_vs.cso" }; }
 		inline std::string StandardSprite_VS()					{ return { "./Shader/cso/standard_sprite_vs.cso" }; }
 		inline std::string DepthExtraction_VS()					{ return { "./Shader/cso/variance_shadow_depth_extraction_vs.cso" }; }
 		inline std::string RefractionMapping_VS()				{ return { "./Shader/cso/refraction_mapping_vs.cso" }; }
@@ -44,6 +45,7 @@ namespace cumulonimbus::mapping::shader_filename
 		inline std::string SingleColor_PS()						{ return { "./Shader/cso/single_color_ps.cso" }; }
 		inline std::string SampleShader_PS()					{ return { "./Shader/cso/sample_shader_ps.cso" }; }
 		inline std::string DebugCollision_PS()					{ return { "./Shader/cso/debug_collision_ps.cso" }; }
+		inline std::string DebugPrimitive_PS()					{ return { "./Shader/cso/debug_primitive_ps.cso" }; }
 		inline std::string GlowExtraction_PS()					{ return { "./Shader/cso/glow_extraction_ps.cso" }; }
 		inline std::string StandardSprite_PS()					{ return { "./Shader/cso/standard_sprite_ps.cso" }; }
 		inline std::string SingleColorMTR_PS()					{ return { "./Shader/cso/single_color_mtr_ps.cso" }; }

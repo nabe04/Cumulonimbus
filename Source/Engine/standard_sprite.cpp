@@ -12,7 +12,7 @@ namespace cumulonimbus
 		StandardSpriteShader::StandardSpriteShader()
 			:Shader{}
 		{
-			// Setting the InputLayout
+			// InputLayout‚Ìİ’è
 			std::array<D3D11_INPUT_ELEMENT_DESC, 2 > layout =
 			{
 			 {

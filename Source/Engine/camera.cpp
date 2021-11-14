@@ -90,10 +90,10 @@ namespace cumulonimbus::camera
 		}
 
 		max_camera_angle		= other.max_camera_angle;
-		eye_position			=  other.eye_position;
+		eye_position			= other.eye_position;
 		focus_position			= other.focus_position;
 		focus_offset			= other.focus_offset;
-		up_vec					=  other.up_vec;
+		up_vec					= other.up_vec;
 		current_up_vec			= other.current_up_vec;
 		right_vec				= other.right_vec;
 		front_vec				= other.front_vec;

@@ -16,7 +16,6 @@ CBUFFER(DebugCollisionCB, CBSlot_DebugCollision)
 {
 	float4 collider_color;
 
-
 #ifdef __cplusplus
 	template <typename Archive>
 	void serialize(Archive && archive)

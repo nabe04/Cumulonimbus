@@ -6,6 +6,7 @@
 #include "camera_component.h"
 #include "file_path_helper.h"
 #include "sky_box.h"
+#include "collision_manager.h"
 
 CEREAL_CLASS_VERSION(cumulonimbus::system::System, 1)
 
@@ -16,21 +17,6 @@ namespace
 
 namespace cumulonimbus::system
 {
-	//template <class Archive>
-	//void System::serialize(Archive&& archive ,std::uint32_t const version)
-	//{
-	//	archive(
-	//		CEREAL_NVP(camera_texture)
-	//	);
-
-	//	if(version == 1)
-	//	{
-	//		archive(
-	//			CEREAL_NVP(sky_box)
-	//		);
-	//	}
-	//}
-
 	template <class Archive>
 	void System::save(Archive&& archive, std::uint32_t const version) const
 	{
@@ -73,8 +59,9 @@ namespace cumulonimbus::system
 
 	System::System()
 	{
-		camera_texture	= std::make_unique<camera::CameraTexture>(*this);
-		sky_box			= std::make_unique<graphics::SkyBox>(*this, locator::Locator::GetDx11Device()->device.Get(),".Data/Assets/cubemap/Table_Mountain/table_mountain.dds");
+		camera_texture		= std::make_unique<camera::CameraTexture>(*this);
+		collision_primitive = std::make_unique<collision::CollisionPrimitiveAsset>(*this);
+		sky_box				= std::make_unique<graphics::SkyBox>(*this, locator::Locator::GetDx11Device()->device.Get(),".Data/Assets/cubemap/Table_Mountain/table_mountain.dds");
 	}
 
 	void System::Save(const std::filesystem::path& save_path)
@@ -162,7 +149,7 @@ namespace cumulonimbus::system
 
 	void System::Render(ecs::Registry* registry)
 	{
-		for(auto& [hash,render_function] : render_functions)
+		for(auto& render_function : render_functions | std::views::values)
 		{
 			render_function(registry);
 		}
@@ -182,6 +169,11 @@ namespace cumulonimbus::system
 	camera::CameraTexture& System::GetCameraTexture() const
 	{
 		return *(camera_texture.get());
+	}
+
+	collision::CollisionPrimitiveAsset& System::GetCollisionPrimitive() const
+	{
+		return *(collision_primitive.get());
 	}
 
 	graphics::SkyBox& System::GetSkyBox() const

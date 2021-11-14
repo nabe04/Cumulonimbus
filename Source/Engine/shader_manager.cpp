@@ -6,6 +6,7 @@
 
 // Shaders
 // 3D
+#include "debug_primitive_shader.h"
 #include "3d_standard.h"
 #include "sample_shader.h"
 #include "diffuse.h"
@@ -335,6 +336,7 @@ namespace cumulonimbus::shader_system
 		using namespace mapping::shader_assets;
 		// Shaderのコンパイル
 		// 3D
+		RegistryShader<shader_system::DebugCollisionShader>(ShaderAsset3D::DebugCollision);
 		//RegistryShader<shader_system::SampleShader>				(ShaderAsset3D::SampleShader);
 		//RegistryShader<shader_system::DiffuseShader>			(ShaderAsset3D::Diffuse);
 		//RegistryShader<shader_system::PhongShader>				(ShaderAsset3D::Phong);
@@ -351,13 +353,13 @@ namespace cumulonimbus::shader_system
 	}
 
 	//-------------------  3D用シェーダーのBind,Unbind  ----------------------//
-	void ShaderManager::BindShader(const mapping::shader_assets::ShaderAsset3D asset)
+	void ShaderManager::BindShader(const mapping::shader_assets::ShaderAsset3D asset) const
 	{
 		shader3d_map.at(asset)->BindShader();
 		//shader3d_map.at(mapping::shader_assets::ShaderAsset3D::SampleShader)->BindShader();
 	}
 
-	void ShaderManager::UnbindShader(const mapping::shader_assets::ShaderAsset3D asset)
+	void ShaderManager::UnbindShader(const mapping::shader_assets::ShaderAsset3D asset) const
 	{
 		shader3d_map.at(asset)->UnbindShader();
 	}

@@ -20,6 +20,8 @@ namespace cumulonimbus::mapping::shader_assets
 		//RefractionMapping,
 		//SingleColor,
 
+		DebugPrimitive,
+		DebugCollision,
 		Collision,
 
 		End

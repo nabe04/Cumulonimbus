@@ -27,7 +27,6 @@
 #include "sprite_component.h"
 #include "transform_component.h"
 
-
 namespace cumulonimbus::renderer
 {
 	RenderPath::RenderPath(ID3D11Device* device)
@@ -96,19 +95,19 @@ namespace cumulonimbus::renderer
 			if (!scene->GetIsVisible())
 				continue;
 
-			if (ecs::Registry& registry = *scene->GetRegistry();
-				registry.GetArray<component::ModelComponent>().GetComponents().size() > 0)
-			{
-				// GBuffer‚Ö‚Ì•`‰æˆ—
-				Render3DToGBuffer_Begin(immediate_context);
-				Render3DToGBuffer(immediate_context, &registry, &camera, scene->GetLight());
-				Render3DToGBuffer_End(immediate_context, &camera);
+			ecs::Registry& registry = *scene->GetRegistry();
 
-				// “–‚½‚è”»’è‚Ì•`‰æ
-				RenderCollision_Begin(immediate_context, &camera);
-				RenderCollision(immediate_context, &registry);
-				RenderCollision_End(immediate_context, &camera);
-			}
+			// GBuffer‚Ö‚Ì•`‰æˆ—
+			Render3DToGBuffer_Begin(immediate_context);
+			Render3DToGBuffer(immediate_context, &registry, &camera, scene->GetLight());
+			Render3DToGBuffer_End(immediate_context, &camera);
+
+
+
+			//RenderCollision_Begin(immediate_context, &camera);
+			//RenderCollision(immediate_context, &registry);
+			//RenderCollision_End(immediate_context, &camera);
+
 		}
 
 		for (auto& scene : scenes | std::views::values)
@@ -231,18 +230,16 @@ namespace cumulonimbus::renderer
 		RenderSkyBox(immediate_context, camera, light);
 		RenderSkyBox_End(immediate_context, camera);
 
-		if (registry->GetArray<component::ModelComponent>().GetComponents().size() > 0)
-		{
-			// GBuffer‚Ö‚Ì•`‰æˆ—
-			Render3DToGBuffer_Begin(immediate_context);
-			Render3DToGBuffer(immediate_context, registry, camera, light);
-			Render3DToGBuffer_End(immediate_context, camera);
+		// GBuffer‚Ö‚Ì•`‰æˆ—
+		Render3DToGBuffer_Begin(immediate_context);
+		Render3DToGBuffer(immediate_context, registry, camera, light);
+		Render3DToGBuffer_End(immediate_context, camera);
 
-			// “–‚½‚è”»’è‚Ì•`‰æ
-			RenderCollision_Begin(immediate_context, camera);
-			RenderCollision(immediate_context, registry);
-			RenderCollision_End(immediate_context, camera);
-		}
+		//// “–‚½‚è”»’è‚Ì•`‰æ
+		//RenderCollision_Begin(immediate_context, camera);
+		//RenderCollision(immediate_context, registry);
+		//RenderCollision_End(immediate_context, camera);
+
 
 		// 2DƒXƒvƒ‰ƒCƒg‚Ì•`‰æ
 		Render2D(immediate_context, registry, camera, true);
@@ -441,6 +438,8 @@ namespace cumulonimbus::renderer
 
 			RenderModel(immediate_context, registry, ent, &model_comp, camera, light);
 		}
+
+		RenderCollisions(immediate_context, registry);
 	}
 
 	void RenderPath::Render3DToGBuffer_End(
@@ -655,6 +654,57 @@ namespace cumulonimbus::renderer
 
 			}
 		}
+	}
+
+	void RenderPath::RenderCollisions(
+		ID3D11DeviceContext* immediate_context,
+		ecs::Registry* registry)
+	{
+		for(auto& sphere_collision_comp : registry->GetArray<component::SphereCollisionComponent>().GetComponents())
+		{// ‹…ƒ‚ƒfƒ‹‚Ì•`‰æ
+			const mapping::rename_type::Entity ent = sphere_collision_comp.GetEntity();
+			RendereSphereCollision(immediate_context, registry, ent);
+		}
+	}
+
+	void RenderPath::RendereSphereCollision(
+		ID3D11DeviceContext* immediate_context,
+		ecs::Registry* registry, const mapping::rename_type::Entity& entity)
+	{
+		const mapping::rename_type::UUID sphere_id = locator::Locator::GetSystem()->GetCollisionPrimitive().GetSphereId();
+		if (!locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>()->HasModel(sphere_id))
+			return;
+
+		shader_manager->BindShader(mapping::shader_assets::ShaderAsset3D::DebugCollision);
+		rasterizer->Activate(immediate_context, RasterizeState::Wireframe);
+		const asset::Model& sphere_model = locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>()->GetModel(sphere_id);
+
+		for (auto& sphere_collision = registry->GetComponent<component::SphereCollisionComponent>(entity);
+			const auto& sphere : sphere_collision.GetSpheres())
+		{
+			for (const auto& mesh : sphere_model.GetModelData().GetMeshes())
+			{
+				// ƒƒbƒVƒ…’PˆÊƒRƒ“ƒXƒ^ƒ“ƒgƒoƒbƒtƒ@XV
+				TransformCB transform{};
+				transform.bone_transforms[0] = sphere.second.world_transform_matrix;
+
+				registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
+
+				UINT stride = sizeof(shader::Vertex);
+				UINT offset = 0;
+				immediate_context->IASetVertexBuffers(0, 1, mesh.vertex_buffer.GetAddressOf(), &stride, &offset);
+				immediate_context->IASetIndexBuffer(mesh.index_buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+
+				locator::Locator::GetDx11Device()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleList);
+
+				for (const asset::ModelData::Subset& subset : mesh.subsets)
+				{
+					immediate_context->DrawIndexed(subset.index_count, subset.start_index, 0);
+				}
+			}
+		}
+
+		shader_manager->UnbindShader(mapping::shader_assets::ShaderAsset3D::DebugCollision);
 	}
 
 	void RenderPath::RenderCollision_Begin(

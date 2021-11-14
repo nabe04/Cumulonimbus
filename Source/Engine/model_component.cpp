@@ -146,9 +146,9 @@ namespace cumulonimbus::component
 				items_path.emplace_back(value);
 				items.emplace_back(items_path.back().filename().string());
 			}
-			// Combo内でアイテム選択時
+			
 			if (helper::imgui::Combo("Model", current_item, items))
-			{
+			{// ImGui::Combo内でアイテム選択時
 				for (const auto& [key, value] : asset_sheet_manager.GetSheet<asset::Model>().sheet)
 				{
 					if (current_item != std::filesystem::path{ value }.filename().string())
@@ -258,7 +258,7 @@ namespace cumulonimbus::component
 		return current_keyframe < (animation.num_key_frame - 1);
 	}
 
-	int ModelComponent::GetNodeIndexFromName(const std::string& node_name)
+	int ModelComponent::GetNodeIndexFromName(const std::string& node_name) const
 	{
 		for(u_int node_index = 0; node_index < nodes.size();++node_index)
 		{
@@ -270,6 +270,20 @@ namespace cumulonimbus::component
 
 		// ノード名が見つからなかったので-1(インデックスで存在しない番号)を返す
 		return -1;
+	}
+
+	bool ModelComponent::HasNodeFromName(const std::string& node_name) const
+	{
+		for (u_int node_index = 0; node_index < nodes.size(); ++node_index)
+		{
+			if (nodes.at(node_index).name.compare(node_name) == 0)
+			{// ノード名が見つかったので現在のインデックス番号を返す
+				return true;
+			}
+		}
+
+		// ノード名が見つからなかったので-1(インデックスで存在しない番号)を返す
+		return false;
 	}
 
 	void ModelComponent::SwitchAnimation(

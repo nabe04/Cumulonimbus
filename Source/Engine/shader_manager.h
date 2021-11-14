@@ -196,8 +196,8 @@ namespace cumulonimbus
 			 *	 	    現在のマテリアルに応じてセットする
 			 *		    シェーダーを変える
 			 */
-			void BindShader(mapping::shader_assets::ShaderAsset3D asset);
-			void UnbindShader(mapping::shader_assets::ShaderAsset3D asset);
+			void BindShader(mapping::shader_assets::ShaderAsset3D asset) const;
+			void UnbindShader(mapping::shader_assets::ShaderAsset3D asset) const;
 
 			/**
 			 * @brief : Material2DComponentに登録されている
