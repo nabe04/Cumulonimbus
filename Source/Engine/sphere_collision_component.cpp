@@ -185,15 +185,6 @@ namespace cumulonimbus::component
 	{
 		if(GetRegistry()->CollapsingHeader<SphereCollisionComponent>(GetEntity(),"Sphere Collider"))
 		{
-			int no = 0;
-
-			std::vector<std::string> items{};
-			items.reserve(spheres.size());
-			for(const auto& sphere_name : spheres | std::views::keys)
-			{
-				items.emplace_back(sphere_name);
-			}
-
 			//-- 球の追加&削除処理 --//
 			ImGui::Text("Add Sphere");
 			ImGui::SameLine();
@@ -219,6 +210,13 @@ namespace cumulonimbus::component
 				}
 			}
 
+			std::vector<std::string> items{};
+			items.reserve(spheres.size());
+			for (const auto& sphere_name : spheres | std::views::keys)
+			{
+				items.emplace_back(sphere_name);
+			}
+
 			//-- ImGui::Comboでの選択中のコリジョン変更 --//
 			if(helper::imgui::Combo("Sphere Data",selected_collision_name,items))
 			{
@@ -228,10 +226,13 @@ namespace cumulonimbus::component
 			//-- 選択されている球の設定 --//
 			if (spheres.contains(selected_collision_name))
 			{
+				AttachSocket(spheres.at(selected_collision_name).bone_name);
 				ImGui::DragFloat3("Position", (float*)&spheres.at(selected_collision_name).offset, 0.01f, -100.0f, 100.0f);
 				ImGui::DragFloat("Radius", &spheres.at(selected_collision_name).radius, 0.1f, 0.1f, 50);
-				AttachSocket(spheres.at(selected_collision_name).bone_name);
 			}
+
+
+			//int no = 0;
 
 			//for (auto& [sphere_name,sphere_data]: spheres)
 			//{

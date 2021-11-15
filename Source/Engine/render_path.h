@@ -223,8 +223,14 @@ namespace cumulonimbus::renderer
 		 */
 		void RenderCollisions(
 			ID3D11DeviceContext* immediate_context, ecs::Registry* registry);
-		void RendereSphereCollision(ID3D11DeviceContext* immediate_context,
-			ecs::Registry* registry, const mapping::rename_type::Entity& entity);
+		void RenderSphereCollision(
+			ID3D11DeviceContext* immediate_context,
+			ecs::Registry* registry, 
+			const mapping::rename_type::Entity& entity);
+		void RenderCapsuleCollision(
+			ID3D11DeviceContext* immediate_context,
+			ecs::Registry* registry,
+			const mapping::rename_type::Entity& entity);
 
 		/**
 		 * @brief : “–‚½‚è”»’è‚Ì•`‰æ

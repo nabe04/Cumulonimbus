@@ -19,14 +19,22 @@ namespace cumulonimbus
 			DirectX::SimpleMath::Vector3 rotation{};		// カプセルの回転調節値(度数法)
 			DirectX::SimpleMath::Vector3 start{ 0,-1,0 };	// カプセルの始点(デフォルト値 : { 0, 1, 0})
 			DirectX::SimpleMath::Vector3 end  { 0, 1,0 };	// カプセルの終点(デフォルト値 : { 0,-1, 0})
-			std::string					 bone_name{ "" };	// FBXモデルのボーンの位置名
+			std::string					 bone_name{};	// FBXモデルのボーンの位置名
 			float						 length{ 2 };		// カプセルの端点間の長さ
 			float						 radius{ 1 };		// カプセルの半径
 			HitResult					 hit_result{};		// ヒット結果
 			CollisionPreset				 collision_preset{ CollisionPreset::OverlapAll };	// コリジョンのプロファイル
+			DirectX::SimpleMath::Vector4 base_color{ 1.f,1.f,1.f,1.f };
+			DirectX::SimpleMath::Vector4 hit_color{ 1.f,.0f,.0f,1.f };
 
-			template <class Archive>
-			void serialize(Archive&& archive);
+			//template <class Archive>
+			//void serialize(Archive&& archive);
+
+			template<class Archive>
+			void load(Archive&& archive, uint32_t version);
+
+			template<class Archive>
+			void save(Archive&& archive, uint32_t version) const;
 		};
 	} // collision
 
@@ -41,10 +49,11 @@ namespace cumulonimbus
 			explicit CapsuleCollisionComponent()  = default; // for cereal
 			~CapsuleCollisionComponent() override = default;
 
-			void PreGameUpdate(float dt)		override;
+			void CommonUpdate(float dt)		override;
+			void PreGameUpdate(float dt)	override;
 			void GameUpdate(float dt)		override;
 			void PostGameUpdate(float dt)	override;
-			void RenderImGui()			override;
+			void RenderImGui()				override;
 
 			void Load(ecs::Registry* registry) override;
 

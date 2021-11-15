@@ -19,7 +19,6 @@
 #include "camera_component.h"
 #include "capsule_collison_component.h"
 #include "fbx_model_component.h"
-#include "mesh_object.h"
 #include "model_component.h"
 #include "sky_box.h"
 #include "sphere_collision_component.h"
@@ -662,14 +661,20 @@ namespace cumulonimbus::renderer
 		ID3D11DeviceContext* immediate_context,
 		ecs::Registry* registry)
 	{
-		for(auto& sphere_collision_comp : registry->GetArray<component::SphereCollisionComponent>().GetComponents())
+		for(const auto& sphere_collision_comp : registry->GetArray<component::SphereCollisionComponent>().GetComponents())
 		{// 球モデルの描画
 			const mapping::rename_type::Entity ent = sphere_collision_comp.GetEntity();
-			RendereSphereCollision(immediate_context, registry, ent);
+			RenderSphereCollision(immediate_context, registry, ent);
+		}
+
+		for(const auto& capsule_collision_comp : registry->GetArray<component::CapsuleCollisionComponent>().GetComponents())
+		{// カプセルモデルの描画
+			const mapping::rename_type::Entity ent = capsule_collision_comp.GetEntity();
+			RenderCapsuleCollision(immediate_context, registry, ent);
 		}
 	}
 
-	void RenderPath::RendereSphereCollision(
+	void RenderPath::RenderSphereCollision(
 		ID3D11DeviceContext* immediate_context,
 		ecs::Registry* registry, const mapping::rename_type::Entity& entity)
 	{
@@ -689,6 +694,47 @@ namespace cumulonimbus::renderer
 				// メッシュ単位コンスタントバッファ更新
 				TransformCB transform{};
 				transform.bone_transforms[0] = sphere.second.world_transform_matrix;
+
+				registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
+
+				UINT stride = sizeof(shader::Vertex);
+				UINT offset = 0;
+				immediate_context->IASetVertexBuffers(0, 1, mesh.vertex_buffer.GetAddressOf(), &stride, &offset);
+				immediate_context->IASetIndexBuffer(mesh.index_buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+
+				locator::Locator::GetDx11Device()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleList);
+
+				for (const asset::ModelData::Subset& subset : mesh.subsets)
+				{
+					immediate_context->DrawIndexed(subset.index_count, subset.start_index, 0);
+				}
+			}
+		}
+
+		shader_manager->UnbindShader(mapping::shader_assets::ShaderAsset3D::DebugCollision);
+	}
+
+	void RenderPath::RenderCapsuleCollision(
+		ID3D11DeviceContext* immediate_context,
+		ecs::Registry* registry,
+		const mapping::rename_type::Entity& entity)
+	{
+		const mapping::rename_type::UUID capsule_id = locator::Locator::GetSystem()->GetCollisionPrimitive().GetCapsuleId();
+		if (!locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>()->HasModel(capsule_id))
+			return;
+
+		shader_manager->BindShader(mapping::shader_assets::ShaderAsset3D::DebugCollision);
+		rasterizer->Activate(immediate_context, RasterizeState::Wireframe);
+		const asset::Model& capsule_model = locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>()->GetModel(capsule_id);
+
+		for (auto& capsule_collision = registry->GetComponent<component::CapsuleCollisionComponent>(entity);
+		     const auto& capsule : capsule_collision.GetCapsules() | std::views::values)
+		{
+			for (const auto& mesh : capsule_model.GetModelData().GetMeshes())
+			{
+				// メッシュ単位コンスタントバッファ更新
+				TransformCB transform{};
+				transform.bone_transforms[0] = capsule.world_transform_matrix;
 
 				registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
 
@@ -747,14 +793,14 @@ namespace cumulonimbus::renderer
 										  ecs::Registry* registry, mapping::rename_type::Entity entity,
 										  const FbxModelResource* model_resource)
 	{
-		auto& sphere_collision = registry->GetComponent<component::SphereCollisionComponent>(entity);
-		for (const auto& sphere : sphere_collision.GetSpheres())
+		for (auto& sphere_collision = registry->GetComponent<component::SphereCollisionComponent>(entity);
+		     const auto& sphere : sphere_collision.GetSpheres() | std::views::values)
 		{
 			for (const auto& mesh : model_resource->GetModelData().meshes)
 			{
 				// メッシュ単位コンスタントバッファ更新
 				TransformCB transform{};
-				transform.bone_transforms[0] = sphere.second.world_transform_matrix;
+				transform.bone_transforms[0] = sphere.world_transform_matrix;
 
 				registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
 
@@ -784,14 +830,14 @@ namespace cumulonimbus::renderer
 
 	void RenderPath::RenderCapsuleCollisionModel(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, mapping::rename_type::Entity entity, const FbxModelResource* model_resource)
 	{
-		auto& capsule_collision = registry->GetComponent<component::CapsuleCollisionComponent>(entity);
-		for (auto& capsule : capsule_collision.GetCapsules())
+		for (auto& capsule_collision = registry->GetComponent<component::CapsuleCollisionComponent>(entity);
+		     auto& capsule : capsule_collision.GetCapsules() | std::views::values)
 		{
 			for (const auto& mesh : model_resource->GetModelData().meshes)
 			{
 				// メッシュ単位コンスタントバッファ更新
 				TransformCB transform{};
-				transform.bone_transforms[0] = capsule.second.world_transform_matrix;
+				transform.bone_transforms[0] = capsule.world_transform_matrix;
 
 				registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
 
@@ -803,16 +849,6 @@ namespace cumulonimbus::renderer
 
 				for (const ModelData::Subset& subset : mesh.subsets)
 				{
-
-					//DebugCollisionCB cb_collision;
-					//if (sphere.second.is_hit)
-					//{
-					//	cb_collision.collider_color = { 1.f,.0f,.0f,1.f };
-					//}
-					//else
-					//{
-					//	cb_collision.collider_color = { .0f,.0f,1.f,1.f };
-					//}
 					immediate_context->DrawIndexed(subset.index_count, subset.start_index, 0);
 				}
 			}
@@ -1124,6 +1160,5 @@ namespace cumulonimbus::renderer
 		registry->GetComponent<component::TransformComponent>(entity).UnbindCBuffer();
 		camera->UnbindCBuffer();
 	}
-
 
 } // cumulonimbus::renderer

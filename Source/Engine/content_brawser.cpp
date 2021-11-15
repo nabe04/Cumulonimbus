@@ -4,7 +4,6 @@
 #include "resource_manager.h"
 #include "scene.h"
 
-#include "mesh_object.h"
 #include "fbx_model_component.h"
 
 void ContentBrowser::Render(cumulonimbus::scene::Scene* scene)

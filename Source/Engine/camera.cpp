@@ -25,8 +25,8 @@ namespace cumulonimbus::camera
 											    cb_camera->GetData().camera_at.z - cb_camera->GetData().camera_position.z };
 		cb_camera->GetData().camera_fov		= 0.0f;
 		cb_camera->GetData().camera_aspect	= 0.0f;
-		cb_camera->GetData().camera_width	= locator::Locator::GetWindow()->Width();
-		cb_camera->GetData().camera_height	= locator::Locator::GetWindow()->Height();
+		cb_camera->GetData().camera_width	= static_cast<float>(locator::Locator::GetWindow()->Width());
+		cb_camera->GetData().camera_height	= static_cast<float>(locator::Locator::GetWindow()->Height());
 		cb_camera->GetData().camera_view_matrix = { 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
 		cb_camera->GetData().camera_view_projection_matrix = { 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
 
