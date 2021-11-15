@@ -4,6 +4,7 @@
 
 #include "cereal_helper.h"
 #include "ecs.h"
+#include "cum_imgui_helper.h"
 // components
 #include "fbx_model_component.h"
 #include "model_component.h"
@@ -108,10 +109,7 @@ namespace cumulonimbus::component
 
 				if (sphere.bone_name.empty())
 				{
-					//// モデルが持つワールド変換行列
-					//DirectX::SimpleMath::Matrix world_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorldMatrix();
-					//world_transform._11 = world_transform._22 = world_transform._33 = world_transform._44 = 1.0f;
-					//sphere.world_transform_matrix = model_local_matrix * world_transform;
+					// モデルが持つワールド変換行列
 					DefaultTransform(sphere, model_local_matrix);
 				}
 				else
@@ -121,7 +119,8 @@ namespace cumulonimbus::component
 					{
 						if (model_comp->HasNodeFromName(sphere.bone_name.c_str()))
 						{
-							sphere.world_transform_matrix = model_comp->GetNodeMatrix(sphere.bone_name.c_str());
+							DirectX::SimpleMath::Matrix world_transform = model_comp->GetNodeMatrix(sphere.bone_name.c_str());
+							sphere.world_transform_matrix = model_local_matrix * world_transform;
 						}
 						else
 						{
@@ -132,8 +131,6 @@ namespace cumulonimbus::component
 					{
 						DefaultTransform(sphere, model_local_matrix);
 					}
-					// 旧方式
-					//sphere.second.world_transform_matrix = model_local_matrix * GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).GetNodeMatrix(sphere.second.bone_name.c_str());
 				}
 			}
 
@@ -190,17 +187,63 @@ namespace cumulonimbus::component
 		{
 			int no = 0;
 
-			for (auto& [sphere_name,sphere_data]: spheres)
+			std::vector<std::string> items{};
+			items.reserve(spheres.size());
+			for(const auto& sphere_name : spheres | std::views::keys)
 			{
-				if (ImGui::TreeNode((void*)(intptr_t)no, "Info %d", no))
-				{
-					ImGui::DragFloat3("Position", (float*)&sphere_data.offset, 0.01f, -100.0f, 100.0f);
-					ImGui::DragFloat("Radius", &sphere_data.radius, 0.1f, 0.1f, 50);
-
-					ImGui::TreePop();
-				}
-				no++;
+				items.emplace_back(sphere_name);
 			}
+
+			//-- 球の追加&削除処理 --//
+			ImGui::Text("Add Sphere");
+			ImGui::SameLine();
+			if(ImGui::Button(ICON_FA_PLUS))
+			{
+				AddSphere();
+			}
+			ImGui::SameLine();
+			if(ImGui::Button(ICON_FA_MINUS))
+			{
+				if (const auto itr = spheres.find(selected_collision_name);
+					itr != spheres.end())
+				{
+					spheres.erase(itr);
+					if(spheres.size() > 0)
+					{
+						selected_collision_name = spheres.begin()->first;
+					}
+					else
+					{
+						selected_collision_name = "";
+					}
+				}
+			}
+
+			//-- ImGui::Comboでの選択中のコリジョン変更 --//
+			if(helper::imgui::Combo("Sphere Data",selected_collision_name,items))
+			{
+
+			}
+
+			//-- 選択されている球の設定 --//
+			if (spheres.contains(selected_collision_name))
+			{
+				ImGui::DragFloat3("Position", (float*)&spheres.at(selected_collision_name).offset, 0.01f, -100.0f, 100.0f);
+				ImGui::DragFloat("Radius", &spheres.at(selected_collision_name).radius, 0.1f, 0.1f, 50);
+				AttachSocket(spheres.at(selected_collision_name).bone_name);
+			}
+
+			//for (auto& [sphere_name,sphere_data]: spheres)
+			//{
+			//	if (ImGui::TreeNode((void*)(intptr_t)no, "Info %d", no))
+			//	{
+			//		ImGui::DragFloat3("Position", (float*)&sphere_data.offset, 0.01f, -100.0f, 100.0f);
+			//		ImGui::DragFloat("Radius", &sphere_data.radius, 0.1f, 0.1f, 50);
+
+			//		ImGui::TreePop();
+			//	}
+			//	no++;
+			//}
 		}
 	}
 
@@ -225,6 +268,7 @@ namespace cumulonimbus::component
 				else
 				{
 					spheres.emplace(new_name, sphere);
+					selected_collision_name = new_name;
 					return new_name;
 				}
 			}
@@ -235,6 +279,7 @@ namespace cumulonimbus::component
 				assert((!"The sphere name already exists(SphereCollisionComponent::AddSphere)"));
 
 			spheres.emplace(name, sphere);
+			selected_collision_name = name;
 			return name;
 		}
 	}

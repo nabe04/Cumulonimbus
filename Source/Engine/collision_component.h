@@ -5,6 +5,8 @@
 
 #include "component_base.h"
 #include "cereal_helper.h"
+#include "constant_buffer.h"
+#include "debug_collision.h"
 
 namespace cumulonimbus::component
 {
@@ -121,6 +123,15 @@ namespace cumulonimbus::component
 		[[nodiscard]] CollisionTag GetCollisionTag() const;
 	protected:
 		CollisionTag		 collision_tag;
+		buffer::ConstantBuffer<DebugCollisionCB> cbuffer{};
+		// GUI上で現在選択されているコリジョンの名前
+		std::string selected_collision_name{};
+
+		/**
+		 * @brief : ModelComponentを保持していた場合のボーン位置の変更
+		 * @remark : ImGui描画処理内で使用する
+		 */
+		void AttachSocket(std::string& socket_name);
 	};
 } // cumulonimbus::component
 

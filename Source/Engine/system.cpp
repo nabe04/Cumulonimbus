@@ -8,7 +8,7 @@
 #include "sky_box.h"
 #include "collision_manager.h"
 
-CEREAL_CLASS_VERSION(cumulonimbus::system::System, 1)
+CEREAL_CLASS_VERSION(cumulonimbus::system::System, 2)
 
 namespace
 {
@@ -29,7 +29,8 @@ namespace cumulonimbus::system
 			archive(
 				CEREAL_NVP(sky_box),
 				CEREAL_NVP(current_scene_path),
-				CEREAL_NVP(default_scene_path)
+				CEREAL_NVP(default_scene_path),
+				CEREAL_NVP(collision_primitive)
 			);
 		}
 	}
@@ -52,7 +53,8 @@ namespace cumulonimbus::system
 			archive(
 				CEREAL_NVP(sky_box),
 				CEREAL_NVP(current_scene_path),
-				CEREAL_NVP(default_scene_path)
+				CEREAL_NVP(default_scene_path),
+				CEREAL_NVP(collision_primitive)
 			);
 		}
 	}
@@ -96,10 +98,14 @@ namespace cumulonimbus::system
 				camera_texture = std::make_unique<camera::CameraTexture>(*this);
 			if(!sky_box.get())
 				sky_box = std::make_unique<graphics::SkyBox>(*this, locator::Locator::GetDx11Device()->device.Get());
+			if(!collision_primitive.get())
+				collision_primitive = std::make_unique<collision::CollisionPrimitiveAsset>(*this);
 
 			// System::Renderì‡ä÷êîÇÃçƒìoò^(çƒì«çûÇ≥ÇÍÇΩÇ‡ÇÃÇÃÇ›)
 			RegisterRenderFunction(utility::GetHash<camera::CameraTexture>(),
 								   [&](ecs::Registry* registry) {camera_texture->RenderImGui(registry); });
+			RegisterRenderFunction(utility::GetHash<collision::CollisionPrimitiveAsset>(),
+				[&](ecs::Registry* registry) {collision_primitive->RenderImGui(registry); });
 
 			sky_box->Load(*this);
 		};
@@ -143,8 +149,6 @@ namespace cumulonimbus::system
 	void System::Update(const float dt)
 	{
 		sky_box->Update(dt);
-		auto a = current_scene_path;
-		int b;
 	}
 
 	void System::Render(ecs::Registry* registry)

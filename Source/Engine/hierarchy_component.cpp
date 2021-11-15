@@ -100,7 +100,7 @@ namespace cumulonimbus::component
 			if (auto* model_comp = GetRegistry()->TryGetComponent<ModelComponent>(parent_entity);
 				model_comp)
 			{
-				// ImGui::Comboで表示用の
+				// ImGui::Comboで表示用のボーン名一覧
 				std::vector<std::string> node_name_items{};
 				node_name_items.reserve(model_comp->GetNodes().size() + 1);
 				node_name_items.emplace_back(filename_helper::GetNone());

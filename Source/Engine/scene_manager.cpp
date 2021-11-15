@@ -174,6 +174,7 @@ namespace cumulonimbus::scene
 	void SceneManager::UnInitialize()
 	{
 		active_scenes.clear();
+		system->Save();
 	}
 
 	void SceneManager::Update(const float dt)
