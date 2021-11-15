@@ -90,10 +90,10 @@ dcl_temps 5
 //   v4.x <- vin.bone_indices.x; v4.y <- vin.bone_indices.y; v4.z <- vin.bone_indices.z; v4.w <- vin.bone_indices.w; 
 //   o0.x <- <main return value>.position.x; o0.y <- <main return value>.position.y; o0.z <- <main return value>.position.z; o0.w <- <main return value>.position.w
 //
-#line 16 "D:\Desktop\Cumulonimbus\Shader\debug_collision_vs.hlsl"
+#line 15 "D:\Desktop\Cumulonimbus\Shader\debug_collision_vs.hlsl"
 itof r0.xyz, l(0, 0, 0, 0)  // r0.x <- world_pos.x; r0.y <- world_pos.y; r0.z <- world_pos.z
 
-#line 18
+#line 17
 mov r0.w, l(0)  // r0.w <- i
 mov r1.xyz, r0.xyzx  // r1.x <- world_pos.x; r1.y <- world_pos.y; r1.z <- world_pos.z
 mov r1.w, r0.w  // r1.w <- i
@@ -101,7 +101,7 @@ loop
   ilt r2.x, r1.w, l(4)
   breakc_z r2.x
 
-#line 23
+#line 22
   dp4 r2.x, v3.xyzw, icb[r1.w + 0].xyzw
   and r3.xyzw, v4.xyzw, icb[r1.w + 4].xyzw
   or r2.yz, r3.yywy, r3.xxzx
@@ -117,11 +117,11 @@ loop
   mul r2.xyz, r2.yzwy, r2.xxxx
   add r1.xyz, r1.xyzx, r2.xyzx
 
-#line 25
+#line 24
   iadd r1.w, r1.w, l(1)
 endloop 
 
-#line 27
+#line 26
 mul r0.xyzw, r1.xxxx, cb1[8].xyzw
 mul r2.xyzw, r1.yyyy, cb1[9].xyzw
 add r0.xyzw, r0.xyzw, r2.xyzw
@@ -130,10 +130,10 @@ add r0.xyzw, r0.xyzw, r1.xyzw
 mul r1.xyzw, cb1[11].xyzw, l(1.000000, 1.000000, 1.000000, 1.000000)
 add r0.xyzw, r0.xyzw, r1.xyzw  // r0.x <- wvp_pos.x; r0.y <- wvp_pos.y; r0.z <- wvp_pos.z; r0.w <- wvp_pos.w
 
-#line 29
+#line 28
 mov r0.xyzw, r0.xyzw  // r0.x <- vout.position.x; r0.y <- vout.position.y; r0.z <- vout.position.z; r0.w <- vout.position.w
 
-#line 31
+#line 30
 mov o0.xyzw, r0.xyzw
 ret 
 // Approximately 33 instruction slots used

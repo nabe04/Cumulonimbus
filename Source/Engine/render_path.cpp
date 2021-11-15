@@ -183,10 +183,10 @@ namespace cumulonimbus::renderer
 					Render3DToGBuffer(immediate_context, &registry, camera_comp.GetCamera(), scene->GetLight());
 					Render3DToGBuffer_End(immediate_context, camera_comp.GetCamera());
 
-					// “–‚½‚è”»’è‚Ì•`‰æ
-					RenderCollision_Begin(immediate_context, camera_comp.GetCamera());
-					RenderCollision(immediate_context, &registry);
-					RenderCollision_End(immediate_context, camera_comp.GetCamera());
+					//// “–‚½‚è”»’è‚Ì•`‰æ
+					//RenderCollision_Begin(immediate_context, camera_comp.GetCamera());
+					//RenderCollision(immediate_context, &registry);
+					//RenderCollision_End(immediate_context, camera_comp.GetCamera());
 				}
 			}
 		}
@@ -281,10 +281,10 @@ namespace cumulonimbus::renderer
 				Render3DToGBuffer(immediate_context, registry, camera_comp.GetCamera(), light);
 				Render3DToGBuffer_End(immediate_context, camera_comp.GetCamera());
 
-				// “–‚½‚è”»’è‚Ì•`‰æ
-				RenderCollision_Begin(immediate_context, camera_comp.GetCamera());
-				RenderCollision(immediate_context, registry);
-				RenderCollision_End(immediate_context, camera_comp.GetCamera());
+				//// “–‚½‚è”»’è‚Ì•`‰æ
+				//RenderCollision_Begin(immediate_context, camera_comp.GetCamera());
+				//RenderCollision(immediate_context, registry);
+				//RenderCollision_End(immediate_context, camera_comp.GetCamera());
 			}
 		}
 
@@ -439,7 +439,9 @@ namespace cumulonimbus::renderer
 			RenderModel(immediate_context, registry, ent, &model_comp, camera, light);
 		}
 
+		camera->BindCBuffer();
 		RenderCollisions(immediate_context, registry);
+		camera->UnbindCBuffer();
 	}
 
 	void RenderPath::Render3DToGBuffer_End(

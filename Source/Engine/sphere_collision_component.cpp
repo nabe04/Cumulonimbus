@@ -82,17 +82,7 @@ namespace cumulonimbus::component
 		SetEntity(ent);
 	}
 
-	void SphereCollisionComponent::PreGameUpdate(float dt)
-	{
-
-	}
-
-	void SphereCollisionComponent::GameUpdate(float dt)
-	{
-
-	}
-
-	void SphereCollisionComponent::PostGameUpdate(float dt)
+	void SphereCollisionComponent::CommonUpdate(float dt)
 	{
 		auto DefaultTransform = [&](collision::Sphere& sphere, const DirectX::SimpleMath::Matrix& local_mat)
 		{
@@ -126,10 +116,10 @@ namespace cumulonimbus::component
 				}
 				else
 				{
-					if(auto* model_comp = GetRegistry()->TryGetComponent<component::ModelComponent>(GetEntity());
-					   model_comp)
+					if (auto* model_comp = GetRegistry()->TryGetComponent<component::ModelComponent>(GetEntity());
+						model_comp)
 					{
-						if(model_comp->HasNodeFromName(sphere.bone_name.c_str()))
+						if (model_comp->HasNodeFromName(sphere.bone_name.c_str()))
 						{
 							sphere.world_transform_matrix = model_comp->GetNodeMatrix(sphere.bone_name.c_str());
 						}
@@ -150,9 +140,9 @@ namespace cumulonimbus::component
 			{// HitEvent‚ÌXV
 				sphere.hit_result.is_old_hit = sphere.hit_result.is_hit;
 
-				if(sphere.hit_result.is_hit)
+				if (sphere.hit_result.is_hit)
 				{
-					if(sphere.hit_result.is_old_hit)
+					if (sphere.hit_result.is_old_hit)
 					{// ‘¼‚ÌCollision‚ÉG‚ê‚Ä‚¢‚éŠÔ
 						sphere.hit_result.hit_event = collision::HitEvent::OnCollisionStay;
 					}
@@ -178,9 +168,40 @@ namespace cumulonimbus::component
 	}
 
 
-	void SphereCollisionComponent::RenderImGui()
+	void SphereCollisionComponent::PreGameUpdate(float dt)
 	{
 
+	}
+
+	void SphereCollisionComponent::GameUpdate(float dt)
+	{
+
+	}
+
+	void SphereCollisionComponent::PostGameUpdate(float dt)
+	{
+
+	}
+
+
+	void SphereCollisionComponent::RenderImGui()
+	{
+		if(GetRegistry()->CollapsingHeader<SphereCollisionComponent>(GetEntity(),"Sphere Collider"))
+		{
+			int no = 0;
+
+			for (auto& [sphere_name,sphere_data]: spheres)
+			{
+				if (ImGui::TreeNode((void*)(intptr_t)no, "Info %d", no))
+				{
+					ImGui::DragFloat3("Position", (float*)&sphere_data.offset, 0.01f, -100.0f, 100.0f);
+					ImGui::DragFloat("Radius", &sphere_data.radius, 0.1f, 0.1f, 50);
+
+					ImGui::TreePop();
+				}
+				no++;
+			}
+		}
 	}
 
 	void SphereCollisionComponent::Load(ecs::Registry* registry)

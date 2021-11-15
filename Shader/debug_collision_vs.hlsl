@@ -7,7 +7,6 @@
 // PS_Input(VS_Output)
 
 #include "globals.hlsli"
-#include "diffuse.hlsli"
 
 VS_OutPut main(VS_Input vin)
 {
