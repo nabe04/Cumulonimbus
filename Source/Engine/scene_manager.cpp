@@ -200,6 +200,8 @@ namespace cumulonimbus::scene
 			{
 				scene->GameUpdate(dt);
 			}
+
+			collision_manager->Update(dt, scene->GetRegistry());
 		}
 
 		system->Update(dt);

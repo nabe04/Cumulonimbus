@@ -94,12 +94,19 @@ namespace cumulonimbus::component
 		);
 	}
 
-	CapsuleCollisionComponent::CapsuleCollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, CollisionTag tag)
+	CapsuleCollisionComponent::CapsuleCollisionComponent(
+		ecs::Registry* registry,
+		const mapping::rename_type::Entity ent,
+		const CollisionTag tag)
 		:CollisionComponent{ registry,ent,tag }
 	{
+
 	}
 
-	CapsuleCollisionComponent::CapsuleCollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const CapsuleCollisionComponent& copy_comp)
+	CapsuleCollisionComponent::CapsuleCollisionComponent(
+		ecs::Registry* registry,
+		const mapping::rename_type::Entity ent,
+		const CapsuleCollisionComponent& copy_comp)
 	{
 		*this = copy_comp;
 		SetRegistry(registry);
@@ -162,23 +169,38 @@ namespace cumulonimbus::component
 				}
 			}
 
-			//if (capsule.bone_name.empty())
-			//{
-			//	// ƒ‚ƒfƒ‹‚ªŽ‚Â‰ñ“] ~ •½sˆÚ“®s—ñ‚©‚çs—ñ‚ðì¬(ƒ‚ƒfƒ‹‚ÌŠgk‚Íl—¶‚µ‚È‚¢)
-			//	DirectX::SimpleMath::Matrix st_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetRotationMatrix() * GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetTranslationMatrix();
-			//	//world_transform._11 = world_transform._22   = world_transform._33 = world_transform._44 = 1.0f;
-			//	capsule.world_transform_matrix = model_local_matrix * st_transform;
-			//}
-			//else
-			//{
-			//	capsule.world_transform_matrix = model_local_matrix * GetRegistry()->GetComponent<FbxModelComponent>(GetEntity()).GetNodeMatrix(capsule.bone_name.c_str());
-			//}
-
 			DirectX::SimpleMath::Vector3 up = capsule.world_transform_matrix.Up();
 			up.Normalize();
 			const DirectX::SimpleMath::Vector3 reference_point = capsule.world_transform_matrix.Translation();
-			capsule.start = reference_point + up * -(capsule.length * 0.5f);
-			capsule.end = reference_point + up * (capsule.length * 0.5f);
+			capsule.start	= reference_point + up * -(capsule.length * 0.5f);
+			capsule.end		= reference_point + up * (capsule.length * 0.5f);
+
+			{// HitEvent‚ÌXV
+				if (capsule.hit_result.is_hit)
+				{
+					if (capsule.hit_result.is_old_hit)
+					{// ‘¼‚ÌCollision‚ÉG‚ê‚Ä‚¢‚éŠÔ
+						capsule.hit_result.hit_event = collision::HitEvent::OnCollisionStay;
+					}
+					else
+					{// ‘¼‚ÌCollision‚ÉG‚ê‚½‚Æ‚«
+						capsule.hit_result.hit_event = collision::HitEvent::OnCollisionEnter;
+					}
+				}
+				else
+				{
+					if (capsule.hit_result.is_old_hit)
+					{// ‘¼‚ÌCollision‚ÉG‚ê‚é‚Ì‚ð‚â‚ß‚½‚Æ‚«
+						capsule.hit_result.hit_event = collision::HitEvent::OnCollisionExit;
+					}
+					else
+					{// ‘¼‚Ì‚Ç‚ÌCollision‚É‚àG‚ê‚Ä‚¢‚È‚¢ŠÔ
+						capsule.hit_result.hit_event = collision::HitEvent::None;
+					}
+				}
+
+				capsule.hit_result.is_old_hit = capsule.hit_result.is_hit;
+			}
 		}
 
 		//// ”»’è—p(ƒJƒvƒZƒ‹)ƒf[ƒ^‚ÌXV
@@ -307,9 +329,28 @@ namespace cumulonimbus::component
 	{
 		if (GetRegistry()->CollapsingHeader<CapsuleCollisionComponent>(GetEntity(), "Capsule Collider"))
 		{
+			ImGui::Text("Add Capsule");
+			ImGui::SameLine();
 			if (ImGui::Button(ICON_FA_PLUS))
 			{
 				AddCapsule();
+			}
+			ImGui::SameLine();
+			if (ImGui::Button(ICON_FA_MINUS))
+			{
+				if (const auto itr = capsules.find(selected_collision_name);
+					itr != capsules.end())
+				{
+					capsules.erase(itr);
+					if (capsules.size() > 0)
+					{
+						selected_collision_name = capsules.begin()->first;
+					}
+					else
+					{
+						selected_collision_name = "";
+					}
+				}
 			}
 
 			std::vector<std::string> items{};
@@ -338,71 +379,19 @@ namespace cumulonimbus::component
 				ImGui::Text("Segment End.x   : %f", capsule.end.x);
 				ImGui::Text("Segment End.y   : %f", capsule.end.y);
 				ImGui::Text("Segment End.z   : %f", capsule.end.z);
-				ImGui::DragFloat3("Offset", (float*)&capsule.offset, 0.1f, -1000, 1000);
-				ImGui::DragFloat3("Rotation", (float*)&capsule.rotation, 0.5f, -180.f, 180.f);
-				ImGui::DragFloat("Length", &capsule.length, 0.1f, 1.0f, 1000.0f);
-				ImGui::DragFloat("Radius", &capsule.radius, 0.1f, 1.0f, 1000.0f);
+				ImGui::DragFloat3("Offset"	, &capsule.offset.x	 , 0.1f, -1000 , 1000);
+				ImGui::DragFloat3("Rotation", &capsule.rotation.x, 0.5f, -180.f, 180.f);
+				ImGui::DragFloat("Length"	, &capsule.length	 , 0.1f, 1.0f  , 1000.0f);
+				ImGui::DragFloat("Radius"	, &capsule.radius	 , 0.1f, 1.0f  , 1000.0f);
+				ImGui::ColorEdit4("Base Color", &capsule.base_color.x);
+				ImGui::ColorEdit4("Hit Color" , &capsule.hit_color.x);
 			}
-
-			//int id = 0;
-			//for (auto& capsule : capsules)
-			//{
-			//	ImGui::PushID(id);
-			//	if (ImGui::TreeNode(capsule.first.c_str()))
-			//	{
-			//		ImGui::Text("Is Hit : %d", capsule.second.hit_result.is_hit);
-			//		ImGui::Text("Fetch Bone Name : %s", capsule.second.bone_name.c_str());
-			//		ImGui::Text("Segment Start.x : %f", capsule.second.start.x);
-			//		ImGui::Text("Segment Start.y : %f", capsule.second.start.y);
-			//		ImGui::Text("Segment Start.z : %f", capsule.second.start.z);
-			//		ImGui::Text("Segment End.x   : %f", capsule.second.end.x);
-			//		ImGui::Text("Segment End.y   : %f", capsule.second.end.y);
-			//		ImGui::Text("Segment End.z   : %f", capsule.second.end.z);
-			//		ImGui::DragFloat3("Offset", (float*)&capsule.second.offset, 0.1f, -1000, 1000);
-			//		ImGui::DragFloat3("Rotation", (float*)&capsule.second.rotation, 0.5f, -180.f, 180.f);
-			//		ImGui::DragFloat("Length", &capsule.second.length, 0.1f, 1.0f, 1000.0f);
-			//		ImGui::DragFloat("Radius", &capsule.second.radius, 0.1f, 1.0f, 1000.0f);
-			//		++id;
-			//		ImGui::TreePop();
-			//	}
-
-			//	ImGui::PopID();
-			//}
 		}
-
-		//if(ImGui::TreeNode("CapsuleCollisionComponent"))
-		//{
-		//	int id = 0;
-		//	for(auto& capsule : capsules)
-		//	{
-		//		ImGui::PushID(id);
-		//		if (ImGui::TreeNode(capsule.first.c_str()))
-		//		{
-		//			ImGui::Text("Is Hit : %d", capsule.second.hit_result.is_hit);
-		//			ImGui::Text("Fetch Bone Name : %s", capsule.second.bone_name.c_str());
-		//			ImGui::Text("Segment Start.x : %f", capsule.second.start.x);
-		//			ImGui::Text("Segment Start.y : %f", capsule.second.start.y);
-		//			ImGui::Text("Segment Start.z : %f", capsule.second.start.z);
-		//			ImGui::Text("Segment End.x   : %f", capsule.second.end.x);
-		//			ImGui::Text("Segment End.y   : %f", capsule.second.end.y);
-		//			ImGui::Text("Segment End.z   : %f", capsule.second.end.z);
-		//			ImGui::DragFloat3("Offset", (float*)&capsule.second.offset, 0.1f, -1000, 1000);
-		//			ImGui::DragFloat3("Rotation", (float*)&capsule.second.rotation, 0.5f, -180.f, 180.f);
-		//			ImGui::DragFloat("Length", &capsule.second.length, 0.1f, 1.0f, 1000.0f);
-		//			ImGui::DragFloat("Radius", &capsule.second.radius, 0.1f, 1.0f, 1000.0f);
-		//			++id;
-		//			ImGui::TreePop();
-		//		}
-
-		//		ImGui::PopID();
-		//	}
-
-		//	ImGui::TreePop();
-		//}
 	}
 
 	void CapsuleCollisionComponent::Load(ecs::Registry* registry)
 	{
+		CollisionComponent::Load(registry);
 		SetRegistry(registry);
 	}
 

@@ -14,7 +14,7 @@
 PS_Output main(PS_Input pin)
 {
     PS_Output pout = (PS_Output) 0;
-    //pout.color = collider_color;
-    pout.color = float4(1, 1, 1, 1);
+    pout.color = collider_color;
+    //pout.color = float4(1, 1, 1, 1);
 	return pout;
 }

@@ -104,6 +104,8 @@ namespace cumulonimbus::component
 		explicit CollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, CollisionTag tag);
 		explicit CollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const CollisionComponent& copy_comp); // for prefab
 		explicit CollisionComponent()  = default; // for cereal
+		CollisionComponent(const CollisionComponent& other);
+		CollisionComponent& operator=(const CollisionComponent& other);
 		~CollisionComponent() override = default;
 
 		void PreGameUpdate(float dt)   override {}
@@ -120,10 +122,18 @@ namespace cumulonimbus::component
 		void save(Archive&& archive, uint32_t version) const;
 
 		void SetCollisionTag(CollisionTag tag);
-		[[nodiscard]] CollisionTag GetCollisionTag() const;
+		[[nodiscard]]
+		CollisionTag GetCollisionTag() const;
+
+		[[nodiscard]]
+		buffer::ConstantBuffer<DebugCollisionCB>& GetCBuffer() const
+		{
+			return *cbuffer.get();
+		}
+
 	protected:
 		CollisionTag		 collision_tag;
-		buffer::ConstantBuffer<DebugCollisionCB> cbuffer{};
+		std::unique_ptr<buffer::ConstantBuffer<DebugCollisionCB> >cbuffer{};
 		// GUI上で現在選択されているコリジョンの名前
 		std::string selected_collision_name{};
 

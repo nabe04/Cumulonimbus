@@ -180,7 +180,6 @@ namespace cumulonimbus::component
 
 	}
 
-
 	void SphereCollisionComponent::RenderImGui()
 	{
 		if(GetRegistry()->CollapsingHeader<SphereCollisionComponent>(GetEntity(),"Sphere Collider"))
@@ -226,30 +225,19 @@ namespace cumulonimbus::component
 			//-- ëIëÇ≥ÇÍÇƒÇ¢ÇÈãÖÇÃê›íË --//
 			if (spheres.contains(selected_collision_name))
 			{
-				AttachSocket(spheres.at(selected_collision_name).bone_name);
-				ImGui::DragFloat3("Position", (float*)&spheres.at(selected_collision_name).offset, 0.01f, -100.0f, 100.0f);
-				ImGui::DragFloat("Radius", &spheres.at(selected_collision_name).radius, 0.1f, 0.1f, 50);
+				collision::Sphere& sphere = spheres.at(selected_collision_name);
+				AttachSocket(sphere.bone_name);
+				ImGui::DragFloat3("Position", &sphere.offset.x , 0.01f, -100.0f, 100.0f);
+				ImGui::DragFloat("Radius"	, &sphere.radius	, 0.1f , 0.1f	, 50);
+				ImGui::ColorEdit4("Base Color", &sphere.base_color.x);
+				ImGui::ColorEdit4("Hit Color" , &sphere.hit_color.x);
 			}
-
-
-			//int no = 0;
-
-			//for (auto& [sphere_name,sphere_data]: spheres)
-			//{
-			//	if (ImGui::TreeNode((void*)(intptr_t)no, "Info %d", no))
-			//	{
-			//		ImGui::DragFloat3("Position", (float*)&sphere_data.offset, 0.01f, -100.0f, 100.0f);
-			//		ImGui::DragFloat("Radius", &sphere_data.radius, 0.1f, 0.1f, 50);
-
-			//		ImGui::TreePop();
-			//	}
-			//	no++;
-			//}
 		}
 	}
 
 	void SphereCollisionComponent::Load(ecs::Registry* registry)
 	{
+		CollisionComponent::Load(registry);
 		SetRegistry(registry);
 	}
 

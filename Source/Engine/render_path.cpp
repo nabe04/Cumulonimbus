@@ -687,15 +687,21 @@ namespace cumulonimbus::renderer
 		const asset::Model& sphere_model = locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>()->GetModel(sphere_id);
 
 		for (auto& sphere_collision = registry->GetComponent<component::SphereCollisionComponent>(entity);
-			const auto& sphere : sphere_collision.GetSpheres())
+		     const auto& sphere : sphere_collision.GetSpheres() | std::views::values)
 		{
 			for (const auto& mesh : sphere_model.GetModelData().GetMeshes())
 			{
-				// メッシュ単位コンスタントバッファ更新
+				//-- 球単位コンスタントバッファの更新&バインド --//
+				// Transformの設定
 				TransformCB transform{};
-				transform.bone_transforms[0] = sphere.second.world_transform_matrix;
-
+				transform.bone_transforms[0] = sphere.world_transform_matrix;
 				registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
+				// コリジョン色の設定
+				if (sphere.hit_result.is_hit)
+					sphere_collision.GetCBuffer().SetData(DebugCollisionCB{ sphere.hit_color });
+				else
+					sphere_collision.GetCBuffer().SetData(DebugCollisionCB{ sphere.base_color });
+				sphere_collision.GetCBuffer().Activate(immediate_context, CBSlot_DebugCollision, false, true);
 
 				UINT stride = sizeof(shader::Vertex);
 				UINT offset = 0;
@@ -708,6 +714,10 @@ namespace cumulonimbus::renderer
 				{
 					immediate_context->DrawIndexed(subset.index_count, subset.start_index, 0);
 				}
+
+				//-- コンスタントバッファのアンバインド --//
+				sphere_collision.GetCBuffer().Deactivate(immediate_context);
+				registry->GetComponent<component::TransformComponent>(entity).UnbindCBuffer();
 			}
 		}
 
@@ -732,11 +742,17 @@ namespace cumulonimbus::renderer
 		{
 			for (const auto& mesh : capsule_model.GetModelData().GetMeshes())
 			{
-				// メッシュ単位コンスタントバッファ更新
+				//-- カプセル単位コンスタントバッファの更新&バインド --//
 				TransformCB transform{};
 				transform.bone_transforms[0] = capsule.world_transform_matrix;
-
 				registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
+				// コリジョン色の設定
+				if (capsule.hit_result.is_hit)
+					capsule_collision.GetCBuffer().SetData(DebugCollisionCB{ capsule.hit_color });
+				else
+					capsule_collision.GetCBuffer().SetData(DebugCollisionCB{ capsule.base_color });
+				capsule_collision.GetCBuffer().Activate(immediate_context, CBSlot_DebugCollision, false, true);
+
 
 				UINT stride = sizeof(shader::Vertex);
 				UINT offset = 0;
@@ -749,6 +765,10 @@ namespace cumulonimbus::renderer
 				{
 					immediate_context->DrawIndexed(subset.index_count, subset.start_index, 0);
 				}
+
+				//-- コンスタントバッファのアンバインド --//
+				capsule_collision.GetCBuffer().Deactivate(immediate_context);
+				registry->GetComponent<component::TransformComponent>(entity).UnbindCBuffer();
 			}
 		}
 
