@@ -15,7 +15,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> default_depth_stencil_view;
 
 public:
-	// TODO : メンバ変数のpublicを消す & ゲッタの用意
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> render_target_view;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depth_stencil_view;
 
@@ -115,5 +114,5 @@ public:
 	[[nodiscard]] ID3D11DepthStencilView**   GetDSV_Address()	  { return depth_stencil_view.GetAddressOf(); }
 	[[nodiscard]] ID3D11ShaderResourceView** GetRenderTargetSRV() { return render_target_shader_resource_view.GetAddressOf(); }
 	[[nodiscard]] ID3D11ShaderResourceView** GetDepthStencilSRV() { return depth_stencil_shader_resource_view.GetAddressOf(); }
-	
+
 };

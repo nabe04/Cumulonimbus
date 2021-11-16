@@ -68,23 +68,23 @@ namespace cumulonimbus::scene
 
 	void Scene::Execute(Framework* framework)
 	{
-		this->framework = framework;
+		//this->framework = framework;
 
-		Initialize();
+		//Initialize();
 
-		while(framework->ProcessLoop())
-		{
-			const float delta_time = std::min(0.03f, static_cast<float>(framework->GetHighResolutionTimer().GetDeltaTime()));
+		//while(framework->ProcessLoop())
+		//{
+		//	const float delta_time = std::min(0.03f, static_cast<float>(framework->GetHighResolutionTimer().GetDeltaTime()));
 
-			// Update process
-			Update(delta_time);
+		//	// Update process
+		//	Update(delta_time);
 
-			framework->DrawBegin();
-			Render();
-			framework->DrawEnd();
-		}
+		//	framework->DrawBegin();
+		//	Render();
+		//	framework->DrawEnd();
+		//}
 
-		UnInitialize();
+		//UnInitialize();
 	}
 
 	void Scene::CommonUpdate(const float dt)
@@ -312,7 +312,7 @@ namespace cumulonimbus::scene
 		render_path->RenderGame(immediate_context, registry.get(), light.get());
 
 #ifdef _DEBUG
-		editor_manager->RenderEditor(this, registry.get());
+		//editor_manager->RenderEditor(this, registry.get());
 #endif // _DEBUG
 	}
 

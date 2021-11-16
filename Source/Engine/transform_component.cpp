@@ -15,7 +15,7 @@
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::TransformComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::TransformComponent)
-CEREAL_CLASS_VERSION(cumulonimbus::component::TransformComponent, 0);
+CEREAL_CLASS_VERSION(cumulonimbus::component::TransformComponent, 1);
 
 namespace cumulonimbus::component
 {
@@ -47,6 +47,14 @@ namespace cumulonimbus::component
 			CEREAL_NVP(rotation_before),
 			CEREAL_NVP(rotation_after)
 		);
+
+
+		if (version == 1)
+		{
+			archive(
+				CEREAL_NVP(model_euler_angle)
+			);
+		}
 	}
 
 	template <class Archive>
@@ -73,7 +81,9 @@ namespace cumulonimbus::component
 
 			// Quaternion
 			CEREAL_NVP(rotation_before),
-			CEREAL_NVP(rotation_after)
+			CEREAL_NVP(rotation_after),
+
+			CEREAL_NVP(model_euler_angle)
 		);
 	}
 

@@ -148,7 +148,6 @@ namespace cumulonimbus::scene
 		 */
 		void EndGame();
 
-		// Todo : スクリプト機能が出来れば消す
 		/**
 		 * @brief : プレファブの初期作成
 		 */

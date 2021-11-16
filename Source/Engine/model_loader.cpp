@@ -495,7 +495,6 @@ namespace cumulonimbus::asset
 
 			ModelData::Subset& subset = mesh.subsets.at(fbx_material_index);
 
-			// HACK : indexに変更
 			// 現在のマテリアルが「vector<Material> materials」の何番目にあるかを検索
 			int index = FindMaterialIndex(model, fbx_node->GetScene(), fbx_surface_material);
 			subset.material_index = index;

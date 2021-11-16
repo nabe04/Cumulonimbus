@@ -23,7 +23,6 @@ namespace cumulonimbus::locator
 			window					 = nullptr;
 			system					 = nullptr;
 			asset_manager			 = nullptr;
-			resource_manager		 = nullptr;
 			dx11_configurator		 = nullptr;
 			texture_resource_manager = nullptr;
 		}
@@ -32,7 +31,6 @@ namespace cumulonimbus::locator
 			input.reset();
 			window.reset();
 			system.reset();
-			resource_manager.reset();
 			dx11_configurator.reset();
 			texture_resource_manager.reset();
 		}
@@ -42,7 +40,6 @@ namespace cumulonimbus::locator
 		static Dx11Device*		GetDx11Device()			{ return dx11_configurator.get(); }
 		static InputSystem*		GetInput()				{ return input.get(); }
 		static system::System*  GetSystem()				{ return system.get();	 }
-		static ResourceManager* GetResourceManager()	{ return resource_manager.get(); }
 		static asset::AssetManager* GetAssetManager()	{ return asset_manager.get(); }
 		static manager::texture::TextureResourceManager* GetTextureResourceManager() { return texture_resource_manager.get(); }
 
@@ -69,11 +66,6 @@ namespace cumulonimbus::locator
 				system = s;
 				return;
 			}
-			else if constexpr (std::is_same<T, ResourceManager>::value)
-			{
-				resource_manager = s;
-				return;
-			}
 			else if constexpr(std::is_same<T,asset::AssetManager>::value)
 			{
 				asset_manager = s;
@@ -97,7 +89,6 @@ namespace cumulonimbus::locator
 		inline static std::shared_ptr<Dx11Device>			dx11_configurator{};
 		inline static std::shared_ptr<InputSystem>			input{};
 		inline static std::shared_ptr<system::System>		system{};
-		inline static std::shared_ptr<ResourceManager>		resource_manager{};
 		inline static std::shared_ptr<asset::AssetManager>	asset_manager{};
 		inline static std::shared_ptr<manager::texture::TextureResourceManager> texture_resource_manager{ nullptr };
 	};

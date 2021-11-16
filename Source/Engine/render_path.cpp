@@ -775,119 +775,119 @@ namespace cumulonimbus::renderer
 		shader_manager->UnbindShader(mapping::shader_assets::ShaderAsset3D::DebugCollision);
 	}
 
-	void RenderPath::RenderCollision_Begin(
-		ID3D11DeviceContext* immediate_context,
-		const camera::Camera* camera)
-	{
-		// off_screen->Activate(immediate_context);
-		camera->BindFrameBuffer();
-		// DirectX graphics stateのバインド
-		rasterizer->Activate(immediate_context, RasterizeState::Wireframe);
-		depth_stencil->Activate(immediate_context, DepthStencilState::DepthTest_True_Write_True);
-		blend->Activate(immediate_context, BlendState::Alpha);
-		// シェーダーのバインド
-		shader_manager->BindLocalShader(mapping::shader_assets::LocalShaderAsset::Collision);
-		local_shader_asset_manager->BindCBuffer(mapping::shader_assets::LocalShaderAsset::Collision);
-		// ビュー行列のバインド
-		camera->BindCBuffer();
+	//void RenderPath::RenderCollision_Begin(
+	//	ID3D11DeviceContext* immediate_context,
+	//	const camera::Camera* camera)
+	//{
+	//	// off_screen->Activate(immediate_context);
+	//	camera->BindFrameBuffer();
+	//	// DirectX graphics stateのバインド
+	//	rasterizer->Activate(immediate_context, RasterizeState::Wireframe);
+	//	depth_stencil->Activate(immediate_context, DepthStencilState::DepthTest_True_Write_True);
+	//	blend->Activate(immediate_context, BlendState::Alpha);
+	//	// シェーダーのバインド
+	//	shader_manager->BindLocalShader(mapping::shader_assets::LocalShaderAsset::Collision);
+	//	local_shader_asset_manager->BindCBuffer(mapping::shader_assets::LocalShaderAsset::Collision);
+	//	// ビュー行列のバインド
+	//	camera->BindCBuffer();
 
-	}
+	//}
 
-	void RenderPath::RenderCollision(ID3D11DeviceContext* immediate_context, ecs::Registry* registry)
-	{
-		for (auto& sphere_collision : registry->GetArray<component::SphereCollisionComponent>().GetComponents())
-		{
-			const mapping::rename_type::Entity ent = sphere_collision.GetEntity();
-			const auto& model_resource = locator::Locator::GetResourceManager()->FbxModelResouece("sphere");
-			RenderSphereCollisionModel(immediate_context, registry, ent, model_resource.get());
-		}
-		for(auto& capsule_collision : registry->GetArray<component::CapsuleCollisionComponent>().GetComponents())
-		{
-			const mapping::rename_type::Entity ent = capsule_collision.GetEntity();
-			const auto& model_resource = locator::Locator::GetResourceManager()->FbxModelResouece("capsule");
-			RenderCapsuleCollisionModel(immediate_context, registry, ent, model_resource.get());
-		}
-	}
+	//void RenderPath::RenderCollision(ID3D11DeviceContext* immediate_context, ecs::Registry* registry)
+	//{
+	//	for (auto& sphere_collision : registry->GetArray<component::SphereCollisionComponent>().GetComponents())
+	//	{
+	//		const mapping::rename_type::Entity ent = sphere_collision.GetEntity();
+	//		const auto& model_resource = locator::Locator::GetResourceManager()->FbxModelResouece("sphere");
+	//		RenderSphereCollisionModel(immediate_context, registry, ent, model_resource.get());
+	//	}
+	//	for(auto& capsule_collision : registry->GetArray<component::CapsuleCollisionComponent>().GetComponents())
+	//	{
+	//		const mapping::rename_type::Entity ent = capsule_collision.GetEntity();
+	//		const auto& model_resource = locator::Locator::GetResourceManager()->FbxModelResouece("capsule");
+	//		RenderCapsuleCollisionModel(immediate_context, registry, ent, model_resource.get());
+	//	}
+	//}
 
-	void RenderPath::RenderSphereCollisionModel(ID3D11DeviceContext* immediate_context,
-										  ecs::Registry* registry, mapping::rename_type::Entity entity,
-										  const FbxModelResource* model_resource)
-	{
-		for (auto& sphere_collision = registry->GetComponent<component::SphereCollisionComponent>(entity);
-		     const auto& sphere : sphere_collision.GetSpheres() | std::views::values)
-		{
-			for (const auto& mesh : model_resource->GetModelData().meshes)
-			{
-				// メッシュ単位コンスタントバッファ更新
-				TransformCB transform{};
-				transform.bone_transforms[0] = sphere.world_transform_matrix;
+	//void RenderPath::RenderSphereCollisionModel(ID3D11DeviceContext* immediate_context,
+	//									  ecs::Registry* registry, mapping::rename_type::Entity entity,
+	//									  const FbxModelResource* model_resource)
+	//{
+	//	for (auto& sphere_collision = registry->GetComponent<component::SphereCollisionComponent>(entity);
+	//	     const auto& sphere : sphere_collision.GetSpheres() | std::views::values)
+	//	{
+	//		for (const auto& mesh : model_resource->GetModelData().meshes)
+	//		{
+	//			// メッシュ単位コンスタントバッファ更新
+	//			TransformCB transform{};
+	//			transform.bone_transforms[0] = sphere.world_transform_matrix;
 
-				registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
+	//			registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
 
-				UINT stride = sizeof(shader::Vertex);
-				UINT offset = 0;
-				immediate_context->IASetVertexBuffers(0, 1, mesh.vertex_buffer.GetAddressOf(), &stride, &offset);
-				immediate_context->IASetIndexBuffer(mesh.index_buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-				locator::Locator::GetDx11Device()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleList);
+	//			UINT stride = sizeof(shader::Vertex);
+	//			UINT offset = 0;
+	//			immediate_context->IASetVertexBuffers(0, 1, mesh.vertex_buffer.GetAddressOf(), &stride, &offset);
+	//			immediate_context->IASetIndexBuffer(mesh.index_buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	//			locator::Locator::GetDx11Device()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleList);
 
-				for (const ModelData::Subset& subset : mesh.subsets)
-				{
+	//			for (const ModelData::Subset& subset : mesh.subsets)
+	//			{
 
-					//DebugCollisionCB cb_collision;
-					//if (sphere.second.is_hit)
-					//{
-					//	cb_collision.collider_color = { 1.f,.0f,.0f,1.f };
-					//}
-					//else
-					//{
-					//	cb_collision.collider_color = { .0f,.0f,1.f,1.f };
-					//}
-					immediate_context->DrawIndexed(subset.index_count, subset.start_index, 0);
-				}
-			}
-		}
-	}
+	//				//DebugCollisionCB cb_collision;
+	//				//if (sphere.second.is_hit)
+	//				//{
+	//				//	cb_collision.collider_color = { 1.f,.0f,.0f,1.f };
+	//				//}
+	//				//else
+	//				//{
+	//				//	cb_collision.collider_color = { .0f,.0f,1.f,1.f };
+	//				//}
+	//				immediate_context->DrawIndexed(subset.index_count, subset.start_index, 0);
+	//			}
+	//		}
+	//	}
+	//}
 
-	void RenderPath::RenderCapsuleCollisionModel(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, mapping::rename_type::Entity entity, const FbxModelResource* model_resource)
-	{
-		for (auto& capsule_collision = registry->GetComponent<component::CapsuleCollisionComponent>(entity);
-		     auto& capsule : capsule_collision.GetCapsules() | std::views::values)
-		{
-			for (const auto& mesh : model_resource->GetModelData().meshes)
-			{
-				// メッシュ単位コンスタントバッファ更新
-				TransformCB transform{};
-				transform.bone_transforms[0] = capsule.world_transform_matrix;
+	//void RenderPath::RenderCapsuleCollisionModel(ID3D11DeviceContext* immediate_context, ecs::Registry* registry, mapping::rename_type::Entity entity, const FbxModelResource* model_resource)
+	//{
+	//	for (auto& capsule_collision = registry->GetComponent<component::CapsuleCollisionComponent>(entity);
+	//	     auto& capsule : capsule_collision.GetCapsules() | std::views::values)
+	//	{
+	//		for (const auto& mesh : model_resource->GetModelData().meshes)
+	//		{
+	//			// メッシュ単位コンスタントバッファ更新
+	//			TransformCB transform{};
+	//			transform.bone_transforms[0] = capsule.world_transform_matrix;
 
-				registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
+	//			registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
 
-				UINT stride = sizeof(shader::Vertex);
-				UINT offset = 0;
-				immediate_context->IASetVertexBuffers(0, 1, mesh.vertex_buffer.GetAddressOf(), &stride, &offset);
-				immediate_context->IASetIndexBuffer(mesh.index_buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-				locator::Locator::GetDx11Device()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleList);
+	//			UINT stride = sizeof(shader::Vertex);
+	//			UINT offset = 0;
+	//			immediate_context->IASetVertexBuffers(0, 1, mesh.vertex_buffer.GetAddressOf(), &stride, &offset);
+	//			immediate_context->IASetIndexBuffer(mesh.index_buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	//			locator::Locator::GetDx11Device()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleList);
 
-				for (const ModelData::Subset& subset : mesh.subsets)
-				{
-					immediate_context->DrawIndexed(subset.index_count, subset.start_index, 0);
-				}
-			}
-		}
-	}
+	//			for (const ModelData::Subset& subset : mesh.subsets)
+	//			{
+	//				immediate_context->DrawIndexed(subset.index_count, subset.start_index, 0);
+	//			}
+	//		}
+	//	}
+	//}
 
 
-	void RenderPath::RenderCollision_End(
-		ID3D11DeviceContext* immediate_context,
-		const camera::Camera* camera)
-	{
-		// ビュー行列のバインド
-		camera->UnbindCBuffer();
-		// シェーダーのバインド
-		shader_manager->UnbindLocalShader(mapping::shader_assets::LocalShaderAsset::Collision);
-		local_shader_asset_manager->UnbindCBuffer(mapping::shader_assets::LocalShaderAsset::Collision);
-		//off_screen->Deactivate(immediate_context);
-		camera->UnbindFrameBuffer();
-	}
+	//void RenderPath::RenderCollision_End(
+	//	ID3D11DeviceContext* immediate_context,
+	//	const camera::Camera* camera)
+	//{
+	//	// ビュー行列のバインド
+	//	camera->UnbindCBuffer();
+	//	// シェーダーのバインド
+	//	shader_manager->UnbindLocalShader(mapping::shader_assets::LocalShaderAsset::Collision);
+	//	local_shader_asset_manager->UnbindCBuffer(mapping::shader_assets::LocalShaderAsset::Collision);
+	//	//off_screen->Deactivate(immediate_context);
+	//	camera->UnbindFrameBuffer();
+	//}
 
 	void RenderPath::RenderSprite(
 		ID3D11DeviceContext* immediate_context,

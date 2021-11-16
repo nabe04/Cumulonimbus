@@ -248,7 +248,7 @@ namespace cumulonimbus::component
 	{
 	}
 
-	//Todo : ƒRƒŠƒWƒ‡ƒ“ŠÖŒW
+
 	void CapsuleCollisionComponent::PostGameUpdate(float dt)
 	{
 		//auto DefaultTransform = [&](collision::Capsule& capsule, const DirectX::SimpleMath::Matrix& local_mat)

@@ -7,7 +7,6 @@ namespace cumulonimbus::editor
 	EditorManager::EditorManager()
 	{
 		//-- オブジェクトのインスタンス化 --//
-		content_browser  = std::make_unique<ContentBrowser>();
 		hierarchy		 = std::make_unique<Hierarchy>();
 		inspector		 = std::make_unique<Inspector>();
 		menu_bar		 = std::make_unique<MenuBar>();
@@ -35,7 +34,6 @@ namespace cumulonimbus::editor
 		scene::Scene& selected_scene = *active_scenes.at(selected_scene_id);
 		ecs::Registry& registry = *selected_scene.GetRegistry();
 
-		content_browser->Render(&selected_scene);
 		hierarchy->Render(selected_scene_id, active_scenes, *project_view.get());
 		inspector->Render(&registry, hierarchy->GetSelectedEntity());
 		game_view->Render(&registry);
@@ -44,19 +42,6 @@ namespace cumulonimbus::editor
 		system_inspector->Render(&registry);
 		tool_bar->Render(&registry);
 		menu_bar->Render(selected_scene_id, active_scenes);
-	}
-
-	void EditorManager::RenderEditor(scene::Scene* scene, ecs::Registry* registry) const
-	{
-		//content_browser->Render(scene);
-		//hierarchy->Render(registry);
-		//inspector->Render(registry, hierarchy->GetSelectedEntity());
-		//menu_bar->Render(registry);
-		//game_view->Render(registry);
-		//scene_view->Render(registry, project_view.get(), hierarchy.get()); // ドラッグ & ドロップの関係上 scene_viewとproject_viewの順番を変えてはならない
-		//project_view->Render(registry);
-		//system_inspector->Render(registry);
-		//tool_bar->Render(registry);
 	}
 } // cumulonimbus::editor
 

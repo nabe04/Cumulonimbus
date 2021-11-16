@@ -94,10 +94,10 @@ HRESULT Dx11Device::CreateDevice(HWND hwnd,ID3D11Device** device, ID3D11DeviceCo
 	scd.SampleDesc.Count					= 1;
 	scd.SampleDesc.Quality					= 0;
 	scd.BufferUsage							= DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	scd.BufferCount							= 1; // Todo : ïœçX(2)
+	scd.BufferCount							= 1;
 	scd.OutputWindow						= hwnd;
 	scd.Windowed							= true; // ReleaseÇ≈ìÆÇ≠ÇÊÇ§Ç…Ç»ÇÍÇŒ"is_window"ÇéwíËÇ∑ÇÈ
-	scd.SwapEffect							= DXGI_SWAP_EFFECT_DISCARD; // Todo : DXGI_SWAP_EFFECT_FLIP_DISCARD
+	scd.SwapEffect							= DXGI_SWAP_EFFECT_DISCARD;
 	scd.Flags								= 0;
 	Microsoft::WRL::ComPtr<IDXGIFactory>  dxgi_factory;
 	Microsoft::WRL::ComPtr < IDXGIAdapter> dxgi_adapter;

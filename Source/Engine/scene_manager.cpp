@@ -213,9 +213,6 @@ namespace cumulonimbus::scene
 		render_path->RenderScene(immediate_context, active_scenes, editor_manager->GetSceneView().GetSceneViewCamera().GetCamera());
 		render_path->RenderGame(immediate_context, active_scenes);
 #ifdef _DEBUG
-		// Todo : 複数シーン読み込み対応後現在選択されているシーンがわかれば第1,2引数を変更する
-		//editor_manager->RenderEditor(active_scenes.begin()->second.get(), active_scenes.begin()->second->GetRegistry());
-
 		// 複数シーン対応版
 		editor_manager->RenderEditor(active_scenes);
 #endif // _DEBUG

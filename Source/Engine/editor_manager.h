@@ -1,7 +1,6 @@
 #pragma once
 #include <memory>
 
-#include "content_browser.h"
 #include "hierarchy.h"
 #include "inspector.h"
 #include "menu_bar.h"
@@ -34,8 +33,6 @@ namespace cumulonimbus::editor
 		 * @param active_scenes : 現在開いているシーン(SceneManagerのパラメータ)
 		 */
 		void RenderEditor(std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& active_scenes);
-		// Todo : 複数シーン用のRenderEditorを作成した際に消す
-		void RenderEditor(scene::Scene* scene, ecs::Registry* registry) const;
 
 		[[nodiscard]]
 		Hierarchy& GetHierarchyView() const { return *hierarchy.get(); }
@@ -51,7 +48,6 @@ namespace cumulonimbus::editor
 		void SetSelectedSceneId(const mapping::rename_type::UUID& id) { selected_scene_id = id; }
 	private:
 		//-- 描画するGUI郡 --//
-		std::unique_ptr<ContentBrowser>  content_browser{};
 		std::unique_ptr<Hierarchy>		 hierarchy{};
 		std::unique_ptr<Inspector>		 inspector{};
 		std::unique_ptr<MenuBar>		 menu_bar{};

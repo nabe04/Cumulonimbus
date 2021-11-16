@@ -30,7 +30,6 @@ namespace cumulonimbus::editor
 		void Render(
 			mapping::rename_type::UUID& selected_scene_id,
 			std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& active_scenes);
-		void Render(ecs::Registry* registry);
 
 	private:
 		bool is_menu_open		 = false;
@@ -46,12 +45,6 @@ namespace cumulonimbus::editor
 		void FileMenu(
 			const mapping::rename_type::UUID& selected_scene_id,
 			std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& active_scenes);
-
-		// Todo : 複数シーン対応後削除予定
-		/**
-		 * @brief : 「File」内項目と詳細
-		 */
-		void FileMenu(ecs::Registry* registry);
 
 		/**
 		 * @brief : 「Window」内のメニューバー設定

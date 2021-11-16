@@ -326,7 +326,6 @@ void BulidFBX::BuildMesh(FbxNode* fbx_node, FbxMesh* fbx_mesh)
 
 		ModelData::Subset& subset = mesh.subsets.at(fbx_material_index);
 
-		// HACK : indexに変更
 		// 現在のマテリアルが「vector<Material> materials」の何番目にあるかを検索
 		int index = FindMaterialIndex(fbx_node->GetScene(), fbx_surface_material);
 		subset.material = &model_data.materials.at(index); // 初めに読み込んだマテリアルのリンク & std::vector<Material> materialsの「index」番目の要素にアクセス

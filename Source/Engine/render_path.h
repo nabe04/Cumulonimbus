@@ -232,24 +232,24 @@ namespace cumulonimbus::renderer
 			ecs::Registry* registry,
 			const mapping::rename_type::Entity& entity);
 
-		/**
-		 * @brief : “–‚½‚è”»’è‚Ì•`‰æ
-		 */
-		void RenderCollision_Begin(
-				ID3D11DeviceContext* immediate_context,
-				const camera::Camera* camera);
-		void RenderCollision(ID3D11DeviceContext* immediate_context, ecs::Registry* registry);
-		void RenderSphereCollisionModel(
-				ID3D11DeviceContext* immediate_context,
-				ecs::Registry* registry, mapping::rename_type::Entity entity,
-				const FbxModelResource* model_resource);
-		void RenderCapsuleCollisionModel(
-				ID3D11DeviceContext* immediate_context,
-				ecs::Registry* registry, mapping::rename_type::Entity entity,
-				const FbxModelResource* model_resource);
-		void RenderCollision_End(
-				ID3D11DeviceContext* immediate_context,
-				const camera::Camera* camera);
+		///**
+		// * @brief : “–‚½‚è”»’è‚Ì•`‰æ
+		// */
+		//void RenderCollision_Begin(
+		//		ID3D11DeviceContext* immediate_context,
+		//		const camera::Camera* camera);
+		//void RenderCollision(ID3D11DeviceContext* immediate_context, ecs::Registry* registry);
+		//void RenderSphereCollisionModel(
+		//		ID3D11DeviceContext* immediate_context,
+		//		ecs::Registry* registry, mapping::rename_type::Entity entity,
+		//		const FbxModelResource* model_resource);
+		//void RenderCapsuleCollisionModel(
+		//		ID3D11DeviceContext* immediate_context,
+		//		ecs::Registry* registry, mapping::rename_type::Entity entity,
+		//		const FbxModelResource* model_resource);
+		//void RenderCollision_End(
+		//		ID3D11DeviceContext* immediate_context,
+		//		const camera::Camera* camera);
 
 		/*
 		 * brief        : 2DƒXƒvƒ‰ƒCƒg‚Ì•`‰æ
