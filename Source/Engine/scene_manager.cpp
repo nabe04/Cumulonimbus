@@ -252,5 +252,11 @@ namespace cumulonimbus::scene
 																	  true, "Player_Base");
 		// 作成したエンティティの削除(プレハブへの登録のみが目的の為)
 		registry.Destroy(player_base);
+		// カメラを
+		if(!registry.GetArray<component::CameraComponent>().GetComponents().empty())
+		{
+			auto& camera_comp = *registry.GetArray<component::CameraComponent>().GetComponents().begin();
+			camera_comp.SwitchMainCamera();
+		}
 	}
 } // cumulonimbus::scene

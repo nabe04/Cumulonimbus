@@ -79,7 +79,7 @@ namespace cumulonimbus::renderer
 
 		// Todo : SkyBoxにそもそもLightのパラメータが不要かもしれない
 		//        不要の場合for文を省く事ができる
-		for (auto& [scene_id, scene] : scenes)
+		for (auto& scene : scenes | std::views::values)
 		{
 			// SkyBoxの描画
 			RenderSkyBox_Begin(immediate_context, &camera);
@@ -151,11 +151,13 @@ namespace cumulonimbus::renderer
 			}
 		}
 
-		for (auto& [scene_id, scene] : scenes)
+		for (auto& scene : scenes | std::views::values)
 		{
 			for (ecs::Registry& registry = *scene->GetRegistry();
 				 auto& camera_comp : registry.GetArray<component::CameraComponent>().GetComponents())
 			{
+				if (!camera_comp.GetIsMainCamera())
+					continue;
 				// SkyBoxの描画
 				RenderSkyBox_Begin(immediate_context, camera_comp.GetCamera());
 				RenderSkyBox(immediate_context, camera_comp.GetCamera(), scene->GetLight());
@@ -301,23 +303,6 @@ namespace cumulonimbus::renderer
 		}
 
 		RenderEnd(immediate_context);
-
-		//for (auto& camera_comp : registry->GetArray<component::CameraComponent>().GetComponents())
-		//{
-		//	if (!camera_comp.GetIsMainCamera())
-		//		continue;
-
-		//	if (ImGui::Begin("RTV"))
-		//	{
-		//		if (ImGui::IsWindowFocused() && ImGui::IsMouseDown(ImGuiMouseButton_Left))
-		//		{
-		//			ImGui::Text("True");
-		//		}
-		//		const auto size = ImGui::GetWindowSize();
-		//		helper::imgui::Image(*camera_comp.GetCamera()->GetFrameBufferSRV_Address(), { size.x,size.y });
-		//	}
-		//	ImGui::End();
-		//}
 	}
 
 	void RenderPath::RenderBegin(ID3D11DeviceContext* immediate_context)

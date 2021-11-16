@@ -15,12 +15,12 @@ namespace cumulonimbus::camera
 		Initialize();
 
 		cb_camera->GetData().camera_position = { .0f,.0f,.0f };
-		cb_camera->GetData().camera_at		= { 0.0f,0.0f,1.0f };
-		cb_camera->GetData().camera_far_z	= 1.0f;
-		cb_camera->GetData().camera_near_z	= 0.0f;
-		cb_camera->GetData().camera_right	= { 1.0f,0.0f,0.0f };
-		cb_camera->GetData().camera_up		= { 0.0f,1.0f,0.0f };
-		cb_camera->GetData().camera_front	= { cb_camera->GetData().camera_at.x - cb_camera->GetData().camera_position.x,
+		cb_camera->GetData().camera_at		 = { 0.0f,0.0f,1.0f };
+		cb_camera->GetData().camera_far_z	 = 1.0f;
+		cb_camera->GetData().camera_near_z	 = 0.0f;
+		cb_camera->GetData().camera_right	 = { 1.0f,0.0f,0.0f };
+		cb_camera->GetData().camera_up		 = { 0.0f,1.0f,0.0f };
+		cb_camera->GetData().camera_front	 = { cb_camera->GetData().camera_at.x - cb_camera->GetData().camera_position.x,
 											    cb_camera->GetData().camera_at.y - cb_camera->GetData().camera_position.y,
 											    cb_camera->GetData().camera_at.z - cb_camera->GetData().camera_position.z };
 		cb_camera->GetData().camera_fov		= 0.0f;
@@ -117,12 +117,12 @@ namespace cumulonimbus::camera
 		Initialize();
 
 		cb_camera->GetData().camera_position = eye_position;
-		cb_camera->GetData().camera_at		= focus_position;
-		cb_camera->GetData().camera_far_z	= far_z;
-		cb_camera->GetData().camera_near_z	= near_z;
-		cb_camera->GetData().camera_right	= right_vec;
-		cb_camera->GetData().camera_up		= up_vec;
-		cb_camera->GetData().camera_front	= { cb_camera->GetData().camera_at.x - cb_camera->GetData().camera_position.x,
+		cb_camera->GetData().camera_at		 = focus_position;
+		cb_camera->GetData().camera_far_z	 = far_z;
+		cb_camera->GetData().camera_near_z	 = near_z;
+		cb_camera->GetData().camera_right	 = right_vec;
+		cb_camera->GetData().camera_up		 = up_vec;
+		cb_camera->GetData().camera_front	 = { cb_camera->GetData().camera_at.x - cb_camera->GetData().camera_position.x,
 											    cb_camera->GetData().camera_at.y - cb_camera->GetData().camera_position.y,
 											    cb_camera->GetData().camera_at.z - cb_camera->GetData().camera_position.z };
 		cb_camera->GetData().camera_fov		= fov;
@@ -185,30 +185,32 @@ namespace cumulonimbus::camera
 	{
 		auto& camera = cb_camera->GetData();
 		helper::imgui::Image(*off_screen->GetRenderTargetSRV(), { 160,100 });
-		ImGui::Text("-----------------------");
-		ImGui::Text("Camera Pos X %f", camera.camera_position.x);
-		ImGui::Text("Camera Pos Y %f", camera.camera_position.y);
-		ImGui::Text("Camera Pos Z %f", camera.camera_position.z);
-		ImGui::Text("-----------------------");
-		ImGui::Text("Focus X %f", camera.camera_at.x);
-		ImGui::Text("Focus Y %f", camera.camera_at.y);
-		ImGui::Text("Focus Z %f", camera.camera_at.z);
-		ImGui::Text("-----------------------");
-		ImGui::Text("Camera Front X %f", camera.camera_front.x);
-		ImGui::Text("Camera Front Y %f", camera.camera_front.y);
-		ImGui::Text("Camera Front Z %f", camera.camera_front.z);
-		ImGui::Text("-----------------------");
-		ImGui::Text("Camera Up X %f", camera.camera_up.x);
-		ImGui::Text("Camera Up Y %f", camera.camera_up.y);
-		ImGui::Text("Camera Up Z %f", camera.camera_up.z);
-		ImGui::Text("-----------------------");
-		ImGui::Text("Camera Right X %f", camera.camera_right.x);
-		ImGui::Text("Camera Right Y %f", camera.camera_right.y);
-		ImGui::Text("Camera Right Z %f", camera.camera_right.z);
+		//ImGui::Text("-----------------------");
+		//ImGui::Text("Camera Pos X %f", camera.camera_position.x);
+		//ImGui::Text("Camera Pos Y %f", camera.camera_position.y);
+		//ImGui::Text("Camera Pos Z %f", camera.camera_position.z);
+		//ImGui::Text("-----------------------");
+		//ImGui::Text("Focus X %f", camera.camera_at.x);
+		//ImGui::Text("Focus Y %f", camera.camera_at.y);
+		//ImGui::Text("Focus Z %f", camera.camera_at.z);
+		//ImGui::Text("-----------------------");
+		//ImGui::Text("Camera Front X %f", camera.camera_front.x);
+		//ImGui::Text("Camera Front Y %f", camera.camera_front.y);
+		//ImGui::Text("Camera Front Z %f", camera.camera_front.z);
+		//ImGui::Text("-----------------------");
+		//ImGui::Text("Camera Up X %f", camera.camera_up.x);
+		//ImGui::Text("Camera Up Y %f", camera.camera_up.y);
+		//ImGui::Text("Camera Up Z %f", camera.camera_up.z);
+		//ImGui::Text("-----------------------");
+		//ImGui::Text("Camera Right X %f", camera.camera_right.x);
+		//ImGui::Text("Camera Right Y %f", camera.camera_right.y);
+		//ImGui::Text("Camera Right Z %f", camera.camera_right.z);
 
-		ImGui::Text("focus_position x : %f\nfocus_position y : %f\nfocus_position z : %f", focus_position.x, focus_position.y, focus_position.z);
-		ImGui::Text("angle x  : %f\nangle y  : %f\nangle z  : %f", camera_angle.x, camera_angle.y, camera_angle.z);
-		ImGui::Text("Pos x  : %f\n Pos y  : %f\n Pos z  : %f", eye_position.x, eye_position.y, eye_position.z);
+		//ImGui::Text("focus_position x : %f\nfocus_position y : %f\nfocus_position z : %f", focus_position.x, focus_position.y, focus_position.z);
+		//ImGui::Text("angle x  : %f\nangle y  : %f\nangle z  : %f", camera_angle.x, camera_angle.y, camera_angle.z);
+		//ImGui::Text("Pos x  : %f\n Pos y  : %f\n Pos z  : %f", eye_position.x, eye_position.y, eye_position.z);
+
+		ImGui::DragFloat3("Offset", &focus_offset.x, 0.5f, -FLT_MAX, FLT_MAX);
 	}
 
 	void Camera::ClearFrameBuffer(const DirectX::SimpleMath::Vector4& clear_color) const
@@ -292,11 +294,11 @@ namespace cumulonimbus::camera
 		const float fov, const float aspect,
 		const float min, const float max)
 	{
-		is_perspective = true;
-		this->fov = fov;
-		this->aspect = aspect;
-		this->near_z = min;
-		this->far_z = max;
+		is_perspective	= true;
+		this->fov		= fov;
+		this->aspect	= aspect;
+		this->near_z	= min;
+		this->far_z		= max;
 	}
 
 	void Camera::SetOrtho(
@@ -328,46 +330,46 @@ namespace cumulonimbus::camera
 		front_vec.Normalize();
 	}
 
-	void Camera::UpdateDefaultCamera(float dt)
-	{
-		const auto& mouse = cumulonimbus::locator::Locator::GetInput()->Mouse();
-		const auto& key = cumulonimbus::locator::Locator::GetInput()->Keyboard();
+	//void Camera::UpdateDefaultCamera(float dt)
+	//{
+	//	const auto& mouse = cumulonimbus::locator::Locator::GetInput()->Mouse();
+	//	const auto& key = cumulonimbus::locator::Locator::GetInput()->Keyboard();
 
-		if (mouse.GetState(MouseButton::Left) == ButtonState::Held &&
-			mouse.GetState(MouseButton::Right) == ButtonState::Held)
-		{
-			Track(static_cast<float>(mouse.DeltaX()), right_vec);
-			Crane(static_cast<float>(-mouse.DeltaY()), { 0,1,0 });
-		}
-		else if (mouse.GetState(MouseButton::Left) == ButtonState::Held)
-		{
-			DollyInOut(static_cast<float>(mouse.DeltaY()));
-			Pan(static_cast<float>(mouse.DeltaX()));
+	//	if (mouse.GetState(MouseButton::Left) == ButtonState::Held &&
+	//		mouse.GetState(MouseButton::Right) == ButtonState::Held)
+	//	{
+	//		Track(static_cast<float>(mouse.DeltaX()), right_vec);
+	//		Crane(static_cast<float>(-mouse.DeltaY()), { 0,1,0 });
+	//	}
+	//	else if (mouse.GetState(MouseButton::Left) == ButtonState::Held)
+	//	{
+	//		DollyInOut(static_cast<float>(mouse.DeltaY()));
+	//		Pan(static_cast<float>(mouse.DeltaX()));
 
-			if (key.GetState(Keycode::D) == ButtonState::Held)
-				Track(camera_speed.x, right_vec);
-			if (key.GetState(Keycode::A) == ButtonState::Held)
-				Track(-camera_speed.x, right_vec);
-			if (key.GetState(Keycode::W) == ButtonState::Held)
-				Crane(camera_speed.y, current_up_vec);
-			if (key.GetState(Keycode::S) == ButtonState::Held)
-				Crane(-camera_speed.y, current_up_vec);
-		}
-		else if (mouse.GetState(MouseButton::Right) == ButtonState::Held)
-		{
-			Pan(static_cast<float>(mouse.DeltaX()));
-			Tilt(static_cast<float>(mouse.DeltaY()));
+	//		if (key.GetState(Keycode::D) == ButtonState::Held)
+	//			Track(camera_speed.x, right_vec);
+	//		if (key.GetState(Keycode::A) == ButtonState::Held)
+	//			Track(-camera_speed.x, right_vec);
+	//		if (key.GetState(Keycode::W) == ButtonState::Held)
+	//			Crane(camera_speed.y, current_up_vec);
+	//		if (key.GetState(Keycode::S) == ButtonState::Held)
+	//			Crane(-camera_speed.y, current_up_vec);
+	//	}
+	//	else if (mouse.GetState(MouseButton::Right) == ButtonState::Held)
+	//	{
+	//		Pan(static_cast<float>(mouse.DeltaX()));
+	//		Tilt(static_cast<float>(mouse.DeltaY()));
 
-			if (key.GetState(Keycode::D) == ButtonState::Held)
-				Track(camera_speed.x, right_vec);
-			if (key.GetState(Keycode::A) == ButtonState::Held)
-				Track(-camera_speed.x, right_vec);
-			if (key.GetState(Keycode::W) == ButtonState::Held)
-				Crane(camera_speed.y, current_up_vec);
-			if (key.GetState(Keycode::S) == ButtonState::Held)
-				Crane(-camera_speed.y, current_up_vec);
-		}
-	}
+	//		if (key.GetState(Keycode::D) == ButtonState::Held)
+	//			Track(camera_speed.x, right_vec);
+	//		if (key.GetState(Keycode::A) == ButtonState::Held)
+	//			Track(-camera_speed.x, right_vec);
+	//		if (key.GetState(Keycode::W) == ButtonState::Held)
+	//			Crane(camera_speed.y, current_up_vec);
+	//		if (key.GetState(Keycode::S) == ButtonState::Held)
+	//			Crane(-camera_speed.y, current_up_vec);
+	//	}
+	//}
 
 	void Camera::CalcCameraDirectionalVector()
 	{
@@ -508,7 +510,7 @@ namespace cumulonimbus::camera
 		CalcCameraDirectionalVector();
 	}
 
-	void Camera::Tilt(float velocity)
+	void Camera::Tilt(const float velocity)
 	{
 		DirectX::SimpleMath::Quaternion q{};
 		q = DirectX::SimpleMath::Quaternion::Identity;
@@ -529,8 +531,9 @@ namespace cumulonimbus::camera
 				project_vec.Normalize();
 
 				const float d = front_vec.Dot(project_vec);
-				const float rad = acosf(d);
-				if (rad > DirectX::XMConvertToRadians(max_camera_angle.x))
+
+				if (const float rad = acosf(d);
+					rad > DirectX::XMConvertToRadians(max_camera_angle.x))
 				{// +90度以上回転しているので戻す
 					const float diff = rad - DirectX::XMConvertToRadians(max_camera_angle.x);
 					q = q.CreateFromAxisAngle(right_vec, diff);
@@ -561,25 +564,25 @@ namespace cumulonimbus::camera
 		CalcCameraDirectionalVector();
 	}
 
-	void Camera::DollyInOut(float velocity)
+	void Camera::DollyInOut(const float velocity)
 	{
 		const float v = -velocity * camera_speed.y;
 
-		focus_position += front_vec * velocity;
-		eye_position += front_vec * v;
+		focus_position += front_vec * v;
+		eye_position   += front_vec * v;
 	}
 
-	void Camera::Track(float velocity, const DirectX::SimpleMath::Vector3& axis)
+	void Camera::Track(const float velocity, const DirectX::SimpleMath::Vector3& axis)
 	{
 		// カメラの注視点と位置を同じだけ移動
-		focus_position += axis * velocity;
-		eye_position += axis * velocity;
+		focus_position	+= axis * velocity;
+		eye_position	+= axis * velocity;
 	}
 
-	void Camera::Crane(float velocity, const DirectX::SimpleMath::Vector3& axis)
+	void Camera::Crane(const float velocity, const DirectX::SimpleMath::Vector3& axis)
 	{
 		// カメラの注視点と位置を同じだけ移動
-		focus_position += axis * velocity;
-		eye_position += axis * velocity;
+		focus_position	+= axis * velocity;
+		eye_position	+= axis * velocity;
 	}
 } // cumulonimbus::camera

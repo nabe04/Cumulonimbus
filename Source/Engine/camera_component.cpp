@@ -22,7 +22,7 @@ using namespace DirectX;
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::CameraComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::CameraComponent)
-CEREAL_CLASS_VERSION(cumulonimbus::component::CameraComponent, 0)
+CEREAL_CLASS_VERSION(cumulonimbus::component::CameraComponent, 1)
 
 namespace cumulonimbus::camera
 {
@@ -71,7 +71,7 @@ namespace cumulonimbus::component
 	//}
 
 	template <class Archive>
-	void CameraComponent::load(Archive&& archive, uint32_t version)
+	void CameraComponent::load(Archive&& archive, const uint32_t version)
 	{
 		archive(
 			cereal::base_class<ComponentBase>(this),
@@ -83,10 +83,17 @@ namespace cumulonimbus::component
 			CEREAL_NVP(is_active),
 			CEREAL_NVP(is_main_camera)
 		);
+
+		if(version == 1)
+		{
+			archive(
+				CEREAL_NVP(camera_offset)
+			);
+		}
 	}
 
 	template <class Archive>
-	void CameraComponent::save(Archive&& archive, uint32_t version) const
+	void CameraComponent::save(Archive&& archive, const uint32_t version) const
 	{
 		archive(
 			cereal::base_class<ComponentBase>(this),
@@ -98,6 +105,13 @@ namespace cumulonimbus::component
 			CEREAL_NVP(is_active),
 			CEREAL_NVP(is_main_camera)
 		);
+
+		if(version >= 0)
+		{
+			archive(
+				CEREAL_NVP(camera_offset)
+			);
+		}
 	}
 
 
@@ -105,8 +119,8 @@ namespace cumulonimbus::component
 	CameraComponent::CameraComponent()
 		:ComponentBase{}
 	{
-		camera = std::make_unique<camera::Camera>(locator::Locator::GetWindow()->Width(),
-												  locator::Locator::GetWindow()->Height());;
+		camera = std::make_unique<camera::Camera>(static_cast<float>(locator::Locator::GetWindow()->Width()),
+												  static_cast<float>(locator::Locator::GetWindow()->Height()));;
 	}
 
 	CameraComponent::CameraComponent(
@@ -211,7 +225,9 @@ namespace cumulonimbus::component
 	{
 		if (GetRegistry()->CollapsingHeader<CameraComponent>(GetEntity(), "Camera"))
 		{
-			ImGui::DragFloat("Camera Length", &camera_length, 0.1f, 0.1f, 1000.0f);
+			camera->RenderImGui();
+			ImGui::DragFloat("Camera Length" , &camera_length, 0.1f, 0.1f, FLT_MAX);
+			ImGui::DragFloat3("Camera Offset", &camera_offset.x, .5f, 0, FLT_MAX);
 		}
 
 		//if (bool is_removed_component = false;
@@ -290,7 +306,7 @@ namespace cumulonimbus::component
 		auto& position = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetPosition();
 
 		camera->SetFocusPosition(position + camera->GetFocusOffset());
-		//camera->SetEyePosition(position + camera->GetFocusOffset());
 		camera->SetEyePosition(camera->GetFocusPosition() + (camera->GetCameraFront() * -1) * camera_length);
+		camera->SetEyeOffset(camera_offset);
 	}
 } // cumulonimbus::component

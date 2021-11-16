@@ -149,12 +149,19 @@ namespace cumulonimbus::component
 		std::unique_ptr<camera::Camera> camera{};
 
 		//-- カメラとオブジェクトのアタッチ用変数 --//
-		mapping::rename_type::Entity attach_entity;	// アタッチするオブジェクトのエンティティ
-		float camera_length{100}; // オブジェクトとカメラの長さ
+		// アタッチするオブジェクトのエンティティ
+		mapping::rename_type::Entity attach_entity;
+		// オブジェクトとカメラの長さ
+		float camera_length{100};
+		// カメラのオフセット値
+		DirectX::SimpleMath::Vector3 camera_offset{};
 
-		bool  is_active				  = true;  // カメラを描画対象に加えるか(RenderPath::Render関数内でtrueの場合のみ描画する)
-		bool  is_use_camera_for_debug = true; // デバッグ用カメラを使用するか
-		bool  is_main_camera		  = false; // バックバッファ用のカメラ(全てのcamera_componentの中でtrueになるのは常に一つだけ)
+		// カメラを描画対象に加えるか(RenderPath::Render関数内でtrueの場合のみ描画する)
+		bool  is_active				  = true;
+		// デバッグ用カメラを使用するか
+		bool  is_use_camera_for_debug = true;
+		// バックバッファ用のカメラ(全てのcamera_componentの中でtrueになるのは常に一つだけ)
+		bool  is_main_camera		  = false;
 
 		/**
 		 * @brief : オブジェクトアタッチ時の更新関数
