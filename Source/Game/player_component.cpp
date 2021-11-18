@@ -573,16 +573,20 @@ namespace cumulonimbus::component
 
 		if (player_state.GetInitialize())
 		{// アニメーションセット(AnimationData::Jump_Begin)
-			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Jump_Begin), false);
+			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Jump_Begin_2), false);
 		}
 
-		if (model_comp.CurrentKeyframe() > 4)
+		if (auto& rigid_body_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
+			model_comp.CurrentKeyframe() > 4)
 		{
 			if(!is_jumping)
 			{
-				auto& rigid_body_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
 				rigid_body_comp.Jump();
 				is_jumping = true;
+			}
+
+			{// 移動速度の設定
+				rigid_body_comp.AddForce({ jump_movement_speed,0.0f,jump_movement_speed });
 			}
 
 			using namespace locator;
@@ -602,13 +606,13 @@ namespace cumulonimbus::component
 
 		// 状態遷移(PlayerState::Jump_Loop)
 		player_state.SetState(PlayerState::Jump_Loop);
-		GetRegistry()->GetComponent<component::RigidBodyComponent>(GetEntity()).GravityStop(false);
+		GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity()).GravityStop(false);
 	}
 
 	void PlayerComponent::JumpLoop(float dt)
 	{
 		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-		auto& movement_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
+		auto& rigid_body_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
 
 		if (player_state.GetInitialize())
 		{
@@ -617,13 +621,12 @@ namespace cumulonimbus::component
 		}
 
 		{// 移動速度の設定
-			const DirectX::SimpleMath::Vector2 stick_left = locator::Locator::GetInput()->GamePad().LeftThumbStick(0);
-			movement_comp.AddForce({ stick_left.x * jump_movement_speed,0.0f,stick_left.y * jump_movement_speed });
+			rigid_body_comp.AddForce({  jump_movement_speed,0.0f,jump_movement_speed });
 		}
 
 		{// アニメーション遷移
 
-			if (movement_comp.GetCurrentGravity() < 0)
+			if (rigid_body_comp.GetCurrentGravity() < 0)
 			{// アニメーション遷移(PlayerState::Jump_Landing)
 				player_state.SetState(PlayerState::Jump_Landing);
 			}
@@ -647,12 +650,17 @@ namespace cumulonimbus::component
 			GetRegistry()->GetComponent<ModelComponent>(GetEntity()).SwitchAnimation(GetAnimDataIndex(AnimationData::Jump_Landing), false);
 		}
 
+		{// 移動速度の設定
+			auto& rigid_body_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
+			rigid_body_comp.AddForce({ jump_movement_speed,0.0f,jump_movement_speed });
+		}
+
 		auto& ray_cast_comp = GetRegistry()->GetComponent<RayCastComponent>(GetEntity());
-		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
-		if (ray_cast_comp.GetIsBlockHit(mapping::collision_name::ray::ForFloor()) ||
-			transform_comp.GetPosition().y <= 0)
-		{
-			// 状態遷移(PlayerState::Jump_End)
+
+		if (auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
+			ray_cast_comp.GetIsBlockHit(mapping::collision_name::ray::ForFloor()) ||
+										transform_comp.GetPosition().y <= 0)
+		{// 状態遷移(PlayerState::Jump_End)
 			player_state.SetState(PlayerState::Jump_End);
 		}
 

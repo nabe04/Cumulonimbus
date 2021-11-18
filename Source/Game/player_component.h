@@ -128,6 +128,7 @@ namespace cumulonimbus::component
 			Knock_Down_Loop,
 			Knock_Down_On_Stand,
 			Attack_Normal_01_End,
+			Jump_Begin_2,
 
 			End
 		};
@@ -142,9 +143,6 @@ namespace cumulonimbus::component
 		void GameUpdate(float dt)			override;
 		void RenderImGui()					override;
 		void Load(ecs::Registry* registry)	override;
-
-		//template<class Archive>
-		//void serialize(Archive&& archive);
 
 		template<class Archive>
 		void load(Archive&& archive, uint32_t version);
