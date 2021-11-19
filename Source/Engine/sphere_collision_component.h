@@ -116,7 +116,7 @@ namespace cumulonimbus
 			[[nodiscard]] std::unordered_map<std::string, collision::Sphere>& GetSpheres();
 		private:
 			// 判定用データ群
-			std::unordered_map<std::string, collision::Sphere> spheres;
+			std::unordered_map<std::string, collision::Sphere> spheres{};
 		};
 	} // component
 

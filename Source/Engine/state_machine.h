@@ -8,10 +8,11 @@
 
 // brief : State Machine
 // Key	 : State Key
-template<typename Key, typename ReturnVal = void ,typename... Args>
+template<class Key, class ReturnVal = void , class... Args>
 class StateMachine
 {
 public:
+	StateMachine()	= default;
 	~StateMachine() = default;
 
 	/**
@@ -99,8 +100,8 @@ private:
 	Key old_state{ static_cast<int>(-1) };		// State‚Ì‰Šú‰»‚È‚Ç‚Ég‚¤
 	//std::function<ReturnVal(Args...)> call_back;
 
-	std::map<Key, std::function<ReturnVal(Args...)>> states;
+	std::map<Key, std::function<ReturnVal(Args...)>> states{};
 
-	bool is_switched = false;
+	bool is_switched{ false };
 
 };

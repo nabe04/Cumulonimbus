@@ -38,7 +38,8 @@ namespace cumulonimbus::component
 		virtual ~ComponentBase() = default;
 
 		/**
-		 * @brief : インスペクタービューなどコンポーネントの
+		 * @brief : 初期化処理
+		 * @remark : インスペクタービューなどコンポーネントの
 		 *			追加時に引数を指定できない場合に使用
 		 */
 		virtual void Initialize(ecs::Registry* registry, mapping::rename_type::Entity ent) {}
@@ -53,6 +54,8 @@ namespace cumulonimbus::component
 			ecs::Registry* registry,
 			const std::map<mapping::rename_type::Entity, mapping::rename_type::Entity>& connector) {}
 
+
+		virtual void Start() {}
 		virtual void PreCommonUpdate(float dt) {}
 		virtual void CommonUpdate(float dt) {}
 		virtual void PostCommonUpdate(float dt) {}
@@ -84,9 +87,12 @@ namespace cumulonimbus::component
 			);
 		}
 
-		[[nodiscard]] ecs::Registry* GetRegistry() const { return registry; }
-		[[nodiscard]] mapping::rename_type::Entity GetEntity() const { return entity; }
-		[[nodiscard]] mapping::component_tag::ComponentTag GetComponentTag() const { return component_tag; }
+		[[nodiscard]]
+		ecs::Registry* GetRegistry() const { return registry; }
+		[[nodiscard]]
+		mapping::rename_type::Entity GetEntity() const { return entity; }
+		[[nodiscard]]
+		mapping::component_tag::ComponentTag GetComponentTag() const { return component_tag; }
 
 		void SetRegistry(ecs::Registry* registry) { this->registry = registry; }
 		void SetEntity(const mapping::rename_type::Entity ent) { entity = ent; }

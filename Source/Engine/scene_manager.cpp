@@ -226,6 +226,7 @@ namespace cumulonimbus::scene
 			if (scene_name.empty())
 				scene_name = filename_helper::GetNoTitled();
 			scene->SaveScene(save_path + "/" + scene_name, scene->GetSceneName());
+			scene->StartGame();
 		}
 	}
 

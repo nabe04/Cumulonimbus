@@ -135,31 +135,42 @@ namespace cumulonimbus::component
 			}
 
 			{// HitEventの更新
-				sphere.hit_result.is_old_hit = sphere.hit_result.is_hit;
-
 				if (sphere.hit_result.is_hit)
 				{
 					if (sphere.hit_result.is_old_hit)
 					{// 他のCollisionに触れている間
+						// ヒットイベントの更新
 						sphere.hit_result.hit_event = collision::HitEvent::OnCollisionStay;
+						// イベント処理の発行
+						on_collision_stay_event.Invoke(GetEntity());
 					}
 					else
 					{// 他のCollisionに触れたとき
+						// ヒットイベントの更新
 						sphere.hit_result.hit_event = collision::HitEvent::OnCollisionEnter;
+						// イベント処理の発行
+						on_collision_enter_event.Invoke(GetEntity());
 					}
 				}
 				else
 				{
 					if (sphere.hit_result.is_old_hit)
 					{// 他のCollisionに触れるのをやめたとき
+						// ヒットイベントの更新
 						sphere.hit_result.hit_event = collision::HitEvent::OnCollisionExit;
+						// イベント処理の発行
+						on_collision_exit_event.Invoke(GetEntity());
 					}
 					else
 					{// 他のどのCollisionにも触れていない間
+						// ヒットイベントの更新
 						sphere.hit_result.hit_event = collision::HitEvent::None;
+						// イベント処理の発行
+						on_collision_none.Invoke(GetEntity());
 					}
 				}
 
+				sphere.hit_result.is_old_hit = sphere.hit_result.is_hit;
 			}
 		}
 	}

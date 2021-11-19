@@ -1085,6 +1085,9 @@
     <ClInclude Include="Source\Engine\primitive_data.h">
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\event.h">
+      <Filter>Header\Engine\System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Cumulonimbus.rc" />

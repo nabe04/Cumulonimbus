@@ -99,7 +99,7 @@ namespace cumulonimbus::system
 		std::unique_ptr<collision::CollisionPrimitiveAsset> collision_primitive{};
 		std::unique_ptr<graphics::SkyBox>	   sky_box{};
 
-		std::string current_scene_path{};  // 現在開かれているシーン(cerealがstd::filesystem未対応のためstd::stringにしている)
+		std::string current_scene_path{}; // 現在開かれているシーン(cerealがstd::filesystem未対応のためstd::stringにしている)
 		std::string default_scene_path{}; // ウィンドウ作成時に開くシーン(cerealがstd::filesystem未対応のためstd::stringにしている)
 	};
 } // cumulonimbus::system

@@ -1,4 +1,6 @@
 #pragma once
+#include <functional>
+
 #include <DirectXMath.h>
 
 #include <cereal/cereal.hpp>
@@ -7,6 +9,7 @@
 #include "cereal_helper.h"
 #include "constant_buffer.h"
 #include "debug_collision.h"
+#include "event.h"
 
 namespace cumulonimbus::component
 {
@@ -131,9 +134,37 @@ namespace cumulonimbus::component
 			return *cbuffer.get();
 		}
 
+		/**
+		 * @brief : 他のCollisionに触れたときのイベント登録
+		 */
+		void RegisterEventEnter(const mapping::rename_type::UUID& id,const std::function<void()>& func);
+
+		/**
+		 * @brief : 他のCollisionに触れるのをやめたときのイベント登録
+		 */
+		void RegisterEventExit(const mapping::rename_type::UUID& id, const std::function<void()>& func);
+
+		/**
+		 * @brief : 他のCollisionに触れている間のイベント登録
+		 */
+		void RegisterEventStay(const mapping::rename_type::UUID& id, const std::function<void()>& func);
+
+		/**
+		 * @brief : 他のどのCollisionにも触れていない間のイベント登録
+		 */
+		void RegisterEventNone(const mapping::rename_type::UUID& id, const std::function<void()>& func);
+
 	protected:
 		CollisionTag		 collision_tag;
 		std::unique_ptr<buffer::ConstantBuffer<DebugCollisionCB> >cbuffer{};
+		// 他のCollisionに触れたときのイベント
+		system::Event<void> on_collision_enter_event;
+		// 他のCollisionに触れるのをやめたときのイベント
+		system::Event<void> on_collision_exit_event;
+		// 他のCollisionに触れている間のイベント
+		system::Event<void> on_collision_stay_event;
+		// 他のどのCollisionにも触れていない間のイベント
+		system::Event<void> on_collision_none;
 		// GUI上で現在選択されているコリジョンの名前
 		std::string selected_collision_name{};
 

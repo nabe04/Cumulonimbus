@@ -11,15 +11,6 @@ CEREAL_CLASS_VERSION(cumulonimbus::component::CollisionComponent, 0)
 
 namespace cumulonimbus::component
 {
-	//template <class Archive>
-	//void CollisionComponent::serialize(Archive&& archive)
-	//{
-	//	archive(
-	//		cereal::base_class<ComponentBase>(this),
-	//		CEREAL_NVP(collision_tag)
-	//	);
-	//}
-
 	template <class Archive>
 	void CollisionComponent::load(Archive&& archive, uint32_t version)
 	{
@@ -102,6 +93,26 @@ namespace cumulonimbus::component
 	CollisionTag CollisionComponent::GetCollisionTag() const
 	{
 		return collision_tag;
+	}
+
+	void CollisionComponent::RegisterEventEnter(const mapping::rename_type::UUID& id, const std::function<void()>& func)
+	{
+		on_collision_enter_event.RegistryEvent(id, func);
+	}
+
+	void CollisionComponent::RegisterEventExit(const mapping::rename_type::UUID& id, const std::function<void()>& func)
+	{
+		on_collision_exit_event.RegistryEvent(id, func);
+	}
+
+	void CollisionComponent::RegisterEventStay(const mapping::rename_type::UUID& id, const std::function<void()>& func)
+	{
+		on_collision_stay_event.RegistryEvent(id, func);
+	}
+
+	void CollisionComponent::RegisterEventNone(const mapping::rename_type::UUID& id, const std::function<void()>& func)
+	{
+		on_collision_none.RegistryEvent(id, func);
 	}
 
 	void CollisionComponent::AttachSocket(std::string& socket_name)

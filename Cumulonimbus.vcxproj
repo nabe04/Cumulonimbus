@@ -64,6 +64,7 @@
     <ClInclude Include="Source\Engine\ecs.h" />
     <ClInclude Include="Source\Engine\editor_manager.h" />
     <ClInclude Include="Source\Engine\enum_state_map.h" />
+    <ClInclude Include="Source\Engine\event.h" />
     <ClInclude Include="Source\Engine\fbx_model_component.h" />
     <ClInclude Include="Source\Engine\fbx_model_resource.h" />
     <ClInclude Include="Source\Engine\filename_helper.h" />

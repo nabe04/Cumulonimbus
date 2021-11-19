@@ -139,9 +139,13 @@ namespace cumulonimbus::component
 		~PlayerComponent() override = default;
 
 		void Initialize(ecs::Registry* registry, mapping::rename_type::Entity ent) override;
+
+		void Start() override;
+
 		void PreGameUpdate(float dt)		override;
 		void GameUpdate(float dt)			override;
 		void RenderImGui()					override;
+
 		void Load(ecs::Registry* registry)	override;
 
 		template<class Archive>
@@ -264,6 +268,12 @@ namespace cumulonimbus::component
 		 * @param ent : 自分のエンティティ
 		 */
 		void InitializeMoveState(ecs::Registry* registry, const mapping::rename_type::Entity& ent);
+
+		/**
+		 * @brief : ダメージ処理
+		 */
+		void OnDamaged();
+
 		/**
 		 * @brief : StateMachineクラスで管理するプレイヤーの状態関数
 		 */

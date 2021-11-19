@@ -68,6 +68,8 @@ namespace cumulonimbus::ecs
 	public:
 		virtual ~ComponentArrayBase() = default;
 
+		//  ゲーム時更新処理の初めの1フレーム時の処理
+		virtual void StartGame()				= 0;
 		// 共通の更新処理
 		virtual void PreCommonUpdate(float dt)	= 0;
 		virtual void CommonUpdate(float dt)		= 0;
@@ -112,6 +114,15 @@ namespace cumulonimbus::ecs
 		size_t GetHashCode() override
 		{
 			return typeid(T).hash_code();
+		}
+
+		//--  ゲーム時更新処理の初めの1フレーム時の処理 --//
+		void StartGame() override
+		{
+			for(auto& component : components)
+			{
+				component.Start();
+			}
 		}
 
 		//-- 共通の更新処理 --//
@@ -418,15 +429,17 @@ namespace cumulonimbus::ecs
 			RegisterComponentName();
 		}
 
-		//-- 共通の更新処理 --//
+		//  ゲーム時更新処理の初めの1フレーム時の処理
+		void Start();
+		// 共通の更新処理
 		void PreCommonUpdate(float dt);
 		void CommonUpdate(float dt);
 		void PostCommonUpdate(float dt);
-		//-- シーンの更新処理 --//
+		// シーンの更新処理
 		void PreSceneUpdate(float dt);
 		void SceneUpdate(float dt);
 		void PostSceneUpdate(float dt);
-		//-- ゲームの更新処理 --//
+		// ゲームの更新処理
 		void PreGameUpdate(float dt);
 		void GameUpdate(float dt);
 		void PostGameUpdate(float dt);

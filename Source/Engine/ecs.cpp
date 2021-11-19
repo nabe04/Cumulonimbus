@@ -98,9 +98,17 @@ namespace cumulonimbus::ecs
 		}
 	}
 
+	void Registry::Start()
+	{
+		for(auto& component : component_arrays)
+		{
+			component.second->StartGame();
+		}
+	}
+
+
 	void Registry::PreCommonUpdate(const float dt)
 	{
-		const auto& num_ent = entities.size();
 		for (auto& component : component_arrays)
 		{
 			component.second->PreCommonUpdate(dt);

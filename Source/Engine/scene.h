@@ -50,8 +50,21 @@ namespace cumulonimbus::scene
 
 		void Execute(Framework* framework);
 
+		/**
+		 * @brief : ゲーム開始時処理
+		 */
+		void StartGame();
+		/**
+		 * @brief : 共通の更新処理
+		 */
 		void CommonUpdate(float dt);
+		/**
+		 * @brief : シーン中の更新処理
+		 */
 		void SceneUpdate(float dt);
+		/**
+		 * @brief : ゲーム中の更新処理
+		 */
 		void GameUpdate(float dt);
 
 		/**

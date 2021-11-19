@@ -19,6 +19,7 @@
 #include "scene.h"
 #include "scene_manager.h"
 #include "transform_component.h"
+#include "capsule_collison_component.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::PlayerComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::Actor3DComponent, cumulonimbus::component::PlayerComponent)
@@ -77,37 +78,30 @@ namespace cumulonimbus::component
 	PlayerComponent::PlayerComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent)
 		:Actor3DComponent{ registry, ent }
 	{
+		Initialize(registry, ent);
+	}
+
+	PlayerComponent::PlayerComponent(
+		ecs::Registry* registry,
+		const mapping::rename_type::Entity ent,
+		const PlayerComponent& copy_comp)
+		:Actor3DComponent{registry,ent}
+	{
+		*this = copy_comp;
+		SetRegistry(registry);
+		SetEntity(ent);
+
+		Initialize(registry, ent);
+	}
+
+	void PlayerComponent::Initialize(ecs::Registry* registry, const mapping::rename_type::Entity ent)
+	{
 		InitializeMoveState(registry, ent);
 
-		//// アニメーションの最終キーフレームの設定
-		//SetAdjustKeyFrame("walk_front"				, 32);
-		//SetAdjustKeyFrame("avoid_dash_begin"		, 24);
-		//SetAdjustKeyFrame("avoid_dash_end"			, 10);
-		//SetAdjustKeyFrame("dash"					, 16);
-		//SetAdjustKeyFrame("attack_normal_01"		, 40);
-		//SetAdjustKeyFrame("attack_normal_02"		, 36);
-		//SetAdjustKeyFrame("attack_normal_04_begin"	, 4);
-		//SetAdjustKeyFrame("attacking_normal_04"		, 4);
-		//SetAdjustKeyFrame("attack_strong_01"		, 27);
-		//SetAdjustKeyFrame("attack_strong_02"		, 22);
-		//SetAdjustKeyFrame("attack_strong_03"		, 22);
-		//SetAdjustKeyFrame("attack_strong_04"		, 22);
-		//SetAdjustKeyFrame("jump_start"				, 13);
-		//SetAdjustKeyFrame("jump_loop"				, 46);
-		//SetAdjustKeyFrame("jump_end"				, 17);
-		//SetAdjustKeyFrame("attacking_jump_01"		, 18);
-		//SetAdjustKeyFrame("attacking_jump_02"		, 16);
-		//SetAdjustKeyFrame("attacking_jump_03"		, 18);
-		//SetAdjustKeyFrame("attacking_jump_04"		, 18);
-		//SetAdjustKeyFrame("attack_jump_01_end"		, 36);
-		//SetAdjustKeyFrame("attack_jump_02_end"		, 36);
-		//SetAdjustKeyFrame("attack_jump_03_end"		, 34);
-		//SetAdjustKeyFrame("attack_jump_04_end"		, 32);
-
 		// 先行入力によるアニメーションの中断フレームの設定
-		SetAnimationBreakFrame(AnimationData::Attack_Normal_01 , 16);
-		SetAnimationBreakFrame(AnimationData::Attack_Normal_02 , 20);
-		SetAnimationBreakFrame(AnimationData::Attack_Normal_03 , 37);
+		SetAnimationBreakFrame(AnimationData::Attack_Normal_01, 16);
+		SetAnimationBreakFrame(AnimationData::Attack_Normal_02, 20);
+		SetAnimationBreakFrame(AnimationData::Attack_Normal_03, 37);
 		SetAnimationBreakFrame(AnimationData::Attacking_Jump_01, 15);
 		SetAnimationBreakFrame(AnimationData::Attacking_Jump_02, 14);
 		SetAnimationBreakFrame(AnimationData::Attacking_Jump_03, 16);
@@ -125,39 +119,9 @@ namespace cumulonimbus::component
 		registry->GetComponent<RayCastComponent>(ent).AddRay(mapping::collision_name::ray::ForWall(), {});
 		registry->GetComponent<RayCastComponent>(ent).SetRayOffset(mapping::collision_name::ray::ForWall(), { 0.0f,20.0f,0.0f });
 
-		// カメラに関する設定
-		if (!registry->TryGetComponent<CameraComponent>(ent))
-		{
-			registry->AddComponent<CameraComponent>(ent, true);
-		}
-		registry->GetComponent<CameraComponent>(ent).GetCamera()->SetCameraSpeed({ 0.05f,0.05f });
-		registry->GetComponent<CameraComponent>(ent).GetCamera()->SetFocusOffset({ 0.0f,50.0f,0.0f });
-	}
-
-	PlayerComponent::PlayerComponent(
-		ecs::Registry* registry,
-		const mapping::rename_type::Entity ent,
-		const PlayerComponent& copy_comp)
-		:Actor3DComponent{registry,ent}
-	{
-		*this = copy_comp;
-		SetRegistry(registry);
-		SetEntity(ent);
-
-		InitializeMoveState(registry, ent);
-
-		registry->GetOrEmplaceComponent<RigidBodyComponent>(ent);
-		// レイキャストに関する設定
-		if (!registry->TryGetComponent<RayCastComponent>(ent))
-		{
-			registry->AddComponent<RayCastComponent>(ent, CollisionTag::Player);
-		}
-		// 床(floor)用rayの追加 & 設定
-		registry->GetComponent<RayCastComponent>(ent).AddRay(mapping::collision_name::ray::ForFloor(), {});
-		registry->GetComponent<RayCastComponent>(ent).SetRayOffset(mapping::collision_name::ray::ForFloor(), { 0.0f,20.0f,0.0f });
-		// 壁(wall)用rayの追加 & 設定
-		registry->GetComponent<RayCastComponent>(ent).AddRay(mapping::collision_name::ray::ForWall(), {});
-		registry->GetComponent<RayCastComponent>(ent).SetRayOffset(mapping::collision_name::ray::ForWall(), { 0.0f,20.0f,0.0f });
+		// コリジョンへのイベント登録
+		auto& capsule_collision = registry->GetOrEmplaceComponent<CapsuleCollisionComponent>(GetEntity(), CollisionTag::Player);
+		capsule_collision.RegisterEventEnter(GetEntity(), [ent, registry]() {registry->GetComponent<PlayerComponent>(ent).OnDamaged(); });
 
 		// カメラに関する設定
 		if (!registry->TryGetComponent<CameraComponent>(ent))
@@ -166,11 +130,6 @@ namespace cumulonimbus::component
 		}
 		registry->GetComponent<CameraComponent>(ent).GetCamera()->SetCameraSpeed({ 0.05f,0.05f });
 		registry->GetComponent<CameraComponent>(ent).GetCamera()->SetFocusOffset({ 0.0f,50.0f,0.0f });
-	}
-
-	void PlayerComponent::Initialize(ecs::Registry* registry, mapping::rename_type::Entity ent)
-	{// Prefabからオブジェクトが作成された時の初期化処理
-
 	}
 
 	void PlayerComponent::InitializeMoveState(ecs::Registry* registry, const mapping::rename_type::Entity& ent)
@@ -226,11 +185,22 @@ namespace cumulonimbus::component
 		player_state.SetState(PlayerState::Idle);
 	}
 
+	void PlayerComponent::Start()
+	{
+		// コリジョンへのイベント登録
+		if(auto* capsule_collision = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(GetEntity());
+		   capsule_collision)
+		{
+			capsule_collision->RegisterEventEnter(GetEntity(), [&]() {GetRegistry()->GetComponent<PlayerComponent>(GetEntity()).OnDamaged(); });
+		}
+
+	}
+
 	void PlayerComponent::PreGameUpdate(float dt)
 	{
 	}
 
-	void PlayerComponent::GameUpdate(float dt)
+	void PlayerComponent::GameUpdate(const float dt)
 	{
 		Collision();
 
@@ -263,7 +233,8 @@ namespace cumulonimbus::component
 	void PlayerComponent::Load(ecs::Registry* registry)
 	{
 		SetRegistry(registry);
-		InitializeMoveState(registry, GetEntity());
+		Initialize(registry, GetEntity());
+		//InitializeMoveState(registry, GetEntity());
 	}
 
 	int PlayerComponent::GetAnimDataIndex(AnimationData anim_state) const
@@ -455,6 +426,11 @@ namespace cumulonimbus::component
 		return static_cast<int>(animation_break_frame.at(state)) < model_comp.CurrentKeyframe() ? true : false;
 	}
 
+	void PlayerComponent::OnDamaged()
+	{
+		int a;
+		a = 0;
+	}
 
 	void PlayerComponent::TPose(const float dt)
 	{

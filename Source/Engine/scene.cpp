@@ -87,6 +87,11 @@ namespace cumulonimbus::scene
 		//UnInitialize();
 	}
 
+	void Scene::StartGame()
+	{
+		registry->Start();
+	}
+
 	void Scene::CommonUpdate(const float dt)
 	{// ‹¤’Ê‚ÌXVˆ—
 		registry->PreCommonUpdate(dt);

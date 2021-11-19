@@ -96,9 +96,6 @@ namespace cumulonimbus::editor
 				ImGui::TreeNodeEx(std::string{ ICON_FA_CLOUD_SUN + scene_name }.c_str(),tree_flg))
 			{
 
-					ImGui::PopStyleColor();
-
-
 				if(ImGui::IsItemClicked(ImGuiMouseButton_Left))
 				{
 					// 選択されているシーンの変更
@@ -171,6 +168,8 @@ namespace cumulonimbus::editor
 
 				ImGui::TreePop();
 			}
+
+			ImGui::PopStyleColor();
 
 			//-- ドラッグ & ドロップでのシーン追加読み込み --//
 			if (std::filesystem::path selected_asset = ""; // アセットのリセット
