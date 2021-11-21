@@ -11,7 +11,7 @@
 #include "sky_box.h"
 // components
 #include "player_component.h"
-
+#include "enemy_soldier_component.h"
 
 namespace cumulonimbus {
 	namespace asset {
@@ -204,6 +204,15 @@ namespace cumulonimbus::scene
 			collision_manager->Update(dt, scene->GetRegistry());
 		}
 
+		// エンティティの削除処理
+		for (auto& [scene_id, scene] : active_scenes)
+		{
+			for(const auto& destroy_entity : scene->GetRegistry()->GetDestroyEntities())
+			{
+				scene->GetRegistry()->Destroy(destroy_entity);
+			}
+		}
+
 		system->Update(dt);
 	}
 
@@ -243,16 +252,26 @@ namespace cumulonimbus::scene
 
 	void SceneManager::InitialCreatePrefab()
 	{
-		//-- プレイヤーの基となるプレハブの作成 --//
 		ecs::Registry& registry = *active_scenes.begin()->second->GetRegistry();
+		//-- プレイヤーの基となるプレハブの作成 --//
 		const mapping::rename_type::Entity& player_base = registry.CreateEntity();
 		registry.AddComponent<component::PlayerComponent>(player_base);
 		// プレハブの作成
 		asset_manager->GetLoader<asset::PrefabLoader>()->CreatePrefab(*asset_manager.get(), &registry,
 																	  std::vector<mapping::rename_type::Entity>{player_base},
 																	  true, "Player_Base");
+
+		//-- 敵の基となるプレハブの作成 --//
+		const mapping::rename_type::Entity& enemy_soldier_base = registry.CreateEntity();
+		registry.AddComponent<component::EnemySoldierComponent>(enemy_soldier_base);
+		// プレハブの作成
+		asset_manager->GetLoader<asset::PrefabLoader>()->CreatePrefab(*asset_manager.get(), &registry,
+																	  std::vector<mapping::rename_type::Entity>{enemy_soldier_base},
+																	  true, "E_Soldier_Base");
+
 		// 作成したエンティティの削除(プレハブへの登録のみが目的の為)
 		registry.Destroy(player_base);
+		registry.Destroy(enemy_soldier_base);
 		// カメラを
 		if(!registry.GetArray<component::CameraComponent>().GetComponents().empty())
 		{

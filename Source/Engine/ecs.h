@@ -327,12 +327,21 @@ namespace cumulonimbus::ecs
 		/**
 		 * @brief : EntityがComponentを持っているか
 		 */
-		[[nodiscard]] bool Content(const mapping::rename_type::Entity entity) const
+		[[nodiscard]]
+		bool Content(const mapping::rename_type::Entity entity) const
 		{
 			if (entity_id.contains(entity))
 				return true;
 
 			return false;
+		}
+
+		/**
+		 * @brief : コンポーネントの要素数
+		 */
+		size_t Size() const
+		{
+			return components.size();
 		}
 
 		std::vector<T>& GetComponents()
@@ -496,6 +505,15 @@ namespace cumulonimbus::ecs
 		 * @brief : Entityの作成
 		 */
 		mapping::rename_type::Entity CreateEntity();
+
+		/**
+		 * @brief : 削除対象のEntityの追加
+		 * @remark : イテレータの破壊が起こらないようにするため
+		 */
+		void AddDestroyEntity(const mapping::rename_type::Entity& entity)
+		{
+			destroy_entities.emplace_back(entity);
+		}
 
 		/**
 		 * @brief : 指定のEntityの削除
@@ -728,6 +746,12 @@ namespace cumulonimbus::ecs
 			return component_arrays;
 		}
 
+		[[nodiscard]]
+		const std::vector<mapping::rename_type::Entity>& GetDestroyEntities() const
+		{
+			return destroy_entities;
+		}
+
 		void SetScene(scene::Scene* scene)		  { this->scene = scene; }
 		[[nodiscard]] scene::Scene*   GetScene()   const { return scene; }
 
@@ -758,6 +782,7 @@ namespace cumulonimbus::ecs
 
 		std::unordered_map<mapping::rename_type::ComponentName, std::unique_ptr<ComponentArrayBase>> component_arrays;
 		std::unordered_map<mapping::rename_type::Entity, std::pair<mapping::rename_type::Entity, mapping::rename_type::EntityName>> entities;
+		std::vector<mapping::rename_type::Entity> destroy_entities{};
 		scene::Scene* scene;
 	};
 
@@ -896,6 +921,7 @@ namespace cumulonimbus::ecs
 				std::ifstream ifs(load_file_path_and_name + file_path_helper::GetBinExtension(), std::ios_base::binary);
 				if (!ifs)
 					assert(!"Not open file");
+					//return;
 				cereal::BinaryInputArchive input_archive(ifs);
 				input_archive(*this);
 			}

@@ -189,14 +189,14 @@ namespace cumulonimbus::editor
 					locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->Save(*registry.GetScene(), current_scene_path);
 				}
 				locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->CreateScene(scene_manager);
-				selected_scene_id = scene_manager.GetActiveScenes()->begin()->first;
+				selected_scene_id = scene_manager.GetActiveScenes().begin()->first;
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Don't Save", ImVec2(140, 0)))
 			{
 				locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>()->CreateScene(scene_manager);
-				selected_scene_id = scene_manager.GetActiveScenes()->begin()->first;
+				selected_scene_id = scene_manager.GetActiveScenes().begin()->first;
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::SameLine();

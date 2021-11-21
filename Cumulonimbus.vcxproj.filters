@@ -597,6 +597,9 @@
     <ClCompile Include="debug_primitive_shader.cpp">
       <Filter>Source\Engine\Shader%28.cpp%29</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\wave_system.cpp">
+      <Filter>Source\Engine\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -1086,6 +1089,9 @@
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\event.h">
+      <Filter>Header\Engine\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\wave_system.h">
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
   </ItemGroup>

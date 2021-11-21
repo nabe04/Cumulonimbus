@@ -19,6 +19,8 @@ namespace cumulonimbus::component
 		explicit EnemyBaseComponent()  = default; // for cereal
 		~EnemyBaseComponent() override = default;
 
+		void Start()					   override{};
+
 		void GameUpdate(float dt)		   override {}
 		void RenderImGui()				   override {}
 		void Load(ecs::Registry* registry) override;
@@ -62,6 +64,11 @@ namespace cumulonimbus::component
 		std::unordered_map<std::string, RandomFloat> transition_timer{};
 		// モデルのyaw回転(度数法)のランダム値
 		RandomFloat random_rotation_angle{};
+
+		/**
+		 * @brief : ダメージ処理
+		 */
+		virtual void OnDamaged() {};
 
 		/**
 		 * @brief			: "transition_timer"の登録

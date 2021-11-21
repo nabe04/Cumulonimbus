@@ -52,9 +52,9 @@ namespace cumulonimbus::asset
 		//-- game --//
 		// player
 		RegistryComponent<component::PlayerComponent>();
-		//// enemy
+		// enemy
 		RegistryComponent<component::EnemyBaseComponent>();
-		//RegistryComponent<component::EnemySoldierComponent>();
+		RegistryComponent<component::EnemySoldierComponent>();
 	}
 
 	template <class T>
@@ -154,6 +154,7 @@ namespace cumulonimbus::asset
 	{
 		if (path.extension().compare(file_path_helper::GetPrefabExtension()) != 0)
 			assert(!"The file extension is not 「.prefab」");
+			//return;
 
 		// パラメータのリセット
 		if (!entity_assets.empty())

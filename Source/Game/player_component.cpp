@@ -187,13 +187,12 @@ namespace cumulonimbus::component
 
 	void PlayerComponent::Start()
 	{
-		// コリジョンへのイベント登録
+		// コリジョンイベントの登録
 		if(auto* capsule_collision = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(GetEntity());
 		   capsule_collision)
 		{
 			capsule_collision->RegisterEventEnter(GetEntity(), [&]() {GetRegistry()->GetComponent<PlayerComponent>(GetEntity()).OnDamaged(); });
 		}
-
 	}
 
 	void PlayerComponent::PreGameUpdate(float dt)

@@ -88,14 +88,24 @@ namespace cumulonimbus::scene
 
 		//-- ÉQÉbÉ^Å[ --//
 		[[nodiscard]]
-		std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<Scene>>* GetActiveScenes()
+		std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<Scene>>& GetActiveScenes()
 		{
-			return &active_scenes;
+			return active_scenes;
 		}
 		[[nodiscard]]
-		Scene* GetScene(const mapping::rename_type::UUID& scene_id)
+		const std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<Scene>>& GetActiveScenes() const
 		{
-			return active_scenes.at(scene_id).get();
+			return active_scenes;
+		}
+		[[nodiscard]]
+		Scene& GetScene(const mapping::rename_type::UUID& scene_id)
+		{
+			return *active_scenes.at(scene_id).get();
+		}
+		[[nodiscard]]
+		const Scene& GetScene(const mapping::rename_type::UUID& scene_id) const
+		{
+			return *active_scenes.at(scene_id).get();
 		}
 		[[nodiscard]]
 		Framework* GetFramework() const

@@ -175,6 +175,7 @@
     <ClInclude Include="Source\Engine\vertex_shader.h" />
     <ClInclude Include="Source\Engine\camera_component.h" />
     <ClInclude Include="Source\Engine\wave.h" />
+    <ClInclude Include="Source\Engine\wave_system.h" />
     <ClInclude Include="Source\Engine\window.h" />
     <ClInclude Include="Source\Game\enemy_base_component.h" />
     <ClInclude Include="Source\Game\enemy_forest_demon_component.h" />
@@ -320,6 +321,7 @@
     <ClCompile Include="Source\Engine\vertex_shader.cpp" />
     <ClCompile Include="Source\Engine\camera_component.cpp" />
     <ClCompile Include="Source\Engine\toon.cpp" />
+    <ClCompile Include="Source\Engine\wave_system.cpp" />
     <ClCompile Include="Source\Engine\window.cpp" />
     <ClCompile Include="Source\Game\enemy_base_component.cpp" />
     <ClCompile Include="Source\Game\enemy_forest_demon_component.cpp" />
