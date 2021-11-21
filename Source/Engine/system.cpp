@@ -148,6 +148,11 @@ namespace cumulonimbus::system
 
 	void System::Update(const float dt)
 	{
+		//for(auto& update_func : update_functions | std::views::values)
+		//{
+		//	update_func(dt);
+		//}
+
 		sky_box->Update(dt);
 	}
 
@@ -158,6 +163,18 @@ namespace cumulonimbus::system
 			render_function(registry);
 		}
 	}
+
+	void System::RegisterUpdateFunction(
+		const mapping::rename_type::Hash& hash,
+		const std::function<void(float dt)>& update_func)
+	{
+		// Œ^‚ª‚·‚Å‚É“o˜^‚³‚ê‚Ä‚¢‚½ê‡ã‘‚«‚·‚é
+		if (update_functions.contains(hash))
+			update_functions.at(hash) = update_func;
+
+		update_functions.emplace(hash, update_func);
+	}
+
 
 	void System::RegisterRenderFunction(
 		const mapping::rename_type::Hash& hash,

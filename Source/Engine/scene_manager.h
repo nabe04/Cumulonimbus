@@ -13,6 +13,11 @@ namespace cumulonimbus
 		class AssetManager;
 	} // asset
 
+	namespace system
+	{
+		class WaveSystem;
+	} // system
+
 	namespace renderer
 	{
 		class RenderPath;
@@ -132,6 +137,8 @@ namespace cumulonimbus::scene
 		std::unique_ptr<renderer::RenderPath> render_path{};
 		// エディター全体で統一の設定
 		std::shared_ptr<system::System>		  system{};
+		// ウェーブ管理
+		std::unique_ptr<system::WaveSystem>   wave_system{};
 
 		//-- Manager's --//
 		// アセットシート管理用マネジャー

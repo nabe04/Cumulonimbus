@@ -81,6 +81,8 @@ namespace cumulonimbus::component
 
 	void EnemySoldierComponent::Start()
 	{
+		Initialize(GetRegistry(), GetEntity());
+
 		//  コリジョンイベントの登録
 		if(auto* capsule_collision = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(GetEntity());
 		   capsule_collision)

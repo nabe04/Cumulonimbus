@@ -9,6 +9,7 @@
 #include "prefab_loader.h"
 #include "render_path.h"
 #include "sky_box.h"
+#include "wave_system.h"
 // components
 #include "player_component.h"
 #include "enemy_soldier_component.h"
@@ -58,10 +59,14 @@ namespace cumulonimbus::scene
 		framework		= std::make_unique<Framework>(window);
 		editor_manager	= std::make_unique<editor::EditorManager>();
 		system			= std::make_shared<system::System>();
+		wave_system		= std::make_unique<system::WaveSystem>();
 		asset_manager	= std::make_shared<asset::AssetManager>();
 		render_path		= std::make_unique<renderer::RenderPath>(locator::Locator::GetDx11Device()->device.Get());
 		// システムのロード
 		system->Load();
+		// システムへの関数登録
+		const auto& wave_hash = utility::GetHash<system::WaveSystem>();
+		system->RegisterRenderFunction(wave_hash, [&](ecs::Registry* registry) {wave_system->RenderImGui(registry); });
 		// ロケータへの登録
 		locator::Locator::Provide<system::System>(system);
 		locator::Locator::Provide<asset::AssetManager>(asset_manager);
@@ -185,6 +190,7 @@ namespace cumulonimbus::scene
 			ButtonState::Press)
 		{
 			BeginGame();
+			//wave_system->
 		}
 		if (editor_manager->GetToolBar().GetToolBarButton().GetButtonState(editor::ToolBar::Button::Play) ==
 			ButtonState::Release)
@@ -199,6 +205,7 @@ namespace cumulonimbus::scene
 			if(editor_manager->GetToolBar().IsPlaybackState(editor::ToolBar::Button::Play))
 			{
 				scene->GameUpdate(dt);
+				wave_system->Update(*this);
 			}
 
 			collision_manager->Update(dt, scene->GetRegistry());
@@ -207,10 +214,7 @@ namespace cumulonimbus::scene
 		// エンティティの削除処理
 		for (auto& [scene_id, scene] : active_scenes)
 		{
-			for(const auto& destroy_entity : scene->GetRegistry()->GetDestroyEntities())
-			{
-				scene->GetRegistry()->Destroy(destroy_entity);
-			}
+			scene->GetRegistry()->DestroyEntity();
 		}
 
 		system->Update(dt);

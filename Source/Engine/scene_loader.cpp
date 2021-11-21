@@ -2,6 +2,7 @@
 
 #include "scene.h"
 #include "scene_manager.h"
+#include "filename_helper.h"
 
 namespace
 {
@@ -216,6 +217,14 @@ namespace cumulonimbus::asset
 		// システムに現在のシーン名を登録
 		locator::Locator::GetSystem()->SetCurrentScenePath(path.string());
 		scene.LoadScene(path.parent_path().string(), path.filename().string());
+	}
+
+	std::string SceneLoader::Name(const mapping::rename_type::UUID& scene_id) const
+	{
+		if (!scenes.contains(scene_id))
+			return filename_helper::GetNoTitled();
+
+		return std::filesystem::path{ scenes.at(scene_id).scene_file_path }.filename().replace_extension().string();
 	}
 
 	mapping::rename_type::UUID SceneLoader::Convert(

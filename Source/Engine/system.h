@@ -70,11 +70,16 @@ namespace cumulonimbus::system
 		void Render(ecs::Registry* registry);
 
 		/**
-		 * @brief : ƒvƒƒWƒFƒNƒg‹¤’Ê‚Ìİ’èŠÖ”‚Ì“o˜^
+		 * @brief : ƒvƒƒWƒFƒNƒg‹¤’Ê‚Ìİ’è‚ÌXVŠÖ”‚Ì“o˜^
+		 */
+		void RegisterUpdateFunction(const mapping::rename_type::Hash& hash, const  std::function<void(float dt)>& update_func);
+
+		/**
+		 * @brief : ƒvƒƒWƒFƒNƒg‹¤’Ê‚Ìİ’è‚ÌImGui•`‰æŠÖ”‚Ì“o˜^
 		 * @remark : ImGuiã‚Å‚Ìİ’è‚ğ–Ú“I‚Æ‚µ‚Ä‚¢‚é‚½‚ß
 		 *           ImGui—p‚ÌŠÖ”‚ğ“o˜^‚·‚é
 		 */
-		void RegisterRenderFunction(const mapping::rename_type::Hash& hash, const  std::function<void(ecs::Registry* registry)>& render_func);
+		void RegisterRenderFunction(const mapping::rename_type::Hash& hash, const std::function<void(ecs::Registry* registry)>& render_func);
 
 		[[nodiscard]]
 		camera::CameraTexture& GetCameraTexture() const;
@@ -92,6 +97,8 @@ namespace cumulonimbus::system
 			current_scene_path = scene_path;
 		}
 	private:
+		// “o˜^‚³‚ê‚½•û‚ÌUpdateŠÖ”‚Ì•Û
+		std::map<mapping::rename_type::Hash, std::function<void(float dt)>> update_functions{};
 		// “o˜^‚³‚ê‚½Œ^‚ÌRenderŠÖ”‚Ì•Û
 		std::map<mapping::rename_type::Hash, std::function<void(ecs::Registry* registry)>> render_functions{};
 

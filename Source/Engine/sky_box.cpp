@@ -43,6 +43,7 @@ namespace cumulonimbus::graphics
 		pixel_shader  = std::make_unique<shader::PixelShader>( device, mapping::shader_filename::ps::SkyBox_PS().c_str());
 
 		// System::Render“à‚ÅÀs‚·‚éŠÖ”‚Ì“o˜^
+		system.RegisterUpdateFunction(utility::GetHash<SkyBox>(), [&](const float dt) {Update(dt); });
 		system.RegisterRenderFunction(utility::GetHash<SkyBox>(), [&](ecs::Registry* registry) {RenderImGui(registry); });
 	}
 
@@ -60,7 +61,8 @@ namespace cumulonimbus::graphics
 
 	void SkyBox::RenderImGui(ecs::Registry* registry)
 	{
-		if (ImGui::TreeNode("Sky map texture"))
+		if (const ImGuiTreeNodeFlags tree_flg{ ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth };
+			ImGui::CollapsingHeader(ICON_FA_SUN"Sky Box", tree_flg))
 		{
 			for (auto& it : cube_textures)
 			{
@@ -68,8 +70,6 @@ namespace cumulonimbus::graphics
 				ImGui::SameLine();
 				ImGui::Image((void*)it->GetShaderResourceView(), { 100,100 });
 			}
-
-			ImGui::TreePop();
 		}
 	}
 

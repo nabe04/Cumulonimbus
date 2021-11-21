@@ -9,6 +9,7 @@
 #include "window.h"
 #include "scene_manager.h"
 #include "render_path.h"
+#include "wave_system.h"
 #include "gaussian_blur.h"
 
 INT WINAPI wWinMain(HINSTANCE instance, HINSTANCE prev_instance, LPWSTR cmd_line, INT cmd_show)

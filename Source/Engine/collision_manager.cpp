@@ -118,7 +118,7 @@ namespace cumulonimbus::collision
 
 	void CollisionManager::Update(const float dt, ecs::Registry* registry)
 	{
-		// 球同士の判定
+		//-- 球同士の判定 --//
 		auto& sphere_collisions = registry->GetArray<component::SphereCollisionComponent>();
 		for (int s1 = 0; s1 < sphere_collisions.GetComponents().size(); ++s1)
 		{
@@ -132,7 +132,7 @@ namespace cumulonimbus::collision
 			}
 		}
 
-		// カプセル同士の判定
+		//-- カプセル同士の判定 --//
 		auto& capsule_collisions = registry->GetArray<component::CapsuleCollisionComponent>();
 		for (int c1 = 0; c1 < capsule_collisions.GetComponents().size(); ++c1)
 		{
@@ -145,8 +145,10 @@ namespace cumulonimbus::collision
 					capsule_collisions.GetComponents().at(c2));
 			}
 		}
+		// 別のシーン同士
 
-		// 球とカプセルの判定
+
+		//-- 球とカプセルの判定 --//
 		for (int s = 0; s < sphere_collisions.GetComponents().size(); ++s)
 		{
 			for (int c = 0; c < capsule_collisions.GetComponents().size(); ++c)
@@ -159,7 +161,7 @@ namespace cumulonimbus::collision
 			}
 		}
 
-		// 地形とモデルとの判定(レイキャスト)
+		//-- 地形とモデルとの判定(レイキャスト) --//
 		for (auto& ray_cast_array = registry->GetArray<component::RayCastComponent>();
 			 auto& ray_comp : ray_cast_array.GetComponents())
 		{
@@ -759,6 +761,53 @@ namespace cumulonimbus::collision
 						c1.second.collision_preset,
 						c2.second.collision_preset,
 						(c1.second.radius + c2.second.radius) - len);
+				}
+				else
+				{
+					c1.second.hit_result.is_hit = c2.second.hit_result.is_hit = false;
+				}
+			}
+		}
+		return hit;
+	}
+
+	bool CollisionManager::IntersectCapsuleVsCapsule(
+		const float dt,
+		ecs::Registry* registry_1, ecs::Registry* registry_2,
+		component::CapsuleCollisionComponent& capsule_1,
+		component::CapsuleCollisionComponent& capsule_2)
+	{
+		bool hit = false;
+
+		for (auto& c1 : capsule_1.GetCapsules())
+		{
+			for (auto& c2 : capsule_2.GetCapsules())
+			{
+				// それぞれのカプセルの線分(始点)からの大きさ
+				float c1_t, c2_t;
+				DirectX::SimpleMath::Vector3 c1_p, c2_p;
+
+				// 線分の最近距離
+				const float len = arithmetic::ClosestPtSegmentSegment(
+					c1.second.start, c1.second.end,
+					c2.second.start, c2.second.end,
+					c1_t, c2_t,
+					c1_p, c2_p);
+
+				if (len < c1.second.radius + c2.second.radius)
+				{
+					c1.second.hit_result.is_hit = true;
+					c2.second.hit_result.is_hit = true;
+					hit = true;
+					// 押出し処理
+					//Extrude(
+					//	dt,
+					//	registry,
+					//	capsule_1.GetEntity(), capsule_2.GetEntity(),
+					//	c1_p, c2_p,
+					//	c1.second.collision_preset,
+					//	c2.second.collision_preset,
+					//	(c1.second.radius + c2.second.radius) - len);
 				}
 				else
 				{

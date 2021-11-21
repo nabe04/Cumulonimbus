@@ -516,6 +516,21 @@ namespace cumulonimbus::ecs
 		}
 
 		/**
+		 * @brief : destroy_entitiesに登録されたエンティティの削除
+		 */
+		void DestroyEntity()
+		{
+			if (destroy_entities.empty())
+				return;
+			for(const auto& destroy_entity : destroy_entities)
+			{
+				Destroy(destroy_entity);
+			}
+
+			destroy_entities.clear();
+		}
+
+		/**
 		 * @brief : 指定のEntityの削除
 		 *          Entityに含まれるコンポーネントも削除
 		 */

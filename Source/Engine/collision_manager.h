@@ -19,6 +19,11 @@ namespace cumulonimbus
 		class System;
 	} // system
 
+	namespace scene
+	{
+		class SceneManager;
+	} // scene
+
 	namespace component
 	{
 		class ModelComponent;
@@ -194,10 +199,17 @@ namespace cumulonimbus::collision
 
 		/**
 		 * @brief : カプセルとカプセルの当たり判定
+		 * @remark : 同一のシーン同士
 		 */
 		bool IntersectCapsuleVsCapsule(
 			float dt,
 			ecs::Registry* registry,
+			component::CapsuleCollisionComponent& capsule_1,
+			component::CapsuleCollisionComponent& capsule_2);
+
+		bool IntersectCapsuleVsCapsule(
+			float dt,
+			ecs::Registry* registry_1, ecs::Registry* registry_2,
 			component::CapsuleCollisionComponent& capsule_1,
 			component::CapsuleCollisionComponent& capsule_2);
 
