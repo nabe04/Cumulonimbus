@@ -27,14 +27,17 @@ namespace cumulonimbus::system
 		);
 	}
 
-	void WaveSystem::Start()
+	void WaveSystem::Start(scene::SceneManager& scene_manager)
 	{
-		wave_index = 0;
+		ChangeWave(scene_manager, true);
 	}
 
-	void WaveSystem::Update(const scene::SceneManager& scene_manager)
+	void WaveSystem::Update(scene::SceneManager& scene_manager)
 	{
 		if (waves_id.empty())
+			return;
+
+		if (wave_index >= waves_id.size())
 			return;
 
 		if (!scene_manager.GetActiveScenes().contains(waves_id.at(wave_index)))
@@ -44,7 +47,7 @@ namespace cumulonimbus::system
 		if(ecs::Registry& registry = *scene_manager.GetScene(waves_id.at(wave_index)).GetRegistry();
 		   registry.GetArray<component::ModelComponent>().Size() == 0)
 		{// シーン内のModelComponentが存在しない場合次のウェーブに移行する
-			ChangeWave();
+			ChangeWave(scene_manager, false);
 		}
 	}
 
@@ -83,10 +86,6 @@ namespace cumulonimbus::system
 			for (u_int wave_no = 0;
 				auto & wave_id: waves_id)
 			{
-				//if (!scene_asset.sheet.contains(wave_id))
-				//	continue;
-				//const std::string wave_name = scene_asset.sheet.at(wave_id);
-
 				if (std::string scene_name = scene_loader->Name(wave_id);
 					helper::imgui::Combo("Wave" + std::to_string(wave_no + 1), scene_name, scenes_name))
 				{
@@ -109,7 +108,40 @@ namespace cumulonimbus::system
 		waves_id.emplace_back(scene_id);
 	}
 
-	void WaveSystem::ChangeWave()
+	void WaveSystem::ChangeWave(scene::SceneManager& scene_manager, const bool is_first)
 	{
+		++wave_index;
+		if(is_first)
+		{
+			wave_index = 0;
+			if (waves_id.size() <= 0)
+				return;
+		}
+
+		if (waves_id.empty())
+			return;
+		if (wave_index >= waves_id.size())
+			return;
+
+		auto& scene_loader = *locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>();
+
+		while(true)
+		{
+			if (wave_index >= waves_id.size())
+				break;
+
+			if(!scene_loader.HasScene(waves_id.at(wave_index)))
+			{
+				++wave_index;
+				continue;
+			}
+
+			if (wave_index > 0)
+				scene_loader.DestroyScene(scene_manager, waves_id.at(wave_index - 1));
+
+			scene_loader.AddScene(scene_manager, waves_id.at(wave_index));
+			scene_manager.GetScene(waves_id.at(wave_index)).StartGame();
+			break;
+		}
 	}
 } // cumulonimbus::system

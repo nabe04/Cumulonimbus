@@ -38,7 +38,7 @@ namespace cumulonimbus::asset
 		 * @brief : オーバーロードされているLoad関数の共通処理記述部
 		 */
 		void Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id) override;
-		
+
 		/**
 		 * @brief : アセットの名前変更
 		 * @remark : 変更先のクラスでasset_idが存在しない場合処理を抜ける
@@ -64,6 +64,12 @@ namespace cumulonimbus::asset
 		 * @param asset_id : 削除したいアセットのID(UUID)
 		 */
 		void Delete(AssetManager& asset_manager, const mapping::rename_type::UUID& asset_id) override;
+
+		/**
+		 * @brief : 指定されてIDのシーンが存在するか
+		 */
+		[[nodiscard]]
+		bool HasScene(const mapping::rename_type::UUID& scene_id) const;
 
 		/**
 		 * @brief : 指定された拡張子はロード可能か
@@ -136,6 +142,10 @@ namespace cumulonimbus::asset
 			scene::SceneManager& scene_manager,
 			const std::filesystem::path& add_scene_path);
 
+		void DestroyScene(
+			scene::SceneManager& scene_manager,
+			const mapping::rename_type::UUID& destroy_scene_id);
+
 		void CreateScene(scene::SceneManager& scene_manager);
 
 		/**
@@ -149,7 +159,7 @@ namespace cumulonimbus::asset
 
 		[[nodiscard]]
 		std::string Name(const mapping::rename_type::UUID& scene_id) const;
-	
+
 	private:
 		std::map<mapping::rename_type::UUID, SceneAsset> scenes{};
 

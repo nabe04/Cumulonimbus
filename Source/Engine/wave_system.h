@@ -27,9 +27,9 @@ namespace cumulonimbus::system
 		template<class Archive>
 		void save(Archive&& archive, uint32_t version) const;
 
-		void Start();
-		
-		void Update(const scene::SceneManager& scene_manager);
+		void Start(scene::SceneManager& scene_manager);
+
+		void Update(scene::SceneManager& scene_manager);
 
 		void RenderImGui(ecs::Registry* registry);
 
@@ -42,7 +42,7 @@ namespace cumulonimbus::system
 		/**
 		 * @brief : ウェーブシーンの変更
 		 */
-		void ChangeWave();
+		void ChangeWave(scene::SceneManager& scene_manager, bool is_first);
 
 	private:
 		/**

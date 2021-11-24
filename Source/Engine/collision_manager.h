@@ -121,6 +121,8 @@ namespace cumulonimbus::collision
 		 */
 		void Update(float dt, ecs::Registry* registry);
 
+		void Update(float dt, scene::SceneManager& scene_manager);
+
 		void RenderImGui(ecs::Registry* registry);
 
 		/**
@@ -189,11 +191,20 @@ namespace cumulonimbus::collision
 
 		/**
 		 * @brief : 球と球の当たり判定
-		 *	        SphereCollisionComponentが持つSphere分処理を回す
+		 * @remark : 同一シーン同士
 		 */
 		bool IntersectSphereVsSphere(
 			float dt,
 			ecs::Registry* registry,
+			component::SphereCollisionComponent& sphere_1,
+			component::SphereCollisionComponent& sphere_2);
+		/**
+		 * @brief : 球と球の当たり判定
+		 * @remark : 別シーン同士
+		 */
+		bool IntersectSphereVsSphere(
+			float dt,
+			ecs::Registry* registry_1, ecs::Registry* registry_2,
 			component::SphereCollisionComponent& sphere_1,
 			component::SphereCollisionComponent& sphere_2);
 
@@ -206,7 +217,10 @@ namespace cumulonimbus::collision
 			ecs::Registry* registry,
 			component::CapsuleCollisionComponent& capsule_1,
 			component::CapsuleCollisionComponent& capsule_2);
-
+		/**
+		 * @brief : カプセルとカプセルの当たり判定
+		 * @remark : 別シーン同士
+		 */
 		bool IntersectCapsuleVsCapsule(
 			float dt,
 			ecs::Registry* registry_1, ecs::Registry* registry_2,

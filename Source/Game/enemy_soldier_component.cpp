@@ -93,7 +93,6 @@ namespace cumulonimbus::component
 		auto& model_loader = *locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>();
 		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
 		model_loader.GetModel(model_comp.GetModelID()).GetModelData().SetAnimationKeyFrame(static_cast<u_int>(AnimationData::Walk), 1);
-
 	}
 
 	void EnemySoldierComponent::GameUpdate(float dt)

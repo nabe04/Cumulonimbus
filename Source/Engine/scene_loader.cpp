@@ -110,6 +110,15 @@ namespace cumulonimbus::asset
 		asset_manager.Save();
 	}
 
+	bool SceneLoader::HasScene(const mapping::rename_type::UUID& scene_id) const 
+	{
+		if (scenes.contains(scene_id))
+			return true;
+
+		return false;
+	}
+
+
 	bool SceneLoader::Supported(const std::filesystem::path extension)
 	{
 		static const std::set<std::filesystem::path> extensions
@@ -178,6 +187,13 @@ namespace cumulonimbus::asset
 	{
 		const mapping::rename_type::UUID add_scene_id = locator::Locator::GetAssetManager()->GetAssetSheetManager().Search<asset::SceneAsset>(add_scene_path);
 		AddScene(scene_manager, add_scene_id, add_scene_path);
+	}
+
+	void SceneLoader::DestroyScene(
+		scene::SceneManager& scene_manager,
+		const mapping::rename_type::UUID& destroy_scene_id)
+	{
+		scene_manager.DeleteScene(destroy_scene_id);
 	}
 
 	void SceneLoader::CreateScene(scene::SceneManager& scene_manager)

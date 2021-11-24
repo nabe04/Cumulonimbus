@@ -10,6 +10,8 @@
 #include "model_loader.h"
 #include "rename_type_mapping.h"
 #include "system.h"
+#include "scene_manager.h"
+#include "scene_loader.h"
 // Components
 #include "transform_component.h"
 #include "capsule_collison_component.h"
@@ -172,6 +174,127 @@ namespace cumulonimbus::collision
 			{
 				const auto& model = registry->GetComponent<component::ModelComponent>(ent_terrain);
 				IntersectRayVsModel(dt, registry, model, ray_comp);
+			}
+		}
+	}
+
+	void CollisionManager::Update(const float dt, scene::SceneManager& scene_manager)
+	{
+		//-- 同一シーン内での判定処理 --//
+		for(const auto& scene : scene_manager.GetActiveScenes() | std::views::values)
+		{
+			auto* registry = scene->GetRegistry();
+
+			//-- 球同士の判定 --//
+			auto& sphere_collisions = registry->GetArray<component::SphereCollisionComponent>();
+			for (int s1 = 0; s1 < sphere_collisions.GetComponents().size(); ++s1)
+			{
+				for (int s2 = s1 + 1; s2 < sphere_collisions.GetComponents().size(); ++s2)
+				{
+					IntersectSphereVsSphere(
+						dt,
+						registry,
+						sphere_collisions.GetComponents().at(s1),
+						sphere_collisions.GetComponents().at(s2));
+				}
+			}
+
+			//-- カプセル同士の判定 --//
+			auto& capsule_collisions = registry->GetArray<component::CapsuleCollisionComponent>();
+			for (int c1 = 0; c1 < capsule_collisions.GetComponents().size(); ++c1)
+			{
+				for (int c2 = c1 + 1; c2 < capsule_collisions.GetComponents().size(); ++c2)
+				{
+					IntersectCapsuleVsCapsule(
+						dt,
+						registry,
+						capsule_collisions.GetComponents().at(c1),
+						capsule_collisions.GetComponents().at(c2));
+				}
+			}
+			// 別のシーン同士
+
+
+			//-- 球とカプセルの判定 --//
+			for (int s = 0; s < sphere_collisions.GetComponents().size(); ++s)
+			{
+				for (int c = 0; c < capsule_collisions.GetComponents().size(); ++c)
+				{
+					IntersectSphereVsCapsule(
+						dt,
+						registry,
+						sphere_collisions.GetComponents().at(s),
+						capsule_collisions.GetComponents().at(c));
+				}
+			}
+
+			//-- 地形とモデルとの判定(レイキャスト) --//
+			for (auto& ray_cast_array = registry->GetArray<component::RayCastComponent>();
+				auto & ray_comp : ray_cast_array.GetComponents())
+			{
+				mapping::rename_type::Entity ent = ray_comp.GetEntity();
+
+				// ent_terrainsとRayCastComponentを持つモデルでレイキャストの判定を行う
+				for (const auto& ent_terrain : ent_terrains)
+				{
+					const auto& model = registry->GetComponent<component::ModelComponent>(ent_terrain);
+					IntersectRayVsModel(dt, registry, model, ray_comp);
+				}
+			}
+		}
+
+
+		//-- 別シーンでの判定処理 --//
+		std::vector<mapping::rename_type::UUID> scenes_id{};
+		scenes_id.reserve(scene_manager.GetActiveScenes().size());
+		for (const auto & scene_id : scene_manager.GetActiveScenes() | std::views::keys)
+		{
+			scenes_id.emplace_back(scene_id);
+		}
+		if (scenes_id.size() <= 1)
+			return;
+
+		for (int scene_1 = 0; scene_1 < scenes_id.size(); ++scene_1)
+		{
+			for (int scene_2 = scene_1 + 1; scene_2 < scenes_id.size(); ++scene_2)
+			{
+				auto* registry_1 = scene_manager.GetActiveScenes().at(scenes_id.at(scene_1))->GetRegistry();
+				auto* registry_2 = scene_manager.GetActiveScenes().at(scenes_id.at(scene_2))->GetRegistry();
+
+				////-- 球同士の判定 --//
+				auto& sphere_collisions_1 = registry_1->GetArray<component::SphereCollisionComponent>();
+				auto& sphere_collisions_2 = registry_2->GetArray<component::SphereCollisionComponent>();
+				for (int s1 = 0; s1 < sphere_collisions_1.GetComponents().size(); ++s1)
+				{
+					for (int s2 = 0; s2 < sphere_collisions_2.GetComponents().size(); ++s2)
+					{
+						IntersectSphereVsSphere(
+							dt,
+							registry_1, registry_2,
+							sphere_collisions_1.GetComponents().at(s1),
+							sphere_collisions_2.GetComponents().at(s2));
+					}
+				}
+
+				//-- カプセル同士の判定 --//
+				auto& capsule_collisions_1 = registry_1->GetArray<component::CapsuleCollisionComponent>();
+				auto& capsule_collisions_2 = registry_2->GetArray<component::CapsuleCollisionComponent>();
+				for (int c1 = 0; c1 < capsule_collisions_1.Size(); ++c1)
+				{
+					for (int c2 = 0; c2 < capsule_collisions_2.Size(); ++c2)
+					{
+						if(IntersectCapsuleVsCapsule(
+							dt,
+							registry_1, registry_2,
+							capsule_collisions_1.GetComponents().at(c1),
+							capsule_collisions_2.GetComponents().at(c2)))
+						{
+							int a;
+							a = 0;
+						}
+					}
+				}
+
 			}
 		}
 	}
@@ -724,6 +847,47 @@ namespace cumulonimbus::collision
 		return hit;
 	}
 
+	bool CollisionManager::IntersectSphereVsSphere(
+		const float dt,
+		ecs::Registry* registry_1, ecs::Registry* registry_2,
+		component::SphereCollisionComponent& sphere_1,
+		component::SphereCollisionComponent& sphere_2)
+	{
+		bool hit = false;
+		for(auto& s1 : sphere_1.GetSpheres() | std::views::values)
+		{
+			for(auto& s2 : sphere_2.GetSpheres() | std::views::values)
+			{
+				const DirectX::SimpleMath::Vector3 s1_translation = s1.world_transform_matrix.Translation();
+				const DirectX::SimpleMath::Vector3 s2_translation = s2.world_transform_matrix.Translation();
+
+				const DirectX::SimpleMath::Vector3 v = { s1_translation - s2_translation };
+
+				if (const float len = v.Length();
+					len <= s1.radius + s2.radius)
+				{
+					hit = true;
+					s1.hit_result.is_hit = true;
+					s2.hit_result.is_hit = true;
+					// 押出し処理
+					//Extrude(
+					//	dt,
+					//	registry,
+					//	sphere_1.GetEntity(), sphere_2.GetEntity(),
+					//	s1_translation, s2_translation,
+					//	s1.collision_preset, s2.collision_preset,
+					//	(s1.radius + s2.radius) - len);
+				}
+				else
+				{
+					s1.hit_result.is_hit = false;
+					s2.hit_result.is_hit = false;
+				}
+			}
+		}
+		return hit;
+	}
+
 	bool CollisionManager::IntersectCapsuleVsCapsule(
 		const float dt,
 		ecs::Registry* registry,
@@ -779,9 +943,9 @@ namespace cumulonimbus::collision
 	{
 		bool hit = false;
 
-		for (auto& c1 : capsule_1.GetCapsules())
+		for (auto& c1 : capsule_1.GetCapsules() | std::views::values)
 		{
-			for (auto& c2 : capsule_2.GetCapsules())
+			for (auto& c2 : capsule_2.GetCapsules() | std::views::values)
 			{
 				// それぞれのカプセルの線分(始点)からの大きさ
 				float c1_t, c2_t;
@@ -789,15 +953,15 @@ namespace cumulonimbus::collision
 
 				// 線分の最近距離
 				const float len = arithmetic::ClosestPtSegmentSegment(
-					c1.second.start, c1.second.end,
-					c2.second.start, c2.second.end,
+					c1.start, c1.end,
+					c2.start, c2.end,
 					c1_t, c2_t,
 					c1_p, c2_p);
 
-				if (len < c1.second.radius + c2.second.radius)
+				if (len < c1.radius + c2.radius)
 				{
-					c1.second.hit_result.is_hit = true;
-					c2.second.hit_result.is_hit = true;
+					c1.hit_result.is_hit = true;
+					c2.hit_result.is_hit = true;
 					hit = true;
 					// 押出し処理
 					//Extrude(
@@ -811,7 +975,7 @@ namespace cumulonimbus::collision
 				}
 				else
 				{
-					c1.second.hit_result.is_hit = c2.second.hit_result.is_hit = false;
+					c1.hit_result.is_hit = c2.hit_result.is_hit = false;
 				}
 			}
 		}

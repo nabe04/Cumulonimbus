@@ -26,6 +26,7 @@ namespace cumulonimbus
 			CollisionPreset				 collision_preset{ CollisionPreset::OverlapAll };	// コリジョンのプロファイル
 			DirectX::SimpleMath::Vector4 base_color{ 1.f,1.f,1.f,1.f };
 			DirectX::SimpleMath::Vector4 hit_color{ 1.f,.0f,.0f,1.f };
+			bool						 is_visible{ true };
 
 			//template <class Archive>
 			//void serialize(Archive&& archive);

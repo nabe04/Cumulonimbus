@@ -347,14 +347,15 @@ namespace cumulonimbus::component
 			{
 				collision::Capsule& capsule = capsules.at(selected_collision_name);
 				AttachSocket(capsule.bone_name);
-				ImGui::Text("Is Hit : %d", capsule.hit_result.is_hit);
-				ImGui::Text("Fetch Bone Name : %s", capsule.bone_name.c_str());
-				ImGui::Text("Segment Start.x : %f", capsule.start.x);
-				ImGui::Text("Segment Start.y : %f", capsule.start.y);
-				ImGui::Text("Segment Start.z : %f", capsule.start.z);
-				ImGui::Text("Segment End.x   : %f", capsule.end.x);
-				ImGui::Text("Segment End.y   : %f", capsule.end.y);
-				ImGui::Text("Segment End.z   : %f", capsule.end.z);
+				//ImGui::Text("Is Hit : %d", capsule.hit_result.is_hit);
+				//ImGui::Text("Fetch Bone Name : %s", capsule.bone_name.c_str());
+				//ImGui::Text("Segment Start.x : %f", capsule.start.x);
+				//ImGui::Text("Segment Start.y : %f", capsule.start.y);
+				//ImGui::Text("Segment Start.z : %f", capsule.start.z);
+				//ImGui::Text("Segment End.x   : %f", capsule.end.x);
+				//ImGui::Text("Segment End.y   : %f", capsule.end.y);
+				//ImGui::Text("Segment End.z   : %f", capsule.end.z);
+				ImGui::Checkbox("Is Visible", &capsule.is_visible);
 				ImGui::DragFloat3("Offset"	, &capsule.offset.x	 , 0.1f, -1000 , 1000);
 				ImGui::DragFloat3("Rotation", &capsule.rotation.x, 0.5f, -180.f, 180.f);
 				ImGui::DragFloat("Length"	, &capsule.length	 , 0.1f, 1.0f  , 1000.0f);

@@ -190,7 +190,7 @@ namespace cumulonimbus::scene
 			ButtonState::Press)
 		{
 			BeginGame();
-			//wave_system->
+			wave_system->Start(*this);
 		}
 		if (editor_manager->GetToolBar().GetToolBarButton().GetButtonState(editor::ToolBar::Button::Play) ==
 			ButtonState::Release)
@@ -208,8 +208,10 @@ namespace cumulonimbus::scene
 				wave_system->Update(*this);
 			}
 
-			collision_manager->Update(dt, scene->GetRegistry());
+			//collision_manager->Update(dt, scene->GetRegistry());
 		}
+
+		collision_manager->Update(dt, *this);
 
 		// エンティティの削除処理
 		for (auto& [scene_id, scene] : active_scenes)

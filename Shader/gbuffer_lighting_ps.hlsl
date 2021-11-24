@@ -19,13 +19,15 @@ float4 main(PS_Input pin) : SV_TARGET
     // light_vec : ライトの向きベクトル(法線方向に合わせていない)
     const float3 light_vec = normalize(light_direction);
 
-    float3 diffuse = Diffuse(normal_map.xyz, light_vec, light_color, 1.0f);
+    //float3 diffuse = Diffuse(normal_map.xyz, light_vec, light_color, 1.0f);
 
-    float3 phong_specular = BlinnPhongSpecular(normal_map.xyz , light_vec,
-											   light_color.xyz, eye_vec,
-											   float3(1.0f, 1.0f, 1.0f), 5);
+    //float3 phong_specular = BlinnPhongSpecular(normal_map.xyz , light_vec,
+				//							   light_color.xyz, eye_vec,
+				//							   float3(1.0f, 1.0f, 1.0f), 5);
 
-    albedo_color *= float4(diffuse + phong_specular + light_color, 1.0f);
+   // albedo_color *= float4(diffuse + phong_specular + light_color, 1.0f);
+
+    albedo_color *= float4(light_color, 1.0f);
 
     return albedo_color;
 }

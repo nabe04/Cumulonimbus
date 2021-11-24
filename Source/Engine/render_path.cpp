@@ -88,6 +88,7 @@ namespace cumulonimbus::renderer
 			break;
 		}
 
+		Render3DToGBuffer_Begin(immediate_context);
 		for(auto& scene : scenes | std::views::values)
 		{
 			// シーンがアクティブで無いのなら描画しない
@@ -97,17 +98,10 @@ namespace cumulonimbus::renderer
 			ecs::Registry& registry = *scene->GetRegistry();
 
 			// GBufferへの描画処理
-			Render3DToGBuffer_Begin(immediate_context);
+
 			Render3DToGBuffer(immediate_context, &registry, &camera, scene->GetLight());
-			Render3DToGBuffer_End(immediate_context, &camera);
-
-
-
-			//RenderCollision_Begin(immediate_context, &camera);
-			//RenderCollision(immediate_context, &registry);
-			//RenderCollision_End(immediate_context, &camera);
-
 		}
+		Render3DToGBuffer_End(immediate_context, &camera);
 
 		for (auto& scene : scenes | std::views::values)
 		{
@@ -166,6 +160,7 @@ namespace cumulonimbus::renderer
 			}
 		}
 
+		camera::Camera* main_camera = nullptr;
 		for (auto& scene : scenes | std::views::values)
 		{
 			// シーンがアクティブで無いのなら描画しない
@@ -174,23 +169,40 @@ namespace cumulonimbus::renderer
 			for (ecs::Registry& registry = *scene->GetRegistry();
 				auto & camera_comp : registry.GetArray<component::CameraComponent>().GetComponents())
 			{
-				if (!camera_comp.GetIsActive())
+				if (!camera_comp.GetIsMainCamera())
 					continue;
 
-				if (registry.GetArray<component::ModelComponent>().GetComponents().size() > 0)
-				{
-					// GBufferへの描画処理
-					Render3DToGBuffer_Begin(immediate_context);
-					Render3DToGBuffer(immediate_context, &registry, camera_comp.GetCamera(), scene->GetLight());
-					Render3DToGBuffer_End(immediate_context, camera_comp.GetCamera());
+				main_camera = camera_comp.GetCamera();
+				break;
 
-					//// 当たり判定の描画
-					//RenderCollision_Begin(immediate_context, camera_comp.GetCamera());
-					//RenderCollision(immediate_context, &registry);
-					//RenderCollision_End(immediate_context, camera_comp.GetCamera());
-				}
+				//Render3DToGBuffer_Begin(immediate_context);
+				//if (registry.GetArray<component::ModelComponent>().GetComponents().size() > 0)
+				//{
+				//	// GBufferへの描画処理
+				//	Render3DToGBuffer(immediate_context, &registry, camera_comp.GetCamera(), scene->GetLight());
+				//}
+				//Render3DToGBuffer_End(immediate_context, camera_comp.GetCamera());
 			}
 		}
+
+		if(main_camera)
+		{
+			Render3DToGBuffer_Begin(immediate_context);
+			for (auto& scene : scenes | std::views::values)
+			{
+				// シーンがアクティブで無いのなら描画しない
+				if (!scene->GetIsVisible())
+					continue;
+
+				ecs::Registry& registry = *scene->GetRegistry();
+
+				// GBufferへの描画処理
+
+				Render3DToGBuffer(immediate_context, &registry, main_camera, scene->GetLight());
+			}
+			Render3DToGBuffer_End(immediate_context, main_camera);
+		}
+
 
 		for (auto& scene : scenes | std::views::values)
 		{
@@ -674,6 +686,9 @@ namespace cumulonimbus::renderer
 		for (auto& sphere_collision = registry->GetComponent<component::SphereCollisionComponent>(entity);
 		     const auto& sphere : sphere_collision.GetSpheres() | std::views::values)
 		{
+			if (!sphere.is_visible)
+				continue;
+
 			for (const auto& mesh : sphere_model.GetModelData().GetMeshes())
 			{
 				//-- 球単位コンスタントバッファの更新&バインド --//
@@ -725,6 +740,9 @@ namespace cumulonimbus::renderer
 		for (auto& capsule_collision = registry->GetComponent<component::CapsuleCollisionComponent>(entity);
 		     const auto& capsule : capsule_collision.GetCapsules() | std::views::values)
 		{
+			if(!capsule.is_visible)
+				continue;
+
 			for (const auto& mesh : capsule_model.GetModelData().GetMeshes())
 			{
 				//-- カプセル単位コンスタントバッファの更新&バインド --//

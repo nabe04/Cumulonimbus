@@ -238,6 +238,7 @@ namespace cumulonimbus::component
 			{
 				collision::Sphere& sphere = spheres.at(selected_collision_name);
 				AttachSocket(sphere.bone_name);
+				ImGui::Checkbox("Is Visible", &sphere.is_visible);
 				ImGui::DragFloat3("Position", &sphere.offset.x , 0.01f, -100.0f, 100.0f);
 				ImGui::DragFloat("Radius"	, &sphere.radius	, 0.1f , 0.1f	, 50);
 				ImGui::ColorEdit4("Base Color", &sphere.base_color.x);
@@ -339,7 +340,6 @@ namespace cumulonimbus::component
 			sphere.second.collision_preset = preset;
 		}
 	}
-
 
 	std::unordered_map<std::string, collision::Sphere>& SphereCollisionComponent::GetSpheres()
 	{
