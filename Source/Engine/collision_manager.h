@@ -148,6 +148,10 @@ namespace cumulonimbus::collision
 	private:
 		// レイキャストの判定を行う際の判定が行われる(地形)データ群
 		std::vector<mapping::rename_type::Entity> ent_terrains{};
+		// ヒットした球コリジョン(key : 球の識別ID、 value : 球をもつエンティティ)
+		std::unordered_map<mapping::rename_type::UUID, mapping::rename_type::Entity >hit_ent_sphere{};
+		// ヒットしたカプセルコリジョン(key : カプセルの識別ID、 value : 球をもつエンティティ)
+		std::unordered_map<mapping::rename_type::UUID, mapping::rename_type::Entity> hit_ent_capsule{};
 
 		/**
 		 * @brief	: 反発係数の算出
@@ -156,6 +160,26 @@ namespace cumulonimbus::collision
 		float CalculateRestitution(
 			const component::PhysicMaterialComponent* physic_material_comp_1,
 			const component::PhysicMaterialComponent* physic_material_comp_2);
+
+		/**
+		 * @brief : 衝突した球情報の追加
+		 * @remark : 同じIDを追加しようとした場合上書きされる
+		 * @param sphere_id : 球ID
+		 * @param ent : 保有先のエンティティ
+		 */
+		void AddHitSphere(
+			const mapping::rename_type::UUID& sphere_id,
+			const mapping::rename_type::Entity& ent);
+
+		/**
+		 * @brief : 衝突したカプセル情報の追加
+		 * @remark : 同じIDを追加しようとした場合上書きされる
+		 * @param capsule_id : 球ID
+		 * @param ent : 保有先のエンティティ
+		 */
+		void AddHitCapsule(
+			const mapping::rename_type::UUID& capsule_id,
+			const mapping::rename_type::Entity& ent);
 
 		/**
 		 * @brief : 押出し処理
@@ -173,8 +197,8 @@ namespace cumulonimbus::collision
 		void Extrude(
 			float dt,
 			ecs::Registry* registry,
-			mapping::rename_type::Entity ent_1,
-			mapping::rename_type::Entity ent_2,
+			const mapping::rename_type::Entity& ent_1,
+			const mapping::rename_type::Entity& ent_2,
 			const DirectX::SimpleMath::Vector3& mass_point_1,
 			const DirectX::SimpleMath::Vector3& mass_point_2,
 			CollisionPreset collision_preset_1,
@@ -217,7 +241,7 @@ namespace cumulonimbus::collision
 
 		/**
 		 * @brief : 球と球の当たり判定
-		 * @remark : 同一シーン同士
+		 * @remark : 同一シーン同士の判定処理
 		 */
 		bool IntersectSphereVsSphere(
 			float dt,
@@ -226,7 +250,7 @@ namespace cumulonimbus::collision
 			component::SphereCollisionComponent& sphere_2);
 		/**
 		 * @brief : 球と球の当たり判定
-		 * @remark : 別シーン同士
+		 * @remark : 別シーン同士の判定処理
 		 */
 		bool IntersectSphereVsSphere(
 			float dt,
@@ -236,7 +260,7 @@ namespace cumulonimbus::collision
 
 		/**
 		 * @brief : カプセルとカプセルの当たり判定
-		 * @remark : 同一のシーン同士
+		 * @remark : 同一のシーン同士の判定処理
 		 */
 		bool IntersectCapsuleVsCapsule(
 			float dt,
@@ -245,7 +269,7 @@ namespace cumulonimbus::collision
 			component::CapsuleCollisionComponent& capsule_2);
 		/**
 		 * @brief : カプセルとカプセルの当たり判定
-		 * @remark : 別シーン同士
+		 * @remark : 別シーン同士の判定処理
 		 */
 		bool IntersectCapsuleVsCapsule(
 			float dt,
@@ -254,12 +278,23 @@ namespace cumulonimbus::collision
 			component::CapsuleCollisionComponent& capsule_2);
 
 		/**
-		 * @brief     : 球とカプセルの当たり判定
-		 * @attention : 同じエンティティ内での球とカプセルの判定は行わない
+		 * @brief : 球とカプセルの当たり判定
+		 * @remark : 同じエンティティ内での球とカプセルの判定は行わない
+		 * @remark : 同一シーン同士の判定
 		 */
 		bool IntersectSphereVsCapsule(
 			float dt,
 			ecs::Registry* registry,
+			component::SphereCollisionComponent& sphere,
+			component::CapsuleCollisionComponent& capsule);
+		/**
+		 * @brief : 球とカプセルの当たり判定
+		 * @remark : 同じエンティティ内での球とカプセルの判定は行わない
+		 * @remark : 別シーン同士の判定
+		 */
+		bool IntersectSphereVsCapsule(
+			float dt,
+			ecs::Registry* registry_1, ecs::Registry* registry_2,
 			component::SphereCollisionComponent& sphere,
 			component::CapsuleCollisionComponent& capsule);
 	};

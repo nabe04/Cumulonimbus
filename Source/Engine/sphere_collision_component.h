@@ -23,6 +23,7 @@ namespace cumulonimbus
 			DirectX::SimpleMath::Vector4 base_color{ 1.f,1.f,1.f,1.f };
 			DirectX::SimpleMath::Vector4 hit_color{ 1.f,.0f,.0f,1.f };
 			bool						 is_visible{ true };
+			mapping::rename_type::UUID   id{}; // 球判別用ID(ユニークなもの)
 
 			template<class Archive>
 			void load(Archive&& archive, uint32_t version);
@@ -42,6 +43,8 @@ namespace cumulonimbus
 			explicit SphereCollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const SphereCollisionComponent& copy_comp); // for prefab
 			explicit SphereCollisionComponent()  = default; // for cereal
 			~SphereCollisionComponent() override = default;
+
+			void Start() override;
 
 			void CommonUpdate(float dt) override;
 			void PreGameUpdate(float dt)   override;
@@ -76,6 +79,13 @@ namespace cumulonimbus
 					const std::string&		 bone_name,
 					const std::string&	     sphere_name = "",
 					const collision::Sphere& sphere = {});
+
+			/**
+			 * @brief : sphere_idから保持している球コリジョンを取得
+			 * @remark : sphere_idが一致しない場合nullptrを返す
+			 * @param sphere_id : 取得したい球コリジョン情報
+			 */
+			collision::Sphere* TryGetSphere(const mapping::rename_type::UUID& sphere_id);
 
 			/**
 			 * @brief				: 個々のsphereの"offset"のセット

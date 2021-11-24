@@ -207,19 +207,20 @@ namespace cumulonimbus::scene
 				scene->GameUpdate(dt);
 				wave_system->Update(*this);
 			}
-
-			//collision_manager->Update(dt, scene->GetRegistry());
 		}
 
-		collision_manager->Update(dt, *this);
+		if (editor_manager->GetToolBar().IsPlaybackState(editor::ToolBar::Button::Play))
+		{// ゲームプレイ時のみ判定処理を行う
+			collision_manager->Update(dt, *this);
+		}
+
+		system->Update(dt);
 
 		// エンティティの削除処理
 		for (auto& [scene_id, scene] : active_scenes)
 		{
 			scene->GetRegistry()->DestroyEntity();
 		}
-
-		system->Update(dt);
 	}
 
 	void SceneManager::Render()

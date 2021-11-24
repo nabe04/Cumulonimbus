@@ -89,6 +89,14 @@ namespace cumulonimbus::component
 		SetEntity(ent);
 	}
 
+	void SphereCollisionComponent::Start()
+	{
+		for(auto& sphere : spheres | std::views::values)
+		{
+			sphere.id = utility::GenerateUUID();
+		}
+	}
+
 	void SphereCollisionComponent::CommonUpdate(float dt)
 	{
 		auto DefaultTransform = [&](collision::Sphere& sphere, const DirectX::SimpleMath::Matrix& local_mat)
@@ -285,6 +293,7 @@ namespace cumulonimbus::component
 				else
 				{
 					spheres.emplace(new_name, sphere);
+					spheres.at(new_name).id = utility::GenerateUUID();
 					selected_collision_name = new_name;
 					return new_name;
 				}
@@ -296,6 +305,7 @@ namespace cumulonimbus::component
 				assert((!"The sphere name already exists(SphereCollisionComponent::AddSphere)"));
 
 			spheres.emplace(name, sphere);
+			spheres.at(name).id		= utility::GenerateUUID();
 			selected_collision_name = name;
 			return name;
 		}
@@ -309,6 +319,17 @@ namespace cumulonimbus::component
 		const std::string name = AddSphere(sphere_name, sphere);
 		spheres.at(name).bone_name = bone_name;
 		return name;
+	}
+
+	collision::Sphere* SphereCollisionComponent::TryGetSphere(const mapping::rename_type::UUID& sphere_id)
+	{
+		for(auto& sphere : spheres | std::views::values)
+		{
+			if (sphere.id == sphere_id)
+				return &sphere;
+		}
+
+		return nullptr;
 	}
 
 	void SphereCollisionComponent::SetOffset(const std::string& sphere_name, const DirectX::SimpleMath::Vector3& offset)

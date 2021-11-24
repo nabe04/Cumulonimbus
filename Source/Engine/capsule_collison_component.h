@@ -27,6 +27,7 @@ namespace cumulonimbus
 			DirectX::SimpleMath::Vector4 base_color{ 1.f,1.f,1.f,1.f };
 			DirectX::SimpleMath::Vector4 hit_color{ 1.f,.0f,.0f,1.f };
 			bool						 is_visible{ true };
+			mapping::rename_type::UUID   id{};
 
 			//template <class Archive>
 			//void serialize(Archive&& archive);
@@ -50,6 +51,8 @@ namespace cumulonimbus
 			explicit CapsuleCollisionComponent()  = default; // for cereal
 			~CapsuleCollisionComponent() override = default;
 
+			void Start() override;
+			
 			void CommonUpdate(float dt)		override;
 			void PreGameUpdate(float dt)	override;
 			void GameUpdate(float dt)		override;
@@ -86,6 +89,13 @@ namespace cumulonimbus
 				const std::string&		  bone_name,
 				const std::string&		  capsule_name = "",
 				const collision::Capsule& capsule = {});
+
+			/**
+			 * @brief : capsule_idから保持しているカプセルコリジョンを取得
+			 * @remark : capsule_idが一致しない場合nullptrを返す
+			 * @param capsule_id : 取得したいカプセルコリジョンを情報
+			 */
+			collision::Capsule* TryGetCapsule(const mapping::rename_type::UUID& capsule_id);
 
 			/**
 			 * @brief				: 個々のカプセルの"offset"のセット

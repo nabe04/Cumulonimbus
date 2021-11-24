@@ -147,8 +147,6 @@ namespace cumulonimbus::collision
 					capsule_collisions.GetComponents().at(c2));
 			}
 		}
-		// 別のシーン同士
-
 
 		//-- 球とカプセルの判定 --//
 		for (int s = 0; s < sphere_collisions.GetComponents().size(); ++s)
@@ -180,6 +178,9 @@ namespace cumulonimbus::collision
 
 	void CollisionManager::Update(const float dt, scene::SceneManager& scene_manager)
 	{
+		hit_ent_sphere.clear();
+		hit_ent_capsule.clear();
+
 		//-- 同一シーン内での判定処理 --//
 		for(const auto& scene : scene_manager.GetActiveScenes() | std::views::values)
 		{
@@ -212,8 +213,6 @@ namespace cumulonimbus::collision
 						capsule_collisions.GetComponents().at(c2));
 				}
 			}
-			// 別のシーン同士
-
 
 			//-- 球とカプセルの判定 --//
 			for (int s = 0; s < sphere_collisions.GetComponents().size(); ++s)
@@ -305,6 +304,61 @@ namespace cumulonimbus::collision
 						}
 					}
 				}
+
+				//-- 球とカプセル同士の判定 --//
+				// シーン1(球)、シーン2(カプセル)の場合
+				for (int s1 = 0; s1 < s1_size; ++s1)
+				{
+					for (int c2 = 0; c2 < c2_size; ++c2)
+					{
+						IntersectSphereVsCapsule(
+							dt,
+							registry_1, registry_2,
+							sphere_collisions_1.GetComponents().at(s1),
+							capsule_collisions_2.GetComponents().at(c2));
+					}
+				}
+				// シーン1(カプセル)、シーン2(球)の場合
+				for (int c1 = 0; c1 < c1_size; ++c1)
+				{
+					for (int s2 = 0; s2 < s2_size; ++s2)
+					{
+						IntersectSphereVsCapsule(
+							dt,
+							registry_2, registry_1,
+							sphere_collisions_2.GetComponents().at(s2),
+							capsule_collisions_1.GetComponents().at(c1));
+					}
+				}
+
+			}
+		}
+
+		//-- 判定されたコリジョンの判定をtrueに --//
+		for (const auto& scene : scene_manager.GetActiveScenes() | std::views::values)
+		{
+			auto* registry = scene->GetRegistry();
+
+			for (const auto& [sphere_id, ent] : hit_ent_sphere)
+			{// 判定された球情報が一致した場合判定(is_hit)をtrueに
+				if (!registry->HasComponent<component::SphereCollisionComponent>(ent))
+					continue;
+				auto* sphere = registry->GetComponent<component::SphereCollisionComponent>(ent).TryGetSphere(sphere_id);
+				if (!sphere)
+					continue;
+				// 球の判定をTrueに
+				sphere->hit_result.is_hit = true;
+			}
+
+			for (const auto& [capsule_id, ent] : hit_ent_capsule)
+			{// 判定されたカプセル情報が一致した場合判定(is_hit)をtrueに
+				if (!registry->HasComponent<component::CapsuleCollisionComponent>(ent))
+					continue;
+				auto* capsule = registry->GetComponent<component::CapsuleCollisionComponent>(ent).TryGetCapsule(capsule_id);
+				if (!capsule)
+					continue;
+				// 球の判定をTrueに
+				capsule->hit_result.is_hit = true;
 			}
 		}
 	}
@@ -472,11 +526,38 @@ namespace cumulonimbus::collision
 		return 0;
 	}
 
+	void CollisionManager::AddHitSphere(
+		const mapping::rename_type::UUID& sphere_id,
+		const mapping::rename_type::Entity& ent)
+	{
+		if (hit_ent_sphere.contains(sphere_id))
+		{
+			hit_ent_sphere.at(sphere_id) = ent;
+			return;
+		}
+
+		hit_ent_sphere.emplace(sphere_id, ent);
+	}
+
+	void CollisionManager::AddHitCapsule(
+		const mapping::rename_type::UUID& capsule_id,
+		const mapping::rename_type::Entity& ent)
+	{
+		if (hit_ent_capsule.contains(capsule_id))
+		{
+			hit_ent_capsule.at(capsule_id) = ent;
+			return;
+		}
+
+		hit_ent_capsule.emplace(capsule_id, ent);
+	}
+
+
 	void CollisionManager::Extrude(
 		const float dt,
 		ecs::Registry* registry,
-		const mapping::rename_type::Entity ent_1,
-		const mapping::rename_type::Entity ent_2,
+		const mapping::rename_type::Entity& ent_1,
+		const mapping::rename_type::Entity& ent_2,
 		const DirectX::SimpleMath::Vector3& mass_point_1,
 		const DirectX::SimpleMath::Vector3& mass_point_2,
 		const CollisionPreset collision_preset_1,
@@ -578,8 +659,8 @@ namespace cumulonimbus::collision
 		const DirectX::SimpleMath::Vector3& ray_end,
 		DirectX::SimpleMath::Vector3* hit_pos)
 	{
-		DirectX::XMVECTOR world_start		= DirectX::XMLoadFloat3(&ray_start);
-		DirectX::XMVECTOR world_end			= DirectX::XMLoadFloat3(&ray_end);
+		DirectX::XMVECTOR world_start = DirectX::XMLoadFloat3(&ray_start);
+		DirectX::XMVECTOR world_end	  = DirectX::XMLoadFloat3(&ray_end);
 
 		// ent_terrainsとRayCastComponentを持つモデルでレイキャストの判定を行う
 		for (const auto& ent_terrain : ent_terrains)
@@ -594,7 +675,7 @@ namespace cumulonimbus::collision
 				const component::ModelComponent::Node node = model_comp.GetNodes().at(mesh.node_index);
 
 				// レイをワールド空間からローカル空間へ変換
-				DirectX::XMMATRIX world_transform = DirectX::XMLoadFloat4x4(&node.world_transform);
+				DirectX::XMMATRIX world_transform		  = DirectX::XMLoadFloat4x4(&node.world_transform);
 				DirectX::XMMATRIX inverse_world_transform = DirectX::XMMatrixInverse(nullptr, world_transform);
 
 				DirectX::XMVECTOR start  = DirectX::XMVector3TransformCoord(world_start, inverse_world_transform);
@@ -873,34 +954,36 @@ namespace cumulonimbus::collision
 		component::SphereCollisionComponent& sphere_2)
 	{
 		bool hit = false;
-		for(auto& s1 : sphere_1.GetSpheres())
+		for(auto& s1 : sphere_1.GetSpheres() | std::views::values)
 		{
-			for(auto& s2 : sphere_2.GetSpheres())
+			for(auto& s2 : sphere_2.GetSpheres() | std::views::values)
 			{
-				const DirectX::SimpleMath::Vector3 s1_translation = s1.second.world_transform_matrix.Translation();
-				const DirectX::SimpleMath::Vector3 s2_translation = s2.second.world_transform_matrix.Translation();
+				const DirectX::SimpleMath::Vector3 s1_translation = s1.world_transform_matrix.Translation();
+				const DirectX::SimpleMath::Vector3 s2_translation = s2.world_transform_matrix.Translation();
 
 				const DirectX::SimpleMath::Vector3 v = { s1_translation - s2_translation };
 				const float len = v.Length();
 
-				if (len <= s1.second.radius + s2.second.radius)
+				if (len <= s1.radius + s2.radius)
 				{
 					hit = true;
-					s1.second.hit_result.is_hit = true;
-					s2.second.hit_result.is_hit = true;
+					AddHitSphere(s1.id, sphere_1.GetEntity());
+					AddHitSphere(s2.id, sphere_2.GetEntity());
+					//s1.second.hit_result.is_hit = true;
+					//s2.second.hit_result.is_hit = true;
 					// 押出し処理
 					Extrude(
 						dt,
 						registry,
 						sphere_1.GetEntity(), sphere_2.GetEntity(),
 						s1_translation, s2_translation,
-						s1.second.collision_preset, s2.second.collision_preset,
-						(s1.second.radius + s2.second.radius) - len);
+						s1.collision_preset, s2.collision_preset,
+						(s1.radius + s2.radius) - len);
 				}
 				else
 				{
-					s1.second.hit_result.is_hit = false;
-					s2.second.hit_result.is_hit = false;
+					s1.hit_result.is_hit = false;
+					s2.hit_result.is_hit = false;
 				}
 
 			}
@@ -928,8 +1011,10 @@ namespace cumulonimbus::collision
 					len <= s1.radius + s2.radius)
 				{
 					hit = true;
-					s1.hit_result.is_hit = true;
-					s2.hit_result.is_hit = true;
+					AddHitSphere(s1.id, sphere_1.GetEntity());
+					AddHitSphere(s2.id, sphere_2.GetEntity());
+					//s1.hit_result.is_hit = true;
+					//s2.hit_result.is_hit = true;
 					// 押出し処理
 					Extrude(
 						dt,
@@ -957,9 +1042,9 @@ namespace cumulonimbus::collision
 	{
 		bool hit = false;
 
-		for(auto& c1 : capsule_1.GetCapsules())
+		for(auto& c1 : capsule_1.GetCapsules() | std::views::values)
 		{
-			for(auto& c2 : capsule_2.GetCapsules())
+			for(auto& c2 : capsule_2.GetCapsules() | std::views::values)
 			{
 				// それぞれのカプセルの線分(始点)からの大きさ
 				float c1_t, c2_t;
@@ -967,15 +1052,17 @@ namespace cumulonimbus::collision
 
 				// 線分の最近距離
 				const float len = arithmetic::ClosestPtSegmentSegment(
-									c1.second.start, c1.second.end,
-									c2.second.start, c2.second.end,
+									c1.start, c1.end,
+									c2.start, c2.end,
 									c1_t, c2_t,
 									c1_p, c2_p);
 
-				if(len <c1.second.radius + c2.second.radius)
+				if(len <c1.radius + c2.radius)
 				{
-					c1.second.hit_result.is_hit = true;
-					c2.second.hit_result.is_hit = true;
+					AddHitCapsule(c1.id, capsule_1.GetEntity());
+					AddHitCapsule(c2.id, capsule_2.GetEntity());
+					//c1.second.hit_result.is_hit = true;
+					//c2.second.hit_result.is_hit = true;
 					hit = true;
 					// 押出し処理
 					Extrude(
@@ -983,13 +1070,13 @@ namespace cumulonimbus::collision
 						registry,
 						capsule_1.GetEntity(), capsule_2.GetEntity(),
 						c1_p, c2_p,
-						c1.second.collision_preset,
-						c2.second.collision_preset,
-						(c1.second.radius + c2.second.radius) - len);
+						c1.collision_preset,
+						c2.collision_preset,
+						(c1.radius + c2.radius) - len);
 				}
 				else
 				{
-					c1.second.hit_result.is_hit = c2.second.hit_result.is_hit = false;
+					c1.hit_result.is_hit = c2.hit_result.is_hit = false;
 				}
 			}
 		}
@@ -1021,8 +1108,10 @@ namespace cumulonimbus::collision
 
 				if (len < c1.radius + c2.radius)
 				{
-					c1.hit_result.is_hit = true;
-					c2.hit_result.is_hit = true;
+					AddHitCapsule(c1.id, capsule_1.GetEntity());
+					AddHitCapsule(c2.id, capsule_2.GetEntity());
+					//c1.hit_result.is_hit = true;
+					//c2.hit_result.is_hit = true;
 					hit = true;
 					// 押出し処理
 					Extrude(
@@ -1055,37 +1144,91 @@ namespace cumulonimbus::collision
 		if (sphere.GetEntity() == capsule.GetEntity())
 			return hit;
 
-		for (auto& s : sphere.GetSpheres())
+		for (auto& s : sphere.GetSpheres() | std::views::values)
 		{
-			for (auto& c : capsule.GetCapsules())
+			for (auto& c : capsule.GetCapsules() | std::views::values)
 			{
 				// 球の中心とカプセルの線分の間の(平方した)距離の算出
-				const float dist = arithmetic::SqDistPointSegment(c.second.start, c.second.end, s.second.world_transform_matrix.Translation());
+				const float dist = arithmetic::SqDistPointSegment(c.start, c.end, s.world_transform_matrix.Translation());
 				// (平方した)距離が(平方した)半径の総和よりも小さい場合は衝突
-				const float radius = s.second.radius + c.second.radius;
+				const float radius = s.radius + c.radius;
 				if(dist <= radius * radius)
 				{
-					c.second.hit_result.is_hit = true;
-					s.second.hit_result.is_hit = true;
+					AddHitSphere(s.id, sphere.GetEntity());
+					AddHitCapsule(c.id, capsule.GetEntity());
+					//c.hit_result.is_hit = true;
+					//s.hit_result.is_hit = true;
 					hit = true;
 					float t = 0; //	最近接点までの距離(線分の割合)
 					DirectX::SimpleMath::Vector3 p{}; // カプセルの最近接点
-					arithmetic::ClosestPtPointSegment(c.second.start, c.second.end, s.second.world_transform_matrix.Translation(), p, t);
+					arithmetic::ClosestPtPointSegment(c.start, c.end, s.world_transform_matrix.Translation(), p, t);
 					// 押出し処理
 					Extrude(
 						dt,
 						registry,
 						sphere.GetEntity(), capsule.GetEntity(),
-						s.second.world_transform_matrix.Translation(), p,
-						s.second.collision_preset, c.second.collision_preset,
-						(s.second.radius + c.second.radius) - std::sqrtf(dist));
+						s.world_transform_matrix.Translation(), p,
+						s.collision_preset, c.collision_preset,
+						(s.radius + c.radius) - std::sqrtf(dist));
+				}
+				else
+				{
+					c.hit_result.is_hit = false;
+					s.hit_result.is_hit = false;
 				}
 			}
 		}
-
 		return hit;
 	}
 
+	bool CollisionManager::IntersectSphereVsCapsule(
+		const float dt,
+		ecs::Registry* registry_1, ecs::Registry* registry_2,
+		component::SphereCollisionComponent& sphere,
+		component::CapsuleCollisionComponent& capsule)
+	{
+		bool hit = false;
+
+		// 同じエンティティ同士なら判定処理を行わない
+		if (sphere.GetEntity() == capsule.GetEntity())
+			return hit;
+
+		for (auto& s : sphere.GetSpheres() | std::views::values)
+		{
+			for (auto& c : capsule.GetCapsules() | std::views::values)
+			{
+				// 球の中心とカプセルの線分の間の(平方した)距離の算出
+				const float dist = arithmetic::SqDistPointSegment(c.start, c.end, s.world_transform_matrix.Translation());
+				// (平方した)距離が(平方した)半径の総和よりも小さい場合は衝突
+				const float radius = s.radius + c.radius;
+				if (dist <= radius * radius)
+				{
+					AddHitSphere(s.id, sphere.GetEntity());
+					AddHitCapsule(c.id, capsule.GetEntity());
+					//c.second.hit_result.is_hit = true;
+					//s.second.hit_result.is_hit = true;
+					hit = true;
+					float t = 0; //	最近接点までの距離(線分の割合)
+					DirectX::SimpleMath::Vector3 p{}; // カプセルの最近接点
+					arithmetic::ClosestPtPointSegment(c.start, c.end, s.world_transform_matrix.Translation(), p, t);
+					// 押出し処理
+					Extrude(
+						dt,
+						registry_1, registry_2,
+						sphere.GetEntity(), capsule.GetEntity(),
+						s.world_transform_matrix.Translation(), p,
+						s.collision_preset, c.collision_preset,
+						(s.radius + c.radius) - std::sqrtf(dist));
+				}
+				else
+				{
+					c.hit_result.is_hit = false;
+					s.hit_result.is_hit = false;
+				}
+			}
+		}
+		return hit;
+	}
 
 
 } // cumulonimbus::collision

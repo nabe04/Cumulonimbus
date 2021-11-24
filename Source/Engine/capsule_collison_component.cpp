@@ -119,6 +119,14 @@ namespace cumulonimbus::component
 		SetEntity(ent);
 	}
 
+	void CapsuleCollisionComponent::Start()
+	{
+		for(auto& capsule : capsules | std::views::values)
+		{
+			capsule.id = utility::GenerateUUID();
+		}
+	}
+
 	void CapsuleCollisionComponent::CommonUpdate(float dt)
 	{
 		auto DefaultTransform = [&](collision::Capsule& capsule, const DirectX::SimpleMath::Matrix& local_mat)
@@ -405,6 +413,7 @@ namespace cumulonimbus::component
 				else
 				{
 					capsules.emplace(new_name, capsule);
+					capsules.at(new_name).id = utility::GenerateUUID();
 					return new_name;
 				}
 			}
@@ -415,6 +424,7 @@ namespace cumulonimbus::component
 				assert((!"The sphere name already exists(SphereCollisionComponent::AddSphere)"));
 
 			capsules.emplace(name, capsule);
+			capsules.at(name).id = utility::GenerateUUID();
 			return name;
 		}
 	}
@@ -427,6 +437,17 @@ namespace cumulonimbus::component
 		std::string name = AddCapsule(capsule_name, capsule);
 		capsules.at(name).bone_name = bone_name;
 		return name;
+	}
+
+	collision::Capsule* CapsuleCollisionComponent::TryGetCapsule(const mapping::rename_type::UUID& capsule_id)
+	{
+		for(auto& capsule : capsules | std::views::values)
+		{
+			if (capsule.id == capsule_id)
+				return &capsule;
+		}
+
+		return nullptr;
 	}
 
 	void CapsuleCollisionComponent::SetOffset(
@@ -490,7 +511,6 @@ namespace cumulonimbus::component
 			capsule.second.collision_preset = preset;
 		}
 	}
-
 
 	std::unordered_map<std::string, collision::Capsule>& CapsuleCollisionComponent::GetCapsules()
 	{
