@@ -2,8 +2,8 @@
 
 #include <cassert>
 
-#include "cereal_helper.h"
 #include "ecs.h"
+#include "enum_state_map.h"
 #include "cum_imgui_helper.h"
 // components
 #include "fbx_model_component.h"
@@ -15,6 +15,12 @@ CEREAL_REGISTER_TYPE(cumulonimbus::component::SphereCollisionComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::CollisionComponent, cumulonimbus::component::SphereCollisionComponent)
 CEREAL_CLASS_VERSION(cumulonimbus::component::SphereCollisionComponent, 0)
 CEREAL_CLASS_VERSION(cumulonimbus::collision::Sphere, 0)
+
+namespace
+{
+	// ImGui描画時にCollisionPreset(enum class)から文字列一覧を取得する為に使用
+	EnumStateMap<cumulonimbus::collision::CollisionPreset> collision_preset{};
+}
 
 namespace cumulonimbus::collision
 {
@@ -237,8 +243,18 @@ namespace cumulonimbus::component
 			if (spheres.contains(selected_collision_name))
 			{
 				collision::Sphere& sphere = spheres.at(selected_collision_name);
+				auto CollisionPresetCombo = [&]()
+				{
+					if(std::string current_name = nameof::nameof_enum(sphere.collision_preset).data();
+					   helper::imgui::Combo("Preset",current_name,collision_preset.GetStateNames()))
+					{// コリジョンプリセットの変更
+						sphere.collision_preset = collision_preset.GetStateMap().at(current_name);
+					}
+				};
+
 				AttachSocket(sphere.bone_name);
 				ImGui::Checkbox("Is Visible", &sphere.is_visible);
+				CollisionPresetCombo();
 				ImGui::DragFloat3("Position", &sphere.offset.x , 0.01f, -100.0f, 100.0f);
 				ImGui::DragFloat("Radius"	, &sphere.radius	, 0.1f , 0.1f	, 50);
 				ImGui::ColorEdit4("Base Color", &sphere.base_color.x);

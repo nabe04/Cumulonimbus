@@ -5,9 +5,6 @@
 
 #include <nameof.h>
 
-#include <cereal/types/map.hpp>
-#include <cereal/types/string.hpp>
-
 template <typename T>
 concept StateEnum = requires ()
 {
@@ -37,18 +34,23 @@ public:
 		auto flag	  = static_cast<T>(0);
 		current_state = state_map.at(nameof::nameof_enum(flag).data());
 	}
-	EnumStateMap(const T& state)
+	explicit EnumStateMap(const T& state)
 		:EnumStateMap()
 	{
 		current_state = state;
 	}
 
-	[[nodiscard]] unsigned int NumState() const { return state_map.size(); }
-	[[nodiscard]] const std::map<std::string, T>& GetStateMap() const { return state_map; }
-	[[nodiscard]] const std::vector<std::string>&  GetStateNames() const { return state_names; }
+	[[nodiscard]]
+	unsigned int NumState() const { return state_map.size(); }
+	[[nodiscard]]
+	const std::map<std::string, T>& GetStateMap() const { return state_map; }
+	[[nodiscard]]
+	const std::vector<std::string>&  GetStateNames() const { return state_names; }
 
-	[[nodiscard]] const T& GetCurrentState() const { return current_state; }
-	[[nodiscard]] std::string GetCurrentStateName() { return nameof::nameof_enum(current_state).data(); }
+	[[nodiscard]]
+	const T& GetCurrentState() const { return current_state; }
+	[[nodiscard]]
+	std::string GetCurrentStateName() { return nameof::nameof_enum(current_state).data(); }
 	void SetState(const T& state)
 	{
 		if (!state_map.contains(nameof::nameof_enum(state).data()))
@@ -68,16 +70,6 @@ public:
 			CEREAL_NVP(current_state)
 		);
 	}
-
-	//void operator{} (const T& state)
-	//{
-	//	if (!state_map.contains(nameof::nameof_enum(state).data()))
-	//	{
-	//		assert(!"Don't have state");
-	//	}
-
-	//	current_state = state;
-	//}
 
 private:
 	std::map<std::string, T> state_map{};

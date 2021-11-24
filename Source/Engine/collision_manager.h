@@ -158,22 +158,48 @@ namespace cumulonimbus::collision
 			const component::PhysicMaterialComponent* physic_material_comp_2);
 
 		/**
-		 * @brief						: 押出し処理
-		 * @param dt					: delta time
-		 * @param registry				: コンポーネントの取得に使用
-		 * @param ent_1					: 押出し対象エンティティ(1)
-		 * @param ent_2					: 押出し対象エンティティ(2)
-		 * @param mass_point_1			: 質点(1)
-		 * @param mass_point_2			: 質点(2)
-		 * @param collision_preset_1	: コリジョンプリセット(1)
-		 * @param collision_preset_2	: コリジョンプリセット(2)
-		 * @param penetration			: めり込み具合
+		 * @brief : 押出し処理
+		 * @remark : 同一シーン同士
+		 * @param dt : delta time
+		 * @param registry : コンポーネントの取得に使用
+		 * @param ent_1	: 押出し対象エンティティ(1)
+		 * @param ent_2	: 押出し対象エンティティ(2)
+		 * @param mass_point_1 : 質点(1)
+		 * @param mass_point_2 : 質点(2)
+		 * @param collision_preset_1 : コリジョンプリセット(1)
+		 * @param collision_preset_2 : コリジョンプリセット(2)
+		 * @param penetration : めり込み具合
 		 */
 		void Extrude(
 			float dt,
 			ecs::Registry* registry,
 			mapping::rename_type::Entity ent_1,
 			mapping::rename_type::Entity ent_2,
+			const DirectX::SimpleMath::Vector3& mass_point_1,
+			const DirectX::SimpleMath::Vector3& mass_point_2,
+			CollisionPreset collision_preset_1,
+			CollisionPreset collision_preset_2,
+			float penetration);
+		/**
+		 * @brief : 押出し処理
+		 * @remark : 別シーン同士
+		 * @param dt : delta time
+		 * @param registry_1 : シーン1のレジストリ
+		 * @param registry_2 : シーン2のレジストリ
+		 * @param ent_1	: 押出し対象エンティティ(1)
+		 * @param ent_2	: 押出し対象エンティティ(2)
+		 * @param mass_point_1 : 質点(1)
+		 * @param mass_point_2 : 質点(2)
+		 * @param collision_preset_1 : コリジョンプリセット(1)
+		 * @param collision_preset_2 : コリジョンプリセット(2)
+		 * @param penetration : めり込み具合
+		 */
+		void Extrude(
+			float dt,
+			ecs::Registry* registry_1,
+			ecs::Registry* registry_2,
+			const mapping::rename_type::Entity& ent_1,
+			const mapping::rename_type::Entity& ent_2,
 			const DirectX::SimpleMath::Vector3& mass_point_1,
 			const DirectX::SimpleMath::Vector3& mass_point_2,
 			CollisionPreset collision_preset_1,

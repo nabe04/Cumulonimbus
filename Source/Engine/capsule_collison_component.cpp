@@ -14,6 +14,12 @@ CEREAL_REGISTER_TYPE(cumulonimbus::component::CapsuleCollisionComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::CollisionComponent, cumulonimbus::component::CapsuleCollisionComponent)
 CEREAL_CLASS_VERSION(cumulonimbus::component::CapsuleCollisionComponent, 0)
 
+namespace
+{
+	// ImGui描画時にCollisionPreset(enum class)から文字列一覧を取得する為に使用
+	EnumStateMap<cumulonimbus::collision::CollisionPreset> collision_preset{};
+}
+
 namespace cumulonimbus::collision
 {
 	//template <class Archive>
@@ -346,6 +352,15 @@ namespace cumulonimbus::component
 			if(capsules.contains(selected_collision_name))
 			{
 				collision::Capsule& capsule = capsules.at(selected_collision_name);
+				auto CollisionPresetCombo = [&]()
+				{
+					if (std::string current_name = nameof::nameof_enum(capsule.collision_preset).data();
+						helper::imgui::Combo("Preset", current_name, collision_preset.GetStateNames()))
+					{// コリジョンプリセットの変更
+						capsule.collision_preset = collision_preset.GetStateMap().at(current_name);
+					}
+				};
+
 				AttachSocket(capsule.bone_name);
 				//ImGui::Text("Is Hit : %d", capsule.hit_result.is_hit);
 				//ImGui::Text("Fetch Bone Name : %s", capsule.bone_name.c_str());
@@ -356,6 +371,7 @@ namespace cumulonimbus::component
 				//ImGui::Text("Segment End.y   : %f", capsule.end.y);
 				//ImGui::Text("Segment End.z   : %f", capsule.end.z);
 				ImGui::Checkbox("Is Visible", &capsule.is_visible);
+				CollisionPresetCombo();
 				ImGui::DragFloat3("Offset"	, &capsule.offset.x	 , 0.1f, -1000 , 1000);
 				ImGui::DragFloat3("Rotation", &capsule.rotation.x, 0.5f, -180.f, 180.f);
 				ImGui::DragFloat("Length"	, &capsule.length	 , 0.1f, 1.0f  , 1000.0f);

@@ -258,43 +258,53 @@ namespace cumulonimbus::collision
 		{
 			for (int scene_2 = scene_1 + 1; scene_2 < scenes_id.size(); ++scene_2)
 			{
+				// シーン1のレジストリ(1、２は識別番号)
 				auto* registry_1 = scene_manager.GetActiveScenes().at(scenes_id.at(scene_1))->GetRegistry();
+				// シーン2のレジストリ(1、２は識別番号)
 				auto* registry_2 = scene_manager.GetActiveScenes().at(scenes_id.at(scene_2))->GetRegistry();
 
-				////-- 球同士の判定 --//
+				//-- 球同士の判定 --//
 				auto& sphere_collisions_1 = registry_1->GetArray<component::SphereCollisionComponent>();
 				auto& sphere_collisions_2 = registry_2->GetArray<component::SphereCollisionComponent>();
-				for (int s1 = 0; s1 < sphere_collisions_1.GetComponents().size(); ++s1)
-				{
-					for (int s2 = 0; s2 < sphere_collisions_2.GetComponents().size(); ++s2)
+				const auto s1_size = sphere_collisions_1.Size();
+				const auto s2_size = sphere_collisions_2.Size();
+				if(s1_size >= 1 &&
+				   s2_size >= 1)
+				{// それぞれのシーンに球コライダーが1つ以上存在する場合に判定処理を行う
+					for (int s1 = 0; s1 < s1_size; ++s1)
 					{
-						IntersectSphereVsSphere(
-							dt,
-							registry_1, registry_2,
-							sphere_collisions_1.GetComponents().at(s1),
-							sphere_collisions_2.GetComponents().at(s2));
-					}
-				}
-
-				//-- カプセル同士の判定 --//
-				auto& capsule_collisions_1 = registry_1->GetArray<component::CapsuleCollisionComponent>();
-				auto& capsule_collisions_2 = registry_2->GetArray<component::CapsuleCollisionComponent>();
-				for (int c1 = 0; c1 < capsule_collisions_1.Size(); ++c1)
-				{
-					for (int c2 = 0; c2 < capsule_collisions_2.Size(); ++c2)
-					{
-						if(IntersectCapsuleVsCapsule(
-							dt,
-							registry_1, registry_2,
-							capsule_collisions_1.GetComponents().at(c1),
-							capsule_collisions_2.GetComponents().at(c2)))
+						for (int s2 = 0; s2 < s2_size; ++s2)
 						{
-							int a;
-							a = 0;
+							IntersectSphereVsSphere(
+								dt,
+								registry_1, registry_2,
+								sphere_collisions_1.GetComponents().at(s1),
+								sphere_collisions_2.GetComponents().at(s2));
 						}
 					}
 				}
 
+
+				//-- カプセル同士の判定 --//
+				auto& capsule_collisions_1 = registry_1->GetArray<component::CapsuleCollisionComponent>();
+				auto& capsule_collisions_2 = registry_2->GetArray<component::CapsuleCollisionComponent>();
+				const auto c1_size = capsule_collisions_1.Size();
+				const auto c2_size = capsule_collisions_2.Size();
+				if(c1_size >= 1 &&
+				   c2_size >= 1)
+				{// それぞれのシーンにカプセルコライダーが1つ以上存在する場合に判定処理を行う
+					for (int c1 = 0; c1 < c1_size; ++c1)
+					{
+						for (int c2 = 0; c2 < c2_size; ++c2)
+						{
+							IntersectCapsuleVsCapsule(
+								dt,
+								registry_1, registry_2,
+								capsule_collisions_1.GetComponents().at(c1),
+								capsule_collisions_2.GetComponents().at(c2));
+						}
+					}
+				}
 			}
 		}
 	}
@@ -495,7 +505,8 @@ namespace cumulonimbus::collision
 		if(pre_v1 - pre_v2 > 0)
 		{
 			// 反発係数の取得
-			const float restitution = CalculateRestitution(registry->TryGetComponent<component::PhysicMaterialComponent>(ent_1), registry->TryGetComponent<component::PhysicMaterialComponent>(ent_2));
+			const float restitution = CalculateRestitution(registry->TryGetComponent<component::PhysicMaterialComponent>(ent_1),
+														   registry->TryGetComponent<component::PhysicMaterialComponent>(ent_2));
 
 			// 衝突後の速度
 			const float post_v1 = (m1 * pre_v1 + m2 * pre_v2 + restitution * m2 * (pre_v2 - pre_v1)) / (m1 + m2);
@@ -509,6 +520,56 @@ namespace cumulonimbus::collision
 
 		registry->GetComponent<component::TransformComponent>(ent_1).AdjustPosition(-(m2 / (m1 + m2) * penetration * n));
 		registry->GetComponent<component::TransformComponent>(ent_2).AdjustPosition(m1 / (m1 + m2) * penetration * n);
+	}
+
+	void CollisionManager::Extrude(
+		const float dt,
+		ecs::Registry* registry_1, ecs::Registry* registry_2,
+		const mapping::rename_type::Entity& ent_1,
+		const mapping::rename_type::Entity& ent_2,
+		const DirectX::SimpleMath::Vector3& mass_point_1,
+		const DirectX::SimpleMath::Vector3& mass_point_2,
+		const CollisionPreset collision_preset_1,
+		const CollisionPreset collision_preset_2,
+		const float penetration)
+	{
+		// 条件 1 : お互いRigidBodyComponentを持っていること
+		// 条件 2 : お互いのCollisionPresetがBlockAllであること
+		if (!registry_1->TryGetComponent<component::RigidBodyComponent>(ent_1)) return;
+		if (!registry_2->TryGetComponent<component::RigidBodyComponent>(ent_2)) return;
+		if (collision_preset_1 != CollisionPreset::BlockAll) return;
+		if (collision_preset_2 != CollisionPreset::BlockAll) return;
+
+		auto& rigid_body_comp_1 = registry_1->GetComponent<component::RigidBodyComponent>(ent_1);
+		auto& rigid_body_comp_2 = registry_2->GetComponent<component::RigidBodyComponent>(ent_2);
+
+		DirectX::SimpleMath::Vector3 n{ mass_point_2 - mass_point_1 };
+		n.Normalize();
+
+		const float m1 = rigid_body_comp_1.GetMass();
+		const float m2 = rigid_body_comp_2.GetMass();
+
+		// 衝突前の速度
+		const float pre_v1 = rigid_body_comp_1.GetVelocity().Dot(n);
+		const float pre_v2 = rigid_body_comp_2.GetVelocity().Dot(n);
+		if (pre_v1 - pre_v2 > 0)
+		{
+			// 反発係数の取得
+			const float restitution = CalculateRestitution(registry_1->TryGetComponent<component::PhysicMaterialComponent>(ent_1),
+														   registry_2->TryGetComponent<component::PhysicMaterialComponent>(ent_2));
+
+			// 衝突後の速度
+			const float post_v1 = (m1 * pre_v1 + m2 * pre_v2 + restitution * m2 * (pre_v2 - pre_v1)) / (m1 + m2);
+			const float post_v2 = (m1 * pre_v1 + m2 * pre_v2 + restitution * m1 * (pre_v1 - pre_v2)) / (m1 + m2);
+
+			rigid_body_comp_1.AddVelocity((post_v1 - pre_v1) * n);
+			rigid_body_comp_1.Integrate(dt);
+			rigid_body_comp_2.AddVelocity((post_v2 - pre_v2) * n);
+			rigid_body_comp_2.Integrate(dt);
+		}
+
+		registry_1->GetComponent<component::TransformComponent>(ent_1).AdjustPosition(-(m2 / (m1 + m2) * penetration * n));
+		registry_2->GetComponent<component::TransformComponent>(ent_2).AdjustPosition(m1 / (m1 + m2) * penetration * n);
 	}
 
 	bool CollisionManager::IntersectRayVsDragModel(
@@ -870,13 +931,13 @@ namespace cumulonimbus::collision
 					s1.hit_result.is_hit = true;
 					s2.hit_result.is_hit = true;
 					// 押出し処理
-					//Extrude(
-					//	dt,
-					//	registry,
-					//	sphere_1.GetEntity(), sphere_2.GetEntity(),
-					//	s1_translation, s2_translation,
-					//	s1.collision_preset, s2.collision_preset,
-					//	(s1.radius + s2.radius) - len);
+					Extrude(
+						dt,
+						registry_1,registry_2,
+						sphere_1.GetEntity(), sphere_2.GetEntity(),
+						s1_translation, s2_translation,
+						s1.collision_preset, s2.collision_preset,
+						(s1.radius + s2.radius) - len);
 				}
 				else
 				{
@@ -964,14 +1025,14 @@ namespace cumulonimbus::collision
 					c2.hit_result.is_hit = true;
 					hit = true;
 					// 押出し処理
-					//Extrude(
-					//	dt,
-					//	registry,
-					//	capsule_1.GetEntity(), capsule_2.GetEntity(),
-					//	c1_p, c2_p,
-					//	c1.second.collision_preset,
-					//	c2.second.collision_preset,
-					//	(c1.second.radius + c2.second.radius) - len);
+					Extrude(
+						dt,
+						registry_1, registry_2,
+						capsule_1.GetEntity(), capsule_2.GetEntity(),
+						c1_p, c2_p,
+						c1.collision_preset,
+						c2.collision_preset,
+						(c1.radius + c2.radius) - len);
 				}
 				else
 				{
