@@ -89,10 +89,6 @@ namespace cumulonimbus::component
 		{
 			capsule_collision->RegisterEventEnter(GetEntity(), [&]() {GetRegistry()->GetComponent<EnemySoldierComponent>(GetEntity()).OnDamaged(); });
 		}
-
-		auto& model_loader = *locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>();
-		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-		model_loader.GetModel(model_comp.GetModelID()).GetModelData().SetAnimationKeyFrame(static_cast<u_int>(AnimationData::Walk), 1);
 	}
 
 	void EnemySoldierComponent::GameUpdate(float dt)
@@ -117,17 +113,18 @@ namespace cumulonimbus::component
 	void EnemySoldierComponent::Initialize(ecs::Registry* registry, mapping::rename_type::Entity ent)
 	{
 		// stateに応じての処理の登録
-		soldier_state.AddState(SoldierState::Idle, [ent, registry](const float dt) {registry->GetComponent<EnemySoldierComponent>(ent).Idle(dt); });
-		soldier_state.AddState(SoldierState::Walk, [ent, registry](const float dt) {registry->GetComponent<EnemySoldierComponent>(ent).Walk(dt); });
-		soldier_state.AddState(SoldierState::Tracking, [ent, registry](const float dt) {registry->GetComponent<EnemySoldierComponent>(ent).Tracking(dt); });
-		soldier_state.AddState(SoldierState::Damage, [ent, registry](const float dt) {registry->GetComponent<EnemySoldierComponent>(ent).Damage(dt); });
-		soldier_state.AddState(SoldierState::Death, [ent, registry](const float dt) {registry->GetComponent<EnemySoldierComponent>(ent).Death(dt); });
-		soldier_state.AddState(SoldierState::Attack_01, [ent, registry](const float dt) {registry->GetComponent<EnemySoldierComponent>(ent).Attack01(dt); });
-		soldier_state.AddState(SoldierState::Attack_02, [ent, registry](const float dt) {registry->GetComponent<EnemySoldierComponent>(ent).Attack02(dt); });
-		soldier_state.AddState(SoldierState::Attack_03, [ent, registry](const float dt) {registry->GetComponent<EnemySoldierComponent>(ent).Attack03(dt); });
+		soldier_state.AddState(SoldierState::Idle		, [ent, registry](const float dt) {registry->GetComponent<EnemySoldierComponent>(ent).Idle(dt); });
+		soldier_state.AddState(SoldierState::Wave_Start , [ent, registry](const float dt) {registry->GetComponent<EnemySoldierComponent>(ent).WaveStart(dt); });
+		soldier_state.AddState(SoldierState::Walk		, [ent, registry](const float dt) {registry->GetComponent<EnemySoldierComponent>(ent).Walk(dt); });
+		soldier_state.AddState(SoldierState::Tracking	, [ent, registry](const float dt) {registry->GetComponent<EnemySoldierComponent>(ent).Tracking(dt); });
+		soldier_state.AddState(SoldierState::Damage		, [ent, registry](const float dt) {registry->GetComponent<EnemySoldierComponent>(ent).Damage(dt); });
+		soldier_state.AddState(SoldierState::Death		, [ent, registry](const float dt) {registry->GetComponent<EnemySoldierComponent>(ent).Death(dt); });
+		soldier_state.AddState(SoldierState::Attack_01	, [ent, registry](const float dt) {registry->GetComponent<EnemySoldierComponent>(ent).Attack01(dt); });
+		soldier_state.AddState(SoldierState::Attack_02	, [ent, registry](const float dt) {registry->GetComponent<EnemySoldierComponent>(ent).Attack02(dt); });
+		soldier_state.AddState(SoldierState::Attack_03	, [ent, registry](const float dt) {registry->GetComponent<EnemySoldierComponent>(ent).Attack03(dt); });
 
 		// 初期stateの設定(SoldierState::Idle)
-		soldier_state.SetState(SoldierState::Walk);
+		soldier_state.SetState(SoldierState::Wave_Start);
 
 		// transition_timerの設定
 		RegisterTransitionTimer(transition_idle_to_walk, 3.f, 7.f);
@@ -180,6 +177,20 @@ namespace cumulonimbus::component
 		//timer.current_time = 0.0f;
 	}
 
+	void EnemySoldierComponent::WaveStart(const float dt)
+	{
+		if(soldier_state.GetInitialize())
+		{
+			auto& model_loader = *locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>();
+			auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
+			// アニメーションのキーフレームを
+			model_loader.GetModel(model_comp.GetModelID()).GetModelData().SetAnimationKeyFrame(static_cast<u_int>(AnimationData::Walk), 1);
+			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Walk));
+		}
+
+		soldier_state.SetState(SoldierState::Walk);
+	}
+
 	void EnemySoldierComponent::Walk(const float dt)
 	{
 		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
@@ -188,8 +199,10 @@ namespace cumulonimbus::component
 		auto& timer = transition_timer.at(transition_walk_to_idle);
 		if (soldier_state.GetInitialize())
 		{
+			auto& model_loader = *locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>();
 			// アニメーションセット(AnimationData::Walk)
 			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Walk));
+			model_loader.GetModel(model_comp.GetModelID()).GetModelData().ResetAnimationKeyFrame(static_cast<u_int>(AnimationData::Walk));
 			{// モデル回転の初期設定
 				random_rotation_angle.SetRandomVal();
 				random_rotation_angle.current_time = 0;
@@ -202,31 +215,31 @@ namespace cumulonimbus::component
 			}
 		}
 
-		//random_rotation_angle.current_time += dt * rotation_time_rate;
-		//transform_comp.QuaternionSlerp(random_rotation_angle.current_time);
+		random_rotation_angle.current_time += dt * rotation_time_rate;
+		transform_comp.QuaternionSlerp(random_rotation_angle.current_time);
 
-		//if (random_rotation_angle.current_time > 1)
-		//{
-		//	random_rotation_angle.current_time = 1;
-		//}
+		if (random_rotation_angle.current_time > 1)
+		{
+			random_rotation_angle.current_time = 1;
+		}
 		//rigid_body_comp.AddForce({ walk_speed,0.0f,walk_speed });
 
-		//const mapping::rename_type::Entity ent_player = GetRegistry()->GetArray<PlayerComponent>().GetComponents().at(0).GetEntity();
-		//if (Search(GetRegistry()->GetComponent<TransformComponent>(ent_player).GetPosition(), tracking_transition_angle, tracking_transition_distance))
-		//{// 索敵範囲内にプレイヤーがいれば状態遷移(SoldierState::Tracking)
-		//	soldier_state.SetState(SoldierState::Tracking);
-		//	timer.current_time = 0;
-		//}
+		const mapping::rename_type::Entity ent_player = GetRegistry()->GetArray<PlayerComponent>().GetComponents().at(0).GetEntity();
+		if (Search(GetRegistry()->GetComponent<TransformComponent>(ent_player).GetPosition(), tracking_transition_angle, tracking_transition_distance))
+		{// 索敵範囲内にプレイヤーがいれば状態遷移(SoldierState::Tracking)
+			soldier_state.SetState(SoldierState::Tracking);
+			timer.current_time = 0;
+		}
 
-		//timer.current_time += dt;
-		//if (timer.current_time < timer.random_val)
-		//	return;
+		timer.current_time += dt;
+		if (timer.current_time < timer.random_val)
+			return;
 
-		//soldier_state.SetState(SoldierState::Idle);
-		//timer.current_time = 0;
+		soldier_state.SetState(SoldierState::Idle);
+		timer.current_time = 0;
 	}
 
-	void EnemySoldierComponent::Tracking(float dt)
+	void EnemySoldierComponent::Tracking(const float dt)
 	{
 		auto& fbx_model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
 		auto& timer			 = transition_timer.at(transition_tracking_to_attack);

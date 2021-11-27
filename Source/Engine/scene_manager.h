@@ -127,6 +127,11 @@ namespace cumulonimbus::scene
 		{
 			return collision_manager.get();
 		}
+		[[nodiscard]]
+		system::WaveSystem* GetWaveSystem() const
+		{
+			return wave_system.get();
+		}
 
 	private:
 		// Œ»İŠJ‚©‚ê‚Ä‚¢‚éƒV[ƒ“

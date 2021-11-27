@@ -481,9 +481,9 @@ namespace cumulonimbus::asset
 		int fbx_polygon_count = fbx_mesh->GetPolygonCount();  // ポリゴン数取得
 
 		model.GetModelData().GetMeshes().emplace_back(ModelData::Mesh());
-		ModelData::Mesh& mesh = model.GetModelData().GetMeshes().back();
-		mesh.mesh_name = fbx_node->GetName();		// mesh名取得
-		mesh.material_count = fbx_material_count;
+		ModelData::Mesh& mesh	= model.GetModelData().GetMeshes().back();
+		mesh.mesh_name			= fbx_node->GetName();		// mesh名取得
+		mesh.material_count		= fbx_material_count;
 		mesh.subsets.resize(fbx_material_count > 0 ? fbx_material_count : 1);
 		mesh.node_index = FindNodeIndex(model, fbx_node->GetName());
 
@@ -822,10 +822,11 @@ namespace cumulonimbus::asset
 			fbx_sampling_step.SetTime(0, 0, 1, 0, 0, fbx_time_mode);	// 1秒当たりの時間を算出?
 			fbx_sampling_step = static_cast<FbxLongLong>(fbx_sampling_step.Get() * sampling_time);
 
-			int start_frame = static_cast<int>(fbx_start_time.Get() / fbx_sampling_step.Get());
-			int end_frame = static_cast<int>(fbx_end_time.Get() / fbx_sampling_step.Get());
-			const int frame_count = static_cast<int>((fbx_end_time.Get() - fbx_start_time.Get()) / fbx_sampling_step.Get());
-			animation.num_key_frame = frame_count;
+			int start_frame				= static_cast<int>(fbx_start_time.Get() / fbx_sampling_step.Get());
+			int end_frame				= static_cast<int>(fbx_end_time.Get() / fbx_sampling_step.Get());
+			const int frame_count		= static_cast<int>((fbx_end_time.Get() - fbx_start_time.Get()) / fbx_sampling_step.Get());
+			animation.num_key_frame		= frame_count;
+			animation.default_key_frame = frame_count;
 
 			// アニメーションの対象となるノードを列挙する
 			std::vector<FbxNode*> fbx_nodes;

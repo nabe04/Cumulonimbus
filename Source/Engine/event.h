@@ -1,5 +1,6 @@
 #pragma once
 #include <map>
+#include <ranges>
 
 #include "rename_type_mapping.h"
 
@@ -28,6 +29,14 @@ namespace cumulonimbus::system
 				return;
 
 			events.at(id)(args...);
+		}
+
+		void InvokeAll(Args... args)
+		{
+			for(auto& eve : events | std::views::values)
+			{
+				eve(args...);
+			}
 		}
 
 	private:

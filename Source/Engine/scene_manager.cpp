@@ -64,6 +64,8 @@ namespace cumulonimbus::scene
 		render_path		= std::make_unique<renderer::RenderPath>(locator::Locator::GetDx11Device()->device.Get());
 		// システムのロード
 		system->Load();
+		// ウェーブシステムのロード
+		wave_system->Load();
 		// システムへの関数登録
 		const auto& wave_hash = utility::GetHash<system::WaveSystem>();
 		system->RegisterRenderFunction(wave_hash, [&](ecs::Registry* registry) {wave_system->RenderImGui(registry); });
@@ -180,6 +182,7 @@ namespace cumulonimbus::scene
 	{
 		active_scenes.clear();
 		system->Save();
+		wave_system->Save();
 	}
 
 	void SceneManager::Update(const float dt)

@@ -21,8 +21,8 @@ namespace cumulonimbus::camera
 		cb_camera->GetData().camera_right	 = { 1.0f,0.0f,0.0f };
 		cb_camera->GetData().camera_up		 = { 0.0f,1.0f,0.0f };
 		cb_camera->GetData().camera_front	 = { cb_camera->GetData().camera_at.x - cb_camera->GetData().camera_position.x,
-											    cb_camera->GetData().camera_at.y - cb_camera->GetData().camera_position.y,
-											    cb_camera->GetData().camera_at.z - cb_camera->GetData().camera_position.z };
+											     cb_camera->GetData().camera_at.y - cb_camera->GetData().camera_position.y,
+											     cb_camera->GetData().camera_at.z - cb_camera->GetData().camera_position.z };
 		cb_camera->GetData().camera_fov		= 0.0f;
 		cb_camera->GetData().camera_aspect	= 0.0f;
 		cb_camera->GetData().camera_width	= static_cast<float>(locator::Locator::GetWindow()->Width());
@@ -123,8 +123,8 @@ namespace cumulonimbus::camera
 		cb_camera->GetData().camera_right	 = right_vec;
 		cb_camera->GetData().camera_up		 = up_vec;
 		cb_camera->GetData().camera_front	 = { cb_camera->GetData().camera_at.x - cb_camera->GetData().camera_position.x,
-											    cb_camera->GetData().camera_at.y - cb_camera->GetData().camera_position.y,
-											    cb_camera->GetData().camera_at.z - cb_camera->GetData().camera_position.z };
+											     cb_camera->GetData().camera_at.y - cb_camera->GetData().camera_position.y,
+											     cb_camera->GetData().camera_at.z - cb_camera->GetData().camera_position.z };
 		cb_camera->GetData().camera_fov		= fov;
 		cb_camera->GetData().camera_aspect	= aspect;
 		cb_camera->GetData().camera_width	= width;
@@ -148,9 +148,8 @@ namespace cumulonimbus::camera
 			off_screen.reset();
 		off_screen	= std::make_shared<FrameBuffer>(
 						locator::Locator::GetDx11Device()->device.Get(),
-						width, height);
+						static_cast<int>(width), static_cast<int>(height));
 	}
-
 
 	void Camera::Update(float dt)
 	{

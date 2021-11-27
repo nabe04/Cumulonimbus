@@ -37,7 +37,7 @@ SorbelFilter::SorbelFilter(ID3D11Device* device, unsigned int width, unsigned in
 	//-- Sampler state--//
 	samplers.at(static_cast<int>(SorbelFilterSamplerState::Linear_Wrap)) = std::make_unique<Sampler>(
 		device, D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_WRAP,
-		D3D11_COMPARISON_ALWAYS, 0.0f, 0.0f, 0.0f, 1.0);
+		D3D11_COMPARISON_ALWAYS, 0.0f, 0.0f, 0.0f, 1.0f);
 
 	//-- Blend state --//
 	blend = std::make_unique<Blend>(device);

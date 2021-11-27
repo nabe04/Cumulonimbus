@@ -330,7 +330,6 @@ namespace cumulonimbus::collision
 							capsule_collisions_1.GetComponents().at(c1));
 					}
 				}
-
 			}
 		}
 

@@ -11,7 +11,7 @@ namespace cumulonimbus::asset
 {
 	void ModelData::SetAnimationKeyFrame(const u_int animation_index, const u_int frames)
 	{
-		animations.at(animation_index).num_key_frame = frames;
+		animations.at(animation_index).num_key_frame  = frames;
 		// 1モーション間のキーフレームの長さ(秒)調整
 		animations.at(animation_index).seconds_length = frames * animations.at(animation_index).sampling_time;
 	}
@@ -34,6 +34,28 @@ namespace cumulonimbus::asset
 	void ModelData::SetAnimationPlaybackSpeed(const u_int animation_index, const float playback_speed)
 	{
 		animations.at(animation_index).playback_speed = playback_speed;
+	}
+
+	void ModelData::ResetAnimationKeyFrame(const u_int animation_index)
+	{
+		animations.at(animation_index).num_key_frame = animations.at(animation_index).default_key_frame;
+		// 1モーション間のキーフレームの長さ(秒)調整
+		animations.at(animation_index).seconds_length = animations.at(animation_index).num_key_frame * animations.at(animation_index).sampling_time;
+	}
+
+	void ModelData::ResetAnimationKeyFrame(const std::string& animation_name)
+	{
+		for (auto& animation : animations)
+		{// animations(std::vector)から指定のアニメーションを検索
+			if (animation.animation_name == animation_name)
+			{
+				animation.num_key_frame = animation.default_key_frame;
+				// 1モーション間のキーフレームの長さ(秒)調整
+				animation.seconds_length = animation.num_key_frame * animation.sampling_time;
+				return;
+			}
+		}
+		assert(!"Animation names did not match(FbxModelResource::SetAnimationKeyFrame)");
 	}
 
 	void ModelData::SetAnimationPlaybackSpeed(const std::string& animation_name, const float playback_speed)
@@ -127,6 +149,11 @@ namespace cumulonimbus::asset
 				if (FAILED(hr))
 					assert(!"CreateBuffer(Index) error of FbxModelResource class ");
 			}
+		}
+
+		for(auto& animation : model_data.GetAnimations())
+		{// デフォルトのキーフレーム格納
+			animation.default_key_frame = animation.num_key_frame;
 		}
 	}
 

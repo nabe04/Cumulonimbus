@@ -17,24 +17,6 @@ namespace
 
 namespace cumulonimbus::system
 {
-	template <class Archive>
-	void System::save(Archive&& archive, std::uint32_t const version) const
-	{
-		archive(
-			CEREAL_NVP(camera_texture)
-		);
-
-		if(version >= 0)
-		{
-			archive(
-				CEREAL_NVP(sky_box),
-				CEREAL_NVP(current_scene_path),
-				CEREAL_NVP(default_scene_path),
-				CEREAL_NVP(collision_primitive)
-			);
-		}
-	}
-
 	template<class Archive>
 	void System::load(Archive&& archive, std::uint32_t const version)
 	{
@@ -59,27 +41,30 @@ namespace cumulonimbus::system
 		}
 	}
 
+
+	template <class Archive>
+	void System::save(Archive&& archive, std::uint32_t const version) const
+	{
+		archive(
+			CEREAL_NVP(camera_texture)
+		);
+
+		if (version >= 0)
+		{
+			archive(
+				CEREAL_NVP(sky_box),
+				CEREAL_NVP(current_scene_path),
+				CEREAL_NVP(default_scene_path),
+				CEREAL_NVP(collision_primitive)
+			);
+		}
+	}
+
 	System::System()
 	{
 		camera_texture		= std::make_unique<camera::CameraTexture>(*this);
 		collision_primitive = std::make_unique<collision::CollisionPrimitiveAsset>(*this);
 		sky_box				= std::make_unique<graphics::SkyBox>(*this, locator::Locator::GetDx11Device()->device.Get(),".Data/Assets/cubemap/Table_Mountain/table_mountain.dds");
-	}
-
-	void System::Save(const std::filesystem::path& save_path)
-	{
-		if (save_path.compare({ "" }) == 0)
-		{// デフォルトのパスに保存
-			std::ofstream ofs(default_path_and_name + file_path_helper::GetSystemExtension(), std::ios_base::binary);
-			cereal::BinaryOutputArchive output_archive(ofs);
-			output_archive(*this);
-		}
-		else
-		{
-			std::ofstream ofs(save_path, std::ios_base::binary);
-			cereal::BinaryOutputArchive output_archive(ofs);
-			output_archive(*this);
-		}
 	}
 
 	void System::Load(const std::filesystem::path& load_path)
@@ -110,10 +95,11 @@ namespace cumulonimbus::system
 			sky_box->Load(*this);
 		};
 
+		// デフォルトのフォルダにある「.sys」の読み込み
 		if(load_path.empty())
-		{// デフォルトのフォルダにある「.sys」の読み込み
-			std::filesystem::path default_path{};
-			for (const auto& path : std::filesystem::directory_iterator(std::filesystem::path{ default_path_and_name }.parent_path()))
+		{
+			for (std::filesystem::path default_path{};
+				 const auto& path : std::filesystem::directory_iterator(std::filesystem::path{ default_path_and_name }.parent_path()))
 			{
 				default_path = path;
 				if (!extension.contains(default_path.extension()))
@@ -144,6 +130,22 @@ namespace cumulonimbus::system
 			input_archive(*this);
 		}
 		Initialize();
+	}
+
+	void System::Save(const std::filesystem::path& save_path)
+	{
+		if (save_path.compare({ "" }) == 0)
+		{// デフォルトのパスに保存
+			std::ofstream ofs(default_path_and_name + file_path_helper::GetSystemExtension(), std::ios_base::binary);
+			cereal::BinaryOutputArchive output_archive(ofs);
+			output_archive(*this);
+		}
+		else
+		{
+			std::ofstream ofs(save_path, std::ios_base::binary);
+			cereal::BinaryOutputArchive output_archive(ofs);
+			output_archive(*this);
+		}
 	}
 
 	void System::Update(const float dt)

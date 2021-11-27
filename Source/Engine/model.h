@@ -142,13 +142,14 @@ namespace cumulonimbus::asset
 
 		struct Animation
 		{
-			std::vector<Keyframe>		keyframes;
-			float						seconds_length;			// キーフレームの長さ(秒) (num_key_frame * sampling_time)
-			float						sampling_rate;			// アニメーションのキーフレイムレイト
-			float						sampling_time;			// 1フレーム当たりのキーフレームの長さ(1 / sampling_rate)
-			float						playback_speed = 1.0f;  // アニメーションの再生速度(倍率)
-			int							num_key_frame;			// キーフレーム数
-			std::string					animation_name;			// アニメーションの名
+			std::vector<Keyframe>		keyframes{};
+			float						seconds_length{};		// キーフレームの長さ(秒) (num_key_frame * sampling_time)
+			float						sampling_rate{};		// アニメーションのキーフレイムレイト
+			float						sampling_time{};		// 1フレーム当たりのキーフレームの長さ(1 / sampling_rate)
+			float						playback_speed{1.0f};	// アニメーションの再生速度(倍率)
+			int							num_key_frame{};		// キーフレーム数
+			int							default_key_frame{};	// デフォルトのキーフレーム
+			std::string					animation_name{};		// アニメーションの名
 
 			template<class Archive>
 			void serialize(Archive& archive, int version)
@@ -207,6 +208,20 @@ namespace cumulonimbus::asset
 		 * @attention				: animation_nameの名前が一致しない場合アサーションで処理が落ちる
 		 */
 		void SetAnimationKeyFrame(const std::string& animation_name, u_int frames);
+
+		/**
+		 * @brief : アニメーションキーフレームのリセット
+		 * @remark : モデル読み込み時のdefault_key_frameがセットされる
+		 * @param animation_index	: ModelData::animations(std::vector)の要素番号
+		 */
+		void ResetAnimationKeyFrame(u_int animation_index);
+		/**
+		 * @brief : アニメーションキーフレームのリセット
+		 * @remark : モデル読み込み時のdefault_key_frameがセットされる
+		 * @param animation_name	: モデルが持つアニメーション名
+		 *							  (ModelData::Animation::animation_name)
+		 */
+		void ResetAnimationKeyFrame(const std::string& animation_name);
 
 		/**
 		 * @brief					: ModelData::animations(std::vector)の要素番号から

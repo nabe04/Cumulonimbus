@@ -66,6 +66,11 @@ namespace cumulonimbus::component
 		RandomFloat random_rotation_angle{};
 
 		/**
+		 * @brief : ウェーブ変更時処理
+		 */
+		virtual void OnWaveChanged() {};
+
+		/**
 		 * @brief : ダメージ処理
 		 */
 		virtual void OnDamaged() {};
@@ -95,7 +100,8 @@ namespace cumulonimbus::component
 		 * @param search_length : 索敵距離
 		 * @return : true -> 索敵範囲内
 		 */
-		[[nodiscard]] bool Search(const DirectX::SimpleMath::Vector3& target_pos, float search_range, float search_length) const;
+		[[nodiscard]]
+		bool Search(const DirectX::SimpleMath::Vector3& target_pos, float search_range, float search_length) const;
 
 		/**
 		 * @brief				: 指定した位置への追跡処理(モデルの回転処理も含む)

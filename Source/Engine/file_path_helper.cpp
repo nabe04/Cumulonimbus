@@ -33,6 +33,10 @@ namespace cumulonimbus::file_path_helper
 		return { ".sys" };
 	}
 
+	std::string GetWaveSystemExtension()
+	{
+		return { ".wsys" };
+	}
 
 	std::string GetLastSceneExtension()
 	{

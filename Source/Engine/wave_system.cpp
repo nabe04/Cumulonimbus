@@ -9,6 +9,12 @@
 
 CEREAL_CLASS_VERSION(cumulonimbus::system::WaveSystem, 0)
 
+namespace
+{
+	const std::string default_path_and_name{ "./Data/System/wave_system" };
+}
+
+
 namespace cumulonimbus::system
 {
 	template <class Archive>
@@ -27,9 +33,19 @@ namespace cumulonimbus::system
 		);
 	}
 
+	void WaveSystem::Initialize(scene::SceneManager& scene_manager)
+	{
+		wave_state.AddState(WaveState::Start , [&](scene::SceneManager& sm) {StartGame(sm); });
+		wave_state.AddState(WaveState::Update, [&](scene::SceneManager& sm) {UpdateGame(sm); });
+		wave_state.AddState(WaveState::Change, [&](scene::SceneManager& sm) {ChangeWave(sm); });
+
+		wave_state.SetState(WaveState::Start);
+	}
+
 	void WaveSystem::Start(scene::SceneManager& scene_manager)
 	{
-		ChangeWave(scene_manager, true);
+		//ChangeWave(scene_manager, true);
+		Initialize(scene_manager);
 	}
 
 	void WaveSystem::Update(scene::SceneManager& scene_manager)
@@ -44,11 +60,7 @@ namespace cumulonimbus::system
 			//assert(!"A scene that doesn't exist(WaveSystem::Update)");
 			return;
 
-		if(ecs::Registry& registry = *scene_manager.GetScene(waves_id.at(wave_index)).GetRegistry();
-		   registry.GetArray<component::ModelComponent>().Size() == 0)
-		{// シーン内のModelComponentが存在しない場合次のウェーブに移行する
-			ChangeWave(scene_manager, false);
-		}
+		wave_state.Update(scene_manager);
 	}
 
 	void WaveSystem::RenderImGui(ecs::Registry* registry)
@@ -103,6 +115,72 @@ namespace cumulonimbus::system
 		}
 	}
 
+	void WaveSystem::Load(const std::filesystem::path& load_path)
+	{
+		static const std::set<std::filesystem::path> extension
+		{
+			file_path_helper::GetWaveSystemExtension()
+		};
+
+		std::filesystem::create_directory(std::filesystem::path{ default_path_and_name }.parent_path());
+
+		// デフォルトのフォルダにある「.wsys」の読み込み
+		if(load_path.empty())
+		{
+			std::filesystem::path default_path{};
+			for(const auto paths = utility::GetAllSubDirectoryFilePath(std::filesystem::path{ default_path_and_name }.parent_path().string());
+				const auto& p :paths)
+			{
+				default_path = p;
+				if (!extension.contains(default_path.extension()))
+					continue;
+				{
+					std::ifstream ifs(default_path, std::ios_base::binary);
+					if (!ifs)
+						assert(!"Not found file(WaveSystem::Load)");
+					cereal::BinaryInputArchive input_archive(ifs);
+					input_archive(*this);
+				}
+				return;
+			}
+			// ファイルパスが存在しなかったので現在の情報で保存
+			Save();
+			return;
+		}
+
+		// 任意のフォルダからの読み込み
+		if (!extension.contains(load_path.extension()))
+			assert(!"The extension is incorrect(WaveSystem::Load)");
+		{
+			std::ifstream ifs(load_path);
+			if (!ifs)
+				assert(!"Not found file(WaveSystem::Load)");
+			cereal::BinaryInputArchive input_archive(ifs);
+			input_archive(*this);
+		}
+	}
+
+	void WaveSystem::Save(const std::filesystem::path& save_path)
+	{
+		if(save_path.empty())
+		{// デフォルトパスに保存
+			std::ofstream ofs(default_path_and_name + file_path_helper::GetWaveSystemExtension(), std::ios_base::binary);
+			cereal::BinaryOutputArchive output_archive(ofs);
+			output_archive(*this);
+		}
+		else
+		{
+			std::ofstream ofs(save_path, std::ios_base::binary);
+			cereal::BinaryOutputArchive output_archive(ofs);
+			output_archive(*this);
+		}
+	}
+
+	void WaveSystem::RegisterEventChanged(const mapping::rename_type::UUID& id, const std::function<void()>& func)
+	{
+		on_wave_changed.RegistryEvent(id, func);
+	}
+
 	void WaveSystem::AddWave(const mapping::rename_type::UUID& scene_id)
 	{
 		waves_id.emplace_back(scene_id);
@@ -139,9 +217,34 @@ namespace cumulonimbus::system
 			if (wave_index > 0)
 				scene_loader.DestroyScene(scene_manager, waves_id.at(wave_index - 1));
 
+			// ウェーブに登録されているシーンの追加読み込み
 			scene_loader.AddScene(scene_manager, waves_id.at(wave_index));
+			// シーンの開始処理
 			scene_manager.GetScene(waves_id.at(wave_index)).StartGame();
+			// ウェーブの切り替わり時の登録関数を全て実行
+			on_wave_changed.InvokeAll();
 			break;
 		}
 	}
+
+	void WaveSystem::StartGame(scene::SceneManager& scene_manager)
+	{
+		ChangeWave(scene_manager, true);
+	}
+
+	void WaveSystem::UpdateGame(scene::SceneManager& scene_manager)
+	{
+		if (ecs::Registry& registry = *scene_manager.GetScene(waves_id.at(wave_index)).GetRegistry();
+			registry.GetArray<component::ModelComponent>().Size() == 0)
+		{// シーン内のModelComponentが存在しない場合次のウェーブに移行する
+			wave_state.SetState(WaveState::Change);
+		}
+	}
+
+	void WaveSystem::ChangeWave(scene::SceneManager& scene_manager)
+	{
+		ChangeWave(scene_manager, false);
+		wave_state.SetState(WaveState::Update);
+	}
+
 } // cumulonimbus::system

@@ -146,7 +146,7 @@ namespace cumulonimbus::component
 				items_path.emplace_back(value);
 				items.emplace_back(items_path.back().filename().string());
 			}
-			
+
 			if (helper::imgui::Combo("Model", current_item, items))
 			{// ImGui::Combo内でアイテム選択時
 				for (const auto& [key, value] : asset_sheet_manager.GetSheet<asset::Model>().sheet)
@@ -221,6 +221,7 @@ namespace cumulonimbus::component
 						{
 							SwitchAnimation(animation_index, true);
 						}
+						animation.default_key_frame = animation.num_key_frame;
 						model_data.SetAnimationKeyFrame(animation_index, animation.num_key_frame);
 
 						ImGui::TreePop();

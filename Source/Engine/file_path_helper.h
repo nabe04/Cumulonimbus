@@ -46,6 +46,13 @@ namespace cumulonimbus::file_path_helper
 	std::string GetSystemExtension();
 
 	/**
+	 * @brief : 「.wsys」を返す
+	 * @return : .wsys
+	 */
+	[[nodiscard]]
+	std::string GetWaveSystemExtension();
+
+	/**
 	 * @brief : 「.lsn」を返す
 	 * @return : .lsn
 	 */

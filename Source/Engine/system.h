@@ -37,22 +37,12 @@ namespace cumulonimbus::system
 		explicit System();
 		~System() = default;
 
-		//template<class Archive>
-		//void serialize(Archive&& archive, std::uint32_t version);
-
-		template<class Archive>
-		void save(Archive&& archive, std::uint32_t version) const;
-
 		template<class Archive>
 		void load(Archive&& archive, std::uint32_t version);
 
-		/**
-		 * @brief : 「.system」ファイルのセーブ
-		 * @param save_path : 「.system」ファイルまでのパス(※拡張子(「.sys」)含む)
-		 *					   (パスを指定しない場合デフォルトの
-		 *					   パスに保存される(./Data/System/system.sys))
-		 */
-		void Save(const std::filesystem::path& save_path = {""});
+
+		template<class Archive>
+		void save(Archive&& archive, std::uint32_t version) const;
 
 		/**
 		 * @brief : 「.system」ファイルのロード
@@ -61,6 +51,14 @@ namespace cumulonimbus::system
 		 *					   パスからロードされる(./Data/System/system.sys))
 		 */
 		void Load(const std::filesystem::path& load_path = {""});
+
+		/**
+		 * @brief : 「.system」ファイルのセーブ
+		 * @param save_path : 「.system」ファイルまでのパス(※拡張子(「.sys」)含む)
+		 *					   (パスを指定しない場合デフォルトの
+		 *					   パスに保存される(./Data/System/system.sys))
+		 */
+		void Save(const std::filesystem::path& save_path = { "" });
 
 		void Update(float dt);
 

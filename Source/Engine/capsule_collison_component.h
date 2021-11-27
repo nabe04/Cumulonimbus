@@ -52,7 +52,7 @@ namespace cumulonimbus
 			~CapsuleCollisionComponent() override = default;
 
 			void Start() override;
-			
+
 			void CommonUpdate(float dt)		override;
 			void PreGameUpdate(float dt)	override;
 			void GameUpdate(float dt)		override;

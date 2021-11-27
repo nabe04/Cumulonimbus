@@ -22,7 +22,7 @@ namespace cumulonimbus
 			};
 
 			using namespace mapping::shader_filename;
-			vertex_shader = std::make_unique<shader_system::VertexShader>(vs::StandardSprite_VS().c_str(), layout.data(), layout.size());
+			vertex_shader = std::make_unique<shader_system::VertexShader>(vs::StandardSprite_VS().c_str(), layout.data(), static_cast<UINT>(layout.size()));
 			pixel_shader  = std::make_unique<shader_system::PixelShader>(ps::StandardSprite_PS().c_str());
 		}
 

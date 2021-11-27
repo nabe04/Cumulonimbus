@@ -13,6 +13,7 @@ namespace cumulonimbus::component
 		enum class SoldierState
 		{
 			Idle,
+			Wave_Start,
 			Walk,
 			Tracking,
 			Damage,
@@ -93,11 +94,12 @@ namespace cumulonimbus::component
 		int GetAnimDataIndex(AnimationData anim_data) const;
 
 		void Initialize(ecs::Registry* registry, mapping::rename_type::Entity ent) override;
-		
+
 		void OnDamaged() override;
 
 		//-- StateMachineƒNƒ‰ƒX‚ÅŠÇ—‚·‚é“G‚Ìó‘ÔŠÖ” --//
 		void Idle(float dt);
+		void WaveStart(float dt);
 		void Walk(float dt);
 		void Tracking(float dt);
 		void Damage(float dt);
