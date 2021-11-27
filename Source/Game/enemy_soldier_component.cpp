@@ -94,6 +94,7 @@ namespace cumulonimbus::component
 	void EnemySoldierComponent::GameUpdate(float dt)
 	{
 		soldier_state.Update(dt);
+		Movement();
 	}
 
 	void EnemySoldierComponent::RenderImGui()
@@ -135,9 +136,23 @@ namespace cumulonimbus::component
 		SetRandomRotationAngle(-180.f, 180.f);
 	}
 
+	void EnemySoldierComponent::Movement()
+	{
+		auto* rigid_body_comp = GetRegistry()->TryGetComponent<RigidBodyComponent>(GetEntity());
+		if (!rigid_body_comp)
+			return;
+
+		if (auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
+			transform_comp.GetPosition().y < 0)
+		{
+			rigid_body_comp->SetCurrentGravity(0);
+			transform_comp.SetPosition_Y(.0f);
+		}
+	}
+
 	void EnemySoldierComponent::OnDamaged()
 	{
-		GetRegistry()->AddDestroyEntity(GetEntity());
+		//GetRegistry()->AddDestroyEntity(GetEntity());
 	}
 
 	void EnemySoldierComponent::Idle(float dt)
@@ -254,13 +269,15 @@ namespace cumulonimbus::component
 			timer.SetRandomVal();
 		}
 
+		float distance = 0; // ©g‚ÆƒvƒŒƒCƒ„[‚Æ‚Ì‹——£
 		{// ’ÇÕˆ—
-			float distance = 0; // ©g‚ÆƒvƒŒƒCƒ„[‚Æ‚Ì‹——£
-			const mapping::rename_type::Entity ent_player = GetRegistry()->GetArray<PlayerComponent>().GetComponents().at(0).GetEntity();
-			EnemyBaseComponent::Tracking(
-				GetRegistry()->GetComponent<TransformComponent>(ent_player).GetPosition(),
-				{ tracking_speed,.0f,tracking_speed },
-				distance);
+			PlayerComponent* player_comp = GetPlayer();
+			if (!player_comp)
+				return;
+			const mapping::rename_type::Entity ent_player = player_comp->GetEntity();
+			EnemyBaseComponent::Tracking(player_comp->GetRegistry()->GetComponent<TransformComponent>(ent_player).GetPosition(),
+										 { tracking_speed,.0f,tracking_speed },
+										 distance);
 		}
 
 		{// ó‘Ô‚ÌØ‚è‘Ö‚¦
@@ -268,6 +285,12 @@ namespace cumulonimbus::component
 			//{// õ“G”ÍˆÍŠO‚È‚ç‘Ò‹@ó‘Ô‚É‘JˆÚ(SoldierState::Idle)
 			//	soldier_state.SetState(SoldierState::Idle);
 			//}
+
+			if (distance > tracking_interruption_distance)
+			{// õ“G”ÍˆÍŠO‚È‚ç‘Ò‹@ó‘Ô‚É‘JˆÚ(SoldierState::Idle)
+				//soldier_state.SetState(SoldierState::Idle);
+				return;
+			}
 
 			//if (distance < attack_transition_distance)
 			//	timer.current_time += dt;
@@ -316,8 +339,8 @@ namespace cumulonimbus::component
 		if (fbx_model_comp.IsPlayAnimation())
 			return;
 
-		// ó‘Ô‘JˆÚ(SoldierState::Idle)
-		soldier_state.SetState(SoldierState::Idle);
+		// ó‘Ô‘JˆÚ(SoldierState::Tracking)
+		soldier_state.SetState(SoldierState::Tracking);
 	}
 
 	void EnemySoldierComponent::Attack02(float dt)
@@ -334,8 +357,8 @@ namespace cumulonimbus::component
 		if (fbx_model_comp.IsPlayAnimation())
 			return;
 
-		// ó‘Ô‘JˆÚ(SoldierState::Idle)
-		soldier_state.SetState(SoldierState::Idle);
+		// ó‘Ô‘JˆÚ(SoldierState::Tracking)
+		soldier_state.SetState(SoldierState::Tracking);
 	}
 
 	void EnemySoldierComponent::Attack03(float dt)

@@ -40,8 +40,8 @@ namespace cumulonimbus::system
 		wave_state.AddState(WaveState::Change, [&](scene::SceneManager& sm) {ChangeWave(sm); });
 
 		wave_state.SetState(WaveState::Update);
-
-		ChangeWave(scene_manager, true);
+		if(is_active)
+			ChangeWave(scene_manager, true);
 	}
 
 	void WaveSystem::Start(scene::SceneManager& scene_manager)
@@ -72,6 +72,9 @@ namespace cumulonimbus::system
 
 	void WaveSystem::Update(scene::SceneManager& scene_manager)
 	{
+		if (!is_active)
+			return;
+
 		if (waves_id.empty())
 			return;
 
@@ -90,6 +93,8 @@ namespace cumulonimbus::system
 		if (const ImGuiTreeNodeFlags tree_flg{ ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth };
 			ImGui::CollapsingHeader(ICON_FA_WATER"Wave System", tree_flg))
 		{
+			ImGui::Checkbox("Is Active", &is_active);
+
 			const auto& scene_asset = locator::Locator::GetAssetManager()->GetAssetSheetManager().GetSheet<asset::SceneAsset>();
 			const auto& scene_loader = locator::Locator::GetAssetManager()->GetLoader<asset::SceneLoader>();
 

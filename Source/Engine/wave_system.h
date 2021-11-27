@@ -82,7 +82,8 @@ namespace cumulonimbus::system
 		 */
 		std::vector<mapping::rename_type::UUID> waves_id{};
 
-		u_int wave_index = 0;
+		u_int wave_index{ 0 };
+		bool is_active{ true };
 
 		Event<void> on_wave_changed{};
 		StateMachine<WaveState, void, scene::SceneManager&> wave_state{};

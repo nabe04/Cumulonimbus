@@ -120,9 +120,8 @@ namespace cumulonimbus::component
 		self_front_vec.y = 0;
 		self_front_vec.Normalize();
 
-		float rad = arithmetic::CalcAngleFromTwoVec(self_to_target_vec, self_front_vec);
-
-		if (!arithmetic::IsEqual(rad, 0.0f))
+		if (float rad = arithmetic::CalcAngleFromTwoVec(self_to_target_vec, self_front_vec);
+			!arithmetic::IsEqual(rad, 0.0f))
 		{
 			if (self_front_vec.Cross(self_to_target_vec).y < 0)
 				rad *= -1;
@@ -137,7 +136,10 @@ namespace cumulonimbus::component
 
 	void EnemyBaseComponent::RotateToPlayerDirection() const
 	{
-		const mapping::rename_type::Entity player_ent = GetRegistry()->GetArray<PlayerComponent>().GetComponents().at(0).GetEntity();
+		PlayerComponent* player_comp = GetPlayer();
+		if (!player_comp)
+			return;
+		const mapping::rename_type::Entity player_ent = player_comp->GetEntity();
 		const DirectX::SimpleMath::Vector3 player_pos = GetRegistry()->GetComponent<TransformComponent>(player_ent).GetPosition();
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 

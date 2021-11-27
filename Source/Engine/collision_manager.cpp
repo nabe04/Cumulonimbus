@@ -250,84 +250,84 @@ namespace cumulonimbus::collision
 		{
 			scenes_id.emplace_back(scene_id);
 		}
-		if (scenes_id.size() <= 1)
-			return;
-
-		for (int scene_1 = 0; scene_1 < scenes_id.size(); ++scene_1)
+		if (scenes_id.size() >= 1)
 		{
-			for (int scene_2 = scene_1 + 1; scene_2 < scenes_id.size(); ++scene_2)
+			for (int scene_1 = 0; scene_1 < scenes_id.size(); ++scene_1)
 			{
-				// シーン1のレジストリ(1、２は識別番号)
-				auto* registry_1 = scene_manager.GetActiveScenes().at(scenes_id.at(scene_1))->GetRegistry();
-				// シーン2のレジストリ(1、２は識別番号)
-				auto* registry_2 = scene_manager.GetActiveScenes().at(scenes_id.at(scene_2))->GetRegistry();
+				for (int scene_2 = scene_1 + 1; scene_2 < scenes_id.size(); ++scene_2)
+				{
+					// シーン1のレジストリ(1、２は識別番号)
+					auto* registry_1 = scene_manager.GetActiveScenes().at(scenes_id.at(scene_1))->GetRegistry();
+					// シーン2のレジストリ(1、２は識別番号)
+					auto* registry_2 = scene_manager.GetActiveScenes().at(scenes_id.at(scene_2))->GetRegistry();
 
-				//-- 球同士の判定 --//
-				auto& sphere_collisions_1 = registry_1->GetArray<component::SphereCollisionComponent>();
-				auto& sphere_collisions_2 = registry_2->GetArray<component::SphereCollisionComponent>();
-				const auto s1_size = sphere_collisions_1.Size();
-				const auto s2_size = sphere_collisions_2.Size();
-				if(s1_size >= 1 &&
-				   s2_size >= 1)
-				{// それぞれのシーンに球コライダーが1つ以上存在する場合に判定処理を行う
-					for (int s1 = 0; s1 < s1_size; ++s1)
-					{
-						for (int s2 = 0; s2 < s2_size; ++s2)
+					//-- 球同士の判定 --//
+					auto& sphere_collisions_1 = registry_1->GetArray<component::SphereCollisionComponent>();
+					auto& sphere_collisions_2 = registry_2->GetArray<component::SphereCollisionComponent>();
+					const auto s1_size = sphere_collisions_1.Size();
+					const auto s2_size = sphere_collisions_2.Size();
+					if (s1_size >= 1 &&
+						s2_size >= 1)
+					{// それぞれのシーンに球コライダーが1つ以上存在する場合に判定処理を行う
+						for (int s1 = 0; s1 < s1_size; ++s1)
 						{
-							IntersectSphereVsSphere(
-								dt,
-								registry_1, registry_2,
-								sphere_collisions_1.GetComponents().at(s1),
-								sphere_collisions_2.GetComponents().at(s2));
+							for (int s2 = 0; s2 < s2_size; ++s2)
+							{
+								IntersectSphereVsSphere(
+									dt,
+									registry_1, registry_2,
+									sphere_collisions_1.GetComponents().at(s1),
+									sphere_collisions_2.GetComponents().at(s2));
+							}
 						}
 					}
-				}
 
 
-				//-- カプセル同士の判定 --//
-				auto& capsule_collisions_1 = registry_1->GetArray<component::CapsuleCollisionComponent>();
-				auto& capsule_collisions_2 = registry_2->GetArray<component::CapsuleCollisionComponent>();
-				const auto c1_size = capsule_collisions_1.Size();
-				const auto c2_size = capsule_collisions_2.Size();
-				if(c1_size >= 1 &&
-				   c2_size >= 1)
-				{// それぞれのシーンにカプセルコライダーが1つ以上存在する場合に判定処理を行う
-					for (int c1 = 0; c1 < c1_size; ++c1)
+					//-- カプセル同士の判定 --//
+					auto& capsule_collisions_1 = registry_1->GetArray<component::CapsuleCollisionComponent>();
+					auto& capsule_collisions_2 = registry_2->GetArray<component::CapsuleCollisionComponent>();
+					const auto c1_size = capsule_collisions_1.Size();
+					const auto c2_size = capsule_collisions_2.Size();
+					if (c1_size >= 1 &&
+						c2_size >= 1)
+					{// それぞれのシーンにカプセルコライダーが1つ以上存在する場合に判定処理を行う
+						for (int c1 = 0; c1 < c1_size; ++c1)
+						{
+							for (int c2 = 0; c2 < c2_size; ++c2)
+							{
+								IntersectCapsuleVsCapsule(
+									dt,
+									registry_1, registry_2,
+									capsule_collisions_1.GetComponents().at(c1),
+									capsule_collisions_2.GetComponents().at(c2));
+							}
+						}
+					}
+
+					//-- 球とカプセル同士の判定 --//
+					// シーン1(球)、シーン2(カプセル)の場合
+					for (int s1 = 0; s1 < s1_size; ++s1)
 					{
 						for (int c2 = 0; c2 < c2_size; ++c2)
 						{
-							IntersectCapsuleVsCapsule(
+							IntersectSphereVsCapsule(
 								dt,
 								registry_1, registry_2,
-								capsule_collisions_1.GetComponents().at(c1),
+								sphere_collisions_1.GetComponents().at(s1),
 								capsule_collisions_2.GetComponents().at(c2));
 						}
 					}
-				}
-
-				//-- 球とカプセル同士の判定 --//
-				// シーン1(球)、シーン2(カプセル)の場合
-				for (int s1 = 0; s1 < s1_size; ++s1)
-				{
-					for (int c2 = 0; c2 < c2_size; ++c2)
+					// シーン1(カプセル)、シーン2(球)の場合
+					for (int c1 = 0; c1 < c1_size; ++c1)
 					{
-						IntersectSphereVsCapsule(
-							dt,
-							registry_1, registry_2,
-							sphere_collisions_1.GetComponents().at(s1),
-							capsule_collisions_2.GetComponents().at(c2));
-					}
-				}
-				// シーン1(カプセル)、シーン2(球)の場合
-				for (int c1 = 0; c1 < c1_size; ++c1)
-				{
-					for (int s2 = 0; s2 < s2_size; ++s2)
-					{
-						IntersectSphereVsCapsule(
-							dt,
-							registry_2, registry_1,
-							sphere_collisions_2.GetComponents().at(s2),
-							capsule_collisions_1.GetComponents().at(c1));
+						for (int s2 = 0; s2 < s2_size; ++s2)
+						{
+							IntersectSphereVsCapsule(
+								dt,
+								registry_2, registry_1,
+								sphere_collisions_2.GetComponents().at(s2),
+								capsule_collisions_1.GetComponents().at(c1));
+						}
 					}
 				}
 			}

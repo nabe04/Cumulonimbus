@@ -670,7 +670,7 @@ namespace cumulonimbus::ecs
 				return  0;
 			}
 
-			return  static_cast<ComponentArray<T>&>(component_arrays.at(component_name)).Size();
+			return  static_cast<ComponentArray<T>&>(*component_arrays.at(component_name)).Size();
 		}
 
 		/**

@@ -137,6 +137,8 @@ namespace cumulonimbus::component
 			capsule.world_transform_matrix = local_mat * world_transform;
 		};
 
+		const auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
+
 		// 判定用(カプセル)データの更新
 		for (auto& capsule : capsules | std::views::values)
 		{
@@ -168,6 +170,15 @@ namespace cumulonimbus::component
 					if (model_comp->HasNodeFromName(capsule.bone_name.c_str()))
 					{
 						DirectX::SimpleMath::Matrix world_transform = model_comp->GetNodeMatrix(capsule.bone_name.c_str());
+						DirectX::SimpleMath::Vector3 scale{}, translation{};
+						DirectX::SimpleMath::Quaternion rotation{};
+						if (world_transform.Decompose(scale, rotation, translation))
+						{
+							DirectX::SimpleMath::Matrix t = DirectX::SimpleMath::Matrix::CreateTranslation(translation);
+							DirectX::SimpleMath::Matrix r = DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&rotation));
+							world_transform = r * t;
+						}
+
 						capsule.world_transform_matrix = model_local_matrix * world_transform;
 					}
 					else
@@ -186,8 +197,11 @@ namespace cumulonimbus::component
 			DirectX::SimpleMath::Vector3 up = capsule.world_transform_matrix.Up();
 			up.Normalize();
 			const DirectX::SimpleMath::Vector3 reference_point = capsule.world_transform_matrix.Translation();
-			capsule.start	= reference_point + up * -(capsule.length * 0.5f);
+
+			capsule.start   = reference_point + up * -(capsule.length * 0.5f);
 			capsule.end		= reference_point + up * (capsule.length * 0.5f);
+			//float radius = capsule.radius;
+			//capsule.radius  = radius * transform_comp.GetScale().y;
 
 			{// HitEventの更新
 				if (capsule.hit_result.is_hit)
@@ -369,6 +383,7 @@ namespace cumulonimbus::component
 					}
 				};
 
+				ImGui::PushID("Capsule Collider");
 				AttachSocket(capsule.bone_name);
 				//ImGui::Text("Is Hit : %d", capsule.hit_result.is_hit);
 				//ImGui::Text("Fetch Bone Name : %s", capsule.bone_name.c_str());
@@ -386,6 +401,7 @@ namespace cumulonimbus::component
 				ImGui::DragFloat("Radius"	, &capsule.radius	 , 0.1f, 1.0f  , 1000.0f);
 				ImGui::ColorEdit4("Base Color", &capsule.base_color.x);
 				ImGui::ColorEdit4("Hit Color" , &capsule.hit_color.x);
+				ImGui::PopID();
 			}
 		}
 	}

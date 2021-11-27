@@ -95,6 +95,8 @@ namespace cumulonimbus::component
 
 		void Initialize(ecs::Registry* registry, mapping::rename_type::Entity ent) override;
 
+		void Movement();
+		
 		void OnDamaged() override;
 
 		//-- StateMachineƒNƒ‰ƒX‚ÅŠÇ—‚·‚é“G‚Ìó‘ÔŠÖ” --//

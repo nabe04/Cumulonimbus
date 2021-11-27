@@ -260,13 +260,15 @@ namespace cumulonimbus::component
 					}
 				};
 
+				ImGui::PushID("Sphere Collider");
 				AttachSocket(sphere.bone_name);
 				ImGui::Checkbox("Is Visible", &sphere.is_visible);
 				CollisionPresetCombo();
-				ImGui::DragFloat3("Position", &sphere.offset.x , 0.01f, -100.0f, 100.0f);
-				ImGui::DragFloat("Radius"	, &sphere.radius	, 0.1f , 0.1f	, 50);
+				ImGui::DragFloat3("Position", &sphere.offset.x	, 0.01f	, FLT_MIN , FLT_MAX);
+				ImGui::DragFloat("Radius"	, &sphere.radius	, 0.1f	, 0.1f	  , FLT_MAX);
 				ImGui::ColorEdit4("Base Color", &sphere.base_color.x);
 				ImGui::ColorEdit4("Hit Color" , &sphere.hit_color.x);
+				ImGui::PopID();
 			}
 		}
 	}
