@@ -6,6 +6,8 @@
 // components
 #include "player_component.h"
 #include "rigid_body_component.h"
+#include "scene.h"
+#include "scene_manager.h"
 #include "transform_component.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::EnemyBaseComponent)
@@ -153,6 +155,21 @@ namespace cumulonimbus::component
 			rad *= -1;
 
 		transform_comp.AdjustRotationFromAxis({ 0,1,0 }, rad);
+	}
+
+	PlayerComponent* EnemyBaseComponent::GetPlayer() const
+	{
+		for(const auto& active_scenes = GetRegistry()->GetScene()->GetSceneManager()->GetActiveScenes();
+			const auto& active_scene : active_scenes | std::views::values)
+		{
+			auto& registry = *active_scene->GetRegistry();
+			if (registry.GetComponentSize<PlayerComponent>() <= 0)
+				continue;
+
+			return &registry.GetArray<PlayerComponent>().GetComponents().at(0);
+		}
+
+		return nullptr;
 	}
 
 } // cumulonimbus::component

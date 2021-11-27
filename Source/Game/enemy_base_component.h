@@ -4,9 +4,17 @@
 
 #include "actor3d_component.h"
 
-namespace cumulonimbus::ecs
+namespace cumulonimbus
 {
-	class Registry;
+	namespace ecs
+	{
+		class Registry;
+	} // ecs
+
+	namespace component
+	{
+		class PlayerComponent;
+	} // component
 } // cumulonimbus::ecs
 
 namespace cumulonimbus::component
@@ -115,5 +123,12 @@ namespace cumulonimbus::component
 		 * @brief : プレイヤーの方向への回転処理
 		 */
 		void RotateToPlayerDirection() const ;
+
+		/**
+		 * @brief : シーンに存在するプレイヤーを取得
+		 * @remark : プレイヤーが存在しない場合nullptrを返す
+		 */
+		[[nodiscard]]
+		PlayerComponent* GetPlayer() const;
 	};
 } // cumulonimbus::component

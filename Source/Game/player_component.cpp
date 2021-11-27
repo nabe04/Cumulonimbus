@@ -490,8 +490,8 @@ namespace cumulonimbus::component
 
 		{// ˆÚ“®‘¬“x‚ÌÝ’è
 			//physics_comp.AddForce({ walk_speed,0.0f,walk_speed });
-			auto& movement_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
-			movement_comp.AddForce({ walk_speed,0.0f,walk_speed });
+			auto& rigid_body_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
+			rigid_body_comp.AddForce({ walk_speed,0.0f,walk_speed });
 			//AdjustVelocity(dt, { walk_speed,0.0f,walk_speed });
 		}
 

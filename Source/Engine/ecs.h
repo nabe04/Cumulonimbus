@@ -339,6 +339,7 @@ namespace cumulonimbus::ecs
 		/**
 		 * @brief : コンポーネントの要素数
 		 */
+		[[nodiscard]]
 		size_t Size() const
 		{
 			return components.size();
@@ -572,7 +573,7 @@ namespace cumulonimbus::ecs
 		 *          すでにComponentを所持していた場合
 		 *          新しく追加せず、所持しているComponentを返す
 		 */
-		template <typename T, typename... Args>
+		template <class T, class... Args>
 		T& AddComponent(const mapping::rename_type::Entity entity, Args... args)
 		{
 			ComponentArray<T>& array = GetArray<T>();
@@ -581,7 +582,7 @@ namespace cumulonimbus::ecs
 			return array.GetComponent(entity);
 		}
 
-		template<typename T>
+		template<class T>
 		T& AddOrReplaceComponent(const mapping::rename_type::Entity entity, const T& replace_comp)
 		{
 			ComponentArray<T>& array = GetArray<T>();
@@ -590,7 +591,7 @@ namespace cumulonimbus::ecs
 			return array.GetComponent(entity);
 		}
 
-		template <typename T>
+		template <class T>
 		[[nodiscard]] T& GetComponent(const mapping::rename_type::Entity entity)
 		{
 			ComponentArray<T>& array = GetArray<T>();
@@ -604,7 +605,7 @@ namespace cumulonimbus::ecs
 		 * @brief      : Entityが持つT型のComponentを返す
 		 * ※caution  : EntityがT型を保持していない場合はnullptrを返す
 		 */
-		template <typename T>
+		template <class T>
 		[[nodiscard]] T* TryGetComponent(const mapping::rename_type::Entity entity)
 		{
 			ComponentArray<T>& array = GetArray<T>();
@@ -618,7 +619,7 @@ namespace cumulonimbus::ecs
 		 * @brief : コンポーネントがあれば持っているコンポーネントを返し
 		 *          なければ、コンポーネントを作る
 		 */
-		template<typename T, typename... Args>
+		template<class T, class... Args>
 		T& GetOrEmplaceComponent(mapping::rename_type::Entity entity, Args... args)
 		{
 			T* t = TryGetComponent<T>(entity);
@@ -635,7 +636,7 @@ namespace cumulonimbus::ecs
 		/**
 		 * @brief : T型のComponentのEntityを削除
 		 */
-		template <typename T>
+		template <class T>
 		void RemoveComponent(const mapping::rename_type::Entity entity)
 		{
 			ComponentArray<T>& array = GetArray<T>();
@@ -645,7 +646,7 @@ namespace cumulonimbus::ecs
 		/**
 		 * @brief : T型が持つComponentId(uint64_t)からComponentArrayを取得する
 		 */
-		template <typename T>
+		template <class T>
 		ComponentArray<T>& GetArray()
 		{
 			//const ComponentId component_id = GetComponentId<T>();
@@ -657,6 +658,19 @@ namespace cumulonimbus::ecs
 			}
 
 			return static_cast<ComponentArray<T>&>(*component_arrays.at(component_name).get());
+		}
+
+		template<class T>
+		[[nodiscard]]
+		size_t GetComponentSize() const
+		{
+			const std::string component_name = file_path_helper::GetTypeName<T>();
+			if (!component_arrays.contains(component_name))
+			{
+				return  0;
+			}
+
+			return  static_cast<ComponentArray<T>&>(component_arrays.at(component_name)).Size();
 		}
 
 		/**
@@ -757,6 +771,12 @@ namespace cumulonimbus::ecs
 
 		[[nodiscard]]
 		std::unordered_map<mapping::rename_type::ComponentName, std::unique_ptr<ComponentArrayBase>>& GetComponentArrays()
+		{
+			return component_arrays;
+		}
+
+		[[nodiscard]]
+		const std::unordered_map<mapping::rename_type::ComponentName, std::unique_ptr<ComponentArrayBase>>& GetComponentArrays() const
 		{
 			return component_arrays;
 		}

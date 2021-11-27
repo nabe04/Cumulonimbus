@@ -42,6 +42,7 @@ namespace cumulonimbus::system
 		void Initialize(scene::SceneManager& scene_manager);
 
 		void Start(scene::SceneManager& scene_manager);
+		void End(scene::SceneManager& scene_manager);
 
 		void Update(scene::SceneManager& scene_manager);
 

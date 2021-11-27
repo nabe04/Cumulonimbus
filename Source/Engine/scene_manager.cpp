@@ -199,6 +199,7 @@ namespace cumulonimbus::scene
 			ButtonState::Release)
 		{
 			EndGame();
+			wave_system->End(*this);
 		}
 
 		for(auto& [scene_id, scene] : active_scenes)

@@ -179,22 +179,25 @@ namespace cumulonimbus::component
 
 	void EnemySoldierComponent::WaveStart(const float dt)
 	{
+		auto& model_loader = *locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>();
+		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
 		if(soldier_state.GetInitialize())
 		{
-			auto& model_loader = *locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>();
-			auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-			// アニメーションのキーフレームを
-			model_loader.GetModel(model_comp.GetModelID()).GetModelData().SetAnimationKeyFrame(static_cast<u_int>(AnimationData::Walk), 1);
+			// Walkアニメーションのキーフレームを1フレームに変更
+			model_loader.GetModel(model_comp.GetModelID()).GetModelData().SetAnimationKeyFrame(GetAnimDataIndex(AnimationData::Walk), 1);
 			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Walk));
 		}
 
-		soldier_state.SetState(SoldierState::Walk);
+		//  Walkアニメーションのキーフレームをデフォルのキーフレームに戻す
+		model_loader.GetModel(model_comp.GetModelID()).GetModelData().ResetAnimationKeyFrame(GetAnimDataIndex(AnimationData::Walk));
+		// 状態遷移(SoldierState::Walk)
+		soldier_state.SetState(SoldierState::Tracking);
 	}
 
 	void EnemySoldierComponent::Walk(const float dt)
 	{
 		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-		//auto& rigid_body_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
+		auto& rigid_body_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 		auto& timer = transition_timer.at(transition_walk_to_idle);
 		if (soldier_state.GetInitialize())
@@ -222,7 +225,7 @@ namespace cumulonimbus::component
 		{
 			random_rotation_angle.current_time = 1;
 		}
-		//rigid_body_comp.AddForce({ walk_speed,0.0f,walk_speed });
+		rigid_body_comp.AddForce({ walk_speed,0.0f,walk_speed });
 
 		const mapping::rename_type::Entity ent_player = GetRegistry()->GetArray<PlayerComponent>().GetComponents().at(0).GetEntity();
 		if (Search(GetRegistry()->GetComponent<TransformComponent>(ent_player).GetPosition(), tracking_transition_angle, tracking_transition_distance))
@@ -241,18 +244,18 @@ namespace cumulonimbus::component
 
 	void EnemySoldierComponent::Tracking(const float dt)
 	{
-		auto& fbx_model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-		auto& timer			 = transition_timer.at(transition_tracking_to_attack);
+		auto& timer = transition_timer.at(transition_tracking_to_attack);
 
 		if (soldier_state.GetInitialize())
 		{
+			auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
 			// アニメーションセット(AnimationData::Run)
-			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Run), true);
+			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Run), true);
 			timer.SetRandomVal();
 		}
 
-		float distance = 0; // 自身とプレイヤーとの距離
 		{// 追跡処理
+			float distance = 0; // 自身とプレイヤーとの距離
 			const mapping::rename_type::Entity ent_player = GetRegistry()->GetArray<PlayerComponent>().GetComponents().at(0).GetEntity();
 			EnemyBaseComponent::Tracking(
 				GetRegistry()->GetComponent<TransformComponent>(ent_player).GetPosition(),
@@ -261,21 +264,21 @@ namespace cumulonimbus::component
 		}
 
 		{// 状態の切り替え
-			if (distance > tracking_interruption_distance)
-			{// 索敵範囲外なら待機状態に遷移(SoldierState::Idle)
-				soldier_state.SetState(SoldierState::Idle);
-			}
+			//if (distance > tracking_interruption_distance)
+			//{// 索敵範囲外なら待機状態に遷移(SoldierState::Idle)
+			//	soldier_state.SetState(SoldierState::Idle);
+			//}
 
-			if (distance < attack_transition_distance)
-				timer.current_time += dt;
+			//if (distance < attack_transition_distance)
+			//	timer.current_time += dt;
 
-			// timerが一定値を超えない限り次の状態には遷移しない
-			if (timer.current_time < timer.random_val)
-				return;
+			//// timerが一定値を超えない限り次の状態には遷移しない
+			//if (timer.current_time < timer.random_val)
+			//	return;
 
-			// プレイヤーとの距離が刺突距離以上なら状態をSoldierState::Attack_03に遷移
-			if (distance > attack_thrust_distance)
-				soldier_state.SetState(SoldierState::Attack_03);
+			//// プレイヤーとの距離が刺突距離以上なら状態をSoldierState::Attack_03に遷移
+			//if (distance > attack_thrust_distance)
+			//	soldier_state.SetState(SoldierState::Attack_03);
 
 			// それ以外はランダムで遷移
 			if(arithmetic::RandomIntInRange(0,1) == 0)

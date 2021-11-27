@@ -39,13 +39,35 @@ namespace cumulonimbus::system
 		wave_state.AddState(WaveState::Update, [&](scene::SceneManager& sm) {UpdateGame(sm); });
 		wave_state.AddState(WaveState::Change, [&](scene::SceneManager& sm) {ChangeWave(sm); });
 
-		wave_state.SetState(WaveState::Start);
+		wave_state.SetState(WaveState::Update);
+
+		ChangeWave(scene_manager, true);
 	}
 
 	void WaveSystem::Start(scene::SceneManager& scene_manager)
 	{
 		//ChangeWave(scene_manager, true);
 		Initialize(scene_manager);
+	}
+
+	void WaveSystem::End(scene::SceneManager& scene_manager)
+	{
+		std::vector<mapping::rename_type::UUID> delete_scene_ids{};
+		for(const auto& wave_id : waves_id)
+		{
+			for(const auto& scene_id : scene_manager.GetActiveScenes() | std::views::keys)
+			{
+				if(wave_id != scene_id)
+					continue;;
+
+				delete_scene_ids.emplace_back(wave_id);
+			}
+		}
+
+		for(const auto& delete_scene_id : delete_scene_ids)
+		{
+			scene_manager.DeleteScene(delete_scene_id);
+		}
 	}
 
 	void WaveSystem::Update(scene::SceneManager& scene_manager)
@@ -230,6 +252,7 @@ namespace cumulonimbus::system
 	void WaveSystem::StartGame(scene::SceneManager& scene_manager)
 	{
 		ChangeWave(scene_manager, true);
+		wave_state.SetState(WaveState::Update);
 	}
 
 	void WaveSystem::UpdateGame(scene::SceneManager& scene_manager)
