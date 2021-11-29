@@ -40,6 +40,8 @@ enum class CollisionTag
 	Player,
 	Enemy,
 	Camera,
+
+	End
 };
 
 namespace cumulonimbus::collision

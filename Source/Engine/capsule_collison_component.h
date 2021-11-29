@@ -14,23 +14,21 @@ namespace cumulonimbus
 	{
 		struct Capsule
 		{
+			bool						 is_visible{ true }; // 表示するか
+			float						 length{ 2 };		 // カプセルの端点間の長さ
+			float						 radius{ 1 };		 // カプセルの半径
+			std::string					 bone_name{};		 // FBXモデルのボーンの位置名
+			mapping::rename_type::UUID   id{};				 // カプセルID(ゲーム開始毎に変わる)
+			CollisionPreset				 collision_preset{ CollisionPreset::OverlapAll }; // コリジョンのプロファイル
+			HitResult					 hit_result{};		 // ヒット結果
+			CollisionTag				 collision_tag{ CollisionTag::Object }; // 判定用タグ
 			DirectX::SimpleMath::Matrix  world_transform_matrix{ DirectX::SimpleMath::Matrix::Identity }; // ワールド変換行列
 			DirectX::SimpleMath::Vector3 offset{};			// カプセルの位置調節値
 			DirectX::SimpleMath::Vector3 rotation{};		// カプセルの回転調節値(度数法)
 			DirectX::SimpleMath::Vector3 start{ 0,-1,0 };	// カプセルの始点(デフォルト値 : { 0, 1, 0})
 			DirectX::SimpleMath::Vector3 end  { 0, 1,0 };	// カプセルの終点(デフォルト値 : { 0,-1, 0})
-			std::string					 bone_name{};	// FBXモデルのボーンの位置名
-			float						 length{ 2 };		// カプセルの端点間の長さ
-			float						 radius{ 1 };		// カプセルの半径
-			HitResult					 hit_result{};		// ヒット結果
-			CollisionPreset				 collision_preset{ CollisionPreset::OverlapAll };	// コリジョンのプロファイル
-			DirectX::SimpleMath::Vector4 base_color{ 1.f,1.f,1.f,1.f };
-			DirectX::SimpleMath::Vector4 hit_color{ 1.f,.0f,.0f,1.f };
-			bool						 is_visible{ true };
-			mapping::rename_type::UUID   id{};
-
-			//template <class Archive>
-			//void serialize(Archive&& archive);
+			DirectX::SimpleMath::Vector4 base_color{ 1.f,1.f,1.f,1.f }; // コリジョンの基本色(判定外時)
+			DirectX::SimpleMath::Vector4 hit_color{ 1.f,.0f,.0f,1.f };  // コリジョンの判定色(判定時)
 
 			template<class Archive>
 			void load(Archive&& archive, uint32_t version);

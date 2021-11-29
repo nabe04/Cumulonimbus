@@ -12,7 +12,8 @@
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::CapsuleCollisionComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::CollisionComponent, cumulonimbus::component::CapsuleCollisionComponent)
-CEREAL_CLASS_VERSION(cumulonimbus::component::CapsuleCollisionComponent, 0)
+CEREAL_CLASS_VERSION(cumulonimbus::component::CapsuleCollisionComponent, 1)
+CEREAL_CLASS_VERSION(cumulonimbus::collision::Capsule, 1)
 
 namespace
 {
@@ -56,6 +57,13 @@ namespace cumulonimbus::collision
 			CEREAL_NVP(base_color),
 			CEREAL_NVP(hit_color)
 		);
+
+		if(version == 1)
+		{
+			archive(
+				CEREAL_NVP(collision_tag)
+			);
+		}
 	}
 
 	template <class Archive>
@@ -73,7 +81,8 @@ namespace cumulonimbus::collision
 			CEREAL_NVP(hit_result),
 			CEREAL_NVP(collision_preset),
 			CEREAL_NVP(base_color),
-			CEREAL_NVP(hit_color)
+			CEREAL_NVP(hit_color),
+			CEREAL_NVP(collision_tag)
 		);
 	}
 

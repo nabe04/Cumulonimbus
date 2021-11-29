@@ -25,7 +25,7 @@ namespace
 namespace cumulonimbus::collision
 {
 	template <class Archive>
-	void Sphere::load(Archive&& archive, uint32_t version)
+	void Sphere::load(Archive&& archive, const uint32_t version)
 	{
 		archive(
 			CEREAL_NVP(world_transform_matrix),
@@ -35,12 +35,13 @@ namespace cumulonimbus::collision
 			CEREAL_NVP(hit_result),
 			CEREAL_NVP(collision_preset),
 			CEREAL_NVP(base_color),
-			CEREAL_NVP(hit_color)
+			CEREAL_NVP(hit_color),
+			CEREAL_NVP(collision_tag)
 		);
 	}
 
 	template <class Archive>
-	void Sphere::save(Archive&& archive, uint32_t version) const
+	void Sphere::save(Archive&& archive, const uint32_t version) const
 	{
 		archive(
 			CEREAL_NVP(world_transform_matrix),
@@ -50,7 +51,8 @@ namespace cumulonimbus::collision
 			CEREAL_NVP(hit_result),
 			CEREAL_NVP(collision_preset),
 			CEREAL_NVP(base_color),
-			CEREAL_NVP(hit_color)
+			CEREAL_NVP(hit_color),
+			CEREAL_NVP(collision_tag)
 		);
 	}
 
@@ -134,6 +136,14 @@ namespace cumulonimbus::component
 						if (model_comp->HasNodeFromName(sphere.bone_name.c_str()))
 						{
 							DirectX::SimpleMath::Matrix world_transform = model_comp->GetNodeMatrix(sphere.bone_name.c_str());
+							DirectX::SimpleMath::Vector3 scale{}, translation{};
+							DirectX::SimpleMath::Quaternion rotation{};
+							if (world_transform.Decompose(scale, rotation, translation))
+							{
+								DirectX::SimpleMath::Matrix t = DirectX::SimpleMath::Matrix::CreateTranslation(translation);
+								DirectX::SimpleMath::Matrix r = DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&rotation));
+								world_transform = r * t;
+							}
 							sphere.world_transform_matrix = model_local_matrix * world_transform;
 						}
 						else

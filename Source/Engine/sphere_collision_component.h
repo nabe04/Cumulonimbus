@@ -14,16 +14,17 @@ namespace cumulonimbus
 	{
 		struct Sphere
 		{
-			DirectX::SimpleMath::Matrix  world_transform_matrix{ DirectX::SimpleMath::Matrix::Identity }; // ワールド変換行列
-			DirectX::SimpleMath::Vector3 offset{};		// 球の位置調節値
-			std::string					 bone_name{};	// FBXモデルのボーンの位置名
+			bool						 is_visible{ true };
 			float						 radius{ 1.f };	// 半径
+			mapping::rename_type::UUID   id{}; // 球判別用ID(ユニークなもの)
+			std::string					 bone_name{};	// FBXモデルのボーンの位置名
 			HitResult				     hit_result{};	// ヒット結果
 			CollisionPreset				 collision_preset{CollisionPreset::OverlapAll};	// コリジョンのプロファイル
+			CollisionTag				 collision_tag{ CollisionTag::Object };
+			DirectX::SimpleMath::Matrix  world_transform_matrix{ DirectX::SimpleMath::Matrix::Identity }; // ワールド変換行列
+			DirectX::SimpleMath::Vector3 offset{};		// 球の位置調節値
 			DirectX::SimpleMath::Vector4 base_color{ 1.f,1.f,1.f,1.f };
 			DirectX::SimpleMath::Vector4 hit_color{ 1.f,.0f,.0f,1.f };
-			bool						 is_visible{ true };
-			mapping::rename_type::UUID   id{}; // 球判別用ID(ユニークなもの)
 
 			template<class Archive>
 			void load(Archive&& archive, uint32_t version);
