@@ -12,6 +12,7 @@
 #include "wave_system.h"
 // components
 #include "player_component.h"
+#include "player_sword_component.h"
 #include "enemy_soldier_component.h"
 
 namespace cumulonimbus {
@@ -271,6 +272,11 @@ namespace cumulonimbus::scene
 		asset_manager->GetLoader<asset::PrefabLoader>()->CreatePrefab(*asset_manager.get(), &registry,
 																	  std::vector<mapping::rename_type::Entity>{player_base},
 																	  true, "Player_Base");
+		const mapping::rename_type::Entity& player_sword_base = registry.CreateEntity();
+		registry.AddComponent<component::PlayerSwordComponent>(player_sword_base);
+		asset_manager->GetLoader<asset::PrefabLoader>()->CreatePrefab(*asset_manager.get(),&registry,
+																	   std::vector<mapping::rename_type::Entity>{player_sword_base},
+																	   true, "Player_Sword_Base");
 
 		//-- “G‚ÌŠî‚Æ‚È‚éƒvƒŒƒnƒu‚Ìì¬ --//
 		const mapping::rename_type::Entity& enemy_soldier_base = registry.CreateEntity();

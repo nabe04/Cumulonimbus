@@ -24,6 +24,7 @@
 #include "enemy_base_component.h"
 #include "enemy_soldier_component.h"
 #include "player_component.h"
+#include "player_sword_component.h"
 
 namespace cumulonimbus::asset
 {
@@ -52,6 +53,7 @@ namespace cumulonimbus::asset
 		//-- game --//
 		// player
 		RegistryComponent<component::PlayerComponent>();
+		RegistryComponent<component::PlayerSwordComponent>();
 		// enemy
 		RegistryComponent<component::EnemyBaseComponent>();
 		RegistryComponent<component::EnemySoldierComponent>();

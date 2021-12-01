@@ -2,6 +2,19 @@
 
 namespace cumulonimbus::component
 {
+	PlayerSwordComponent::PlayerSwordComponent(ecs::Registry* registry, mapping::rename_type::Entity ent)
+	{
+	}
+
+	PlayerSwordComponent::PlayerSwordComponent(ecs::Registry* registry, mapping::rename_type::Entity ent,
+		const PlayerSwordComponent& copy_comp)
+	{
+	}
+
+	void PlayerSwordComponent::GameUpdate(float dt)
+	{
+	}
+
 	void PlayerSwordComponent::Start()
 	{
 

@@ -409,7 +409,8 @@ namespace cumulonimbus::ecs
 			{// バイナリファイルから取得
 				std::ifstream ifs(load_file_path_and_name + file_path_helper::GetBinExtension(), std::ios_base::binary);
 				if (!ifs)
-					assert(!"Not open file");
+					//assert(!"Not open file");
+					return;
 				cereal::BinaryInputArchive input_archive(ifs);
 				input_archive(
 					CEREAL_NVP(components),
@@ -961,8 +962,8 @@ namespace cumulonimbus::ecs
 			{// バイナリファイルから取得
 				std::ifstream ifs(load_file_path_and_name + file_path_helper::GetBinExtension(), std::ios_base::binary);
 				if (!ifs)
-					assert(!"Not open file");
-					//return;
+					//assert(!"Not open file");
+					return;
 				cereal::BinaryInputArchive input_archive(ifs);
 				input_archive(*this);
 			}

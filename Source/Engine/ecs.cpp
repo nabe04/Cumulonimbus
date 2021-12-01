@@ -23,6 +23,7 @@
 #include "enemy_base_component.h"
 #include "enemy_soldier_component.h"
 #include "player_component.h"
+#include "player_sword_component.h"
 
 namespace cumulonimbus::ecs
 {
@@ -222,6 +223,7 @@ namespace cumulonimbus::ecs
 		//-- game --//
 		// player
 		RegistryComponent<component::PlayerComponent>();
+		RegistryComponent<component::PlayerSwordComponent>();
 		// enemy
 		RegistryComponent<component::EnemyBaseComponent>();
 		RegistryComponent<component::EnemySoldierComponent>();
