@@ -18,7 +18,7 @@ namespace cumulonimbus::shader_system
 		};
 
 		using namespace mapping::shader_filename;
-		vertex_shader = std::make_unique<shader_system::VertexShader>(vs::DebugPrimitive_VS().c_str(), layout.data(), layout.size());
+		vertex_shader = std::make_unique<shader_system::VertexShader>(vs::DebugPrimitive_VS().c_str(), layout.data(), static_cast<UINT>(layout.size()));
 		pixel_shader  = std::make_unique<shader_system::PixelShader>(ps::DebugPrimitive_PS().c_str());
 	}
 

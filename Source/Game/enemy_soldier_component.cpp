@@ -12,6 +12,7 @@
 #include "model_component.h"
 #include "player_component.h"
 #include "rigid_body_component.h"
+#include "sphere_collision_component.h"
 #include "transform_component.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::EnemySoldierComponent)
@@ -65,13 +66,13 @@ namespace cumulonimbus::component
 	}
 
 
-	EnemySoldierComponent::EnemySoldierComponent(ecs::Registry* registry, mapping::rename_type::Entity ent)
+	EnemySoldierComponent::EnemySoldierComponent(ecs::Registry* registry, const mapping::rename_type::Entity ent)
 		:EnemyBaseComponent{ registry,ent }
 	{
 		Initialize(registry, ent);
 	}
 
-	EnemySoldierComponent::EnemySoldierComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const EnemySoldierComponent& copy_comp)
+	EnemySoldierComponent::EnemySoldierComponent(ecs::Registry* registry, const mapping::rename_type::Entity ent, const EnemySoldierComponent& copy_comp)
 	{
 		*this = copy_comp;
 		SetRegistry(registry);
@@ -83,11 +84,18 @@ namespace cumulonimbus::component
 	{
 		Initialize(GetRegistry(), GetEntity());
 
+		const auto registry = GetRegistry();
+		const auto entity   = GetEntity();
 		//  コリジョンイベントの登録
 		if(auto* capsule_collision = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(GetEntity());
 		   capsule_collision)
 		{
-			capsule_collision->RegisterEventEnter(GetEntity(), [&]() {GetRegistry()->GetComponent<EnemySoldierComponent>(GetEntity()).OnDamaged(); });
+			capsule_collision->RegisterEventEnter(GetEntity(), [=](const collision::HitResult& hit_result) { registry->GetComponent<EnemySoldierComponent>(entity).OnDamaged(hit_result); });
+		}
+		if (auto* sphere_collision = GetRegistry()->TryGetComponent<SphereCollisionComponent>(GetEntity());
+			sphere_collision)
+		{
+			sphere_collision->RegisterEventEnter(GetEntity(), [=](const collision::HitResult& hit_result) {registry->GetComponent<EnemySoldierComponent>(entity).OnAttack(hit_result); });
 		}
 	}
 
@@ -124,7 +132,7 @@ namespace cumulonimbus::component
 		soldier_state.AddState(SoldierState::Attack_02	, [ent, registry](const float dt) {registry->GetComponent<EnemySoldierComponent>(ent).Attack02(dt); });
 		soldier_state.AddState(SoldierState::Attack_03	, [ent, registry](const float dt) {registry->GetComponent<EnemySoldierComponent>(ent).Attack03(dt); });
 
-		// 初期stateの設定(SoldierState::Idle)
+		// 初期stateの設定(SoldierState::Wave_Start)
 		soldier_state.SetState(SoldierState::Wave_Start);
 
 		// transition_timerの設定
@@ -150,7 +158,23 @@ namespace cumulonimbus::component
 		}
 	}
 
-	void EnemySoldierComponent::OnDamaged()
+	void EnemySoldierComponent::OnAttack(const collision::HitResult& hit_result)
+	{
+		// ヒット先のタグがPlayer以外なら処理を飛ばす
+		if (hit_result.collision_tag != collision::CollisionTag::Player)
+			return;
+
+		if (arithmetic::RandomIntInRange(0, 1) == 0)
+		{
+			soldier_state.SetState(SoldierState::Attack_01);
+		}
+		else
+		{
+			soldier_state.SetState(SoldierState::Attack_02);
+		}
+	}
+
+	void EnemySoldierComponent::OnDamaged(const collision::HitResult& hit_result)
 	{
 		//GetRegistry()->AddDestroyEntity(GetEntity());
 	}
@@ -303,15 +327,15 @@ namespace cumulonimbus::component
 			//if (distance > attack_thrust_distance)
 			//	soldier_state.SetState(SoldierState::Attack_03);
 
-			// それ以外はランダムで遷移
-			if(arithmetic::RandomIntInRange(0,1) == 0)
-			{
-				soldier_state.SetState(SoldierState::Attack_01);
-			}
-			else
-			{
-				soldier_state.SetState(SoldierState::Attack_02);
-			}
+			//// それ以外はランダムで遷移
+			//if(arithmetic::RandomIntInRange(0,1) == 0)
+			//{
+			//	soldier_state.SetState(SoldierState::Attack_01);
+			//}
+			//else
+			//{
+			//	soldier_state.SetState(SoldierState::Attack_02);
+			//}
 
 			timer.current_time = 0;
 		}

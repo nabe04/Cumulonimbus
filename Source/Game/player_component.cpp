@@ -110,7 +110,7 @@ namespace cumulonimbus::component
 		// レイキャストに関する設定
 		if (!registry->TryGetComponent<RayCastComponent>(ent))
 		{
-			registry->AddComponent<RayCastComponent>(ent, CollisionTag::Player);
+			registry->AddComponent<RayCastComponent>(ent, collision::CollisionTag::Player);
 		}
 		// 床(floor)用rayの追加 & 設定
 		registry->GetComponent<RayCastComponent>(ent).AddRay(mapping::collision_name::ray::ForFloor(), {});
@@ -120,8 +120,8 @@ namespace cumulonimbus::component
 		registry->GetComponent<RayCastComponent>(ent).SetRayOffset(mapping::collision_name::ray::ForWall(), { 0.0f,20.0f,0.0f });
 
 		// コリジョンへのイベント登録
-		auto& capsule_collision = registry->GetOrEmplaceComponent<CapsuleCollisionComponent>(GetEntity(), CollisionTag::Player);
-		capsule_collision.RegisterEventEnter(GetEntity(), [ent, registry]() {registry->GetComponent<PlayerComponent>(ent).OnDamaged(); });
+		auto& capsule_collision = registry->GetOrEmplaceComponent<CapsuleCollisionComponent>(GetEntity(), collision::CollisionTag::Player);
+		capsule_collision.RegisterEventEnter(GetEntity(), [ent, registry](const collision::HitResult& hit_result) {registry->GetComponent<PlayerComponent>(ent).OnDamaged(hit_result); });
 
 		// カメラに関する設定
 		if (!registry->TryGetComponent<CameraComponent>(ent))
@@ -191,7 +191,7 @@ namespace cumulonimbus::component
 		if(auto* capsule_collision = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(GetEntity());
 		   capsule_collision)
 		{
-			capsule_collision->RegisterEventEnter(GetEntity(), [&]() {GetRegistry()->GetComponent<PlayerComponent>(GetEntity()).OnDamaged(); });
+			capsule_collision->RegisterEventEnter(GetEntity(), [&](const collision::HitResult& hit_result) {GetRegistry()->GetComponent<PlayerComponent>(GetEntity()).OnDamaged(hit_result); });
 		}
 	}
 
@@ -425,7 +425,7 @@ namespace cumulonimbus::component
 		return static_cast<int>(animation_break_frame.at(state)) < model_comp.CurrentKeyframe() ? true : false;
 	}
 
-	void PlayerComponent::OnDamaged()
+	void PlayerComponent::OnDamaged(const collision::HitResult& hit_result)
 	{
 		int a;
 		a = 0;

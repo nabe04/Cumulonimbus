@@ -10,6 +10,7 @@
 
 #include "actor3d_component.h"
 #include "state_machine.h"
+#include "collision_component.h"
 
 namespace cumulonimbus::component
 {
@@ -169,6 +170,8 @@ namespace cumulonimbus::component
 		float attack_04_speed{ 700 };	// 通常攻撃04(ジャンプ攻撃)時の速さ
 		float avoid_dash_speed{ 900 };  // 回避ダッシュ速度
 		float jump_movement_speed{ 300 };
+		//-- 状態の応じての攻撃力設定 --//
+
 
 		//-- 状態フラグ --//
 		bool is_jumping{ false }; // ジャンプフラグ
@@ -272,7 +275,7 @@ namespace cumulonimbus::component
 		/**
 		 * @brief : ダメージ処理
 		 */
-		void OnDamaged();
+		void OnDamaged(const collision::HitResult& hit_result);
 
 		/**
 		 * @brief : StateMachineクラスで管理するプレイヤーの状態関数

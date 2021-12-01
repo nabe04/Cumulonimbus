@@ -19,6 +19,8 @@ namespace
 {
 	// ImGui描画時にCollisionPreset(enum class)から文字列一覧を取得する為に使用
 	EnumStateMap<cumulonimbus::collision::CollisionPreset> collision_preset{};
+	// ImGui描画時にCollisionTag(enum class)から文字列一覧を取得する為に使用
+	EnumStateMap<cumulonimbus::collision::CollisionTag> collision_tag{};
 }
 
 namespace cumulonimbus::collision
@@ -112,7 +114,7 @@ namespace cumulonimbus::component
 	CapsuleCollisionComponent::CapsuleCollisionComponent(
 		ecs::Registry* registry,
 		const mapping::rename_type::Entity ent,
-		const CollisionTag tag)
+		const collision::CollisionTag tag)
 		:CollisionComponent{ registry,ent,tag }
 	{
 
@@ -220,14 +222,14 @@ namespace cumulonimbus::component
 						// ヒットイベントの更新
 						capsule.hit_result.hit_event = collision::HitEvent::OnCollisionStay;
 						// イベント処理の発行
-						on_collision_stay_event.Invoke(GetEntity());
+						on_collision_stay_event.Invoke(GetEntity(), capsule.hit_result);
 					}
 					else
 					{// 他のCollisionに触れたとき
 						// ヒットイベントの更新
 						capsule.hit_result.hit_event = collision::HitEvent::OnCollisionEnter;
 						// イベント処理の発行
-						on_collision_enter_event.Invoke(GetEntity());
+						on_collision_enter_event.Invoke(GetEntity(), capsule.hit_result);
 					}
 				}
 				else
@@ -237,14 +239,14 @@ namespace cumulonimbus::component
 						// ヒットイベントの更新
 						capsule.hit_result.hit_event = collision::HitEvent::OnCollisionExit;
 						// イベント処理の発行
-						on_collision_exit_event.Invoke(GetEntity());
+						on_collision_exit_event.Invoke(GetEntity(), capsule.hit_result);
 					}
 					else
 					{// 他のどのCollisionにも触れていない間
 						// ヒットイベントの更新
 						capsule.hit_result.hit_event = collision::HitEvent::None;
 						// イベント処理の発行
-						on_collision_none.Invoke(GetEntity());
+						on_collision_none.Invoke(GetEntity(), capsule.hit_result);
 					}
 				}
 
@@ -383,12 +385,22 @@ namespace cumulonimbus::component
 			if(capsules.contains(selected_collision_name))
 			{
 				collision::Capsule& capsule = capsules.at(selected_collision_name);
+				// カプセルプリセット変更関数
 				auto CollisionPresetCombo = [&]()
 				{
 					if (std::string current_name = nameof::nameof_enum(capsule.collision_preset).data();
 						helper::imgui::Combo("Preset", current_name, collision_preset.GetStateNames()))
 					{// コリジョンプリセットの変更
 						capsule.collision_preset = collision_preset.GetStateMap().at(current_name);
+					}
+				};
+				// カプセルタグ変更関数
+				auto CollisionTagCombo = [&]()
+				{
+					if (std::string current_name = nameof::nameof_enum(capsule.collision_tag).data();
+						helper::imgui::Combo("Tag", current_name, collision_tag.GetStateNames()))
+					{// コリジョンタグの変更
+						capsule.collision_tag = collision_tag.GetStateMap().at(current_name);
 					}
 				};
 
@@ -404,6 +416,7 @@ namespace cumulonimbus::component
 				//ImGui::Text("Segment End.z   : %f", capsule.end.z);
 				ImGui::Checkbox("Is Visible", &capsule.is_visible);
 				CollisionPresetCombo();
+				CollisionTagCombo();
 				ImGui::DragFloat3("Offset"	, &capsule.offset.x	 , 0.1f, -1000 , 1000);
 				ImGui::DragFloat3("Rotation", &capsule.rotation.x, 0.5f, -180.f, 180.f);
 				ImGui::DragFloat("Length"	, &capsule.length	 , 0.1f, 1.0f  , 1000.0f);

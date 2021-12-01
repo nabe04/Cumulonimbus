@@ -16,36 +16,32 @@ namespace cumulonimbus::component
 	class SphereCollisionComponent;
 } // cumulonimbus::component
 
-
-struct OriginCollisionData
-{
-	// Empty Data
-};
-
-/*
-* brief : Shape of the hit decision
-*/
-enum class CollisionType
-{
-	Sphere,
-	InnerSphere,
-};
-
-/*
-* brief : Tag for judging a hit
-*/
-enum class CollisionTag
-{
-	Object,
-	Player,
-	Enemy,
-	Camera,
-
-	End
-};
+///*
+//* brief : Shape of the hit decision
+//*/
+//enum class CollisionType
+//{
+//	Sphere,
+//	InnerSphere,
+//};
+//
 
 namespace cumulonimbus::collision
 {
+	/*
+	 * brief : Tag for judging a hit
+	 */
+	enum class CollisionTag
+	{
+		Object,
+		Player,
+		Sword,
+		Enemy,
+		Camera,
+
+		End
+	};
+
 	/**
 	 * @brief : コリジョンのプロファイル
 	 */
@@ -76,13 +72,16 @@ namespace cumulonimbus::collision
 	 */
 	struct HitResult
 	{
-		DirectX::XMFLOAT3	position		= { 0.0f,0.0f,0.0f };	// ヒット位置
-		DirectX::XMFLOAT3	normal			= { 0.0f,0.0f,0.0f };	// ヒット位置の法線
-		float				distance		= 0.0f;
-		int					material_index	= -1;
-		bool				is_hit			= false;				// ヒット状態
-		bool				is_old_hit		= false;				// 1フレーム前の"is_hit"値
-		HitEvent			hit_event;								// ヒットイベント
+		DirectX::XMFLOAT3			position		{ 0.0f,0.0f,0.0f };	// ヒット位置
+		DirectX::XMFLOAT3			normal			{ 0.0f,0.0f,0.0f };	// ヒット位置の法線
+		float						distance		{0.0f};
+		int							material_index	{ -1 };
+		bool						is_hit			{ false };	// ヒット状態
+		bool						is_old_hit		{ false };	// 1フレーム前の"is_hit"値
+		HitEvent					hit_event		{};	// ヒットイベント
+		collision::CollisionTag     collision_tag   {}; // 判定されたコリジョンタグ
+		mapping::rename_type::UUID  entity			{};	// 判定されたエンティティ
+		mapping::rename_type::UUID	collision_id	{}; // 判定されたコリジョンID
 
 		template <class Archive>
 		void serialize(Archive&& archive)
@@ -106,7 +105,7 @@ namespace cumulonimbus::component
 	{
 	public:
 		using ComponentBase::ComponentBase;
-		explicit CollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, CollisionTag tag);
+		explicit CollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, collision::CollisionTag tag);
 		explicit CollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const CollisionComponent& copy_comp); // for prefab
 		explicit CollisionComponent()  = default; // for cereal
 		CollisionComponent(const CollisionComponent& other);
@@ -126,10 +125,6 @@ namespace cumulonimbus::component
 		template<class Archive>
 		void save(Archive&& archive, uint32_t version) const;
 
-		void SetCollisionTag(CollisionTag tag);
-		[[nodiscard]]
-		CollisionTag GetCollisionTag() const;
-
 		[[nodiscard]]
 		buffer::ConstantBuffer<DebugCollisionCB>& GetCBuffer() const
 		{
@@ -139,36 +134,36 @@ namespace cumulonimbus::component
 		/**
 		 * @brief : 他のCollisionに触れたときのイベント登録
 		 */
-		void RegisterEventEnter(const mapping::rename_type::UUID& id,const std::function<void()>& func);
+		void RegisterEventEnter(const mapping::rename_type::UUID& id,const std::function<void(const collision::HitResult&)>& func);
 
 		/**
 		 * @brief : 他のCollisionに触れるのをやめたときのイベント登録
 		 */
-		void RegisterEventExit(const mapping::rename_type::UUID& id, const std::function<void()>& func);
+		void RegisterEventExit(const mapping::rename_type::UUID& id, const std::function<void(const collision::HitResult&)>& func);
 
 		/**
 		 * @brief : 他のCollisionに触れている間のイベント登録
 		 */
-		void RegisterEventStay(const mapping::rename_type::UUID& id, const std::function<void()>& func);
+		void RegisterEventStay(const mapping::rename_type::UUID& id, const std::function<void(const collision::HitResult&)>& func);
 
 		/**
 		 * @brief : 他のどのCollisionにも触れていない間のイベント登録
 		 */
-		void RegisterEventNone(const mapping::rename_type::UUID& id, const std::function<void()>& func);
+		void RegisterEventNone(const mapping::rename_type::UUID& id, const std::function<void(const collision::HitResult&)>& func);
 
 	protected:
-		CollisionTag		 collision_tag;
 		std::unique_ptr<buffer::ConstantBuffer<DebugCollisionCB> >cbuffer{};
 		// 他のCollisionに触れたときのイベント
-		system::Event<void> on_collision_enter_event;
+		system::Event<void, const collision::HitResult&> on_collision_enter_event;
 		// 他のCollisionに触れるのをやめたときのイベント
-		system::Event<void> on_collision_exit_event;
+		system::Event<void, const collision::HitResult&> on_collision_exit_event;
 		// 他のCollisionに触れている間のイベント
-		system::Event<void> on_collision_stay_event;
+		system::Event<void, const collision::HitResult&> on_collision_stay_event;
 		// 他のどのCollisionにも触れていない間のイベント
-		system::Event<void> on_collision_none;
+		system::Event<void, const collision::HitResult&> on_collision_none;
 		// GUI上で現在選択されているコリジョンの名前
 		std::string selected_collision_name{};
+		collision::CollisionTag tag{};
 
 		/**
 		 * @brief : ModelComponentを保持していた場合のボーン位置の変更

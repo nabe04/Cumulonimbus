@@ -49,7 +49,7 @@ namespace cumulonimbus::component
 	RayCastComponent::RayCastComponent(
 		ecs::Registry* registry,
 		const mapping::rename_type::Entity ent,
-		const CollisionTag tag)
+		const collision::CollisionTag tag)
 		: CollisionComponent{ registry,ent,tag }
 	{
 

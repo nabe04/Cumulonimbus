@@ -16,7 +16,7 @@ namespace cumulonimbus::component
 	{
 		archive(
 			cereal::base_class<ComponentBase>(this),
-			CEREAL_NVP(collision_tag)
+			CEREAL_NVP(tag)
 		);
 	}
 
@@ -25,7 +25,7 @@ namespace cumulonimbus::component
 	{
 		archive(
 			cereal::base_class<ComponentBase>(this),
-			CEREAL_NVP(collision_tag)
+			CEREAL_NVP(tag)
 		);
 	}
 
@@ -38,7 +38,7 @@ namespace cumulonimbus::component
 	}
 
 	CollisionComponent::CollisionComponent(ecs::Registry* registry,
-		mapping::rename_type::Entity ent, CollisionTag tag)
+		mapping::rename_type::Entity ent, collision::CollisionTag tag)
 		:ComponentBase{ registry,ent }
 	{
 		cbuffer = std::make_unique<buffer::ConstantBuffer<DebugCollisionCB>>(locator::Locator::GetDx11Device()->device.Get());
@@ -57,7 +57,6 @@ namespace cumulonimbus::component
 
 	CollisionComponent::CollisionComponent(const CollisionComponent& other)
 		:ComponentBase{other},
-	     collision_tag{other.collision_tag},
 	     selected_collision_name{other.selected_collision_name}
 	{
 		if (cbuffer)
@@ -73,7 +72,6 @@ namespace cumulonimbus::component
 		}
 
 		ComponentBase::operator=(other);
-		collision_tag = other.collision_tag;
 		selected_collision_name = other.selected_collision_name;
 
 		if (cbuffer)
@@ -83,34 +81,22 @@ namespace cumulonimbus::component
 		return *this;
 	}
 
-
-
-	void CollisionComponent::SetCollisionTag(CollisionTag tag)
-	{
-		collision_tag = tag;
-	}
-
-	CollisionTag CollisionComponent::GetCollisionTag() const
-	{
-		return collision_tag;
-	}
-
-	void CollisionComponent::RegisterEventEnter(const mapping::rename_type::UUID& id, const std::function<void()>& func)
+	void CollisionComponent::RegisterEventEnter(const mapping::rename_type::UUID& id, const std::function<void(const collision::HitResult&)>& func)
 	{
 		on_collision_enter_event.RegistryEvent(id, func);
 	}
 
-	void CollisionComponent::RegisterEventExit(const mapping::rename_type::UUID& id, const std::function<void()>& func)
+	void CollisionComponent::RegisterEventExit(const mapping::rename_type::UUID& id, const std::function<void(const collision::HitResult&)>& func)
 	{
 		on_collision_exit_event.RegistryEvent(id, func);
 	}
 
-	void CollisionComponent::RegisterEventStay(const mapping::rename_type::UUID& id, const std::function<void()>& func)
+	void CollisionComponent::RegisterEventStay(const mapping::rename_type::UUID& id, const std::function<void(const collision::HitResult&)>& func)
 	{
 		on_collision_stay_event.RegistryEvent(id, func);
 	}
 
-	void CollisionComponent::RegisterEventNone(const mapping::rename_type::UUID& id, const std::function<void()>& func)
+	void CollisionComponent::RegisterEventNone(const mapping::rename_type::UUID& id, const std::function<void(const collision::HitResult&)>& func)
 	{
 		on_collision_none.RegistryEvent(id, func);
 	}

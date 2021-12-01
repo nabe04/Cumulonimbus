@@ -96,8 +96,9 @@ namespace cumulonimbus::component
 		void Initialize(ecs::Registry* registry, mapping::rename_type::Entity ent) override;
 
 		void Movement();
-		
-		void OnDamaged() override;
+
+		void OnAttack(const collision::HitResult& hit_result) override;
+		void OnDamaged(const collision::HitResult& hit_result) override;
 
 		//-- StateMachineƒNƒ‰ƒX‚ÅŠÇ—‚·‚é“G‚Ìó‘ÔŠÖ” --//
 		void Idle(float dt);

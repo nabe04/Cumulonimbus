@@ -600,6 +600,9 @@
     <ClCompile Include="Source\Engine\wave_system.cpp">
       <Filter>Source\Engine\System</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Game\player_sword_component.cpp">
+      <Filter>Source\Game\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -1093,6 +1096,9 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\wave_system.h">
       <Filter>Header\Engine\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\player_sword_component.h">
+      <Filter>Header\Game\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

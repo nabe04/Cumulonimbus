@@ -44,7 +44,7 @@ namespace cumulonimbus
 		{
 		public:
 			using CollisionComponent::CollisionComponent;
-			explicit CapsuleCollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, CollisionTag tag);
+			explicit CapsuleCollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, collision::CollisionTag tag);
 			explicit CapsuleCollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const CapsuleCollisionComponent& copy_comp); // for prefab
 			explicit CapsuleCollisionComponent()  = default; // for cereal
 			~CapsuleCollisionComponent() override = default;

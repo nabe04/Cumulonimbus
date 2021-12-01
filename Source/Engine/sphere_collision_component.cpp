@@ -79,7 +79,7 @@ namespace cumulonimbus::component
 		);
 	}
 
-	SphereCollisionComponent::SphereCollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, CollisionTag tag)
+	SphereCollisionComponent::SphereCollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, collision::CollisionTag tag)
 		:CollisionComponent{ registry,ent ,tag }
 	{
 	}
@@ -166,14 +166,14 @@ namespace cumulonimbus::component
 						// ヒットイベントの更新
 						sphere.hit_result.hit_event = collision::HitEvent::OnCollisionStay;
 						// イベント処理の発行
-						on_collision_stay_event.Invoke(GetEntity());
+						on_collision_stay_event.Invoke(GetEntity(), sphere.hit_result);
 					}
 					else
 					{// 他のCollisionに触れたとき
 						// ヒットイベントの更新
 						sphere.hit_result.hit_event = collision::HitEvent::OnCollisionEnter;
 						// イベント処理の発行
-						on_collision_enter_event.Invoke(GetEntity());
+						on_collision_enter_event.Invoke(GetEntity(), sphere.hit_result);
 					}
 				}
 				else
@@ -183,14 +183,14 @@ namespace cumulonimbus::component
 						// ヒットイベントの更新
 						sphere.hit_result.hit_event = collision::HitEvent::OnCollisionExit;
 						// イベント処理の発行
-						on_collision_exit_event.Invoke(GetEntity());
+						on_collision_exit_event.Invoke(GetEntity(), sphere.hit_result);
 					}
 					else
 					{// 他のどのCollisionにも触れていない間
 						// ヒットイベントの更新
 						sphere.hit_result.hit_event = collision::HitEvent::None;
 						// イベント処理の発行
-						on_collision_none.Invoke(GetEntity());
+						on_collision_none.Invoke(GetEntity(), sphere.hit_result);
 					}
 				}
 

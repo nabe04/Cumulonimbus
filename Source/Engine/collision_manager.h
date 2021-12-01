@@ -37,6 +37,7 @@ namespace cumulonimbus
 	{
 		struct		HitResult;
 		struct		Sphere;
+		struct		Capsule;
 		enum class	CollisionPreset;
 	} // collision
 
@@ -180,6 +181,61 @@ namespace cumulonimbus::collision
 		void AddHitCapsule(
 			const mapping::rename_type::UUID& capsule_id,
 			const mapping::rename_type::Entity& ent);
+
+		/**
+		 * @brief : 判定した時のHitResultの更新
+		 * @remark : result_1の情報がresult_2に格納され,
+		 *			 result_2の情報がresult_1に格納される
+		 * @param sphere_1 : Sphere情報(1)
+		 * @param sphere_2 : Sphere情報(2)
+		 * @param result_1 : sphere_1のHitResult
+		 * @param result_2 : sphere_2のHitResult
+		 * @param ent_1 : result_1のエンティティ
+		 * @param ent_2 : result_2のエンティティ
+		 */
+		void UpdateHitResult(
+			const Sphere& sphere_1,
+			const Sphere& sphere_2,
+			HitResult& result_1,
+			HitResult& result_2,
+			const mapping::rename_type::UUID& ent_1,
+			const mapping::rename_type::UUID& ent_2);
+
+		/**
+		 * @brief : 判定した時のHitResultの更新
+		 * @remark : result_1の情報がresult_2に格納され,
+		 *			 result_2の情報がresult_1に格納される
+		 * @param capsule_1 : Capsule情報(1)
+		 * @param capsule_2 : Capsule情報(2)
+		 * @param result_1 : sphere_1のHitResult
+		 * @param result_2 : sphere_2のHitResult
+		 * @param ent_1 : result_1のエンティティ
+		 * @param ent_2 : result_2のエンティティ
+		 */
+		void UpdateHitResult(
+			const Capsule& capsule_1,
+			const Capsule& capsule_2,
+			HitResult& result_1,
+			HitResult& result_2,
+			const mapping::rename_type::UUID& ent_1,
+			const mapping::rename_type::UUID& ent_2);
+
+		/**
+		 * @brief : 判定した時のHitResultの更新
+		 * @remark : sphereの情報がcapsuleに格納され,
+		 *			 capsuleの情報がsphereに格納される
+		 * @param sphere : Sphere情報(1)
+		 * @param capsule : Capsule情報(2)
+		 * @param s_result : sphereのHitResult
+		 * @param c_result : capsuleのHitResult
+		 * @param s_ent : sphereのエンティティ
+		 * @param c_ent : capsuleのエンティティ
+		 */
+		void UpdateHitResult(
+			const Sphere& sphere, const Capsule& capsule,
+			HitResult& s_result, HitResult& c_result,
+			const mapping::rename_type::UUID& s_ent,
+			const mapping::rename_type::UUID& c_ent);
 
 		/**
 		 * @brief : 押出し処理

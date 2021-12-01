@@ -3,6 +3,7 @@
 #include <string>
 
 #include "actor3d_component.h"
+#include "collision_component.h"
 
 namespace cumulonimbus
 {
@@ -69,6 +70,7 @@ namespace cumulonimbus::component
 		};
 
 
+		int hp{};
 		std::unordered_map<std::string, RandomFloat> transition_timer{};
 		// モデルのyaw回転(度数法)のランダム値
 		RandomFloat random_rotation_angle{};
@@ -79,9 +81,14 @@ namespace cumulonimbus::component
 		virtual void OnWaveChanged() {};
 
 		/**
+		 * @brief : 攻撃開始処理
+		 */
+		virtual void OnAttack(const collision::HitResult& hit_result) {};
+
+		/**
 		 * @brief : ダメージ処理
 		 */
-		virtual void OnDamaged() {};
+		virtual void OnDamaged(const collision::HitResult& hit_result) {};
 
 		/**
 		 * @brief			: "transition_timer"の登録

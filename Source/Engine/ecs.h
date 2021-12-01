@@ -742,6 +742,7 @@ namespace cumulonimbus::ecs
 			const std::string& header_name,
 			const ImGuiTreeNodeFlags tree_node_flags = ImGuiTreeNodeFlags_DefaultOpen)
 		{
+			bool is_removed = false;
 			const std::string id = ent + header_name;
 			ImGui::PushID(id.c_str());
 			if (ImGui::Button(ICON_FA_ELLIPSIS_V))
@@ -753,11 +754,16 @@ namespace cumulonimbus::ecs
 				if (ImGui::MenuItem("Remove Component"))
 				{
 					RemoveComponent<T>(ent);
+					is_removed = true;
 				}
 				ImGui::EndPopup();
 			}
 			ImGui::PopID();
 			ImGui::SameLine();
+
+			if (is_removed)
+				return false;
+
 			const bool ret_val = ImGui::CollapsingHeader(header_name.c_str(), tree_node_flags);
 
 			return ret_val;
