@@ -18,19 +18,29 @@ namespace cumulonimbus
 			float						 radius{ 1.f };	// 半径
 			mapping::rename_type::UUID   id{}; // 球判別用ID(ユニークなもの)
 			std::string					 bone_name{};	// FBXモデルのボーンの位置名
-			HitResult				     hit_result{};	// ヒット結果
 			CollisionPreset				 collision_preset{CollisionPreset::OverlapAll};	// コリジョンのプロファイル
 			CollisionTag				 collision_tag{ CollisionTag::Object };
 			DirectX::SimpleMath::Matrix  world_transform_matrix{ DirectX::SimpleMath::Matrix::Identity }; // ワールド変換行列
 			DirectX::SimpleMath::Vector3 offset{};		// 球の位置調節値
 			DirectX::SimpleMath::Vector4 base_color{ 1.f,1.f,1.f,1.f };
 			DirectX::SimpleMath::Vector4 hit_color{ 1.f,.0f,.0f,1.f };
+			std::unordered_map<mapping::rename_type::Entity, HitResult> hit_results{}; // ヒット結果(オブジェクト毎)
 
 			template<class Archive>
 			void load(Archive&& archive, uint32_t version);
 
 			template<class Archive>
 			void save(Archive&& archive, uint32_t version) const;
+
+			HitResult* TryGetHitResult(const mapping::rename_type::Entity& ent);
+			/**
+			 * @brief : 判定されたエンティティの登録
+			 */
+			void RegisterHitEntity(const mapping::rename_type::Entity& ent, const HitResult& hit_result);
+			/**
+			 * @brief : 判定されたエンティティの登録解除
+			 */
+			void UnRegisterHitEntity(const mapping::rename_type::Entity& ent);
 		};
 	} // collision
 

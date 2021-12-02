@@ -20,7 +20,6 @@ namespace cumulonimbus
 			std::string					 bone_name{};		 // FBXモデルのボーンの位置名
 			mapping::rename_type::UUID   id{};				 // カプセルID(ゲーム開始毎に変わる)
 			CollisionPreset				 collision_preset{ CollisionPreset::OverlapAll }; // コリジョンのプロファイル
-			HitResult					 hit_result{};		 // ヒット結果
 			CollisionTag				 collision_tag{ CollisionTag::Object }; // 判定用タグ
 			DirectX::SimpleMath::Matrix  world_transform_matrix{ DirectX::SimpleMath::Matrix::Identity }; // ワールド変換行列
 			DirectX::SimpleMath::Vector3 offset{};			// カプセルの位置調節値

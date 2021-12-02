@@ -1,4 +1,6 @@
 #pragma once
+#include <set>
+
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <SimpleMath.h>
@@ -101,8 +103,12 @@ namespace cumulonimbus::collision
 	private:
 		struct HitData
 		{
-			mapping::rename_type::Entity self_entity; // 自身のエンティティ
-			mapping::rename_type::Entity hit_entity;  // 判定先のエンティティ
+			mapping::rename_type::Entity self_entity{}; // 自身のエンティティ
+			mapping::rename_type::Entity hit_entity{};  // 判定先のエンティティ
+			std::set<mapping::rename_type::Entity> hit_entities{}; // 判定先のエンティティ
+
+			void RegisterHitEntity(const mapping::rename_type::Entity& ent);
+			void UnRegisterHitEntity(const mapping::rename_type::Entity& ent);
 		};
 
 	public:
@@ -173,11 +179,13 @@ namespace cumulonimbus::collision
 		 * @brief : 衝突した球情報の追加
 		 * @remark : 同じIDを追加しようとした場合上書きされる
 		 * @param sphere_id : 球ID
-		 * @param hit_data : ヒットデータ
+		 * @param self_ent : 判定元(自身)のエンティティ
+		 * @param hit_ent : 判定先のエンティティ
 		 */
 		void AddHitSphere(
 			const mapping::rename_type::UUID& sphere_id,
-			const HitData& hit_data);
+			const mapping::rename_type::Entity& self_ent,
+			const mapping::rename_type::Entity& hit_ent);
 
 		/**
 		 * @brief : 衝突したカプセル情報の追加
@@ -204,8 +212,7 @@ namespace cumulonimbus::collision
 		 */
 		void UpdateHitResult(
 			ecs::Registry* registry_1, ecs::Registry* registry_2,
-			const Sphere&  sphere_1	 , const Sphere&  sphere_2,
-			HitResult&     result_1	 , HitResult&     result_2,
+			Sphere&		   sphere_1	 , Sphere&		  sphere_2,
 			const mapping::rename_type::UUID& ent_1,
 			const mapping::rename_type::UUID& ent_2);
 
@@ -225,7 +232,6 @@ namespace cumulonimbus::collision
 		void UpdateHitResult(
 			ecs::Registry* registry_1, ecs::Registry* registry_2,
 			Capsule&	   capsule_1 , Capsule&       capsule_2,
-			HitResult&	   result_1  ,HitResult&	  result_2,
 			const mapping::rename_type::UUID& ent_1,
 			const mapping::rename_type::UUID& ent_2);
 
@@ -244,8 +250,7 @@ namespace cumulonimbus::collision
 		 */
 		void UpdateHitResult(
 			ecs::Registry* registry_1, ecs::Registry* registry_2,
-			const Sphere&  sphere	 , const Capsule& capsule,
-			HitResult& s_result		 , HitResult&     c_result,
+			Sphere&		   sphere	 , Capsule&		  capsule,
 			const mapping::rename_type::UUID& s_ent,
 			const mapping::rename_type::UUID& c_ent);
 

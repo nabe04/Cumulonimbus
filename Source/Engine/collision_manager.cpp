@@ -108,7 +108,24 @@ namespace cumulonimbus::collision
 				}
 			}
 		}
+	}
 
+	void CollisionManager::HitData::RegisterHitEntity(const mapping::rename_type::Entity& ent)
+	{
+		// 既に登録されている場合は処理を抜ける
+		if (hit_entities.contains(ent))
+			return;
+		// ヒットエンティティの追加
+		hit_entities.emplace(ent);
+	}
+
+	void CollisionManager::HitData::UnRegisterHitEntity(const mapping::rename_type::Entity& ent)
+	{
+		// 登録されていない場合処理を抜ける
+		if (!hit_entities.contains(ent))
+			return;
+		// ヒットエンティティの削除
+		hit_entities.erase(ent);
 	}
 
 	CollisionManager::CollisionManager(system::System& system)
@@ -344,8 +361,14 @@ namespace cumulonimbus::collision
 				auto* sphere = registry->GetComponent<component::SphereCollisionComponent>(hit_data.self_entity).TryGetSphere(sphere_id);
 				if (!sphere)
 					continue;
-				// 球の判定をTrueに
-				sphere->hit_result.is_hit = true;
+
+				// 球のエンティティ別の判定をTrueに
+				for (auto& [hit_ent, hit_result] : sphere->hit_results)
+				{
+					// 判定された球が球コライダーのリスト内に存在する場合のみ判定をTrueにする
+					if (hit_data.hit_entities.contains(hit_ent))
+						hit_result.is_hit = true;
+				}
 			}
 
 			for (const auto& [capsule_id, hit_data] : hit_ent_capsule)
@@ -355,8 +378,7 @@ namespace cumulonimbus::collision
 				auto* capsule = registry->GetComponent<component::CapsuleCollisionComponent>(hit_data.self_entity).TryGetCapsule(capsule_id);
 				if (!capsule)
 					continue;
-				// 球の判定をTrueに
-				capsule->hit_result.is_hit = true;
+				// カプセルのエンティティ別の判定をTrueに
 				for(auto& hit_result : capsule->hit_results | std::views::values)
 				{
 					if(hit_result.entity == hit_data.hit_entity)
@@ -531,14 +553,18 @@ namespace cumulonimbus::collision
 
 	void CollisionManager::AddHitSphere(
 		const mapping::rename_type::UUID& sphere_id,
-		const HitData& hit_data)
+		const mapping::rename_type::Entity& self_ent,
+		const mapping::rename_type::Entity& hit_ent)
 	{
 		if (hit_ent_sphere.contains(sphere_id))
 		{
-			hit_ent_sphere.at(sphere_id) = hit_data;
+			hit_ent_sphere.at(sphere_id).RegisterHitEntity(hit_ent);
 			return;
 		}
 
+		HitData hit_data{};
+		hit_data.self_entity = self_ent;
+		hit_data.RegisterHitEntity(hit_ent);
 		hit_ent_sphere.emplace(sphere_id, hit_data);
 	}
 
@@ -557,44 +583,56 @@ namespace cumulonimbus::collision
 
 	void CollisionManager::UpdateHitResult(
 		ecs::Registry* registry_1, ecs::Registry* registry_2,
-		const Sphere&  sphere_1  ,const Sphere& sphere_2,
-		HitResult&	   result_1  , HitResult& result_2,
+		Sphere&		   sphere_1  , Sphere&		  sphere_2,
 		const mapping::rename_type::UUID& ent_1,
 		const mapping::rename_type::UUID& ent_2)
 	{
-		// 判定先のレジストリ
-		result_1.registry = registry_2;
-		result_2.registry = registry_1;
-		// 判定先のコリジョンタグ
-		result_1.collision_tag = sphere_2.collision_tag;
-		result_2.collision_tag = sphere_1.collision_tag;
-		// 判定先のコリジョンID
-		result_1.collision_id = sphere_2.id;
-		result_2.collision_id = sphere_1.id;
-		// 判定先ののエンティティ
-		result_1.entity = ent_2;
-		result_2.entity = ent_1;
+		//// 判定先のレジストリ
+		//result_1.registry = registry_2;
+		//result_2.registry = registry_1;
+		//// 判定先のコリジョンタグ
+		//result_1.collision_tag = sphere_2.collision_tag;
+		//result_2.collision_tag = sphere_1.collision_tag;
+		//// 判定先のコリジョンID
+		//result_1.collision_id = sphere_2.id;
+		//result_2.collision_id = sphere_1.id;
+		//// 判定先ののエンティティ
+		//result_1.entity = ent_2;
+		//result_2.entity = ent_1;
+
+		HitResult result_1_{};
+		result_1_.registry		= registry_2;
+		result_1_.collision_tag = sphere_2.collision_tag;
+		result_1_.collision_id	= sphere_2.id;
+		result_1_.entity		= ent_2;
+		sphere_1.RegisterHitEntity(ent_2, result_1_);
+
+		HitResult result_2_{};
+		result_2_.registry		= registry_1;
+		result_2_.collision_tag = sphere_1.collision_tag;
+		result_2_.collision_id	= sphere_1.id;
+		result_2_.entity		= ent_1;
+		sphere_2.RegisterHitEntity(ent_1, result_2_);
 	}
 
 	void CollisionManager::UpdateHitResult(
 		ecs::Registry* registry_1, ecs::Registry* registry_2,
 		Capsule&	   capsule_1 , Capsule&       capsule_2,
-		HitResult&	   result_1	 , HitResult&     result_2,
 		const mapping::rename_type::UUID& ent_1,
 		const mapping::rename_type::UUID& ent_2)
 	{
-		// 判定先のレジストリ
-		result_1.registry = registry_2;
-		result_2.registry = registry_1;
-		// 判定先のコリジョンタグ
-		result_1.collision_tag = capsule_2.collision_tag;
-		result_2.collision_tag = capsule_1.collision_tag;
-		// 判定先のコリジョンID
-		result_1.collision_id = capsule_2.id;
-		result_2.collision_id = capsule_1.id;
-		// 判定先ののエンティティ
-		result_1.entity = ent_2;
-		result_2.entity = ent_1;
+		//// 判定先のレジストリ
+		//result_1.registry = registry_2;
+		//result_2.registry = registry_1;
+		//// 判定先のコリジョンタグ
+		//result_1.collision_tag = capsule_2.collision_tag;
+		//result_2.collision_tag = capsule_1.collision_tag;
+		//// 判定先のコリジョンID
+		//result_1.collision_id = capsule_2.id;
+		//result_2.collision_id = capsule_1.id;
+		//// 判定先ののエンティティ
+		//result_1.entity = ent_2;
+		//result_2.entity = ent_1;
 
 		HitResult result_1_{};
 		result_1_.registry		= registry_2;
@@ -613,23 +651,36 @@ namespace cumulonimbus::collision
 
 	void CollisionManager::UpdateHitResult(
 		ecs::Registry* registry_1, ecs::Registry* registry_2,
-		const Sphere&  sphere	 , const Capsule& capsule,
-		HitResult&     s_result  , HitResult& c_result,
+		Sphere&		   sphere	 , Capsule&		  capsule,
 		const mapping::rename_type::UUID& s_ent,
 		const mapping::rename_type::UUID& c_ent)
 	{
-		// 判定先のレジストリ
-		s_result.registry = registry_2;
-		c_result.registry = registry_1;
-		// 判定先のコリジョンタグ
-		s_result.collision_tag = capsule.collision_tag;
-		c_result.collision_tag = sphere.collision_tag;
-		// 判定先のコリジョンID
-		s_result.collision_id = capsule.id;
-		c_result.collision_id = sphere.id;
-		// 判定先ののエンティティ
-		s_result.entity = c_ent;
-		c_result.entity = s_ent;
+		//// 判定先のレジストリ
+		//s_result.registry = registry_2;
+		//c_result.registry = registry_1;
+		//// 判定先のコリジョンタグ
+		//s_result.collision_tag = capsule.collision_tag;
+		//c_result.collision_tag = sphere.collision_tag;
+		//// 判定先のコリジョンID
+		//s_result.collision_id = capsule.id;
+		//c_result.collision_id = sphere.id;
+		//// 判定先ののエンティティ
+		//s_result.entity = c_ent;
+		//c_result.entity = s_ent;
+
+		HitResult result_1_{};
+		result_1_.registry		= registry_2;
+		result_1_.collision_tag = capsule.collision_tag;
+		result_1_.collision_id	= capsule.id;
+		result_1_.entity		= c_ent;
+		sphere.RegisterHitEntity(c_ent, result_1_);
+
+		HitResult result_2_{};
+		result_2_.registry		= registry_1;
+		result_2_.collision_tag = sphere.collision_tag;
+		result_2_.collision_id	= sphere.id;
+		result_2_.entity		= s_ent;
+		capsule.RegisterHitEntity(s_ent, result_2_);
 	}
 
 	void CollisionManager::Extrude(
@@ -1046,11 +1097,11 @@ namespace cumulonimbus::collision
 				if (len <= s1.radius + s2.radius)
 				{
 					hit = true;
-					AddHitSphere(s1.id, HitData{ sphere_1.GetEntity(),sphere_2.GetEntity() });
-					AddHitSphere(s2.id, HitData{ sphere_2.GetEntity(),sphere_1.GetEntity() });
+					AddHitSphere(s1.id, sphere_1.GetEntity(), sphere_2.GetEntity());
+					AddHitSphere(s2.id, sphere_2.GetEntity(), sphere_1.GetEntity());
 					// ヒット情報の更新
 					UpdateHitResult(sphere_1.GetRegistry(),sphere_2.GetRegistry(),
-									s1, s2, s1.hit_result, s2.hit_result,
+									s1, s2,
 									sphere_1.GetEntity(), sphere_2.GetEntity());
 
 					// 押出し処理
@@ -1064,8 +1115,16 @@ namespace cumulonimbus::collision
 				}
 				else
 				{
-					s1.hit_result.is_hit = false;
-					s2.hit_result.is_hit = false;
+					if (auto* hit_result_1 = s1.TryGetHitResult(sphere_2.GetEntity());
+						hit_result_1)
+					{
+						hit_result_1->is_hit = false;
+					}
+					if (auto* hit_result_2 = s2.TryGetHitResult(sphere_1.GetEntity());
+						hit_result_2)
+					{
+						hit_result_2->is_hit = false;
+					}
 				}
 
 			}
@@ -1093,11 +1152,11 @@ namespace cumulonimbus::collision
 					len <= s1.radius + s2.radius)
 				{
 					hit = true;
-					AddHitSphere(s1.id, HitData{ sphere_1.GetEntity(),sphere_2.GetEntity() });
-					AddHitSphere(s2.id, HitData{ sphere_2.GetEntity(),sphere_1.GetEntity() });
+					AddHitSphere(s1.id, sphere_1.GetEntity(), sphere_2.GetEntity());
+					AddHitSphere(s2.id, sphere_2.GetEntity(), sphere_1.GetEntity());
 					// ヒット情報の更新
 					UpdateHitResult(sphere_1.GetRegistry(),sphere_2.GetRegistry(),
-									s1, s2, s1.hit_result, s2.hit_result,
+									s1, s2,
 									sphere_1.GetEntity(), sphere_2.GetEntity());
 
 					// 押出し処理
@@ -1111,8 +1170,17 @@ namespace cumulonimbus::collision
 				}
 				else
 				{
-					s1.hit_result.is_hit = false;
-					s2.hit_result.is_hit = false;
+
+					if (auto* hit_result_1 = s1.TryGetHitResult(sphere_2.GetEntity());
+						hit_result_1)
+					{
+						hit_result_1->is_hit = false;
+					}
+					if (auto* hit_result_2 = s2.TryGetHitResult(sphere_1.GetEntity());
+						hit_result_2)
+					{
+						hit_result_2->is_hit = false;
+					}
 				}
 			}
 		}
@@ -1148,7 +1216,7 @@ namespace cumulonimbus::collision
 					AddHitCapsule(c2.id, HitData{ capsule_2.GetEntity(),capsule_1.GetEntity() });
 					// ヒット情報の更新
 					UpdateHitResult(capsule_1.GetRegistry(),capsule_2.GetRegistry(),
-									c1, c2, c1.hit_result, c2.hit_result,
+									c1, c2,
 									capsule_1.GetEntity(), capsule_2.GetEntity());
 					hit = true;
 
@@ -1164,7 +1232,6 @@ namespace cumulonimbus::collision
 				}
 				else
 				{
-					c1.hit_result.is_hit = c2.hit_result.is_hit = false;
 					if (auto* hit_result_1 = c1.TryGetHitResult(capsule_2.GetEntity());
 						hit_result_1)
 					{
@@ -1210,7 +1277,7 @@ namespace cumulonimbus::collision
 					AddHitCapsule(c2.id, HitData{ capsule_2.GetEntity(),capsule_1.GetEntity() });
 					// ヒット情報の更新
 					UpdateHitResult(capsule_1.GetRegistry(),capsule_2.GetRegistry(),
-									c1, c2, c1.hit_result, c2.hit_result,
+									c1, c2,
 									capsule_1.GetEntity(), capsule_2.GetEntity());
 					hit = true;
 
@@ -1226,7 +1293,16 @@ namespace cumulonimbus::collision
 				}
 				else
 				{
-					c1.hit_result.is_hit = c2.hit_result.is_hit = false;
+					if (auto* hit_result_1 = c1.TryGetHitResult(capsule_2.GetEntity());
+						hit_result_1)
+					{
+						hit_result_1->is_hit = false;
+					}
+					if (auto* hit_result_2 = c2.TryGetHitResult(capsule_1.GetEntity());
+						hit_result_2)
+					{
+						hit_result_2->is_hit = false;
+					}
 				}
 			}
 		}
@@ -1254,11 +1330,11 @@ namespace cumulonimbus::collision
 				if(const float radius = s.radius + c.radius;
 				   dist <= radius * radius)
 				{
-					AddHitSphere(s.id , HitData{ sphere.GetEntity() ,capsule.GetEntity() });
+					AddHitSphere(s.id, sphere.GetEntity(), capsule.GetEntity());
 					AddHitCapsule(c.id, HitData{ capsule.GetEntity(),sphere.GetEntity() });
 					// ヒット情報の更新
 					UpdateHitResult(sphere.GetRegistry(),capsule.GetRegistry(),
-									s, c, s.hit_result, c.hit_result,
+									s, c,
 									sphere.GetEntity(), capsule.GetEntity());
 					hit = true;
 					float t = 0; //	最近接点までの距離(線分の割合)
@@ -1275,8 +1351,16 @@ namespace cumulonimbus::collision
 				}
 				else
 				{
-					c.hit_result.is_hit = false;
-					s.hit_result.is_hit = false;
+					if (auto* hit_result_1 = s.TryGetHitResult(capsule.GetEntity());
+						hit_result_1)
+					{
+						hit_result_1->is_hit = false;
+					}
+					if (auto* hit_result_2 = c.TryGetHitResult(sphere.GetEntity());
+						hit_result_2)
+					{
+						hit_result_2->is_hit = false;
+					}
 				}
 			}
 		}
@@ -1305,11 +1389,11 @@ namespace cumulonimbus::collision
 				if (const float radius = s.radius + c.radius;
 					dist <= radius * radius)
 				{
-					AddHitSphere(s.id , HitData{ sphere.GetEntity() ,capsule.GetEntity() });
+					AddHitSphere(s.id, sphere.GetEntity(), capsule.GetEntity());
 					AddHitCapsule(c.id, HitData{ capsule.GetEntity(),sphere.GetEntity() });
 					// ヒット情報の更新
 					UpdateHitResult(sphere.GetRegistry(),capsule.GetRegistry(),
-									s, c, s.hit_result, c.hit_result,
+									s, c,
 									sphere.GetEntity(), capsule.GetEntity());
 					hit = true;
 					float t = 0; //	最近接点までの距離(線分の割合)
@@ -1326,8 +1410,16 @@ namespace cumulonimbus::collision
 				}
 				else
 				{
-					c.hit_result.is_hit = false;
-					s.hit_result.is_hit = false;
+					if (auto* hit_result_1 = s.TryGetHitResult(capsule.GetEntity());
+						hit_result_1)
+					{
+						hit_result_1->is_hit = false;
+					}
+					if (auto* hit_result_2 = c.TryGetHitResult(sphere.GetEntity());
+						hit_result_2)
+					{
+						hit_result_2->is_hit = false;
+					}
 				}
 			}
 		}

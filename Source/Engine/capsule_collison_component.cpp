@@ -13,7 +13,7 @@
 CEREAL_REGISTER_TYPE(cumulonimbus::component::CapsuleCollisionComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::CollisionComponent, cumulonimbus::component::CapsuleCollisionComponent)
 CEREAL_CLASS_VERSION(cumulonimbus::component::CapsuleCollisionComponent, 1)
-CEREAL_CLASS_VERSION(cumulonimbus::collision::Capsule, 1)
+CEREAL_CLASS_VERSION(cumulonimbus::collision::Capsule, 2)
 
 namespace
 {
@@ -45,47 +45,87 @@ namespace cumulonimbus::collision
 	template <class Archive>
 	void Capsule::load(Archive&& archive, uint32_t version)
 	{
-		archive(
-			CEREAL_NVP(world_transform_matrix),
-			CEREAL_NVP(offset),
-			CEREAL_NVP(rotation),
-			CEREAL_NVP(start),
-			CEREAL_NVP(end),
-			CEREAL_NVP(bone_name),
-			CEREAL_NVP(length),
-			CEREAL_NVP(radius),
-			CEREAL_NVP(hit_result),
-			CEREAL_NVP(collision_preset),
-			CEREAL_NVP(base_color),
-			CEREAL_NVP(hit_color)
-		);
-
 		if(version == 1)
 		{
 			archive(
+				CEREAL_NVP(world_transform_matrix),
+				CEREAL_NVP(offset),
+				CEREAL_NVP(rotation),
+				CEREAL_NVP(start),
+				CEREAL_NVP(end),
+				CEREAL_NVP(bone_name),
+				CEREAL_NVP(length),
+				CEREAL_NVP(radius),
+			    //CEREAL_NVP(hit_result),
+				CEREAL_NVP(collision_preset),
+				CEREAL_NVP(base_color),
+				CEREAL_NVP(hit_color),
 				CEREAL_NVP(collision_tag)
 			);
+		}
+
+
+		if(version == 2)
+		{
+			archive(
+				CEREAL_NVP(world_transform_matrix),
+				CEREAL_NVP(offset),
+				CEREAL_NVP(rotation),
+				CEREAL_NVP(start),
+				CEREAL_NVP(end),
+				CEREAL_NVP(bone_name),
+				CEREAL_NVP(length),
+				CEREAL_NVP(radius),
+				CEREAL_NVP(collision_preset),
+				CEREAL_NVP(base_color),
+				CEREAL_NVP(hit_color),
+				CEREAL_NVP(collision_tag)
+			);
+
+			//archive(
+			//	CEREAL_NVP(collision_tag)
+			//);
 		}
 	}
 
 	template <class Archive>
 	void Capsule::save(Archive&& archive, uint32_t version) const
 	{
-		archive(
-			CEREAL_NVP(world_transform_matrix),
-			CEREAL_NVP(offset),
-			CEREAL_NVP(rotation),
-			CEREAL_NVP(start),
-			CEREAL_NVP(end),
-			CEREAL_NVP(bone_name),
-			CEREAL_NVP(length),
-			CEREAL_NVP(radius),
-			CEREAL_NVP(hit_result),
-			CEREAL_NVP(collision_preset),
-			CEREAL_NVP(base_color),
-			CEREAL_NVP(hit_color),
-			CEREAL_NVP(collision_tag)
-		);
+		if(version == 1)
+		{
+			archive(
+				CEREAL_NVP(world_transform_matrix),
+				CEREAL_NVP(offset),
+				CEREAL_NVP(rotation),
+				CEREAL_NVP(start),
+				CEREAL_NVP(end),
+				CEREAL_NVP(bone_name),
+				CEREAL_NVP(length),
+				CEREAL_NVP(radius),
+				//CEREAL_NVP(hit_result),
+				CEREAL_NVP(collision_preset),
+				CEREAL_NVP(base_color),
+				CEREAL_NVP(hit_color),
+				CEREAL_NVP(collision_tag)
+			);
+		}
+		if(version == 2)
+		{
+			archive(
+				CEREAL_NVP(world_transform_matrix),
+				CEREAL_NVP(offset),
+				CEREAL_NVP(rotation),
+				CEREAL_NVP(start),
+				CEREAL_NVP(end),
+				CEREAL_NVP(bone_name),
+				CEREAL_NVP(length),
+				CEREAL_NVP(radius),
+				CEREAL_NVP(collision_preset),
+				CEREAL_NVP(base_color),
+				CEREAL_NVP(hit_color),
+				CEREAL_NVP(collision_tag)
+			);
+		}
 	}
 
 	HitResult* Capsule::TryGetHitResult(const mapping::rename_type::Entity& ent)
@@ -263,7 +303,7 @@ namespace cumulonimbus::component
 							hit_result.hit_event = collision::HitEvent::OnCollisionExit;
 							// イベントの発行
 							on_collision_exit_event.Invoke(GetEntity(), hit_result);
-							delete_hit_entities.emplace_back(hit_ent);
+							delete_hit_entities.emplace_back(hit_result.entity);
 						}
 						else
 						{// 他のどのCollisionにも触れていない間

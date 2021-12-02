@@ -14,7 +14,7 @@
 CEREAL_REGISTER_TYPE(cumulonimbus::component::SphereCollisionComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::CollisionComponent, cumulonimbus::component::SphereCollisionComponent)
 CEREAL_CLASS_VERSION(cumulonimbus::component::SphereCollisionComponent, 0)
-CEREAL_CLASS_VERSION(cumulonimbus::collision::Sphere, 0)
+CEREAL_CLASS_VERSION(cumulonimbus::collision::Sphere, 1)
 
 namespace
 {
@@ -27,36 +27,92 @@ namespace cumulonimbus::collision
 	template <class Archive>
 	void Sphere::load(Archive&& archive, const uint32_t version)
 	{
-		archive(
-			CEREAL_NVP(world_transform_matrix),
-			CEREAL_NVP(offset),
-			CEREAL_NVP(bone_name),
-			CEREAL_NVP(radius),
-			CEREAL_NVP(hit_result),
-			CEREAL_NVP(collision_preset),
-			CEREAL_NVP(base_color),
-			CEREAL_NVP(hit_color),
-			CEREAL_NVP(collision_tag)
-		);
+		if(version == 0)
+		{
+			archive(
+				CEREAL_NVP(world_transform_matrix),
+				CEREAL_NVP(offset),
+				CEREAL_NVP(bone_name),
+				CEREAL_NVP(radius),
+				//CEREAL_NVP(hit_result),
+				CEREAL_NVP(collision_preset),
+				CEREAL_NVP(base_color),
+				CEREAL_NVP(hit_color),
+				CEREAL_NVP(collision_tag)
+			);
+		}
+
+		if(version == 1)
+		{
+			archive(
+				CEREAL_NVP(world_transform_matrix),
+				CEREAL_NVP(offset),
+				CEREAL_NVP(bone_name),
+				CEREAL_NVP(radius),
+				CEREAL_NVP(collision_preset),
+				CEREAL_NVP(base_color),
+				CEREAL_NVP(hit_color),
+				CEREAL_NVP(collision_tag)
+			);
+		}
 	}
 
 	template <class Archive>
 	void Sphere::save(Archive&& archive, const uint32_t version) const
 	{
-		archive(
-			CEREAL_NVP(world_transform_matrix),
-			CEREAL_NVP(offset),
-			CEREAL_NVP(bone_name),
-			CEREAL_NVP(radius),
-			CEREAL_NVP(hit_result),
-			CEREAL_NVP(collision_preset),
-			CEREAL_NVP(base_color),
-			CEREAL_NVP(hit_color),
-			CEREAL_NVP(collision_tag)
-		);
+		if(version == 0)
+		{
+			archive(
+				CEREAL_NVP(world_transform_matrix),
+				CEREAL_NVP(offset),
+				CEREAL_NVP(bone_name),
+				CEREAL_NVP(radius),
+				//CEREAL_NVP(hit_result),
+				CEREAL_NVP(collision_preset),
+				CEREAL_NVP(base_color),
+				CEREAL_NVP(hit_color),
+				CEREAL_NVP(collision_tag)
+			);
+		}
+
+		if(version == 1)
+		{
+			archive(
+				CEREAL_NVP(world_transform_matrix),
+				CEREAL_NVP(offset),
+				CEREAL_NVP(bone_name),
+				CEREAL_NVP(radius),
+				CEREAL_NVP(collision_preset),
+				CEREAL_NVP(base_color),
+				CEREAL_NVP(hit_color),
+				CEREAL_NVP(collision_tag)
+			);
+		}
 	}
 
+	HitResult* Sphere::TryGetHitResult(const mapping::rename_type::Entity& ent)
+	{
+		if (hit_results.contains(ent))
+			return &hit_results.at(ent);
 
+		return nullptr;
+	}
+
+	void Sphere::RegisterHitEntity(const mapping::rename_type::Entity& ent, const HitResult& hit_result)
+	{
+		// 既に登録されている場合は処理を抜ける
+		if (hit_results.contains(ent))
+			return;
+		hit_results.emplace(ent, hit_result);
+	}
+
+	void Sphere::UnRegisterHitEntity(const mapping::rename_type::Entity& ent)
+	{
+		// エンティティが存在しない場合処理を抜ける
+		if (!hit_results.contains(ent))
+			return;
+		hit_results.erase(ent);
+	}
 } // cumulonimbus::collision
 
 namespace cumulonimbus::component
@@ -100,6 +156,164 @@ namespace cumulonimbus::component
 	}
 
 	void SphereCollisionComponent::CommonUpdate(float dt)
+	{
+		//auto DefaultTransform = [&](collision::Sphere& sphere, const DirectX::SimpleMath::Matrix& local_mat)
+		//{
+		//	// モデルが持つワールド変換行列
+		//	DirectX::SimpleMath::Matrix world_transform = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetWorldMatrix();
+		//	world_transform._11 = world_transform._22 = world_transform._33 = world_transform._44 = 1.0f;
+		//	sphere.world_transform_matrix = local_mat * world_transform;
+		//};
+
+		//// 判定用(球)データの更新
+		//for (auto& sphere : spheres | std::views::values)
+		//{
+		//	{// ワールド変換行列の作成１
+		//		// Scaling
+		//		const DirectX::SimpleMath::Matrix s = DirectX::XMMatrixScaling(sphere.radius, sphere.radius, sphere.radius);
+		//		// Rotation
+		//		const DirectX::SimpleMath::Matrix r = DirectX::XMMatrixIdentity();
+		//		// Parallel movement
+		//		DirectX::SimpleMath::Matrix t = DirectX::SimpleMath::Matrix::Identity;
+		//		t.Translation(sphere.offset);
+		//		// Local matrix
+		//		const DirectX::SimpleMath::Matrix model_local_matrix = s * r * t;
+
+		//		if (sphere.bone_name.empty())
+		//		{
+		//			// モデルが持つワールド変換行列
+		//			DefaultTransform(sphere, model_local_matrix);
+		//		}
+		//		else
+		//		{
+		//			if (auto* model_comp = GetRegistry()->TryGetComponent<component::ModelComponent>(GetEntity());
+		//				model_comp)
+		//			{
+		//				if (model_comp->HasNodeFromName(sphere.bone_name.c_str()))
+		//				{
+		//					DirectX::SimpleMath::Matrix world_transform = model_comp->GetNodeMatrix(sphere.bone_name.c_str());
+		//					DirectX::SimpleMath::Vector3 scale{}, translation{};
+		//					DirectX::SimpleMath::Quaternion rotation{};
+		//					if (world_transform.Decompose(scale, rotation, translation))
+		//					{
+		//						DirectX::SimpleMath::Matrix t = DirectX::SimpleMath::Matrix::CreateTranslation(translation);
+		//						DirectX::SimpleMath::Matrix r = DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&rotation));
+		//						world_transform = r * t;
+		//					}
+		//					sphere.world_transform_matrix = model_local_matrix * world_transform;
+		//				}
+		//				else
+		//				{
+		//					DefaultTransform(sphere, model_local_matrix);
+		//				}
+		//			}
+		//			else
+		//			{
+		//				DefaultTransform(sphere, model_local_matrix);
+		//			}
+		//		}
+		//	}
+
+		//	{// HitEventの更新
+		//		const auto ent_name = GetRegistry()->GetName(GetEntity());
+
+		//		std::vector<mapping::rename_type::Entity> delete_hit_entities{};
+		//		for (auto& [hit_ent, hit_result] : sphere.hit_results)
+		//		{
+		//			const auto hit_name = GetRegistry()->GetName(hit_ent);
+		//			int a;
+		//			a = 0;
+
+		//			if (hit_result.is_hit)
+		//			{
+		//				if (hit_result.is_old_hit)
+		//				{// 他のコリジョンに触れている間
+		//					// ヒットイベントの更新
+		//					hit_result.hit_event = collision::HitEvent::OnCollisionStay;
+		//					// イベント処理の発行
+		//					on_collision_stay_event.Invoke(GetEntity(), hit_result);
+		//				}
+		//				else
+		//				{// 他のCollisionに触れたとき
+		//					// ヒットイベントの更新
+		//					hit_result.hit_event = collision::HitEvent::OnCollisionEnter;
+		//					// イベント処理の発行
+		//					on_collision_enter_event.Invoke(GetEntity(), hit_result);
+		//				}
+		//			}
+		//			else
+		//			{
+		//				if (hit_result.is_old_hit)
+		//				{// 他のCollisionに触れるのをやめたとき
+		//					// ヒットイベントの更新
+		//					hit_result.hit_event = collision::HitEvent::OnCollisionExit;
+		//					// イベントの発行
+		//					on_collision_exit_event.Invoke(GetEntity(), hit_result);
+		//					delete_hit_entities.emplace_back(hit_result.entity);
+		//				}
+		//				else
+		//				{// 他のどのCollisionにも触れていない間
+		//					// ヒットイベントの更新
+		//					hit_result.hit_event = collision::HitEvent::None;
+		//					// イベント処理の発行
+		//					on_collision_none.Invoke(GetEntity(), hit_result);
+		//				}
+		//			}
+		//			hit_result.is_old_hit = hit_result.is_hit;
+		//		}
+
+		//		for (const auto& delete_hit_ent : delete_hit_entities)
+		//		{
+		//			sphere.UnRegisterHitEntity(delete_hit_ent);
+		//		}
+
+		//		//if (sphere.hit_result.is_hit)
+		//		//{
+		//		//	if (sphere.hit_result.is_old_hit)
+		//		//	{// 他のCollisionに触れている間
+		//		//		// ヒットイベントの更新
+		//		//		sphere.hit_result.hit_event = collision::HitEvent::OnCollisionStay;
+		//		//		// イベント処理の発行
+		//		//		on_collision_stay_event.Invoke(GetEntity(), sphere.hit_result);
+		//		//	}
+		//		//	else
+		//		//	{// 他のCollisionに触れたとき
+		//		//		// ヒットイベントの更新
+		//		//		sphere.hit_result.hit_event = collision::HitEvent::OnCollisionEnter;
+		//		//		// イベント処理の発行
+		//		//		on_collision_enter_event.Invoke(GetEntity(), sphere.hit_result);
+		//		//	}
+		//		//}
+		//		//else
+		//		//{
+		//		//	if (sphere.hit_result.is_old_hit)
+		//		//	{// 他のCollisionに触れるのをやめたとき
+		//		//		// ヒットイベントの更新
+		//		//		sphere.hit_result.hit_event = collision::HitEvent::OnCollisionExit;
+		//		//		// イベント処理の発行
+		//		//		on_collision_exit_event.Invoke(GetEntity(), sphere.hit_result);
+		//		//	}
+		//		//	else
+		//		//	{// 他のどのCollisionにも触れていない間
+		//		//		// ヒットイベントの更新
+		//		//		sphere.hit_result.hit_event = collision::HitEvent::None;
+		//		//		// イベント処理の発行
+		//		//		on_collision_none.Invoke(GetEntity(), sphere.hit_result);
+		//		//	}
+		//		//}
+
+		//		//sphere.hit_result.is_old_hit = sphere.hit_result.is_hit;
+		//	}
+		//}
+	}
+
+
+	void SphereCollisionComponent::PreGameUpdate(float dt)
+	{
+
+	}
+
+	void SphereCollisionComponent::GameUpdate(float dt)
 	{
 		auto DefaultTransform = [&](collision::Sphere& sphere, const DirectX::SimpleMath::Matrix& local_mat)
 		{
@@ -159,55 +373,96 @@ namespace cumulonimbus::component
 			}
 
 			{// HitEventの更新
-				if (sphere.hit_result.is_hit)
+				const auto ent_name = GetRegistry()->GetName(GetEntity());
+
+				std::vector<mapping::rename_type::Entity> delete_hit_entities{};
+				for (auto& [hit_ent, hit_result] : sphere.hit_results)
 				{
-					if (sphere.hit_result.is_old_hit)
-					{// 他のCollisionに触れている間
-						// ヒットイベントの更新
-						sphere.hit_result.hit_event = collision::HitEvent::OnCollisionStay;
-						// イベント処理の発行
-						on_collision_stay_event.Invoke(GetEntity(), sphere.hit_result);
+					const auto hit_name = GetRegistry()->GetName(hit_ent);
+					int a;
+					a = 0;
+
+					if (hit_result.is_hit)
+					{
+						if (hit_result.is_old_hit)
+						{// 他のコリジョンに触れている間
+							// ヒットイベントの更新
+							hit_result.hit_event = collision::HitEvent::OnCollisionStay;
+							// イベント処理の発行
+							on_collision_stay_event.Invoke(GetEntity(), hit_result);
+						}
+						else
+						{// 他のCollisionに触れたとき
+							// ヒットイベントの更新
+							hit_result.hit_event = collision::HitEvent::OnCollisionEnter;
+							// イベント処理の発行
+							on_collision_enter_event.Invoke(GetEntity(), hit_result);
+						}
 					}
 					else
-					{// 他のCollisionに触れたとき
-						// ヒットイベントの更新
-						sphere.hit_result.hit_event = collision::HitEvent::OnCollisionEnter;
-						// イベント処理の発行
-						on_collision_enter_event.Invoke(GetEntity(), sphere.hit_result);
+					{
+						if (hit_result.is_old_hit)
+						{// 他のCollisionに触れるのをやめたとき
+							// ヒットイベントの更新
+							hit_result.hit_event = collision::HitEvent::OnCollisionExit;
+							// イベントの発行
+							on_collision_exit_event.Invoke(GetEntity(), hit_result);
+							delete_hit_entities.emplace_back(hit_result.entity);
+						}
+						else
+						{// 他のどのCollisionにも触れていない間
+							// ヒットイベントの更新
+							hit_result.hit_event = collision::HitEvent::None;
+							// イベント処理の発行
+							on_collision_none.Invoke(GetEntity(), hit_result);
+						}
 					}
-				}
-				else
-				{
-					if (sphere.hit_result.is_old_hit)
-					{// 他のCollisionに触れるのをやめたとき
-						// ヒットイベントの更新
-						sphere.hit_result.hit_event = collision::HitEvent::OnCollisionExit;
-						// イベント処理の発行
-						on_collision_exit_event.Invoke(GetEntity(), sphere.hit_result);
-					}
-					else
-					{// 他のどのCollisionにも触れていない間
-						// ヒットイベントの更新
-						sphere.hit_result.hit_event = collision::HitEvent::None;
-						// イベント処理の発行
-						on_collision_none.Invoke(GetEntity(), sphere.hit_result);
-					}
+					hit_result.is_old_hit = hit_result.is_hit;
 				}
 
-				sphere.hit_result.is_old_hit = sphere.hit_result.is_hit;
+				for (const auto& delete_hit_ent : delete_hit_entities)
+				{
+					sphere.UnRegisterHitEntity(delete_hit_ent);
+				}
+
+				//if (sphere.hit_result.is_hit)
+				//{
+				//	if (sphere.hit_result.is_old_hit)
+				//	{// 他のCollisionに触れている間
+				//		// ヒットイベントの更新
+				//		sphere.hit_result.hit_event = collision::HitEvent::OnCollisionStay;
+				//		// イベント処理の発行
+				//		on_collision_stay_event.Invoke(GetEntity(), sphere.hit_result);
+				//	}
+				//	else
+				//	{// 他のCollisionに触れたとき
+				//		// ヒットイベントの更新
+				//		sphere.hit_result.hit_event = collision::HitEvent::OnCollisionEnter;
+				//		// イベント処理の発行
+				//		on_collision_enter_event.Invoke(GetEntity(), sphere.hit_result);
+				//	}
+				//}
+				//else
+				//{
+				//	if (sphere.hit_result.is_old_hit)
+				//	{// 他のCollisionに触れるのをやめたとき
+				//		// ヒットイベントの更新
+				//		sphere.hit_result.hit_event = collision::HitEvent::OnCollisionExit;
+				//		// イベント処理の発行
+				//		on_collision_exit_event.Invoke(GetEntity(), sphere.hit_result);
+				//	}
+				//	else
+				//	{// 他のどのCollisionにも触れていない間
+				//		// ヒットイベントの更新
+				//		sphere.hit_result.hit_event = collision::HitEvent::None;
+				//		// イベント処理の発行
+				//		on_collision_none.Invoke(GetEntity(), sphere.hit_result);
+				//	}
+				//}
+
+				//sphere.hit_result.is_old_hit = sphere.hit_result.is_hit;
 			}
 		}
-	}
-
-
-	void SphereCollisionComponent::PreGameUpdate(float dt)
-	{
-
-	}
-
-	void SphereCollisionComponent::GameUpdate(float dt)
-	{
-
 	}
 
 	void SphereCollisionComponent::PostGameUpdate(float dt)
@@ -278,6 +533,13 @@ namespace cumulonimbus::component
 				ImGui::DragFloat("Radius"	, &sphere.radius	, 0.1f	, 0.1f	  , FLT_MAX);
 				ImGui::ColorEdit4("Base Color", &sphere.base_color.x);
 				ImGui::ColorEdit4("Hit Color" , &sphere.hit_color.x);
+				// テスト(すぐ消す)
+				ImGui::Separator();
+				ImGui::Text("Hit Ent Name");
+				for (const auto& hit_result : sphere.hit_results)
+				{
+					ImGui::Text(GetRegistry()->GetName(hit_result.second.entity).c_str());
+				}
 				ImGui::PopID();
 			}
 		}

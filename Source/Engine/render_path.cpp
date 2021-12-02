@@ -697,10 +697,10 @@ namespace cumulonimbus::renderer
 				transform.bone_transforms[0] = sphere.world_transform_matrix;
 				registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
 				// コリジョン色の設定
-				if (sphere.hit_result.is_hit)
-					sphere_collision.GetCBuffer().SetData(DebugCollisionCB{ sphere.hit_color });
-				else
+				if (sphere.hit_results.empty())
 					sphere_collision.GetCBuffer().SetData(DebugCollisionCB{ sphere.base_color });
+				else
+					sphere_collision.GetCBuffer().SetData(DebugCollisionCB{ sphere.hit_color });
 				sphere_collision.GetCBuffer().Activate(immediate_context, CBSlot_DebugCollision, false, true);
 
 				UINT stride = sizeof(shader::Vertex);
@@ -750,10 +750,11 @@ namespace cumulonimbus::renderer
 				transform.bone_transforms[0] = capsule.world_transform_matrix;
 				registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
 				// コリジョン色の設定
-				if (capsule.hit_result.is_hit)
-					capsule_collision.GetCBuffer().SetData(DebugCollisionCB{ capsule.hit_color });
-				else
+				if (capsule.hit_results.empty())
 					capsule_collision.GetCBuffer().SetData(DebugCollisionCB{ capsule.base_color });
+				else
+					capsule_collision.GetCBuffer().SetData(DebugCollisionCB{ capsule.hit_color });
+
 				capsule_collision.GetCBuffer().Activate(immediate_context, CBSlot_DebugCollision, false, true);
 
 
