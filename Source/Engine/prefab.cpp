@@ -25,6 +25,7 @@
 #include "enemy_soldier_component.h"
 #include "player_component.h"
 #include "player_sword_component.h"
+#include "damageable_component.h"
 
 namespace cumulonimbus::asset
 {
@@ -50,6 +51,8 @@ namespace cumulonimbus::asset
 		RegistryComponent<component::RigidBodyComponent>();
 		// camera
 		RegistryComponent<component::CameraComponent>();
+		// damage
+		RegistryComponent<component::DamageableComponent>();
 		//-- game --//
 		// player
 		RegistryComponent<component::PlayerComponent>();

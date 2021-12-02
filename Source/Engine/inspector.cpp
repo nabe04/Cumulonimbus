@@ -6,7 +6,7 @@
 #include "ecs.h"
 #include "fbx_model_resource.h"
 #include "file_path_helper.h"
-// components
+// components(engine)
 #include "billboard_component.h"
 #include "camera_component.h"
 #include "capsule_collison_component.h"
@@ -16,6 +16,8 @@
 #include "rigid_body_component.h"
 #include "sphere_collision_component.h"
 #include "sprite_component.h"
+// components(game)
+#include "player_sword_component.h"
 
 namespace cumulonimbus::editor
 {
@@ -30,6 +32,7 @@ namespace cumulonimbus::editor
 		RegisterComponent<component::SphereCollisionComponent>(	"Sphere Collider"	 , mapping::component_tag::ComponentTag::Physics);
 		RegisterComponent<component::RigidBodyComponent>(		"RigidBody"			 , mapping::component_tag::ComponentTag::Physics);
 		RegisterComponent<component::CameraComponent>(			"Camera"			 , mapping::component_tag::ComponentTag::Camera);
+		RegisterComponent<component::PlayerSwordComponent>(		"Player Sword"		 , mapping::component_tag::ComponentTag::Game);
 	}
 
 	void Inspector::Render(ecs::Registry* registry, const mapping::rename_type::Entity ent)
@@ -84,15 +87,15 @@ namespace cumulonimbus::editor
 		ComponentMenu(registry, ent, "Sprite"	, mapping::component_tag::ComponentTag::Sprite);
 		ComponentMenu(registry, ent, "Physics"	, mapping::component_tag::ComponentTag::Physics);
 		ComponentMenu(registry, ent, "Camera"	, mapping::component_tag::ComponentTag::Camera);
+		ComponentMenu(registry, ent, "Game"		, mapping::component_tag::ComponentTag::Game);
 
 		ImGui::EndPopup(); // "my_file_popup"
 	}
 
 	void Inspector::ComponentMenu(ecs::Registry* registry, const mapping::rename_type::Entity ent, const std::string& menu_name, const mapping::component_tag::ComponentTag tag)
 	{
-		bool is_used = false;
-
-		for (auto& [key, value] : component_map)
+		for (bool is_used = false;
+			 auto& [key, value] : component_map)
 		{
 			if (value.second.get()->GetComponentTag() == tag)
 			{

@@ -80,6 +80,7 @@ namespace cumulonimbus::collision
 		bool						is_old_hit		{ false };	// 1フレーム前の"is_hit"値
 		HitEvent					hit_event		{};	// ヒットイベント
 		collision::CollisionTag     collision_tag   {}; // 判定されたコリジョンタグ
+		ecs::Registry*				registry{};			// 判定されたレジストリ
 		mapping::rename_type::UUID  entity			{};	// 判定されたエンティティ
 		mapping::rename_type::UUID	collision_id	{}; // 判定されたコリジョンID
 

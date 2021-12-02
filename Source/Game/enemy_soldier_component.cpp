@@ -9,6 +9,7 @@
 #include "model_loader.h"
 // components
 #include "capsule_collison_component.h"
+#include "damageable_component.h"
 #include "model_component.h"
 #include "player_component.h"
 #include "rigid_body_component.h"
@@ -84,8 +85,11 @@ namespace cumulonimbus::component
 	{
 		Initialize(GetRegistry(), GetEntity());
 
-		const auto registry = GetRegistry();
-		const auto entity   = GetEntity();
+		const auto registry = this->GetRegistry();
+		const auto entity   = this->GetEntity();
+		// ダメージイベントの登録
+		auto& damageable_comp = registry->GetOrEmplaceComponent<DamageableComponent>(GetEntity());
+		damageable_comp.RegistryDamageEvent(GetEntity(), [=](const component::DamageData& damage_data) { registry->GetComponent<EnemySoldierComponent>(entity).OnDamaged(damage_data); });
 		//  コリジョンイベントの登録
 		if(auto* capsule_collision = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(GetEntity());
 		   capsule_collision)
@@ -95,7 +99,7 @@ namespace cumulonimbus::component
 		if (auto* sphere_collision = GetRegistry()->TryGetComponent<SphereCollisionComponent>(GetEntity());
 			sphere_collision)
 		{
-			sphere_collision->RegisterEventEnter(GetEntity(), [=](const collision::HitResult& hit_result) {registry->GetComponent<EnemySoldierComponent>(entity).OnAttack(hit_result); });
+			sphere_collision->RegisterEventEnter(GetEntity(), [=](const collision::HitResult& hit_result) { registry->GetComponent<EnemySoldierComponent>(entity).OnAttack(hit_result); });
 		}
 	}
 
@@ -121,6 +125,9 @@ namespace cumulonimbus::component
 
 	void EnemySoldierComponent::Initialize(ecs::Registry* registry, mapping::rename_type::Entity ent)
 	{
+		auto& damageable_comp = registry->GetOrEmplaceComponent<DamageableComponent>(ent);
+		damageable_comp.RegistryDamageEvent(ent, [registry, ent](const component::DamageData& damage_data) { registry->GetComponent<EnemySoldierComponent>(ent).OnDamaged(damage_data); });
+
 		// stateに応じての処理の登録
 		soldier_state.AddState(SoldierState::Idle		, [ent, registry](const float dt) {registry->GetComponent<EnemySoldierComponent>(ent).Idle(dt); });
 		soldier_state.AddState(SoldierState::Wave_Start , [ent, registry](const float dt) {registry->GetComponent<EnemySoldierComponent>(ent).WaveStart(dt); });
@@ -177,6 +184,21 @@ namespace cumulonimbus::component
 	void EnemySoldierComponent::OnDamaged(const collision::HitResult& hit_result)
 	{
 		//GetRegistry()->AddDestroyEntity(GetEntity());
+	}
+
+	void EnemySoldierComponent::OnDamaged(const DamageData& damage_data)
+	{
+		hp -= damage_data.damage_amount;
+
+		if(hp <= 0)
+		{
+			//GetRegistry()->AddDestroyEntity(GetEntity());
+			soldier_state.SetState(SoldierState::Death);
+		}
+		else
+		{
+			soldier_state.SetState(SoldierState::Damage);
+		}
 	}
 
 	void EnemySoldierComponent::Idle(float dt)
@@ -343,6 +365,19 @@ namespace cumulonimbus::component
 
 	void EnemySoldierComponent::Damage(float dt)
 	{
+		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
+
+		if(soldier_state.GetInitialize())
+		{
+			// アニメーションセット(AnimationData::Damage)
+			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Damage), false, 0.3f);
+		}
+
+		// アニメーション再生中は処理を中断
+		if (model_comp.IsPlayAnimation())
+			return;
+
+
 	}
 
 	void EnemySoldierComponent::Death(float dt)
@@ -351,16 +386,16 @@ namespace cumulonimbus::component
 
 	void EnemySoldierComponent::Attack01(float dt)
 	{
-		auto& fbx_model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
+		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
 
 		if (soldier_state.GetInitialize())
 		{
 			// アニメーションセット(AnimationData::Attack_01)
-			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_01), false);
+			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_01), false);
 		}
 
 		// アニメーション再生中は処理を中断
-		if (fbx_model_comp.IsPlayAnimation())
+		if (model_comp.IsPlayAnimation())
 			return;
 
 		// 状態遷移(SoldierState::Tracking)

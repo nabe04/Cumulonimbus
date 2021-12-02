@@ -88,7 +88,29 @@ namespace cumulonimbus::collision
 		);
 	}
 
+	HitResult* Capsule::TryGetHitResult(const mapping::rename_type::Entity& ent)
+	{
+		if (hit_results.contains(ent))
+			return &hit_results.at(ent);
 
+		return nullptr;
+	}
+
+	void Capsule::RegisterHitEntity(const mapping::rename_type::Entity& ent, const HitResult& hit_result)
+	{
+		// 既に登録されている場合は処理を抜ける
+		if (hit_results.contains(ent))
+			return;
+		hit_results.emplace(ent, hit_result);
+	}
+
+	void Capsule::UnRegisterHitEntity(const mapping::rename_type::Entity& ent)
+	{
+		// エンティティが存在しない場合処理を抜ける
+		if (!hit_results.contains(ent))
+			return;
+		hit_results.erase(ent);
+	}
 } // collision
 
 namespace cumulonimbus::component
@@ -211,46 +233,90 @@ namespace cumulonimbus::component
 
 			capsule.start   = reference_point + up * -(capsule.length * 0.5f);
 			capsule.end		= reference_point + up * (capsule.length * 0.5f);
-			//float radius = capsule.radius;
-			//capsule.radius  = radius * transform_comp.GetScale().y;
 
 			{// HitEventの更新
-				if (capsule.hit_result.is_hit)
+				std::vector<mapping::rename_type::Entity> delete_hit_entities{};
+				for(auto& [hit_ent,hit_result] : capsule.hit_results)
 				{
-					if (capsule.hit_result.is_old_hit)
-					{// 他のCollisionに触れている間
-						// ヒットイベントの更新
-						capsule.hit_result.hit_event = collision::HitEvent::OnCollisionStay;
-						// イベント処理の発行
-						on_collision_stay_event.Invoke(GetEntity(), capsule.hit_result);
+					if(hit_result.is_hit)
+					{
+						if(hit_result.is_old_hit)
+						{// 他のコリジョンに触れている間
+							// ヒットイベントの更新
+							hit_result.hit_event = collision::HitEvent::OnCollisionStay;
+							// イベント処理の発行
+							on_collision_stay_event.Invoke(GetEntity(), hit_result);
+						}
+						else
+						{// 他のCollisionに触れたとき
+							// ヒットイベントの更新
+							hit_result.hit_event = collision::HitEvent::OnCollisionEnter;
+							// イベント処理の発行
+							on_collision_enter_event.Invoke(GetEntity(), hit_result);
+						}
 					}
 					else
-					{// 他のCollisionに触れたとき
-						// ヒットイベントの更新
-						capsule.hit_result.hit_event = collision::HitEvent::OnCollisionEnter;
-						// イベント処理の発行
-						on_collision_enter_event.Invoke(GetEntity(), capsule.hit_result);
+					{
+						if(hit_result.is_old_hit)
+						{// 他のCollisionに触れるのをやめたとき
+							// ヒットイベントの更新
+							hit_result.hit_event = collision::HitEvent::OnCollisionExit;
+							// イベントの発行
+							on_collision_exit_event.Invoke(GetEntity(), hit_result);
+							delete_hit_entities.emplace_back(hit_ent);
+						}
+						else
+						{// 他のどのCollisionにも触れていない間
+							// ヒットイベントの更新
+							hit_result.hit_event = collision::HitEvent::None;
+							// イベント処理の発行
+							on_collision_none.Invoke(GetEntity(), hit_result);
+						}
 					}
-				}
-				else
-				{
-					if (capsule.hit_result.is_old_hit)
-					{// 他のCollisionに触れるのをやめたとき
-						// ヒットイベントの更新
-						capsule.hit_result.hit_event = collision::HitEvent::OnCollisionExit;
-						// イベント処理の発行
-						on_collision_exit_event.Invoke(GetEntity(), capsule.hit_result);
-					}
-					else
-					{// 他のどのCollisionにも触れていない間
-						// ヒットイベントの更新
-						capsule.hit_result.hit_event = collision::HitEvent::None;
-						// イベント処理の発行
-						on_collision_none.Invoke(GetEntity(), capsule.hit_result);
-					}
+					hit_result.is_old_hit = hit_result.is_hit;
 				}
 
-				capsule.hit_result.is_old_hit = capsule.hit_result.is_hit;
+				for(const auto& delete_hit_ent : delete_hit_entities)
+				{
+					capsule.UnRegisterHitEntity(delete_hit_ent);
+				}
+
+				//if (capsule.hit_result.is_hit)
+				//{
+				//	if (capsule.hit_result.is_old_hit)
+				//	{// 他のCollisionに触れている間
+				//		// ヒットイベントの更新
+				//		capsule.hit_result.hit_event = collision::HitEvent::OnCollisionStay;
+				//		// イベント処理の発行
+				//		on_collision_stay_event.Invoke(GetEntity(), capsule.hit_result);
+				//	}
+				//	else
+				//	{// 他のCollisionに触れたとき
+				//		// ヒットイベントの更新
+				//		capsule.hit_result.hit_event = collision::HitEvent::OnCollisionEnter;
+				//		// イベント処理の発行
+				//		on_collision_enter_event.Invoke(GetEntity(), capsule.hit_result);
+				//	}
+				//}
+				//else
+				//{
+				//	if (capsule.hit_result.is_old_hit)
+				//	{// 他のCollisionに触れるのをやめたとき
+				//		// ヒットイベントの更新
+				//		capsule.hit_result.hit_event = collision::HitEvent::OnCollisionExit;
+				//		// イベント処理の発行
+				//		on_collision_exit_event.Invoke(GetEntity(), capsule.hit_result);
+				//	}
+				//	else
+				//	{// 他のどのCollisionにも触れていない間
+				//		// ヒットイベントの更新
+				//		capsule.hit_result.hit_event = collision::HitEvent::None;
+				//		// イベント処理の発行
+				//		on_collision_none.Invoke(GetEntity(), capsule.hit_result);
+				//	}
+				//}
+
+				//capsule.hit_result.is_old_hit = capsule.hit_result.is_hit;
 			}
 		}
 	}
@@ -423,6 +489,14 @@ namespace cumulonimbus::component
 				ImGui::DragFloat("Radius"	, &capsule.radius	 , 0.1f, 1.0f  , 1000.0f);
 				ImGui::ColorEdit4("Base Color", &capsule.base_color.x);
 				ImGui::ColorEdit4("Hit Color" , &capsule.hit_color.x);
+				// テスト(すぐ消す)
+				ImGui::Separator();
+				ImGui::Text("Hit Ent Name");
+				for(const auto& hit_result : capsule.hit_results)
+				{
+					ImGui::Text(GetRegistry()->GetName(hit_result.second.entity).c_str());
+				}
+
 				ImGui::PopID();
 			}
 		}

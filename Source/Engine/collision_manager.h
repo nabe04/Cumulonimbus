@@ -98,6 +98,13 @@ namespace cumulonimbus::collision
 
 	class CollisionManager final
 	{
+	private:
+		struct HitData
+		{
+			mapping::rename_type::Entity self_entity; // 自身のエンティティ
+			mapping::rename_type::Entity hit_entity;  // 判定先のエンティティ
+		};
+
 	public:
 		explicit CollisionManager(system::System& system);
 		explicit CollisionManager()								= default; // for cereal
@@ -150,9 +157,9 @@ namespace cumulonimbus::collision
 		// レイキャストの判定を行う際の判定が行われる(地形)データ群
 		std::vector<mapping::rename_type::Entity> ent_terrains{};
 		// ヒットした球コリジョン(key : 球の識別ID、 value : 球をもつエンティティ)
-		std::unordered_map<mapping::rename_type::UUID, mapping::rename_type::Entity >hit_ent_sphere{};
+		std::unordered_map<mapping::rename_type::UUID, HitData> hit_ent_sphere{};
 		// ヒットしたカプセルコリジョン(key : カプセルの識別ID、 value : 球をもつエンティティ)
-		std::unordered_map<mapping::rename_type::UUID, mapping::rename_type::Entity> hit_ent_capsule{};
+		std::unordered_map<mapping::rename_type::UUID, HitData> hit_ent_capsule{};
 
 		/**
 		 * @brief	: 反発係数の算出
@@ -166,26 +173,28 @@ namespace cumulonimbus::collision
 		 * @brief : 衝突した球情報の追加
 		 * @remark : 同じIDを追加しようとした場合上書きされる
 		 * @param sphere_id : 球ID
-		 * @param ent : 保有先のエンティティ
+		 * @param hit_data : ヒットデータ
 		 */
 		void AddHitSphere(
 			const mapping::rename_type::UUID& sphere_id,
-			const mapping::rename_type::Entity& ent);
+			const HitData& hit_data);
 
 		/**
 		 * @brief : 衝突したカプセル情報の追加
 		 * @remark : 同じIDを追加しようとした場合上書きされる
 		 * @param capsule_id : 球ID
-		 * @param ent : 保有先のエンティティ
+		 * @param hit_data : ヒットデータ
 		 */
 		void AddHitCapsule(
 			const mapping::rename_type::UUID& capsule_id,
-			const mapping::rename_type::Entity& ent);
+			const HitData& hit_data);
 
 		/**
 		 * @brief : 判定した時のHitResultの更新
 		 * @remark : result_1の情報がresult_2に格納され,
 		 *			 result_2の情報がresult_1に格納される
+		 * @param registry_1 : sphere_1のレジストリ
+		 * @param registry_2 : sphere_2のレジストリ
 		 * @param sphere_1 : Sphere情報(1)
 		 * @param sphere_2 : Sphere情報(2)
 		 * @param result_1 : sphere_1のHitResult
@@ -194,10 +203,9 @@ namespace cumulonimbus::collision
 		 * @param ent_2 : result_2のエンティティ
 		 */
 		void UpdateHitResult(
-			const Sphere& sphere_1,
-			const Sphere& sphere_2,
-			HitResult& result_1,
-			HitResult& result_2,
+			ecs::Registry* registry_1, ecs::Registry* registry_2,
+			const Sphere&  sphere_1	 , const Sphere&  sphere_2,
+			HitResult&     result_1	 , HitResult&     result_2,
 			const mapping::rename_type::UUID& ent_1,
 			const mapping::rename_type::UUID& ent_2);
 
@@ -205,6 +213,8 @@ namespace cumulonimbus::collision
 		 * @brief : 判定した時のHitResultの更新
 		 * @remark : result_1の情報がresult_2に格納され,
 		 *			 result_2の情報がresult_1に格納される
+		 * @param registry_1 : capsule_1のレジストリ
+		 * @param registry_2 : capsule_2のレジストリ
 		 * @param capsule_1 : Capsule情報(1)
 		 * @param capsule_2 : Capsule情報(2)
 		 * @param result_1 : sphere_1のHitResult
@@ -213,10 +223,9 @@ namespace cumulonimbus::collision
 		 * @param ent_2 : result_2のエンティティ
 		 */
 		void UpdateHitResult(
-			const Capsule& capsule_1,
-			const Capsule& capsule_2,
-			HitResult& result_1,
-			HitResult& result_2,
+			ecs::Registry* registry_1, ecs::Registry* registry_2,
+			Capsule&	   capsule_1 , Capsule&       capsule_2,
+			HitResult&	   result_1  ,HitResult&	  result_2,
 			const mapping::rename_type::UUID& ent_1,
 			const mapping::rename_type::UUID& ent_2);
 
@@ -224,6 +233,8 @@ namespace cumulonimbus::collision
 		 * @brief : 判定した時のHitResultの更新
 		 * @remark : sphereの情報がcapsuleに格納され,
 		 *			 capsuleの情報がsphereに格納される
+		 * @param registry_1 : sphereのレジストリ
+		 * @param registry_2 : capsuleのレジストリ
 		 * @param sphere : Sphere情報(1)
 		 * @param capsule : Capsule情報(2)
 		 * @param s_result : sphereのHitResult
@@ -232,8 +243,9 @@ namespace cumulonimbus::collision
 		 * @param c_ent : capsuleのエンティティ
 		 */
 		void UpdateHitResult(
-			const Sphere& sphere, const Capsule& capsule,
-			HitResult& s_result, HitResult& c_result,
+			ecs::Registry* registry_1, ecs::Registry* registry_2,
+			const Sphere&  sphere	 , const Capsule& capsule,
+			HitResult& s_result		 , HitResult&     c_result,
 			const mapping::rename_type::UUID& s_ent,
 			const mapping::rename_type::UUID& c_ent);
 

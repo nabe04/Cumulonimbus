@@ -20,6 +20,7 @@
 #include "scene_manager.h"
 #include "transform_component.h"
 #include "capsule_collison_component.h"
+#include "damageable_component.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::PlayerComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::Actor3DComponent, cumulonimbus::component::PlayerComponent)
@@ -105,6 +106,8 @@ namespace cumulonimbus::component
 		SetAnimationBreakFrame(AnimationData::Attacking_Jump_01, 15);
 		SetAnimationBreakFrame(AnimationData::Attacking_Jump_02, 14);
 		SetAnimationBreakFrame(AnimationData::Attacking_Jump_03, 16);
+
+		registry->GetOrEmplaceComponent<DamageableComponent>(ent).RegistryDamageEvent(ent, [ent, registry](const DamageData& damage_data) {registry->GetComponent<PlayerComponent>(ent).OnDamaged(damage_data); });
 
 		registry->GetOrEmplaceComponent<RigidBodyComponent>(ent);
 		// レイキャストに関する設定
@@ -429,6 +432,11 @@ namespace cumulonimbus::component
 	{
 		int a;
 		a = 0;
+	}
+
+	void PlayerComponent::OnDamaged(const component::DamageData& damage_data)
+	{
+
 	}
 
 	void PlayerComponent::TPose(const float dt)

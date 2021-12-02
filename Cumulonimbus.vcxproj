@@ -53,6 +53,7 @@
     <ClInclude Include="Source\Engine\constant_buffer_mapping.h" />
     <ClInclude Include="Source\Engine\content_browser.h" />
     <ClInclude Include="Source\Engine\cum_imgui_helper.h" />
+    <ClInclude Include="Source\Engine\damageable_component.h" />
     <ClInclude Include="Source\Engine\debug_collision.h" />
     <ClInclude Include="Source\Engine\debug_primitive.h" />
     <ClInclude Include="Source\Engine\debug_primitive_shader.h" />
@@ -184,6 +185,7 @@
     <ClInclude Include="Source\Game\player_component.h" />
     <ClInclude Include="Source\Game\player_sword_component.h" />
     <ClInclude Include="Source\Game\sound_resource.h" />
+    <ClInclude Include="weapon_component.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="debug_primitive_shader.cpp" />
@@ -215,6 +217,7 @@
     <ClCompile Include="Source\Engine\component_list.cpp" />
     <ClCompile Include="Source\Engine\content_brawser.cpp" />
     <ClCompile Include="Source\Engine\cum_imgui_helper.cpp" />
+    <ClCompile Include="Source\Engine\damageable_component.cpp" />
     <ClCompile Include="Source\Engine\debug_collision.cpp" />
     <ClCompile Include="Source\Engine\debug_primitive.cpp" />
     <ClCompile Include="Source\Engine\depth_map.cpp" />

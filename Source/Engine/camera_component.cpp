@@ -114,8 +114,6 @@ namespace cumulonimbus::component
 		}
 	}
 
-
-
 	CameraComponent::CameraComponent()
 		:ComponentBase{}
 	{

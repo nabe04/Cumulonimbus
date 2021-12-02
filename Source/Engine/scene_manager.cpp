@@ -265,26 +265,27 @@ namespace cumulonimbus::scene
 	void SceneManager::InitialCreatePrefab()
 	{
 		ecs::Registry& registry = *active_scenes.begin()->second->GetRegistry();
-		//-- プレイヤーの基となるプレハブの作成 --//
+		// プレイヤーの基となるプレハブの作成
 		const mapping::rename_type::Entity& player_base = registry.CreateEntity();
 		registry.AddComponent<component::PlayerComponent>(player_base);
-		// プレハブの作成
 		asset_manager->GetLoader<asset::PrefabLoader>()->CreatePrefab(*asset_manager.get(), &registry,
 																	  std::vector<mapping::rename_type::Entity>{player_base},
 																	  true, "Player_Base");
+		// 武器(プレイヤー)の基となるプレハブの作成
 		const mapping::rename_type::Entity& player_sword_base = registry.CreateEntity();
 		registry.AddComponent<component::PlayerSwordComponent>(player_sword_base);
 		asset_manager->GetLoader<asset::PrefabLoader>()->CreatePrefab(*asset_manager.get(),&registry,
 																	   std::vector<mapping::rename_type::Entity>{player_sword_base},
 																	   true, "Player_Sword_Base");
 
-		//-- 敵の基となるプレハブの作成 --//
+		// 敵の基となるプレハブの作成
 		const mapping::rename_type::Entity& enemy_soldier_base = registry.CreateEntity();
 		registry.AddComponent<component::EnemySoldierComponent>(enemy_soldier_base);
-		// プレハブの作成
 		asset_manager->GetLoader<asset::PrefabLoader>()->CreatePrefab(*asset_manager.get(), &registry,
 																	  std::vector<mapping::rename_type::Entity>{enemy_soldier_base},
 																	  true, "E_Soldier_Base");
+
+		registry.CreateEntity();
 
 		// 作成したエンティティの削除(プレハブへの登録のみが目的の為)
 		registry.Destroy(player_base);

@@ -603,6 +603,9 @@
     <ClCompile Include="Source\Game\player_sword_component.cpp">
       <Filter>Source\Game\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\damageable_component.cpp">
+      <Filter>Source\Engine\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -1099,6 +1102,12 @@
     </ClInclude>
     <ClInclude Include="Source\Game\player_sword_component.h">
       <Filter>Header\Game\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="weapon_component.h">
+      <Filter>Header\Game\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\damageable_component.h">
+      <Filter>Header\Engine\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

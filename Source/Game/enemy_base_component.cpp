@@ -5,6 +5,7 @@
 #include "rename_type_mapping.h"
 // components
 #include "player_component.h"
+#include "player_sword_component.h"
 #include "rigid_body_component.h"
 #include "scene.h"
 #include "scene_manager.h"
@@ -44,6 +45,7 @@ namespace cumulonimbus::component
 	EnemyBaseComponent::EnemyBaseComponent(ecs::Registry* registry, mapping::rename_type::Entity ent)
 		:Actor3DComponent{ registry,ent }
 	{
+		///registry->GetScene()->GetSceneManager()->GetActiveScenes()
 	}
 
 	EnemyBaseComponent::EnemyBaseComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const EnemyBaseComponent& copy_comp)

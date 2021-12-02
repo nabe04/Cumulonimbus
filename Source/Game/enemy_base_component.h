@@ -15,6 +15,7 @@ namespace cumulonimbus
 	namespace component
 	{
 		class PlayerComponent;
+		struct DamageData;
 	} // component
 } // cumulonimbus::ecs
 
@@ -69,7 +70,6 @@ namespace cumulonimbus::component
 			}
 		};
 
-
 		int hp{};
 		std::unordered_map<std::string, RandomFloat> transition_timer{};
 		// モデルのyaw回転(度数法)のランダム値
@@ -89,6 +89,7 @@ namespace cumulonimbus::component
 		 * @brief : ダメージ処理
 		 */
 		virtual void OnDamaged(const collision::HitResult& hit_result) {};
+		virtual void OnDamaged(const DamageData& damage_data) {};
 
 		/**
 		 * @brief			: "transition_timer"の登録

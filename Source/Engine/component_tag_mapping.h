@@ -9,6 +9,7 @@ namespace cumulonimbus::mapping::component_tag
 		Sprite,
 		Physics,
 		Camera,
+		Game,
 
 		End
 	};

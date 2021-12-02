@@ -10,6 +10,7 @@
 #include "billboard_component.h"
 #include "camera_component.h"
 #include "capsule_collison_component.h"
+#include "damageable_component.h"
 #include "hierarchy_component.h"
 #include "model_component.h"
 #include "physic_material_component.h"
@@ -220,6 +221,8 @@ namespace cumulonimbus::ecs
 		RegistryComponent<component::RigidBodyComponent>();
 		// camera
 		RegistryComponent<component::CameraComponent>();
+		// damage
+		RegistryComponent<component::DamageableComponent>();
 		//-- game --//
 		// player
 		RegistryComponent<component::PlayerComponent>();

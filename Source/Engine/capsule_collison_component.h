@@ -29,12 +29,23 @@ namespace cumulonimbus
 			DirectX::SimpleMath::Vector3 end  { 0, 1,0 };	// カプセルの終点(デフォルト値 : { 0,-1, 0})
 			DirectX::SimpleMath::Vector4 base_color{ 1.f,1.f,1.f,1.f }; // コリジョンの基本色(判定外時)
 			DirectX::SimpleMath::Vector4 hit_color{ 1.f,.0f,.0f,1.f };  // コリジョンの判定色(判定時)
+			std::unordered_map<mapping::rename_type::Entity, HitResult> hit_results{}; // ヒット結果(オブジェクト毎)
 
 			template<class Archive>
 			void load(Archive&& archive, uint32_t version);
 
 			template<class Archive>
 			void save(Archive&& archive, uint32_t version) const;
+
+			HitResult* TryGetHitResult(const mapping::rename_type::Entity& ent);
+			/**
+			 * @brief : 判定されたエンティティの登録
+			 */
+			void RegisterHitEntity(const mapping::rename_type::Entity& ent, const HitResult& hit_result);
+			/**
+			 * @brief : 判定されたエンティティの登録解除
+			 */
+			void UnRegisterHitEntity(const mapping::rename_type::Entity& ent);
 		};
 	} // collision
 

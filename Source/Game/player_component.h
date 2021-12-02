@@ -11,6 +11,7 @@
 #include "actor3d_component.h"
 #include "state_machine.h"
 #include "collision_component.h"
+#include "damageable_component.h"
 
 namespace cumulonimbus::component
 {
@@ -154,6 +155,13 @@ namespace cumulonimbus::component
 
 		template<class Archive>
 		void save(Archive&& archive, uint32_t version) const;
+
+
+		[[nodiscard]]
+		u_int GetCurrentDamageAmount() const
+		{
+			return current_damage_amount;
+		}
 	private:
 		// プレイヤーの状態管理変数
 		StateMachine<PlayerState, void, const float> player_state{};
@@ -165,16 +173,23 @@ namespace cumulonimbus::component
 		std::map<AnimationData, u_int> animation_break_frame{};
 
 		//-- 状態に応じてのスピード設定 --//
-		float walk_speed{ 300 };		// 歩きの速さ
-		float dash_speed{ 700 };		// 走りの速さ
-		float attack_04_speed{ 700 };	// 通常攻撃04(ジャンプ攻撃)時の速さ
-		float avoid_dash_speed{ 900 };  // 回避ダッシュ速度
+		// 歩きの速さ
+		float walk_speed{ 300 };
+		// 走りの速さ
+		float dash_speed{ 700 };
+		// 通常攻撃04(ジャンプ攻撃)時の速さ
+		float attack_04_speed{ 700 };
+		// 回避ダッシュ速度
+		float avoid_dash_speed{ 900 };
 		float jump_movement_speed{ 300 };
 		//-- 状態の応じての攻撃力設定 --//
+		// 現在の攻撃力
+		u_int current_damage_amount{ 1 };
 
 
 		//-- 状態フラグ --//
-		bool is_jumping{ false }; // ジャンプフラグ
+		// ジャンプフラグ
+		bool is_jumping{ false };
 
 		// パッド入力のデッドゾーン値
 		float threshold{ 0.05f };
@@ -198,7 +213,8 @@ namespace cumulonimbus::component
 		/**
 		 * @brief : enum class(AnimationState)をint型に変換
 		 */
-		[[nodiscard]] int GetAnimDataIndex(AnimationData anim_state) const;
+		[[nodiscard]]
+		int GetAnimDataIndex(AnimationData anim_state) const;
 
 		/**
 		 * @brief : レイキャストで使用するパラメータのセット
@@ -276,6 +292,10 @@ namespace cumulonimbus::component
 		 * @brief : ダメージ処理
 		 */
 		void OnDamaged(const collision::HitResult& hit_result);
+		/**
+		 * @brief : ダメージ処理
+		 */
+		void OnDamaged(const component::DamageData& damage_data);
 
 		/**
 		 * @brief : StateMachineクラスで管理するプレイヤーの状態関数

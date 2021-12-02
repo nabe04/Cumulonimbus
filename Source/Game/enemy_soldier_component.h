@@ -99,6 +99,7 @@ namespace cumulonimbus::component
 
 		void OnAttack(const collision::HitResult& hit_result) override;
 		void OnDamaged(const collision::HitResult& hit_result) override;
+		void OnDamaged(const DamageData& damage_data) override;
 
 		//-- StateMachineƒNƒ‰ƒX‚ÅŠÇ—‚·‚é“G‚Ìó‘ÔŠÖ” --//
 		void Idle(float dt);
