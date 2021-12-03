@@ -133,8 +133,6 @@ namespace cumulonimbus::collision
 		/**
 		 * @brief : CollisionComponentを持つエンティティ全体の当たり判定処理
 		 */
-		void Update(float dt, ecs::Registry* registry);
-
 		void Update(float dt, scene::SceneManager& scene_manager);
 
 		void RenderImGui(ecs::Registry* registry);
@@ -191,11 +189,13 @@ namespace cumulonimbus::collision
 		 * @brief : 衝突したカプセル情報の追加
 		 * @remark : 同じIDを追加しようとした場合上書きされる
 		 * @param capsule_id : 球ID
-		 * @param hit_data : ヒットデータ
+		 * @param self_ent : 判定元(自身)のエンティティ
+		 * @param hit_ent : 判定先のエンティティ
 		 */
 		void AddHitCapsule(
 			const mapping::rename_type::UUID& capsule_id,
-			const HitData& hit_data);
+			const mapping::rename_type::Entity& self_ent,
+			const mapping::rename_type::Entity& hit_ent);
 
 		/**
 		 * @brief : 判定した時のHitResultの更新
@@ -205,8 +205,6 @@ namespace cumulonimbus::collision
 		 * @param registry_2 : sphere_2のレジストリ
 		 * @param sphere_1 : Sphere情報(1)
 		 * @param sphere_2 : Sphere情報(2)
-		 * @param result_1 : sphere_1のHitResult
-		 * @param result_2 : sphere_2のHitResult
 		 * @param ent_1 : result_1のエンティティ
 		 * @param ent_2 : result_2のエンティティ
 		 */
@@ -224,8 +222,6 @@ namespace cumulonimbus::collision
 		 * @param registry_2 : capsule_2のレジストリ
 		 * @param capsule_1 : Capsule情報(1)
 		 * @param capsule_2 : Capsule情報(2)
-		 * @param result_1 : sphere_1のHitResult
-		 * @param result_2 : sphere_2のHitResult
 		 * @param ent_1 : result_1のエンティティ
 		 * @param ent_2 : result_2のエンティティ
 		 */
@@ -243,8 +239,6 @@ namespace cumulonimbus::collision
 		 * @param registry_2 : capsuleのレジストリ
 		 * @param sphere : Sphere情報(1)
 		 * @param capsule : Capsule情報(2)
-		 * @param s_result : sphereのHitResult
-		 * @param c_result : capsuleのHitResult
 		 * @param s_ent : sphereのエンティティ
 		 * @param c_ent : capsuleのエンティティ
 		 */

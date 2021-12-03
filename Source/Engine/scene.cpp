@@ -253,49 +253,10 @@ namespace cumulonimbus::scene
 
 	void Scene::Update(const float dt)
 	{
-		auto a = locator::Locator::GetSystem()->GetCurrentScenePath();
-
-		editor_manager->Update(dt);
-		if (editor_manager->GetToolBar().GetToolBarButton().GetButtonState(editor::ToolBar::Button::Play) ==
-			ButtonState::Press)
-		{
-			SaveScene(file_path_helper::GetSaveSceneViewFilePathAndName(), "test");
-		}
-		if (editor_manager->GetToolBar().GetToolBarButton().GetButtonState(editor::ToolBar::Button::Play) ==
-			ButtonState::Release)
-		{
-			LoadScene(file_path_helper::GetSaveSceneViewFilePathAndName(), "test" + file_path_helper::GetSceneExtension());
-		}
-
-		// 共通の更新処理
-		registry->PreCommonUpdate(dt);
-		registry->CommonUpdate(dt);
-		registry->PostCommonUpdate(dt);
-		// Scene Viewの更新処理
-		registry->PreSceneUpdate(dt);
-		registry->SceneUpdate(dt);
-		registry->PostSceneUpdate(dt);
-		if(editor_manager->GetToolBar().IsPlaybackState(editor::ToolBar::Button::Play))
-		{
-			// Game Viewの更新処理
-			registry->PreGameUpdate(dt);
-			registry->GameUpdate(dt);
-			registry->PostGameUpdate(dt);
-		}
-
-		collision_manager->Update(dt, registry.get());
-
-		system->Update(dt);
-
-		// light update
-		for (const auto& camera_comp : registry->GetArray<cumulonimbus::component::CameraComponent>().GetComponents())
-		{
-			if (camera_comp.GetIsMainCamera())
-				light->Update(&camera_comp);
-		}
+		//auto a = locator::Locator::GetSystem()->GetCurrentScenePath();
 
 		//editor_manager->Update(dt);
-		//if( editor_manager->GetToolBar().GetToolBarButton().GetButtonState(editor::ToolBar::Button::Play) ==
+		//if (editor_manager->GetToolBar().GetToolBarButton().GetButtonState(editor::ToolBar::Button::Play) ==
 		//	ButtonState::Press)
 		//{
 		//	SaveScene(file_path_helper::GetSaveSceneViewFilePathAndName(), "test");
@@ -305,6 +266,45 @@ namespace cumulonimbus::scene
 		//{
 		//	LoadScene(file_path_helper::GetSaveSceneViewFilePathAndName(), "test" + file_path_helper::GetSceneExtension());
 		//}
+
+		//// 共通の更新処理
+		//registry->PreCommonUpdate(dt);
+		//registry->CommonUpdate(dt);
+		//registry->PostCommonUpdate(dt);
+		//// Scene Viewの更新処理
+		//registry->PreSceneUpdate(dt);
+		//registry->SceneUpdate(dt);
+		//registry->PostSceneUpdate(dt);
+		//if(editor_manager->GetToolBar().IsPlaybackState(editor::ToolBar::Button::Play))
+		//{
+		//	// Game Viewの更新処理
+		//	registry->PreGameUpdate(dt);
+		//	registry->GameUpdate(dt);
+		//	registry->PostGameUpdate(dt);
+		//}
+
+		//collision_manager->Update(dt, registry.get());
+
+		//system->Update(dt);
+
+		//// light update
+		//for (const auto& camera_comp : registry->GetArray<cumulonimbus::component::CameraComponent>().GetComponents())
+		//{
+		//	if (camera_comp.GetIsMainCamera())
+		//		light->Update(&camera_comp);
+		//}
+
+		////editor_manager->Update(dt);
+		////if( editor_manager->GetToolBar().GetToolBarButton().GetButtonState(editor::ToolBar::Button::Play) ==
+		////	ButtonState::Press)
+		////{
+		////	SaveScene(file_path_helper::GetSaveSceneViewFilePathAndName(), "test");
+		////}
+		////if (editor_manager->GetToolBar().GetToolBarButton().GetButtonState(editor::ToolBar::Button::Play) ==
+		////	ButtonState::Release)
+		////{
+		////	LoadScene(file_path_helper::GetSaveSceneViewFilePathAndName(), "test" + file_path_helper::GetSceneExtension());
+		////}
 	}
 
 	void Scene::Render()

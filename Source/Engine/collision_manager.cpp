@@ -135,64 +135,6 @@ namespace cumulonimbus::collision
 									  [&](ecs::Registry* registry) {RenderImGui(registry); });
 	}
 
-	void CollisionManager::Update(const float dt, ecs::Registry* registry)
-	{
-		//-- 球同士の判定 --//
-		auto& sphere_collisions = registry->GetArray<component::SphereCollisionComponent>();
-		for (int s1 = 0; s1 < sphere_collisions.GetComponents().size(); ++s1)
-		{
-			for (int s2 = s1 + 1; s2 < sphere_collisions.GetComponents().size(); ++s2)
-			{
-				IntersectSphereVsSphere(
-					dt,
-					registry,
-					sphere_collisions.GetComponents().at(s1),
-					sphere_collisions.GetComponents().at(s2));
-			}
-		}
-
-		//-- カプセル同士の判定 --//
-		auto& capsule_collisions = registry->GetArray<component::CapsuleCollisionComponent>();
-		for (int c1 = 0; c1 < capsule_collisions.GetComponents().size(); ++c1)
-		{
-			for (int c2 = c1 + 1; c2 < capsule_collisions.GetComponents().size(); ++c2)
-			{
-				IntersectCapsuleVsCapsule(
-					dt,
-					registry,
-					capsule_collisions.GetComponents().at(c1),
-					capsule_collisions.GetComponents().at(c2));
-			}
-		}
-
-		//-- 球とカプセルの判定 --//
-		for (int s = 0; s < sphere_collisions.GetComponents().size(); ++s)
-		{
-			for (int c = 0; c < capsule_collisions.GetComponents().size(); ++c)
-			{
-				IntersectSphereVsCapsule(
-					dt,
-					registry,
-					sphere_collisions.GetComponents().at(s),
-					capsule_collisions.GetComponents().at(c));
-			}
-		}
-
-		//-- 地形とモデルとの判定(レイキャスト) --//
-		for (auto& ray_cast_array = registry->GetArray<component::RayCastComponent>();
-			 auto& ray_comp : ray_cast_array.GetComponents())
-		{
-			mapping::rename_type::Entity ent = ray_comp.GetEntity();
-
-			// ent_terrainsとRayCastComponentを持つモデルでレイキャストの判定を行う
-			for (const auto& ent_terrain : ent_terrains)
-			{
-				const auto& model = registry->GetComponent<component::ModelComponent>(ent_terrain);
-				IntersectRayVsModel(dt, registry, model, ray_comp);
-			}
-		}
-	}
-
 	void CollisionManager::Update(const float dt, scene::SceneManager& scene_manager)
 	{
 		hit_ent_sphere.clear();
@@ -379,9 +321,9 @@ namespace cumulonimbus::collision
 				if (!capsule)
 					continue;
 				// カプセルのエンティティ別の判定をTrueに
-				for(auto& hit_result : capsule->hit_results | std::views::values)
+				for (auto& [hit_ent, hit_result] : capsule->hit_results)
 				{
-					if(hit_result.entity == hit_data.hit_entity)
+					if (hit_data.hit_entities.contains(hit_ent))
 						hit_result.is_hit = true;
 				}
 			}
@@ -570,14 +512,18 @@ namespace cumulonimbus::collision
 
 	void CollisionManager::AddHitCapsule(
 		const mapping::rename_type::UUID& capsule_id,
-		const HitData& hit_data)
+		const mapping::rename_type::Entity& self_ent,
+		const mapping::rename_type::Entity& hit_ent)
 	{
 		if (hit_ent_capsule.contains(capsule_id))
 		{
-			hit_ent_capsule.at(capsule_id) = hit_data;
+			hit_ent_capsule.at(capsule_id).RegisterHitEntity(hit_ent);
 			return;
 		}
 
+		HitData hit_data{};
+		hit_data.self_entity = self_ent;
+		hit_data.RegisterHitEntity(hit_ent);
 		hit_ent_capsule.emplace(capsule_id, hit_data);
 	}
 
@@ -1101,7 +1047,7 @@ namespace cumulonimbus::collision
 					AddHitSphere(s2.id, sphere_2.GetEntity(), sphere_1.GetEntity());
 					// ヒット情報の更新
 					UpdateHitResult(sphere_1.GetRegistry(),sphere_2.GetRegistry(),
-									s1, s2,
+								 s1, s2,
 									sphere_1.GetEntity(), sphere_2.GetEntity());
 
 					// 押出し処理
@@ -1156,7 +1102,7 @@ namespace cumulonimbus::collision
 					AddHitSphere(s2.id, sphere_2.GetEntity(), sphere_1.GetEntity());
 					// ヒット情報の更新
 					UpdateHitResult(sphere_1.GetRegistry(),sphere_2.GetRegistry(),
-									s1, s2,
+								 s1, s2,
 									sphere_1.GetEntity(), sphere_2.GetEntity());
 
 					// 押出し処理
@@ -1212,11 +1158,11 @@ namespace cumulonimbus::collision
 
 				if(len <c1.radius + c2.radius)
 				{
-					AddHitCapsule(c1.id, HitData{ capsule_1.GetEntity(),capsule_2.GetEntity() });
-					AddHitCapsule(c2.id, HitData{ capsule_2.GetEntity(),capsule_1.GetEntity() });
+					AddHitCapsule(c1.id, capsule_1.GetEntity(), capsule_2.GetEntity());
+					AddHitCapsule(c2.id, capsule_2.GetEntity(), capsule_1.GetEntity());
 					// ヒット情報の更新
 					UpdateHitResult(capsule_1.GetRegistry(),capsule_2.GetRegistry(),
-									c1, c2,
+								 c1, c2,
 									capsule_1.GetEntity(), capsule_2.GetEntity());
 					hit = true;
 
@@ -1273,11 +1219,11 @@ namespace cumulonimbus::collision
 
 				if (len < c1.radius + c2.radius)
 				{
-					AddHitCapsule(c1.id, HitData{ capsule_1.GetEntity(),capsule_2.GetEntity() });
-					AddHitCapsule(c2.id, HitData{ capsule_2.GetEntity(),capsule_1.GetEntity() });
+					AddHitCapsule(c1.id, capsule_1.GetEntity(), capsule_2.GetEntity());
+					AddHitCapsule(c2.id, capsule_2.GetEntity(), capsule_1.GetEntity());
 					// ヒット情報の更新
-					UpdateHitResult(capsule_1.GetRegistry(),capsule_2.GetRegistry(),
-									c1, c2,
+					UpdateHitResult(capsule_1.GetRegistry(), capsule_2.GetRegistry(),
+								 c1, c2,
 									capsule_1.GetEntity(), capsule_2.GetEntity());
 					hit = true;
 
@@ -1331,10 +1277,10 @@ namespace cumulonimbus::collision
 				   dist <= radius * radius)
 				{
 					AddHitSphere(s.id, sphere.GetEntity(), capsule.GetEntity());
-					AddHitCapsule(c.id, HitData{ capsule.GetEntity(),sphere.GetEntity() });
+					AddHitCapsule(c.id, capsule.GetEntity(), sphere.GetEntity());
 					// ヒット情報の更新
 					UpdateHitResult(sphere.GetRegistry(),capsule.GetRegistry(),
-									s, c,
+								 s, c,
 									sphere.GetEntity(), capsule.GetEntity());
 					hit = true;
 					float t = 0; //	最近接点までの距離(線分の割合)
@@ -1390,10 +1336,10 @@ namespace cumulonimbus::collision
 					dist <= radius * radius)
 				{
 					AddHitSphere(s.id, sphere.GetEntity(), capsule.GetEntity());
-					AddHitCapsule(c.id, HitData{ capsule.GetEntity(),sphere.GetEntity() });
+					AddHitCapsule(c.id, capsule.GetEntity(), sphere.GetEntity());
 					// ヒット情報の更新
 					UpdateHitResult(sphere.GetRegistry(),capsule.GetRegistry(),
-									s, c,
+								 s, c,
 									sphere.GetEntity(), capsule.GetEntity());
 					hit = true;
 					float t = 0; //	最近接点までの距離(線分の割合)
