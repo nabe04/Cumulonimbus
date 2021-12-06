@@ -55,6 +55,12 @@ namespace cumulonimbus::component
 		SetEntity(ent);
 	}
 
+	EnemyBaseComponent::EnemyBaseComponent(const mapping::component_tag::ComponentTag tag)
+		:Actor3DComponent{ tag }
+	{
+
+	}
+
 	void EnemyBaseComponent::Load(ecs::Registry* registry)
 	{
 		SetRegistry(registry);

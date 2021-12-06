@@ -81,15 +81,23 @@ namespace cumulonimbus::component
 		Initialize(registry, ent);
 	}
 
+	EnemySoldierComponent::EnemySoldierComponent(mapping::component_tag::ComponentTag tag)
+		:EnemyBaseComponent{ tag }
+	{
+
+	}
+
 	void EnemySoldierComponent::Start()
 	{
 		Initialize(GetRegistry(), GetEntity());
+
+		hp = 100;
 
 		const auto registry = this->GetRegistry();
 		const auto entity   = this->GetEntity();
 		// ダメージイベントの登録
 		auto& damageable_comp = registry->GetOrEmplaceComponent<DamageableComponent>(GetEntity());
-		damageable_comp.RegistryDamageEvent(GetEntity(), [=](const component::DamageData& damage_data) { registry->GetComponent<EnemySoldierComponent>(entity).OnDamaged(damage_data); });
+		damageable_comp.RegistryDamageEvent(GetEntity(), [=](const DamageData& damage_data, const collision::HitResult& hit_result) { registry->GetComponent<EnemySoldierComponent>(entity).OnDamaged(damage_data, hit_result); });
 		//  コリジョンイベントの登録
 		if(auto* capsule_collision = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(GetEntity());
 		   capsule_collision)
@@ -103,7 +111,7 @@ namespace cumulonimbus::component
 		}
 	}
 
-	void EnemySoldierComponent::GameUpdate(float dt)
+	void EnemySoldierComponent::GameUpdate(const float dt)
 	{
 		soldier_state.Update(dt);
 		Movement();
@@ -111,6 +119,10 @@ namespace cumulonimbus::component
 
 	void EnemySoldierComponent::RenderImGui()
 	{
+		if (GetRegistry()->CollapsingHeader<EnemySoldierComponent>(GetEntity(), "Soldier"))
+		{
+
+		}
 	}
 
 	void EnemySoldierComponent::Load(ecs::Registry* registry)
@@ -126,7 +138,7 @@ namespace cumulonimbus::component
 	void EnemySoldierComponent::Initialize(ecs::Registry* registry, mapping::rename_type::Entity ent)
 	{
 		auto& damageable_comp = registry->GetOrEmplaceComponent<DamageableComponent>(ent);
-		damageable_comp.RegistryDamageEvent(ent, [registry, ent](const component::DamageData& damage_data) { registry->GetComponent<EnemySoldierComponent>(ent).OnDamaged(damage_data); });
+		damageable_comp.RegistryDamageEvent(ent, [registry, ent](const DamageData& damage_data, const collision::HitResult& hit_result) { registry->GetComponent<EnemySoldierComponent>(ent).OnDamaged(damage_data, hit_result); });
 
 		// stateに応じての処理の登録
 		soldier_state.AddState(SoldierState::Idle		, [ent, registry](const float dt) {registry->GetComponent<EnemySoldierComponent>(ent).Idle(dt); });
@@ -139,8 +151,11 @@ namespace cumulonimbus::component
 		soldier_state.AddState(SoldierState::Attack_02	, [ent, registry](const float dt) {registry->GetComponent<EnemySoldierComponent>(ent).Attack02(dt); });
 		soldier_state.AddState(SoldierState::Attack_03	, [ent, registry](const float dt) {registry->GetComponent<EnemySoldierComponent>(ent).Attack03(dt); });
 
-		// 初期stateの設定(SoldierState::Wave_Start)
-		soldier_state.SetState(SoldierState::Wave_Start);
+		//// 初期stateの設定(SoldierState::Wave_Start)
+		//soldier_state.SetState(SoldierState::Wave_Start);
+
+		// Todo : 敵の回避テスト
+		soldier_state.SetState(SoldierState::Attack_01);
 
 		// transition_timerの設定
 		RegisterTransitionTimer(transition_idle_to_walk, 3.f, 7.f);
@@ -186,7 +201,7 @@ namespace cumulonimbus::component
 		//GetRegistry()->AddDestroyEntity(GetEntity());
 	}
 
-	void EnemySoldierComponent::OnDamaged(const DamageData& damage_data)
+	void EnemySoldierComponent::OnDamaged(const DamageData& damage_data, const collision::HitResult& hit_result)
 	{
 		hp -= damage_data.damage_amount;
 
@@ -248,6 +263,9 @@ namespace cumulonimbus::component
 			model_loader.GetModel(model_comp.GetModelID()).GetModelData().SetAnimationKeyFrame(GetAnimDataIndex(AnimationData::Walk), 1);
 			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Walk));
 		}
+
+		// テスト終了後消す
+		return;
 
 		//  Walkアニメーションのキーフレームをデフォルのキーフレームに戻す
 		model_loader.GetModel(model_comp.GetModelID()).GetModelData().ResetAnimationKeyFrame(GetAnimDataIndex(AnimationData::Walk));
@@ -376,12 +394,21 @@ namespace cumulonimbus::component
 		// アニメーション再生中は処理を中断
 		if (model_comp.IsPlayAnimation())
 			return;
-
-
 	}
 
 	void EnemySoldierComponent::Death(float dt)
 	{
+		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
+
+		if (soldier_state.GetInitialize())
+		{
+			// アニメーションセット(AnimationData::Die)
+			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Die), false);
+		}
+
+		// アニメーション再生中は処理を中断
+		if (model_comp.IsPlayAnimation())
+			return;
 	}
 
 	void EnemySoldierComponent::Attack01(float dt)
@@ -398,22 +425,25 @@ namespace cumulonimbus::component
 		if (model_comp.IsPlayAnimation())
 			return;
 
-		// 状態遷移(SoldierState::Tracking)
-		soldier_state.SetState(SoldierState::Tracking);
+		// Todo : 敵の回避テスト
+		soldier_state.SetState(SoldierState::Attack_01);
+
+		//// 状態遷移(SoldierState::Tracking)
+		//soldier_state.SetState(SoldierState::Tracking);
 	}
 
 	void EnemySoldierComponent::Attack02(float dt)
 	{
-		auto& fbx_model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
+		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
 
 		if (soldier_state.GetInitialize())
 		{
 			// アニメーションセット(AnimationData::Attack_02)
-			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_02), false);
+			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_02), false);
 		}
 
 		// アニメーション再生中は処理を中断
-		if (fbx_model_comp.IsPlayAnimation())
+		if (model_comp.IsPlayAnimation())
 			return;
 
 		// 状態遷移(SoldierState::Tracking)
@@ -422,19 +452,19 @@ namespace cumulonimbus::component
 
 	void EnemySoldierComponent::Attack03(float dt)
 	{
-		auto& fbx_model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
+		//auto& fbx_model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
 
-		if (soldier_state.GetInitialize())
-		{
-			// アニメーションセット(AnimationData::Attack_03)
-			fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_03), false);
-		}
+		//if (soldier_state.GetInitialize())
+		//{
+		//	// アニメーションセット(AnimationData::Attack_03)
+		//	fbx_model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_03), false);
+		//}
 
-		// アニメーション再生中は処理を中断
-		if (fbx_model_comp.IsPlayAnimation())
-			return;
+		//// アニメーション再生中は処理を中断
+		//if (fbx_model_comp.IsPlayAnimation())
+		//	return;
 
-		// 状態遷移(SoldierState::Idle)
-		soldier_state.SetState(SoldierState::Idle);
+		//// 状態遷移(SoldierState::Idle)
+		//soldier_state.SetState(SoldierState::Idle);
 	}
 } // cumulonimbus::component

@@ -26,6 +26,7 @@ namespace cumulonimbus::component
 	public:
 		explicit EnemyBaseComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
 		explicit EnemyBaseComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const EnemyBaseComponent& copy_comp); // for prefab
+		explicit EnemyBaseComponent(mapping::component_tag::ComponentTag tag);
 		explicit EnemyBaseComponent()  = default; // for cereal
 		~EnemyBaseComponent() override = default;
 
@@ -48,10 +49,10 @@ namespace cumulonimbus::component
 		 */
 		struct RandomFloat
 		{
-			float min = 0; // 最小値
-			float max = 1; // 最大値
-			float random_val = 0; // minからmaxまでのランダム値
-			float current_time = 0; // 計測時間
+			float min{ 0 }; // 最小値
+			float max{ 1 }; // 最大値
+			float random_val{ 0 }; // minからmaxまでのランダム値
+			float current_time{ 0 }; // 計測時間
 
 			/**
 			 * @brief : min,maxの値をもとにrandom_valの値を設定
@@ -89,7 +90,7 @@ namespace cumulonimbus::component
 		 * @brief : ダメージ処理
 		 */
 		virtual void OnDamaged(const collision::HitResult& hit_result) {};
-		virtual void OnDamaged(const DamageData& damage_data) {};
+		virtual void OnDamaged(const DamageData& damage_data, const collision::HitResult& hit_result) {}
 
 		/**
 		 * @brief			: "transition_timer"の登録

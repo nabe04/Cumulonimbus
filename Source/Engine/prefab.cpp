@@ -20,12 +20,14 @@
 #include "sphere_collision_component.h"
 #include "sprite_component.h"
 #include "transform_component.h"
+#include "damageable_component.h"
 // components(game)
 #include "enemy_base_component.h"
 #include "enemy_soldier_component.h"
+#include "soldier_sword_component.h"
 #include "player_component.h"
 #include "player_sword_component.h"
-#include "damageable_component.h"
+
 
 namespace cumulonimbus::asset
 {
@@ -60,6 +62,7 @@ namespace cumulonimbus::asset
 		// enemy
 		RegistryComponent<component::EnemyBaseComponent>();
 		RegistryComponent<component::EnemySoldierComponent>();
+		RegistryComponent<component::SoldierSwordComponent>();
 	}
 
 	template <class T>

@@ -107,7 +107,7 @@ namespace cumulonimbus::component
 		SetAnimationBreakFrame(AnimationData::Attacking_Jump_02, 14);
 		SetAnimationBreakFrame(AnimationData::Attacking_Jump_03, 16);
 
-		registry->GetOrEmplaceComponent<DamageableComponent>(ent).RegistryDamageEvent(ent, [ent, registry](const DamageData& damage_data) {registry->GetComponent<PlayerComponent>(ent).OnDamaged(damage_data); });
+		registry->GetOrEmplaceComponent<DamageableComponent>(ent).RegistryDamageEvent(ent, [ent, registry](const DamageData& damage_data, const collision::HitResult& hit_result) {registry->GetComponent<PlayerComponent>(ent).OnHit(damage_data, hit_result); });
 
 		registry->GetOrEmplaceComponent<RigidBodyComponent>(ent);
 		// レイキャストに関する設定
@@ -121,10 +121,6 @@ namespace cumulonimbus::component
 		// 壁(wall)用rayの追加 & 設定
 		registry->GetComponent<RayCastComponent>(ent).AddRay(mapping::collision_name::ray::ForWall(), {});
 		registry->GetComponent<RayCastComponent>(ent).SetRayOffset(mapping::collision_name::ray::ForWall(), { 0.0f,20.0f,0.0f });
-
-		// コリジョンへのイベント登録
-		auto& capsule_collision = registry->GetOrEmplaceComponent<CapsuleCollisionComponent>(GetEntity(), collision::CollisionTag::Player);
-		capsule_collision.RegisterEventEnter(GetEntity(), [ent, registry](const collision::HitResult& hit_result) {registry->GetComponent<PlayerComponent>(ent).OnDamaged(hit_result); });
 
 		// カメラに関する設定
 		if (!registry->TryGetComponent<CameraComponent>(ent))
@@ -184,18 +180,16 @@ namespace cumulonimbus::component
 		player_state.AddState(PlayerState::Attacking_Jump_Strong		, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingJumpStrong(dt); });
 		player_state.AddState(PlayerState::Attack_Jump_Strong_End		, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJumpStrongEnd(dt); });
 		player_state.AddState(PlayerState::Dash_Attack					, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).DashAttack(dt); });
-		// 初期stateの設定(Idle)
+		// 初期stateの設定(PlayerState::Idle)
 		player_state.SetState(PlayerState::Idle);
 	}
 
 	void PlayerComponent::Start()
 	{
-		// コリジョンイベントの登録
-		if(auto* capsule_collision = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(GetEntity());
-		   capsule_collision)
-		{
-			capsule_collision->RegisterEventEnter(GetEntity(), [&](const collision::HitResult& hit_result) {GetRegistry()->GetComponent<PlayerComponent>(GetEntity()).OnDamaged(hit_result); });
-		}
+		// 初期stateの設定(PlayerState::Idle)
+		player_state.SetState(PlayerState::Idle);
+		// ヒット時イベントの登録
+		GetRegistry()->GetOrEmplaceComponent<DamageableComponent>(GetEntity()).RegistryDamageEvent(GetEntity(), [ent = GetEntity(), registry = GetRegistry()](const DamageData& damage_data, const collision::HitResult& hit_result) {registry->GetComponent<PlayerComponent>(ent).OnHit(damage_data, hit_result); });
 	}
 
 	void PlayerComponent::PreGameUpdate(float dt)
@@ -428,15 +422,28 @@ namespace cumulonimbus::component
 		return static_cast<int>(animation_break_frame.at(state)) < model_comp.CurrentKeyframe() ? true : false;
 	}
 
-	void PlayerComponent::OnDamaged(const collision::HitResult& hit_result)
-	{
-		int a;
-		a = 0;
-	}
-
 	void PlayerComponent::OnDamaged(const component::DamageData& damage_data)
 	{
 
+	}
+
+	void PlayerComponent::OnHit(const DamageData& damage_data, const collision::HitResult& hit_result)
+	{
+		if(player_state.GetState() == PlayerState::Avoid_Dash_Begin)
+		{
+			is_avoid = true;
+		}
+		else
+		{
+			//player_state.SetState(PlayerState::Damage_Small);
+		}
+	}
+
+	float PlayerComponent::GetAndResetAnimSwitchTime(const float reset_time)
+	{
+		const float ret_val = anim_switch_time;
+		anim_switch_time = reset_time;
+		return ret_val;
 	}
 
 	void PlayerComponent::TPose(const float dt)
@@ -452,11 +459,11 @@ namespace cumulonimbus::component
 		}
 	}
 
-	void PlayerComponent::Idle(float dt)
+	void PlayerComponent::Idle(const float dt)
 	{
 		if (player_state.GetInitialize())
 		{// アニメーションセット(AnimationData::Idle)
-			GetRegistry()->GetComponent<ModelComponent>(GetEntity()).SwitchAnimation(GetAnimDataIndex(AnimationData::Idle), true);
+			GetRegistry()->GetComponent<ModelComponent>(GetEntity()).SwitchAnimation(GetAnimDataIndex(AnimationData::Idle), true, GetAndResetAnimSwitchTime());
 		}
 
 		using namespace locator;
@@ -543,12 +550,15 @@ namespace cumulonimbus::component
 
 	void PlayerComponent::DamageSmall(float dt)
 	{
+		if(player_state.GetInitialize())
+		{
+
+		}
 	}
 
 	void PlayerComponent::DamageBig(float dt)
 	{
 	}
-
 
 	void PlayerComponent::JumpBegin(float dt)
 	{
@@ -680,7 +690,31 @@ namespace cumulonimbus::component
 
 	void PlayerComponent::DashAttack(float dt)
 	{
+		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
+		if(player_state.GetInitialize())
+		{
+			InitializeAnimationVariable();
+			// アニメーションセット(AnimationData::Dash_Attack)
+			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Dash_Attack));
+		}
 
+		auto& rigid_body_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
+		rigid_body_comp.AddForce({ dash_attack_speed,0,dash_attack_speed });
+
+		using namespace locator;
+		const auto& game_pad = Locator::GetInput()->GamePad();
+		if(ButtonState::Press == game_pad.GetState(GamePadButton::X))
+		{
+
+		}
+
+		if (model_comp.IsPlayAnimation())
+			return;
+
+		// 遷移時間の設定
+		anim_switch_time = switch_dash_attack_to_idle;
+		// 状態遷移(PlayerState::Idle)
+		player_state.SetState(PlayerState::Idle);
 	}
 
 	void PlayerComponent::AttackingNormal01(const float dt)
@@ -787,7 +821,7 @@ namespace cumulonimbus::component
 		}
 	}
 
-	void PlayerComponent::AttackingNormal03(float dt)
+	void PlayerComponent::AttackingNormal03(const float dt)
 	{
 		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
 		if (player_state.GetInitialize())
@@ -801,8 +835,8 @@ namespace cumulonimbus::component
 		{
 			using namespace locator;
 			if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-			{// 先行入力セット(PlayerState::Attack_Normal_04_Begin)
-				precede_input = PlayerState::Attack_Normal_04_Begin;
+			{// 先行入力セット(PlayerState::Attack_Normal_02)
+				precede_input = PlayerState::Attack_Normal_02;
 			}
 			else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
 			{// 先行入力セット(PlayerState::Attacking_Strong_04)
@@ -1352,13 +1386,21 @@ namespace cumulonimbus::component
 			// ゲームパッド入力値取得(スティック、トリガー)
 			const DirectX::XMFLOAT2 stick_left = Locator::GetInput()->GamePad().LeftThumbStick(0);
 			const float				trigger_right = Locator::GetInput()->GamePad().RightTrigger(0);
+
+			if(is_avoid)
+			{
+				player_state.SetState(PlayerState::Attack_Normal_04_Begin);
+				return;
+			}
+
 			if (trigger_right < threshold)
 			{//	状態遷移(PlayerState::Avoid_Dash_End)
 				player_state.SetState(PlayerState::Avoid_Dash_End);
 			}
 			else
 			{
-				if (stick_left.x < threshold && stick_left.y < threshold)
+				if ((stick_left.x < threshold && -stick_left.x < threshold) &&
+					(stick_left.y < threshold && -stick_left.y < threshold))
 				{// スティック入力なし
 					// 状態遷移(PlayerState::Avoid_Dash_End)
 					player_state.SetState(PlayerState::Avoid_Dash_End);
@@ -1377,6 +1419,12 @@ namespace cumulonimbus::component
 		if (player_state.GetInitialize())
 		{// アニメーションセット(AnimationData::Avoid_Dash_End)
 			GetRegistry()->GetComponent<ModelComponent>(GetEntity()).SwitchAnimation(GetAnimDataIndex(AnimationData::Avoid_Dash_End), false);
+		}
+
+		{// 移動速度の設定
+			auto& movement_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
+			movement_comp.AddForce({ avoid_dash_speed * 0.7f,0.0f,avoid_dash_speed * 0.7f });
+			//AdjustVelocity(dt, { avoid_dash_speed,0.0f,avoid_dash_speed });
 		}
 
 		// アニメーション再生中なら処理を中断
@@ -1405,7 +1453,6 @@ namespace cumulonimbus::component
 		{// 移動速度の設定
 			auto& movement_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
 			movement_comp.AddForce({ dash_speed,0.0f,dash_speed });
-			//AdjustVelocity(dt, { dash_speed,0.0f,dash_speed });
 		}
 
 		{// アニメーション遷移
@@ -1417,11 +1464,13 @@ namespace cumulonimbus::component
 			{
 				if (stick_left.x > threshold || stick_left.y > threshold)
 				{// 状態遷移(PlayerState::Walk)
-					player_state.SetState(PlayerState::Walk_Front);
+					//player_state.SetState(PlayerState::Walk_Front);
+					player_state.SetState(PlayerState::Avoid_Dash_End);
 				}
 				else
 				{// 状態遷移(PlayerState::Idle)
-					player_state.SetState(PlayerState::Idle);
+					//player_state.SetState(PlayerState::Idle);
+					player_state.SetState(PlayerState::Avoid_Dash_End);
 				}
 			}
 			else

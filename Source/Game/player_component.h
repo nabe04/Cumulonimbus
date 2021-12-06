@@ -172,24 +172,50 @@ namespace cumulonimbus::component
 		// アニメーション中断フレーム(先行入力などで使用)
 		std::map<AnimationData, u_int> animation_break_frame{};
 
+		// アニメーション遷移時間
+		float anim_switch_time{ 0.1f };
+
 		//-- 状態に応じてのスピード設定 --//
-		// 歩きの速さ
-		float walk_speed{ 300 };
-		// 走りの速さ
-		float dash_speed{ 700 };
-		// 通常攻撃04(ジャンプ攻撃)時の速さ
-		float attack_04_speed{ 700 };
+		// 歩きの速度
+		float walk_speed{ 300.0f };
+		// 走りの速度
+		float dash_speed{ 700.0f };
+		// 通常攻撃04(ジャンプ攻撃)時の速度
+		float attack_04_speed{ 700.0f };
+		// ダッシュ攻撃の速度
+		float dash_attack_speed{ 300.0f };
 		// 回避ダッシュ速度
-		float avoid_dash_speed{ 900 };
-		float jump_movement_speed{ 300 };
+		float avoid_dash_speed{ 900.0f };
+		float jump_movement_speed{ 300.0f };
 		//-- 状態の応じての攻撃力設定 --//
 		// 現在の攻撃力
 		u_int current_damage_amount{ 1 };
+		// 通常弱攻撃時のダメージ
+		u_int damage_normal_01{ 1 };
+		u_int damage_normal_02{ 1 };
+		u_int damage_normal_03{ 1 };
+		u_int damage_normal_04{ 1 };
+		// 通常強攻撃時のダメージ
+		u_int damage_strong_01{ 2 };
+		u_int damage_strong_02{ 2 };
+		u_int damage_strong_03{ 2 };
+		u_int damage_strong_04{ 2 };
+		// 空中弱攻撃時のダメージ
+		u_int damage_jump_normal_01{ 1 };
+		u_int damage_jump_normal_02{ 1 };
+		u_int damage_jump_normal_03{ 1 };
+		u_int damage_jump_normal_04{ 1 };
+		// 空中強攻撃時のダメージ
+		u_int damage_jump_strong{ 2 };
 
+		//-- 各状態からの遷移時間 --//
+		float switch_dash_attack_to_idle{ 0.3f };
 
 		//-- 状態フラグ --//
 		// ジャンプフラグ
 		bool is_jumping{ false };
+		// 回避フラグ
+		bool is_avoid{ false };
 
 		// パッド入力のデッドゾーン値
 		float threshold{ 0.05f };
@@ -204,7 +230,7 @@ namespace cumulonimbus::component
 		/**
 		 * @brief : State変更時にアニメーション用のメンバ変数の初期化
 		 */
-		void InitializeAnimationVariable(PlayerState state = PlayerState::End, float long_press_time = 0.0f)
+		void InitializeAnimationVariable(const PlayerState state = PlayerState::End, const float long_press_time = 0.0f)
 		{
 			precede_input = state;
 			this->long_press_time = long_press_time;
@@ -258,6 +284,12 @@ namespace cumulonimbus::component
 		 */
 		void SetAnimationBreakFrame(AnimationData state, u_int keyframe);
 
+		void SetCurrentDamage(const u_int amount)
+		{
+			current_damage_amount = amount;
+		}
+
+
 		/**
 		 * @brief : 次のアニメーションがPlayerState::Attacking_Normal_Long_Press
 		 *			に遷移して良いかの判定関数。
@@ -291,11 +323,19 @@ namespace cumulonimbus::component
 		/**
 		 * @brief : ダメージ処理
 		 */
-		void OnDamaged(const collision::HitResult& hit_result);
-		/**
-		 * @brief : ダメージ処理
-		 */
 		void OnDamaged(const component::DamageData& damage_data);
+
+		/**
+		 * @brief : 他のコリジョンとのヒット時処理
+		 */
+		void OnHit(const DamageData& damage_data, const collision::HitResult& hit_result);
+
+		/**
+		 * @brief : アニメーション遷移時間の取得 & 遷移時間のリセット
+		 * @param reset_time : リセット時の遷移時間
+		 * @return : リセットされる前の遷移時間
+		 */
+		float GetAndResetAnimSwitchTime(float reset_time = 0.1f);
 
 		/**
 		 * @brief : StateMachineクラスで管理するプレイヤーの状態関数

@@ -59,7 +59,7 @@ namespace cumulonimbus
 
 namespace cumulonimbus::renderer
 {
-	class RenderPath final
+	class RenderPath
 	{
 	public:
 		explicit RenderPath(ID3D11Device* device);

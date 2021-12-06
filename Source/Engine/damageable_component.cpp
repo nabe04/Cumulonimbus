@@ -1,5 +1,7 @@
 #include "damageable_component.h"
 
+#include "collision_component.h"
+
 namespace cumulonimbus::component
 {
 	DamageableComponent::DamageableComponent(ecs::Registry* registry, mapping::rename_type::Entity ent)
@@ -21,13 +23,13 @@ namespace cumulonimbus::component
 
 	}
 
-	void DamageableComponent::RegistryDamageEvent(const mapping::rename_type::UUID& ent, const std::function<void(const DamageData&)>& func)
+	void DamageableComponent::RegistryDamageEvent(const mapping::rename_type::UUID& ent, const std::function<void(const DamageData&, const collision::HitResult&)>& func)
 	{
 		damage_event.RegistryEvent(ent, func);
 	}
 
-	void DamageableComponent::OnDamaged(const mapping::rename_type::UUID& id, const DamageData& damage_data)
+	void DamageableComponent::OnDamaged(const mapping::rename_type::UUID& id, const DamageData& damage_data, const collision::HitResult& hit_result)
 	{
-		damage_event.Invoke(id, damage_data);
+		damage_event.Invoke(id, damage_data, hit_result);
 	}
 } // cumulonimbus::component

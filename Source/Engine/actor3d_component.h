@@ -15,6 +15,7 @@ namespace cumulonimbus::component
 	public:
 		explicit Actor3DComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
 		explicit Actor3DComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const Actor3DComponent& copy_comp);
+		explicit Actor3DComponent(mapping::component_tag::ComponentTag tag);
 		explicit Actor3DComponent()  = default; // for cereal
 		~Actor3DComponent() override = default;
 

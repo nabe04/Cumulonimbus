@@ -18,4 +18,11 @@ namespace cumulonimbus::component
 		SetRegistry(registry);
 		SetEntity(ent);
 	}
+
+	Actor3DComponent::Actor3DComponent(const mapping::component_tag::ComponentTag tag)
+		:ComponentBase{ tag }
+	{
+
+	}
+
 } // cumulonimbus::component

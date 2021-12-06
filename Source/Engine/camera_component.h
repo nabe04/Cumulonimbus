@@ -162,6 +162,7 @@ namespace cumulonimbus::component
 		bool  is_use_camera_for_debug = true;
 		// バックバッファ用のカメラ(全てのcamera_componentの中でtrueになるのは常に一つだけ)
 		bool  is_main_camera		  = false;
+		bool  is_old_main_camera = false;
 
 		/**
 		 * @brief : オブジェクトアタッチ時の更新関数

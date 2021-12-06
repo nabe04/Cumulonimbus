@@ -224,8 +224,16 @@ namespace cumulonimbus::component
 		if (GetRegistry()->CollapsingHeader<CameraComponent>(GetEntity(), "Camera"))
 		{
 			camera->RenderImGui();
+			ImGui::Checkbox("Main Camera", &is_main_camera);
 			ImGui::DragFloat("Camera Length" , &camera_length, 0.1f, 0.1f, FLT_MAX);
 			ImGui::DragFloat3("Camera Offset", &camera_offset.x, .5f, 0, FLT_MAX);
+
+			if(is_main_camera && (!is_old_main_camera))
+			{
+				SwitchMainCamera();
+			}
+
+			is_old_main_camera = is_main_camera;
 		}
 
 		//if (bool is_removed_component = false;

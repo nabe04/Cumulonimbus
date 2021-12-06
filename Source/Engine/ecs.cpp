@@ -23,6 +23,7 @@
 // components(game)
 #include "enemy_base_component.h"
 #include "enemy_soldier_component.h"
+#include "soldier_sword_component.h"
 #include "player_component.h"
 #include "player_sword_component.h"
 
@@ -230,6 +231,7 @@ namespace cumulonimbus::ecs
 		// enemy
 		RegistryComponent<component::EnemyBaseComponent>();
 		RegistryComponent<component::EnemySoldierComponent>();
+		RegistryComponent<component::SoldierSwordComponent>();
 	}
 
 	void Registry::Save(const std::string& filename, const std::string& scene_name)

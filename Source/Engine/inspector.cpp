@@ -18,6 +18,8 @@
 #include "sprite_component.h"
 // components(game)
 #include "player_sword_component.h"
+#include "enemy_soldier_component.h"
+#include "soldier_sword_component.h"
 
 namespace cumulonimbus::editor
 {
@@ -32,7 +34,9 @@ namespace cumulonimbus::editor
 		RegisterComponent<component::SphereCollisionComponent>(	"Sphere Collider"	 , mapping::component_tag::ComponentTag::Physics);
 		RegisterComponent<component::RigidBodyComponent>(		"RigidBody"			 , mapping::component_tag::ComponentTag::Physics);
 		RegisterComponent<component::CameraComponent>(			"Camera"			 , mapping::component_tag::ComponentTag::Camera);
+		RegisterComponent<component::EnemySoldierComponent>(	"Soldier"			 , mapping::component_tag::ComponentTag::Game);
 		RegisterComponent<component::PlayerSwordComponent>(		"Player Sword"		 , mapping::component_tag::ComponentTag::Game);
+		RegisterComponent<component::SoldierSwordComponent>(	"Solider Sword"		 , mapping::component_tag::ComponentTag::Game);
 	}
 
 	void Inspector::Render(ecs::Registry* registry, const mapping::rename_type::Entity ent)

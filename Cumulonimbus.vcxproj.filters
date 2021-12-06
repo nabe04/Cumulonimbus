@@ -606,6 +606,12 @@
     <ClCompile Include="Source\Engine\damageable_component.cpp">
       <Filter>Source\Engine\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Game\weapon_component.cpp">
+      <Filter>Source\Game\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\soldier_sword_component.cpp">
+      <Filter>Source\Game\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -1103,11 +1109,14 @@
     <ClInclude Include="Source\Game\player_sword_component.h">
       <Filter>Header\Game\Components</Filter>
     </ClInclude>
-    <ClInclude Include="weapon_component.h">
-      <Filter>Header\Game\Components</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Engine\damageable_component.h">
       <Filter>Header\Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\soldier_sword_component.h">
+      <Filter>Header\Game\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\weapon_component.h">
+      <Filter>Header\Game\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1169,6 +1178,7 @@
     <None Include="Shader\functions_lighting.hlsli">
       <Filter>Shader%28HLSL%29\HF</Filter>
     </None>
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header">

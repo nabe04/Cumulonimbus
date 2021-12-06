@@ -184,8 +184,9 @@
     <ClInclude Include="Source\Game\enemy_soldier_component.h" />
     <ClInclude Include="Source\Game\player_component.h" />
     <ClInclude Include="Source\Game\player_sword_component.h" />
+    <ClInclude Include="Source\Game\soldier_sword_component.h" />
     <ClInclude Include="Source\Game\sound_resource.h" />
-    <ClInclude Include="weapon_component.h" />
+    <ClInclude Include="Source\Game\weapon_component.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="debug_primitive_shader.cpp" />
@@ -333,10 +334,13 @@
     <ClCompile Include="Source\Game\enemy_soldier_component.cpp" />
     <ClCompile Include="Source\Game\player_component.cpp" />
     <ClCompile Include="Source\Game\player_sword_component.cpp" />
+    <ClCompile Include="Source\Game\soldier_sword_component.cpp" />
     <ClCompile Include="Source\Game\sound_resource.cpp" />
+    <ClCompile Include="Source\Game\weapon_component.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
+    <None Include="ClassDiagram1.cd" />
     <None Include="Shader\bloom.hlsli" />
     <None Include="Shader\cook_torrance.hlsli" />
     <None Include="Shader\diffuse.hlsli" />

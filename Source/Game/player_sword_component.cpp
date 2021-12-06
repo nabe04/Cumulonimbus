@@ -6,7 +6,7 @@
 #include "player_component.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::PlayerSwordComponent)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::PlayerSwordComponent)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::WeaponComponent, cumulonimbus::component::PlayerSwordComponent)
 CEREAL_CLASS_VERSION(cumulonimbus::component::PlayerSwordComponent, 0)
 
 namespace cumulonimbus::component
@@ -15,7 +15,7 @@ namespace cumulonimbus::component
 	void PlayerSwordComponent::load(Archive&& archive, const uint32_t version)
 	{
 		//archive(
-		//	cereal::base_class<ComponentBase>(this)
+		//	cereal::base_class<WeaponComponent>(this)
 		//);
 
 	}
@@ -24,17 +24,17 @@ namespace cumulonimbus::component
 	void PlayerSwordComponent::save(Archive&& archive, const uint32_t version) const
 	{
 		//archive(
-		//	cereal::base_class<ComponentBase>(this)
+		//	cereal::base_class<WeaponComponent>(this)
 		//);
 	}
 
 	PlayerSwordComponent::PlayerSwordComponent(ecs::Registry* registry, mapping::rename_type::Entity ent)
-		:ComponentBase{ registry,ent }
+		:WeaponComponent{ registry,ent }
 	{
 	}
 
 	PlayerSwordComponent::PlayerSwordComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const PlayerSwordComponent& copy_comp)
-		: ComponentBase{ registry,ent }
+		: WeaponComponent{ registry,ent }
 	{
 		*this = copy_comp;
 		SetRegistry(registry);
@@ -42,14 +42,11 @@ namespace cumulonimbus::component
 	}
 
 	PlayerSwordComponent::PlayerSwordComponent(mapping::component_tag::ComponentTag tag)
-		:ComponentBase{ tag }
+		:WeaponComponent{ tag }
 	{
 
 	}
 
-	void PlayerSwordComponent::GameUpdate(float dt)
-	{
-	}
 
 	void PlayerSwordComponent::Start()
 	{
@@ -59,6 +56,11 @@ namespace cumulonimbus::component
 			capsule_collision->RegisterEventEnter(GetEntity(), [ent = GetEntity(), registry = GetRegistry()](const collision::HitResult& hit_result){registry->GetComponent<PlayerSwordComponent>(ent).OnHit(hit_result); });
 		}
 	}
+
+	void PlayerSwordComponent::GameUpdate(float dt)
+	{
+	}
+
 
 	void PlayerSwordComponent::RenderImGui()
 	{
@@ -84,7 +86,7 @@ namespace cumulonimbus::component
 		HierarchyComponent& hierarchy_comp = GetRegistry()->GetComponent<HierarchyComponent>(GetEntity());
 
 		// 親のエンティティ取得
-		const mapping::rename_type::Entity parent_ent = hierarchy_comp.GetParentEntity();
+		const mapping::rename_type::Entity& parent_ent = hierarchy_comp.GetParentEntity();
 		if (hit_result.entity == parent_ent)
 			return;
 		if(auto* player_comp = GetRegistry()->TryGetComponent<PlayerComponent>(parent_ent);
@@ -96,7 +98,7 @@ namespace cumulonimbus::component
 		if(auto* damageable_comp = hit_result.registry->TryGetComponent<DamageableComponent>(hit_result.entity);
 		   damageable_comp)
 		{
-			damageable_comp->OnDamaged(hit_result.entity, damage_data);
+			damageable_comp->OnDamaged(hit_result.entity, damage_data, hit_result);
 		}
 	}
 

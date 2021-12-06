@@ -1,5 +1,5 @@
 #pragma once
-#include "component_base.h"
+#include "weapon_component.h"
 #include "event.h"
 
 namespace cumulonimbus
@@ -12,13 +12,13 @@ namespace cumulonimbus
 
 namespace cumulonimbus::component
 {
-	class PlayerSwordComponent final : public ComponentBase
+	class PlayerSwordComponent final : public WeaponComponent
 	{
 	public:
 		explicit PlayerSwordComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
 		explicit PlayerSwordComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const PlayerSwordComponent& copy_comp); // for prefab
 		explicit PlayerSwordComponent(mapping::component_tag::ComponentTag tag);
-		explicit PlayerSwordComponent() = default; // for cereal
+		explicit PlayerSwordComponent()  = default; // for cereal
 		~PlayerSwordComponent() override = default;
 
 		void Start() override;
@@ -38,6 +38,6 @@ namespace cumulonimbus::component
 	private:
 		system::Event<void, u_int> damage_event{};
 
-		void OnHit(const collision::HitResult& hit_result);
+		void OnHit(const collision::HitResult& hit_result) override;
 	};
 } // cumulonimbus::component

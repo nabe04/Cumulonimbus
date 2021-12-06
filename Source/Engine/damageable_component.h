@@ -4,6 +4,11 @@
 #include "event.h"
 #include "component_base.h"
 
+namespace cumulonimbus::collision
+{
+	struct HitResult;
+} // cumulonimbus::collision
+
 namespace cumulonimbus::component
 {
 	struct DamageData
@@ -21,10 +26,10 @@ namespace cumulonimbus::component
 
 		void Load(ecs::Registry* registry) override;
 
-		void RegistryDamageEvent(const mapping::rename_type::UUID& id, const std::function<void(const DamageData&)>& func);
-		void OnDamaged(const mapping::rename_type::UUID& id, const DamageData& damage_data);
+		void RegistryDamageEvent(const mapping::rename_type::UUID& id, const std::function<void(const DamageData&, const collision::HitResult&)>& func);
+		void OnDamaged(const mapping::rename_type::UUID& id, const DamageData& damage_data, const collision::HitResult& hit_result);
 	
 	private:
-		system::Event<void, const DamageData&> damage_event{};
+		system::Event<void, const DamageData&, const collision::HitResult&> damage_event{};
 	};
 } // cumulonimbus::component

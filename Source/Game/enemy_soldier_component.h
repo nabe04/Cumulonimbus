@@ -30,16 +30,16 @@ namespace cumulonimbus::component
 		 */
 		enum class AnimationData
 		{
-			Walk,
 			Run,
-			Attack_03,
-			Attack_01,
-			Attack_02,
-			Death,
-			Death_Loop,
-			Damage,
-			Attack_All,
 			Idle,
+			Damage,
+			Die,
+			Die_Loop,
+			Walk,
+			Equip,
+			Unarm,
+			Attack_02,
+			Attack_01,
 
 			End
 		};
@@ -47,6 +47,7 @@ namespace cumulonimbus::component
 	public:
 		explicit EnemySoldierComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
 		explicit EnemySoldierComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const EnemySoldierComponent& copy_comp); // for prefab
+		explicit EnemySoldierComponent(mapping::component_tag::ComponentTag tag);
 		explicit EnemySoldierComponent()  = default; // for cereal
 		~EnemySoldierComponent() override = default;
 
@@ -99,7 +100,7 @@ namespace cumulonimbus::component
 
 		void OnAttack(const collision::HitResult& hit_result) override;
 		void OnDamaged(const collision::HitResult& hit_result) override;
-		void OnDamaged(const DamageData& damage_data) override;
+		void OnDamaged(const DamageData& damage_data, const collision::HitResult& hit_result) override;
 
 		//-- StateMachineÉNÉâÉXÇ≈ä«óùÇ∑ÇÈìGÇÃèÛë‘ä÷êî --//
 		void Idle(float dt);
