@@ -171,6 +171,8 @@ namespace cumulonimbus::component
 		std::map<std::string, u_int> adjust_keyframe_map{};
 		// アニメーション中断フレーム(先行入力などで使用)
 		std::map<AnimationData, u_int> animation_break_frame{};
+		// ヒットリザルト
+		collision::HitResult hit_result{};
 
 		// アニメーション遷移時間
 		float anim_switch_time{ 0.1f };
@@ -289,7 +291,6 @@ namespace cumulonimbus::component
 			current_damage_amount = amount;
 		}
 
-
 		/**
 		 * @brief : 次のアニメーションがPlayerState::Attacking_Normal_Long_Press
 		 *			に遷移して良いかの判定関数。
@@ -323,12 +324,17 @@ namespace cumulonimbus::component
 		/**
 		 * @brief : ダメージ処理
 		 */
-		void OnDamaged(const component::DamageData& damage_data);
+		void OnDamaged(const DamageData& damage_data);
 
 		/**
 		 * @brief : 他のコリジョンとのヒット時処理
 		 */
 		void OnHit(const DamageData& damage_data, const collision::HitResult& hit_result);
+
+		/**
+		 * @brief : ジャスト回避判定のヒット時処理
+		 */
+		void OnHitAvoidRange(const collision::HitResult& hit_result);
 
 		/**
 		 * @brief : アニメーション遷移時間の取得 & 遷移時間のリセット

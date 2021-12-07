@@ -70,6 +70,8 @@ namespace cumulonimbus::component
 
 	void RigidBodyComponent::PreGameUpdate(float dt)
 	{
+		auto name = GetRegistry()->GetName(GetEntity());
+
 		if (is_gravity)
 		{
 			current_gravity += gravity;

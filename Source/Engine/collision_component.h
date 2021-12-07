@@ -38,6 +38,8 @@ namespace cumulonimbus::collision
 		Sword,
 		Enemy,
 		Camera,
+		Player_Weapon,
+		Enemy_Weapon,
 
 		End
 	};

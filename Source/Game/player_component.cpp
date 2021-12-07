@@ -1,6 +1,5 @@
 #include "player_component.h"
 
-#include <d3d11.h>
 #include <DirectXMath.h>
 #include <SimpleMath.h>
 
@@ -11,16 +10,16 @@
 #include "locator.h"
 #include "model_loader.h"
 // components
+#include "hierarchy_component.h"
 #include "camera_component.h"
-#include "collision_name_mapping.h"
 #include "model_component.h"
 #include "raycast_component.h"
 #include "rigid_body_component.h"
 #include "scene.h"
 #include "scene_manager.h"
 #include "transform_component.h"
-#include "capsule_collison_component.h"
 #include "damageable_component.h"
+#include "sphere_collision_component.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::PlayerComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::Actor3DComponent, cumulonimbus::component::PlayerComponent)
@@ -188,8 +187,22 @@ namespace cumulonimbus::component
 	{
 		// 初期stateの設定(PlayerState::Idle)
 		player_state.SetState(PlayerState::Idle);
+
+		const mapping::rename_type::Entity entity = GetEntity();
+		ecs::Registry* registry = GetRegistry();
 		// ヒット時イベントの登録
-		GetRegistry()->GetOrEmplaceComponent<DamageableComponent>(GetEntity()).RegistryDamageEvent(GetEntity(), [ent = GetEntity(), registry = GetRegistry()](const DamageData& damage_data, const collision::HitResult& hit_result) {registry->GetComponent<PlayerComponent>(ent).OnHit(damage_data, hit_result); });
+		if (auto* damageable_comp = GetRegistry()->TryGetComponent<DamageableComponent>(GetEntity());
+			damageable_comp)
+		{
+			damageable_comp->RegistryDamageEvent(GetEntity(), [=](const DamageData& damage_data, const collision::HitResult& hit_result) { registry->GetComponent<PlayerComponent>(entity).OnHit(damage_data, hit_result); });
+		}
+		// ジャスト回避イベントの登録
+		if (auto* sphere_collision_comp = GetRegistry()->TryGetComponent<SphereCollisionComponent>(GetEntity());
+			sphere_collision_comp)
+		{
+			sphere_collision_comp->RegisterEventEnter(GetEntity(), [=](const collision::HitResult& hit_result) {registry->GetComponent<PlayerComponent>(entity).OnHitAvoidRange(hit_result); });
+		}
+		//GetRegistry()->GetOrEmplaceComponent<DamageableComponent>(GetEntity()).RegistryDamageEvent(GetEntity(), [=](const DamageData& damage_data, const collision::HitResult& hit_result) { registry->GetComponent<PlayerComponent>(entity).OnHit(damage_data, hit_result); });
 	}
 
 	void PlayerComponent::PreGameUpdate(float dt)
@@ -221,8 +234,11 @@ namespace cumulonimbus::component
 			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Walk Speed		"	, &walk_speed		, 0.5f	, 0.1f, FLT_MAX);
 			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Dash Speed		"	, &dash_speed		, 0.5f	, 0.1f, FLT_MAX);
 			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Avoid Dash Speed"	, &avoid_dash_speed , 0.5f	, 0.1f, FLT_MAX);
+			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Counter Speed	"	, &attack_04_speed	, 0.5f	, 0.1f, FLT_MAX);
 			ImGui::Separator();
 			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Attack_04_Jump_Strength", &attack_04_jump_strength, 0.5f, 0.1f, FLT_MAX);
+			ImGui::Separator();
+			ImGui::Text("Is Avoid %d", is_avoid);
 		}
 	}
 
@@ -262,8 +278,8 @@ namespace cumulonimbus::component
 		}
 
 		{// 壁(wall)用rayの設定
-			const DirectX::SimpleMath::Vector3 ray_start	= transform_comp.GetPosition() + ray_cast_comp->GetRayOffset(mapping::collision_name::ray::ForWall());
-			const DirectX::SimpleMath::Vector3 ray_end = ray_start + DirectX::SimpleMath::Vector3{ transform_comp.GetModelFront().x * 70,0,transform_comp.GetModelFront().z * 70 };
+			const DirectX::SimpleMath::Vector3 ray_start = transform_comp.GetPosition() + ray_cast_comp->GetRayOffset(mapping::collision_name::ray::ForWall());
+			const DirectX::SimpleMath::Vector3 ray_end	 = ray_start + DirectX::SimpleMath::Vector3{ transform_comp.GetModelFront().x * 70,0,transform_comp.GetModelFront().z * 70 };
 			DirectX::SimpleMath::Vector3 ray_vec{ ray_end - ray_start };
 			ray_vec.Normalize();
 			ray_cast_comp->SetRayStartPos(mapping::collision_name::ray::ForWall(), ray_start);
@@ -278,9 +294,13 @@ namespace cumulonimbus::component
 		   transform_comp.GetPosition().y < 0)
 		{
 			auto& rigid_body_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
-			rigid_body_comp.SetCurrentGravity(0);
 			transform_comp.SetPosition_Y(.0f);
 			is_jumping = false;
+
+			if(player_state.GetState() != PlayerState::Attacking_Normal_04)
+			{
+				rigid_body_comp.SetCurrentGravity(0);
+			}
 		}
 	}
 
@@ -429,14 +449,37 @@ namespace cumulonimbus::component
 
 	void PlayerComponent::OnHit(const DamageData& damage_data, const collision::HitResult& hit_result)
 	{
-		if(player_state.GetState() == PlayerState::Avoid_Dash_Begin)
-		{
-			is_avoid = true;
-		}
-		else
-		{
-			//player_state.SetState(PlayerState::Damage_Small);
-		}
+		//is_avoid = false;
+
+
+		//if(player_state.GetState() == PlayerState::Avoid_Dash_Begin)
+		//{
+		//	is_avoid = true;
+		//	this->hit_result = hit_result;
+		//}
+		//else
+		//{
+		//	//player_state.SetState(PlayerState::Damage_Small);
+		//}
+	}
+
+	void PlayerComponent::OnHitAvoidRange(const collision::HitResult& hit_result)
+	{
+		if (player_state.GetState() != PlayerState::Avoid_Dash_Begin)
+			return;
+
+		if (hit_result.collision_tag != collision::CollisionTag::Enemy_Weapon)
+			return;
+
+		mapping::rename_type::Entity parent_ent{};
+		parent_ent = hit_result.registry->GetComponent<HierarchyComponent>(hit_result.entity).GetParentEntity();
+		if (parent_ent.empty())
+			return;
+
+		this->hit_result = hit_result;
+		this->hit_result.entity = parent_ent;
+
+		is_avoid = true;
 	}
 
 	float PlayerComponent::GetAndResetAnimSwitchTime(const float reset_time)
@@ -887,11 +930,14 @@ namespace cumulonimbus::component
 		if (model_comp.IsPlayAnimation())
 			return;
 
+		Rotate(hit_result.registry, hit_result.entity);
+
 		// 状態遷移(PlayerState::Attacking_Normal_04)
 		player_state.SetState(PlayerState::Attacking_Normal_04);
 		auto& rigid_body_component = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
 		// ジャンプ処理
 		rigid_body_component.Jump(attack_04_jump_strength);
+		rigid_body_component.GravityStop(false);
 	}
 
 	void PlayerComponent::AttackingNormal04(float dt)
@@ -1367,7 +1413,9 @@ namespace cumulonimbus::component
 	void PlayerComponent::AvoidDashBegin(float dt)
 	{
 		if (player_state.GetInitialize())
-		{// アニメーションセット(AnimationData::Avoid_Dash_Begin)
+		{
+			InitializeAnimationVariable();
+			// アニメーションセット(AnimationData::Avoid_Dash_Begin)
 			GetRegistry()->GetComponent<ModelComponent>(GetEntity()).SwitchAnimation(GetAnimDataIndex(AnimationData::Avoid_Dash_Begin), false);
 		}
 
@@ -1377,21 +1425,37 @@ namespace cumulonimbus::component
 			//AdjustVelocity(dt, { avoid_dash_speed,0.0f,avoid_dash_speed });
 		}
 
+		using namespace locator;
+
+		if (is_avoid)
+		{
+			if (Locator::GetInput()->GamePad().GetState(GamePadButton::X) == ButtonState::Press)
+			{
+				player_state.SetState(PlayerState::Attack_Normal_04_Begin);
+				//is_avoid = false;
+				return;
+			}
+		}
+
+		//if (Locator::GetInput()->GamePad().GetState(GamePadButton::X) == ButtonState::Press)
+		//{
+		//	player_state.SetState(PlayerState::Attack_Normal_04_Begin);
+		//	//is_avoid = false;
+		//	return;
+		//}
+
 		{// アニメーション遷移
 			// アニメーション再生中なら処理を中断
 			if (GetRegistry()->GetComponent<ModelComponent>(GetEntity()).IsPlayAnimation())
 				return;
 
-			using namespace locator;
+			// Todo : 調整後戻す
+			//is_avoid = false;
+
 			// ゲームパッド入力値取得(スティック、トリガー)
 			const DirectX::XMFLOAT2 stick_left = Locator::GetInput()->GamePad().LeftThumbStick(0);
 			const float				trigger_right = Locator::GetInput()->GamePad().RightTrigger(0);
 
-			if(is_avoid)
-			{
-				player_state.SetState(PlayerState::Attack_Normal_04_Begin);
-				return;
-			}
 
 			if (trigger_right < threshold)
 			{//	状態遷移(PlayerState::Avoid_Dash_End)
@@ -1417,7 +1481,9 @@ namespace cumulonimbus::component
 	void PlayerComponent::AvoidDashEnd(float dt)
 	{
 		if (player_state.GetInitialize())
-		{// アニメーションセット(AnimationData::Avoid_Dash_End)
+		{
+			InitializeAnimationVariable();
+			// アニメーションセット(AnimationData::Avoid_Dash_End)
 			GetRegistry()->GetComponent<ModelComponent>(GetEntity()).SwitchAnimation(GetAnimDataIndex(AnimationData::Avoid_Dash_End), false);
 		}
 

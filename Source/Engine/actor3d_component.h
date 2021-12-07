@@ -40,6 +40,14 @@ namespace cumulonimbus::component
 				cereal::base_class<ComponentBase>(this)
 			);
 		}
+
+	protected:
+		/**
+		 * @brief : 指定のエンティティの方向への回転
+		 * @param registry : エンティティの持つレジストリ
+		 * @param ent : 回転先のエンティティ
+		 */
+		void Rotate(ecs::Registry* registry, const mapping::rename_type::Entity& ent);
 	};
 } // cumulonimbus::component
 
