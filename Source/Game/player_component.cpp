@@ -465,12 +465,15 @@ namespace cumulonimbus::component
 
 	void PlayerComponent::OnHitAvoidRange(const collision::HitResult& hit_result)
 	{
+		// 回避状態以外の状態の場合処理を抜ける
 		if (player_state.GetState() != PlayerState::Avoid_Dash_Begin)
 			return;
 
+		// ヒット先のタグがEnemy_Weapon以外の場合処理を抜ける
 		if (hit_result.collision_tag != collision::CollisionTag::Enemy_Weapon)
 			return;
 
+		// ヒット先のWeaponが持つ親エンティティの取得
 		mapping::rename_type::Entity parent_ent{};
 		parent_ent = hit_result.registry->GetComponent<HierarchyComponent>(hit_result.entity).GetParentEntity();
 		if (parent_ent.empty())
@@ -1432,7 +1435,7 @@ namespace cumulonimbus::component
 			if (Locator::GetInput()->GamePad().GetState(GamePadButton::X) == ButtonState::Press)
 			{
 				player_state.SetState(PlayerState::Attack_Normal_04_Begin);
-				//is_avoid = false;
+				is_avoid = false;
 				return;
 			}
 		}
@@ -1449,8 +1452,7 @@ namespace cumulonimbus::component
 			if (GetRegistry()->GetComponent<ModelComponent>(GetEntity()).IsPlayAnimation())
 				return;
 
-			// Todo : 調整後戻す
-			//is_avoid = false;
+			is_avoid = false;
 
 			// ゲームパッド入力値取得(スティック、トリガー)
 			const DirectX::XMFLOAT2 stick_left = Locator::GetInput()->GamePad().LeftThumbStick(0);

@@ -151,11 +151,11 @@ namespace cumulonimbus::component
 		soldier_state.AddState(SoldierState::Attack_02	, [ent, registry](const float dt) {registry->GetComponent<EnemySoldierComponent>(ent).Attack02(dt); });
 		soldier_state.AddState(SoldierState::Attack_03	, [ent, registry](const float dt) {registry->GetComponent<EnemySoldierComponent>(ent).Attack03(dt); });
 
-		//// 初期stateの設定(SoldierState::Wave_Start)
-		//soldier_state.SetState(SoldierState::Wave_Start);
+		// 初期stateの設定(SoldierState::Wave_Start)
+		soldier_state.SetState(SoldierState::Wave_Start);
 
-		// Todo : 敵の回避テスト
-		soldier_state.SetState(SoldierState::Attack_01);
+		//// Todo : 敵の回避テスト
+		//soldier_state.SetState(SoldierState::Attack_01);
 
 		// transition_timerの設定
 		RegisterTransitionTimer(transition_idle_to_walk, 3.f, 7.f);
@@ -182,6 +182,8 @@ namespace cumulonimbus::component
 
 	void EnemySoldierComponent::OnAttack(const collision::HitResult& hit_result)
 	{
+		auto name = hit_result.registry->GetName(hit_result.entity);
+
 		// ヒット先のタグがPlayer以外なら処理を飛ばす
 		if (hit_result.collision_tag != collision::CollisionTag::Player)
 			return;
@@ -263,9 +265,6 @@ namespace cumulonimbus::component
 			model_loader.GetModel(model_comp.GetModelID()).GetModelData().SetAnimationKeyFrame(GetAnimDataIndex(AnimationData::Walk), 1);
 			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Walk));
 		}
-
-		// テスト終了後消す
-		return;
 
 		//  Walkアニメーションのキーフレームをデフォルのキーフレームに戻す
 		model_loader.GetModel(model_comp.GetModelID()).GetModelData().ResetAnimationKeyFrame(GetAnimDataIndex(AnimationData::Walk));
@@ -425,11 +424,11 @@ namespace cumulonimbus::component
 		if (model_comp.IsPlayAnimation())
 			return;
 
-		// Todo : 敵の回避テスト
-		soldier_state.SetState(SoldierState::Attack_01);
+		//// Todo : 敵の回避テスト
+		//soldier_state.SetState(SoldierState::Attack_01);
 
-		//// 状態遷移(SoldierState::Tracking)
-		//soldier_state.SetState(SoldierState::Tracking);
+		// 状態遷移(SoldierState::Tracking)
+		soldier_state.SetState(SoldierState::Tracking);
 	}
 
 	void EnemySoldierComponent::Attack02(float dt)

@@ -4,16 +4,15 @@
 #include "asset_manager.h"
 #include "cum_imgui_helper.h"
 #include "ecs.h"
-#include "locator.h"
 #include "fbx_model_resource.h"
+#include "locator.h"
 #include "model_data.h"
 #include "model_loader.h"
 #include "rename_type_mapping.h"
-#include "system.h"
-#include "scene_manager.h"
 #include "scene_loader.h"
+#include "scene_manager.h"
+#include "system.h"
 // Components
-#include "transform_component.h"
 #include "capsule_collison_component.h"
 #include "model_component.h"
 #include "model_component.h"
@@ -21,6 +20,7 @@
 #include "raycast_component.h"
 #include "rigid_body_component.h"
 #include "sphere_collision_component.h"
+#include "transform_component.h"
 
 namespace cumulonimbus::collision
 {
@@ -495,35 +495,37 @@ namespace cumulonimbus::collision
 
 	void CollisionManager::AddHitSphere(
 		const mapping::rename_type::UUID& sphere_id,
+		const mapping::rename_type::UUID& hit_id,
 		const mapping::rename_type::Entity& self_ent,
 		const mapping::rename_type::Entity& hit_ent)
 	{
 		if (hit_ent_sphere.contains(sphere_id))
 		{
-			hit_ent_sphere.at(sphere_id).RegisterHitEntity(hit_ent);
+			hit_ent_sphere.at(sphere_id).RegisterHitEntity(hit_id);
 			return;
 		}
 
 		HitData hit_data{};
 		hit_data.self_entity = self_ent;
-		hit_data.RegisterHitEntity(hit_ent);
+		hit_data.RegisterHitEntity(hit_id);
 		hit_ent_sphere.emplace(sphere_id, hit_data);
 	}
 
 	void CollisionManager::AddHitCapsule(
 		const mapping::rename_type::UUID& capsule_id,
+		const mapping::rename_type::UUID& hit_id,
 		const mapping::rename_type::Entity& self_ent,
 		const mapping::rename_type::Entity& hit_ent)
 	{
 		if (hit_ent_capsule.contains(capsule_id))
 		{
-			hit_ent_capsule.at(capsule_id).RegisterHitEntity(hit_ent);
+			hit_ent_capsule.at(capsule_id).RegisterHitEntity(hit_id);
 			return;
 		}
 
 		HitData hit_data{};
 		hit_data.self_entity = self_ent;
-		hit_data.RegisterHitEntity(hit_ent);
+		hit_data.RegisterHitEntity(hit_id);
 		hit_ent_capsule.emplace(capsule_id, hit_data);
 	}
 
@@ -551,14 +553,14 @@ namespace cumulonimbus::collision
 		result_1_.collision_tag = sphere_2.collision_tag;
 		result_1_.collision_id	= sphere_2.id;
 		result_1_.entity		= ent_2;
-		sphere_1.RegisterHitEntity(ent_2, result_1_);
+		sphere_1.RegisterHitEntity(sphere_2.id, result_1_);
 
 		HitResult result_2_{};
 		result_2_.registry		= registry_1;
 		result_2_.collision_tag = sphere_1.collision_tag;
 		result_2_.collision_id	= sphere_1.id;
 		result_2_.entity		= ent_1;
-		sphere_2.RegisterHitEntity(ent_1, result_2_);
+		sphere_2.RegisterHitEntity(sphere_1.id, result_2_);
 	}
 
 	void CollisionManager::UpdateHitResult(
@@ -585,14 +587,14 @@ namespace cumulonimbus::collision
 		result_1_.collision_tag = capsule_2.collision_tag;
 		result_1_.collision_id	= capsule_2.id;
 		result_1_.entity		= ent_2;
-		capsule_1.RegisterHitEntity(ent_2, result_1_);
+		capsule_1.RegisterHitEntity(capsule_2.id, result_1_);
 
 		HitResult result_2_{};
 		result_2_.registry		= registry_1;
 		result_2_.collision_tag = capsule_1.collision_tag;
 		result_2_.collision_id	= capsule_1.id;
 		result_2_.entity		= ent_1;
-		capsule_2.RegisterHitEntity(ent_1, result_2_);
+		capsule_2.RegisterHitEntity(capsule_1.id, result_2_);
 	}
 
 	void CollisionManager::UpdateHitResult(
@@ -619,14 +621,14 @@ namespace cumulonimbus::collision
 		result_1_.collision_tag = capsule.collision_tag;
 		result_1_.collision_id	= capsule.id;
 		result_1_.entity		= c_ent;
-		sphere.RegisterHitEntity(c_ent, result_1_);
+		sphere.RegisterHitEntity(capsule.id, result_1_);
 
 		HitResult result_2_{};
 		result_2_.registry		= registry_1;
 		result_2_.collision_tag = sphere.collision_tag;
 		result_2_.collision_id	= sphere.id;
 		result_2_.entity		= s_ent;
-		capsule.RegisterHitEntity(s_ent, result_2_);
+		capsule.RegisterHitEntity(sphere.id, result_2_);
 	}
 
 	void CollisionManager::Extrude(
@@ -1043,8 +1045,8 @@ namespace cumulonimbus::collision
 				if (len <= s1.radius + s2.radius)
 				{
 					hit = true;
-					AddHitSphere(s1.id, sphere_1.GetEntity(), sphere_2.GetEntity());
-					AddHitSphere(s2.id, sphere_2.GetEntity(), sphere_1.GetEntity());
+					AddHitSphere(s1.id, s2.id, sphere_1.GetEntity(), sphere_2.GetEntity());
+					AddHitSphere(s2.id, s1.id, sphere_2.GetEntity(), sphere_1.GetEntity());
 					// ヒット情報の更新
 					UpdateHitResult(sphere_1.GetRegistry(),sphere_2.GetRegistry(),
 								 s1, s2,
@@ -1061,12 +1063,12 @@ namespace cumulonimbus::collision
 				}
 				else
 				{
-					if (auto* hit_result_1 = s1.TryGetHitResult(sphere_2.GetEntity());
+					if (auto* hit_result_1 = s1.TryGetHitResult(s2.id);
 						hit_result_1)
 					{
 						hit_result_1->is_hit = false;
 					}
-					if (auto* hit_result_2 = s2.TryGetHitResult(sphere_1.GetEntity());
+					if (auto* hit_result_2 = s2.TryGetHitResult(s1.id);
 						hit_result_2)
 					{
 						hit_result_2->is_hit = false;
@@ -1098,8 +1100,8 @@ namespace cumulonimbus::collision
 					len <= s1.radius + s2.radius)
 				{
 					hit = true;
-					AddHitSphere(s1.id, sphere_1.GetEntity(), sphere_2.GetEntity());
-					AddHitSphere(s2.id, sphere_2.GetEntity(), sphere_1.GetEntity());
+					AddHitSphere(s1.id, s2.id, sphere_1.GetEntity(), sphere_2.GetEntity());
+					AddHitSphere(s2.id, s1.id, sphere_2.GetEntity(), sphere_1.GetEntity());
 					// ヒット情報の更新
 					UpdateHitResult(sphere_1.GetRegistry(),sphere_2.GetRegistry(),
 								 s1, s2,
@@ -1117,12 +1119,12 @@ namespace cumulonimbus::collision
 				else
 				{
 
-					if (auto* hit_result_1 = s1.TryGetHitResult(sphere_2.GetEntity());
+					if (auto* hit_result_1 = s1.TryGetHitResult(s2.id);
 						hit_result_1)
 					{
 						hit_result_1->is_hit = false;
 					}
-					if (auto* hit_result_2 = s2.TryGetHitResult(sphere_1.GetEntity());
+					if (auto* hit_result_2 = s2.TryGetHitResult(s1.id);
 						hit_result_2)
 					{
 						hit_result_2->is_hit = false;
@@ -1158,8 +1160,8 @@ namespace cumulonimbus::collision
 
 				if(len <c1.radius + c2.radius)
 				{
-					AddHitCapsule(c1.id, capsule_1.GetEntity(), capsule_2.GetEntity());
-					AddHitCapsule(c2.id, capsule_2.GetEntity(), capsule_1.GetEntity());
+					AddHitCapsule(c1.id, c2.id, capsule_1.GetEntity(), capsule_2.GetEntity());
+					AddHitCapsule(c2.id, c1.id, capsule_2.GetEntity(), capsule_1.GetEntity());
 					// ヒット情報の更新
 					UpdateHitResult(capsule_1.GetRegistry(),capsule_2.GetRegistry(),
 								 c1, c2,
@@ -1178,12 +1180,12 @@ namespace cumulonimbus::collision
 				}
 				else
 				{
-					if (auto* hit_result_1 = c1.TryGetHitResult(capsule_2.GetEntity());
+					if (auto* hit_result_1 = c1.TryGetHitResult(c2.id);
 						hit_result_1)
 					{
 						hit_result_1->is_hit = false;
 					}
-					if (auto* hit_result_2 = c2.TryGetHitResult(capsule_1.GetEntity());
+					if (auto* hit_result_2 = c2.TryGetHitResult(c1.id);
 						hit_result_2)
 					{
 						hit_result_2->is_hit = false;
@@ -1219,8 +1221,8 @@ namespace cumulonimbus::collision
 
 				if (len < c1.radius + c2.radius)
 				{
-					AddHitCapsule(c1.id, capsule_1.GetEntity(), capsule_2.GetEntity());
-					AddHitCapsule(c2.id, capsule_2.GetEntity(), capsule_1.GetEntity());
+					AddHitCapsule(c1.id, c2.id, capsule_1.GetEntity(), capsule_2.GetEntity());
+					AddHitCapsule(c2.id, c1.id, capsule_2.GetEntity(), capsule_1.GetEntity());
 					// ヒット情報の更新
 					UpdateHitResult(capsule_1.GetRegistry(), capsule_2.GetRegistry(),
 								 c1, c2,
@@ -1239,12 +1241,12 @@ namespace cumulonimbus::collision
 				}
 				else
 				{
-					if (auto* hit_result_1 = c1.TryGetHitResult(capsule_2.GetEntity());
+					if (auto* hit_result_1 = c1.TryGetHitResult(c2.id);
 						hit_result_1)
 					{
 						hit_result_1->is_hit = false;
 					}
-					if (auto* hit_result_2 = c2.TryGetHitResult(capsule_1.GetEntity());
+					if (auto* hit_result_2 = c2.TryGetHitResult(c1.id);
 						hit_result_2)
 					{
 						hit_result_2->is_hit = false;
@@ -1276,8 +1278,8 @@ namespace cumulonimbus::collision
 				if(const float radius = s.radius + c.radius;
 				   dist <= radius * radius)
 				{
-					AddHitSphere(s.id, sphere.GetEntity(), capsule.GetEntity());
-					AddHitCapsule(c.id, capsule.GetEntity(), sphere.GetEntity());
+					AddHitSphere(s.id, c.id, sphere.GetEntity(), capsule.GetEntity());
+					AddHitCapsule(c.id, s.id, capsule.GetEntity(), sphere.GetEntity());
 					// ヒット情報の更新
 					UpdateHitResult(sphere.GetRegistry(),capsule.GetRegistry(),
 								 s, c,
@@ -1297,12 +1299,12 @@ namespace cumulonimbus::collision
 				}
 				else
 				{
-					if (auto* hit_result_1 = s.TryGetHitResult(capsule.GetEntity());
+					if (auto* hit_result_1 = s.TryGetHitResult(c.id);
 						hit_result_1)
 					{
 						hit_result_1->is_hit = false;
 					}
-					if (auto* hit_result_2 = c.TryGetHitResult(sphere.GetEntity());
+					if (auto* hit_result_2 = c.TryGetHitResult(s.id);
 						hit_result_2)
 					{
 						hit_result_2->is_hit = false;
@@ -1335,8 +1337,8 @@ namespace cumulonimbus::collision
 				if (const float radius = s.radius + c.radius;
 					dist <= radius * radius)
 				{
-					AddHitSphere(s.id, sphere.GetEntity(), capsule.GetEntity());
-					AddHitCapsule(c.id, capsule.GetEntity(), sphere.GetEntity());
+					AddHitSphere(s.id, c.id, sphere.GetEntity(), capsule.GetEntity());
+					AddHitCapsule(c.id, s.id, capsule.GetEntity(), sphere.GetEntity());
 					// ヒット情報の更新
 					UpdateHitResult(sphere.GetRegistry(),capsule.GetRegistry(),
 								 s, c,
@@ -1356,12 +1358,12 @@ namespace cumulonimbus::collision
 				}
 				else
 				{
-					if (auto* hit_result_1 = s.TryGetHitResult(capsule.GetEntity());
+					if (auto* hit_result_1 = s.TryGetHitResult(c.id);
 						hit_result_1)
 					{
 						hit_result_1->is_hit = false;
 					}
-					if (auto* hit_result_2 = c.TryGetHitResult(sphere.GetEntity());
+					if (auto* hit_result_2 = c.TryGetHitResult(s.id);
 						hit_result_2)
 					{
 						hit_result_2->is_hit = false;

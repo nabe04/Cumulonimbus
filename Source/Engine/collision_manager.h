@@ -177,11 +177,13 @@ namespace cumulonimbus::collision
 		 * @brief : 衝突した球情報の追加
 		 * @remark : 同じIDを追加しようとした場合上書きされる
 		 * @param sphere_id : 球ID
+		 * @param hit_id : 判定先のコリジョン登録用ID
 		 * @param self_ent : 判定元(自身)のエンティティ
 		 * @param hit_ent : 判定先のエンティティ
 		 */
 		void AddHitSphere(
 			const mapping::rename_type::UUID& sphere_id,
+			const mapping::rename_type::UUID& hit_id,
 			const mapping::rename_type::Entity& self_ent,
 			const mapping::rename_type::Entity& hit_ent);
 
@@ -189,11 +191,13 @@ namespace cumulonimbus::collision
 		 * @brief : 衝突したカプセル情報の追加
 		 * @remark : 同じIDを追加しようとした場合上書きされる
 		 * @param capsule_id : 球ID
+		 * @param hit_id : 判定先のコリジョン登録用ID
 		 * @param self_ent : 判定元(自身)のエンティティ
 		 * @param hit_ent : 判定先のエンティティ
 		 */
 		void AddHitCapsule(
 			const mapping::rename_type::UUID& capsule_id,
+			const mapping::rename_type::UUID& hit_id,
 			const mapping::rename_type::Entity& self_ent,
 			const mapping::rename_type::Entity& hit_ent);
 

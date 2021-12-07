@@ -239,14 +239,14 @@ namespace cumulonimbus::component
 						// ヒットイベントの更新
 						hit_result.hit_event = collision::HitEvent::OnCollisionStay;
 						// イベント処理の発行
-						on_collision_stay_event.Invoke(GetEntity(), hit_result);
+						on_collision_stay_event.Invoke(hit_ent, hit_result);
 					}
 					else
 					{// 他のCollisionに触れたとき
 						// ヒットイベントの更新
 						hit_result.hit_event = collision::HitEvent::OnCollisionEnter;
 						// イベント処理の発行
-						on_collision_enter_event.Invoke(GetEntity(), hit_result);
+						on_collision_enter_event.Invoke(hit_ent, hit_result);
 					}
 				}
 				else
@@ -256,15 +256,15 @@ namespace cumulonimbus::component
 						// ヒットイベントの更新
 						hit_result.hit_event = collision::HitEvent::OnCollisionExit;
 						// イベントの発行
-						on_collision_exit_event.Invoke(GetEntity(), hit_result);
-						delete_hit_entities.emplace_back(hit_result.entity);
+						on_collision_exit_event.Invoke(hit_ent, hit_result);
+						delete_hit_entities.emplace_back(hit_ent);
 					}
 					else
 					{// 他のどのCollisionにも触れていない間
 						// ヒットイベントの更新
 						hit_result.hit_event = collision::HitEvent::None;
 						// イベント処理の発行
-						on_collision_none.Invoke(GetEntity(), hit_result);
+						on_collision_none.Invoke(hit_ent, hit_result);
 					}
 				}
 				hit_result.is_old_hit = hit_result.is_hit;
@@ -377,19 +377,26 @@ namespace cumulonimbus::component
 
 				ImGui::PushID("Sphere Collider");
 				AttachSocket(sphere.bone_name);
-				ImGui::Checkbox("Is Visible", &sphere.is_visible);
+				IMGUI_LEFT_LABEL(ImGui::Checkbox, "Is Visible", &sphere.is_visible);
 				CollisionPresetCombo();
-				ImGui::DragFloat3("Position", &sphere.offset.x	, 0.01f	, FLT_MIN , FLT_MAX);
-				ImGui::DragFloat("Radius"	, &sphere.radius	, 0.1f	, 0.1f	  , FLT_MAX);
-				ImGui::ColorEdit4("Base Color", &sphere.base_color.x);
-				ImGui::ColorEdit4("Hit Color" , &sphere.hit_color.x);
-				// テスト(すぐ消す)
-				ImGui::Separator();
-				ImGui::Text("Hit Ent Name");
-				for (const auto& hit_result : sphere.hit_results)
-				{
-					ImGui::Text(GetRegistry()->GetName(hit_result.second.entity).c_str());
-				}
+				IMGUI_LEFT_LABEL(ImGui::DragFloat3, "Position", &sphere.offset.x, 0.01f, -FLT_MAX, FLT_MAX);
+				IMGUI_LEFT_LABEL(ImGui::DragFloat , "Radius"  , &sphere.radius  , 0.1f , 0.1f	 , FLT_MAX);
+				IMGUI_LEFT_LABEL(ImGui::ColorEdit4, "Base Color", &sphere.base_color.x);
+				IMGUI_LEFT_LABEL(ImGui::ColorEdit4, "Hit Color" , &sphere.hit_color.x);
+
+				//ImGui::Checkbox("Is Visible", &sphere.is_visible);
+				//CollisionPresetCombo();
+				//ImGui::DragFloat3("Position", &sphere.offset.x	, 0.01f	, FLT_MIN , FLT_MAX);
+				//ImGui::DragFloat("Radius"	, &sphere.radius	, 0.1f	, 0.1f	  , FLT_MAX);
+				//ImGui::ColorEdit4("Base Color", &sphere.base_color.x);
+				//ImGui::ColorEdit4("Hit Color" , &sphere.hit_color.x);
+				//// テスト(すぐ消す)
+				//ImGui::Separator();
+				//ImGui::Text("Hit Ent Name");
+				//for (const auto& hit_result : sphere.hit_results)
+				//{
+				//	ImGui::Text(GetRegistry()->GetName(hit_result.second.entity).c_str());
+				//}
 				ImGui::PopID();
 			}
 		}
