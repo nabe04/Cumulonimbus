@@ -511,6 +511,8 @@ namespace cumulonimbus::component
 				};
 
 				ImGui::PushID("Capsule Collider");
+				ImGui::Checkbox("Is Visible", &capsule.is_visible);
+				ImGui::Checkbox("Hidden In Game", &capsule.hidden_in_game);
 				AttachSocket(capsule.bone_name);
 				//ImGui::Text("Is Hit : %d", capsule.hit_result.is_hit);
 				//ImGui::Text("Fetch Bone Name : %s", capsule.bone_name.c_str());
@@ -520,7 +522,6 @@ namespace cumulonimbus::component
 				//ImGui::Text("Segment End.x   : %f", capsule.end.x);
 				//ImGui::Text("Segment End.y   : %f", capsule.end.y);
 				//ImGui::Text("Segment End.z   : %f", capsule.end.z);
-				ImGui::Checkbox("Is Visible", &capsule.is_visible);
 				CollisionPresetCombo();
 				CollisionTagCombo();
 				ImGui::DragFloat3("Offset"	, &capsule.offset.x	 , 0.1f, -1000 , 1000);

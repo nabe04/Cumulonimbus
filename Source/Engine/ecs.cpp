@@ -68,11 +68,18 @@ namespace cumulonimbus::ecs
 		return entities.at(id).first;
 	}
 
-	void Registry::AddDestroyEntity(const mapping::rename_type::Entity& entity, const bool is_destroy_sub_hierarchy)
+	void Registry::AddDestroyEntity(const mapping::rename_type::Entity& entity)
 	{
+		// 削除対象のエンティティ(entity)を追加
 		destroy_entities.emplace_back(entity);
 
-		if (!is_destroy_sub_hierarchy)
+		const component::HierarchyComponent* hierarchy_comp{};
+		if (hierarchy_comp = TryGetComponent<component::HierarchyComponent>(entity);
+			!hierarchy_comp)
+			return;
+
+		// 削除対象のエンティティに子階層のエンティティが存在しない場合処理を抜ける
+		if (hierarchy_comp->GetFirstChild().empty())
 			return;
 
 		const auto sub_hierarchies = GetComponent<component::HierarchyComponent>(entity).GetSubHierarchies();
@@ -84,7 +91,6 @@ namespace cumulonimbus::ecs
 			destroy_entities.emplace_back(sub_hierarchy);
 		}
 	}
-
 
 	void Registry::CreateEntity(ecs::Entity ent)
 	{

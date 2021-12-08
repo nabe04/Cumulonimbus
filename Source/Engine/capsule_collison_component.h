@@ -15,6 +15,7 @@ namespace cumulonimbus
 		struct Capsule
 		{
 			bool						 is_visible{ true }; // 表示するか
+			bool						 hidden_in_game{ true };
 			float						 length{ 2 };		 // カプセルの端点間の長さ
 			float						 radius{ 1 };		 // カプセルの半径
 			std::string					 bone_name{};		 // FBXモデルのボーンの位置名

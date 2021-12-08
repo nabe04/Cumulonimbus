@@ -98,8 +98,7 @@ namespace cumulonimbus::renderer
 			ecs::Registry& registry = *scene->GetRegistry();
 
 			// GBuffer‚Ö‚Ì•`‰æˆ—
-
-			Render3DToGBuffer(immediate_context, &registry, &camera, scene->GetLight());
+			Render3DToGBuffer(immediate_context, &registry, &camera, scene->GetLight(), false);
 		}
 		Render3DToGBuffer_End(immediate_context, &camera);
 
@@ -198,7 +197,7 @@ namespace cumulonimbus::renderer
 
 				// GBuffer‚Ö‚Ì•`‰æˆ—
 
-				Render3DToGBuffer(immediate_context, &registry, main_camera, scene->GetLight());
+				Render3DToGBuffer(immediate_context, &registry, main_camera, scene->GetLight(), true);
 			}
 			Render3DToGBuffer_End(immediate_context, main_camera);
 		}
@@ -245,7 +244,7 @@ namespace cumulonimbus::renderer
 
 		// GBuffer‚Ö‚Ì•`‰æˆ—
 		Render3DToGBuffer_Begin(immediate_context);
-		Render3DToGBuffer(immediate_context, registry, camera, light);
+		Render3DToGBuffer(immediate_context, registry, camera, light, false);
 		Render3DToGBuffer_End(immediate_context, camera);
 
 		//// “–‚½‚è”»’è‚Ì•`‰æ
@@ -291,7 +290,7 @@ namespace cumulonimbus::renderer
 			{
 				// GBuffer‚Ö‚Ì•`‰æˆ—
 				Render3DToGBuffer_Begin(immediate_context);
-				Render3DToGBuffer(immediate_context, registry, camera_comp.GetCamera(), light);
+				Render3DToGBuffer(immediate_context, registry, camera_comp.GetCamera(), light, true);
 				Render3DToGBuffer_End(immediate_context, camera_comp.GetCamera());
 
 				//// “–‚½‚è”»’è‚Ì•`‰æ
@@ -425,7 +424,8 @@ namespace cumulonimbus::renderer
 		ID3D11DeviceContext* immediate_context,
 		ecs::Registry* registry,
 		const camera::Camera* camera,
-		const Light* light)
+		const Light* light,
+		bool is_game)
 	{
 		auto& model = registry->GetArray<component::ModelComponent>().GetComponents();
 		for(auto& model_comp : registry->GetArray<component::ModelComponent>().GetComponents())
@@ -436,7 +436,7 @@ namespace cumulonimbus::renderer
 		}
 
 		camera->BindCBuffer();
-		RenderCollisions(immediate_context, registry);
+		RenderCollisions(immediate_context, registry, is_game);
 		camera->UnbindCBuffer();
 	}
 
@@ -656,24 +656,27 @@ namespace cumulonimbus::renderer
 
 	void RenderPath::RenderCollisions(
 		ID3D11DeviceContext* immediate_context,
-		ecs::Registry* registry)
+		ecs::Registry* registry,
+		const bool is_game)
 	{
 		for(const auto& sphere_collision_comp : registry->GetArray<component::SphereCollisionComponent>().GetComponents())
 		{// ‹…ƒ‚ƒfƒ‹‚Ì•`‰æ
 			const mapping::rename_type::Entity ent = sphere_collision_comp.GetEntity();
-			RenderSphereCollision(immediate_context, registry, ent);
+			RenderSphereCollision(immediate_context, registry, ent, is_game);
 		}
 
 		for(const auto& capsule_collision_comp : registry->GetArray<component::CapsuleCollisionComponent>().GetComponents())
 		{// ƒJƒvƒZƒ‹ƒ‚ƒfƒ‹‚Ì•`‰æ
 			const mapping::rename_type::Entity ent = capsule_collision_comp.GetEntity();
-			RenderCapsuleCollision(immediate_context, registry, ent);
+			RenderCapsuleCollision(immediate_context, registry, ent, is_game);
 		}
 	}
 
 	void RenderPath::RenderSphereCollision(
 		ID3D11DeviceContext* immediate_context,
-		ecs::Registry* registry, const mapping::rename_type::Entity& entity)
+		ecs::Registry* registry, 
+		const mapping::rename_type::Entity& entity,
+		const bool is_game)
 	{
 		const mapping::rename_type::UUID sphere_id = locator::Locator::GetSystem()->GetCollisionPrimitive().GetSphereId();
 		if (!locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>()->HasModel(sphere_id))
@@ -687,6 +690,12 @@ namespace cumulonimbus::renderer
 		     const auto& sphere : sphere_collision.GetSpheres() | std::views::values)
 		{
 			if (!sphere.is_visible)
+				continue;
+
+			if (sphere.collision_preset == collision::CollisionPreset::NoCollision)
+				continue;
+
+			if (is_game && sphere.hidden_in_game)
 				continue;
 
 			for (const auto& mesh : sphere_model.GetModelData().GetMeshes())
@@ -727,7 +736,8 @@ namespace cumulonimbus::renderer
 	void RenderPath::RenderCapsuleCollision(
 		ID3D11DeviceContext* immediate_context,
 		ecs::Registry* registry,
-		const mapping::rename_type::Entity& entity)
+		const mapping::rename_type::Entity& entity,
+		const bool is_game)
 	{
 		const mapping::rename_type::UUID capsule_id = locator::Locator::GetSystem()->GetCollisionPrimitive().GetCapsuleId();
 		if (!locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>()->HasModel(capsule_id))
@@ -741,6 +751,12 @@ namespace cumulonimbus::renderer
 		     const auto& capsule : capsule_collision.GetCapsules() | std::views::values)
 		{
 			if(!capsule.is_visible)
+				continue;
+
+			if (capsule.collision_preset == collision::CollisionPreset::NoCollision)
+				continue;
+
+			if(is_game && capsule.hidden_in_game)
 				continue;
 
 			for (const auto& mesh : capsule_model.GetModelData().GetMeshes())

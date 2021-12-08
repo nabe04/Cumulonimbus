@@ -1036,6 +1036,23 @@ namespace cumulonimbus::collision
 		{
 			for(auto& s2 : sphere_2.GetSpheres() | std::views::values)
 			{
+				// コリジョンプリセットが判定なし(CollisionPreset::NoCollision)の場合次の処理に移る
+				if (s1.collision_preset == CollisionPreset::NoCollision ||
+					s2.collision_preset == CollisionPreset::NoCollision)
+				{
+					if (auto* hit_result_1 = s1.TryGetHitResult(s2.id);
+						hit_result_1)
+					{
+						hit_result_1->is_hit = false;
+					}
+					if (auto* hit_result_2 = s2.TryGetHitResult(s1.id);
+						hit_result_2)
+					{
+						hit_result_2->is_hit = false;
+					}
+					continue;
+				}
+
 				const DirectX::SimpleMath::Vector3 s1_translation = s1.world_transform_matrix.Translation();
 				const DirectX::SimpleMath::Vector3 s2_translation = s2.world_transform_matrix.Translation();
 
@@ -1091,6 +1108,23 @@ namespace cumulonimbus::collision
 		{
 			for(auto& s2 : sphere_2.GetSpheres() | std::views::values)
 			{
+				// コリジョンプリセットが判定なし(CollisionPreset::NoCollision)の場合次の処理に移る
+				if (s1.collision_preset == CollisionPreset::NoCollision ||
+					s2.collision_preset == CollisionPreset::NoCollision)
+				{
+					if (auto* hit_result_1 = s1.TryGetHitResult(s2.id);
+						hit_result_1)
+					{
+						hit_result_1->is_hit = false;
+					}
+					if (auto* hit_result_2 = s2.TryGetHitResult(s1.id);
+						hit_result_2)
+					{
+						hit_result_2->is_hit = false;
+					}
+					continue;
+				}
+
 				const DirectX::SimpleMath::Vector3 s1_translation = s1.world_transform_matrix.Translation();
 				const DirectX::SimpleMath::Vector3 s2_translation = s2.world_transform_matrix.Translation();
 
@@ -1147,6 +1181,23 @@ namespace cumulonimbus::collision
 		{
 			for(auto& c2 : capsule_2.GetCapsules() | std::views::values)
 			{
+				// コリジョンプリセットが判定なし(CollisionPreset::NoCollision)の場合次の処理に移る
+				if (c1.collision_preset == CollisionPreset::NoCollision ||
+					c2.collision_preset == CollisionPreset::NoCollision)
+				{
+					if (auto* hit_result_1 = c1.TryGetHitResult(c2.id);
+						hit_result_1)
+					{
+						hit_result_1->is_hit = false;
+					}
+					if (auto* hit_result_2 = c2.TryGetHitResult(c1.id);
+						hit_result_2)
+					{
+						hit_result_2->is_hit = false;
+					}
+					continue;
+				}
+				
 				// それぞれのカプセルの線分(始点)からの大きさ
 				float c1_t, c2_t;
 				DirectX::SimpleMath::Vector3 c1_p, c2_p;
@@ -1208,6 +1259,23 @@ namespace cumulonimbus::collision
 		{
 			for (auto& c2 : capsule_2.GetCapsules() | std::views::values)
 			{
+				// コリジョンプリセットが判定なし(CollisionPreset::NoCollision)の場合次の処理に移る
+				if (c1.collision_preset == CollisionPreset::NoCollision ||
+					c2.collision_preset == CollisionPreset::NoCollision)
+				{
+					if (auto* hit_result_1 = c1.TryGetHitResult(c2.id);
+						hit_result_1)
+					{
+						hit_result_1->is_hit = false;
+					}
+					if (auto* hit_result_2 = c2.TryGetHitResult(c1.id);
+						hit_result_2)
+					{
+						hit_result_2->is_hit = false;
+					}
+					continue;
+				}
+				
 				// それぞれのカプセルの線分(始点)からの大きさ
 				float c1_t, c2_t;
 				DirectX::SimpleMath::Vector3 c1_p, c2_p;
@@ -1273,6 +1341,23 @@ namespace cumulonimbus::collision
 		{
 			for (auto& c : capsule.GetCapsules() | std::views::values)
 			{
+				// コリジョンプリセットが判定なし(CollisionPreset::NoCollision)の場合次の処理に移る
+				if (s.collision_preset == CollisionPreset::NoCollision ||
+					c.collision_preset == CollisionPreset::NoCollision)
+				{
+					if (auto* hit_result_1 = s.TryGetHitResult(c.id);
+						hit_result_1)
+					{
+						hit_result_1->is_hit = false;
+					}
+					if (auto* hit_result_2 = c.TryGetHitResult(s.id);
+						hit_result_2)
+					{
+						hit_result_2->is_hit = false;
+					}
+					continue;
+				}
+				
 				// 球の中心とカプセルの線分の間の(平方した)距離の算出
 				const float dist = arithmetic::SqDistPointSegment(c.start, c.end, s.world_transform_matrix.Translation());
 				if(const float radius = s.radius + c.radius;
@@ -1331,6 +1416,23 @@ namespace cumulonimbus::collision
 		{
 			for (auto& c : capsule.GetCapsules() | std::views::values)
 			{
+				// コリジョンプリセットが判定なし(CollisionPreset::NoCollision)の場合次の処理に移る
+				if (s.collision_preset == CollisionPreset::NoCollision ||
+					c.collision_preset == CollisionPreset::NoCollision)
+				{
+					if (auto* hit_result_1 = s.TryGetHitResult(c.id);
+						hit_result_1)
+					{
+						hit_result_1->is_hit = false;
+					}
+					if (auto* hit_result_2 = c.TryGetHitResult(s.id);
+						hit_result_2)
+					{
+						hit_result_2->is_hit = false;
+					}
+					continue;
+				}
+				
 				// 球の中心とカプセルの線分の間の(平方した)距離の算出
 				const float dist = arithmetic::SqDistPointSegment(c.start, c.end, s.world_transform_matrix.Translation());
 				// (平方した)距離が(平方した)半径の総和よりも小さい場合は衝突

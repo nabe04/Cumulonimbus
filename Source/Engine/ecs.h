@@ -511,8 +511,11 @@ namespace cumulonimbus::ecs
 		/**
 		 * @brief : 削除対象のEntityの追加
 		 * @remark : イテレータの破壊が起こらないようにするため
+		 * @remark : 削除対象のエンティティに子階層のエンティティが存在する場合
+		 *			 子階層のエンティティも削除対象に加える
+		 * @param entity : 削除対象のエンティティ
 		 */
-		void AddDestroyEntity(const mapping::rename_type::Entity& entity, bool is_destroy_sub_hierarchy = false);
+		void AddDestroyEntity(const mapping::rename_type::Entity& entity);
 
 		/**
 		 * @brief : destroy_entitiesに登録されたエンティティの削除
@@ -600,8 +603,8 @@ namespace cumulonimbus::ecs
 		}
 
 		/**
-		 * @brief      : Entityが持つT型のComponentを返す
-		 * ※caution  : EntityがT型を保持していない場合はnullptrを返す
+		 * @brief  : Entityが持つT型のComponentを返す
+		 * @remark : EntityがT型を保持していない場合はnullptrを返す
 		 */
 		template <class T>
 		[[nodiscard]] T* TryGetComponent(const mapping::rename_type::Entity entity)

@@ -171,7 +171,8 @@ namespace cumulonimbus::renderer
 			ID3D11DeviceContext*  immediate_context,
 			ecs::Registry*		  registry,
 			const camera::Camera* camera,
-			const Light*		  light);
+			const Light*		  light,
+			bool				  is_game);
 		/*
 		 * brier     : 各々のシェーダーに応じて作成したGBufferをoff_screenにまとめる
 		 * ※caution : Render3DToGBuffer_Begin関数でセットしたGBuffer用のシェーダアンバインドする
@@ -222,15 +223,17 @@ namespace cumulonimbus::renderer
 		 * @brief : 全ての当たり判定の描画
 		 */
 		void RenderCollisions(
-			ID3D11DeviceContext* immediate_context, ecs::Registry* registry);
+			ID3D11DeviceContext* immediate_context, ecs::Registry* registry, bool is_game);
 		void RenderSphereCollision(
 			ID3D11DeviceContext* immediate_context,
-			ecs::Registry* registry, 
-			const mapping::rename_type::Entity& entity);
+			ecs::Registry* registry,
+			const mapping::rename_type::Entity& entity,
+			bool is_game);
 		void RenderCapsuleCollision(
 			ID3D11DeviceContext* immediate_context,
 			ecs::Registry* registry,
-			const mapping::rename_type::Entity& entity);
+			const mapping::rename_type::Entity& entity,
+			bool is_game);
 
 		///**
 		// * @brief : 当たり判定の描画

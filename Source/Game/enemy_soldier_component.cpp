@@ -205,9 +205,6 @@ namespace cumulonimbus::component
 
 	void EnemySoldierComponent::OnDamaged(const DamageData& damage_data, const collision::HitResult& hit_result)
 	{
-		GetRegistry()->AddDestroyEntity(GetEntity(), true);
-		return;
-
 		hp -= damage_data.damage_amount;
 
 		if(hp <= 0)

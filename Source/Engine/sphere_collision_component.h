@@ -15,6 +15,7 @@ namespace cumulonimbus
 		struct Sphere
 		{
 			bool						 is_visible{ true };
+			bool						 hidden_in_game{ true };
 			float						 radius{ 1.f };	// 半径
 			mapping::rename_type::UUID   id{}; // 球判別用ID(ユニークなもの)
 			std::string					 bone_name{};	// FBXモデルのボーンの位置名
