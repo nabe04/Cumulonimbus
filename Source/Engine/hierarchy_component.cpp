@@ -155,6 +155,30 @@ namespace cumulonimbus::component
 
 	}
 
+	std::vector<mapping::rename_type::Entity> HierarchyComponent::GetSubHierarchies() const
+	{
+		std::vector<mapping::rename_type::Entity> sub_hierarchies{};
+
+		std::function<void(ecs::Registry*, const mapping::rename_type::Entity&)> RegistrySubHierarchies = [&](ecs::Registry* registry,const mapping::rename_type::Entity& ent)
+		{
+			if (HierarchyComponent* sub_hierarchy_comp = registry->TryGetComponent<HierarchyComponent>(ent);
+				sub_hierarchy_comp)
+			{
+				const auto& parent_ent = sub_hierarchy_comp->GetParentEntity();
+				if (GetEntity() == parent_ent)
+					sub_hierarchies.emplace_back(sub_hierarchy_comp->GetEntity());
+				RegistrySubHierarchies(registry, parent_ent);
+			}
+		};
+
+		for(const auto& hierarchy_comp : GetRegistry()->GetArray<HierarchyComponent>().GetComponents())
+		{
+			RegistrySubHierarchies(GetRegistry(), hierarchy_comp.GetEntity());
+		}
+
+		return sub_hierarchies;
+	}
+
 	void HierarchyComponent::SetParentEntity(
 		ecs::Registry* const registry,
 		const mapping::rename_type::Entity& parent_ent)

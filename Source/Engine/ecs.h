@@ -512,10 +512,7 @@ namespace cumulonimbus::ecs
 		 * @brief : 削除対象のEntityの追加
 		 * @remark : イテレータの破壊が起こらないようにするため
 		 */
-		void AddDestroyEntity(const mapping::rename_type::Entity& entity)
-		{
-			destroy_entities.emplace_back(entity);
-		}
+		void AddDestroyEntity(const mapping::rename_type::Entity& entity, bool is_destroy_sub_hierarchy = false);
 
 		/**
 		 * @brief : destroy_entitiesに登録されたエンティティの削除

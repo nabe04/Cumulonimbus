@@ -285,14 +285,14 @@ namespace cumulonimbus::component
 							// ヒットイベントの更新
 							hit_result.hit_event = collision::HitEvent::OnCollisionStay;
 							// イベント処理の発行
-							on_collision_stay_event.Invoke(hit_ent, hit_result);
+							on_collision_stay_event.Invoke(GetEntity(), hit_result);
 						}
 						else
 						{// 他のCollisionに触れたとき
 							// ヒットイベントの更新
 							hit_result.hit_event = collision::HitEvent::OnCollisionEnter;
 							// イベント処理の発行
-							on_collision_enter_event.Invoke(hit_ent, hit_result);
+							on_collision_enter_event.Invoke(GetEntity(), hit_result);
 						}
 					}
 					else
@@ -302,7 +302,7 @@ namespace cumulonimbus::component
 							// ヒットイベントの更新
 							hit_result.hit_event = collision::HitEvent::OnCollisionExit;
 							// イベントの発行
-							on_collision_exit_event.Invoke(hit_ent, hit_result);
+							on_collision_exit_event.Invoke(GetEntity(), hit_result);
 							delete_hit_entities.emplace_back(hit_ent);
 						}
 						else
@@ -310,7 +310,7 @@ namespace cumulonimbus::component
 							// ヒットイベントの更新
 							hit_result.hit_event = collision::HitEvent::None;
 							// イベント処理の発行
-							on_collision_none.Invoke(hit_ent, hit_result);
+							on_collision_none.Invoke(GetEntity(), hit_result);
 						}
 					}
 					hit_result.is_old_hit = hit_result.is_hit;

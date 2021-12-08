@@ -91,7 +91,7 @@ namespace cumulonimbus::component
 	{
 		Initialize(GetRegistry(), GetEntity());
 
-		hp = 100;
+		hp = 5;
 
 		const auto registry = this->GetRegistry();
 		const auto entity   = this->GetEntity();
@@ -121,7 +121,7 @@ namespace cumulonimbus::component
 	{
 		if (GetRegistry()->CollapsingHeader<EnemySoldierComponent>(GetEntity(), "Soldier"))
 		{
-
+			ImGui::Text("Current Hp : %d", hp);
 		}
 	}
 
@@ -205,11 +205,13 @@ namespace cumulonimbus::component
 
 	void EnemySoldierComponent::OnDamaged(const DamageData& damage_data, const collision::HitResult& hit_result)
 	{
+		GetRegistry()->AddDestroyEntity(GetEntity(), true);
+		return;
+
 		hp -= damage_data.damage_amount;
 
 		if(hp <= 0)
 		{
-			//GetRegistry()->AddDestroyEntity(GetEntity());
 			soldier_state.SetState(SoldierState::Death);
 		}
 		else
@@ -268,6 +270,7 @@ namespace cumulonimbus::component
 
 		//  Walkアニメーションのキーフレームをデフォルのキーフレームに戻す
 		model_loader.GetModel(model_comp.GetModelID()).GetModelData().ResetAnimationKeyFrame(GetAnimDataIndex(AnimationData::Walk));
+
 		// 状態遷移(SoldierState::Walk)
 		soldier_state.SetState(SoldierState::Tracking);
 	}
@@ -393,6 +396,9 @@ namespace cumulonimbus::component
 		// アニメーション再生中は処理を中断
 		if (model_comp.IsPlayAnimation())
 			return;
+
+		// 状態遷移(SoldierState::Tracking)
+		soldier_state.SetState(SoldierState::Tracking);
 	}
 
 	void EnemySoldierComponent::Death(float dt)
@@ -408,6 +414,8 @@ namespace cumulonimbus::component
 		// アニメーション再生中は処理を中断
 		if (model_comp.IsPlayAnimation())
 			return;
+
+		GetRegistry()->AddDestroyEntity(GetEntity());
 	}
 
 	void EnemySoldierComponent::Attack01(float dt)

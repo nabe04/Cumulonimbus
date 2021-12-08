@@ -31,6 +31,7 @@ namespace cumulonimbus::component
 		ecs::Registry* registry,
 		const mapping::rename_type::Entity ent,
 		const WeaponComponent& copy_comp)
+		: Actor3DComponent{ registry,ent }
 	{
 		*this = copy_comp;
 		SetRegistry(registry);

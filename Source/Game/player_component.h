@@ -3,10 +3,6 @@
 #include <string>
 
 #include <d3d11.h>
-#include <DirectXMath.h>
-#include <SimpleMath.h>
-#include <cereal/cereal.hpp>
-#include <cereal/types/polymorphic.hpp>
 
 #include "actor3d_component.h"
 #include "state_machine.h"

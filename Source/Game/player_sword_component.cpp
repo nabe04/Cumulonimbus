@@ -7,25 +7,31 @@
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::PlayerSwordComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::WeaponComponent, cumulonimbus::component::PlayerSwordComponent)
-CEREAL_CLASS_VERSION(cumulonimbus::component::PlayerSwordComponent, 0)
+CEREAL_CLASS_VERSION(cumulonimbus::component::PlayerSwordComponent, 1)
 
 namespace cumulonimbus::component
 {
 	template <class Archive>
 	void PlayerSwordComponent::load(Archive&& archive, const uint32_t version)
 	{
-		//archive(
-		//	cereal::base_class<WeaponComponent>(this)
-		//);
+		if(version == 1)
+		{
+			archive(
+				cereal::base_class<WeaponComponent>(this)
+			);
 
+		}
 	}
 
 	template <class Archive>
 	void PlayerSwordComponent::save(Archive&& archive, const uint32_t version) const
 	{
-		//archive(
-		//	cereal::base_class<WeaponComponent>(this)
-		//);
+		if(version == 1)
+		{
+			archive(
+				cereal::base_class<WeaponComponent>(this)
+			);
+		}
 	}
 
 	PlayerSwordComponent::PlayerSwordComponent(ecs::Registry* registry, mapping::rename_type::Entity ent)
@@ -33,7 +39,10 @@ namespace cumulonimbus::component
 	{
 	}
 
-	PlayerSwordComponent::PlayerSwordComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const PlayerSwordComponent& copy_comp)
+	PlayerSwordComponent::PlayerSwordComponent(
+		ecs::Registry* registry,
+		mapping::rename_type::Entity ent,
+		const PlayerSwordComponent& copy_comp)
 		: WeaponComponent{ registry,ent }
 	{
 		*this = copy_comp;
@@ -66,7 +75,9 @@ namespace cumulonimbus::component
 	{
 		if(GetRegistry()->CollapsingHeader<PlayerSwordComponent>(GetEntity(),"Player Sword"))
 		{
-
+			auto name = GetRegistry()->GetName(GetEntity());
+			int a;
+			a = 0;
 		}
 	}
 
@@ -87,9 +98,15 @@ namespace cumulonimbus::component
 
 		// 親のエンティティ取得
 		const mapping::rename_type::Entity& parent_ent = hierarchy_comp.GetParentEntity();
+		// 判定先が親の場合処理を抜ける
 		if (hit_result.entity == parent_ent)
 			return;
-		if(auto* player_comp = GetRegistry()->TryGetComponent<PlayerComponent>(parent_ent);
+
+		// 判定先のコリジョンタグがEnemy以外の場合処理を抜ける
+		if (hit_result.collision_tag != collision::CollisionTag::Enemy)
+			return;
+
+		if (auto* player_comp = GetRegistry()->TryGetComponent<PlayerComponent>(parent_ent);
 			player_comp)
 		{
 			damage_data.damage_amount = player_comp->GetCurrentDamageAmount();

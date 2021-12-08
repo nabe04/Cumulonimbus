@@ -68,6 +68,24 @@ namespace cumulonimbus::ecs
 		return entities.at(id).first;
 	}
 
+	void Registry::AddDestroyEntity(const mapping::rename_type::Entity& entity, const bool is_destroy_sub_hierarchy)
+	{
+		destroy_entities.emplace_back(entity);
+
+		if (!is_destroy_sub_hierarchy)
+			return;
+
+		const auto sub_hierarchies = GetComponent<component::HierarchyComponent>(entity).GetSubHierarchies();
+		destroy_entities.reserve(destroy_entities.size() + sub_hierarchies.size());
+		for(const auto& sub_hierarchy : sub_hierarchies)
+		{
+			auto name = GetName(sub_hierarchy);
+
+			destroy_entities.emplace_back(sub_hierarchy);
+		}
+	}
+
+
 	void Registry::CreateEntity(ecs::Entity ent)
 	{
 		//std::string ent_name = "Entity";

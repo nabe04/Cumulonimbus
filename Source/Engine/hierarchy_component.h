@@ -58,6 +58,13 @@ namespace cumulonimbus::component
 		const mapping::rename_type::Entity& GetBackSibling() const { return back_sibling; }
 		[[nodiscard]]
 		const ParentNodeData& GetParentNodeData() const { return parent_node_data; }
+
+		/**
+		 * @brief : 子階層の全てのエンティティの取得
+		 */
+		[[nodiscard]]
+		std::vector<mapping::rename_type::Entity> GetSubHierarchies() const;
+		
 		/**
 		 * @brief : 親階層のセット
 		 * @remark : 親階層(parent_entity)のセットと同時に初めの子階層エンティティ(first_child)、
@@ -76,23 +83,12 @@ namespace cumulonimbus::component
 		 */
 		void OnDestroyed(ecs::Registry* registry) const;
 
-		/**
-		 * @brief : 兄弟階層のダーティフラグをTrueにする再起関数
-		 * @remark :次の兄弟階層エンティティ(next_sibling)を持たない場合再起処理を終了
-		 */
-		//void ActivateDirtyFlg();
-
-		/**
-		 * @brief : 自身のダーティフラグをFalseにする
-		 */
-		//void DeactivateDirtyFlg();
 	private:
 		mapping::rename_type::Entity parent_entity{}; // 親階層のエンティティ
 		mapping::rename_type::Entity first_child{};	  // 初めの子階層エンティティ
 		mapping::rename_type::Entity next_sibling{};  // 次の兄弟階層エンティティ
 		mapping::rename_type::Entity back_sibling{};  // 前の兄弟階層エンティティ
 		ParentNodeData parent_node_data{};
-		//bool is_dirty{ true };	// ダーティフラグ
 
 		[[nodiscard]]
 		DirectX::SimpleMath::Vector3 GetParentsScale(const mapping::rename_type::Entity& ent) const;
