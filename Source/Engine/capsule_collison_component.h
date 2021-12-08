@@ -14,13 +14,14 @@ namespace cumulonimbus
 	{
 		struct Capsule
 		{
+			bool						 is_enable{ true }; // 判定処理を行うか
 			bool						 is_visible{ true }; // 表示するか
-			bool						 hidden_in_game{ true };
+			bool						 hidden_in_game{ true }; // ゲーム中に表示するか
 			float						 length{ 2 };		 // カプセルの端点間の長さ
 			float						 radius{ 1 };		 // カプセルの半径
 			std::string					 bone_name{};		 // FBXモデルのボーンの位置名
 			mapping::rename_type::UUID   id{};				 // カプセルID(ゲーム開始毎に変わる)
-			CollisionPreset				 collision_preset{ CollisionPreset::OverlapAll }; // コリジョンのプロファイル
+			CollisionType				 collision_type{ CollisionType::OverlapAll }; // コリジョンのプロファイル
 			CollisionTag				 collision_tag{ CollisionTag::Object }; // 判定用タグ
 			DirectX::SimpleMath::Matrix  world_transform_matrix{ DirectX::SimpleMath::Matrix::Identity }; // ワールド変換行列
 			DirectX::SimpleMath::Vector3 offset{};			// カプセルの位置調節値
@@ -107,6 +108,11 @@ namespace cumulonimbus
 			collision::Capsule* TryGetCapsule(const mapping::rename_type::UUID& capsule_id);
 
 			/**
+			 * @brief : 全てのカプセルの当たり判定の行うかの設定
+			 */
+			void SetAllCollisionEnable(bool is_enable);
+
+			/**
 			 * @brief				: 個々のカプセルの"offset"のセット
 			 * @param capsule_name	: capsuleに登録されているキー値
 			 */
@@ -141,15 +147,15 @@ namespace cumulonimbus
 			void SetAllLength(float length);
 
 			/**
-			 * @brief				: 個々のcapsuleの"collision_preset"のセット
+			 * @brief				: 個々のcapsuleの"collision_type"のセット
 			 * @param capsule_name	: capsulesに登録されているキー値
 			 * @param preset		: コリジョンのプロファイル
 			 */
-			void SetCollisionPreset(const std::string& capsule_name, collision::CollisionPreset preset);
+			void SetCollisionType(const std::string& capsule_name, collision::CollisionType preset);
 			/**
-			 * @brief : capsules全ての"collision_preset"のセット
+			 * @brief : capsules全ての"collision_type"のセット
 			 */
-			void SetAllCollisionPreset(collision::CollisionPreset preset);
+			void SetAllCollisionType(collision::CollisionType preset);
 
 			/**
 			* @brief : mapに登録されているcollision::Capsuleの取得

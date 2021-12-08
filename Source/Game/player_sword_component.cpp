@@ -56,13 +56,13 @@ namespace cumulonimbus::component
 
 	}
 
-
 	void PlayerSwordComponent::Start()
 	{
 		if(auto* capsule_collision = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(GetEntity());
 		   capsule_collision)
 		{
 			capsule_collision->RegisterEventEnter(GetEntity(), [ent = GetEntity(), registry = GetRegistry()](const collision::HitResult& hit_result){registry->GetComponent<PlayerSwordComponent>(ent).OnHit(hit_result); });
+			capsule_collision->SetAllCollisionEnable(false);
 		}
 	}
 
@@ -76,8 +76,6 @@ namespace cumulonimbus::component
 		if(GetRegistry()->CollapsingHeader<PlayerSwordComponent>(GetEntity(),"Player Sword"))
 		{
 			auto name = GetRegistry()->GetName(GetEntity());
-			int a;
-			a = 0;
 		}
 	}
 

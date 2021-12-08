@@ -19,7 +19,7 @@ namespace cumulonimbus
 			float						 radius{ 1.f };	// 半径
 			mapping::rename_type::UUID   id{}; // 球判別用ID(ユニークなもの)
 			std::string					 bone_name{};	// FBXモデルのボーンの位置名
-			CollisionPreset				 collision_preset{CollisionPreset::OverlapAll};	// コリジョンのプロファイル
+			CollisionType				 collision_preset{CollisionType::OverlapAll};	// コリジョンのプロファイル
 			CollisionTag				 collision_tag{ CollisionTag::Object };
 			DirectX::SimpleMath::Matrix  world_transform_matrix{ DirectX::SimpleMath::Matrix::Identity }; // ワールド変換行列
 			DirectX::SimpleMath::Vector3 offset{};		// 球の位置調節値
@@ -122,16 +122,16 @@ namespace cumulonimbus
 			void SetAllRadius(float radius);
 
 			/**
-			 * @brief				: 個々のsphereの"collision_preset"のセット
+			 * @brief				: 個々のsphereの"collision_type"のセット
 			 * @param sphere_name	: spheresに登録されているキー値
 			 * @param preset		: コリジョンのプロファイル
 			 */
-			void SetCollisionPreset(const std::string& sphere_name, collision::CollisionPreset preset);
+			void SetCollisionPreset(const std::string& sphere_name, collision::CollisionType preset);
 			/**
-			 * @brief		 : spheres全ての"collision_preset"のセット
+			 * @brief		 : spheres全ての"collision_type"のセット
 			 * @param preset : コリジョンのプロファイル
 			 */
-			void SetAllCollisionPreset(collision::CollisionPreset preset);
+			void SetAllCollisionPreset(collision::CollisionType preset);
 
 			/**
 			 * @brief : mapに登録されているcollision::Sphereの取得

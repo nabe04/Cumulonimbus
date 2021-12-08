@@ -19,7 +19,7 @@ CEREAL_CLASS_VERSION(cumulonimbus::collision::Sphere, 1)
 namespace
 {
 	// ImGui•`‰æŽž‚ÉCollisionPreset(enum class)‚©‚ç•¶Žš—ñˆê——‚ðŽæ“¾‚·‚éˆ×‚ÉŽg—p
-	EnumStateMap<cumulonimbus::collision::CollisionPreset> collision_preset{};
+	EnumStateMap<cumulonimbus::collision::CollisionType> collision_preset{};
 }
 
 namespace cumulonimbus::collision
@@ -494,14 +494,14 @@ namespace cumulonimbus::component
 	}
 
 
-	void SphereCollisionComponent::SetCollisionPreset(const std::string& sphere_name, collision::CollisionPreset preset)
+	void SphereCollisionComponent::SetCollisionPreset(const std::string& sphere_name, collision::CollisionType preset)
 	{
 		if (!spheres.contains(sphere_name))
 			assert(!"Name is not registered(SphereCollisionComponent::SetCollisionPreset)");
 		spheres.at(sphere_name).collision_preset = preset;
 	}
 
-	void SphereCollisionComponent::SetAllCollisionPreset(collision::CollisionPreset preset)
+	void SphereCollisionComponent::SetAllCollisionPreset(collision::CollisionType preset)
 	{
 		for (auto& sphere : spheres)
 		{

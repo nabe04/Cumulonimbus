@@ -47,7 +47,7 @@ namespace cumulonimbus::collision
 	/**
 	 * @brief : コリジョンのプロファイル
 	 */
-	enum class CollisionPreset
+	enum class CollisionType
 	{
 		BlockAll,		// すべてのアクタをブロックする(お互いのコリジョンがBlockAll時に限る)(RigidBodyComponentを持つものに限る)
 		OverlapAll,		// すべてのアクトをオーバーラップする

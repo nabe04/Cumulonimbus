@@ -36,6 +36,7 @@ namespace cumulonimbus::component
 		ecs::Registry* registry,
 		const mapping::rename_type::Entity ent,
 		const SoldierSwordComponent& copy_comp)
+		: WeaponComponent{ registry,ent }
 	{
 		*this = copy_comp;
 		SetRegistry(registry);
@@ -53,6 +54,7 @@ namespace cumulonimbus::component
 			capsule_collision)
 		{
 			capsule_collision->RegisterEventEnter(GetEntity(), [ent = GetEntity(), registry = GetRegistry()](const collision::HitResult& hit_result){ registry->GetComponent<SoldierSwordComponent>(ent).OnHit(hit_result); });
+			capsule_collision->SetAllCollisionEnable(false);
 		}
 	}
 

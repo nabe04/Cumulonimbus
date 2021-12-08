@@ -674,7 +674,7 @@ namespace cumulonimbus::renderer
 
 	void RenderPath::RenderSphereCollision(
 		ID3D11DeviceContext* immediate_context,
-		ecs::Registry* registry, 
+		ecs::Registry* registry,
 		const mapping::rename_type::Entity& entity,
 		const bool is_game)
 	{
@@ -692,7 +692,7 @@ namespace cumulonimbus::renderer
 			if (!sphere.is_visible)
 				continue;
 
-			if (sphere.collision_preset == collision::CollisionPreset::NoCollision)
+			if (sphere.collision_preset == collision::CollisionType::NoCollision)
 				continue;
 
 			if (is_game && sphere.hidden_in_game)
@@ -753,7 +753,10 @@ namespace cumulonimbus::renderer
 			if(!capsule.is_visible)
 				continue;
 
-			if (capsule.collision_preset == collision::CollisionPreset::NoCollision)
+			if (capsule.collision_type == collision::CollisionType::NoCollision)
+				continue;
+
+			if (!capsule.is_enable)
 				continue;
 
 			if(is_game && capsule.hidden_in_game)

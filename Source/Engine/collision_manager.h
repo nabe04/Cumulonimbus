@@ -40,7 +40,7 @@ namespace cumulonimbus
 		struct		HitResult;
 		struct		Sphere;
 		struct		Capsule;
-		enum class	CollisionPreset;
+		enum class	CollisionType;
 	} // collision
 
 } // cumulonimbus
@@ -272,8 +272,8 @@ namespace cumulonimbus::collision
 			const mapping::rename_type::Entity& ent_2,
 			const DirectX::SimpleMath::Vector3& mass_point_1,
 			const DirectX::SimpleMath::Vector3& mass_point_2,
-			CollisionPreset collision_preset_1,
-			CollisionPreset collision_preset_2,
+			CollisionType collision_preset_1,
+			CollisionType collision_preset_2,
 			float penetration);
 		/**
 		 * @brief : âüèoÇµèàóù
@@ -297,8 +297,8 @@ namespace cumulonimbus::collision
 			const mapping::rename_type::Entity& ent_2,
 			const DirectX::SimpleMath::Vector3& mass_point_1,
 			const DirectX::SimpleMath::Vector3& mass_point_2,
-			CollisionPreset collision_preset_1,
-			CollisionPreset collision_preset_2,
+			CollisionType collision_preset_1,
+			CollisionType collision_preset_2,
 			float penetration);
 
 		/**

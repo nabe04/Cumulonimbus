@@ -638,16 +638,16 @@ namespace cumulonimbus::collision
 		const mapping::rename_type::Entity& ent_2,
 		const DirectX::SimpleMath::Vector3& mass_point_1,
 		const DirectX::SimpleMath::Vector3& mass_point_2,
-		const CollisionPreset collision_preset_1,
-		const CollisionPreset collision_preset_2,
+		const CollisionType collision_preset_1,
+		const CollisionType collision_preset_2,
 		const float penetration)
 	{
 		// 条件 1 : お互いRigidBodyComponentを持っていること
 		// 条件 2 : お互いのCollisionPresetがBlockAllであること
 		if (!registry->TryGetComponent<component::RigidBodyComponent>(ent_1)) return;
 		if (!registry->TryGetComponent<component::RigidBodyComponent>(ent_2)) return;
-		if (collision_preset_1 != CollisionPreset::BlockAll) return;
-		if (collision_preset_2 != CollisionPreset::BlockAll) return;
+		if (collision_preset_1 != CollisionType::BlockAll) return;
+		if (collision_preset_2 != CollisionType::BlockAll) return;
 
 		auto& rigid_body_comp_1 = registry->GetComponent<component::RigidBodyComponent>(ent_1);
 		auto& rigid_body_comp_2 = registry->GetComponent<component::RigidBodyComponent>(ent_2);
@@ -688,16 +688,16 @@ namespace cumulonimbus::collision
 		const mapping::rename_type::Entity& ent_2,
 		const DirectX::SimpleMath::Vector3& mass_point_1,
 		const DirectX::SimpleMath::Vector3& mass_point_2,
-		const CollisionPreset collision_preset_1,
-		const CollisionPreset collision_preset_2,
+		const CollisionType collision_preset_1,
+		const CollisionType collision_preset_2,
 		const float penetration)
 	{
 		// 条件 1 : お互いRigidBodyComponentを持っていること
 		// 条件 2 : お互いのCollisionPresetがBlockAllであること
 		if (!registry_1->TryGetComponent<component::RigidBodyComponent>(ent_1)) return;
 		if (!registry_2->TryGetComponent<component::RigidBodyComponent>(ent_2)) return;
-		if (collision_preset_1 != CollisionPreset::BlockAll) return;
-		if (collision_preset_2 != CollisionPreset::BlockAll) return;
+		if (collision_preset_1 != CollisionType::BlockAll) return;
+		if (collision_preset_2 != CollisionType::BlockAll) return;
 
 		auto& rigid_body_comp_1 = registry_1->GetComponent<component::RigidBodyComponent>(ent_1);
 		auto& rigid_body_comp_2 = registry_2->GetComponent<component::RigidBodyComponent>(ent_2);
@@ -1036,9 +1036,9 @@ namespace cumulonimbus::collision
 		{
 			for(auto& s2 : sphere_2.GetSpheres() | std::views::values)
 			{
-				// コリジョンプリセットが判定なし(CollisionPreset::NoCollision)の場合次の処理に移る
-				if (s1.collision_preset == CollisionPreset::NoCollision ||
-					s2.collision_preset == CollisionPreset::NoCollision)
+				// コリジョンプリセットが判定なし(CollisionType::NoCollision)の場合次の処理に移る
+				if (s1.collision_preset == CollisionType::NoCollision ||
+					s2.collision_preset == CollisionType::NoCollision)
 				{
 					if (auto* hit_result_1 = s1.TryGetHitResult(s2.id);
 						hit_result_1)
@@ -1108,9 +1108,9 @@ namespace cumulonimbus::collision
 		{
 			for(auto& s2 : sphere_2.GetSpheres() | std::views::values)
 			{
-				// コリジョンプリセットが判定なし(CollisionPreset::NoCollision)の場合次の処理に移る
-				if (s1.collision_preset == CollisionPreset::NoCollision ||
-					s2.collision_preset == CollisionPreset::NoCollision)
+				// コリジョンプリセットが判定なし(CollisionType::NoCollision)の場合次の処理に移る
+				if (s1.collision_preset == CollisionType::NoCollision ||
+					s2.collision_preset == CollisionType::NoCollision)
 				{
 					if (auto* hit_result_1 = s1.TryGetHitResult(s2.id);
 						hit_result_1)
@@ -1181,9 +1181,10 @@ namespace cumulonimbus::collision
 		{
 			for(auto& c2 : capsule_2.GetCapsules() | std::views::values)
 			{
-				// コリジョンプリセットが判定なし(CollisionPreset::NoCollision)の場合次の処理に移る
-				if (c1.collision_preset == CollisionPreset::NoCollision ||
-					c2.collision_preset == CollisionPreset::NoCollision)
+				// コリジョンプリセットが判定なし(CollisionType::NoCollision)の場合次の処理に移る
+				if (c1.collision_type == CollisionType::NoCollision ||
+					c2.collision_type == CollisionType::NoCollision ||
+					!c1.is_enable || !c2.is_enable)
 				{
 					if (auto* hit_result_1 = c1.TryGetHitResult(c2.id);
 						hit_result_1)
@@ -1197,7 +1198,7 @@ namespace cumulonimbus::collision
 					}
 					continue;
 				}
-				
+
 				// それぞれのカプセルの線分(始点)からの大きさ
 				float c1_t, c2_t;
 				DirectX::SimpleMath::Vector3 c1_p, c2_p;
@@ -1225,8 +1226,8 @@ namespace cumulonimbus::collision
 						registry,
 						capsule_1.GetEntity(), capsule_2.GetEntity(),
 						c1_p, c2_p,
-						c1.collision_preset,
-						c2.collision_preset,
+						c1.collision_type,
+						c2.collision_type,
 						(c1.radius + c2.radius) - len);
 				}
 				else
@@ -1259,9 +1260,10 @@ namespace cumulonimbus::collision
 		{
 			for (auto& c2 : capsule_2.GetCapsules() | std::views::values)
 			{
-				// コリジョンプリセットが判定なし(CollisionPreset::NoCollision)の場合次の処理に移る
-				if (c1.collision_preset == CollisionPreset::NoCollision ||
-					c2.collision_preset == CollisionPreset::NoCollision)
+				// コリジョンプリセットが判定なし(CollisionType::NoCollision)の場合次の処理に移る
+				if (c1.collision_type == CollisionType::NoCollision ||
+					c2.collision_type == CollisionType::NoCollision ||
+					!c1.is_enable || !c2.is_enable)
 				{
 					if (auto* hit_result_1 = c1.TryGetHitResult(c2.id);
 						hit_result_1)
@@ -1275,7 +1277,7 @@ namespace cumulonimbus::collision
 					}
 					continue;
 				}
-				
+
 				// それぞれのカプセルの線分(始点)からの大きさ
 				float c1_t, c2_t;
 				DirectX::SimpleMath::Vector3 c1_p, c2_p;
@@ -1303,8 +1305,8 @@ namespace cumulonimbus::collision
 						registry_1, registry_2,
 						capsule_1.GetEntity(), capsule_2.GetEntity(),
 						c1_p, c2_p,
-						c1.collision_preset,
-						c2.collision_preset,
+						c1.collision_type,
+						c2.collision_type,
 						(c1.radius + c2.radius) - len);
 				}
 				else
@@ -1341,9 +1343,9 @@ namespace cumulonimbus::collision
 		{
 			for (auto& c : capsule.GetCapsules() | std::views::values)
 			{
-				// コリジョンプリセットが判定なし(CollisionPreset::NoCollision)の場合次の処理に移る
-				if (s.collision_preset == CollisionPreset::NoCollision ||
-					c.collision_preset == CollisionPreset::NoCollision)
+				// コリジョンプリセットが判定なし(CollisionType::NoCollision)の場合次の処理に移る
+				if (s.collision_preset == CollisionType::NoCollision ||
+					c.collision_type == CollisionType::NoCollision)
 				{
 					if (auto* hit_result_1 = s.TryGetHitResult(c.id);
 						hit_result_1)
@@ -1357,7 +1359,7 @@ namespace cumulonimbus::collision
 					}
 					continue;
 				}
-				
+
 				// 球の中心とカプセルの線分の間の(平方した)距離の算出
 				const float dist = arithmetic::SqDistPointSegment(c.start, c.end, s.world_transform_matrix.Translation());
 				if(const float radius = s.radius + c.radius;
@@ -1379,7 +1381,7 @@ namespace cumulonimbus::collision
 						registry,
 						sphere.GetEntity(), capsule.GetEntity(),
 						s.world_transform_matrix.Translation(), p,
-						s.collision_preset, c.collision_preset,
+						s.collision_preset, c.collision_type,
 						(s.radius + c.radius) - std::sqrtf(dist));
 				}
 				else
@@ -1416,9 +1418,9 @@ namespace cumulonimbus::collision
 		{
 			for (auto& c : capsule.GetCapsules() | std::views::values)
 			{
-				// コリジョンプリセットが判定なし(CollisionPreset::NoCollision)の場合次の処理に移る
-				if (s.collision_preset == CollisionPreset::NoCollision ||
-					c.collision_preset == CollisionPreset::NoCollision)
+				// コリジョンプリセットが判定なし(CollisionType::NoCollision)の場合次の処理に移る
+				if (s.collision_preset == CollisionType::NoCollision ||
+					c.collision_type == CollisionType::NoCollision)
 				{
 					if (auto* hit_result_1 = s.TryGetHitResult(c.id);
 						hit_result_1)
@@ -1432,7 +1434,7 @@ namespace cumulonimbus::collision
 					}
 					continue;
 				}
-				
+
 				// 球の中心とカプセルの線分の間の(平方した)距離の算出
 				const float dist = arithmetic::SqDistPointSegment(c.start, c.end, s.world_transform_matrix.Translation());
 				// (平方した)距離が(平方した)半径の総和よりも小さい場合は衝突
@@ -1455,7 +1457,7 @@ namespace cumulonimbus::collision
 						registry_1, registry_2,
 						sphere.GetEntity(), capsule.GetEntity(),
 						s.world_transform_matrix.Translation(), p,
-						s.collision_preset, c.collision_preset,
+						s.collision_preset, c.collision_type,
 						(s.radius + c.radius) - std::sqrtf(dist));
 				}
 				else

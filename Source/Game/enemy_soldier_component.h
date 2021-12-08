@@ -1,6 +1,8 @@
 #pragma once
 #include "enemy_base_component.h"
+
 #include "state_machine.h"
+#include "keyframe_event.h"
 
 namespace cumulonimbus::component
 {
@@ -67,6 +69,10 @@ namespace cumulonimbus::component
 	private:
 		// 敵(ForestDemon)の状態管理変数
 		StateMachine<SoldierState, void, const float> soldier_state{};
+		// キーフレーム中のイベント管理
+		std::map<AnimationData, system::KeyframeEvent> keyframe_events{};
+
+		mapping::rename_type::Entity sword_ent{};
 
 		//-- パラメータ --//
 		// Quaternion::Slerpの回転時間倍率
@@ -96,7 +102,13 @@ namespace cumulonimbus::component
 
 		void Initialize(ecs::Registry* registry, mapping::rename_type::Entity ent) override;
 
+		void InitializeKeyframeEvent();
+
 		void Movement();
+
+		void RegistryKeyframeEvent(AnimationData anim_data, const std::string& key_name);
+		[[nodiscard]]
+		system::KeyframeEvent& GetKeyframeEvent(AnimationData anim_data);
 
 		void OnAttack(const collision::HitResult& hit_result) override;
 		void OnDamaged(const collision::HitResult& hit_result) override;

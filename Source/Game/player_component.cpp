@@ -9,7 +9,7 @@
 #include "ecs.h"
 #include "locator.h"
 #include "model_loader.h"
-// components
+// components(engine)
 #include "hierarchy_component.h"
 #include "camera_component.h"
 #include "model_component.h"
@@ -20,10 +20,18 @@
 #include "transform_component.h"
 #include "damageable_component.h"
 #include "sphere_collision_component.h"
+// components(game)
+#include "capsule_collison_component.h"
+#include "player_sword_component.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::PlayerComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::Actor3DComponent, cumulonimbus::component::PlayerComponent)
 CEREAL_CLASS_VERSION(cumulonimbus::component::PlayerComponent, 0);
+
+namespace keyframe_event
+{
+	const std::string event_1{ "Event_1" };
+} // keyframe_event
 
 // プレイヤーアニメーションのキーフレーム調整値
 namespace adjust_key_frame
@@ -97,6 +105,7 @@ namespace cumulonimbus::component
 	void PlayerComponent::Initialize(ecs::Registry* registry, const mapping::rename_type::Entity ent)
 	{
 		InitializeMoveState(registry, ent);
+		InitializeKeyframeEvent();
 
 		// 先行入力によるアニメーションの中断フレームの設定
 		SetAnimationBreakFrame(AnimationData::Attack_Normal_01, 16);
@@ -183,6 +192,31 @@ namespace cumulonimbus::component
 		player_state.SetState(PlayerState::Idle);
 	}
 
+	void PlayerComponent::InitializeKeyframeEvent()
+	{
+		//-- キーフレームイベント登録 --//
+		// 弱攻撃
+		RegistryKeyframeEvent(AnimationData::Attack_Normal_01, keyframe_event::event_1);
+		RegistryKeyframeEvent(AnimationData::Attack_Normal_02, keyframe_event::event_1);
+		RegistryKeyframeEvent(AnimationData::Attack_Normal_03, keyframe_event::event_1);
+		// 強攻撃
+		RegistryKeyframeEvent(AnimationData::Attack_Strong_01, keyframe_event::event_1);
+		RegistryKeyframeEvent(AnimationData::Attack_Strong_02, keyframe_event::event_1);
+		RegistryKeyframeEvent(AnimationData::Attack_Strong_03, keyframe_event::event_1);
+		RegistryKeyframeEvent(AnimationData::Attack_Strong_04, keyframe_event::event_1);
+
+		//-- キーフレームイベントの範囲指定 --//
+		// 弱攻撃
+		GetKeyframeEvent(AnimationData::Attack_Normal_01).SetKeyEvent(keyframe_event::event_1, 10, 16);
+		GetKeyframeEvent(AnimationData::Attack_Normal_02).SetKeyEvent(keyframe_event::event_1,  0, 16);
+		GetKeyframeEvent(AnimationData::Attack_Normal_03).SetKeyEvent(keyframe_event::event_1, 20, 30);
+		// 強攻撃
+		GetKeyframeEvent(AnimationData::Attack_Strong_01).SetKeyEvent(keyframe_event::event_1, 15, 26);
+		GetKeyframeEvent(AnimationData::Attack_Strong_02).SetKeyEvent(keyframe_event::event_1,  8, 17);
+		GetKeyframeEvent(AnimationData::Attack_Strong_03).SetKeyEvent(keyframe_event::event_1, 10, 20);
+		GetKeyframeEvent(AnimationData::Attack_Strong_04).SetKeyEvent(keyframe_event::event_1,  2, 18);
+	}
+
 	void PlayerComponent::Start()
 	{
 		// 初期stateの設定(PlayerState::Idle)
@@ -202,6 +236,21 @@ namespace cumulonimbus::component
 		{
 			sphere_collision_comp->RegisterEventEnter(GetEntity(), [=](const collision::HitResult& hit_result) {registry->GetComponent<PlayerComponent>(entity).OnHitAvoidRange(hit_result); });
 		}
+		// 子階層からPlayerSwordComponentを持つエンティティの取得
+		if (auto* hierarchy_comp = GetRegistry()->TryGetComponent<HierarchyComponent>(GetEntity());
+			hierarchy_comp)
+		{
+			const auto sub_hierarchies = hierarchy_comp->GetSubHierarchies();
+			for(const auto& sub_hierarchy : sub_hierarchies)
+			{
+				if (!GetRegistry()->HasComponent<PlayerSwordComponent>(sub_hierarchy))
+					continue;
+
+				sword_ent = sub_hierarchy;
+				break;
+			}
+		}
+
 		//GetRegistry()->GetOrEmplaceComponent<DamageableComponent>(GetEntity()).RegistryDamageEvent(GetEntity(), [=](const DamageData& damage_data, const collision::HitResult& hit_result) { registry->GetComponent<PlayerComponent>(entity).OnHit(damage_data, hit_result); });
 	}
 
@@ -246,7 +295,6 @@ namespace cumulonimbus::component
 	{
 		SetRegistry(registry);
 		Initialize(registry, GetEntity());
-		//InitializeMoveState(registry, GetEntity());
 	}
 
 	int PlayerComponent::GetAnimDataIndex(AnimationData anim_state) const
@@ -372,6 +420,26 @@ namespace cumulonimbus::component
 		camera_comp.GetCamera()->RotationTPSYaw(rad_x * camera_comp.GetCamera()->GetCameraSpeed().x);
 		camera_comp.GetCamera()->RotationTPSPitch(rad_y * camera_comp.GetCamera()->GetCameraSpeed().y);
 		camera_comp.GetCamera()->SetFocusPosition(transform_comp.GetPosition());
+	}
+
+	void PlayerComponent::RegistryKeyframeEvent(const AnimationData anim_data, const std::string& key_name)
+	{
+		if (keyframe_events.contains(anim_data))
+		{
+			keyframe_events.at(anim_data).RegistryEvent(key_name);
+			return;
+		}
+
+		keyframe_events.emplace(anim_data, system::KeyframeEvent{});
+		keyframe_events.at(anim_data).RegistryEvent(key_name);
+	}
+
+	system::KeyframeEvent& PlayerComponent::GetKeyframeEvent(const AnimationData anim_data)
+	{
+		if (!keyframe_events.contains(anim_data))
+			assert(!"Don't have KeyframeEvent(PlayerComponent::GetKeyframeEvent)");
+
+		return keyframe_events.at(anim_data);
 	}
 
 	void PlayerComponent::SetAdjustKeyFrame(const std::string& animation_name, u_int keyframe)
@@ -771,6 +839,33 @@ namespace cumulonimbus::component
 			InitializeAnimationVariable();
 			// アニメーションセット(AnimationData::Attack_Normal_01)
 			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Normal_01), false, 0.01f);
+			// 剣の当たり判定をなくす
+			if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+				capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
+		}
+
+		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+
+		GetKeyframeEvent(AnimationData::Attack_Normal_01).Update(GetRegistry(), GetEntity(), keyframe_event::event_1);
+		if (GetKeyframeEvent(AnimationData::Attack_Normal_01).GetKeyEvent(keyframe_event::event_1).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeEnter)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(true);
+			}
+		}
+
+		if (GetKeyframeEvent(AnimationData::Attack_Normal_01).GetKeyEvent(keyframe_event::event_1).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeExit)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
 		}
 
 		using namespace locator;
@@ -823,6 +918,33 @@ namespace cumulonimbus::component
 			InitializeAnimationVariable();
 			// アニメーションセット(AnimationData::Attack_Normal_02)
 			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Normal_02), false);
+			// 剣の当たり判定をなくす
+			if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+				capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
+		}
+
+		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+
+		GetKeyframeEvent(AnimationData::Attack_Normal_02).Update(GetRegistry(), GetEntity(), keyframe_event::event_1);
+		if (GetKeyframeEvent(AnimationData::Attack_Normal_02).GetKeyEvent(keyframe_event::event_1).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeEnter)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(true);
+			}
+		}
+
+		if (GetKeyframeEvent(AnimationData::Attack_Normal_02).GetKeyEvent(keyframe_event::event_1).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeExit)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
 		}
 
 		if (!IsBreakAnimationFrame(AnimationData::Attack_Normal_02))
@@ -875,6 +997,33 @@ namespace cumulonimbus::component
 			InitializeAnimationVariable();
 			// アニメーションセット(AnimationData::Attack_Normal_03)
 			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Normal_03), false);
+			// 剣の当たり判定をなくす
+			if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+				capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
+		}
+
+		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+
+		GetKeyframeEvent(AnimationData::Attack_Normal_03).Update(GetRegistry(), GetEntity(), keyframe_event::event_1);
+		if (GetKeyframeEvent(AnimationData::Attack_Normal_03).GetKeyEvent(keyframe_event::event_1).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeEnter)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(true);
+			}
+		}
+
+		if (GetKeyframeEvent(AnimationData::Attack_Normal_03).GetKeyEvent(keyframe_event::event_1).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeExit)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
 		}
 
 		if (!IsBreakAnimationFrame(AnimationData::Attack_Normal_03))
@@ -1001,6 +1150,33 @@ namespace cumulonimbus::component
 			InitializeAnimationVariable();
 			// アニメーションセット(AnimationData::Attack_Strong_01)
 			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Strong_01), false);
+			// 剣の当たり判定をなくす
+			if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+				capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
+		}
+
+		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+
+		GetKeyframeEvent(AnimationData::Attack_Strong_01).Update(GetRegistry(), GetEntity(), keyframe_event::event_1);
+		if (GetKeyframeEvent(AnimationData::Attack_Strong_01).GetKeyEvent(keyframe_event::event_1).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeEnter)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(true);
+			}
+		}
+
+		if (GetKeyframeEvent(AnimationData::Attack_Strong_01).GetKeyEvent(keyframe_event::event_1).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeExit)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
 		}
 
 		using namespace locator;
@@ -1037,6 +1213,33 @@ namespace cumulonimbus::component
 			InitializeAnimationVariable();
 			// アニメーションセット(AnimationData::Attack_Strong_02)
 			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Strong_02), false);
+			// 剣の当たり判定をなくす
+			if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+				capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
+		}
+
+		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+
+		GetKeyframeEvent(AnimationData::Attack_Strong_02).Update(GetRegistry(), GetEntity(), keyframe_event::event_1);
+		if (GetKeyframeEvent(AnimationData::Attack_Strong_02).GetKeyEvent(keyframe_event::event_1).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeEnter)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(true);
+			}
+		}
+
+		if (GetKeyframeEvent(AnimationData::Attack_Strong_02).GetKeyEvent(keyframe_event::event_1).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeExit)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
 		}
 
 		using namespace locator;
@@ -1073,6 +1276,33 @@ namespace cumulonimbus::component
 			InitializeAnimationVariable();
 			// アニメーションセット(AnimationData::Attack_Strong_03)
 			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Strong_03), false);
+			// 剣の当たり判定をなくす
+			if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+				capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
+		}
+
+		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+
+		GetKeyframeEvent(AnimationData::Attack_Strong_03).Update(GetRegistry(), GetEntity(), keyframe_event::event_1);
+		if (GetKeyframeEvent(AnimationData::Attack_Strong_03).GetKeyEvent(keyframe_event::event_1).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeEnter)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(true);
+			}
+		}
+
+		if (GetKeyframeEvent(AnimationData::Attack_Strong_03).GetKeyEvent(keyframe_event::event_1).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeExit)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
 		}
 
 		using namespace locator;
@@ -1109,6 +1339,33 @@ namespace cumulonimbus::component
 			InitializeAnimationVariable();
 			// アニメーションセット(AnimationData::Attack_Strong_04)
 			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Strong_04), false);
+			// 剣の当たり判定をなくす
+			if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+				capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
+		}
+
+		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+
+		GetKeyframeEvent(AnimationData::Attack_Strong_04).Update(GetRegistry(), GetEntity(), keyframe_event::event_1);
+		if (GetKeyframeEvent(AnimationData::Attack_Strong_04).GetKeyEvent(keyframe_event::event_1).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeEnter)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(true);
+			}
+		}
+
+		if (GetKeyframeEvent(AnimationData::Attack_Strong_04).GetKeyEvent(keyframe_event::event_1).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeExit)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
 		}
 
 		// アニメーション再生中なら処理を中断
@@ -1325,6 +1582,12 @@ namespace cumulonimbus::component
 			InitializeAnimationVariable();
 			// アニメーションセット(AnimationData::Attacking_Jump_04)
 			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attacking_Jump_04), false);
+			// 剣の当たり判定をなくす
+			if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+				capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(true);
+			}
 		}
 
 		if ((!model_comp.IsPlayAnimation()))
@@ -1343,6 +1606,12 @@ namespace cumulonimbus::component
 			InitializeAnimationVariable();
 			// アニメーションセット(AnimationData::Attack_Jump_04_End)
 			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Jump_04_End), false);
+			// 剣の当たり判定をなくす
+			if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+				capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
 		}
 
 		if (!model_comp.IsPlayAnimation())

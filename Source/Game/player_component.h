@@ -4,8 +4,10 @@
 
 #include <d3d11.h>
 
-#include "actor3d_component.h"
 #include "state_machine.h"
+#include "keyframe_event.h"
+// components
+#include "actor3d_component.h"
 #include "collision_component.h"
 #include "damageable_component.h"
 
@@ -167,8 +169,13 @@ namespace cumulonimbus::component
 		std::map<std::string, u_int> adjust_keyframe_map{};
 		// アニメーション中断フレーム(先行入力などで使用)
 		std::map<AnimationData, u_int> animation_break_frame{};
+		// キーフレーム中のイベント管理
+		std::map<AnimationData, system::KeyframeEvent> keyframe_events{};
 		// ヒットリザルト
 		collision::HitResult hit_result{};
+
+		// プレイヤーの持つ剣のエンティティ
+		mapping::rename_type::Entity sword_ent{};
 
 		// アニメーション遷移時間
 		float anim_switch_time{ 0.1f };
@@ -267,6 +274,10 @@ namespace cumulonimbus::component
 		 */
 		void CameraWork();
 
+		void RegistryKeyframeEvent(AnimationData anim_data, const std::string& key_name);
+		[[nodiscard]]
+		system::KeyframeEvent& GetKeyframeEvent(AnimationData anim_data);
+
 		/**
 		 * @brief					: アニメーションキーフレーム調整値の設定
 		 * @param animation_name	: モデルのアニメーション名
@@ -316,6 +327,11 @@ namespace cumulonimbus::component
 		 * @param ent : 自分のエンティティ
 		 */
 		void InitializeMoveState(ecs::Registry* registry, const mapping::rename_type::Entity& ent);
+
+		/**
+		 * @brief : キーフレームイベントの初期化
+		 */
+		void InitializeKeyframeEvent();
 
 		/**
 		 * @brief : ダメージ処理

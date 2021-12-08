@@ -10,8 +10,8 @@ namespace cumulonimbus::system
 	class Event final
 	{
 	public:
-		Event()							= default;
- 		~Event()						= default;
+		Event()  = default;
+		~Event() = default;
 
 		void RegistryEvent(const mapping::rename_type::UUID& id, const std::function<ReturnVal(Args...)>& callback)
 		{

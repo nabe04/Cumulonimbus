@@ -18,7 +18,7 @@ CEREAL_CLASS_VERSION(cumulonimbus::collision::Capsule, 2)
 namespace
 {
 	// ImGui描画時にCollisionPreset(enum class)から文字列一覧を取得する為に使用
-	EnumStateMap<cumulonimbus::collision::CollisionPreset> collision_preset{};
+	EnumStateMap<cumulonimbus::collision::CollisionType> collision_preset{};
 	// ImGui描画時にCollisionTag(enum class)から文字列一覧を取得する為に使用
 	EnumStateMap<cumulonimbus::collision::CollisionTag> collision_tag{};
 }
@@ -38,7 +38,7 @@ namespace cumulonimbus::collision
 	//		CEREAL_NVP(length),
 	//		CEREAL_NVP(radius),
 	//		CEREAL_NVP(hit_result),
-	//		CEREAL_NVP(collision_preset)
+	//		CEREAL_NVP(collision_type)
 	//	);
 	//}
 
@@ -57,7 +57,7 @@ namespace cumulonimbus::collision
 				CEREAL_NVP(length),
 				CEREAL_NVP(radius),
 			    //CEREAL_NVP(hit_result),
-				CEREAL_NVP(collision_preset),
+				CEREAL_NVP(collision_type),
 				CEREAL_NVP(base_color),
 				CEREAL_NVP(hit_color),
 				CEREAL_NVP(collision_tag)
@@ -76,7 +76,7 @@ namespace cumulonimbus::collision
 				CEREAL_NVP(bone_name),
 				CEREAL_NVP(length),
 				CEREAL_NVP(radius),
-				CEREAL_NVP(collision_preset),
+				CEREAL_NVP(collision_type),
 				CEREAL_NVP(base_color),
 				CEREAL_NVP(hit_color),
 				CEREAL_NVP(collision_tag)
@@ -103,7 +103,7 @@ namespace cumulonimbus::collision
 				CEREAL_NVP(length),
 				CEREAL_NVP(radius),
 				//CEREAL_NVP(hit_result),
-				CEREAL_NVP(collision_preset),
+				CEREAL_NVP(collision_type),
 				CEREAL_NVP(base_color),
 				CEREAL_NVP(hit_color),
 				CEREAL_NVP(collision_tag)
@@ -120,7 +120,7 @@ namespace cumulonimbus::collision
 				CEREAL_NVP(bone_name),
 				CEREAL_NVP(length),
 				CEREAL_NVP(radius),
-				CEREAL_NVP(collision_preset),
+				CEREAL_NVP(collision_type),
 				CEREAL_NVP(base_color),
 				CEREAL_NVP(hit_color),
 				CEREAL_NVP(collision_tag)
@@ -494,10 +494,10 @@ namespace cumulonimbus::component
 				// カプセルプリセット変更関数
 				auto CollisionPresetCombo = [&]()
 				{
-					if (std::string current_name = nameof::nameof_enum(capsule.collision_preset).data();
+					if (std::string current_name = nameof::nameof_enum(capsule.collision_type).data();
 						helper::imgui::Combo("Preset", current_name, collision_preset.GetStateNames()))
 					{// コリジョンプリセットの変更
-						capsule.collision_preset = collision_preset.GetStateMap().at(current_name);
+						capsule.collision_type = collision_preset.GetStateMap().at(current_name);
 					}
 				};
 				// カプセルタグ変更関数
@@ -603,6 +603,14 @@ namespace cumulonimbus::component
 		return nullptr;
 	}
 
+	void CapsuleCollisionComponent::SetAllCollisionEnable(const bool is_enable)
+	{
+		for (auto& capsule : capsules | std::views::values)
+		{
+			capsule.is_enable = is_enable;
+		}
+	}
+
 	void CapsuleCollisionComponent::SetOffset(
 		const std::string& capsule_name,
 		const DirectX::SimpleMath::Vector3& offset)
@@ -650,18 +658,18 @@ namespace cumulonimbus::component
 		}
 	}
 
-	void CapsuleCollisionComponent::SetCollisionPreset(const std::string& capsule_name, collision::CollisionPreset preset)
+	void CapsuleCollisionComponent::SetCollisionType(const std::string& capsule_name, collision::CollisionType preset)
 	{
 		if (!capsules.contains(capsule_name))
-			assert(!"Name is not registered(CapsuleCollisionComponent::SetCollisionPreset)");
-		capsules.at(capsule_name).collision_preset = preset;
+			assert(!"Name is not registered(CapsuleCollisionComponent::SetCollisionType)");
+		capsules.at(capsule_name).collision_type = preset;
 	}
 
-	void CapsuleCollisionComponent::SetAllCollisionPreset(collision::CollisionPreset preset)
+	void CapsuleCollisionComponent::SetAllCollisionType(collision::CollisionType preset)
 	{
 		for(auto& capsule : capsules)
 		{
-			capsule.second.collision_preset = preset;
+			capsule.second.collision_type = preset;
 		}
 	}
 

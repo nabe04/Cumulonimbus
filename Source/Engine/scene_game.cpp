@@ -67,7 +67,7 @@
 //	//registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_ene_00).AddCapsule();
 //	//registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_ene_00).SetAllRadius(20.0f);
 //	//registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_ene_00).SetAllLength(40.0f);
-//	//registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_ene_00).SetAllCollisionPreset(cumulonimbus::collision::CollisionPreset::BlockAll);
+//	//registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_ene_00).SetAllCollisionPreset(cumulonimbus::collision::CollisionType::BlockAll);
 //	//registry->AddComponent<cum::component::RigidBodyComponent>(ent_ene_00);
 //	//registry->GetComponent<cum::component::RigidBodyComponent>(ent_ene_00).GravityStop(true);
 //
@@ -85,7 +85,7 @@
 //	//registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_player).AddCapsule();
 //	//registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_player).SetAllRadius(20.0f);
 //	//registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_player).SetAllLength(40.0f);
-//	//registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_player).SetAllCollisionPreset(cumulonimbus::collision::CollisionPreset::BlockAll);
+//	//registry->GetComponent<cum::component::CapsuleCollisionComponent>(ent_player).SetAllCollisionPreset(cumulonimbus::collision::CollisionType::BlockAll);
 //	//registry->GetComponent<cum::component::CameraComponent>(ent_player).AttachObject(ent_player);
 //	//registry->GetComponent<cum::component::CameraComponent>(ent_player).InitializeObjectCameraParam(300);
 //	//registry->GetComponent<cum::component::CameraComponent>(ent_player).SetIsDebugCamera(false);
