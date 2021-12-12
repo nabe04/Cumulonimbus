@@ -21,6 +21,12 @@ namespace cumulonimbus::asset
 
 		template<class Archive>
 		void serialize(Archive&& archive);
+
+		//template<class Archive>
+		//void load(Archive&& archive, uint32_t version);
+
+		//template<class Archive>
+		//void save(Archive&& archive, uint32_t version) const;
 	};
 
 	/**
@@ -31,7 +37,8 @@ namespace cumulonimbus::asset
 	{
 	public:
 		explicit Material() = default; // for cereal
-		explicit Material(const MaterialData& data);
+		explicit Material(const mapping::rename_type::UUID& mat_id);
+		explicit Material(const mapping::rename_type::UUID& mat_id, const MaterialData& data);
 		~Material() = default;
 
 		template<class Archive>
@@ -115,6 +122,9 @@ namespace cumulonimbus::asset
 		 */
 		void SetOcclusionID(const mapping::rename_type::UUID& id) { material_data.occlusion_id = id; }
 	private:
+		// マテリアルデータ
 		MaterialData material_data{};
+		// 自分のマテリアルID
+		mapping::rename_type::UUID mat_id{};
 	};
 } // cumulonimbus::asset

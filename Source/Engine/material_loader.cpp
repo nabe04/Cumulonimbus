@@ -114,9 +114,6 @@ namespace cumulonimbus::asset
 			+ "Materials" + "/"
 			+ material_name + file_path_helper::GetMaterialExtension() };
 
-		// 作成したマテリアルを「.mat」形式で保存
-		std::unique_ptr<Material>mat = std::make_unique<Material>(material_data);
-		mat->Save(save_path);
 
 		// 保存したマテリアルのIDを作成
 		mapping::rename_type::UUID id;
@@ -127,6 +124,10 @@ namespace cumulonimbus::asset
 				continue;
 			break;
 		}
+
+		// 作成したマテリアルを「.mat」形式で保存
+		std::unique_ptr<Material>mat = std::make_unique<Material>(id, material_data);
+		mat->Save(save_path);
 
 		// アセットシートの登録
 		asset_manager.GetAssetSheetManager().GetSheet<Material>().sheet.insert(std::make_pair(id, save_path));
@@ -145,7 +146,7 @@ namespace cumulonimbus::asset
 		// すでにテクスチャが存在する場合は処理を抜ける
 		if (materials.contains(id))
 			return;
-		Material m{};
+		Material m{ id };
 		m.Load(asset_manager.GetAssetSheetManager().GetAssetFilename<Material>(id));
 		// マテリアルの作成
 		materials.insert(std::make_pair(
@@ -203,7 +204,7 @@ namespace cumulonimbus::asset
 		if (!materials.contains(mat_id))
 			return { "" };
 
-		std::filesystem::path mat_path = locator::Locator::GetAssetManager()->GetAssetSheetManager().GetAssetFilename<Material>(mat_id);
+		const std::filesystem::path mat_path = locator::Locator::GetAssetManager()->GetAssetSheetManager().GetAssetFilename<Material>(mat_id);
 
 		return mat_path.filename().replace_extension().string();
 	}

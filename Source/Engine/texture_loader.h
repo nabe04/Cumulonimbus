@@ -98,6 +98,16 @@ namespace cumulonimbus::asset
 		Texture& GetTexture(const mapping::rename_type::UUID& id);
 
 		/**
+		 * @brief : TextureLoaderが持つテクスチャ全ての取得
+		 */
+		const std::map<mapping::rename_type::UUID, std::unique_ptr<Texture>>& GetTextures() const;
+
+		/**
+		 * @brief : TextureLoaderが持つテクスチャ全ての取得
+		 */
+		std::map<mapping::rename_type::UUID, std::unique_ptr<Texture>>& GetTextures();
+
+		/**
 		 * @brief : ImGui上でのテクスチャ選択関数
 		 * @remark : ※caution(1) : ImGuiを使用する関数内で使用すること
 		 * @remark : ※caution(2) : ImGui::Begin()の中でこの関数を呼ぶこと

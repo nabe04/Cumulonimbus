@@ -201,6 +201,16 @@ namespace cumulonimbus::asset
 		return *textures.at(id).get();
 	}
 
+	const std::map<mapping::rename_type::UUID, std::unique_ptr<Texture>>& TextureLoader::GetTextures() const
+	{
+		return textures;
+	}
+
+	std::map<mapping::rename_type::UUID, std::unique_ptr<Texture>>& TextureLoader::GetTextures()
+	{
+		return textures;
+	}
+
 	void TextureLoader::SelectableTexture(AssetManager& asset_manager, mapping::rename_type::UUID& tex_id)
 	{
 		std::filesystem::path texture_filename{};

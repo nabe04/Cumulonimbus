@@ -75,7 +75,6 @@ namespace cumulonimbus::component
 			CEREAL_NVP(prev_animation),
 			CEREAL_NVP(anim_states)
 		);
-
 	}
 
 	ModelComponent::ModelComponent(
@@ -124,17 +123,17 @@ namespace cumulonimbus::component
 
 	void ModelComponent::RenderImGui()
 	{
-		if (const ImGuiTreeNodeFlags tree_flg{ ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth };
-			ImGui::CollapsingHeader("Model Component", tree_flg))
+		if(GetRegistry()->CollapsingHeader<ModelComponent>(GetEntity(),"Model"))
 		{
+			const ImGuiTreeNodeFlags tree_flg{ ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth };
+
 			auto& asset_manager = *locator::Locator::GetAssetManager();
 			auto& asset_sheet_manager = asset_manager.GetAssetSheetManager();
 			auto* model_loader = locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>();
-			std::filesystem::path current_path{};
 			std::string current_item{};
 			if (model_loader->HasModel(model_id))
 			{
-				current_path = asset_sheet_manager.GetAssetFilename<asset::Model>(model_id);
+				const std::filesystem::path current_path = asset_sheet_manager.GetAssetFilename<asset::Model>(model_id);
 				current_item = current_path.filename().string();
 			}
 			std::vector<std::filesystem::path> items_path{};
@@ -177,6 +176,7 @@ namespace cumulonimbus::component
 					{// メッシュ毎のマテリアル
 						for (const asset::ModelData::Subset& subset : mesh.subsets)
 						{// メッシュが持つマテリアル郡
+							ImGui::Separator();
 							if (const auto& material_id = GetMaterialID(subset.material_index);
 								ImGui::TreeNodeEx(asset_manager.GetLoader<asset::MaterialLoader>()->GetMaterialName(material_id).c_str(), tree_flg))
 							{
@@ -185,6 +185,7 @@ namespace cumulonimbus::component
 
 								ImGui::TreePop();
 							}
+							ImGui::Separator();
 						}
 						ImGui::TreePop();
 					}
