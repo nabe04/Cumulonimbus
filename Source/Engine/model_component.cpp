@@ -406,6 +406,7 @@ namespace cumulonimbus::component
 
 		// マテリアルIDのコピー
 		const auto& mat_vec = model.GetModelData().GetMaterialsID();
+		material_ids.clear();
 		std::copy(mat_vec.begin(), mat_vec.end(), std::back_inserter(material_ids));
 
 		InitializeAnimState(registry, ent);

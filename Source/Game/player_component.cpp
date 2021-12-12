@@ -44,43 +44,71 @@ namespace cumulonimbus::component
 	template <class Archive>
 	void PlayerComponent::load(Archive&& archive, uint32_t version)
 	{
-		archive(
-			cereal::base_class<Actor3DComponent>(this),
-			CEREAL_NVP(player_state),
-			CEREAL_NVP(precede_input),
-			CEREAL_NVP(adjust_keyframe_map),
-			CEREAL_NVP(animation_break_frame),
-			CEREAL_NVP(walk_speed),
-			CEREAL_NVP(dash_speed),
-			CEREAL_NVP(attack_04_speed),
-			CEREAL_NVP(avoid_dash_speed),
-			CEREAL_NVP(jump_movement_speed),
-			CEREAL_NVP(threshold),
-			CEREAL_NVP(long_press_time),
-			CEREAL_NVP(long_press_slot),
-			CEREAL_NVP(attack_04_jump_strength)
-		);
+		if(version == 0)
+		{
+			archive(
+				cereal::base_class<Actor3DComponent>(this),
+				CEREAL_NVP(player_state),
+				CEREAL_NVP(precede_input),
+				CEREAL_NVP(adjust_keyframe_map),
+				CEREAL_NVP(animation_break_frame),
+				CEREAL_NVP(walk_speed),
+				CEREAL_NVP(dash_speed),
+				CEREAL_NVP(attack_04_speed),
+				CEREAL_NVP(avoid_dash_speed),
+				CEREAL_NVP(jump_movement_speed),
+				CEREAL_NVP(threshold),
+				CEREAL_NVP(long_press_time),
+				CEREAL_NVP(long_press_slot),
+				CEREAL_NVP(attack_04_jump_strength)
+			);
+		}
+
+		if(version == 1)
+		{
+			archive(
+				cereal::base_class<Actor3DComponent>(this),
+				CEREAL_NVP(player_state),
+				CEREAL_NVP(precede_input),
+				CEREAL_NVP(adjust_keyframe_map),
+				CEREAL_NVP(animation_break_frame),
+				CEREAL_NVP(walk_speed),
+				CEREAL_NVP(dash_speed),
+				CEREAL_NVP(attack_04_speed),
+				CEREAL_NVP(avoid_dash_speed),
+				CEREAL_NVP(jump_movement_speed),
+				CEREAL_NVP(threshold),
+				CEREAL_NVP(long_press_time),
+				CEREAL_NVP(long_press_slot),
+				CEREAL_NVP(attack_04_jump_strength)
+			);
+		}
+
 	}
 
 	template <class Archive>
 	void PlayerComponent::save(Archive&& archive, uint32_t version) const
 	{
-		archive(
-			cereal::base_class<Actor3DComponent>(this),
-			CEREAL_NVP(player_state),
-			CEREAL_NVP(precede_input),
-			CEREAL_NVP(adjust_keyframe_map),
-			CEREAL_NVP(animation_break_frame),
-			CEREAL_NVP(walk_speed),
-			CEREAL_NVP(dash_speed),
-			CEREAL_NVP(attack_04_speed),
-			CEREAL_NVP(avoid_dash_speed),
-			CEREAL_NVP(jump_movement_speed),
-			CEREAL_NVP(threshold),
-			CEREAL_NVP(long_press_time),
-			CEREAL_NVP(long_press_slot),
-			CEREAL_NVP(attack_04_jump_strength)
-		);
+		if(version == 0)
+		{
+			archive(
+				cereal::base_class<Actor3DComponent>(this),
+				CEREAL_NVP(player_state),
+				CEREAL_NVP(precede_input),
+				CEREAL_NVP(adjust_keyframe_map),
+				CEREAL_NVP(animation_break_frame),
+				CEREAL_NVP(walk_speed),
+				CEREAL_NVP(dash_speed),
+				CEREAL_NVP(attack_04_speed),
+				CEREAL_NVP(avoid_dash_speed),
+				CEREAL_NVP(jump_movement_speed),
+				CEREAL_NVP(threshold),
+				CEREAL_NVP(long_press_time),
+				CEREAL_NVP(long_press_slot),
+				CEREAL_NVP(attack_04_jump_strength)
+			);
+		}
+
 	}
 
 	PlayerComponent::PlayerComponent(ecs::Registry* const registry, const mapping::rename_type::Entity ent)
@@ -1103,6 +1131,12 @@ namespace cumulonimbus::component
 			InitializeAnimationVariable();
 			// アニメーションセット(AnimationData::Attacking_Normal_04)
 			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attacking_Normal_04), true);
+			// 剣の当たり判定を付ける
+			if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+				capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(true);
+			}
 		}
 
 		rigid_body_comp.AddForce({ attack_04_speed,0,attack_04_speed });
@@ -1124,6 +1158,12 @@ namespace cumulonimbus::component
 			InitializeAnimationVariable();
 			// アニメーションセット(AnimationData::Attack_Normal_04_End)
 			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Normal_04_End), false);
+			// 剣の当たり判定をなくす
+			if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+				capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
 		}
 
 		// アニメーション再生中なら処理を中断

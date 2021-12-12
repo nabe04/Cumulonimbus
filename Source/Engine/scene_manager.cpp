@@ -199,8 +199,8 @@ namespace cumulonimbus::scene
 		if (editor_manager->GetToolBar().GetToolBarButton().GetButtonState(editor::ToolBar::Button::Play) ==
 			ButtonState::Release)
 		{
-			EndGame();
 			wave_system->End(*this);
+			EndGame();
 		}
 
 		for(auto& [scene_id, scene] : active_scenes)
@@ -210,13 +210,13 @@ namespace cumulonimbus::scene
 			if(editor_manager->GetToolBar().IsPlaybackState(editor::ToolBar::Button::Play))
 			{
 				scene->GameUpdate(dt);
-				wave_system->Update(*this);
 			}
 		}
 
 		if (editor_manager->GetToolBar().IsPlaybackState(editor::ToolBar::Button::Play))
 		{// ゲームプレイ時のみ判定処理を行う
 			collision_manager->Update(dt, *this);
+			wave_system->Update(*this);
 		}
 
 		system->Update(dt);
@@ -285,10 +285,9 @@ namespace cumulonimbus::scene
 																	  std::vector<mapping::rename_type::Entity>{enemy_soldier_base},
 																	  true, "E_Soldier_Base");
 
-		registry.CreateEntity();
-
 		// 作成したエンティティの削除(プレハブへの登録のみが目的の為)
 		registry.Destroy(player_base);
+		registry.Destroy(player_sword_base);
 		registry.Destroy(enemy_soldier_base);
 		// カメラを
 		if(!registry.GetArray<component::CameraComponent>().GetComponents().empty())

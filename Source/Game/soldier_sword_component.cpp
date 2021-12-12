@@ -81,7 +81,7 @@ namespace cumulonimbus::component
 			return;
 
 		// 同じエネミーのタグの場合処理を飛ばす
-		if (hit_result.collision_tag == collision::CollisionTag::Enemy)
+		if (hit_result.collision_tag != collision::CollisionTag::Player)
 			return;
 
 		if(auto damageable_comp = hit_result.registry->TryGetComponent<DamageableComponent>(hit_result.entity);
