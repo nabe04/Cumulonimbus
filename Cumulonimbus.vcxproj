@@ -888,7 +888,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>.\Source\Engine;.\Libraries\imgui;.\Libraries\DirectXTK-master\Inc;.\Libraries\FBX\FBX SDK\2019.0\include;.\Libraries\cereal-master\include;.\Libraries\Effekseer152\include\EffekseerRendererDX11;.\Libraries\Effekseer152\include\Effekseer;%(AdditionalIncludeDirectories);D:\Project_5Weeks\Source\Game;.\Source\Game;D:\SunLight_Ver_1_3\Libraries\nameof</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Libraries\Effekseer\include;.\Source\Engine;.\Libraries\imgui;.\Libraries\DirectXTK-master\Inc;.\Libraries\FBX\FBX SDK\2019.0\include;.\Libraries\cereal-master\include;.\Libraries\Effekseer152\include\EffekseerRendererDX11;.\Libraries\Effekseer152\include\Effekseer;%(AdditionalIncludeDirectories);D:\Project_5Weeks\Source\Game;.\Source\Game;D:\SunLight_Ver_1_3\Libraries\nameof</AdditionalIncludeDirectories>
       <AdditionalOptions>-DNOMINMAX %(AdditionalOptions)</AdditionalOptions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>pch.h</ForcedIncludeFiles>
@@ -913,7 +913,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>.\Libraries\portable-file-dialogs;.\Libraries\imgui;.\Libraries\FBX\FBX SDK\2019.0\include;.\Libraries\DirectXTK-master\Inc;.\Libraries\cereal-master\include;.\Source\Engine;%(AdditionalIncludeDirectories);.\Source\Game;.\Libraries\DirectXTex-master\DDSTextureLoader;.\Libraries\DirectXTex-master\DirectXTex;.\Libraries\nameof</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Libraries\Effekseer\include;.\Libraries\portable-file-dialogs;.\Libraries\imgui;.\Libraries\FBX\FBX SDK\2019.0\include;.\Libraries\DirectXTK-master\Inc;.\Libraries\cereal-master\include;.\Source\Engine;%(AdditionalIncludeDirectories);.\Source\Game;.\Libraries\DirectXTex-master\DDSTextureLoader;.\Libraries\DirectXTex-master\DirectXTex;.\Libraries\nameof</AdditionalIncludeDirectories>
       <AdditionalOptions>-DNOMINMAX /bigobj %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -925,8 +925,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>.\Libraries\FBX\FBX SDK\2019.0\lib\vs2015\x64\debug;.\Libraries\DirectXTK-master\Bin\Desktop_2019\x64\Debug;.\Libraries\DirectXTex-master\DirectXTex\Bin\Desktop_2019\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libfbxsdk-md.lib;dxguid.lib;d3dcompiler.lib;d3d11.lib;dxgi.lib;dinput8.lib;DirectXTK.lib;DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>.\Libraries\FBX\FBX SDK\2019.0\lib\vs2015\x64\debug;.\Libraries\DirectXTK-master\Bin\Desktop_2019\x64\Debug;.\Libraries\DirectXTex-master\DirectXTex\Bin\Desktop_2019\x64\Debug;.\Libraries\Effekseer\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libfbxsdk-md.lib;dxguid.lib;d3dcompiler.lib;d3d11.lib;dxgi.lib;dinput8.lib;DirectXTK.lib;DirectXTex.lib;Effekseerd.lib;EffekseerRendererDX11d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
@@ -945,7 +945,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>.\Source\Engine;.\Libraries\imgui;.\Libraries\FBX\FBX SDK\2019.0\include;.\Libraries\DirectXTK-master\Inc;.\Libraries\cereal-master\include;.\Libraries\Effekseer152\include\Effekseer;.\Libraries\Effekseer152\include\EffekseerRendererDX11;%(AdditionalIncludeDirectories);D:\Project_5Weeks\Source\Game;.\Source\Game;D:\SunLight_Ver_1_3\Libraries\nameof</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Libraries\Effekseer\include;.\Source\Engine;.\Libraries\imgui;.\Libraries\FBX\FBX SDK\2019.0\include;.\Libraries\DirectXTK-master\Inc;.\Libraries\cereal-master\include;.\Libraries\Effekseer152\include\Effekseer;.\Libraries\Effekseer152\include\EffekseerRendererDX11;%(AdditionalIncludeDirectories);D:\Project_5Weeks\Source\Game;.\Source\Game;D:\SunLight_Ver_1_3\Libraries\nameof</AdditionalIncludeDirectories>
       <AdditionalOptions>-DNOMINMAX %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -979,7 +979,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>.\Libraries\portable-file-dialogs;.\Libraries\imgui;.\Source\Engine;.\Libraries\FBX\FBX SDK\2019.0\include;.\Libraries\cereal-master\include;.\Source\Game;.\Libraries\DirectXTex-master\DDSTextureLoader;.\Libraries\DirectXTex-master\DirectXTex;.\Libraries\nameof;.\Libraries\DirectXTK-master\Inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Libraries\Effekseer\include;.\Libraries\portable-file-dialogs;.\Libraries\imgui;.\Source\Engine;.\Libraries\FBX\FBX SDK\2019.0\include;.\Libraries\cereal-master\include;.\Source\Game;.\Libraries\DirectXTex-master\DDSTextureLoader;.\Libraries\DirectXTex-master\DirectXTex;.\Libraries\nameof;.\Libraries\DirectXTK-master\Inc</AdditionalIncludeDirectories>
       <AdditionalOptions>-DNOMINMAX %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -993,8 +993,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libfbxsdk-md.lib;dxguid.lib;d3dcompiler.lib;d3d11.lib;dxgi.lib;dinput8.lib;DirectXTK.lib;DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>.\Libraries\FBX\FBX SDK\2019.0\lib\vs2015\x64\release;.\Libraries\DirectXTex-master\DirectXTex\Bin\Desktop_2019\x64\Release;.\Libraries\DirectXTK-master\Bin\Desktop_2019\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libfbxsdk-md.lib;dxguid.lib;d3dcompiler.lib;d3d11.lib;dxgi.lib;dinput8.lib;DirectXTK.lib;DirectXTex.lib;Effekseer.lib;EffekseerRendererDX11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>.\Libraries\Effekseer\lib\Release;.\Libraries\FBX\FBX SDK\2019.0\lib\vs2015\x64\release;.\Libraries\DirectXTex-master\DirectXTex\Bin\Desktop_2019\x64\Release;.\Libraries\DirectXTK-master\Bin\Desktop_2019\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
