@@ -9,6 +9,7 @@
 #include "window.h"
 #include "scene_manager.h"
 #include "render_path.h"
+#include "effekseer_manager.h"
 #include "wave_system.h"
 #include "gaussian_blur.h"
 

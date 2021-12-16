@@ -15,6 +15,7 @@ namespace cumulonimbus
 
 	namespace system
 	{
+		class EffekseerManager;
 		class WaveSystem;
 	} // system
 
@@ -118,6 +119,11 @@ namespace cumulonimbus::scene
 			return framework.get();
 		}
 		[[nodiscard]]
+		system::WaveSystem* GetWaveSystem() const
+		{
+			return wave_system.get();
+		}
+		[[nodiscard]]
 		editor::EditorManager* GetEditorManager() const
 		{
 			return editor_manager.get();
@@ -128,9 +134,9 @@ namespace cumulonimbus::scene
 			return collision_manager.get();
 		}
 		[[nodiscard]]
-		system::WaveSystem* GetWaveSystem() const
+		system::EffekseerManager* GetEffekseerManager() const
 		{
-			return wave_system.get();
+			return effekseer_manager.get();
 		}
 
 	private:
@@ -152,6 +158,8 @@ namespace cumulonimbus::scene
 		std::unique_ptr<editor::EditorManager>	editor_manager{};
 		// 当たり判定管理用マネジャー
 		std::unique_ptr<collision::CollisionManager> collision_manager{};
+		// エフェクシア
+		std::unique_ptr<system::EffekseerManager> effekseer_manager{ nullptr };
 
 		void Execute();
 		void Initialize();

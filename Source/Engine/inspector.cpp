@@ -10,6 +10,7 @@
 #include "billboard_component.h"
 #include "camera_component.h"
 #include "capsule_collison_component.h"
+#include "effekseer_component.h"
 #include "model_component.h"
 #include "physic_material_component.h"
 #include "raycast_component.h"
@@ -28,6 +29,7 @@ namespace cumulonimbus::editor
 		RegisterComponent<component::ModelComponent>(			"Model"				 , mapping::component_tag::ComponentTag::Mesh);
 		RegisterComponent<component::SpriteComponent>(			"Sprite"			 , mapping::component_tag::ComponentTag::Sprite);
 		RegisterComponent<component::BillboardComponent>(		"Billboard"			 , mapping::component_tag::ComponentTag::Sprite);
+		RegisterComponent<component::EffekseerComponent>(		"Effekseer"			 , mapping::component_tag::ComponentTag::Sprite);
 		RegisterComponent<component::RayCastComponent>(			"RayCast Collider"	 , mapping::component_tag::ComponentTag::Physics);
 		RegisterComponent<component::CapsuleCollisionComponent>("Capsule Collider"	 , mapping::component_tag::ComponentTag::Physics);
 		RegisterComponent<component::PhysicMaterialComponent>(	"Physic Material"	 , mapping::component_tag::ComponentTag::Physics);

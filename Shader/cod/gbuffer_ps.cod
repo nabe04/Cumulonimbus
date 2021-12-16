@@ -33,7 +33,7 @@
 // SV_TARGET                2   xyzw        2   TARGET   float   xyzw
 //
 ps_5_0
-dcl_globalFlags refactoringAllowed | skipOptimization
+dcl_globalFlags refactoringAllowed
 dcl_sampler s0, mode_default
 dcl_resource_texture2d (float,float,float,float) t20
 dcl_resource_texture2d (float,float,float,float) t21
@@ -45,81 +45,26 @@ dcl_input_ps linear v5.xy
 dcl_output o0.xyzw
 dcl_output o1.xyzw
 dcl_output o2.xyzw
-dcl_temps 5
-//
-// Initial variable locations:
-//   v0.x <- pin.position.x; v0.y <- pin.position.y; v0.z <- pin.position.z; v0.w <- pin.position.w; 
-//   v1.x <- pin.w_position.x; v1.y <- pin.w_position.y; v1.z <- pin.w_position.z; v1.w <- pin.w_position.w; 
-//   v2.x <- pin.normal.x; v2.y <- pin.normal.y; v2.z <- pin.normal.z; 
-//   v3.x <- pin.tangent.x; v3.y <- pin.tangent.y; v3.z <- pin.tangent.z; 
-//   v4.x <- pin.binormal.x; v4.y <- pin.binormal.y; v4.z <- pin.binormal.z; 
-//   v5.x <- pin.texcoord0.x; v5.y <- pin.texcoord0.y; 
-//   o2.x <- <main return value>.position.x; o2.y <- <main return value>.position.y; o2.z <- <main return value>.position.z; o2.w <- <main return value>.position.w; 
-//   o1.x <- <main return value>.normal.x; o1.y <- <main return value>.normal.y; o1.z <- <main return value>.normal.z; o1.w <- <main return value>.normal.w; 
-//   o0.x <- <main return value>.color.x; o0.y <- <main return value>.color.y; o0.z <- <main return value>.color.z; o0.w <- <main return value>.color.w
-//
-#line 18 "D:\Desktop\Cumulonimbus\Shader\gbuffer_ps.hlsl"
+dcl_temps 3
+sample_indexable(texture2d)(float,float,float,float) o0.xyzw, v5.xyxx, t20.xyzw, s0
 dp3 r0.x, v3.xyzx, v3.xyzx
 rsq r0.x, r0.x
-mul r0.xyz, r0.xxxx, v3.xyzx  // r0.x <- vx.x; r0.y <- vx.y; r0.z <- vx.z
-
-#line 19
+mul r0.xyz, r0.xxxx, v3.xyzx
 dp3 r0.w, v4.xyzx, v4.xyzx
 rsq r0.w, r0.w
-mul r1.xyz, r0.wwww, v4.xyzx  // r1.x <- vy.x; r1.y <- vy.y; r1.z <- vy.z
-
-#line 20
+mul r1.xyz, r0.wwww, v4.xyzx
+sample_indexable(texture2d)(float,float,float,float) r2.xyz, v5.xyxx, t21.xyzw, s0
+mad r2.xyz, r2.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000), l(-1.000000, -1.000000, -1.000000, 0.000000)
+mul r1.xyz, r1.xyzx, r2.yyyy
+mad r0.xyz, r2.xxxx, r0.xyzx, r1.xyzx
 dp3 r0.w, v2.xyzx, v2.xyzx
 rsq r0.w, r0.w
-mul r2.xyz, r0.wwww, v2.xyzx  // r2.x <- vz.x; r2.y <- vz.y; r2.z <- vz.z
-
-#line 23
-mov r3.x, r0.x  // r3.x <- v_mat._m00
-mov r3.y, r1.x  // r3.y <- v_mat._m10
-mov r3.z, r2.x  // r3.z <- v_mat._m20
-mov r4.x, r0.y  // r4.x <- v_mat._m01
-mov r4.y, r1.y  // r4.y <- v_mat._m11
-mov r4.z, r2.y  // r4.z <- v_mat._m21
-mov r2.x, r0.z  // r2.x <- v_mat._m02
-mov r2.y, r1.z  // r2.y <- v_mat._m12
-mov r2.z, r2.z  // r2.z <- v_mat._m22
-
-#line 25
-sample_indexable(texture2d)(float,float,float,float) r0.xyz, v5.xyxx, t21.xyzw, s0
-mov r0.xyz, r0.xyzx  // r0.x <- normal.x; r0.y <- normal.y; r0.z <- normal.z
-
-#line 26
-mul r0.xyz, r0.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
-mov r1.xyz, l(-1.000000,-1.000000,-1.000000,-0.000000)
-add r0.xyz, r0.xyzx, r1.xyzx
-
-#line 29
-dp3 r1.x, r0.xyzx, r3.xyzx
-dp3 r1.y, r0.xyzx, r4.xyzx
-dp3 r1.z, r0.xyzx, r2.xyzx
-dp3 r0.x, r1.xyzx, r1.xyzx
-rsq r0.x, r0.x
-mul r0.xyz, r0.xxxx, r1.xyzx
-
-#line 31
-sample_indexable(texture2d)(float,float,float,float) r1.xyzw, v5.xyxx, t20.xyzw, s0  // r1.x <- color.x; r1.y <- color.y; r1.z <- color.z; r1.w <- color.w
-
-#line 32
-mov r2.xyzw, v1.xyzw  // r2.x <- position.x; r2.y <- position.y; r2.z <- position.z; r2.w <- position.w
-
-#line 34
-mov r1.xyzw, r1.xyzw  // r1.x <- pout.color.x; r1.y <- pout.color.y; r1.z <- pout.color.z; r1.w <- pout.color.w
-
-#line 35
-mov r2.xyzw, r2.xyzw  // r2.x <- pout.position.x; r2.y <- pout.position.y; r2.z <- pout.position.z; r2.w <- pout.position.w
-
-#line 36
-mov r0.xyz, r0.xyzx  // r0.x <- pout.normal.x; r0.y <- pout.normal.y; r0.z <- pout.normal.z
-mov r0.w, l(1.000000)  // r0.w <- pout.normal.w
-
-#line 38
-mov o0.xyzw, r1.xyzw
-mov o1.xyzw, r0.xyzw
-mov o2.xyzw, r2.xyzw
+mul r1.xyz, r0.wwww, v2.xyzx
+mad r0.xyz, r2.zzzz, r1.xyzx, r0.xyzx
+dp3 r0.w, r0.xyzx, r0.xyzx
+rsq r0.w, r0.w
+mul o1.xyz, r0.wwww, r0.xyzx
+mov o1.w, l(1.000000)
+mov o2.xyzw, v1.xyzw
 ret 
-// Approximately 39 instruction slots used
+// Approximately 21 instruction slots used

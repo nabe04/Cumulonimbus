@@ -64,6 +64,8 @@
     <ClInclude Include="Source\Engine\easing.h" />
     <ClInclude Include="Source\Engine\ecs.h" />
     <ClInclude Include="Source\Engine\editor_manager.h" />
+    <ClInclude Include="Source\Engine\effekseer_component.h" />
+    <ClInclude Include="Source\Engine\effekseer_manager.h" />
     <ClInclude Include="Source\Engine\enum_state_map.h" />
     <ClInclude Include="Source\Engine\event.h" />
     <ClInclude Include="Source\Engine\fbx_model_component.h" />
@@ -229,6 +231,8 @@
     <ClCompile Include="Source\Engine\easing.cpp" />
     <ClCompile Include="Source\Engine\ecs.cpp" />
     <ClCompile Include="Source\Engine\editor_manager.cpp" />
+    <ClCompile Include="Source\Engine\effekseer_component.cpp" />
+    <ClCompile Include="Source\Engine\effekseer_manager.cpp" />
     <ClCompile Include="Source\Engine\fbx_model_component.cpp" />
     <ClCompile Include="Source\Engine\fbx_model_resource.cpp" />
     <ClCompile Include="Source\Engine\filename_helper.cpp" />
@@ -913,7 +917,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>.\Libraries\Effekseer\include;.\Libraries\portable-file-dialogs;.\Libraries\imgui;.\Libraries\FBX\FBX SDK\2019.0\include;.\Libraries\DirectXTK-master\Inc;.\Libraries\cereal-master\include;.\Source\Engine;%(AdditionalIncludeDirectories);.\Source\Game;.\Libraries\DirectXTex-master\DDSTextureLoader;.\Libraries\DirectXTex-master\DirectXTex;.\Libraries\nameof</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Libraries\Effekseer\include\Effekseer;.\Libraries\Effekseer\include;.\Libraries\portable-file-dialogs;.\Libraries\imgui;.\Libraries\FBX\FBX SDK\2019.0\include;.\Libraries\DirectXTK-master\Inc;.\Libraries\cereal-master\include;.\Source\Engine;%(AdditionalIncludeDirectories);.\Source\Game;.\Libraries\DirectXTex-master\DDSTextureLoader;.\Libraries\DirectXTex-master\DirectXTex;.\Libraries\nameof</AdditionalIncludeDirectories>
       <AdditionalOptions>-DNOMINMAX /bigobj %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -926,7 +930,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>.\Libraries\FBX\FBX SDK\2019.0\lib\vs2015\x64\debug;.\Libraries\DirectXTK-master\Bin\Desktop_2019\x64\Debug;.\Libraries\DirectXTex-master\DirectXTex\Bin\Desktop_2019\x64\Debug;.\Libraries\Effekseer\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libfbxsdk-md.lib;dxguid.lib;d3dcompiler.lib;d3d11.lib;dxgi.lib;dinput8.lib;DirectXTK.lib;DirectXTex.lib;Effekseerd.lib;EffekseerRendererDX11d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libfbxsdk-md.lib;dxguid.lib;d3dcompiler.lib;d3d11.lib;dxgi.lib;dinput8.lib;DirectXTK.lib;DirectXTex.lib;Effekseer.lib;EffekseerRendererDX11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
@@ -979,7 +983,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>.\Libraries\Effekseer\include;.\Libraries\portable-file-dialogs;.\Libraries\imgui;.\Source\Engine;.\Libraries\FBX\FBX SDK\2019.0\include;.\Libraries\cereal-master\include;.\Source\Game;.\Libraries\DirectXTex-master\DDSTextureLoader;.\Libraries\DirectXTex-master\DirectXTex;.\Libraries\nameof;.\Libraries\DirectXTK-master\Inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Libraries\Effekseer\include\Effekseer;.\Libraries\Effekseer\include;.\Libraries\portable-file-dialogs;.\Libraries\imgui;.\Source\Engine;.\Libraries\FBX\FBX SDK\2019.0\include;.\Libraries\cereal-master\include;.\Source\Game;.\Libraries\DirectXTex-master\DDSTextureLoader;.\Libraries\DirectXTex-master\DirectXTex;.\Libraries\nameof;.\Libraries\DirectXTK-master\Inc</AdditionalIncludeDirectories>
       <AdditionalOptions>-DNOMINMAX %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>

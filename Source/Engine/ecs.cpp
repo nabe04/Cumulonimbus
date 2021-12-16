@@ -11,6 +11,7 @@
 #include "camera_component.h"
 #include "capsule_collison_component.h"
 #include "damageable_component.h"
+#include "effekseer_component.h"
 #include "hierarchy_component.h"
 #include "model_component.h"
 #include "physic_material_component.h"
@@ -248,6 +249,8 @@ namespace cumulonimbus::ecs
 		RegistryComponent<component::CameraComponent>();
 		// damage
 		RegistryComponent<component::DamageableComponent>();
+		// effekseer
+		RegistryComponent<component::EffekseerComponent>();
 		//-- game --//
 		// player
 		RegistryComponent<component::PlayerComponent>();

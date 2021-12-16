@@ -73,7 +73,7 @@ namespace cumulonimbus::component
 
 	void PlayerSwordComponent::RenderImGui()
 	{
-		if(GetRegistry()->CollapsingHeader<PlayerSwordComponent>(GetEntity(),"Player Sword"))
+		if (GetRegistry()->CollapsingHeader<PlayerSwordComponent>(GetEntity(), "Player Sword"))
 		{
 			auto name = GetRegistry()->GetName(GetEntity());
 		}

@@ -100,7 +100,7 @@ namespace cumulonimbus::component
 		 */
 		[[nodiscard]]
 		bool HasNodeFromName(const std::string& node_name) const;
-		
+
 		/**
 		 * @brief : アセットの持つマテリアルを取得
 		 * @param material_index : Subsetのもつmaterial_indexを指定

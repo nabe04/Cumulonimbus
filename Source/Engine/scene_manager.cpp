@@ -3,6 +3,7 @@
 #include <ranges>
 
 #include "editor_manager.h"
+#include "effekseer_manager.h"
 #include "filename_helper.h"
 #include "gaussian_blur.h"
 #include "loader.h"
@@ -57,12 +58,13 @@ namespace cumulonimbus::scene
 	SceneManager::SceneManager(const std::shared_ptr<Window>& window)
 	{
 		// インスタンス化
-		framework		= std::make_unique<Framework>(window);
-		editor_manager	= std::make_unique<editor::EditorManager>();
-		system			= std::make_shared<system::System>();
-		wave_system		= std::make_unique<system::WaveSystem>();
-		asset_manager	= std::make_shared<asset::AssetManager>();
-		render_path		= std::make_unique<renderer::RenderPath>(locator::Locator::GetDx11Device()->device.Get());
+		framework			= std::make_unique<Framework>(window);
+		editor_manager		= std::make_unique<editor::EditorManager>();
+		system				= std::make_shared<system::System>();
+		wave_system			= std::make_unique<system::WaveSystem>();
+		asset_manager		= std::make_shared<asset::AssetManager>();
+		render_path			= std::make_unique<renderer::RenderPath>(locator::Locator::GetDx11Device()->device.Get());
+		effekseer_manager	= std::make_unique<system::EffekseerManager>(locator::Locator::GetDx11Device()->device.Get(), locator::Locator::GetDx11Device()->immediate_context.Get());
 		// システムのロード
 		system->Load();
 		// ウェーブシステムのロード
@@ -189,6 +191,7 @@ namespace cumulonimbus::scene
 	void SceneManager::Update(const float dt)
 	{// シーン毎の更新処理
 		editor_manager->Update(dt);
+		effekseer_manager->Update(dt);
 		// ボタンが押された時の保存
 		if (editor_manager->GetToolBar().GetToolBarButton().GetButtonState(editor::ToolBar::Button::Play) ==
 			ButtonState::Press)

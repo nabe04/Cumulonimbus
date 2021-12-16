@@ -3,6 +3,7 @@
 #include <ranges>
 
 #include "debug_collision.h"
+#include "effekseer_manager.h"
 #include "gbuffer.h"
 #include "gaussian_blur.h"
 #include "graphics_mapping.h"
@@ -20,6 +21,7 @@
 #include "capsule_collison_component.h"
 #include "fbx_model_component.h"
 #include "model_component.h"
+#include "scene_manager.h"
 #include "sky_box.h"
 #include "sphere_collision_component.h"
 #include "sprite.h"
@@ -99,6 +101,12 @@ namespace cumulonimbus::renderer
 
 			// GBufferへの描画処理
 			Render3DToGBuffer(immediate_context, &registry, &camera, scene->GetLight(), false);
+
+			// Effekseerの描画
+			system::EffekseerManager& effekseer_manager = *scene->GetSceneManager()->GetEffekseerManager();
+			RenderEffekseerBegin(&effekseer_manager, &camera);
+			RenderEffekseer(&effekseer_manager);
+			RenderEffekseerEnd(&effekseer_manager, &camera);
 		}
 		Render3DToGBuffer_End(immediate_context, &camera);
 
@@ -107,6 +115,7 @@ namespace cumulonimbus::renderer
 			// シーンがアクティブで無いのなら描画しない
 			if (!scene->GetIsVisible())
 				continue;
+
 			if (ecs::Registry& registry = *scene->GetRegistry();
 				registry.GetArray<component::ModelComponent>().GetComponents().size() > 0)
 			{// 2Dスプライトの描画
@@ -213,6 +222,12 @@ namespace cumulonimbus::renderer
 			{
 				if (!camera_comp.GetIsActive())
 					continue;
+
+				// Effekseerの描画
+				system::EffekseerManager& effekseer_manager = *scene->GetSceneManager()->GetEffekseerManager();
+				RenderEffekseerBegin(&effekseer_manager, camera_comp.GetCamera());
+				RenderEffekseer(&effekseer_manager);
+				RenderEffekseerEnd(&effekseer_manager, camera_comp.GetCamera());
 
 				// 2Dスプライトの描画
 				Render2D(immediate_context, &registry, camera_comp.GetCamera(), false);
@@ -410,6 +425,25 @@ namespace cumulonimbus::renderer
 		locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, sky_box_srv.GetAddressOf(), TexSlot_SkyMap);
 		//off_screen->Deactivate(immediate_context);
 		camera->UnbindFrameBuffer();
+	}
+
+	void RenderPath::RenderEffekseerBegin(
+		const system::EffekseerManager* effekseer_manager,
+		const camera::Camera* camera)
+	{
+		camera->BindCBuffer();
+		effekseer_manager->Begin(camera);
+	}
+
+	void RenderPath::RenderEffekseer(const system::EffekseerManager* effekseer_manager)
+	{
+		effekseer_manager->Render();
+	}
+
+	void RenderPath::RenderEffekseerEnd(const system::EffekseerManager* effekseer_manager, const camera::Camera* camera)
+	{
+		effekseer_manager->End();
+		camera->BindCBuffer();
 	}
 
 	void RenderPath::Render3DToGBuffer_Begin(ID3D11DeviceContext* immediate_context) const

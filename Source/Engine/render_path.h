@@ -22,10 +22,14 @@
 #include "texture.h"
 
 enum class CollisionType;
-class FbxModelResource;
 
 namespace cumulonimbus
 {
+	namespace system
+	{
+		class EffekseerManager;
+	} // system
+
 	namespace camera
 	{
 		class Camera;
@@ -87,13 +91,13 @@ namespace cumulonimbus::renderer
 
 	private:
 		// すべてのシェーダーの生成とセット
-		std::unique_ptr<shader_system::ShaderManager> shader_manager;
+		std::unique_ptr<shader_system::ShaderManager> shader_manager{ nullptr };
 
 		//-- DirectX States --//
-		std::unique_ptr<Blend>			blend;
-		std::unique_ptr<Rasterizer>		rasterizer;
-		std::unique_ptr<DepthStencil>	depth_stencil;
-		std::unique_ptr<Sampler>		sampler;
+		std::unique_ptr<Blend>			blend			{ nullptr };
+		std::unique_ptr<Rasterizer>		rasterizer		{ nullptr };
+		std::unique_ptr<DepthStencil>	depth_stencil	{ nullptr };
+		std::unique_ptr<Sampler>		sampler			{ nullptr };
 
 		std::shared_ptr<FrameBuffer>							off_screen					{ nullptr };
 		std::unique_ptr<graphics::buffer::GBuffer>				g_buffer					{ nullptr };
@@ -102,17 +106,17 @@ namespace cumulonimbus::renderer
 		std::unique_ptr<shader_asset::LocalShaderAssetManager>	local_shader_asset_manager	{ nullptr };
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>		sky_box_srv					{ nullptr };
 
-		/*
-		 * brief : "MeshObjectComponent"がもつDirectX stateのセット
-		 *         (states : rasterizer , sampler , depth_stencil , blend)
+		/**
+		 * @brief : "MeshObjectComponent"がもつDirectX stateのセット
+		 *          (states : rasterizer , sampler , depth_stencil , blend)
 		 */
 		void BindGraphicsState(
 				ID3D11DeviceContext* immediate_context,
 				const cumulonimbus::graphics::GraphicsState& graphics_state);
 
-		/*
-		 * brief : "back_buffer"(メンバ変数)に書き込まれているものを
-		 *		   バックバッファに書き込む
+		/**
+		 * @brief : "back_buffer"(メンバ変数)に書き込まれているものを
+		 *		    バックバッファに書き込む
 		 */
 		void Blit(ID3D11DeviceContext* immediate_context) const;
 
@@ -125,11 +129,11 @@ namespace cumulonimbus::renderer
 		 */
 		void RenderEnd(ID3D11DeviceContext* immediate_context);
 
-		/*
-		 * brief     : 深度テクスチャの作成
-		 *             作成されたテクスチャは
-		 *		       Render3D()でのShadowMapのリソースとして使用
-		 * ※caution : "FBXModelComponent"
+		/**
+		 * @brief  : 深度テクスチャの作成
+		 *           作成されたテクスチャは
+		 *		     Render3D()でのShadowMapのリソースとして使用
+		 * @remaek : "FBXModelComponent"
 		 *			   を持つエンティティのみ描画される
 		 */
 		void RenderShadow_Begin(ID3D11DeviceContext* immediate_context) const;
@@ -140,9 +144,9 @@ namespace cumulonimbus::renderer
 			const Light*		  light);
 		void RenderShadow_End(ID3D11DeviceContext* immediate_context) const;
 
-		/*
-		 * brief : SkyBoxの描画
-		 *		   off_screenバッファを使用して書き込む
+		/**
+		 * @brief : SkyBoxの描画
+		 *		    off_screenバッファを使用して書き込む
 		 */
 		void RenderSkyBox_Begin(
 				ID3D11DeviceContext*	immediate_context,
@@ -155,17 +159,24 @@ namespace cumulonimbus::renderer
 				ID3D11DeviceContext* immediate_context,
 				const camera::Camera* camera);
 
-		/*
-		 * brief     : 3DモデルのGBufferへの描画
+		/**
+		 * @brief : Effekseerの描画
 		 */
-		/*
-		 * brief     : GBuffer用のRTVのクリア、セット、シェーダーのセット
-		 * ※caution : シェーダをBeginの段階でセットするのでGBufferの描画中は
+		void RenderEffekseerBegin(const system::EffekseerManager* effekseer_manager,const camera::Camera* camera);
+		void RenderEffekseer(const system::EffekseerManager* effekseer_manager);
+		void RenderEffekseerEnd(const system::EffekseerManager* effekseer_manager, const camera::Camera* camera);
+
+		/**
+		 * @brief     : 3DモデルのGBufferへの描画
+		 */
+		/**
+		 * @brief  : GBuffer用のRTVのクリア、セット、シェーダーのセット
+		 * @remark : シェーダをBeginの段階でセットするのでGBufferの描画中は
 		 *			   シェーダをセットしないようにする
 		 */
 		void Render3DToGBuffer_Begin(ID3D11DeviceContext* immediate_context) const;
-		/*
-		 * brief : GBufferを描画先にしたモデルの描画
+		/**
+		 * @brief : GBufferを描画先にしたモデルの描画
 		 */
 		void Render3DToGBuffer(
 			ID3D11DeviceContext*  immediate_context,
@@ -173,25 +184,29 @@ namespace cumulonimbus::renderer
 			const camera::Camera* camera,
 			const Light*		  light,
 			bool				  is_game);
-		/*
-		 * brier     : 各々のシェーダーに応じて作成したGBufferをoff_screenにまとめる
-		 * ※caution : Render3DToGBuffer_Begin関数でセットしたGBuffer用のシェーダアンバインドする
+		/**
+		 * @brier  : 各々のシェーダーに応じて作成したGBufferをoff_screenにまとめる
+		 * @remark : Render3DToGBuffer_Begin関数でセットしたGBuffer用のシェーダアンバインドする
 		 */
 		void Render3DToGBuffer_End(
 			ID3D11DeviceContext* immediate_context,
 			const camera::Camera* camera) const;
 
-		/*
-		 * brief : ポストプロセス処理
+		/**
+		 * @brief : ポストプロセス処理
 		 *		   (Bloom)
 		 */
 		void RenderPostProcess_Begin(ID3D11DeviceContext* immediate_context);
 		void RenderPostProcess(ID3D11DeviceContext* immediate_context, ecs::Registry* registry);
 		void RenderPostProcess_End(ID3D11DeviceContext* immediate_context);
 
-		/*
-		 * brief     : 3Dモデルの描画
-		 * ※caution : "FBXModelComponent"
+		/**
+		 *
+		 */
+
+		/**
+		 * @brief  : 3Dモデルの描画
+		 * @remark : "FBXModelComponent"
 		 *			   を持つエンティティのみ描画される
 		 */
 		void Render3D_Begin(ID3D11DeviceContext* immediate_context);
@@ -254,11 +269,11 @@ namespace cumulonimbus::renderer
 		//		ID3D11DeviceContext* immediate_context,
 		//		const camera::Camera* camera);
 
-		/*
-		 * brief        : 2Dスプライトの描画
-		 * ※caution(1) : "OldSpriteComponent", "OldAnimSpriteComponent"
+		/**
+		 * @brief  : 2Dスプライトの描画
+		 * @remark : "OldSpriteComponent", "OldAnimSpriteComponent"
 		 *                を持つエンティティのみ描画される
-		 * ※caution(2) : "バックバッファに直接書き込むため「Begin」や「End」はない"
+		 * @remark : "バックバッファに直接書き込むため「Begin」や「End」はない"
 		 */
 
 		/**
@@ -287,9 +302,9 @@ namespace cumulonimbus::renderer
 			const camera::Camera* camera,
 			bool is_scene /* 描画先がScene Viewかどうか */);
 
-		/*
-		 * brief     : GBufferをoff_screenに結合
-		 * ※caution : FrameBufferのセットはこの関数では行わない
+		/**
+		 * @brief  : GBufferをoff_screenに結合
+		 * @remark : FrameBufferのセットはこの関数では行わない
 		 */
 		void CombinationGBuffer() const;
 	};

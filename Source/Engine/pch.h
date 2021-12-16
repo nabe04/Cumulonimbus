@@ -1,4 +1,8 @@
 #pragma once
+// DirectX
+#include <d3d11.h>
+#include <DirectXMath.h>
+#include <SimpleMath.h>
 // ImGui
 #include <imgui.h>
 #include <./ImGuizmo/ImGuizmo.h>
@@ -16,6 +20,9 @@
 #include <cereal/types/vector.hpp>
 #include <cereal/types/set.hpp>
 #include <cereal/types/string.hpp>
+// Effekseer
+#include <./Effekseer/Effekseer.h>
+#include <./EffekseerRenderer/EffekseerRendererDX11.h>
 //Components
 #include "ecs.h"
 // Graphics State

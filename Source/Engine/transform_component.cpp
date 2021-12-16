@@ -15,7 +15,7 @@
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::TransformComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::TransformComponent)
-CEREAL_CLASS_VERSION(cumulonimbus::component::TransformComponent, 1);
+CEREAL_CLASS_VERSION(cumulonimbus::component::TransformComponent, 1)
 
 namespace cumulonimbus::component
 {
