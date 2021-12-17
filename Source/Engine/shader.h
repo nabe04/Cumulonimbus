@@ -122,28 +122,28 @@ namespace shader
 		DirectX::XMFLOAT4X4 transform_matrix;
 	};
 
-	// Material (b1)
-	struct CB_Material
-	{
-		DirectX::XMFLOAT4 color = { 1.0f,1.0f,1.0f,1.0f }; // Material color
-		DirectX::XMFLOAT4   Ka = { 0.2f,0.2f,0.2f ,0.9f };
-		DirectX::XMFLOAT4	Kd = { 0.8f,0.8f,0.8f ,0.0f };
-		DirectX::XMFLOAT4	Ks = { 1.0f,1.0f,1.0f ,0.0f };
+	//// Material (b1)
+	//struct CB_Material
+	//{
+	//	DirectX::XMFLOAT4 color = { 1.0f,1.0f,1.0f,1.0f }; // Material color
+	//	DirectX::XMFLOAT4   Ka = { 0.2f,0.2f,0.2f ,0.9f };
+	//	DirectX::XMFLOAT4	Kd = { 0.8f,0.8f,0.8f ,0.0f };
+	//	DirectX::XMFLOAT4	Ks = { 1.0f,1.0f,1.0f ,0.0f };
 
-		//-- For Imgui --//
-		void EditParam()
-		{
-			if (ImGui::TreeNode("Material"))
-			{
-				ImGui::ColorEdit4("Color", (float*)&color);
-				ImGui::ColorEdit3("Ambient", (float*)&Ka);
-				ImGui::ColorEdit3("Diffuse", (float*)&Kd);
-				ImGui::ColorEdit3("Speculer", (float*)&Ks);
+	//	//-- For Imgui --//
+	//	void EditParam()
+	//	{
+	//		if (ImGui::TreeNode("Material"))
+	//		{
+	//			ImGui::ColorEdit4("Color", (float*)&color);
+	//			ImGui::ColorEdit3("Ambient", (float*)&Ka);
+	//			ImGui::ColorEdit3("Diffuse", (float*)&Kd);
+	//			ImGui::ColorEdit3("Speculer", (float*)&Ks);
 
-				ImGui::TreePop();
-			}
-		}
-	};
+	//			ImGui::TreePop();
+	//		}
+	//	}
+	//};
 
 	//// Light (b2)
 	//struct CB_Light

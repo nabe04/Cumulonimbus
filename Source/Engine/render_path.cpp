@@ -641,6 +641,7 @@ namespace cumulonimbus::renderer
 		const asset::ModelData& model_data =
 			locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>()->GetModel(model_comp->GetModelID()).GetModelData();
 
+		// rasterizer,sampler,depth_stencil,blend state‚ÌƒZƒbƒg
 		BindGraphicsState(immediate_context, model_comp->GetGraphicsState());
 
 		for (const auto& mesh : model_data.GetMeshes())
@@ -652,9 +653,6 @@ namespace cumulonimbus::renderer
 			{
 				for (size_t i = 0; i < mesh.node_indices.size(); ++i)
 				{
-					DirectX::SimpleMath::Matrix reverse;
-					reverse.Right(DirectX::SimpleMath::Vector3(-1, 0, 0));
-
 					DirectX::SimpleMath::Matrix world_transform		= DirectX::XMLoadFloat4x4(&model_comp->GetNodes().at(mesh.node_indices.at(i)).world_transform);
 					DirectX::SimpleMath::Matrix inverse_transform	= DirectX::XMLoadFloat4x4(&mesh.inverse_transforms.at(i));
 					DirectX::SimpleMath::Matrix bone_transform		= inverse_transform * world_transform;

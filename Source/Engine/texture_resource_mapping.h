@@ -53,5 +53,6 @@
 #define TexSlot_ShaderSlot		TexSlot_OnDemand11
 #define TexSlot_PBRMap			TexSlot_OnDemand12
 #define TexSlot_AOMap			TexSlot_OnDemand13
+#define TexSlot_MetalnessMap	TexSlot_OnDemand14
 
 #endif //TEXTURE_RESOURCE_MAPPING_H

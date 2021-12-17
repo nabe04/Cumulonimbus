@@ -209,21 +209,21 @@ CBUFFER(TransformCB, CBSlot_Transform)
 #endif // __cplusplus
 };
 
-// slot4 (b4)
-CBUFFER(MaterialCB, CBSlot_Material)
-{
-	ShaderMaterial material;
-
-#ifdef __cplusplus
-	template<typename Archive>
-	void serialize(Archive && archive)
-	{
-		archive(
-			CEREAL_NVP(material)
-		);
-	}
-#endif // __cplusplus
-};
+//// slot4 (b4)
+//CBUFFER(MaterialCB, CBSlot_Material)
+//{
+//	ShaderMaterial material;
+//
+//#ifdef __cplusplus
+//	template<typename Archive>
+//	void serialize(Archive && archive)
+//	{
+//		archive(
+//			CEREAL_NVP(material)
+//		);
+//	}
+//#endif // __cplusplus
+//};
 
 // slot5 (b5)
 CBUFFER(ShaderSlotCB, CBSlot_ShaderSlot)

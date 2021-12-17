@@ -66,12 +66,14 @@ namespace cumulonimbus::asset
 	Material::Material(const mapping::rename_type::UUID& mat_id)
 	{
 		this->mat_id = mat_id;
+		cb_material  = std::make_unique<buffer::ConstantBuffer<MaterialCB>>(locator::Locator::GetDx11Device()->device.Get());
 	}
 
 	Material::Material(const mapping::rename_type::UUID& mat_id, const MaterialData& data = {})
 	{
 		this->mat_id  = mat_id;
 		material_data = data;
+		cb_material   = std::make_unique<buffer::ConstantBuffer<MaterialCB>>(locator::Locator::GetDx11Device()->device.Get());
 	}
 
 	void Material::Save(const std::filesystem::path& path)

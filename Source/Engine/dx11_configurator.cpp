@@ -222,10 +222,12 @@ void Dx11Device::Flip(int n)
 	swap_chain->Present(n, 0);
 }
 
-void Dx11Device::CreateDepthStencilView(Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& dsv,
-										Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& ds_srv,
-										u_int width, u_int height,
-										DXGI_FORMAT depth_stencil_texture_format)
+void Dx11Device::CreateDepthStencilView(
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& dsv,
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& ds_srv,
+	const u_int width, const u_int height,
+	const bool need_depth_stencil_shader_resource_view,
+	DXGI_FORMAT depth_stencil_texture_format)
 {
 	const DXGI_FORMAT combinations_of_depth_stencil_formats[3][3] =
 	{
@@ -259,7 +261,7 @@ void Dx11Device::CreateDepthStencilView(Microsoft::WRL::ComPtr<ID3D11DepthStenci
 	texture2d_desc.SampleDesc.Count		= 1;
 	texture2d_desc.SampleDesc.Quality	= 0;
 	texture2d_desc.Usage				= D3D11_USAGE_DEFAULT;
-	texture2d_desc.BindFlags			= (ds_srv != nullptr)  ? D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE : D3D11_BIND_DEPTH_STENCIL;
+	texture2d_desc.BindFlags			= need_depth_stencil_shader_resource_view ? D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE : D3D11_BIND_DEPTH_STENCIL;
 	texture2d_desc.CPUAccessFlags		= 0;
 	texture2d_desc.MiscFlags			= 0;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> texture2d;
@@ -276,7 +278,7 @@ void Dx11Device::CreateDepthStencilView(Microsoft::WRL::ComPtr<ID3D11DepthStenci
 	if (FAILED(hr))
 		assert(!"CreateDepthStencilView error(FrameBuffer)");
 
-	if (ds_srv)
+	if (need_depth_stencil_shader_resource_view)
 	{// ds_srv‚Énullptr‚ª“ü‚Á‚Ä‚¢‚È‚¯‚ê‚Îì¬
 		D3D11_SHADER_RESOURCE_VIEW_DESC shader_resource_view_desc = {};
 		shader_resource_view_desc.Format				= combinations_of_depth_stencil_formats[depth_stencil_texture2d_format_index][2];

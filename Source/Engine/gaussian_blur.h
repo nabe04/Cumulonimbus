@@ -4,6 +4,8 @@
 #include <d3d11.h>
 
 #include "fullscreen_quad.h"
+#include "vertex_shader.h"
+#include "pixel_shader.h"
 #include "shader.h"
 
 class GaussianBlur final : public FullscreenQuad
@@ -33,8 +35,8 @@ private:
 
 	std::unique_ptr<FrameBuffer> fb_gaussian_blur_vertical{};
 	std::unique_ptr<FrameBuffer> fb_gaussian_blur_horizontal{};
-	std::unique_ptr<shader::PixelShader> ps_blur_vertical{};
-	std::unique_ptr<shader::PixelShader> ps_blur_horizontal{};
+	std::unique_ptr<cumulonimbus::shader_system::PixelShader> ps_blur_vertical{};
+	std::unique_ptr<cumulonimbus::shader_system::PixelShader> ps_blur_horizontal{};
 
 	const u_int blur_texture_ps_slot = 0;
 };

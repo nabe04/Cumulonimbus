@@ -63,22 +63,47 @@
 // TEXCOORD                 0   xy          1     NONE   float   xy  
 //
 vs_5_0
-dcl_globalFlags refactoringAllowed
+dcl_globalFlags refactoringAllowed | skipOptimization
 dcl_constantbuffer CB1[12], immediateIndexed
 dcl_constantbuffer CB3[516], immediateIndexed
 dcl_input v0.xyzw
 dcl_input v1.xy
 dcl_output_siv o0.xyzw, position
 dcl_output o1.xy
-dcl_temps 2
-mul r0.xyz, v0.yyyy, cb3[513].xyzx
-mad r0.xyz, cb3[512].xyzx, v0.xxxx, r0.xyzx
-mad r0.xyz, cb3[514].xyzx, v0.zzzz, r0.xyzx
-mad r0.xyz, cb3[515].xyzx, v0.wwww, r0.xyzx
-mul r1.xyzw, r0.yyyy, cb1[9].xyzw
-mad r1.xyzw, cb1[8].xyzw, r0.xxxx, r1.xyzw
-mad r0.xyzw, cb1[10].xyzw, r0.zzzz, r1.xyzw
-add o0.xyzw, r0.xyzw, cb1[11].xyzw
-mov o1.xy, v1.xyxx
+dcl_temps 3
+//
+// Initial variable locations:
+//   v0.x <- vin.position.x; v0.y <- vin.position.y; v0.z <- vin.position.z; v0.w <- vin.position.w; 
+//   v1.x <- vin.texcoord0.x; v1.y <- vin.texcoord0.y; 
+//   o1.x <- <main return value>.texcoord0.x; o1.y <- <main return value>.texcoord0.y; 
+//   o0.x <- <main return value>.position.x; o0.y <- <main return value>.position.y; o0.z <- <main return value>.position.z; o0.w <- <main return value>.position.w
+//
+#line 14 "D:\Desktop\Cumulonimbus\Shader\billboard_vs.hlsl"
+mul r0.xyz, v0.xxxx, cb3[512].xyzx
+mul r1.xyz, v0.yyyy, cb3[513].xyzx
+add r0.xyz, r0.xyzx, r1.xyzx
+mul r1.xyz, v0.zzzz, cb3[514].xyzx
+add r0.xyz, r0.xyzx, r1.xyzx
+mul r1.xyz, v0.wwww, cb3[515].xyzx
+add r0.xyz, r0.xyzx, r1.xyzx  // r0.x <- world_pos.x; r0.y <- world_pos.y; r0.z <- world_pos.z
+
+#line 15
+mul r1.xyzw, r0.xxxx, cb1[8].xyzw
+mul r2.xyzw, r0.yyyy, cb1[9].xyzw
+add r1.xyzw, r1.xyzw, r2.xyzw
+mul r0.xyzw, r0.zzzz, cb1[10].xyzw
+add r0.xyzw, r0.xyzw, r1.xyzw
+mul r1.xyzw, cb1[11].xyzw, l(1.000000, 1.000000, 1.000000, 1.000000)
+add r0.xyzw, r0.xyzw, r1.xyzw  // r0.x <- wvp_pos.x; r0.y <- wvp_pos.y; r0.z <- wvp_pos.z; r0.w <- wvp_pos.w
+
+#line 17
+mov r0.xyzw, r0.xyzw  // r0.x <- vout.position.x; r0.y <- vout.position.y; r0.z <- vout.position.z; r0.w <- vout.position.w
+
+#line 18
+mov r1.xy, v1.xyxx  // r1.x <- vout.texcoord0.x; r1.y <- vout.texcoord0.y
+
+#line 20
+mov o0.xyzw, r0.xyzw
+mov o1.xy, r1.xyxx
 ret 
-// Approximately 10 instruction slots used
+// Approximately 19 instruction slots used

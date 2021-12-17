@@ -134,7 +134,8 @@ namespace cumulonimbus::graphics::buffer
 		std::unique_ptr<FrameBuffer> position_buffer{ nullptr };
 		// 法線情報バッファ
 		std::unique_ptr<FrameBuffer> normal_buffer	{ nullptr };
-
+		// メタリック(metallic)、ラフネス(roughness)、オクリュージョン(occlusion)バッファ
+		std::unique_ptr<FrameBuffer> mro_buffer{ nullptr };
 
 		static constexpr u_int num_rtv = 3; // GBufferで使用するrender_target_viewの総数
 

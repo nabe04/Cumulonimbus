@@ -7,6 +7,8 @@
 
 #include "globals.hlsli"
 #include "functions.hlsli"
+#include "functions_utility.hlsli"
+#include "../Source/Engine/material.h"
 
 SamplerState default_sampler : register(s0);
 
@@ -31,8 +33,15 @@ PS_Output main(PS_Input pin)
     const float4 color    = texture_base_color.Sample(default_sampler, pin.texcoord0);
     const float4 position = pin.w_position;
 
+	// ラフネス値の取得
+    float roughness = GetSingleTextureChannel(mat_use_roughness_channel, texture_roughness, default_sampler, pin.texcoord0);
+	// メタルネス値の取得
+    float metalness = GetSingleTextureChannel(mat_use_metalness_channel, texture_metalness, default_sampler, pin.texcoord0);
+    // オクリュージョン値の取得 mat_use_occlusion_channel
+    float occlusion = GetSingleTextureChannel(mat_use_occlusion_channel, texture_occlusion, default_sampler, pin.texcoord0);
+
     pout.color          = color;
-    pout.position       = position;
+    pout.mro = position;
     pout.normal         = float4(normal, 1.0f);
 
 	return pout;

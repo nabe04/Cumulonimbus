@@ -67,7 +67,7 @@
 // SV_TARGET                2   xyzw        2   TARGET   float   xyzw
 //
 ps_5_0
-dcl_globalFlags refactoringAllowed
+dcl_globalFlags refactoringAllowed | skipOptimization
 dcl_constantbuffer CB2[3], immediateIndexed
 dcl_constantbuffer CB10[1], immediateIndexed
 dcl_sampler s0, mode_default
@@ -82,81 +82,244 @@ dcl_input_ps linear v8.xy
 dcl_output o0.xyzw
 dcl_output o1.xyzw
 dcl_output o2.xyzw
-dcl_temps 4
-add r0.xyz, -v2.xyzx, cb2[0].xyzx
-add r1.xyz, r0.xyzx, -cb2[1].xyzx
-dp3 r0.w, r1.xyzx, r1.xyzx
+dcl_temps 8
+//
+// Initial variable locations:
+//   v0.x <- pin.position.x; v0.y <- pin.position.y; v0.z <- pin.position.z; v0.w <- pin.position.w; 
+//   v1.x <- pin.w_position.x; v1.y <- pin.w_position.y; v1.z <- pin.w_position.z; v1.w <- pin.w_position.w; 
+//   v2.x <- pin.wvp_position.x; v2.y <- pin.wvp_position.y; v2.z <- pin.wvp_position.z; v2.w <- pin.wvp_position.w; 
+//   v3.x <- pin.normal.x; v3.y <- pin.normal.y; v3.z <- pin.normal.z; 
+//   v4.x <- pin.tangent.x; v4.y <- pin.tangent.y; v4.z <- pin.tangent.z; 
+//   v5.x <- pin.binormal.x; v5.y <- pin.binormal.y; v5.z <- pin.binormal.z; 
+//   v6.x <- pin.color.x; v6.y <- pin.color.y; v6.z <- pin.color.z; v6.w <- pin.color.w; 
+//   v7.x <- pin.tex_position.x; v7.y <- pin.tex_position.y; v7.z <- pin.tex_position.z; 
+//   v8.x <- pin.texcoord0.x; v8.y <- pin.texcoord0.y; 
+//   o2.x <- <main return value>.position.x; o2.y <- <main return value>.position.y; o2.z <- <main return value>.position.z; o2.w <- <main return value>.position.w; 
+//   o1.x <- <main return value>.normal.x; o1.y <- <main return value>.normal.y; o1.z <- <main return value>.normal.z; o1.w <- <main return value>.normal.w; 
+//   o0.x <- <main return value>.color.x; o0.y <- <main return value>.color.y; o0.z <- <main return value>.color.z; o0.w <- <main return value>.color.w
+//
+#line 22 "D:\Desktop\Cumulonimbus\Shader\metal_mtr_ps.hlsl"
+mov r0.xyz, -v2.xyzx
+add r0.xyz, r0.xyzx, cb2[0].xyzx  // r0.x <- eye_vector.x; r0.y <- eye_vector.y; r0.z <- eye_vector.z
+
+#line 24
+mov r1.xyz, cb2[1].xyzx  // r1.x <- L.x; r1.y <- L.y; r1.z <- L.z
+
+#line 25
+dp3 r0.w, v3.xyzx, v3.xyzx
 rsq r0.w, r0.w
-mul r1.xyz, r0.wwww, r1.xyzx
-dp3 r0.w, -cb2[1].xyzx, r1.xyzx
-mad r1.w, r0.w, r0.w, l(399.000000)
-sqrt r1.w, r1.w
-add r2.x, r0.w, r1.w
-add r1.w, -r0.w, r1.w
-mad r2.y, r0.w, r2.x, l(-1.000000)
-mad r0.w, r0.w, r1.w, l(1.000000)
-mul r1.w, r1.w, r1.w
-mul r1.w, r1.w, l(0.500000)
-mul r0.w, r0.w, r0.w
-mul r2.xy, r2.xyxx, r2.xyxx
-div r0.w, r2.y, r0.w
-add r0.w, r0.w, l(1.000000)
-mul r0.w, r0.w, r1.w
-div r0.w, r0.w, r2.x
-dp3 r1.w, v3.xyzx, v3.xyzx
-rsq r1.w, r1.w
-mul r2.xyz, r1.wwww, v3.xyzx
-dp3 r1.w, r2.xyzx, r1.xyzx
-mad r2.w, -r1.w, r1.w, l(1.000000)
-mul r3.x, cb10[0].x, cb10[0].x
-mul r3.y, r1.w, r1.w
-add r1.w, r1.w, r1.w
-mul r3.x, r3.y, r3.x
-mul r3.y, r3.y, r3.x
-div r2.w, -r2.w, r3.x
-mul r2.w, r2.w, l(1.442695)
-exp r2.w, r2.w
-mul r3.x, r3.y, l(4.000000)
-div r2.w, r2.w, r3.x
-mul r0.w, r0.w, r2.w
-dp3 r2.w, r0.xyzx, r0.xyzx
-rsq r2.w, r2.w
-mul r0.xyz, r0.xyzx, r2.wwww
-dp3 r1.x, r0.xyzx, r1.xyzx
-dp3 r0.x, r2.xyzx, r0.xyzx
-mul r0.y, r0.x, r1.w
-div r0.y, r0.y, r1.x
-dp3 r0.z, r2.xyzx, -cb2[1].xyzx
-mul r1.y, r0.z, r1.w
-max r0.z, r0.z, l(0.000000)
-mul r3.xyz, r0.zzzz, cb2[2].xyzx
-min r3.xyz, r3.xyzx, l(0.000000, 0.000000, 0.000000, 0.000000)
-mul r3.xyz, r3.xyzx, v6.xyzx
-div r0.z, r1.y, r1.x
-min r0.y, r0.z, r0.y
-min r0.y, r0.y, l(1.000000)
-mul r0.y, r0.y, r0.w
-div r0.x, r0.y, r0.x
-max r0.x, r0.x, l(0.000000)
-mov r1.xyz, cb2[2].xyzx
-mov r1.w, l(1.000000)
-mov r3.w, l(1.000000)
-mad o0.xyzw, r1.xyzw, r0.xxxx, r3.xyzw
-dp3 r0.x, v4.xyzx, v4.xyzx
-rsq r0.x, r0.x
-mul r0.xyz, r0.xxxx, v4.xyzx
-dp3 r0.w, v5.xyzx, v5.xyzx
+mul r2.xyz, r0.wwww, v3.xyzx  // r2.x <- N.x; r2.y <- N.y; r2.z <- N.z
+
+#line 26
+mov r3.xyz, -r1.xyzx
+add r3.xyz, r0.xyzx, r3.xyzx
+dp3 r0.w, r3.xyzx, r3.xyzx
 rsq r0.w, r0.w
-mul r1.xyz, r0.wwww, v5.xyzx
-sample_indexable(texture2d)(float,float,float,float) r3.xyz, v8.xyxx, t21.xyzw, s0
-mad r3.xyz, r3.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000), l(-1.000000, -1.000000, -1.000000, 0.000000)
-mul r1.xyz, r1.xyzx, r3.yyyy
-mad r0.xyz, r3.xxxx, r0.xyzx, r1.xyzx
-mad r0.xyz, r3.zzzz, r2.xyzx, r0.xyzx
+mul r3.xyz, r0.wwww, r3.xyzx  // r3.x <- H.x; r3.y <- H.y; r3.z <- H.z
+
+#line 27
 dp3 r0.w, r0.xyzx, r0.xyzx
 rsq r0.w, r0.w
-mul o1.xyz, r0.wwww, r0.xyzx
-mov o1.w, l(1.000000)
-mov o2.xyzw, v1.xyzw
+mul r0.xyz, r0.wwww, r0.xyzx  // r0.x <- E.x; r0.y <- E.y; r0.z <- E.z
+
+#line 30
+dp3 r0.w, r2.xyzx, r0.xyzx  // r0.w <- NE
+
+#line 31
+dp3 r1.w, r2.xyzx, r3.xyzx  // r1.w <- NH
+
+#line 32
+dp3 r0.x, r0.xyzx, r3.xyzx  // r0.x <- EH
+
+#line 33
+mov r4.xyz, -r1.xyzx
+dp3 r0.y, r2.xyzx, r4.xyzx  // r0.y <- NL
+
+#line 34
+mov r4.xyz, -r1.xyzx
+dp3 r0.z, r4.xyzx, r3.xyzx  // r0.z <- LH
+
+#line 37
+nop 
+mov r2.w, cb10[0].x
+mov r1.w, r1.w
+
+#line 77 "D:\Desktop\Cumulonimbus\Shader\functions_lighting.hlsli"
+mul r3.x, r1.w, r1.w  // r3.x <- NH2
+
+#line 79
+itof r3.y, l(1)
+mov r3.z, -r3.x
+add r3.y, r3.z, r3.y
+mov r3.y, -r3.y
+mul r3.z, r2.w, r3.x
+mul r3.z, r2.w, r3.z
+div r3.y, r3.y, r3.z
+mul r3.y, r3.y, l(1.442695)
+exp r3.y, r3.y
+itof r3.z, l(4)
+mul r3.z, r2.w, r3.z
+mul r2.w, r2.w, r3.z
+mul r2.w, r3.x, r2.w
+mul r2.w, r3.x, r2.w
+div r2.w, r3.y, r2.w  // r2.w <- <Beckmann return value>
+
+#line 37 "D:\Desktop\Cumulonimbus\Shader\metal_mtr_ps.hlsl"
+mov r2.w, r2.w  // r2.w <- D
+
+#line 40
+itof r3.x, l(1)
+itof r3.y, l(2)
+mul r3.y, r1.w, r3.y
+mul r3.y, r0.w, r3.y
+div r3.y, r3.y, r0.x
+itof r3.z, l(2)
+mul r1.w, r1.w, r3.z
+mul r0.y, r0.y, r1.w
+div r0.x, r0.y, r0.x
+min r0.x, r0.x, r3.y
+min r0.x, r0.x, r3.x  // r0.x <- G
+
+#line 43
+mov r0.y, l(20.000000)  // r0.y <- n
+
+#line 44
+mul r0.y, r0.y, r0.y
+mul r1.w, r0.z, r0.z
+add r0.y, r0.y, r1.w
+itof r1.w, l(1)
+mov r1.w, -r1.w
+add r0.y, r0.y, r1.w
+sqrt r0.y, r0.y  // r0.y <- g
+
+#line 45
+add r1.w, r0.z, r0.y  // r1.w <- gpc
+
+#line 46
+mov r3.x, -r0.z
+add r0.y, r0.y, r3.x  // r0.y <- gnc
+
+#line 47
+mul r3.x, r0.z, r1.w
+itof r3.y, l(1)
+mov r3.y, -r3.y
+add r3.x, r3.y, r3.x  // r3.x <- cgpc
+
+#line 48
+mul r0.z, r0.y, r0.z
+itof r3.y, l(1)
+add r0.z, r0.z, r3.y  // r0.z <- cgnc
+
+#line 49
+mul r3.y, r0.y, l(0.500000)
+mul r0.y, r0.y, r3.y
+itof r3.y, l(1)
+mul r3.x, r3.x, r3.x
+mul r0.z, r0.z, r0.z
+div r0.z, r3.x, r0.z
+add r0.z, r0.z, r3.y
+mul r0.y, r0.z, r0.y
+mul r0.z, r1.w, r1.w
+div r0.y, r0.y, r0.z  // r0.y <- F
+
+#line 52
+nop 
+mov r2.xyz, r2.xyzx
+mov r1.xyz, r1.xyzx
+mov r3.xyz, cb2[2].xyzx
+mov r4.xyz, l(1.000000,1.000000,1.000000,0)
+
+#line 14 "D:\Desktop\Cumulonimbus\Shader\functions_lighting.hlsli"
+mov r1.xyz, -r1.xyzx
+dp3 r0.z, r2.xyzx, r1.xyzx  // r0.z <- D
+
+#line 15
+itof r1.x, l(0)
+max r0.z, r0.z, r1.x
+
+#line 16
+mul r1.xyz, r3.xyzx, r4.xyzx
+mul r1.xyz, r0.zzzz, r1.xyzx  // r1.x <- <Diffuse return value>.x; r1.y <- <Diffuse return value>.y; r1.z <- <Diffuse return value>.z
+
+#line 52 "D:\Desktop\Cumulonimbus\Shader\metal_mtr_ps.hlsl"
+min r1.xyz, r1.xyzx, l(0.000000, 0.000000, 0.000000, 0.000000)
+mul r1.xyz, r1.xyzx, v6.xyzx  // r1.x <- f4_diffuse.x; r1.y <- f4_diffuse.y; r1.z <- f4_diffuse.z
+
+#line 53
+mov r1.w, l(1.000000)  // r1.w <- f4_diffuse.w
+
+#line 55
+sample_indexable(texture2d)(float,float,float,float) r2.xyz, v8.xyxx, t21.xyzw, s0
+mov r2.xyz, r2.xyzx  // r2.x <- normal_map.x; r2.y <- normal_map.y; r2.z <- normal_map.z
+
+#line 56
+nop 
+mov r2.xyz, r2.xyzx
+
+#line 55 "D:\Desktop\Cumulonimbus\Shader\functions_utility.hlsli"
+dp3 r0.z, v4.xyzx, v4.xyzx
+rsq r0.z, r0.z
+mul r3.xyz, r0.zzzz, v4.xyzx  // r3.x <- vx.x; r3.y <- vx.y; r3.z <- vx.z
+
+#line 56
+dp3 r0.z, v5.xyzx, v5.xyzx
+rsq r0.z, r0.z
+mul r4.xyz, r0.zzzz, v5.xyzx  // r4.x <- vy.x; r4.y <- vy.y; r4.z <- vy.z
+
+#line 57
+dp3 r0.z, v3.xyzx, v3.xyzx
+rsq r0.z, r0.z
+mul r5.xyz, r0.zzzz, v3.xyzx  // r5.x <- vz.x; r5.y <- vz.y; r5.z <- vz.z
+
+#line 60
+mov r6.x, r3.x  // r6.x <- mat._m00
+mov r6.y, r4.x  // r6.y <- mat._m10
+mov r6.z, r5.x  // r6.z <- mat._m20
+mov r7.x, r3.y  // r7.x <- mat._m01
+mov r7.y, r4.y  // r7.y <- mat._m11
+mov r7.z, r5.y  // r7.z <- mat._m21
+mov r5.x, r3.z  // r5.x <- mat._m02
+mov r5.y, r4.z  // r5.y <- mat._m12
+mov r5.z, r5.z  // r5.z <- mat._m22
+
+#line 61
+mul r2.xyz, r2.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
+mov r3.xyz, l(-1.000000,-1.000000,-1.000000,-0.000000)
+add r2.xyz, r2.xyzx, r3.xyzx
+
+#line 64
+dp3 r3.x, r2.xyzx, r6.xyzx
+dp3 r3.y, r2.xyzx, r7.xyzx
+dp3 r3.z, r2.xyzx, r5.xyzx
+dp3 r0.z, r3.xyzx, r3.xyzx
+rsq r0.z, r0.z
+mul r3.xyz, r0.zzzz, r3.xyzx  // r3.x <- normal_map.x; r3.y <- normal_map.y; r3.z <- normal_map.z
+mov r3.xyz, r3.xyzx  // r3.x <- <CalcNormalFromTangentSpace return value>.x; r3.y <- <CalcNormalFromTangentSpace return value>.y; r3.z <- <CalcNormalFromTangentSpace return value>.z
+
+#line 56 "D:\Desktop\Cumulonimbus\Shader\metal_mtr_ps.hlsl"
+mov r3.xyz, r3.xyzx  // r3.x <- normal.x; r3.y <- normal.y; r3.z <- normal.z
+
+#line 58
+itof r0.z, l(0)
+mul r0.y, r2.w, r0.y
+mul r0.x, r0.x, r0.y
+div r0.x, r0.x, r0.w
+max r0.x, r0.x, r0.z
+mov r2.xyz, cb2[2].xyzx
+mov r2.w, l(1.000000)
+mul r0.xyzw, r0.xxxx, r2.xyzw
+add r0.xyzw, r0.xyzw, r1.xyzw  // r0.x <- pout.color.x; r0.y <- pout.color.y; r0.z <- pout.color.z; r0.w <- pout.color.w
+
+#line 59
+mov r3.xyz, r3.xyzx  // r3.x <- pout.normal.x; r3.y <- pout.normal.y; r3.z <- pout.normal.z
+mov r3.w, l(1.000000)  // r3.w <- pout.normal.w
+
+#line 60
+mov r1.xyzw, v1.xyzw  // r1.x <- pout.position.x; r1.y <- pout.position.y; r1.z <- pout.position.z; r1.w <- pout.position.w
+
+#line 62
+mov o0.xyzw, r0.xyzw
+mov o1.xyzw, r3.xyzw
+mov o2.xyzw, r1.xyzw
 ret 
-// Approximately 76 instruction slots used
+// Approximately 143 instruction slots used

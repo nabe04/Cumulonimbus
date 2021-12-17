@@ -1,20 +1,66 @@
-#pragma once
+#ifndef MATERIAL_H
+#define MATERIAL_H
+
+#ifdef __cplusplus
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <SimpleMath.h>
 
-#include <filesystem>
-
+#include "constant_buffer.h"
 #include "rename_type_mapping.h"
 #include "graphics_mapping.h"
+#endif // __cplusplus
+
+#include "shader_interop_renderer.h"
+
+CBUFFER(MaterialCB, CBSlot_Material)
+{
+	float4 mat_use_roughness_channel;
+	float4 mat_use_metalness_channel;
+	float4 mat_use_occlusion_channel;
+	float mat_roughness;
+	float mat_metalness;
+	
+#ifdef __cplusplus
+	template<class Archive>
+	void load(Archive&& archive,const uint32_t version)
+	{
+		archive(
+			CEREAL_NVP(mat_roughness),
+			CEREAL_NVP(mat_metalness),
+			CEREAL_NVP(mat_use_roughness_channel),
+			CEREAL_NVP(mat_use_metalness_channel),
+			CEREAL_NVP(mat_use_occlusion_channel)
+		);
+	}
+
+	template<class Archive>
+	void save(Archive&& archive,const uint32_t version)
+	{
+		archive(
+			CEREAL_NVP(mat_roughness),
+			CEREAL_NVP(mat_metalness),
+			CEREAL_NVP(mat_use_roughness_channel),
+			CEREAL_NVP(mat_use_metalness_channel),
+			CEREAL_NVP(mat_use_occlusion_channel)
+		);
+	}
+#endif // __cplusplus
+};
+
+#ifdef __cplusplus
+
+CEREAL_CLASS_VERSION(MaterialCB, 0)
 
 namespace cumulonimbus::asset
 {
 	struct MaterialData
 	{
 		DirectX::SimpleMath::Vector4 color{ 1.f,1.f,1.f,1.f };	// モデル本来の色
+		// テクスチャID
 		mapping::rename_type::UUID albedo_id{ "" };				// AlbedoテクスチャのテクスチャID
 		mapping::rename_type::UUID metallic_id{ "" };			// Metallic MapテクスチャのテクスチャID
+		mapping::rename_type::UUID roughness_id{ "" };			// Roughness MapテクスチャのテクスチャID
 		mapping::rename_type::UUID normal_id{ "" };				// Normal MapテクスチャのID
 		mapping::rename_type::UUID height_id{ "" };				// Height MapテクスチャのテクスチャID
 		mapping::rename_type::UUID occlusion_id{ "" };			// AO(Ambient Occlusion) MapテクスチャのID
@@ -126,5 +172,10 @@ namespace cumulonimbus::asset
 		MaterialData material_data{};
 		// 自分のマテリアルID
 		mapping::rename_type::UUID mat_id{};
+		// コンスタントバッファ
+		std::unique_ptr<buffer::ConstantBuffer<MaterialCB>> cb_material{};
 	};
 } // cumulonimbus::asset
+
+#endif // __cplusplus
+#endif // MATERIAL_H

@@ -51,10 +51,12 @@ public:
 	 * height									: dsvテクスチャの高さ
 	 * need_depth_stencil_shader_resource_view	: 作成したdsvをテクスチャとして使用するか
 	 */
-	void CreateDepthStencilView(Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& dsv,
-								Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& ds_srv,
-								u_int width, u_int height,
-								DXGI_FORMAT depth_stencil_texture_format = DXGI_FORMAT_R24G8_TYPELESS);
+	void CreateDepthStencilView(
+		Microsoft::WRL::ComPtr<ID3D11DepthStencilView>& dsv,
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& ds_srv,
+		u_int width, u_int height,
+		bool need_depth_stencil_shader_resource_view = true,
+		DXGI_FORMAT depth_stencil_texture_format = DXGI_FORMAT_R24G8_TYPELESS);
 
 	void SetViewPort(int width, int height) const;
 	void BindPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology) const;
