@@ -15,7 +15,7 @@
 
 SamplerState default_sampler : register(s0);
 
-PS_Output main(PS_Input pin) : SV_TARGET
+PS_Output main(PS_Input pin)
 {
     PS_Output pout = (PS_Output) 0;
 
@@ -26,7 +26,7 @@ PS_Output main(PS_Input pin) : SV_TARGET
 
     pout.color    = albedo_color;
     pout.normal   = float4(normal, 1.0f);
-    pout.position = pin.w_position;
-	
+    pout.mro      = pin.w_position;
+
     return pout;
 }

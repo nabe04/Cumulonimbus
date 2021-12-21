@@ -355,6 +355,7 @@
     <None Include="Shader\general.hlsli" />
     <None Include="Shader\globals.hlsli" />
     <None Include="Shader\monochrome.hlsli" />
+    <None Include="Shader\params_utility.hlsli" />
     <None Include="Shader\phong.hlsli" />
     <None Include="Shader\shader_resource_mapping.hlsli" />
     <None Include="Shader\shadow_functions.hlsli" />
@@ -687,6 +688,9 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\variance_shadow_depth_extraction_vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

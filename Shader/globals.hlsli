@@ -91,7 +91,7 @@ TEXTURE2D(texture_roughness  , float4, TexSlot_RoughnessMap);
 TEXTURE2D(texture_occlusion  , float4, TexSlot_AOMap);
 TEXTURE2D(texture_normal     , float4, TexSlot_NormalMap);
 TEXTURE2D(texture_depth      , float4, TexSlot_Depth);
-TEXTURE2D(texture_position   , float4, TexSlot_Position);
+TEXTURE2D(texture_mro        , float4, TexSlot_MROMap);
 TEXTURE2D(texture_shader_slot, float , TexSlot_ShaderSlot);
 TEXTURECUBE(texture_cube     , float4, TexSlot_SkyMap);
 

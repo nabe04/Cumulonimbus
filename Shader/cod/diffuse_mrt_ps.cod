@@ -88,7 +88,7 @@ dcl_temps 7
 //   v6.x <- pin.color.x; v6.y <- pin.color.y; v6.z <- pin.color.z; v6.w <- pin.color.w; 
 //   v7.x <- pin.tex_position.x; v7.y <- pin.tex_position.y; v7.z <- pin.tex_position.z; 
 //   v8.x <- pin.texcoord0.x; v8.y <- pin.texcoord0.y; 
-//   o2.x <- <main return value>.position.x; o2.y <- <main return value>.position.y; o2.z <- <main return value>.position.z; o2.w <- <main return value>.position.w; 
+//   o2.x <- <main return value>.mro.x; o2.y <- <main return value>.mro.y; o2.z <- <main return value>.mro.z; o2.w <- <main return value>.mro.w; 
 //   o1.x <- <main return value>.normal.x; o1.y <- <main return value>.normal.y; o1.z <- <main return value>.normal.z; o1.w <- <main return value>.normal.w; 
 //   o0.x <- <main return value>.color.x; o0.y <- <main return value>.color.y; o0.z <- <main return value>.color.z; o0.w <- <main return value>.color.w
 //
@@ -102,15 +102,15 @@ mov r2.xyz, cb2[1].xyzx
 mov r3.xyz, v6.xyzx
 mov r0.xyz, r0.xyzx
 
-#line 14 "D:\Desktop\Cumulonimbus\Shader\functions_lighting.hlsli"
+#line 16 "D:\Desktop\Cumulonimbus\Shader\functions_lighting.hlsli"
 mov r2.xyz, -r2.xyzx
 dp3 r0.w, r1.xyzx, r2.xyzx  // r0.w <- D
 
-#line 15
+#line 17
 itof r1.x, l(0)
 max r0.w, r0.w, r1.x
 
-#line 16
+#line 18
 mul r0.xyz, r3.xyzx, r0.xyzx
 mul r0.xyz, r0.wwww, r0.xyzx  // r0.x <- <Diffuse return value>.x; r0.y <- <Diffuse return value>.y; r0.z <- <Diffuse return value>.z
 
@@ -241,7 +241,7 @@ mov r1.xyz, r1.xyzx  // r1.x <- pout.normal.x; r1.y <- pout.normal.y; r1.z <- po
 mov r1.w, l(1.000000)  // r1.w <- pout.normal.w
 
 #line 36
-mov r0.xyzw, v1.xyzw  // r0.x <- pout.position.x; r0.y <- pout.position.y; r0.z <- pout.position.z; r0.w <- pout.position.w
+mov r0.xyzw, v1.xyzw  // r0.x <- pout.mro.x; r0.y <- pout.mro.y; r0.z <- pout.mro.z; r0.w <- pout.mro.w
 
 #line 38
 mov o0.xyzw, r3.xyzw

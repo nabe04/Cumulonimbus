@@ -52,7 +52,7 @@ namespace cumulonimbus::graphics::buffer
 	void GBuffer::UnbindShaderAndRTV()
 	{
 		UnbindShader();
-		UnbindRTV();
+		UnbindRtv();
 	}
 
 	void GBuffer::BindGBuffLightingShader() const
@@ -76,7 +76,7 @@ namespace cumulonimbus::graphics::buffer
 		locator::Locator::GetDx11Device()->BindShaderResource(
 												mapping::graphics::ShaderStage::PS,
 												position_buffer->GetRenderTargetSRV(),
-												TexSlot_Position);
+												TexSlot_MROMap);
 	}
 
 	void GBuffer::UnbindGBufferTextures() const
@@ -92,7 +92,7 @@ namespace cumulonimbus::graphics::buffer
 		// positionテクスチャ
 		locator::Locator::GetDx11Device()->UnbindShaderResource(
 												mapping::graphics::ShaderStage::PS,
-												TexSlot_Position);
+												TexSlot_MROMap);
 		// shader_slotテクスチャ
 		locator::Locator::GetDx11Device()->UnbindShaderResource(
 												mapping::graphics::ShaderStage::PS,
@@ -120,7 +120,15 @@ namespace cumulonimbus::graphics::buffer
 		locator::Locator::GetDx11Device()->BindShaderResource(
 												mapping::graphics::ShaderStage::PS,
 												position_buffer->GetRenderTargetSRV(),
-												TexSlot_Position);
+												TexSlot_MROMap);
+	}
+
+	void GBuffer::BindDepthTexture()
+	{
+		locator::Locator::GetDx11Device()->BindShaderResource(
+											mapping::graphics::ShaderStage::PS,
+											srv_for_g_buffer.GetAddressOf(),
+											TexSlot_Depth);
 	}
 
 	void GBuffer::UnbindColorTexture() const
@@ -141,7 +149,14 @@ namespace cumulonimbus::graphics::buffer
 	{
 		locator::Locator::GetDx11Device()->UnbindShaderResource(
 												mapping::graphics::ShaderStage::PS,
-												TexSlot_Position);
+												TexSlot_MROMap);
+	}
+
+	void GBuffer::UnbindDepthTexture()
+	{
+		locator::Locator::GetDx11Device()->UnbindShaderResource(
+												mapping::graphics::ShaderStage::PS,
+												TexSlot_Depth);
 	}
 
 	ID3D11ShaderResourceView** GBuffer::GetColorBufferSRV_Address() const
@@ -174,7 +189,7 @@ namespace cumulonimbus::graphics::buffer
 		immediate_context->OMSetRenderTargets(num_rtv, rtv, dsv_for_g_buffer.Get());
 	}
 
-	void GBuffer::UnbindRTV()
+	void GBuffer::UnbindRtv()
 	{
 		ID3D11DeviceContext* immediate_context = locator::Locator::GetDx11Device()->immediate_context.Get();
 		ID3D11RenderTargetView* null_rtv[num_rtv] = { nullptr ,nullptr,nullptr };

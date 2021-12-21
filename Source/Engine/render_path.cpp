@@ -459,7 +459,7 @@ namespace cumulonimbus::renderer
 		ecs::Registry* registry,
 		const camera::Camera* camera,
 		const Light* light,
-		bool is_game)
+		const bool is_game)
 	{
 		auto& model = registry->GetArray<component::ModelComponent>().GetComponents();
 		for(auto& model_comp : registry->GetArray<component::ModelComponent>().GetComponents())
@@ -481,14 +481,19 @@ namespace cumulonimbus::renderer
 		g_buffer->UnbindShaderAndRTV();
 
 		camera->BindFrameBuffer();
+		camera->BindCBuffer();
 		// GBufferに書き出したテクスチャのセット
 		g_buffer->BindGBufferTextures();
+		g_buffer->BindDepthTexture();
+
 		// GBufferライティング用シェーダー(PS)のセット
 		g_buffer->BindGBuffLightingShader();
 		fullscreen_quad->Blit(immediate_context);
 
+		g_buffer->UnbindDepthTexture();
 		g_buffer->UnbindGBufferTextures();
 
+		camera->UnbindCBuffer();
 		camera->UnbindFrameBuffer();
 
 		locator::Locator::GetDx11Device()->UnbindShaderResource(mapping::graphics::ShaderStage::PS, 0);
@@ -513,7 +518,7 @@ namespace cumulonimbus::renderer
 
 			locator::Locator::GetDx11Device()->BindShaderResource(
 				mapping::graphics::ShaderStage::PS,
-				camera_comp.GetCamera()->GetFrameBufferSRV_Address(),
+				camera_comp.GetCamera()->GetFrameBufferSrvAddress(),
 				TexSlot_BaseColorMap);
 			fullscreen_quad->Blit(immediate_context, true, true, true);
 			ID3D11ShaderResourceView* const pSRV[1] = { nullptr };
@@ -552,7 +557,7 @@ namespace cumulonimbus::renderer
 			ID3D11DeviceContext* immediate_context,
 			const camera::Camera* camera)
 	{
-		g_buffer->UnbindRTV();
+		g_buffer->UnbindRtv();
 		//off_screen->Activate(immediate_context);
 		camera->BindFrameBuffer();
 		g_buffer->BindColorTexture();

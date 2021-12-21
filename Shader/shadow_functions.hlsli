@@ -19,7 +19,7 @@ float3 GetVarianceShadow(Texture2D st, SamplerState ss, float3 Tex, float3 Scolo
 }
 
 // ワールド座標をライト座標空間に変換
-float3 GetShadowTexture(row_major float4x4 vp, float3 w_pos)
+float3 GetShadowTexture(const row_major float4x4 vp, const float3 w_pos)
 {
     // 正規化デバイス座標(NDC座標)
     float4 wvp_pos;

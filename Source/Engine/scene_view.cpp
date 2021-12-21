@@ -82,7 +82,7 @@ namespace cumulonimbus::editor
 			window_offset.y = (ImGui::GetContentRegionAvail().y - image_size.y) / 2.f;
 			ImGui::Dummy({ .0f,window_offset.y });
 
-			helper::imgui::Image(*scene_view_camera->GetCamera().GetFrameBufferSRV_Address(), { image_size.x,image_size.y });
+			helper::imgui::Image(*scene_view_camera->GetCamera().GetFrameBufferSrvAddress(), { image_size.x,image_size.y });
 
 			{// ImGuizmo‚ðŽg‚Á‚Ä‚ÌƒMƒYƒ‚ˆ—
 				if(auto* transform_comp = registry->TryGetComponent<component::TransformComponent>(hierarchy->GetSelectedEntity());

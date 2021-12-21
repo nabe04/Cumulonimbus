@@ -49,7 +49,7 @@
 #define TexSlot_RoughnessMap    TexSlot_OnDemand7
 #define TexSlot_SpecularMap		TexSlot_OnDemand8
 #define TexSlot_SkyMap			TexSlot_OnDemand9
-#define TexSlot_Position		TexSlot_OnDemand10
+#define TexSlot_MROMap			TexSlot_OnDemand10
 #define TexSlot_ShaderSlot		TexSlot_OnDemand11
 #define TexSlot_PBRMap			TexSlot_OnDemand12
 #define TexSlot_AOMap			TexSlot_OnDemand13

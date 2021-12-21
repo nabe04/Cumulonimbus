@@ -65,24 +65,56 @@ inline float3 CalcNormalFromTangentSpace(const float3 tangent,const float3 binor
 }
 
 /**
- * @brief : use_channel上で1以上の値のテクスチャチャンネル値を取得する
+ * @brief : use_channel上で1以上の値のテクスチャチャンネル値を取得する。
+ *          すべてのチャンネルが1未満の場合spare_param(第5引数)が使用される
  * @param use_channel : 使用したいチャンネル(使用したい成分に1以上を格納する)
  * @param tex : 取得するテクスチャ
  * @param ss : サンプラー
  * @param uv_pos : UV座標
+ * @param spare_param : use_channelの値がすべて1未満の場合使用される値
  */
-inline float GetSingleTextureChannel(const float4 use_channel,const Texture2D tex, const SamplerState ss,const float2 uv_pos)
+inline float GetSingleTextureChannel(
+    const float4 use_channel, const Texture2D tex,
+    const SamplerState ss,const float2 uv_pos,
+    const float spare_param)
 {
     const float4 col = tex.Sample(ss, uv_pos);
+	// 返す色(早期リターンをした場合警告が出たため)
+    float ret_col = 0.0f;
 
     if (use_channel.x >= 1.0f)
-        return col.r;
-    if (use_channel.y >= 1.0f)
-        return col.g;
-    if (use_channel.z >= 1.0f)
-        return col.b;
+        ret_col = col.r;
+    else if (use_channel.y >= 1.0f)
+        ret_col = col.g;
+    else if (use_channel.z >= 1.0f)
+        ret_col = col.b;
+    else if(use_channel.w >= 1.0f)
+        ret_col = col.a;
+	else
+        ret_col = spare_param;
 
-    return col.a;
+    return ret_col;
+}
+
+/**
+ * @brief : 深度テクスチャからワールド空間上の座標を算出
+ * @param texcoord : テスクチャ座標
+ * @param depth : 深度値
+ * @param inv_view_projection : ビュー・プロジェクション行列の逆行列
+ */
+inline float3 DepthToWPosition(
+	float2 texcoord,
+	const float depth,
+	const float4x4 inv_view_projection)
+{
+	// 深度値からプロジェクション座標での位置を算出
+    texcoord.y = -texcoord.y;
+    float2 pos_xy = texcoord.xy * 2.0f - float2(1.0f, -1.0f);
+    const float4 projected_position = float4(pos_xy, depth, 1.0f);
+
+    const float4 position = mul(inv_view_projection, projected_position);
+
+    return position.xyz / position.w;
 }
 
 #endif // FUNCTIONS_UTILITY_SHF

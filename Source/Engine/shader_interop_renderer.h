@@ -2,11 +2,11 @@
 #define SHADER_INTEROP_RENDERER_H
 
 #ifdef __cplusplus
-	#include<string>
+#include<string>
 
-	#include <cereal/cereal.hpp>
+#include <cereal/cereal.hpp>
 
-	#include "cereal_helper.h"
+#include "cereal_helper.h"
 #endif // __cplusplus
 
 #include "shader_interop.h"
@@ -80,6 +80,9 @@ CBUFFER(CameraCB, CBSlot_Camera)
 	float4x4 camera_view_matrix;
 	float4x4 camera_projection_matrix;
 	float4x4 camera_view_projection_matrix;
+	float4x4 camera_inv_view_matrix;
+	float4x4 camera_inv_projection_matrix;
+	float4x4 camera_inv_view_projection_matrix;
 
 	float3	 camera_position;
 	float	 camera_distance_from_origin;

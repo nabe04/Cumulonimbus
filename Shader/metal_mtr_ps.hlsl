@@ -15,10 +15,10 @@
 
 SamplerState default_sampler : register(s0);
 
-PS_Output main(PS_Input pin) : SV_TARGET
+PS_Output main(PS_Input pin)
 {
     PS_Output pout = (PS_Output) 0;
-	
+
     const float3 eye_vector = light_position - pin.wvp_position.xyz;
 
     float3 L = light_direction.xyz; // Light Vector
@@ -57,7 +57,7 @@ PS_Output main(PS_Input pin) : SV_TARGET
 
     pout.color      = f4_diffuse + float4(light_color, 1.0f) * max(0, F * D * G / NE);
     pout.normal     = float4(normal, 1.0f);
-    pout.position   = pin.w_position;
+    pout.mro        = pin.w_position;
 
     return pout;
 }

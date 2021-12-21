@@ -60,6 +60,15 @@ public:
 
 		current_state = state;
 	}
+	void SetState(const std::string& state_name)
+	{
+		if(!state_map.contains(state_name))
+		{
+			assert(!"Don't have state");
+		}
+
+		current_state = state_map.at(state_name);
+	}
 
 	template <typename Archive>
 	void serialize(Archive&& archive)

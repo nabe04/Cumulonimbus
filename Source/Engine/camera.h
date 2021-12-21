@@ -71,6 +71,12 @@ namespace cumulonimbus::camera
 		void BindCBuffer(bool set_in_vs = true, bool set_in_ps = true) const;
 		void UnbindCBuffer() const;
 
+		void BindSrvTexture(int slot = -1) const;
+		void UnbindSrvTexture(int slot = -1) const;
+
+		void BindDsvTexture(int slot = -1) const;
+		void UnbindDsvTexture(int slot = -1) const;
+
 		/**
 		 * @brief		 : クォータニオンを使用してright_vectorを基準に
 		 *			       front_vectorを回転
@@ -231,7 +237,11 @@ namespace cumulonimbus::camera
 		const DirectX::SimpleMath::Vector2& GetCameraSpeed() const { return camera_speed; }
 
 		[[nodiscard]]
-		ID3D11ShaderResourceView** GetFrameBufferSRV_Address() const { return off_screen->GetRenderTargetSRV(); }
+		ID3D11ShaderResourceView** GetFrameBufferSrvAddress() const { return off_screen->GetRenderTargetSRV(); }
+
+		[[nodiscard]]
+		ID3D11ShaderResourceView** GetFrameBufferDsvAddress() const { return off_screen->GetDepthStencilSRV(); }
+
 	private:
 		std::shared_ptr<buffer::ConstantBuffer<CameraCB>>	cb_camera{ nullptr };
 		std::shared_ptr<FrameBuffer>						off_screen{ nullptr };

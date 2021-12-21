@@ -77,6 +77,10 @@ namespace cumulonimbus::camera
 		cb_camera->GetData().camera_height	= height;
 		cb_camera->GetData().camera_view_matrix = view_mat;
 		cb_camera->GetData().camera_view_projection_matrix = view_projection_mat;
+		cb_camera->GetData().camera_inv_view_matrix = view_mat.Invert();
+		cb_camera->GetData().camera_inv_projection_matrix = projection_mat.Invert();
+		cb_camera->GetData().camera_inv_view_projection_matrix = view_projection_mat.Invert();
+
 
 		SetViewInfo(cb_camera->GetData().camera_position, cb_camera->GetData().camera_at, cb_camera->GetData().camera_up);
 		SetProjection(DirectX::XM_PI / 8.0f, static_cast<float>(locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
@@ -129,8 +133,12 @@ namespace cumulonimbus::camera
 		cb_camera->GetData().camera_aspect	= aspect;
 		cb_camera->GetData().camera_width	= width;
 		cb_camera->GetData().camera_height	= height;
-		cb_camera->GetData().camera_view_matrix = view_mat;
-		cb_camera->GetData().camera_view_projection_matrix = view_projection_mat;
+		cb_camera->GetData().camera_view_matrix					= view_mat;
+		cb_camera->GetData().camera_projection_matrix			= projection_mat;
+		cb_camera->GetData().camera_view_projection_matrix		= view_projection_mat;
+		cb_camera->GetData().camera_inv_view_matrix				= view_mat.Invert();
+		cb_camera->GetData().camera_inv_projection_matrix		= projection_mat.Invert();
+		cb_camera->GetData().camera_inv_view_projection_matrix	= view_projection_mat.Invert();
 
 		SetViewInfo(cb_camera->GetData().camera_position, cb_camera->GetData().camera_at, cb_camera->GetData().camera_up);
 		SetProjection(DirectX::XM_PI / 8.0f, static_cast<float>(locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
@@ -239,6 +247,74 @@ namespace cumulonimbus::camera
 	void Camera::UnbindCBuffer() const
 	{
 		cb_camera->Deactivate(locator::Locator::GetDx11Device()->immediate_context.Get());
+	}
+
+	void Camera::BindSrvTexture(const int slot) const
+	{
+		if(slot < 0)
+		{// デフォルトのスロットでセットする
+			locator::Locator::GetDx11Device()->BindShaderResource(
+				mapping::graphics::ShaderStage::PS,
+				off_screen->GetRenderTargetSRV(),
+				TexSlot_BaseColorMap);
+		}
+		else
+		{
+			locator::Locator::GetDx11Device()->BindShaderResource(
+				mapping::graphics::ShaderStage::PS,
+				off_screen->GetRenderTargetSRV(),
+				slot);
+		}
+	}
+
+	void Camera::UnbindSrvTexture(const int slot) const
+	{
+		if (slot < 0)
+		{// デフォルトのスロットでセットする
+			locator::Locator::GetDx11Device()->UnbindShaderResource(
+													mapping::graphics::ShaderStage::PS,
+													TexSlot_BaseColorMap);
+		}
+		else
+		{
+			locator::Locator::GetDx11Device()->UnbindShaderResource(
+													mapping::graphics::ShaderStage::PS,
+													slot);
+		}
+	}
+
+	void Camera::BindDsvTexture(const int slot) const
+	{
+		if (slot < 0)
+		{// デフォルトのスロットでセットする
+			locator::Locator::GetDx11Device()->BindShaderResource(
+													mapping::graphics::ShaderStage::PS,
+													off_screen->GetDepthStencilSRV(),
+													TexSlot_Depth);
+		}
+		else
+		{
+			locator::Locator::GetDx11Device()->BindShaderResource(
+													mapping::graphics::ShaderStage::PS,
+													off_screen->GetDepthStencilSRV(),
+													slot);
+		}
+	}
+
+	void Camera::UnbindDsvTexture(const int slot) const
+	{
+		if (slot < 0)
+		{// デフォルトのスロットでセットする
+			locator::Locator::GetDx11Device()->UnbindShaderResource(
+													mapping::graphics::ShaderStage::PS,
+													TexSlot_Depth);
+		}
+		else
+		{
+			locator::Locator::GetDx11Device()->UnbindShaderResource(
+													mapping::graphics::ShaderStage::PS,
+													slot);
+		}
 	}
 
 	void Camera::RotationFrontVectorFromRightVector(const float radian)
@@ -442,9 +518,13 @@ namespace cumulonimbus::camera
 	void Camera::SetCBufferParam() const
 	{
 		auto& camera_data = cb_camera->GetData();
-		camera_data.camera_view_matrix				= view_mat;
-		camera_data.camera_projection_matrix		= projection_mat;
-		camera_data.camera_view_projection_matrix	= view_projection_mat;
+		camera_data.camera_view_matrix				  = view_mat;
+		camera_data.camera_projection_matrix		  = projection_mat;
+		camera_data.camera_view_projection_matrix	  = view_projection_mat;
+		camera_data.camera_inv_view_matrix			  = view_mat.Invert();
+		camera_data.camera_inv_projection_matrix	  = projection_mat.Invert();
+		camera_data.camera_inv_view_projection_matrix = view_projection_mat.Invert();
+
 
 		camera_data.camera_position				= eye_position;
 		camera_data.camera_distance_from_origin = eye_position.Length();

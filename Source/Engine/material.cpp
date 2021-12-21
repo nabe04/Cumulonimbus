@@ -76,6 +76,28 @@ namespace cumulonimbus::asset
 		cb_material   = std::make_unique<buffer::ConstantBuffer<MaterialCB>>(locator::Locator::GetDx11Device()->device.Get());
 	}
 
+	Material::Material(const Material& other)
+		:material_data{ other.material_data },
+		mat_id{ other.mat_id }
+	{
+		cb_material = std::make_unique<buffer::ConstantBuffer<MaterialCB>>(locator::Locator::GetDx11Device()->device.Get());
+	}
+
+	Material& Material::operator=(const Material& other)
+	{
+		if(this == &other)
+		{
+			return *this;
+		}
+
+		material_data = other.material_data;
+		mat_id		  = other.mat_id;
+
+		cb_material = std::make_unique<buffer::ConstantBuffer<MaterialCB>>(locator::Locator::GetDx11Device()->device.Get());
+
+		return *this;
+	}
+
 	void Material::Save(const std::filesystem::path& path)
 	{
 		if (path.extension().compare(file_path_helper::GetMaterialExtension()) != 0)
@@ -106,50 +128,36 @@ namespace cumulonimbus::asset
 
 	void Material::RenderImGui()
 	{
-		AssetManager& asset_manager = *locator::Locator::GetAssetManager();
-		TextureLoader* tex_loader = locator::Locator::GetAssetManager()->GetLoader<TextureLoader>();
-		Texture& albedo_tex = tex_loader->GetTexture(material_data.albedo_id);
+		TextureLoader* tex_loader	= locator::Locator::GetAssetManager()->GetLoader<TextureLoader>();
+		Texture& albedo_tex			= tex_loader->GetTexture(material_data.albedo_id);
+		Texture& roughness_tex		= tex_loader->GetTexture(material_data.roughness_id);
+		Texture& metalness_tex		= tex_loader->GetTexture(material_data.metallic_id);
+		Texture& normal_tex			= tex_loader->GetTexture(material_data.normal_id);
+		Texture& occlusion_tex		= tex_loader->GetTexture(material_data.occlusion_id);
 		// Albedo Texture
-		ImGui::Text("Albedo");
-		ImGui::SameLine();
-		helper::imgui::Image(albedo_tex);
-
-		if(IMGUI_LEFT_LABEL(ImGui::BeginCombo, "Select Tecture", albedo_tex.GetFilename().c_str()))
-		{
-			const bool is_none_selected = (material_data.albedo_id.empty());
-			if (ImGui::Selectable("None", is_none_selected, 0, {500,50}))
-			{
-				material_data.albedo_id.clear();
-				const std::string mat_filepath = asset_manager.GetAssetSheetManager().GetAssetFilename<Material>(mat_id);
-				Save(mat_filepath);
-			}
-			if (is_none_selected)
-			{
-				ImGui::SetItemDefaultFocus();
-			}
-
-			for (auto& [tex_id, tex_data] : tex_loader->GetTextures())
-			{
-				helper::imgui::Image(*tex_data.get());
-				ImGui::SameLine();
-				const bool is_selected = (tex_id == material_data.albedo_id);
-				if (ImGui::Selectable(tex_data->GetFilename().c_str(), is_selected, 0, { 500,50 }))
-				{
-					material_data.albedo_id = tex_id;
-					const std::string mat_filepath = asset_manager.GetAssetSheetManager().GetAssetFilename<Material>(mat_id);
-					Save(mat_filepath);
-				}
-				if (is_selected)
-				{
-					ImGui::SetItemDefaultFocus();
-				}
-			}
-			ImGui::EndCombo();
-		}
-		//if (ImGui::BeginCombo("Select Texture", albedo_tex.GetFilename().c_str()))
-		//{
-		//
-		//}
+		ImSelectTexture(albedo_tex, material_data.albedo_id, albedo_tex.GetFilename(), std::string{ "Albedo" });
+		ImGui::Spacing();
+		ImGui::Spacing();
+		ImGui::Spacing();
+		// Roughness Texture
+		ImSelectTexture(roughness_tex, material_data.roughness_id, roughness_tex.GetFilename().c_str(), std::string{ "Roughness" });
+		ImSelectColorChannel(roughness_channel, cb_material->GetData().mat_use_roughness_channel, cb_material->GetData().mat_roughness, material_data.roughness_id, std::string{ "Roughness" });
+		ImGui::Spacing();
+		ImGui::Spacing();
+		ImGui::Spacing();
+		// Metalness Texture
+		ImSelectTexture(metalness_tex, material_data.metallic_id, metalness_tex.GetFilename().c_str(), std::string{ "Metalness" });
+		ImSelectColorChannel(metalness_channel, cb_material->GetData().mat_use_metalness_channel, cb_material->GetData().mat_metalness, material_data.metallic_id, std::string{ "Metalness" });
+		ImGui::Spacing();
+		ImGui::Spacing();
+		ImGui::Spacing();
+		// Normal Texture
+		ImSelectTexture(normal_tex, material_data.normal_id, normal_tex.GetFilename().c_str(), std::string{ "Normal" });
+		ImGui::Spacing();
+		ImGui::Spacing();
+		ImGui::Spacing();
+		// Occlusion Texture
+		ImSelectTexture(occlusion_tex, material_data.occlusion_id, occlusion_tex.GetFilename().c_str(), std::string{ "Occlusion" });
 	}
 
 	void Material::BindMaterial(const mapping::graphics::ShaderStage shader_stage) const
@@ -170,5 +178,94 @@ namespace cumulonimbus::asset
 		loader->GetTexture(material_data.normal_id).UnbindTexture(shader_stage, TexSlot_NormalMap);
 	}
 
+	void Material::ImSelectTexture(
+		Texture& tex, mapping::rename_type::UUID& mat_tex_id,
+		const std::string& tex_filename,
+		const std::string& label_name)
+	{
+		AssetManager& asset_manager = *locator::Locator::GetAssetManager();
+		TextureLoader* tex_loader = locator::Locator::GetAssetManager()->GetLoader<TextureLoader>();
+
+		ImGui::Text(label_name.c_str());
+		helper::imgui::Image(tex);
+
+		const std::string label = "##SelectTexture" + label_name;
+
+		ImGui::Text(ICON_FA_IMAGE);
+		ImGui::SameLine();
+
+		if (ImGui::BeginCombo(label.c_str(), tex_filename.c_str()))
+		{
+			const bool is_none_selected = (mat_tex_id.empty());
+			if (ImGui::Selectable("None", is_none_selected, 0, { 500,50 }))
+			{
+				mat_tex_id.clear();
+				const std::string mat_filepath = asset_manager.GetAssetSheetManager().GetAssetFilename<Material>(mat_id);
+				Save(mat_filepath);
+			}
+			if (is_none_selected)
+			{
+				ImGui::SetItemDefaultFocus();
+			}
+
+			for (auto& [tex_id, tex_data] : tex_loader->GetTextures())
+			{
+				helper::imgui::Image(*tex_data.get());
+				ImGui::SameLine();
+				const bool is_selected = (tex_id == mat_tex_id);
+				if (ImGui::Selectable(tex_data->GetFilename().c_str(), is_selected, 0, { 500,50 }))
+				{
+					mat_tex_id = tex_id;
+					const std::string mat_filepath = asset_manager.GetAssetSheetManager().GetAssetFilename<Material>(mat_id);
+					Save(mat_filepath);
+				}
+				if (is_selected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
+	}
+
+	void Material::ImSelectColorChannel(
+		EnumStateMap<ColorChannel>& color_channel,
+		float4& use_channel, float& custom_param,
+		const mapping::rename_type::UUID& mat_id,
+		const std::string& label_name,
+		const float custom_param_range_min,
+		const float custom_param_range_max)
+	{
+		ImGui::PushID(mat_id.c_str());
+		const std::string label_combo = "##SelectColorChannel" + label_name;
+
+		ImGui::Text(ICON_FA_SPINNER);
+		ImGui::SameLine();
+
+		if(ImGui::BeginCombo(label_combo.c_str(), color_channel.GetCurrentStateName().c_str()))
+		{
+			for(const auto& state_name : color_channel.GetStateNames())
+			{
+				const bool is_selected = (state_name == color_channel.GetCurrentStateName());
+				if (ImGui::Selectable(state_name.c_str(), is_selected, 0, { 500,50 }))
+				{
+					color_channel.SetState(state_name);
+				}
+				if(is_selected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
+
+		if(color_channel.GetCurrentState() == ColorChannel::Custom)
+		{
+			const std::string label_drag_float = "##DragParam" + label_name;
+			ImGui::SliderFloat(label_drag_float.c_str(), &custom_param, custom_param_range_min, custom_param_range_max);
+		}
+
+		ImGui::PopID();
+	}
 
 } // cumulonimbus::asset

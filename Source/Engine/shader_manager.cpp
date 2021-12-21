@@ -29,7 +29,7 @@ namespace cumulonimbus::shader_system
 		using namespace mapping::shader_assets;
 		// Shaderのコンパイル
 		// 3D
-		RegistryShader<shader_system::DebugCollisionShader>(ShaderAsset3D::DebugCollision);
+		//RegistryShader<shader_system::DebugCollisionShader>(ShaderAsset3D::DebugCollision);
 		//RegistryShader<shader_system::SampleShader>				(ShaderAsset3D::SampleShader);
 		//RegistryShader<shader_system::DiffuseShader>			(ShaderAsset3D::Diffuse);
 		//RegistryShader<shader_system::PhongShader>				(ShaderAsset3D::Phong);
@@ -42,7 +42,7 @@ namespace cumulonimbus::shader_system
 		RegistryShader2D<shader_system::StandardSpriteShader, shader_asset::StandardSpriteAsset>(ShaderAsset2D::Standard);
 		RegistryShader2D<shader_system::BillboardShader		, shader_asset::BillboardAsset>		(ShaderAsset2D::Billboard);
 		// その他のシェーダー(Local Shader)
-		RegisterShader<shader_system::DebugCollisionShader>     (LocalShaderAsset::Collision);
+		//RegisterShader<shader_system::DebugCollisionShader>     (LocalShaderAsset::Collision);
 	}
 
 	//-------------------  3D用シェーダーのBind,Unbind  ----------------------//

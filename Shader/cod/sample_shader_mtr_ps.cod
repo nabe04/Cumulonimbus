@@ -60,7 +60,7 @@ dcl_temps 7
 //   v6.x <- pin.color.x; v6.y <- pin.color.y; v6.z <- pin.color.z; v6.w <- pin.color.w; 
 //   v7.x <- pin.tex_position.x; v7.y <- pin.tex_position.y; v7.z <- pin.tex_position.z; 
 //   v8.x <- pin.texcoord0.x; v8.y <- pin.texcoord0.y; 
-//   o2.x <- <main return value>.position.x; o2.y <- <main return value>.position.y; o2.z <- <main return value>.position.z; o2.w <- <main return value>.position.w; 
+//   o2.x <- <main return value>.mro.x; o2.y <- <main return value>.mro.y; o2.z <- <main return value>.mro.z; o2.w <- <main return value>.mro.w; 
 //   o1.x <- <main return value>.normal.x; o1.y <- <main return value>.normal.y; o1.z <- <main return value>.normal.z; o1.w <- <main return value>.normal.w; 
 //   o0.x <- <main return value>.color.x; o0.y <- <main return value>.color.y; o0.z <- <main return value>.color.z; o0.w <- <main return value>.color.w
 //
@@ -126,7 +126,7 @@ mov r1.xyz, r1.xyzx  // r1.x <- pout.normal.x; r1.y <- pout.normal.y; r1.z <- po
 mov r1.w, l(1.000000)  // r1.w <- pout.normal.w
 
 #line 29
-mov r2.xyzw, v1.xyzw  // r2.x <- pout.position.x; r2.y <- pout.position.y; r2.z <- pout.position.z; r2.w <- pout.position.w
+mov r2.xyzw, v1.xyzw  // r2.x <- pout.mro.x; r2.y <- pout.mro.y; r2.z <- pout.mro.z; r2.w <- pout.mro.w
 
 #line 31
 mov o0.xyzw, r0.xyzw

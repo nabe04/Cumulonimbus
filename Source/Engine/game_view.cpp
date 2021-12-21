@@ -24,7 +24,7 @@ namespace cumulonimbus::editor
 				// ウィンドウが画面の中央に来るように調整
 				window_offset.y = (ImGui::GetContentRegionAvail().y - image_size.y) / 2.f;
 				ImGui::Dummy({ .0f,window_offset.y });
-				helper::imgui::Image(*camera_comp.GetCamera()->GetFrameBufferSRV_Address(), { image_size.x,image_size.y });
+				helper::imgui::Image(*camera_comp.GetCamera()->GetFrameBufferSrvAddress(), { image_size.x,image_size.y });
 			}
 		}
 		ImGui::End();

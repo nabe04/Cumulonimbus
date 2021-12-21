@@ -2,6 +2,8 @@
 #define MATERIAL_H
 
 #ifdef __cplusplus
+#include <memory>
+
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <SimpleMath.h>
@@ -9,6 +11,7 @@
 #include "constant_buffer.h"
 #include "rename_type_mapping.h"
 #include "graphics_mapping.h"
+#include "enum_state_map.h"
 #endif // __cplusplus
 
 #include "shader_interop_renderer.h"
@@ -18,9 +21,10 @@ CBUFFER(MaterialCB, CBSlot_Material)
 	float4 mat_use_roughness_channel;
 	float4 mat_use_metalness_channel;
 	float4 mat_use_occlusion_channel;
-	float mat_roughness;
-	float mat_metalness;
-	
+	float  mat_roughness;
+	float  mat_metalness;
+	float2 mat_dummy;
+
 #ifdef __cplusplus
 	template<class Archive>
 	void load(Archive&& archive,const uint32_t version)
@@ -49,6 +53,11 @@ CBUFFER(MaterialCB, CBSlot_Material)
 };
 
 #ifdef __cplusplus
+
+namespace cumulonimbus::asset
+{
+	class Texture;
+} // cumulonimbus::asset
 
 CEREAL_CLASS_VERSION(MaterialCB, 0)
 
@@ -81,10 +90,24 @@ namespace cumulonimbus::asset
 	 */
 	class Material final
 	{
+	private:
+		enum class ColorChannel
+		{
+			Custom,
+			R,
+			G,
+			B,
+			A,
+
+			End
+		};
+
 	public:
 		explicit Material() = default; // for cereal
 		explicit Material(const mapping::rename_type::UUID& mat_id);
 		explicit Material(const mapping::rename_type::UUID& mat_id, const MaterialData& data);
+		Material(const Material& other);
+		Material& operator=(const Material& other);
 		~Material() = default;
 
 		template<class Archive>
@@ -174,6 +197,30 @@ namespace cumulonimbus::asset
 		mapping::rename_type::UUID mat_id{};
 		// コンスタントバッファ
 		std::unique_ptr<buffer::ConstantBuffer<MaterialCB>> cb_material{};
+
+		EnumStateMap<ColorChannel> roughness_channel{};
+		EnumStateMap<ColorChannel> metalness_channel{};
+
+		/**
+		 * @brief : マテリアルのテクスチャ選択
+		 * @param tex : 設定されているマテリアルテクスチャ
+		 * @param tex_id : 設定されているテクスチャID
+		 * @param tex_filename : テクスチャ名
+		 * @param label_name : テクスチャ説明のラベル名
+		 */
+		void ImSelectTexture(
+			Texture& tex, mapping::rename_type::UUID& mat_tex_id,
+			const std::string& tex_filename, const std::string& label_name);
+		/**
+		 * @brief : テクスチャの使用するチャンネルの指定
+		 */
+		void ImSelectColorChannel(
+			EnumStateMap<ColorChannel>& color_channel,
+			float4& use_channel, float& custom_param,
+			const mapping::rename_type::UUID& mat_id,
+			const std::string& label_name,
+			float custom_param_range_min = 0.0f,
+			float custom_param_range_max = 1.0f);
 	};
 } // cumulonimbus::asset
 
