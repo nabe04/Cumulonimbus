@@ -165,8 +165,17 @@ namespace cumulonimbus::asset
 		TextureLoader* loader = locator::Locator::GetAssetManager()->GetLoader<TextureLoader>();
 		// Albedoテクスチャのバインド
 		loader->GetTexture(material_data.albedo_id).BindTexture(shader_stage, TexSlot_BaseColorMap);
-		// Normal マップのバインド
+		// Normalマップのバインド
 		loader->GetTexture(material_data.normal_id).BindTexture(shader_stage, TexSlot_NormalMap);
+		// Roughnessマップのバインド
+		loader->GetTexture(material_data.roughness_id).BindTexture(shader_stage, TexSlot_RoughnessMap);
+		// Metalnessマップのバインド
+		loader->GetTexture(material_data.metallic_id).BindTexture(shader_stage, TexSlot_MetalnessMap);
+		// Occlusionマップのバインド
+		loader->GetTexture(material_data.occlusion_id).BindTexture(shader_stage, TexSlot_OcclusionMap);
+
+		// コンスタントバッファのバインド
+		cb_material->Activate(locator::Locator::GetDx11Device()->immediate_context.Get(), CBSlot_Material, false);
 	}
 
 	void Material::UnbindMaterial(const mapping::graphics::ShaderStage shader_stage) const
@@ -176,6 +185,15 @@ namespace cumulonimbus::asset
 		loader->GetTexture(material_data.albedo_id).UnbindTexture(shader_stage, TexSlot_BaseColorMap);
 		// Normal マップのアンバインド
 		loader->GetTexture(material_data.normal_id).UnbindTexture(shader_stage, TexSlot_NormalMap);
+		// Roughnessマップのアンバインド
+		loader->GetTexture(material_data.roughness_id).UnbindTexture(shader_stage, TexSlot_RoughnessMap);
+		// Metalnessマップのアンバインド
+		loader->GetTexture(material_data.metallic_id).UnbindTexture(shader_stage, TexSlot_MetalnessMap);
+		// Occlusionマップのアンバインド
+		loader->GetTexture(material_data.occlusion_id).UnbindTexture(shader_stage, TexSlot_OcclusionMap);
+
+		// コンスタントバッファのアンバインド
+		cb_material->Deactivate(locator::Locator::GetDx11Device()->immediate_context.Get());
 	}
 
 	void Material::ImSelectTexture(
@@ -236,6 +254,49 @@ namespace cumulonimbus::asset
 		const float custom_param_range_min,
 		const float custom_param_range_max)
 	{
+		// 使用するテクスチャチャンネルの設定
+		// (シェーダー側で使用)
+		auto ChangeColorChannel = [&use_channel](const ColorChannel color_channel)
+		{
+			if (color_channel == ColorChannel::R)
+			{
+				use_channel.x = 1.0f;
+				use_channel.y = 0.0f;
+				use_channel.z = 0.0f;
+				use_channel.w = 0.0f;
+				return;
+			}
+			if (color_channel == ColorChannel::G)
+			{
+				use_channel.x = 0.0f;
+				use_channel.y = 1.0f;
+				use_channel.z = 0.0f;
+				use_channel.w = 0.0f;
+				return;
+			}
+			if (color_channel == ColorChannel::B)
+			{
+				use_channel.x = 0.0f;
+				use_channel.y = 0.0f;
+				use_channel.z = 1.0f;
+				use_channel.w = 0.0f;
+				return;
+			}
+			if(color_channel == ColorChannel::A)
+			{
+				use_channel.x = 0.0f;
+				use_channel.y = 0.0f;
+				use_channel.z = 0.0f;
+				use_channel.w = 1.0f;
+				return;
+			}
+
+			use_channel.x = 0.0f;
+			use_channel.y = 0.0f;
+			use_channel.z = 0.0f;
+			use_channel.w = 0.0f;
+		};
+
 		ImGui::PushID(mat_id.c_str());
 		const std::string label_combo = "##SelectColorChannel" + label_name;
 
@@ -250,6 +311,7 @@ namespace cumulonimbus::asset
 				if (ImGui::Selectable(state_name.c_str(), is_selected, 0, { 500,50 }))
 				{
 					color_channel.SetState(state_name);
+					ChangeColorChannel(color_channel.GetCurrentState());
 				}
 				if(is_selected)
 				{
@@ -260,7 +322,7 @@ namespace cumulonimbus::asset
 		}
 
 		if(color_channel.GetCurrentState() == ColorChannel::Custom)
-		{
+		{// color_channelがColorChannel::Customの場合のみ独自のパラメータを設定出来る
 			const std::string label_drag_float = "##DragParam" + label_name;
 			ImGui::SliderFloat(label_drag_float.c_str(), &custom_param, custom_param_range_min, custom_param_range_max);
 		}

@@ -113,7 +113,7 @@ float3 FresnelSchlick(const float3 F0, const float cos_theta)
 }
 
 // Returns number of mipmap levels for specular IBL environment map.
-uint QuerySpecularTextureLevels(const Texture2D specular_tex)
+uint QuerySpecularTextureLevels(const TextureCube specular_tex)
 {
     uint width, height, levels;
     specular_tex.GetDimensions(0, width, height, levels);

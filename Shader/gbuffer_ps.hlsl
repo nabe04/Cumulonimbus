@@ -34,9 +34,9 @@ PS_Output main(PS_Input pin)
     const float4 position = pin.w_position;
 
 	// メタルネス値の取得
-    const float metalness = GetSingleTextureChannel(mat_use_metalness_channel, texture_metalness, default_sampler, pin.texcoord0, 0.5f);
+    const float metalness = GetSingleTextureChannel(mat_use_metalness_channel, texture_metalness, default_sampler, pin.texcoord0, mat_metalness);
 	// ラフネス値の取得
-    const float roughness = GetSingleTextureChannel(mat_use_roughness_channel, texture_roughness, default_sampler, pin.texcoord0, 0.5f);
+    const float roughness = GetSingleTextureChannel(mat_use_roughness_channel, texture_roughness, default_sampler, pin.texcoord0, mat_roughness);
     // オクリュージョン値の取得 mat_use_occlusion_channel
     const float occlusion = GetSingleTextureChannel(mat_use_occlusion_channel, texture_occlusion, default_sampler, pin.texcoord0, 0.5f);
 

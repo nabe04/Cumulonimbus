@@ -308,7 +308,7 @@ mul r0.xyz, r7.xyzx, r0.xyzx
 mul r0.xyz, r3.wwww, r0.xyzx
 add r0.xyz, r0.xyzx, r5.xyzx  // r0.x <- direct_lighting.x; r0.y <- direct_lighting.y; r0.z <- direct_lighting.z
 
-#line 89
+#line 124
 mov o0.xyz, r0.xyzx
 mov o0.w, r2.w
 ret 

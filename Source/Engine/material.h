@@ -93,11 +93,11 @@ namespace cumulonimbus::asset
 	private:
 		enum class ColorChannel
 		{
-			Custom,
 			R,
 			G,
 			B,
 			A,
+			Custom,
 
 			End
 		};

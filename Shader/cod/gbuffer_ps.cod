@@ -10,8 +10,8 @@
 //   float4 mat_use_roughness_channel;  // Offset:    0 Size:    16
 //   float4 mat_use_metalness_channel;  // Offset:   16 Size:    16
 //   float4 mat_use_occlusion_channel;  // Offset:   32 Size:    16
-//   float mat_roughness;               // Offset:   48 Size:     4 [unused]
-//   float mat_metalness;               // Offset:   52 Size:     4 [unused]
+//   float mat_roughness;               // Offset:   48 Size:     4
+//   float mat_metalness;               // Offset:   52 Size:     4
 //   float2 mat_dummy;                  // Offset:   56 Size:     8 [unused]
 //
 // }
@@ -53,7 +53,7 @@
 //
 ps_5_0
 dcl_globalFlags refactoringAllowed | skipOptimization
-dcl_constantbuffer CB4[3], immediateIndexed
+dcl_constantbuffer CB4[4], immediateIndexed
 dcl_sampler s0, mode_default
 dcl_resource_texture2d (float,float,float,float) t20
 dcl_resource_texture2d (float,float,float,float) t21
@@ -167,7 +167,7 @@ else   // Prior locations: r2.x <- col.w
       else 
 
 #line 94
-        mov r2.x, l(0.500000)  // r2.x <- ret_col
+        mov r2.x, cb4[3].y  // r2.x <- ret_col
       endif 
     endif 
   endif 
@@ -220,7 +220,7 @@ else
       else 
 
 #line 94
-        mov r2.y, l(0.500000)  // r2.y <- ret_col
+        mov r2.y, cb4[3].x  // r2.y <- ret_col
       endif 
     endif 
   endif 
