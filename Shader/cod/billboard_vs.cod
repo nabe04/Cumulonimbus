@@ -46,7 +46,7 @@
 // Name                                 Type  Format         Dim      HLSL Bind  Count
 // ------------------------------ ---------- ------- ----------- -------------- ------
 // CameraCB                          cbuffer      NA          NA            cb1      1 
-// TransformCB                       cbuffer      NA          NA            cb3      1 
+// TransformCB                       cbuffer      NA          NA            cb2      1 
 //
 //
 //
@@ -68,7 +68,7 @@
 vs_5_0
 dcl_globalFlags refactoringAllowed | skipOptimization
 dcl_constantbuffer CB1[12], immediateIndexed
-dcl_constantbuffer CB3[516], immediateIndexed
+dcl_constantbuffer CB2[516], immediateIndexed
 dcl_input v0.xyzw
 dcl_input v1.xy
 dcl_output_siv o0.xyzw, position
@@ -82,12 +82,12 @@ dcl_temps 3
 //   o0.x <- <main return value>.position.x; o0.y <- <main return value>.position.y; o0.z <- <main return value>.position.z; o0.w <- <main return value>.position.w
 //
 #line 14 "D:\Desktop\Cumulonimbus\Shader\billboard_vs.hlsl"
-mul r0.xyz, v0.xxxx, cb3[512].xyzx
-mul r1.xyz, v0.yyyy, cb3[513].xyzx
+mul r0.xyz, v0.xxxx, cb2[512].xyzx
+mul r1.xyz, v0.yyyy, cb2[513].xyzx
 add r0.xyz, r0.xyzx, r1.xyzx
-mul r1.xyz, v0.zzzz, cb3[514].xyzx
+mul r1.xyz, v0.zzzz, cb2[514].xyzx
 add r0.xyz, r0.xyzx, r1.xyzx
-mul r1.xyz, v0.wwww, cb3[515].xyzx
+mul r1.xyz, v0.wwww, cb2[515].xyzx
 add r0.xyz, r0.xyzx, r1.xyzx  // r0.x <- world_pos.x; r0.y <- world_pos.y; r0.z <- world_pos.z
 
 #line 15

@@ -38,7 +38,7 @@
 // ------------------------------ ---------- ------- ----------- -------------- ------
 // default_sampler                   sampler      NA          NA             s0      1 
 // texture_normal                    texture  float4          2d            t21      1 
-// LightCB                           cbuffer      NA          NA            cb2      1 
+// LightCB                           cbuffer      NA          NA            cb4      1 
 // MetalCB                           cbuffer      NA          NA           cb10      1 
 //
 //
@@ -68,7 +68,7 @@
 //
 ps_5_0
 dcl_globalFlags refactoringAllowed | skipOptimization
-dcl_constantbuffer CB2[3], immediateIndexed
+dcl_constantbuffer CB4[3], immediateIndexed
 dcl_constantbuffer CB10[1], immediateIndexed
 dcl_sampler s0, mode_default
 dcl_resource_texture2d (float,float,float,float) t21
@@ -100,10 +100,10 @@ dcl_temps 8
 //
 #line 22 "D:\Desktop\Cumulonimbus\Shader\metal_mtr_ps.hlsl"
 mov r0.xyz, -v2.xyzx
-add r0.xyz, r0.xyzx, cb2[0].xyzx  // r0.x <- eye_vector.x; r0.y <- eye_vector.y; r0.z <- eye_vector.z
+add r0.xyz, r0.xyzx, cb4[0].xyzx  // r0.x <- eye_vector.x; r0.y <- eye_vector.y; r0.z <- eye_vector.z
 
 #line 24
-mov r1.xyz, cb2[1].xyzx  // r1.x <- L.x; r1.y <- L.y; r1.z <- L.z
+mov r1.xyz, cb4[1].xyzx  // r1.x <- L.x; r1.y <- L.y; r1.z <- L.z
 
 #line 25
 dp3 r0.w, v3.xyzx, v3.xyzx
@@ -226,7 +226,7 @@ div r0.y, r0.y, r0.z  // r0.y <- F
 nop 
 mov r2.xyz, r2.xyzx
 mov r1.xyz, r1.xyzx
-mov r3.xyz, cb2[2].xyzx
+mov r3.xyz, cb4[2].xyzx
 mov r4.xyz, l(1.000000,1.000000,1.000000,0)
 
 #line 16 "D:\Desktop\Cumulonimbus\Shader\functions_lighting.hlsli"
@@ -305,7 +305,7 @@ mul r0.y, r2.w, r0.y
 mul r0.x, r0.x, r0.y
 div r0.x, r0.x, r0.w
 max r0.x, r0.x, r0.z
-mov r2.xyz, cb2[2].xyzx
+mov r2.xyz, cb4[2].xyzx
 mov r2.w, l(1.000000)
 mul r0.xyzw, r0.xxxx, r2.xyzw
 add r0.xyzw, r0.xyzw, r1.xyzw  // r0.x <- pout.color.x; r0.y <- pout.color.y; r0.z <- pout.color.z; r0.w <- pout.color.w

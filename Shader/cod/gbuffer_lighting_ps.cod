@@ -57,9 +57,10 @@
 // texture_depth                     texture  float4          2d             t0      1 
 // texture_base_color                texture  float4          2d            t20      1 
 // texture_normal                    texture  float4          2d            t21      1 
+// texture_cube                      texture  float4        cube            t29      1 
 // texture_mro                       texture  float4          2d            t30      1 
 // CameraCB                          cbuffer      NA          NA            cb1      1 
-// LightCB                           cbuffer      NA          NA            cb2      1 
+// LightCB                           cbuffer      NA          NA            cb4      1 
 //
 //
 //
@@ -80,15 +81,16 @@
 ps_5_0
 dcl_globalFlags refactoringAllowed | skipOptimization
 dcl_constantbuffer CB1[25], immediateIndexed
-dcl_constantbuffer CB2[2], immediateIndexed
+dcl_constantbuffer CB4[2], immediateIndexed
 dcl_sampler s0, mode_default
 dcl_resource_texture2d (float,float,float,float) t0
 dcl_resource_texture2d (float,float,float,float) t20
 dcl_resource_texture2d (float,float,float,float) t21
+dcl_resource_texturecube (float,float,float,float) t29
 dcl_resource_texture2d (float,float,float,float) t30
 dcl_input_ps linear v1.xy
 dcl_output o0.xyzw
-dcl_temps 9
+dcl_temps 11
 //
 // Initial variable locations:
 //   v0.x <- pin.position.x; v0.y <- pin.position.y; v0.z <- pin.position.z; v0.w <- pin.position.w; 
@@ -171,38 +173,44 @@ mul r3.xyz, r1.wwww, r3.xyzx  // r3.x <- N.x; r3.y <- N.y; r3.z <- N.z
 dp3 r1.w, r3.xyzx, r4.xyzx
 max r1.w, r1.w, l(0.000000)  // r1.w <- cos_lo
 
+#line 47
+mul r3.w, r1.w, l(2.000000)
+mul r5.xyz, r3.xyzx, r3.wwww
+mov r6.xyz, -r4.xyzx
+add r5.xyz, r5.xyzx, r6.xyzx  // r5.x <- Lr.x; r5.y <- Lr.y; r5.z <- Lr.z
+
 #line 50
-mov r5.xyz, -r1.xyzx
-add r5.xyz, r2.xyzx, r5.xyzx
-mul r5.xyz, r0.zzzz, r5.xyzx
-add r1.xyz, r1.xyzx, r5.xyzx  // r1.x <- F0.x; r1.y <- F0.y; r1.z <- F0.z
+mov r6.xyz, -r1.xyzx
+add r6.xyz, r2.xyzx, r6.xyzx
+mul r6.xyz, r0.zzzz, r6.xyzx
+add r1.xyz, r1.xyzx, r6.xyzx  // r1.x <- F0.x; r1.y <- F0.y; r1.z <- F0.z
 
 #line 53
-mov r5.xyz, l(0,0,0,0)  // r5.x <- direct_lighting.x; r5.y <- direct_lighting.y; r5.z <- direct_lighting.z
+mov r6.xyz, l(0,0,0,0)  // r6.x <- direct_lighting.x; r6.y <- direct_lighting.y; r6.z <- direct_lighting.z
 
 #line 55
-mov r6.xyz, -cb2[1].xyzx  // r6.x <- Li.x; r6.y <- Li.y; r6.z <- Li.z
+mov r7.xyz, -cb4[1].xyzx  // r7.x <- Li.x; r7.y <- Li.y; r7.z <- Li.z
 
 #line 57
-itof r7.xyz, l(1, 1, 1, 0)  // r7.x <- Lradiance.x; r7.y <- Lradiance.y; r7.z <- Lradiance.z
+itof r8.xyz, l(1, 1, 1, 0)  // r8.x <- Lradiance.x; r8.y <- Lradiance.y; r8.z <- Lradiance.z
 
 #line 60
-add r8.xyz, r4.xyzx, r6.xyzx
-dp3 r3.w, r8.xyzx, r8.xyzx
+add r9.xyz, r4.xyzx, r7.xyzx
+dp3 r3.w, r9.xyzx, r9.xyzx
 rsq r3.w, r3.w
-mul r8.xyz, r3.wwww, r8.xyzx  // r8.x <- Lh.x; r8.y <- Lh.y; r8.z <- Lh.z
+mul r9.xyz, r3.wwww, r9.xyzx  // r9.x <- Lh.x; r9.y <- Lh.y; r9.z <- Lh.z
 
 #line 63
-dp3 r3.w, r3.xyzx, r6.xyzx
+dp3 r3.w, r3.xyzx, r7.xyzx
 max r3.w, r3.w, l(0.000000)  // r3.w <- cos_li
 
 #line 64
-dp3 r3.x, r3.xyzx, r8.xyzx
+dp3 r3.x, r3.xyzx, r9.xyzx
 max r3.x, r3.x, l(0.000000)  // r3.x <- cos_lh
 
 #line 67
 nop 
-dp3 r3.y, r8.xyzx, r4.xyzx
+dp3 r3.y, r9.xyzx, r4.xyzx
 max r3.y, r3.y, l(0.000000)
 
 #line 112 "D:\Desktop\Cumulonimbus\Shader\functions_lighting.hlsli"
@@ -216,10 +224,10 @@ mul r3.y, r3.y, r3.y
 mul r3.y, r3.y, r3.y
 mul r3.y, r3.y, r3.z
 mul r4.xyz, r3.yyyy, r4.xyzx
-add r1.xyz, r1.xyzx, r4.xyzx  // r1.x <- <FresnelSchlick return value>.x; r1.y <- <FresnelSchlick return value>.y; r1.z <- <FresnelSchlick return value>.z
+add r4.xyz, r1.xyzx, r4.xyzx  // r4.x <- <FresnelSchlick return value>.x; r4.y <- <FresnelSchlick return value>.y; r4.z <- <FresnelSchlick return value>.z
 
 #line 67 "D:\Desktop\Cumulonimbus\Shader\gbuffer_lighting_ps.hlsl"
-mov r1.xyz, r1.xyzx  // r1.x <- F.x; r1.y <- F.y; r1.z <- F.z
+mov r4.xyz, r4.xyzx  // r4.x <- F.x; r4.y <- F.y; r4.z <- F.z
 
 #line 69
 nop 
@@ -249,67 +257,132 @@ mov r0.x, r0.x  // r0.x <- D
 nop 
 
 #line 104 "D:\Desktop\Cumulonimbus\Shader\functions_lighting.hlsli"
-add r0.w, r0.w, l(1.000000)  // r0.w <- r
+add r3.x, r0.w, l(1.000000)  // r3.x <- r
 
 #line 105
-mul r0.w, r0.w, r0.w
-div r0.w, r0.w, l(8.000000)  // r0.w <- k
+mul r3.x, r3.x, r3.x
+div r3.x, r3.x, l(8.000000)  // r3.x <- k
 
 #line 106
 nop 
 
 #line 98
-mov r3.x, -r0.w
-add r3.x, r3.x, l(1.000000)
-mul r3.x, r3.x, r3.w
-add r3.x, r0.w, r3.x
-div r3.x, r3.w, r3.x  // r3.x <- <GaSchlickG1 return value>
-
-#line 106
-nop 
-
-#line 98
-mov r3.y, -r0.w
+mov r3.y, -r3.x
 add r3.y, r3.y, l(1.000000)
-mul r3.y, r1.w, r3.y
-add r0.w, r0.w, r3.y
-div r0.w, r1.w, r0.w  // r0.w <- <GaSchlickG1 return value>
+mul r3.y, r3.y, r3.w
+add r3.y, r3.x, r3.y
+div r3.y, r3.w, r3.y  // r3.y <- <GaSchlickG1 return value>
 
 #line 106
-mul r0.w, r0.w, r3.x  // r0.w <- <GaSchlickGGX return value>
+nop 
+
+#line 98
+mov r3.z, -r3.x
+add r3.z, r3.z, l(1.000000)
+mul r3.z, r1.w, r3.z
+add r3.x, r3.x, r3.z
+div r3.x, r1.w, r3.x  // r3.x <- <GaSchlickG1 return value>
+
+#line 106
+mul r3.x, r3.x, r3.y  // r3.x <- <GaSchlickGGX return value>
 
 #line 71 "D:\Desktop\Cumulonimbus\Shader\gbuffer_lighting_ps.hlsl"
-mov r0.w, r0.w  // r0.w <- G
+mov r3.x, r3.x  // r3.x <- G
 
 #line 76
-itof r3.xyz, l(1, 1, 1, 0)
-mov r4.xyz, -r1.xyzx
-add r3.xyz, r3.xyzx, r4.xyzx
-itof r4.xyz, l(0, 0, 0, 0)
-mov r6.xyz, -r3.xyzx
-add r4.xyz, r4.xyzx, r6.xyzx
-mul r4.xyz, r0.zzzz, r4.xyzx
-add r3.xyz, r3.xyzx, r4.xyzx  // r3.x <- kd.x; r3.y <- kd.y; r3.z <- kd.z
+itof r7.xyz, l(1, 1, 1, 0)
+mov r9.xyz, -r4.xyzx
+add r7.xyz, r7.xyzx, r9.xyzx
+itof r9.xyz, l(0, 0, 0, 0)
+mov r10.xyz, -r7.xyzx
+add r9.xyz, r9.xyzx, r10.xyzx
+mul r9.xyz, r0.zzzz, r9.xyzx
+add r7.xyz, r7.xyzx, r9.xyzx  // r7.x <- kd.x; r7.y <- kd.y; r7.z <- kd.z
 
 #line 81
-mul r2.xyz, r2.xyzx, r3.xyzx  // r2.x <- diffuse_BRDF.x; r2.y <- diffuse_BRDF.y; r2.z <- diffuse_BRDF.z
+mul r7.xyz, r2.xyzx, r7.xyzx  // r7.x <- diffuse_BRDF.x; r7.y <- diffuse_BRDF.y; r7.z <- diffuse_BRDF.z
 
 #line 84
-mul r1.xyz, r0.xxxx, r1.xyzx
-mul r0.xzw, r0.wwww, r1.xxyz
-mul r1.x, r3.w, l(4.000000)
-mul r1.x, r1.w, r1.x
-max r0.y, r0.y, r1.x
-div r0.xyz, r0.xzwx, r0.yyyy  // r0.x <- specular_BRDF.x; r0.y <- specular_BRDF.y; r0.z <- specular_BRDF.z
+mul r4.xyz, r0.xxxx, r4.xyzx
+mul r3.xyz, r3.xxxx, r4.xyzx
+mul r0.x, r3.w, l(4.000000)
+mul r0.x, r1.w, r0.x
+max r0.x, r0.x, r0.y
+div r3.xyz, r3.xyzx, r0.xxxx  // r3.x <- specular_BRDF.x; r3.y <- specular_BRDF.y; r3.z <- specular_BRDF.z
 
 #line 87
-add r0.xyz, r0.xyzx, r2.xyzx
-mul r0.xyz, r7.xyzx, r0.xyzx
-mul r0.xyz, r3.wwww, r0.xyzx
-add r0.xyz, r0.xyzx, r5.xyzx  // r0.x <- direct_lighting.x; r0.y <- direct_lighting.y; r0.z <- direct_lighting.z
+add r3.xyz, r3.xyzx, r7.xyzx
+mul r3.xyz, r8.xyzx, r3.xyzx
+mul r3.xyz, r3.wwww, r3.xyzx
+add r3.xyz, r3.xyzx, r6.xyzx  // r3.x <- direct_lighting.x; r3.y <- direct_lighting.y; r3.z <- direct_lighting.z
+
+#line 95
+itof r4.xyz, l(1, 1, 1, 0)  // r4.x <- irradiance.x; r4.y <- irradiance.y; r4.z <- irradiance.z
+
+#line 101
+nop 
+
+#line 112 "D:\Desktop\Cumulonimbus\Shader\functions_lighting.hlsli"
+mov r6.xyz, -r1.xyzx
+add r6.xyz, r6.xyzx, l(1.000000, 1.000000, 1.000000, 0.000000)
+mov r0.x, -r1.w
+add r0.x, r0.x, l(1.000000)
+mov r0.y, l(1.000000)
+mul r0.y, r0.x, r0.y
+mul r0.x, r0.x, r0.x
+mul r0.x, r0.x, r0.x
+mul r0.x, r0.x, r0.y
+mul r6.xyz, r0.xxxx, r6.xyzx
+add r6.xyz, r1.xyzx, r6.xyzx  // r6.x <- <FresnelSchlick return value>.x; r6.y <- <FresnelSchlick return value>.y; r6.z <- <FresnelSchlick return value>.z
+
+#line 101 "D:\Desktop\Cumulonimbus\Shader\gbuffer_lighting_ps.hlsl"
+mov r6.xyz, r6.xyzx  // r6.x <- F.x; r6.y <- F.y; r6.z <- F.z
+
+#line 104
+mov r6.xyz, -r6.xyzx
+add r6.xyz, r6.xyzx, l(1.000000, 1.000000, 1.000000, 0.000000)
+mov r7.xyz, -r6.xyzx
+add r7.xyz, r7.xyzx, l(0.000000, 0.000000, 0.000000, 0.000000)
+mul r0.xyz, r0.zzzz, r7.xyzx
+add r0.xyz, r0.xyzx, r6.xyzx  // r0.x <- kd.x; r0.y <- kd.y; r0.z <- kd.z
+
+#line 107
+mul r0.xyz, r2.xyzx, r0.xyzx
+mul r0.xyz, r4.xyzx, r0.xyzx  // r0.x <- diffuseIBL.x; r0.y <- diffuseIBL.y; r0.z <- diffuseIBL.z
+
+#line 110
+nop 
+nop 
+
+#line 119 "D:\Desktop\Cumulonimbus\Shader\functions_lighting.hlsli"
+resinfo_indexable(texturecube)(float,float,float,float)_uint r1.w, l(0), t29.xyzw
+mov r1.w, r1.w  // r1.w <- levels
+
+#line 120
+mov r1.w, r1.w  // r1.w <- <QuerySpecularTextureLevels return value>
+
+#line 110 "D:\Desktop\Cumulonimbus\Shader\gbuffer_lighting_ps.hlsl"
+mov r1.w, r1.w  // r1.w <- specularTextureLevels
+
+#line 111
+utof r1.w, r1.w
+mul r0.w, r0.w, r1.w
+sample_l_indexable(texturecube)(float,float,float,float) r2.xyz, r5.xyzx, t29.xyzw, s0, r0.w
+mov r2.xyz, r2.xyzx  // r2.x <- specularIrradiance.x; r2.y <- specularIrradiance.y; r2.z <- specularIrradiance.z
+
+#line 115
+itof r4.xy, l(1, 1, 0, 0)  // r4.x <- specularBRDF.x; r4.y <- specularBRDF.y
+
+#line 118
+mul r1.xyz, r1.xyzx, r4.xxxx
+add r1.xyz, r4.yyyy, r1.xyzx
+mul r1.xyz, r2.xyzx, r1.xyzx  // r1.x <- specularIBL.x; r1.y <- specularIBL.y; r1.z <- specularIBL.z
+
+#line 121
+add r0.xyz, r0.xyzx, r1.xyzx  // r0.x <- ambientLighting.x; r0.y <- ambientLighting.y; r0.z <- ambientLighting.z
 
 #line 124
-mov o0.xyz, r0.xyzx
+add o0.xyz, r0.xyzx, r3.xyzx
 mov o0.w, r2.w
 ret 
-// Approximately 122 instruction slots used
+// Approximately 163 instruction slots used

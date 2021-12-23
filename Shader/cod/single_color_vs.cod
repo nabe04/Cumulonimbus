@@ -53,7 +53,7 @@
 // Name                                 Type  Format         Dim      HLSL Bind  Count
 // ------------------------------ ---------- ------- ----------- -------------- ------
 // CameraCB                          cbuffer      NA          NA            cb1      1 
-// TransformCB                       cbuffer      NA          NA            cb3      1 
+// TransformCB                       cbuffer      NA          NA            cb2      1 
 // SingleColorCB                     cbuffer      NA          NA           cb10      1 
 //
 //
@@ -93,7 +93,7 @@ dcl_immediateConstantBuffer { { 1.000000, 0, 0, 0},
                               { 0, 0, -1, 0},
                               { 0, 0, 0, -1} }
 dcl_constantbuffer CB1[12], immediateIndexed
-dcl_constantbuffer CB3[512], dynamicIndexed
+dcl_constantbuffer CB2[512], dynamicIndexed
 dcl_constantbuffer CB10[1], immediateIndexed
 dcl_input v0.xyzw
 dcl_input v1.xyz
@@ -151,12 +151,12 @@ loop
   or r5.xy, r5.ywyy, r5.xzxx
   or r5.x, r5.y, r5.x
   imul null, r5.x, r5.x, l(4)
-  mul r5.yzw, v0.xxxx, cb3[r5.x + 0].xxyz
-  mul r6.xyz, v0.yyyy, cb3[r5.x + 1].xyzx
+  mul r5.yzw, v0.xxxx, cb2[r5.x + 0].xxyz
+  mul r6.xyz, v0.yyyy, cb2[r5.x + 1].xyzx
   add r5.yzw, r5.yyzw, r6.xxyz
-  mul r6.xyz, v0.zzzz, cb3[r5.x + 2].xyzx
+  mul r6.xyz, v0.zzzz, cb2[r5.x + 2].xyzx
   add r5.yzw, r5.yyzw, r6.xxyz
-  mul r6.xyz, v0.wwww, cb3[r5.x + 3].xyzx
+  mul r6.xyz, v0.wwww, cb2[r5.x + 3].xyzx
   add r5.xyz, r5.yzwy, r6.xyzx
   mul r5.xyz, r3.wwww, r5.xyzx
   add r4.xyz, r5.xyzx, r4.xyzx
@@ -168,12 +168,12 @@ loop
   or r5.x, r5.y, r5.x
   imul null, r5.x, r5.x, l(4)
   itof r5.y, l(0)
-  mul r6.xyz, v1.xxxx, cb3[r5.x + 0].xyzx
-  mul r7.xyz, v1.yyyy, cb3[r5.x + 1].xyzx
+  mul r6.xyz, v1.xxxx, cb2[r5.x + 0].xyzx
+  mul r7.xyz, v1.yyyy, cb2[r5.x + 1].xyzx
   add r6.xyz, r6.xyzx, r7.xyzx
-  mul r7.xyz, v1.zzzz, cb3[r5.x + 2].xyzx
+  mul r7.xyz, v1.zzzz, cb2[r5.x + 2].xyzx
   add r6.xyz, r6.xyzx, r7.xyzx
-  mul r5.xyz, r5.yyyy, cb3[r5.x + 3].xyzx
+  mul r5.xyz, r5.yyyy, cb2[r5.x + 3].xyzx
   add r5.xyz, r5.xyzx, r6.xyzx
   mul r5.xyz, r3.wwww, r5.xyzx
   add r3.xyz, r3.xyzx, r5.zxyz

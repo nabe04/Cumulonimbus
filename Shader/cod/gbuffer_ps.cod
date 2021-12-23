@@ -27,7 +27,7 @@
 // texture_roughness                 texture  float4          2d            t27      1 
 // texture_occlusion                 texture  float4          2d            t33      1 
 // texture_metalness                 texture  float4          2d            t34      1 
-// MaterialCB                        cbuffer      NA          NA            cb4      1 
+// MaterialCB                        cbuffer      NA          NA            cb3      1 
 //
 //
 //
@@ -53,7 +53,7 @@
 //
 ps_5_0
 dcl_globalFlags refactoringAllowed | skipOptimization
-dcl_constantbuffer CB4[4], immediateIndexed
+dcl_constantbuffer CB3[4], immediateIndexed
 dcl_sampler s0, mode_default
 dcl_resource_texture2d (float,float,float,float) t20
 dcl_resource_texture2d (float,float,float,float) t21
@@ -135,7 +135,7 @@ nop
 sample_indexable(texture2d)(float,float,float,float) r2.xyzw, v5.xyxx, t34.wxyz, s0  // r2.y <- col.x; r2.z <- col.y; r2.w <- col.z; r2.x <- col.w
 
 #line 85
-ge r3.x, cb4[1].x, l(1.000000)
+ge r3.x, cb3[1].x, l(1.000000)
 if_nz r3.x
 
 #line 86
@@ -143,7 +143,7 @@ if_nz r3.x
 else   // Prior locations: r2.x <- col.w
 
 #line 87
-  ge r3.x, cb4[1].y, l(1.000000)
+  ge r3.x, cb3[1].y, l(1.000000)
   if_nz r3.x
 
 #line 88
@@ -151,7 +151,7 @@ else   // Prior locations: r2.x <- col.w
   else   // Prior locations: r2.x <- col.w
 
 #line 89
-    ge r3.x, cb4[1].z, l(1.000000)
+    ge r3.x, cb3[1].z, l(1.000000)
     if_nz r3.x
 
 #line 90
@@ -159,7 +159,7 @@ else   // Prior locations: r2.x <- col.w
     else   // Prior locations: r2.x <- col.w
 
 #line 91
-      ge r3.x, cb4[1].w, l(1.000000)
+      ge r3.x, cb3[1].w, l(1.000000)
       if_nz r3.x
 
 #line 92
@@ -167,7 +167,7 @@ else   // Prior locations: r2.x <- col.w
       else 
 
 #line 94
-        mov r2.x, cb4[3].y  // r2.x <- ret_col
+        mov r2.x, cb3[3].y  // r2.x <- ret_col
       endif 
     endif 
   endif 
@@ -188,7 +188,7 @@ nop
 sample_indexable(texture2d)(float,float,float,float) r3.xyzw, v5.xyxx, t27.xyzw, s0  // r3.x <- col.x; r3.y <- col.y; r3.z <- col.z; r3.w <- col.w
 
 #line 85
-ge r4.x, cb4[0].x, l(1.000000)
+ge r4.x, cb3[0].x, l(1.000000)
 if_nz r4.x
 
 #line 86
@@ -196,7 +196,7 @@ if_nz r4.x
 else 
 
 #line 87
-  ge r3.x, cb4[0].y, l(1.000000)
+  ge r3.x, cb3[0].y, l(1.000000)
   if_nz r3.x
 
 #line 88
@@ -204,7 +204,7 @@ else
   else 
 
 #line 89
-    ge r3.x, cb4[0].z, l(1.000000)
+    ge r3.x, cb3[0].z, l(1.000000)
     if_nz r3.x
 
 #line 90
@@ -212,7 +212,7 @@ else
     else 
 
 #line 91
-      ge r3.x, cb4[0].w, l(1.000000)
+      ge r3.x, cb3[0].w, l(1.000000)
       if_nz r3.x
 
 #line 92
@@ -220,7 +220,7 @@ else
       else 
 
 #line 94
-        mov r2.y, cb4[3].x  // r2.y <- ret_col
+        mov r2.y, cb3[3].x  // r2.y <- ret_col
       endif 
     endif 
   endif 
@@ -241,7 +241,7 @@ nop
 sample_indexable(texture2d)(float,float,float,float) r3.xyzw, v5.xyxx, t33.xyzw, s0  // r3.x <- col.x; r3.y <- col.y; r3.z <- col.z; r3.w <- col.w
 
 #line 85
-ge r4.x, cb4[2].x, l(1.000000)
+ge r4.x, cb3[2].x, l(1.000000)
 if_nz r4.x
 
 #line 86
@@ -249,7 +249,7 @@ if_nz r4.x
 else 
 
 #line 87
-  ge r3.x, cb4[2].y, l(1.000000)
+  ge r3.x, cb3[2].y, l(1.000000)
   if_nz r3.x
 
 #line 88
@@ -257,7 +257,7 @@ else
   else 
 
 #line 89
-    ge r3.x, cb4[2].z, l(1.000000)
+    ge r3.x, cb3[2].z, l(1.000000)
     if_nz r3.x
 
 #line 90
@@ -265,7 +265,7 @@ else
     else 
 
 #line 91
-      ge r3.x, cb4[2].w, l(1.000000)
+      ge r3.x, cb3[2].w, l(1.000000)
       if_nz r3.x
 
 #line 92

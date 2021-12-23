@@ -32,7 +32,7 @@
 // texture_depth                     texture  float4          2d             t0      1 
 // texture_base_color                texture  float4          2d            t20      1 
 // texture_normal                    texture  float4          2d            t21      1 
-// LightCB                           cbuffer      NA          NA            cb2      1 
+// LightCB                           cbuffer      NA          NA            cb4      1 
 //
 //
 //
@@ -56,7 +56,7 @@
 //
 ps_5_0
 dcl_globalFlags refactoringAllowed | skipOptimization
-dcl_constantbuffer CB2[2], immediateIndexed
+dcl_constantbuffer CB4[2], immediateIndexed
 dcl_sampler s0, mode_default
 dcl_resource_texture2d (float,float,float,float) t0
 dcl_resource_texture2d (float,float,float,float) t20
@@ -83,7 +83,7 @@ mov r0.xyz, l(1.000000,1.000000,1.000000,0)  // r0.x <- reflectance.x; r0.y <- r
 #line 22
 nop 
 mov r1.xyz, v2.xyzx
-mov r2.xyz, cb2[1].xyzx
+mov r2.xyz, cb4[1].xyzx
 mov r3.xyz, v3.xyzx
 mov r0.xyz, r0.xyzx
 

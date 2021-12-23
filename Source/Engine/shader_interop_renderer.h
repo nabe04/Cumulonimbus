@@ -39,19 +39,6 @@ struct ShaderMaterial
 #endif // __cplusplus
 };
 
-//#ifdef __cplusplus
-//	struct MaterialFilename
-//	{
-//		std::string albedo_color_filename;
-//		std::string emissive_color_filename;
-//
-//		std::string roughness_map_filename;
-//		std::string reflectance_map_filename;
-//		std::string metalness_map_filename;
-//	};
-//
-//#endif // __cplusplus
-
 // 共通のコンスタントバッファ
 // slot 0 (b0)
 CBUFFER(FrameCB, CBSlot_Renderer_Frame)
@@ -136,7 +123,7 @@ CBUFFER(CameraCB, CBSlot_Camera)
 };
 
 // slot2 (b2)
-CBUFFER(LightCB, CBSlot_Light)
+CBUFFER(LightCB, CBSlot_DirectionalLight)
 {
 	float3	light_position;				// ライト位置
 	float	orthographic_view_width;	// 平行投影 : 幅
@@ -228,22 +215,22 @@ CBUFFER(TransformCB, CBSlot_Transform)
 //#endif // __cplusplus
 //};
 
-// slot5 (b5)
-CBUFFER(ShaderSlotCB, CBSlot_ShaderSlot)
-{
-	int		shader_slot;
-	float3	shader_slot_dummy;
-
-#ifdef __cplusplus
-	template<typename Archive>
-	void serialize(Archive && archive)
-	{
-		archive(
-			CEREAL_NVP(shader_slot)
-		);
-	}
-#endif // __cplusplus
-};
+//// slot5 (b5)
+//CBUFFER(ShaderSlotCB, CBSlot_ShaderSlot)
+//{
+//	int		shader_slot;
+//	float3	shader_slot_dummy;
+//
+//#ifdef __cplusplus
+//	template<typename Archive>
+//	void serialize(Archive && archive)
+//	{
+//		archive(
+//			CEREAL_NVP(shader_slot)
+//		);
+//	}
+//#endif // __cplusplus
+//};
 
 
 #endif // SHADER_INTEROP_RENDERER_H

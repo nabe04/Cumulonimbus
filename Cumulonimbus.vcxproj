@@ -40,6 +40,7 @@
     <ClInclude Include="Source\Engine\bloom.h" />
     <ClInclude Include="Source\Engine\camera.h" />
     <ClInclude Include="Source\Engine\capsule_collison_component.h" />
+    <ClInclude Include="Source\Engine\cbuffer_lights.h" />
     <ClInclude Include="Source\Engine\cbuffer_manager.h" />
     <ClInclude Include="Source\Engine\cereal_helper.h" />
     <ClInclude Include="Source\Engine\child_actor_component.h" />
@@ -60,6 +61,7 @@
     <ClInclude Include="Source\Engine\depth_map.h" />
     <ClInclude Include="Source\Engine\depth_stencil.h" />
     <ClInclude Include="Source\Engine\diffuse.h" />
+    <ClInclude Include="Source\Engine\directiona_light_component.h" />
     <ClInclude Include="Source\Engine\dx11_configurator.h" />
     <ClInclude Include="Source\Engine\easing.h" />
     <ClInclude Include="Source\Engine\ecs.h" />
@@ -94,6 +96,8 @@
     <ClInclude Include="Source\Engine\inspector.h" />
     <ClInclude Include="Source\Engine\keyframe_event.h" />
     <ClInclude Include="Source\Engine\light.h" />
+    <ClInclude Include="Source\Engine\light_component.h" />
+    <ClInclude Include="Source\Engine\light_manager.h" />
     <ClInclude Include="Source\Engine\loader.h" />
     <ClInclude Include="Source\Engine\local_shader_manager.h" />
     <ClInclude Include="Source\Engine\locator.h" />
@@ -227,6 +231,7 @@
     <ClCompile Include="Source\Engine\depth_map.cpp" />
     <ClCompile Include="Source\Engine\depth_stencil.cpp" />
     <ClCompile Include="Source\Engine\diffuse.cpp" />
+    <ClCompile Include="Source\Engine\directional_light_component.cpp" />
     <ClCompile Include="Source\Engine\dx11_configurator.cpp" />
     <ClCompile Include="Source\Engine\easing.cpp" />
     <ClCompile Include="Source\Engine\ecs.cpp" />
@@ -256,6 +261,8 @@
     <ClCompile Include="Source\Engine\inspector.cpp" />
     <ClCompile Include="Source\Engine\keyframe_event.cpp" />
     <ClCompile Include="Source\Engine\light.cpp" />
+    <ClCompile Include="Source\Engine\light_component.cpp" />
+    <ClCompile Include="Source\Engine\light_manager.cpp" />
     <ClCompile Include="Source\Engine\local_shader_manager.cpp" />
     <ClCompile Include="Source\Engine\Logger.cpp" />
     <ClCompile Include="Source\Engine\main.cpp" />

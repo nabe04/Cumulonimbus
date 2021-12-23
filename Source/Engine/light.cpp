@@ -59,7 +59,7 @@ void Light::Update(const cumulonimbus::component::CameraComponent* camera)
 
 void Light::BindCBuffer(bool set_in_vs, bool set_in_ps) const
 {
-	cb_light->Activate(cumulonimbus::locator::Locator::GetDx11Device()->immediate_context.Get(), CBSlot_Light, set_in_vs, set_in_ps);
+	cb_light->Activate(cumulonimbus::locator::Locator::GetDx11Device()->immediate_context.Get(), CBSlot_DirectionalLight, set_in_vs, set_in_ps);
 }
 
 void Light::UnbindCBuffer() const

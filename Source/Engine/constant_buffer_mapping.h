@@ -4,11 +4,12 @@
 // 全てのシェーダーに共通して使用する
 // 5～9番は今後共通して使用する可能性を考えて空けておく
 #define CBSlot_Renderer_Frame	0
-#define CBSlot_Camera			1
-#define CBSlot_Light			2
-#define CBSlot_Transform		3
-#define CBSlot_Material			4
-#define CBSlot_ShaderSlot		5
+#define CBSlot_Camera			1	// カメラ
+#define CBSlot_Transform		2	// トランスフォーム
+#define CBSlot_Material			3	// マテリアル
+#define CBSlot_DirectionalLight	4	// ディレクショナルライト
+#define CBSlot_PointLight		5	// ポイントライト
+#define CBSlot_SpotLight		6	// スポットライト
 
 // オンデマンド
 #define CBSlot_OnDemand0		10

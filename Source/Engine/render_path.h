@@ -14,6 +14,7 @@
 #include "fullscreen_quad.h"
 #include "graphics_state.h"
 #include "light.h"
+#include "light_manager.h"
 #include "local_shader_manager.h"
 #include "rasterizer.h"
 #include "rename_type_mapping.h"
@@ -102,6 +103,7 @@ namespace cumulonimbus::renderer
 		std::shared_ptr<FrameBuffer>							off_screen					{ nullptr };
 		std::unique_ptr<graphics::buffer::GBuffer>				g_buffer					{ nullptr };
 		std::unique_ptr<DepthMap>								depth_map					{ nullptr };
+		std::unique_ptr<light::LightManager>					light_manager				{ nullptr };
 		std::unique_ptr<FullscreenQuad>							fullscreen_quad				{ nullptr };
 		std::unique_ptr<shader_asset::LocalShaderAssetManager>	local_shader_asset_manager	{ nullptr };
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>		sky_box_srv					{ nullptr };
@@ -120,10 +122,13 @@ namespace cumulonimbus::renderer
 		 */
 		void Blit(ID3D11DeviceContext* immediate_context) const;
 
+		void BindCBufferLight(ID3D11DeviceContext* immediate_context, std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& scenes);
+		void UnbindCBufferLight(ID3D11DeviceContext* immediate_context);
+
 		/**
 		 * @brief : ‘S‘Ì‚Ì•`‰æ‘Oˆ—
 		 */
-		void RenderBegin(ID3D11DeviceContext* immediate_context);
+		void RenderBegin(ID3D11DeviceContext* immediate_context, std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& scenes);
 		/**
 		 * @brief : ‘S‘Ì‚Ì•`‰æŒãˆ—
 		 */

@@ -19,6 +19,7 @@
 #include "billboard_component.h"
 #include "camera_component.h"
 #include "capsule_collison_component.h"
+#include "directiona_light_component.h"
 #include "fbx_model_component.h"
 #include "model_component.h"
 #include "scene_manager.h"
@@ -35,6 +36,7 @@ namespace cumulonimbus::renderer
 		off_screen			= std::make_shared<FrameBuffer>(device, locator::Locator::GetWindow()->Width(), locator::Locator::GetWindow()->Height());
 		fullscreen_quad		= std::make_unique<FullscreenQuad>(device);
 		depth_map			= std::make_unique<DepthMap>(device);
+		light_manager		= std::make_unique<light::LightManager>(device);
 
 		shader_manager				= std::make_unique<shader_system::ShaderManager>();
 		g_buffer					= std::make_unique<graphics::buffer::GBuffer>();
@@ -61,7 +63,7 @@ namespace cumulonimbus::renderer
 		std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& scenes,
 		const camera::Camera& camera)
 	{
-		RenderBegin(immediate_context);
+		RenderBegin(immediate_context, scenes);
 		camera.ClearFrameBuffer();
 
 		for (auto& scene : scenes | std::views::values)
@@ -130,7 +132,7 @@ namespace cumulonimbus::renderer
 		ID3D11DeviceContext* immediate_context,
 		std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& scenes)
 	{
-		RenderBegin(immediate_context);
+		RenderBegin(immediate_context, scenes);
 
 		for(auto& scene : scenes | std::views::values)
 		{
@@ -241,7 +243,7 @@ namespace cumulonimbus::renderer
 		ID3D11DeviceContext* immediate_context,ecs::Registry* registry,
 		const camera::Camera* camera, const Light* light)
 	{
-		RenderBegin(immediate_context);
+		//RenderBegin(immediate_context);
 		camera->ClearFrameBuffer();
 
 		if (registry->GetArray<component::ModelComponent>().GetComponents().size() > 0)
@@ -280,7 +282,7 @@ namespace cumulonimbus::renderer
 		ecs::Registry* registry,
 		const Light* light)
 	{
-		RenderBegin(immediate_context);
+		//RenderBegin(immediate_context);
 
 		for (auto& camera_comp : registry->GetArray<component::CameraComponent>().GetComponents())
 		{
@@ -331,15 +333,16 @@ namespace cumulonimbus::renderer
 		RenderEnd(immediate_context);
 	}
 
-	void RenderPath::RenderBegin(ID3D11DeviceContext* immediate_context)
+	void RenderPath::RenderBegin(ID3D11DeviceContext* immediate_context, std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& scenes)
 	{
 		//off_screen->Clear(immediate_context);
 		//off_screen->Activate(immediate_context);
+		BindCBufferLight(immediate_context, scenes);
 	}
 
 	void RenderPath::RenderEnd(ID3D11DeviceContext* immediate_context)
 	{
-
+		UnbindCBufferLight(immediate_context);
 	}
 
 	void RenderPath::RenderShadow_Begin(ID3D11DeviceContext* const immediate_context) const
@@ -632,6 +635,33 @@ namespace cumulonimbus::renderer
 															  off_screen->GetRenderTargetSRV(),
 															  TexSlot_BaseColorMap);
 		fullscreen_quad->Blit(immediate_context, true, true, true);
+	}
+
+	void RenderPath::BindCBufferLight(ID3D11DeviceContext* immediate_context, std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& scenes)
+	{
+		for(bool main_directional_light = false;
+			auto& scene : scenes | std::views::values)
+		{
+			for(auto& directional_light : scene->GetRegistry()->GetArray<component::DirectionalLightComponent>().GetComponents())
+			{
+				if(directional_light.GetIsMainLight())
+				{
+					main_directional_light = true;
+					light_manager->SetDirectionalLight(directional_light.GetDirectionalLight());
+					break;
+				}
+			}
+
+			if (main_directional_light)
+				break;
+		}
+
+		light_manager->BindCBuffers(immediate_context);
+	}
+
+	void RenderPath::UnbindCBufferLight(ID3D11DeviceContext* immediate_context)
+	{
+		light_manager->UnbindCBuffers(immediate_context);
 	}
 
 	void RenderPath::RenderModel(

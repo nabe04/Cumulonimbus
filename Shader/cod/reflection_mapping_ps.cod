@@ -30,7 +30,7 @@
 // ------------------------------ ---------- ------- ----------- -------------- ------
 // default_sampler                   sampler      NA          NA             s0      1 
 // texture_cube                      texture  float4        cube            t29      1 
-// LightCB                           cbuffer      NA          NA            cb2      1 
+// LightCB                           cbuffer      NA          NA            cb4      1 
 //
 //
 //
@@ -52,7 +52,7 @@
 //
 ps_5_0
 dcl_globalFlags refactoringAllowed | skipOptimization
-dcl_constantbuffer CB2[1], immediateIndexed
+dcl_constantbuffer CB4[1], immediateIndexed
 dcl_sampler s0, mode_default
 dcl_resource_texturecube (float,float,float,float) t29
 dcl_input_ps linear v1.xyz
@@ -68,7 +68,7 @@ dcl_temps 2
 //   o0.x <- <main return value>.x; o0.y <- <main return value>.y; o0.z <- <main return value>.z; o0.w <- <main return value>.w
 //
 #line 12 "D:\Desktop\Cumulonimbus\Shader\reflection_mapping_ps.hlsl"
-mov r0.xyz, -cb2[0].xyzx
+mov r0.xyz, -cb4[0].xyzx
 add r0.xyz, r0.xyzx, v1.xyzx  // r0.x <- ref.x; r0.y <- ref.y; r0.z <- ref.z
 
 #line 13

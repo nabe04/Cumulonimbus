@@ -55,7 +55,7 @@ namespace cumulonimbus::component
 		~ModelComponent() override = default;
 
 		template<class Archive>
-		void load(Archive&& archive, uint32_t  version);
+		void load(Archive&& archive, uint32_t version);
 
 		template<class Archive>
 		void save(Archive&& archive, uint32_t version) const;

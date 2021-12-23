@@ -40,7 +40,7 @@
 // ------------------------------ ---------- ------- ----------- -------------- ------
 // defaultSampler                    sampler      NA          NA             s0      1 
 // texture_base_color                texture  float4          2d            t20      1 
-// LightCB                           cbuffer      NA          NA            cb2      1 
+// LightCB                           cbuffer      NA          NA            cb4      1 
 // PhongCB                           cbuffer      NA          NA           cb10      1 
 //
 //
@@ -64,7 +64,7 @@
 //
 ps_5_0
 dcl_globalFlags refactoringAllowed | skipOptimization
-dcl_constantbuffer CB2[3], immediateIndexed
+dcl_constantbuffer CB4[3], immediateIndexed
 dcl_constantbuffer CB10[1], immediateIndexed
 dcl_sampler s0, mode_default
 dcl_resource_texture2d (float,float,float,float) t20
@@ -85,7 +85,7 @@ dcl_temps 8
 //
 #line 15 "D:\Desktop\Cumulonimbus\Shader\phong_ps.hlsl"
 mov r0.xyz, -v1.xyzx
-add r0.xyz, r0.xyzx, cb2[0].xyzx  // r0.x <- eye_vector.x; r0.y <- eye_vector.y; r0.z <- eye_vector.z
+add r0.xyz, r0.xyzx, cb4[0].xyzx  // r0.x <- eye_vector.x; r0.y <- eye_vector.y; r0.z <- eye_vector.z
 
 #line 17
 sample_indexable(texture2d)(float,float,float,float) r1.xyzw, v4.xyxx, t20.xyzw, s0  // r1.x <- color.x; r1.y <- color.y; r1.z <- color.z; r1.w <- color.w
@@ -101,15 +101,15 @@ rsq r0.w, r0.w
 mul r0.xyz, r0.wwww, r0.xyzx  // r0.x <- E.x; r0.y <- E.y; r0.z <- E.z
 
 #line 20
-dp3 r0.w, cb2[1].xyzx, cb2[1].xyzx
+dp3 r0.w, cb4[1].xyzx, cb4[1].xyzx
 rsq r0.w, r0.w
-mul r3.xyz, r0.wwww, cb2[1].xyzx  // r3.x <- L.x; r3.y <- L.y; r3.z <- L.z
+mul r3.xyz, r0.wwww, cb4[1].xyzx  // r3.x <- L.x; r3.y <- L.y; r3.z <- L.z
 
 #line 21
 mov r4.xyz, l(1.000000,1.000000,1.000000,0)  // r4.x <- reflectance.x; r4.y <- reflectance.y; r4.z <- reflectance.z
 
 #line 23
-mov r5.xyz, cb2[2].xyzx  // r5.x <- A.x; r5.y <- A.y; r5.z <- A.z
+mov r5.xyz, cb4[2].xyzx  // r5.x <- A.x; r5.y <- A.y; r5.z <- A.z
 
 #line 25
 nop 

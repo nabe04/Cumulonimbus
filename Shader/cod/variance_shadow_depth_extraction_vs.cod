@@ -39,8 +39,8 @@
 //
 // Name                                 Type  Format         Dim      HLSL Bind  Count
 // ------------------------------ ---------- ------- ----------- -------------- ------
-// LightCB                           cbuffer      NA          NA            cb2      1 
-// TransformCB                       cbuffer      NA          NA            cb3      1 
+// TransformCB                       cbuffer      NA          NA            cb2      1 
+// LightCB                           cbuffer      NA          NA            cb4      1 
 //
 //
 //
@@ -73,8 +73,8 @@ dcl_immediateConstantBuffer { { 1.000000, 0, 0, 0},
                               { 0, -1, 0, 0},
                               { 0, 0, -1, 0},
                               { 0, 0, 0, -1} }
-dcl_constantbuffer CB2[24], immediateIndexed
-dcl_constantbuffer CB3[512], dynamicIndexed
+dcl_constantbuffer CB4[24], immediateIndexed
+dcl_constantbuffer CB2[512], dynamicIndexed
 dcl_input v0.xyzw
 dcl_input v3.xyzw
 dcl_input v4.xyzw
@@ -110,12 +110,12 @@ loop
   or r2.yz, r3.yywy, r3.xxzx
   or r2.y, r2.z, r2.y
   imul null, r2.y, r2.y, l(4)
-  mul r3.xyz, v0.xxxx, cb3[r2.y + 0].xyzx
-  mul r4.xyz, v0.yyyy, cb3[r2.y + 1].xyzx
+  mul r3.xyz, v0.xxxx, cb2[r2.y + 0].xyzx
+  mul r4.xyz, v0.yyyy, cb2[r2.y + 1].xyzx
   add r3.xyz, r3.xyzx, r4.xyzx
-  mul r4.xyz, v0.zzzz, cb3[r2.y + 2].xyzx
+  mul r4.xyz, v0.zzzz, cb2[r2.y + 2].xyzx
   add r3.xyz, r3.xyzx, r4.xyzx
-  mul r2.yzw, v0.wwww, cb3[r2.y + 3].xxyz
+  mul r2.yzw, v0.wwww, cb2[r2.y + 3].xxyz
   add r2.yzw, r2.yyzw, r3.xxyz
   mul r2.xyz, r2.yzwy, r2.xxxx
   add r1.xyz, r1.xyzx, r2.xyzx
@@ -125,21 +125,21 @@ loop
 endloop 
 
 #line 28
-mul r0.xyzw, r1.xxxx, cb2[20].xyzw
-mul r2.xyzw, r1.yyyy, cb2[21].xyzw
+mul r0.xyzw, r1.xxxx, cb4[20].xyzw
+mul r2.xyzw, r1.yyyy, cb4[21].xyzw
 add r0.xyzw, r0.xyzw, r2.xyzw
-mul r2.xyzw, r1.zzzz, cb2[22].xyzw
+mul r2.xyzw, r1.zzzz, cb4[22].xyzw
 add r0.xyzw, r0.xyzw, r2.xyzw
-mul r2.xyzw, cb2[23].xyzw, l(1.000000, 1.000000, 1.000000, 1.000000)
+mul r2.xyzw, cb4[23].xyzw, l(1.000000, 1.000000, 1.000000, 1.000000)
 add r0.xyzw, r0.xyzw, r2.xyzw  // r0.x <- wvp_pos.x; r0.y <- wvp_pos.y; r0.z <- wvp_pos.z; r0.w <- wvp_pos.w
 
 #line 29
-mul r2.xyzw, r1.xxxx, cb2[4].xyzw
-mul r3.xyzw, r1.yyyy, cb2[5].xyzw
+mul r2.xyzw, r1.xxxx, cb4[4].xyzw
+mul r3.xyzw, r1.yyyy, cb4[5].xyzw
 add r2.xyzw, r2.xyzw, r3.xyzw
-mul r1.xyzw, r1.zzzz, cb2[6].xyzw
+mul r1.xyzw, r1.zzzz, cb4[6].xyzw
 add r1.xyzw, r1.xyzw, r2.xyzw
-mul r2.xyzw, cb2[7].xyzw, l(1.000000, 1.000000, 1.000000, 1.000000)
+mul r2.xyzw, cb4[7].xyzw, l(1.000000, 1.000000, 1.000000, 1.000000)
 add r1.xyzw, r1.xyzw, r2.xyzw  // r1.x <- wv_pos.x; r1.y <- wv_pos.y; r1.z <- wv_pos.z; r1.w <- wv_pos.w
 
 #line 31
