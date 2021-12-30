@@ -63,8 +63,8 @@ namespace cumulonimbus::renderer
 		std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& scenes,
 		const camera::Camera& camera)
 	{
-		RenderBegin(immediate_context, scenes);
 		camera.ClearFrameBuffer();
+		RenderBegin(immediate_context, scenes);
 
 		for (auto& scene : scenes | std::views::values)
 		{// シーン分のShadowMap作成
@@ -93,6 +93,7 @@ namespace cumulonimbus::renderer
 		}
 
 		Render3DToGBuffer_Begin(immediate_context);
+
 		for(auto& scene : scenes | std::views::values)
 		{
 			// シーンがアクティブで無いのなら描画しない
@@ -110,6 +111,7 @@ namespace cumulonimbus::renderer
 			RenderEffekseer(&effekseer_manager);
 			RenderEffekseerEnd(&effekseer_manager, &camera);
 		}
+
 		Render3DToGBuffer_End(immediate_context, &camera);
 
 		for (auto& scene : scenes | std::views::values)
@@ -273,7 +275,7 @@ namespace cumulonimbus::renderer
 		// 2Dスプライトの描画
 		Render2D(immediate_context, registry, camera, true);
 
-		RenderEnd(immediate_context);
+		//RenderEnd(immediate_context);
 	}
 
 
@@ -330,7 +332,7 @@ namespace cumulonimbus::renderer
 				Render2D(immediate_context, registry, camera_comp.GetCamera(), false);
 		}
 
-		RenderEnd(immediate_context);
+		//RenderEnd(immediate_context);
 	}
 
 	void RenderPath::RenderBegin(ID3D11DeviceContext* immediate_context, std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& scenes)

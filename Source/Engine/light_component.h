@@ -6,6 +6,7 @@ namespace cumulonimbus::component
 	class LightComponent : public ComponentBase
 	{
 	public:
+		using ComponentBase::ComponentBase;
 		explicit LightComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
 		explicit LightComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const LightComponent& copy_comp); // for prefab
 		explicit LightComponent() = default; // for cereal

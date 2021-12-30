@@ -1118,6 +1118,9 @@
     <ClInclude Include="Source\Engine\light_manager.h">
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\point_light_component.h">
+      <Filter>Header\Engine\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Cumulonimbus.rc" />
@@ -1180,6 +1183,12 @@
     </None>
     <None Include="ClassDiagram1.cd" />
     <None Include="Shader\params_utility.hlsli">
+      <Filter>Shader%28HLSL%29\HF</Filter>
+    </None>
+    <None Include="Shader\lighting_pbr.hlsli">
+      <Filter>Shader%28HLSL%29\HF</Filter>
+    </None>
+    <None Include="Shader\macros.hlsli">
       <Filter>Shader%28HLSL%29\HF</Filter>
     </None>
   </ItemGroup>

@@ -69,8 +69,15 @@ namespace cumulonimbus::component
 
 	void DirectionalLightComponent::RenderImGui()
 	{
-		ImGui::ColorEdit4("Color", &light_color.x);
-		ImGui::DragFloat("Intensity", &light_intensity, 0.1f, 0.0f, 150.0f);
+		if (GetRegistry()->CollapsingHeader<DirectionalLightComponent>(GetEntity(), "Directional Light"))
+		{
+			if(ImGui::Button("Is Main Light"))
+			{
+				SwitchMainLight();
+			}
+
+			ImChangeParameter();
+		}
 	}
 
 	void DirectionalLightComponent::Load(ecs::Registry* registry)

@@ -1,6 +1,7 @@
 #ifndef FUNCTIONS_LIGHTING_SHF
 #define FUNCTIONS_LIGHTING_SHF
 
+#include "macros.hlsli"
 #include "params_utility.hlsli"
 
 //--------------------------------------

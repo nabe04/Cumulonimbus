@@ -65,7 +65,8 @@ namespace cumulonimbus::component
 
 	void LightComponent::ImChangeParameter()
 	{
-
+		ImGui::ColorEdit4("Color", &light_color.x);
+		ImGui::DragFloat("Intensity", &light_intensity, 0.1f, 0.0f, 150.0f);
 	}
 
 } // cumulonimbus::component

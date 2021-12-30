@@ -2,17 +2,20 @@
 
 #include <ranges>
 
+#include "prefab.h"
 #include "ecs.h"
 #include "file_path_helper.h"
 #include "file_path_helper.h"
 #include "generic.h"
-#include "prefab.h"
 // components(engine)
 #include "actor3d_component.h"
 #include "billboard_component.h"
 #include "camera_component.h"
 #include "capsule_collison_component.h"
+#include "damageable_component.h"
+#include "directiona_light_component.h"
 #include "hierarchy_component.h"
+#include "light_component.h"
 #include "model_component.h"
 #include "physic_material_component.h"
 #include "raycast_component.h"
@@ -20,13 +23,12 @@
 #include "sphere_collision_component.h"
 #include "sprite_component.h"
 #include "transform_component.h"
-#include "damageable_component.h"
 // components(game)
 #include "enemy_base_component.h"
 #include "enemy_soldier_component.h"
-#include "soldier_sword_component.h"
 #include "player_component.h"
 #include "player_sword_component.h"
+#include "soldier_sword_component.h"
 
 
 namespace cumulonimbus::asset
@@ -51,6 +53,9 @@ namespace cumulonimbus::asset
 		RegistryComponent<component::CapsuleCollisionComponent>();
 		RegistryComponent<component::PhysicMaterialComponent>();
 		RegistryComponent<component::RigidBodyComponent>();
+		// lights
+		RegistryComponent<component::LightComponent>();
+		RegistryComponent<component::DirectionalLightComponent>();
 		// camera
 		RegistryComponent<component::CameraComponent>();
 		// damage

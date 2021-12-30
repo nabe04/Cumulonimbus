@@ -9,6 +9,7 @@ namespace cumulonimbus::component
 	class DirectionalLightComponent final : public LightComponent
 	{
 	public:
+		using LightComponent::LightComponent;
 		explicit DirectionalLightComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
 		explicit DirectionalLightComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const DirectionalLightComponent& copy_comp); // for prefab
 		explicit DirectionalLightComponent()  = default; // for cereal
@@ -24,7 +25,7 @@ namespace cumulonimbus::component
 
 		void CommonUpdate(float dt) override;
 		void PostCommonUpdate(float dt) override;
-		
+
 		void RenderImGui() override;
 
 		void Load(ecs::Registry* registry) override;

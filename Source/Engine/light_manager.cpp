@@ -47,7 +47,12 @@ namespace cumulonimbus::light
 
 	void LightManager::BindDirectionalLightCBuffer(ID3D11DeviceContext* immediate_context)
 	{
-		immediate_context->UpdateSubresource(directional_light_buffer.Get(), 0, nullptr, &cb_directional_light, 0, 0);
+		//DirectionalLightCB cb{};
+		//cb.d_light_intensity = 1.0f;
+		//cb.d_light_direction = DirectX::SimpleMath::Vector3{ 0,0,1 };
+		//cb_directional_light = cb;
+
+		immediate_context->UpdateSubresource(directional_light_buffer.Get(), 0, NULL, &cb_directional_light, 0, 0);
 		immediate_context->PSSetConstantBuffers(CBSlot_DirectionalLight, 1, directional_light_buffer.GetAddressOf());
 	}
 

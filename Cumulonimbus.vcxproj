@@ -112,6 +112,7 @@
     <ClInclude Include="Source\Engine\model_component.h" />
     <ClInclude Include="Source\Engine\model_loader.h" />
     <ClInclude Include="Source\Engine\physic_material_component.h" />
+    <ClInclude Include="Source\Engine\point_light_component.h" />
     <ClInclude Include="Source\Engine\prefab.h" />
     <ClInclude Include="Source\Engine\prefab_loader.h" />
     <ClInclude Include="Source\Engine\primitive_data.h" />
@@ -361,6 +362,8 @@
     <None Include="Shader\functions_lighting.hlsli" />
     <None Include="Shader\general.hlsli" />
     <None Include="Shader\globals.hlsli" />
+    <None Include="Shader\lighting_pbr.hlsli" />
+    <None Include="Shader\macros.hlsli" />
     <None Include="Shader\monochrome.hlsli" />
     <None Include="Shader\params_utility.hlsli" />
     <None Include="Shader\phong.hlsli" />

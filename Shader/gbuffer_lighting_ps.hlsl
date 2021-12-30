@@ -1,125 +1,43 @@
 #define PIN_USE_TEXCOORD0
 
 #include "globals.hlsli"
+#include "lighting_pbr.hlsli"
 #include "functions_utility.hlsli"
 #include "functions_lighting.hlsli"
 #include "../Source/Engine/shader_asset_mapping.h"
-
-   // // eye_vec   : position_mapからカメラへのベクトル
-   // const float3 eye_vec = normalize(w_pos - camera_position);
-   // // light_vec : ライトの向きベクトル(法線方向に合わせていない)
-   // const float3 light_vec = normalize(light_direction);
-
-   // //float3 diffuse = Diffuse(normal_map.xyz, light_vec, light_color, 1.0f);
-
-   // //float3 phong_specular = BlinnPhongSpecular(normal_map.xyz , light_vec,
-			//	//							   light_color.xyz, eye_vec,
-			//	//							   float3(1.0f, 1.0f, 1.0f), 5);
-
-   //// albedo_color *= float4(diffuse + phong_specular + light_color, 1.0f);
-
-   // albedo *= float4(light_color, 1.0f);
-
-    //return albedo_color;
+#include "../Source/Engine/cbuffer_lights.h"
 
 SamplerState defaultSampler : register(s0);
 float4 main(const PS_Input pin) : SV_TARGET
 {
 	// GBufferで書き出したテクスチャの色算出
-    const float4 albedo       = texture_base_color.Sample(defaultSampler, pin.texcoord0);
-    const float4 normal_map   = texture_normal.Sample(defaultSampler, pin.texcoord0);
-    const float  metalness    = texture_mro.Sample(defaultSampler, pin.texcoord0).r;
-    const float  roughness    = texture_mro.Sample(defaultSampler, pin.texcoord0).g;
-    const float  occlusion    = texture_mro.Sample(defaultSampler, pin.texcoord0).b;
-    const float  depth        = texture_depth.Sample(defaultSampler, pin.texcoord0).r;
+    float4 albedo      = texture_base_color.Sample(defaultSampler, pin.texcoord0);
+    const float4 normal_map  = texture_normal.Sample(defaultSampler, pin.texcoord0);
+    const float metalness    = texture_mro.Sample(defaultSampler, pin.texcoord0).r;
+    const float roughness    = texture_mro.Sample(defaultSampler, pin.texcoord0).g;
+    const float occlusion    = texture_mro.Sample(defaultSampler, pin.texcoord0).b;
+    const float depth        = texture_depth.Sample(defaultSampler, pin.texcoord0).r;
 
-    const float3 w_pos = DepthToWPosition(pin.texcoord0, depth, camera_inv_view_projection_matrix);
+    BRDFData brdf_data = (BRDFData) 0;
+    float alpha = albedo.a;
 
-    // Outgoing light direction (vector from world-space fragment position to the "eye").
-    const float3 Lo = normalize(camera_position - w_pos);
+    InitializeBRDFData(albedo.rgb, metalness, roughness, alpha, brdf_data);
 
-    // Angle between surface normal and outgoing light direction.
-	// Get current fragment's normal and transform to world space.
-    const float3 N = normalize(2.0 * normal_map.rgb - 1.0);
-    const float cos_lo = max(0.0, dot(N, Lo));
+    BRDFData brdf_data_clear_coat = (BRDFData) 0;
+    half4 shadow_mask = half4(1, 1, 1, 1);
 
-	// Specular reflection vector.
-    const float3 Lr = 2.0 * cos_lo * N - Lo;
+    const Light main_light = GetMainLight();
+    float3 main_light_direction = d_light_direction;
 
-    // Fresnel reflectance at normal incidence (for metals use albedo color).
-    const float3 F0 = lerp(Fdielectric, albedo.xyz, metalness);
+    const float3 pow_ws = DepthToWPosition(pin.texcoord0, depth, camera_inv_view_projection_matrix);
+    const float3 normal_ws = normalize(2.0 * normal_map.rgb - 1.0);
+    const float3 view_direction_ws = camera_position - pow_ws;
 
-    // Direct lighting calculation for analytical lights.
-    float3 direct_lighting = 0.0;
+	// メインのPBR処理
+    float3 color = LightingPhysicallyBased(brdf_data, brdf_data_clear_coat,
+                                     main_light,
+                                     normal_ws, view_direction_ws,
+                                     float(1.0), true);
 
-    const float3 Li = -light_direction;
-    //float3 Lradiance = lights[i].radiance;
-    const float3 Lradiance = (float3) 1;
-
-	// Half-vector between Li and Lo.
-    const float3 Lh = normalize(Li + Lo);
-
-	// Calculate angles between surface normal and various light vectors.
-    const float cos_li = max(0.0, dot(N, Li));
-    const float cos_lh = max(0.0, dot(N, Lh));
-
-	// Calculate Fresnel term for direct lighting.
-    const float3 F = FresnelSchlick(F0, max(0.0, dot(Lh, Lo)));
-	// Calculate normal distribution for specular BRDF.
-    const float D  = NdfGGX(cos_lh, roughness);
-	// Calculate geometric attenuation for specular BRDF.
-    const float G  = GaSchlickGGX(cos_li, cos_lo, roughness);
-
-    // Diffuse scattering happens due to light being refracted multiple times by a dielectric medium.
-	// Metals on the other hand either reflect or absorb energy, so diffuse contribution is always zero.
-	// To be energy conserving we must scale diffuse BRDF contribution based on Fresnel factor & metalness.
-    const float3 kd = lerp(float3(1, 1, 1) - F, float3(0, 0, 0), metalness);
-
-	// Lambert diffuse BRDF.
-	// We don't scale by 1/PI for lighting & material units to be more convenient.
-	// See: https://seblagarde.wordpress.com/2012/01/08/pi-or-not-to-pi-in-game-lighting-equation/
-    const float3 diffuse_BRDF = kd * albedo;
-
-	// Cook-Torrance specular microfacet BRDF.
-    const float3 specular_BRDF = (F * D * G) / max(Epsilon, 4.0 * cos_li * cos_lo);
-
-	// Total contribution for this light.
-    direct_lighting += (diffuse_BRDF + specular_BRDF) * Lradiance * cos_li;
-
-    // Ambient lighting (IBL).
-    float3 ambientLighting;
-    {
-    	// Sample diffuse irradiance at normal direction.
-        //float3 irradiance = irradianceTexture.Sample(defaultSampler, N).rgb;
-
-        float3 irradiance = (float3) 1;
-
-    	// Calculate Fresnel term for ambient lighting.
-    	// Since we use pre-filtered cubemap(s) and irradiance is coming from many directions
-    	// use cosLo instead of angle with light's half-vector (cosLh above).
-    	// See: https://seblagarde.wordpress.com/2011/08/17/hello-world/
-        float3 F = FresnelSchlick(F0, cos_lo);
-
-    	// Get diffuse contribution factor (as with direct lighting).
-        float3 kd = lerp(1.0 - F, 0.0, metalness);
-
-    	// Irradiance map contains exitant radiance assuming Lambertian BRDF, no need to scale by 1/PI here either.
-        float3 diffuseIBL = kd * albedo.rgb * irradiance;
-
-    	// Sample pre-filtered specular reflection environment at correct mipmap level.
-        uint specularTextureLevels = QuerySpecularTextureLevels(texture_cube);
-        float3 specularIrradiance = texture_cube.SampleLevel(defaultSampler, Lr, roughness * specularTextureLevels).rgb;
-
-    	// Split-sum approximation factors for Cook-Torrance specular BRDF.
-        //float2 specularBRDF = specularBRDF_LUT.Sample(defaultSampler, float2(cos_lo, roughness)).rg;
-        float2 specularBRDF = (float2) 1;
-
-    	// Total specular IBL contribution.
-        float3 specularIBL = (F0 * specularBRDF.x + specularBRDF.y) * specularIrradiance;
-
-    	// Total ambient lighting contribution.
-        ambientLighting = diffuseIBL + specularIBL;
-    }
-
-    return float4(direct_lighting + ambientLighting, albedo.a);
+    return float4(color, albedo.a);
 }

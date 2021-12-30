@@ -10,6 +10,7 @@
 #include "billboard_component.h"
 #include "camera_component.h"
 #include "capsule_collison_component.h"
+#include "directiona_light_component.h"
 #include "effekseer_component.h"
 #include "model_component.h"
 #include "physic_material_component.h"
@@ -18,8 +19,8 @@
 #include "sphere_collision_component.h"
 #include "sprite_component.h"
 // components(game)
-#include "player_sword_component.h"
 #include "enemy_soldier_component.h"
+#include "player_sword_component.h"
 #include "soldier_sword_component.h"
 
 namespace cumulonimbus::editor
@@ -35,6 +36,7 @@ namespace cumulonimbus::editor
 		RegisterComponent<component::PhysicMaterialComponent>(	"Physic Material"	 , mapping::component_tag::ComponentTag::Physics);
 		RegisterComponent<component::SphereCollisionComponent>(	"Sphere Collider"	 , mapping::component_tag::ComponentTag::Physics);
 		RegisterComponent<component::RigidBodyComponent>(		"RigidBody"			 , mapping::component_tag::ComponentTag::Physics);
+		RegisterComponent<component::DirectionalLightComponent>("Directional Light"	 , mapping::component_tag::ComponentTag::Light);
 		RegisterComponent<component::CameraComponent>(			"Camera"			 , mapping::component_tag::ComponentTag::Camera);
 		RegisterComponent<component::EnemySoldierComponent>(	"Soldier"			 , mapping::component_tag::ComponentTag::Game);
 		RegisterComponent<component::PlayerSwordComponent>(		"Player Sword"		 , mapping::component_tag::ComponentTag::Game);
@@ -92,6 +94,7 @@ namespace cumulonimbus::editor
 		ComponentMenu(registry, ent, "Mesh"		, mapping::component_tag::ComponentTag::Mesh);
 		ComponentMenu(registry, ent, "Sprite"	, mapping::component_tag::ComponentTag::Sprite);
 		ComponentMenu(registry, ent, "Physics"	, mapping::component_tag::ComponentTag::Physics);
+		ComponentMenu(registry, ent, "Light"	, mapping::component_tag::ComponentTag::Light);
 		ComponentMenu(registry, ent, "Camera"	, mapping::component_tag::ComponentTag::Camera);
 		ComponentMenu(registry, ent, "Game"		, mapping::component_tag::ComponentTag::Game);
 

@@ -1,6 +1,8 @@
 #ifndef FUNCTIONS_UTILITY_SHF
 #define FUNCTIONS_UTILITY_SHF
 
+#include "macros.hlsli"
+
 /*
  * brief : GBuffer上のPS_Output::shader_slotの色情報の計算
  *         R8_UNORMテクスチャなのでスロット番号を0～1の
@@ -43,6 +45,15 @@ inline bool IsEqual(float l_value,float r_value)
 
 	// epsilon == 1.192092896e-07F
     return (l_val - r_val) <= 1.192092896e-07F ? true : false;
+}
+
+/**
+ * @brief : 長さが0のベクトルを考慮した正規化
+ */
+inline float3 SafeNormalize(const float3 in_vec)
+{
+    const float dp3 = max(FLT_MIN, dot(in_vec, in_vec));
+    return in_vec * rsqrt(dp3);
 }
 
 /*
