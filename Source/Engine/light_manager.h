@@ -19,7 +19,7 @@ namespace cumulonimbus::light
 		void SetNumSpotLights(uint num_lights);
 
 		void BindCBuffers(ID3D11DeviceContext* immediate_context);
-		void UnbindCBuffers(ID3D11DeviceContext* immediate_context);
+		void UnbindCBuffers(ID3D11DeviceContext* immediate_context) const;
 
 		//-- コンスタントバッファのバインド & アンバインド --//
 		/**

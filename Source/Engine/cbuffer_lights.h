@@ -153,8 +153,6 @@ CBUFFER(SpotLightsCB, CBSlot_SpotLight)
 	SpotLight spot_lights[MAX_SPOT_LIGHT];
 };
 
-#endif // CBUFFER_LIGHTS_H
-
 /////////////////////////////////////////////////////////
 //			 Point & Spot Light information			   //
 /////////////////////////////////////////////////////////
@@ -164,3 +162,6 @@ CBUFFER(LightInfoCB, CBSlot_LightInfo)
 	uint s_light_count; // シーン内の存在するスポットライト数
 	float2 light_info_dummy;
 };
+
+
+#endif // CBUFFER_LIGHTS_H

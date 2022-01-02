@@ -33,4 +33,6 @@
 #define CBSlot_DebugCollision		CBSlot_OnDemand0
 #define CBSlot_DebugPrimitive		CBSlot_OnDemand0
 
+// ポイント & スポットライト情報
+#define CBSlot_LightInfo			CBSlot_OnDemand0
 #endif // CONSTANT_BUFFER_MAPPING_H

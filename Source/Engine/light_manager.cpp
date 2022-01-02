@@ -74,11 +74,17 @@ namespace cumulonimbus::light
 	void LightManager::BindCBuffers(ID3D11DeviceContext* immediate_context)
 	{
 		BindDirectionalLightCBuffer(immediate_context);
+		BindPointLightCBuffer(immediate_context);
+		BindSpotLightCBuffer(immediate_context);
+		BindLightInfoCBuffer(immediate_context);
 	}
 
-	void LightManager::UnbindCBuffers(ID3D11DeviceContext* immediate_context)
+	void LightManager::UnbindCBuffers(ID3D11DeviceContext* immediate_context) const
 	{
 		UnbindDirectionalLightCBuffer(immediate_context);
+		UnbindPointLightCBuffer(immediate_context);
+		UnbindSpotLightCBuffer(immediate_context);
+		UnbindLightInfoCBuffer(immediate_context);
 	}
 
 	void LightManager::BindDirectionalLightCBuffer(ID3D11DeviceContext* immediate_context)

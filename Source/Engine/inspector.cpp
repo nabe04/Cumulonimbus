@@ -14,9 +14,11 @@
 #include "effekseer_component.h"
 #include "model_component.h"
 #include "physic_material_component.h"
+#include "point_light_component.h"
 #include "raycast_component.h"
 #include "rigid_body_component.h"
 #include "sphere_collision_component.h"
+#include "spot_light_component.h"
 #include "sprite_component.h"
 // components(game)
 #include "enemy_soldier_component.h"
@@ -37,6 +39,8 @@ namespace cumulonimbus::editor
 		RegisterComponent<component::SphereCollisionComponent>(	"Sphere Collider"	 , mapping::component_tag::ComponentTag::Physics);
 		RegisterComponent<component::RigidBodyComponent>(		"RigidBody"			 , mapping::component_tag::ComponentTag::Physics);
 		RegisterComponent<component::DirectionalLightComponent>("Directional Light"	 , mapping::component_tag::ComponentTag::Light);
+		RegisterComponent<component::PointLightComponent>(		"Point Light"		 , mapping::component_tag::ComponentTag::Light);
+		RegisterComponent<component::SpotLightComponent>(		"Spot Light"		 , mapping::component_tag::ComponentTag::Light);
 		RegisterComponent<component::CameraComponent>(			"Camera"			 , mapping::component_tag::ComponentTag::Camera);
 		RegisterComponent<component::EnemySoldierComponent>(	"Soldier"			 , mapping::component_tag::ComponentTag::Game);
 		RegisterComponent<component::PlayerSwordComponent>(		"Player Sword"		 , mapping::component_tag::ComponentTag::Game);

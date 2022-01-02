@@ -4,8 +4,8 @@
 
 #include "debug_collision.h"
 #include "effekseer_manager.h"
-#include "gbuffer.h"
 #include "gaussian_blur.h"
+#include "gbuffer.h"
 #include "graphics_mapping.h"
 #include "material_loader.h"
 #include "model_loader.h"
@@ -22,9 +22,11 @@
 #include "directiona_light_component.h"
 #include "fbx_model_component.h"
 #include "model_component.h"
+#include "point_light_component.h"
 #include "scene_manager.h"
 #include "sky_box.h"
 #include "sphere_collision_component.h"
+#include "spot_light_component.h"
 #include "sprite.h"
 #include "sprite_component.h"
 #include "transform_component.h"
@@ -639,13 +641,19 @@ namespace cumulonimbus::renderer
 		fullscreen_quad->Blit(immediate_context, true, true, true);
 	}
 
-	void RenderPath::BindCBufferLight(ID3D11DeviceContext* immediate_context, std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& scenes)
+	void RenderPath::BindCBufferLight(
+		ID3D11DeviceContext* immediate_context,
+		std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& scenes)
 	{
 		for(bool main_directional_light = false;
 			auto& scene : scenes | std::views::values)
 		{
+			// ディレクショナルライト
 			for(auto& directional_light : scene->GetRegistry()->GetArray<component::DirectionalLightComponent>().GetComponents())
 			{
+				if (main_directional_light)
+					break;
+
 				if(directional_light.GetIsMainLight())
 				{
 					main_directional_light = true;
@@ -654,8 +662,31 @@ namespace cumulonimbus::renderer
 				}
 			}
 
-			if (main_directional_light)
-				break;
+			// ポイントライト
+			uint num_point_lights = 0;
+			for (auto& point_light : scene->GetRegistry()->GetArray<component::PointLightComponent>().GetComponents())
+			{
+				// ポイントライトの最大数を超えた場合処理を抜ける
+				if (num_point_lights >= MAX_POINT_LIGHT)
+					break;
+
+				light_manager->SetPointLight(point_light.GetPointLight(), num_point_lights);
+				++num_point_lights;
+			}
+			light_manager->SetNumPointLights(num_point_lights);
+
+			// スポットライト
+			uint num_spot_lights = 0;
+			for(auto& spot_light : scene->GetRegistry()->GetArray<component::SpotLightComponent>().GetComponents())
+			{
+				// スポットライトの最大数を超えた場合処理を抜ける
+				if (num_spot_lights >= MAX_SPOT_LIGHT)
+					break;
+
+				light_manager->SetSpotLight(spot_light.GetSpotLight(), num_spot_lights);
+				++num_spot_lights;
+			}
+			light_manager->SetNumSpotLights(num_spot_lights);
 		}
 
 		light_manager->BindCBuffers(immediate_context);

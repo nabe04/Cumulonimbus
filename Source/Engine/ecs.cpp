@@ -17,10 +17,12 @@
 #include "light_component.h"
 #include "model_component.h"
 #include "physic_material_component.h"
+#include "point_light_component.h"
 #include "raycast_component.h"
 #include "rigid_body_component.h"
 #include "sky_box.h"
 #include "sphere_collision_component.h"
+#include "spot_light_component.h"
 #include "sprite_component.h"
 #include "transform_component.h"
 // components(game)
@@ -250,6 +252,8 @@ namespace cumulonimbus::ecs
 		// lights
 		RegistryComponent<component::LightComponent>();
 		RegistryComponent<component::DirectionalLightComponent>();
+		RegistryComponent<component::PointLightComponent>();
+		RegistryComponent<component::SpotLightComponent>();
 		// camera
 		RegistryComponent<component::CameraComponent>();
 		// damage
