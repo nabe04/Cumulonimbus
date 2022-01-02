@@ -35,9 +35,9 @@ float4 main(const PS_Input pin) : SV_TARGET
 
 	// ÉÅÉCÉìÇÃPBRèàóù
     float3 color = LightingPhysicallyBased(brdf_data, brdf_data_clear_coat,
-                                     main_light,
-                                     normal_ws, view_direction_ws,
-                                     float(1.0), true);
+                                           main_light,
+                                           normal_ws, view_direction_ws,
+                                           float(1.0), true);
 
     return float4(color, albedo.a);
 }

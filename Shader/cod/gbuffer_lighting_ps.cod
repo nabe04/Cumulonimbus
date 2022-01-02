@@ -105,54 +105,54 @@ sample_indexable(texture2d)(float,float,float,float) r3.z, v1.xyxx, t0.yzxw, s0 
 #line 24
 nop 
 
-#line 138 "D:\Desktop\Cumulonimbus\Shader\lighting_pbr.hlsli"
+#line 140 "D:\Desktop\Cumulonimbus\Shader\lighting_pbr.hlsli"
 nop 
 
-#line 113
+#line 111
 mov r2.y, l(0.960000)  // r2.y <- one_minus_dielectric_spec
 
-#line 114
+#line 112
 mul r2.z, r1.w, r2.y
 mov r2.z, -r2.z
 add r2.y, r2.z, r2.y  // r2.y <- <OneMinusReflectivityMetallic return value>
 
-#line 138
+#line 140
 mov r2.y, r2.y  // r2.y <- one_minus_reflectivity
 
-#line 140
+#line 142
 mul r2.yzw, r0.xxyz, r2.yyyy  // r2.y <- brdf_diffuse.x; r2.z <- brdf_diffuse.y; r2.w <- brdf_diffuse.z
 
-#line 141
+#line 143
 mov r4.xyz, l(0.040000,0.040000,0.040000,0)
 mov r5.xyz, -r4.xyzx
 add r0.xyz, r0.xyzx, r5.xyzx
 mul r0.xyz, r0.xyzx, r1.wwww
 add r0.xyz, r0.xyzx, r4.xyzx  // r0.x <- brdf_specular.x; r0.y <- brdf_specular.y; r0.z <- brdf_specular.z
 
-#line 143
+#line 145
 nop 
 
-#line 129
+#line 128
 nop 
 
 #line 27
 mul r1.w, r2.x, r2.x  // r1.w <- <PerceptualRoughnessToRoughness return value>
 
-#line 129
+#line 128
 max r1.w, r1.w, l(0.007812)  // r1.w <- out_brdf_data.roughness
 
-#line 130
+#line 129
 mul r2.x, r1.w, r1.w
 max r2.x, r2.x, l(0.000061)  // r2.x <- out_brdf_data.roughness2
 
-#line 131
+#line 130
 nop 
 
-#line 132
+#line 131
 mul r1.w, r1.w, l(4.000000)
 add r1.w, r1.w, l(2.000000)  // r1.w <- out_brdf_data.normalization_term
 
-#line 133
+#line 132
 mov r4.x, l(-1.000000)
 add r4.x, r2.x, r4.x  // r4.x <- out_brdf_data.roughness2_minus_one
 
@@ -205,27 +205,27 @@ add r3.xyz, r3.xyzx, cb1[24].xyzx  // r3.x <- view_direction_ws.x; r3.y <- view_
 #line 37
 nop 
 
-#line 204 "D:\Desktop\Cumulonimbus\Shader\lighting_pbr.hlsli"
+#line 277 "D:\Desktop\Cumulonimbus\Shader\lighting_pbr.hlsli"
 nop 
 mul r3.w, l(1.000000), l(1.000000)
 
-#line 183
+#line 257
 mov r4.yzw, -cb4[0].xxyz
 dp3 r4.y, r1.xyzx, r4.yzwy
 max r4.y, r4.y, l(0.000000)
 min r4.y, r4.y, l(1.000000)  // r4.y <- NdotL
 
-#line 188
+#line 262
 mul r3.w, r3.w, r4.y
 mul r4.yzw, r3.wwww, cb4[1].xxyz  // r4.y <- radiance.x; r4.z <- radiance.y; r4.w <- radiance.z
 
-#line 190
+#line 264
 mov r2.yzw, r2.yyzw  // r2.y <- brdf.x; r2.z <- brdf.y; r2.w <- brdf.z
 
-#line 192
+#line 266
 nop 
 
-#line 150
+#line 152
 nop 
 add r3.xyz, r3.xyzx, cb4[0].xyzx
 
@@ -237,28 +237,28 @@ max r3.w, r3.w, l(0.000000)  // r3.w <- dp3
 rsq r3.w, r3.w
 mul r3.xyz, r3.wwww, r3.xyzx  // r3.x <- <SafeNormalize return value>.x; r3.y <- <SafeNormalize return value>.y; r3.z <- <SafeNormalize return value>.z
 
-#line 150 "D:\Desktop\Cumulonimbus\Shader\lighting_pbr.hlsli"
+#line 152 "D:\Desktop\Cumulonimbus\Shader\lighting_pbr.hlsli"
 mov r3.xyz, r3.xyzx  // r3.x <- half_dir.x; r3.y <- half_dir.y; r3.z <- half_dir.z
 
-#line 152
+#line 154
 dp3 r1.x, r1.xyzx, r3.xyzx
 max r1.x, r1.x, l(0.000000)
 min r1.x, r1.x, l(1.000000)  // r1.x <- NoH
 
-#line 153
+#line 155
 dp3 r1.y, cb4[0].xyzx, r3.xyzx
 max r1.y, r1.y, l(0.000000)
 min r1.y, r1.y, l(1.000000)  // r1.y <- LoH
 
-#line 165
+#line 167
 mul r1.x, r1.x, r1.x
 mul r1.x, r4.x, r1.x
 add r1.x, r1.x, l(1.000010)  // r1.x <- d
 
-#line 167
+#line 169
 mul r1.y, r1.y, r1.y  // r1.y <- LoH2
 
-#line 168
+#line 170
 mul r1.x, r1.x, r1.x
 mov r1.z, l(0.100000)
 max r1.y, r1.y, r1.z
@@ -266,17 +266,17 @@ mul r1.x, r1.y, r1.x
 mul r1.x, r1.w, r1.x
 div r1.x, r2.x, r1.x  // r1.x <- specular_term
 
-#line 170
+#line 172
 mov r1.x, r1.x  // r1.x <- <DirectBRDFSpecular return value>
 
-#line 192
+#line 266
 mul r0.xyz, r0.xyzx, r1.xxxx
 add r0.xyz, r0.xyzx, r2.yzwy  // r0.x <- brdf.x; r0.y <- brdf.y; r0.z <- brdf.z
 
-#line 194
+#line 268
 mul r0.xyz, r4.yzwy, r0.xyzx  // r0.x <- <LightingPhysicallyBased return value>.x; r0.y <- <LightingPhysicallyBased return value>.y; r0.z <- <LightingPhysicallyBased return value>.z
 
-#line 204
+#line 277
 mov r0.xyz, r0.xyzx  // r0.x <- <LightingPhysicallyBased return value>.x; r0.y <- <LightingPhysicallyBased return value>.y; r0.z <- <LightingPhysicallyBased return value>.z
 
 #line 37 "D:\Desktop\Cumulonimbus\Shader\gbuffer_lighting_ps.hlsl"

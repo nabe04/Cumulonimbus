@@ -14,7 +14,9 @@ namespace cumulonimbus::component
 	void DirectionalLightComponent::load(Archive&& archive, uint32_t version)
 	{
 		archive(
-			cereal::base_class<LightComponent>(this)
+			cereal::base_class<LightComponent>(this),
+
+			CEREAL_NVP(directional_light)
 		);
 	}
 
@@ -22,7 +24,9 @@ namespace cumulonimbus::component
 	void DirectionalLightComponent::save(Archive&& archive, uint32_t version) const
 	{
 		archive(
-			cereal::base_class<LightComponent>(this)
+			cereal::base_class<LightComponent>(this),
+
+			CEREAL_NVP(directional_light)
 		);
 	}
 

@@ -148,6 +148,7 @@
     <ClInclude Include="Source\Engine\shader_filename_mapping.h" />
     <ClInclude Include="Source\Engine\shader_interop.h" />
     <ClInclude Include="Source\Engine\shader_interop_renderer.h" />
+    <ClInclude Include="Source\Engine\spot_light_component.h" />
     <ClInclude Include="Source\Engine\sprite_component.h" />
     <ClInclude Include="Source\Engine\system.h" />
     <ClInclude Include="Source\Engine\system_inspector.h" />
@@ -277,6 +278,7 @@
     <ClCompile Include="Source\Engine\model_component.cpp" />
     <ClCompile Include="Source\Engine\model_loader.cpp" />
     <ClCompile Include="Source\Engine\physic_material_component.cpp" />
+    <ClCompile Include="Source\Engine\point_light_component.cpp" />
     <ClCompile Include="Source\Engine\prefab.cpp" />
     <ClCompile Include="Source\Engine\prefab_loader.cpp" />
     <ClCompile Include="Source\Engine\primitive_data.cpp" />
@@ -324,6 +326,7 @@
     <ClCompile Include="Source\Engine\Sound.cpp" />
     <ClCompile Include="Source\Engine\sphere_collision_component.cpp" />
     <ClCompile Include="Source\Engine\spot_light.cpp" />
+    <ClCompile Include="Source\Engine\spot_light_component.cpp" />
     <ClCompile Include="Source\Engine\sprite.cpp" />
     <ClCompile Include="Source\Engine\sprite_component.cpp" />
     <ClCompile Include="Source\Engine\sprite_renderer.cpp" />

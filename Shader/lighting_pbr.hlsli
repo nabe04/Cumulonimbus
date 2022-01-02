@@ -78,7 +78,7 @@ Light GetMainLight()
     light.direction             = d_light_direction;
     light.distance_attenuation  = 1.0f;
     light.shadow_attenuation    = 1.0f;
-    light.color                 = d_light_color;
+    light.color                 = d_light_color.rgb;
 
     return light;
 }
@@ -86,8 +86,6 @@ Light GetMainLight()
 /////////////////////////////////////////////
 //            BRDF Functions               //
 /////////////////////////////////////////////
-
-
 #define kDielectricSpec half4(0.04, 0.04, 0.04, 1.0 - 0.04) // standard dielectric reflectivity coef at incident angle (= 4%)
 
 struct BRDFData
@@ -115,7 +113,8 @@ float OneMinusReflectivityMetallic(const float metallic)
 }
 
 void InitializeBRDFDataDirect(
-        const float3 diffuse, const float3 specular ,
+        const float3 diffuse,
+		const float3 specular ,
 		const float reflectivity,
         const float one_minus_reflectivity,
 		const float roughness,
@@ -133,7 +132,10 @@ void InitializeBRDFDataDirect(
     out_brdf_data.roughness2_minus_one  = out_brdf_data.roughness2 - 1.0f;
 }
 
-void InitializeBRDFData(const float3 albedo, const float metallic, const float roughness, inout float alpha, out BRDFData out_brdf_data)
+void InitializeBRDFData(
+        const float3 albedo, const float metallic,
+        const float roughness, inout float alpha,
+        out BRDFData out_brdf_data)
 {
     const float one_minus_reflectivity  = OneMinusReflectivityMetallic(metallic);
     const float reflectivity            = 1.0f - one_minus_reflectivity;
@@ -170,6 +172,78 @@ float DirectBRDFSpecular(
     return specular_term;
 }
 
+/////////////////////////////////////////////////
+//          Point & Spot Light Function        //
+/////////////////////////////////////////////////
+
+/**
+ * @remark : ポイントライトは向きの考慮を行わない為PBR計算時の向きの
+ *           計算での内積値を1にする為(同じ向きの内積 == 1)
+ */
+Light GetAdditionalPointLight(const uint i, const float3 position_ws, const float3 normal_ws)
+{
+    Light light = (Light) 0;
+	// ライトの計算が行われない場合の返り値
+    light.color                 = (float3) 1.0f;
+    light.direction             = normal_ws;
+    light.distance_attenuation  = 1.0f;
+    light.shadow_attenuation    = 1.0f;
+
+    if (i >= (uint)MAX_POINT_LIGHT)
+        return light;
+
+    const float3 PL = position_ws - point_lights[i].p_light_position; // ポイントライトのベクトル
+    const float  d  = length(PL);
+    const float  r  = point_lights[i].p_light_range;
+
+	// 届かないライトの場合
+	if(d > r)
+        return light;
+
+    light.color                 = point_lights[i].p_light_color;
+    light.direction             = normal_ws;
+    light.distance_attenuation  = saturate(1.0f - d / r);
+
+    return light;
+}
+
+Light GetAdditionalSpotLight(const uint i, const float3 position_ws, const float3 normal_ws)
+{
+    Light light = (Light) 0;
+	// ライトの計算が行われない場合の返り値
+    light.color                 = (float3) 1.0f;
+    light.direction             = normal_ws;
+    light.distance_attenuation  = 1.0f;
+    light.shadow_attenuation    = 1.0f;
+
+	if(i >= (uint)MAX_SPOT_LIGHT)
+        return light;
+
+    float3 SL = position_ws - spot_lights[i].s_light_position; // スポットライトのベクトル
+    const float  d  = length(SL);
+    const float  r  = spot_lights[i].s_light_range;
+
+	// 届かないライトの場合
+    if (d > r)
+        return light;
+
+	// スポットライトの向き
+    const float3 s_front = normalize(spot_lights[i].s_light_direction);
+
+    const float influence = saturate(1.0f - d / r);
+    SL                    = normalize(SL);
+    const float angle     = max(0.0f, dot(SL, s_front));
+    const float area      = spot_lights[i].s_light_inner_cone - spot_lights[i].s_light_outer_cone;
+    float influence2      = spot_lights[i].s_light_inner_cone - angle;
+    influence2            = saturate(1.0f - influence2 / area);
+
+    light.distance_attenuation  = influence * influence2;
+    light.color                 = spot_lights[i].s_light_color.rgb;
+    light.direction             = spot_lights[i].s_light_direction;
+
+    return light;
+}
+
 ///////////////////////////////////
 //       Lighting Function       //
 ///////////////////////////////////
@@ -193,7 +267,6 @@ float3 LightingPhysicallyBased(
 
     return brdf * radiance;
 }
-
 
 float3 LightingPhysicallyBased(
 		const BRDFData brdf_data, const BRDFData brdf_data_clear_coat,
