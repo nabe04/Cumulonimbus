@@ -198,7 +198,6 @@ Light GetAdditionalPointLight(const uint i, const float3 position_ws, const floa
 		// “Í‚­ƒ‰ƒCƒg‚Ì‚ÝŒvŽZ
         if (d <= r)
         {
-
             light.color = point_lights[i].p_light_color;
             light.direction = -normal_ws;
             light.distance_attenuation = saturate(1.0f - d / r);
