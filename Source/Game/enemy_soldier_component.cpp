@@ -82,6 +82,7 @@ namespace cumulonimbus::component
 	}
 
 	EnemySoldierComponent::EnemySoldierComponent(ecs::Registry* registry, const mapping::rename_type::Entity ent, const EnemySoldierComponent& copy_comp)
+		: EnemyBaseComponent{ registry,ent }
 	{
 		*this = copy_comp;
 		SetRegistry(registry);

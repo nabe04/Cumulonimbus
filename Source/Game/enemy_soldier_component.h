@@ -67,7 +67,7 @@ namespace cumulonimbus::component
 		void save(Archive&& archive, uint32_t version) const;
 
 	private:
-		// “G(ForestDemon)‚Ìó‘ÔŠÇ—•Ï”
+		// “G(Soldier)‚Ìó‘ÔŠÇ—•Ï”
 		StateMachine<SoldierState, void, const float> soldier_state{};
 		// ƒL[ƒtƒŒ[ƒ€’†‚ÌƒCƒxƒ“ƒgŠÇ—
 		std::map<AnimationData, system::KeyframeEvent> keyframe_events{};
@@ -78,33 +78,33 @@ namespace cumulonimbus::component
 		// Quaternion::Slerp‚Ì‰ñ“]ŠÔ”{—¦
 		float rotation_time_rate{ 1.0f };
 		// •às‚Ì‘¬‚³
-		float walk_speed{ 100 };
+		float walk_speed{ 100.f };
 		// ’ÇÕ’†‚Ì‘¬‚³
-		float tracking_speed{ 150 };
+		float tracking_speed{ 150.f };
 		// ’ÇÕ’†’f‚Ì’·‚³
-		float tracking_interruption_distance{ 200 };
+		float tracking_interruption_distance{ 200.f };
 		// ’ÇÕ‚©‚çUŒ‚‚ÉˆÚ‚é‹——£
-		float attack_transition_distance{ 100 };
+		float attack_transition_distance{ 100.f };
 		// ’ÇÕ‚©‚çUŒ‚‚ÉˆÚ‚éŠp“x(“x”–@)
-		float attack_transition_angle{ 90 };
+		float attack_transition_angle{ 90.f };
 		// ’ÇÕ‚ÉˆÚ‚é‹——£
-		float tracking_transition_distance{ 200 };
+		float tracking_transition_distance{ 200.f };
 		// ’ÇÕ‚ÉˆÚ‚éŠp“x()
-		float tracking_transition_angle{ 90 };
+		float tracking_transition_angle{ 90.f };
 		// “Ë‚«UŒ‚‚ÉˆÚ‚é‹——£
-		float attack_thrust_distance{ 50 };
-
-		/**
-		 * @brief : enum class(AnimationData)‚ğintŒ^‚É•ÏŠ·
-		 */
-		[[nodiscard]]
-		int GetAnimDataIndex(AnimationData anim_data) const;
+		float attack_thrust_distance{ 50.f };
 
 		void Initialize(ecs::Registry* registry, mapping::rename_type::Entity ent) override;
 
 		void InitializeKeyframeEvent();
 
 		void Movement();
+
+		/**
+		 * @brief : enum class(AnimationData)‚ğintŒ^‚É•ÏŠ·
+		 */
+		[[nodiscard]]
+		int GetAnimDataIndex(AnimationData anim_data) const;
 
 		void RegistryKeyframeEvent(AnimationData anim_data, const std::string& key_name);
 		[[nodiscard]]

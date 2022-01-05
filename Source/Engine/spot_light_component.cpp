@@ -64,8 +64,8 @@ namespace cumulonimbus::component
 		{
 			ImChangeParameter();
 			ImGui::DragFloat("Range", &spot_light.s_light_range, 0.1f, 0.0f, FLT_MAX);
-			ImGui::DragFloat("Inner Cone", &spot_light.s_light_inner_cone, 0.1f, 0.0f, FLT_MAX);
-			ImGui::DragFloat("Outer Cone", &spot_light.s_light_outer_cone, 0.1f, 0.0f, FLT_MAX);
+			ImGui::DragFloat("Inner Cone", &spot_light.s_light_inner_cone, 0.01f, spot_light.s_light_outer_cone, 1.0f);
+			ImGui::DragFloat("Outer Cone", &spot_light.s_light_outer_cone, 0.01f, 0.0f, spot_light.s_light_inner_cone);
 		}
 	}
 

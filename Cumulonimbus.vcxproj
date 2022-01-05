@@ -68,6 +68,7 @@
     <ClInclude Include="Source\Engine\editor_manager.h" />
     <ClInclude Include="Source\Engine\effekseer_component.h" />
     <ClInclude Include="Source\Engine\effekseer_manager.h" />
+    <ClInclude Include="Source\Engine\behavior_tree.h" />
     <ClInclude Include="Source\Engine\enum_state_map.h" />
     <ClInclude Include="Source\Engine\event.h" />
     <ClInclude Include="Source\Engine\fbx_model_component.h" />
@@ -188,6 +189,7 @@
     <ClInclude Include="Source\Engine\wave_system.h" />
     <ClInclude Include="Source\Engine\window.h" />
     <ClInclude Include="Source\Game\enemy_base_component.h" />
+    <ClInclude Include="Source\Game\enemy_boss_component.h" />
     <ClInclude Include="Source\Game\enemy_forest_demon_component.h" />
     <ClInclude Include="Source\Game\enemy_slime_component.h" />
     <ClInclude Include="Source\Game\enemy_soldier_component.h" />
@@ -213,6 +215,7 @@
     <ClCompile Include="Source\Engine\arithmetic.cpp" />
     <ClCompile Include="Source\Engine\asset_manager.cpp" />
     <ClCompile Include="Source\Engine\asset_sheet_manager.cpp" />
+    <ClCompile Include="Source\Engine\behavior_tree.cpp" />
     <ClCompile Include="Source\Engine\billboard.cpp" />
     <ClCompile Include="Source\Engine\billboard_component.cpp" />
     <ClCompile Include="Source\Engine\blend.cpp" />
@@ -346,6 +349,7 @@
     <ClCompile Include="Source\Engine\wave_system.cpp" />
     <ClCompile Include="Source\Engine\window.cpp" />
     <ClCompile Include="Source\Game\enemy_base_component.cpp" />
+    <ClCompile Include="Source\Game\enemy_boss_component.cpp" />
     <ClCompile Include="Source\Game\enemy_forest_demon_component.cpp" />
     <ClCompile Include="Source\Game\enemy_slime_component.cpp" />
     <ClCompile Include="Source\Game\enemy_soldier_component.cpp" />
