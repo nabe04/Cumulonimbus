@@ -9,6 +9,8 @@ namespace cumulonimbus::system
 	class BehaviorTree final
 	{
 	public:
+		using Sequence = std::vector<std::function<ReturnVal(Args...)>>;
+
 		/**
 		 * @brief : ビヘイビアツリーの新規作成
 		 */
@@ -17,7 +19,7 @@ namespace cumulonimbus::system
 			if (behaviors.contains(behavior_type))
 				return;
 
-			behaviors.emplace(behavior_type);
+			behaviors.emplace(behavior_type, Sequence{});
 		}
 
 		/**
@@ -85,6 +87,12 @@ namespace cumulonimbus::system
 		}
 
 		[[nodiscard]]
+		bool GetIsStart() const
+		{
+			return is_start;
+		}
+
+		[[nodiscard]]
 		bool GetIsCompleted() const
 		{
 			return is_completed;
@@ -103,7 +111,6 @@ namespace cumulonimbus::system
 		// 現在のビヘイビアツリーに登録されている処理が全て完了したか
 		bool is_completed{ false };
 		// ビヘイビアツリー本体
-		using Sequence = std::vector<std::function<ReturnVal(Args...)>>;
 		std::map<Key, Sequence> behaviors{};
 	};
 } // cumulonimbus::system

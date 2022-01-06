@@ -22,6 +22,7 @@
 #include "sprite_component.h"
 // components(game)
 #include "enemy_soldier_component.h"
+#include "enemy_boss_component.h"
 #include "player_sword_component.h"
 #include "soldier_sword_component.h"
 
@@ -42,7 +43,8 @@ namespace cumulonimbus::editor
 		RegisterComponent<component::PointLightComponent>(		"Point Light"		 , mapping::component_tag::ComponentTag::Light);
 		RegisterComponent<component::SpotLightComponent>(		"Spot Light"		 , mapping::component_tag::ComponentTag::Light);
 		RegisterComponent<component::CameraComponent>(			"Camera"			 , mapping::component_tag::ComponentTag::Camera);
-		RegisterComponent<component::EnemySoldierComponent>(	"Soldier"			 , mapping::component_tag::ComponentTag::Game);
+		RegisterComponent<component::EnemySoldierComponent>(	"E_Soldier"			 , mapping::component_tag::ComponentTag::Game);
+		RegisterComponent<component::EnemyBossComponent>(		"E_Boss"			 , mapping::component_tag::ComponentTag::Game);
 		RegisterComponent<component::PlayerSwordComponent>(		"Player Sword"		 , mapping::component_tag::ComponentTag::Game);
 		RegisterComponent<component::SoldierSwordComponent>(	"Solider Sword"		 , mapping::component_tag::ComponentTag::Game);
 	}

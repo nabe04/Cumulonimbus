@@ -43,7 +43,7 @@ namespace cumulonimbus::graphics
 		pixel_shader  = std::make_unique<shader::PixelShader>( device, mapping::shader_filename::ps::SkyBox_PS().c_str());
 
 		// System::Render“à‚ÅÀs‚·‚éŠÖ”‚Ì“o˜^
-		system.RegisterUpdateFunction(utility::GetHash<SkyBox>(), [&](const float dt) {Update(dt); });
+		system.RegisterUpdateFunction(utility::GetHash<SkyBox>(), [&](const float dt) { Update(dt); });
 		system.RegisterRenderFunction(utility::GetHash<SkyBox>(), [&](ecs::Registry* registry) {RenderImGui(registry); });
 	}
 

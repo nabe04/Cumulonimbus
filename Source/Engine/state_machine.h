@@ -62,7 +62,8 @@ public:
 	[[nodiscard]]
 	bool GetInitialize()
 	{
-		if (!is_switched) return false;
+		if (!is_switched)
+			return false;
 
 		is_switched = false;
 		return true;

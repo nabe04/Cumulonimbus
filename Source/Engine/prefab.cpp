@@ -28,6 +28,7 @@
 // components(game)
 #include "enemy_base_component.h"
 #include "enemy_soldier_component.h"
+#include "enemy_boss_component.h"
 #include "player_component.h"
 #include "player_sword_component.h"
 #include "soldier_sword_component.h"
@@ -67,10 +68,12 @@ namespace cumulonimbus::asset
 		//-- game --//
 		// player
 		RegistryComponent<component::PlayerComponent>();
-		RegistryComponent<component::PlayerSwordComponent>();
 		// enemy
 		RegistryComponent<component::EnemyBaseComponent>();
 		RegistryComponent<component::EnemySoldierComponent>();
+		RegistryComponent<component::EnemyBossComponent>();
+		// weapon
+		RegistryComponent<component::PlayerSwordComponent>();
 		RegistryComponent<component::SoldierSwordComponent>();
 	}
 
