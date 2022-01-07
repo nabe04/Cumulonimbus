@@ -122,7 +122,14 @@ namespace cumulonimbus::renderer
 		 */
 		void Blit(ID3D11DeviceContext* immediate_context) const;
 
-		void BindCBufferLight(ID3D11DeviceContext* immediate_context, std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& scenes);
+		//-- ライト関連 --//
+		/**
+		 * @brief : シーン内にあるライトをコンスタントバッファ
+		 *			パラメータとしてまとめる
+		 * @remark : 1ループに一度だけで良い
+		 */
+		void SetLightParam(std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& scenes);
+		void BindCBufferLight(ID3D11DeviceContext* immediate_context);
 		void UnbindCBufferLight(ID3D11DeviceContext* immediate_context);
 
 		/**
@@ -204,10 +211,6 @@ namespace cumulonimbus::renderer
 		void RenderPostProcess_Begin(ID3D11DeviceContext* immediate_context);
 		void RenderPostProcess(ID3D11DeviceContext* immediate_context, ecs::Registry* registry);
 		void RenderPostProcess_End(ID3D11DeviceContext* immediate_context);
-
-		/**
-		 *
-		 */
 
 		/**
 		 * @brief  : 3Dモデルの描画

@@ -29,7 +29,7 @@ namespace cumulonimbus::shader_system
 		using namespace mapping::shader_assets;
 		// Shader‚ÌƒRƒ“ƒpƒCƒ‹
 		// 3D
-		//RegistryShader<shader_system::DebugCollisionShader>(ShaderAsset3D::DebugCollision);
+		RegistryShader<shader_system::DebugCollisionShader>(ShaderAsset3D::DebugCollision);
 		//RegistryShader<shader_system::SampleShader>				(ShaderAsset3D::SampleShader);
 		//RegistryShader<shader_system::DiffuseShader>			(ShaderAsset3D::Diffuse);
 		//RegistryShader<shader_system::PhongShader>				(ShaderAsset3D::Phong);

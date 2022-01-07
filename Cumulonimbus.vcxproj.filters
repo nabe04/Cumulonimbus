@@ -145,6 +145,9 @@
     <FxCompile Include="Shader\variance_shadow_depth_extraction_vs.hlsl">
       <Filter>Shader%28HLSL%29\VS</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\debug_collision_vs.hlsl">
+      <Filter>Shader%28HLSL%29\VS</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\scene.cpp">

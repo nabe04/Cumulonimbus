@@ -341,12 +341,12 @@ namespace cumulonimbus::renderer
 	{
 		//off_screen->Clear(immediate_context);
 		//off_screen->Activate(immediate_context);
-		BindCBufferLight(immediate_context, scenes);
+		SetLightParam(scenes);
 	}
 
 	void RenderPath::RenderEnd(ID3D11DeviceContext* immediate_context)
 	{
-		UnbindCBufferLight(immediate_context);
+		//UnbindCBufferLight(immediate_context);
 	}
 
 	void RenderPath::RenderShadow_Begin(ID3D11DeviceContext* const immediate_context) const
@@ -492,10 +492,16 @@ namespace cumulonimbus::renderer
 		// GBufferに書き出したテクスチャのセット
 		g_buffer->BindGBufferTextures();
 		g_buffer->BindDepthTexture();
+		// ライト用コンスタントバッファのセット
+		light_manager->BindCBuffers(immediate_context);
 
 		// GBufferライティング用シェーダー(PS)のセット
 		g_buffer->BindGBuffLightingShader();
 		fullscreen_quad->Blit(immediate_context);
+
+		//BindCBufferLight(immediate_context);
+
+		light_manager->UnbindCBuffers(immediate_context);
 
 		g_buffer->UnbindDepthTexture();
 		g_buffer->UnbindGBufferTextures();
@@ -641,20 +647,18 @@ namespace cumulonimbus::renderer
 		fullscreen_quad->Blit(immediate_context, true, true, true);
 	}
 
-	void RenderPath::BindCBufferLight(
-		ID3D11DeviceContext* immediate_context,
-		std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& scenes)
+	void RenderPath::SetLightParam(std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& scenes)
 	{
-		for(bool main_directional_light = false;
-			auto& scene : scenes | std::views::values)
+		for (bool main_directional_light = false;
+			auto & scene : scenes | std::views::values)
 		{
 			// ディレクショナルライト
-			for(auto& directional_light : scene->GetRegistry()->GetArray<component::DirectionalLightComponent>().GetComponents())
+			for (auto& directional_light : scene->GetRegistry()->GetArray<component::DirectionalLightComponent>().GetComponents())
 			{
 				if (main_directional_light)
 					break;
 
-				if(directional_light.GetIsMainLight())
+				if (directional_light.GetIsMainLight())
 				{
 					main_directional_light = true;
 					light_manager->SetDirectionalLight(directional_light.GetDirectionalLight());
@@ -677,7 +681,7 @@ namespace cumulonimbus::renderer
 
 			// スポットライト
 			uint num_spot_lights = 0;
-			for(auto& spot_light : scene->GetRegistry()->GetArray<component::SpotLightComponent>().GetComponents())
+			for (auto& spot_light : scene->GetRegistry()->GetArray<component::SpotLightComponent>().GetComponents())
 			{
 				// スポットライトの最大数を超えた場合処理を抜ける
 				if (num_spot_lights >= MAX_SPOT_LIGHT)
@@ -688,6 +692,53 @@ namespace cumulonimbus::renderer
 			}
 			light_manager->SetNumSpotLights(num_spot_lights);
 		}
+	}
+
+	void RenderPath::BindCBufferLight(ID3D11DeviceContext* immediate_context)
+	{
+		//for(bool main_directional_light = false;
+		//	auto& scene : scenes | std::views::values)
+		//{
+		//	// ディレクショナルライト
+		//	for(auto& directional_light : scene->GetRegistry()->GetArray<component::DirectionalLightComponent>().GetComponents())
+		//	{
+		//		if (main_directional_light)
+		//			break;
+
+		//		if(directional_light.GetIsMainLight())
+		//		{
+		//			main_directional_light = true;
+		//			light_manager->SetDirectionalLight(directional_light.GetDirectionalLight());
+		//			break;
+		//		}
+		//	}
+
+		//	// ポイントライト
+		//	uint num_point_lights = 0;
+		//	for (auto& point_light : scene->GetRegistry()->GetArray<component::PointLightComponent>().GetComponents())
+		//	{
+		//		// ポイントライトの最大数を超えた場合処理を抜ける
+		//		if (num_point_lights >= MAX_POINT_LIGHT)
+		//			break;
+
+		//		light_manager->SetPointLight(point_light.GetPointLight(), num_point_lights);
+		//		++num_point_lights;
+		//	}
+		//	light_manager->SetNumPointLights(num_point_lights);
+
+		//	// スポットライト
+		//	uint num_spot_lights = 0;
+		//	for(auto& spot_light : scene->GetRegistry()->GetArray<component::SpotLightComponent>().GetComponents())
+		//	{
+		//		// スポットライトの最大数を超えた場合処理を抜ける
+		//		if (num_spot_lights >= MAX_SPOT_LIGHT)
+		//			break;
+
+		//		light_manager->SetSpotLight(spot_light.GetSpotLight(), num_spot_lights);
+		//		++num_spot_lights;
+		//	}
+		//	light_manager->SetNumSpotLights(num_spot_lights);
+		//}
 
 		light_manager->BindCBuffers(immediate_context);
 	}
