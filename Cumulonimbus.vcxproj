@@ -44,6 +44,8 @@
     <ClInclude Include="Source\Engine\cbuffer_manager.h" />
     <ClInclude Include="Source\Engine\cereal_helper.h" />
     <ClInclude Include="Source\Engine\child_actor_component.h" />
+    <ClInclude Include="Source\Engine\collider_message_receiver_component.h" />
+    <ClInclude Include="Source\Engine\collider_message_sender_component.h" />
     <ClInclude Include="Source\Engine\collision_component.h" />
     <ClInclude Include="Source\Engine\collision_manager.h" />
     <ClInclude Include="Source\Engine\collision_name_mapping.h" />
@@ -224,6 +226,8 @@
     <ClCompile Include="Source\Engine\capsule_collison_component.cpp" />
     <ClCompile Include="Source\Engine\cbuffer_manager.cpp" />
     <ClCompile Include="Source\Engine\child_actor_component.cpp" />
+    <ClCompile Include="Source\Engine\collider_message_receiver_component.cpp" />
+    <ClCompile Include="Source\Engine\collider_message_sender_component.cpp" />
     <ClCompile Include="Source\Engine\collision_component.cpp" />
     <ClCompile Include="Source\Engine\collision_manager.cpp" />
     <ClCompile Include="Source\Engine\component_base.cpp" />

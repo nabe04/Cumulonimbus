@@ -7,6 +7,11 @@
 
 namespace cumulonimbus::component
 {
+	class ColliderMessageSenderComponent;
+} // cumulonimbus::component
+
+namespace cumulonimbus::component
+{
 	class EnemyBossComponent : public EnemyBaseComponent
 	{
 	private:
@@ -51,6 +56,15 @@ namespace cumulonimbus::component
 			Damage, // ダメージ、ノックダウン、死亡
 
 			End
+		};
+
+		/**
+		 * @brief : 攻撃の種類
+		 */
+		enum class AttackType
+		{
+			Atk_Melee,
+			Atk_Long_Range
 		};
 
 		/**
@@ -105,6 +119,9 @@ namespace cumulonimbus::component
 
 		void Start() override;
 		void CommonUpdate(float dt) override;
+		void GameUpdate(float dt) override;
+
+		void RenderImGui() override;
 
 		void Load(ecs::Registry* registry) override;
 
@@ -129,11 +146,16 @@ namespace cumulonimbus::component
 		// 近距離攻撃の境界距離
 		float atk_melee_distance{ 100.f };
 
+		// 攻撃範囲内か
+		bool is_in_attack_range{ false };
 		// 次のビヘイビアに移行するか
 		bool is_next_sequence{ false };
 		// ビヘイビアツリーの一連の処理が完了したか
 		bool is_behavior_completed{ false };
 
+		// 次ビヘイビアでの攻撃種
+		AttackType next_attack_type{};
+		
 		void Initialize(ecs::Registry* registry, mapping::rename_type::Entity ent) override;
 
 		void OnAttack(const collision::HitResult& hit_result) override;
@@ -148,6 +170,8 @@ namespace cumulonimbus::component
 		void BehaviorUpdate(float dt);
 		void BehaviorMoveUpdate(float dt);
 		void BehaviorAttackUpdate(float dt);
+
+		void AttackTypeSelection(ColliderMessageSenderComponent& sender);
 
 		template <auto F>
 		std::function<void(float)> GetBehaviorUpdateFunc()

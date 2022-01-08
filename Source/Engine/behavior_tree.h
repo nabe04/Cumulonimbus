@@ -34,6 +34,19 @@ namespace cumulonimbus::system
 			behaviors.at(behavior_type).emplace_back(callback);
 		}
 
+		void Clear(const Key behavior_type)
+		{
+			if (!behaviors.contains(behavior_type))
+				return;
+
+			behaviors.erase(behavior_type);
+		}
+
+		void ClearAll()
+		{
+			behaviors.clear();
+		}
+
 		void Update(Args... args)
 		{
 			// ƒrƒwƒCƒrƒA‚Ìˆ—‚ª“o˜^‚³‚ê‚Ä‚¢‚È‚¢ê‡ˆ—‚ğ’†’f‚·‚é

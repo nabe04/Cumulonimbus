@@ -129,8 +129,6 @@ namespace cumulonimbus::renderer
 		 * @remark : 1ループに一度だけで良い
 		 */
 		void SetLightParam(std::unordered_map<mapping::rename_type::UUID, std::unique_ptr<scene::Scene>>& scenes);
-		void BindCBufferLight(ID3D11DeviceContext* immediate_context);
-		void UnbindCBufferLight(ID3D11DeviceContext* immediate_context);
 
 		/**
 		 * @brief : 全体の描画前処理

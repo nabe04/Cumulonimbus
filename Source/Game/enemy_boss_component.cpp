@@ -6,6 +6,8 @@
 #include "player_component.h"
 #include "sphere_collision_component.h"
 #include "transform_component.h"
+#include "collider_message_receiver_component.h"
+#include "collider_message_sender_component.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::EnemyBossComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::EnemyBaseComponent, cumulonimbus::component::EnemyBossComponent)
@@ -49,30 +51,28 @@ namespace cumulonimbus::component
 	{
 	}
 
-	void EnemyBossComponent::Start()
-	{
-		Initialize(GetRegistry(), GetEntity());
-	}
-
-	void EnemyBossComponent::CommonUpdate(const float dt)
-	{
-		BehaviorUpdate(dt);
-	}
-
 	void EnemyBossComponent::Load(ecs::Registry* registry)
 	{
+		SetRegistry(registry);
 	}
 
-	void EnemyBossComponent::Initialize(ecs::Registry* registry, const mapping::rename_type::Entity ent)
+	void EnemyBossComponent::Start()
 	{
-		EnemyBossComponent& e_boss_comp = registry->GetComponent<EnemyBossComponent>(ent);
-		std::function<bool(float)> behavior_func{};
-		std::function<void(EnemyBossComponent& ,std::function<bool(const float dt)>)> b_func{};
+		EnemyBossComponent& e_boss_comp = GetRegistry()->GetComponent<EnemyBossComponent>(GetEntity());
+
+		//
+		if (auto* collider_receiver = GetRegistry()->TryGetComponent<ColliderMessageReceiverComponent>(GetEntity());
+			collider_receiver)
+		{
+			collider_receiver->RegisterReceivedMessage(GetEntity(), [&e_boss_comp](ColliderMessageSenderComponent& sender) {e_boss_comp.AttackTypeSelection(sender); });
+		}
+
 		//-- 行動(ビヘイビア)の更新StateMachineの追加 --//
-		boss_behavior.AddState(BossBehavior::Move	 , e_boss_comp.GetBehaviorUpdateFunc<&EnemyBossComponent::BehaviorMoveUpdate>());
-		boss_behavior.AddState(BossBehavior::Attack, e_boss_comp.GetBehaviorUpdateFunc<&EnemyBossComponent::BehaviorMoveUpdate>());
+		boss_behavior.AddState(BossBehavior::Move  , e_boss_comp.GetBehaviorUpdateFunc<&EnemyBossComponent::BehaviorMoveUpdate>());
+		boss_behavior.AddState(BossBehavior::Attack, e_boss_comp.GetBehaviorUpdateFunc<&EnemyBossComponent::BehaviorAttackUpdate>());
 		boss_behavior.SetState(BossBehavior::Attack);
 
+		attack_behavior.ClearAll();
 		//-- 攻撃BehaviorTreeの追加 --//
 		// 通常攻撃 1
 		attack_behavior.AddSequence(AttackBehavior::Atk_Normal_01, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal01>());
@@ -86,6 +86,49 @@ namespace cumulonimbus::component
 		attack_behavior.AddSequence(AttackBehavior::Atk_Energy_01, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackEnergy01>());
 		// 遠距離攻撃 2
 		attack_behavior.AddSequence(AttackBehavior::Atk_Energy_02, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackEnergy02>());
+	}
+
+	void EnemyBossComponent::CommonUpdate(const float dt)
+	{
+
+	}
+
+	void EnemyBossComponent::GameUpdate(const float dt)
+	{
+		BehaviorUpdate(dt);
+
+		is_in_attack_range = false;
+	}
+
+	void EnemyBossComponent::RenderImGui()
+	{
+		if(GetRegistry()->CollapsingHeader<EnemyBossComponent>(GetEntity(),"E Boss"))
+		{
+
+		}
+	}
+
+	void EnemyBossComponent::Initialize(ecs::Registry* registry, const mapping::rename_type::Entity ent)
+	{
+		//EnemyBossComponent& e_boss_comp = registry->GetComponent<EnemyBossComponent>(ent);
+		////-- 行動(ビヘイビア)の更新StateMachineの追加 --//
+		//boss_behavior.AddState(BossBehavior::Move  , e_boss_comp.GetBehaviorUpdateFunc<&EnemyBossComponent::BehaviorMoveUpdate>());
+		//boss_behavior.AddState(BossBehavior::Attack, e_boss_comp.GetBehaviorUpdateFunc<&EnemyBossComponent::BehaviorAttackUpdate>());
+		//boss_behavior.SetState(BossBehavior::Attack);
+
+		////-- 攻撃BehaviorTreeの追加 --//
+		//// 通常攻撃 1
+		//attack_behavior.AddSequence(AttackBehavior::Atk_Normal_01, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal01>());
+		//// 通常攻撃 2
+		//attack_behavior.AddSequence(AttackBehavior::Atk_Normal_02, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal02>());
+		//// 通常攻撃 3
+		//attack_behavior.AddSequence(AttackBehavior::Atk_Normal_03, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal03>());
+		//// 通常攻撃 4
+		//attack_behavior.AddSequence(AttackBehavior::Atk_Normal_04, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal04>());
+		//// 遠距離攻撃 1
+		//attack_behavior.AddSequence(AttackBehavior::Atk_Energy_01, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackEnergy01>());
+		//// 遠距離攻撃 2
+		//attack_behavior.AddSequence(AttackBehavior::Atk_Energy_02, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackEnergy02>());
 	}
 
 	void EnemyBossComponent::OnAttack(const collision::HitResult& hit_result)
@@ -106,6 +149,24 @@ namespace cumulonimbus::component
 	//						ビヘイビア更新処理						 //
 	///////////////////////////////////////////////////////////////////
 
+	void EnemyBossComponent::AttackTypeSelection(ColliderMessageSenderComponent& sender)
+	{
+		is_in_attack_range = true;
+
+		// 近距離攻撃の選択
+		if(sender.GetCollisionTag() == collision::CollisionTag::Attack_Melee)
+		{
+			next_attack_type = AttackType::Atk_Melee;
+			return;
+		}
+
+		// 遠距離攻撃の選択
+		if(sender.GetCollisionTag() == collision::CollisionTag::Attack_Long_Range)
+		{
+			next_attack_type = AttackType::Atk_Long_Range;
+		}
+	}
+
 	void EnemyBossComponent::BehaviorUpdate(const float dt)
 	{
 		boss_behavior.Update(dt);
@@ -113,25 +174,27 @@ namespace cumulonimbus::component
 		if(is_behavior_completed)
 		{
 			is_behavior_completed = false;
-			auto* sphere_collision_comp = GetRegistry()->TryGetComponent<SphereCollisionComponent>(GetEntity());
-			if (sphere_collision_comp)
-				return;
 
-			for(auto& sphere_data : sphere_collision_comp->GetSpheres() | std::views::values)
+			if(is_in_attack_range)
 			{
-				for (auto& hit_result : sphere_data.hit_results | std::views::values)
-				{
-					if (hit_result.collision_tag != collision::CollisionTag::Player)
-						continue;
-
-					// ヒット先がプレイヤーの場合攻撃Stateに移行する
-					boss_behavior.SetState(BossBehavior::Attack);
-					return;
-				}
+				// ヒット先がプレイヤーの場合攻撃Stateに移行する
+				boss_behavior.SetState(BossBehavior::Attack);
+				return;
 			}
 
 			// プレイヤーの攻撃範囲外なので行動Stateに移行する
 			boss_behavior.SetState(BossBehavior::Move);
+
+			//auto* sphere_collision_comp = GetRegistry()->TryGetComponent<SphereCollisionComponent>(GetEntity());
+			//if (!sphere_collision_comp)
+			//{
+			//	// プレイヤーの攻撃範囲外なので行動Stateに移行する
+			//	boss_behavior.SetState(BossBehavior::Move);
+			//	return;
+			//}
+
+			//// プレイヤーの攻撃範囲外なので行動Stateに移行する
+			//boss_behavior.SetState(BossBehavior::Move);
 		}
 	}
 
@@ -151,16 +214,16 @@ namespace cumulonimbus::component
 			if (auto* player = GetPlayer();
 				player)
 			{// シーン内にプレイヤーが存在する場合
-				const DirectX::SimpleMath::Vector3 self_pos   = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetPosition();
-				const DirectX::SimpleMath::Vector3 player_pos = player->GetRegistry()->GetComponent<TransformComponent>(player->GetEntity()).GetPosition();
-				const float distance_to_player = DirectX::SimpleMath::Vector3{ self_pos - player_pos }.Length();
+				//const DirectX::SimpleMath::Vector3 self_pos   = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetPosition();
+				//const DirectX::SimpleMath::Vector3 player_pos = player->GetRegistry()->GetComponent<TransformComponent>(player->GetEntity()).GetPosition();
+				//const float distance_to_player = DirectX::SimpleMath::Vector3{ self_pos - player_pos }.Length();
 
-				if(distance_to_player <= atk_melee_distance)
+				if(next_attack_type == AttackType::Atk_Melee)
 				{// 近距離攻撃
 					uint atk_index = arithmetic::RandomIntInRange(0, 3);
 					attack_behavior.SetBehavior(static_cast<AttackBehavior>(atk_index));
 				}
-				else
+				if (next_attack_type == AttackType::Atk_Long_Range)
 				{// 遠距離攻撃
 					if (arithmetic::RandomIntInRange(0, 1) == 0)
 					{

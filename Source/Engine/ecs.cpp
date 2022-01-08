@@ -5,31 +5,47 @@
 
 #include "generic.h"
 #include "scene.h"
-// components(engine)
-#include "actor3d_component.h"
-#include "billboard_component.h"
-#include "camera_component.h"
-#include "capsule_collison_component.h"
-#include "damageable_component.h"
-#include "directiona_light_component.h"
-#include "effekseer_component.h"
-#include "hierarchy_component.h"
-#include "light_component.h"
-#include "model_component.h"
-#include "physic_material_component.h"
-#include "point_light_component.h"
-#include "raycast_component.h"
-#include "rigid_body_component.h"
 #include "sky_box.h"
+//-- components(engine) --//
+// actor
+#include "actor3d_component.h"
+#include "hierarchy_component.h"
+// camera
+#include "camera_component.h"
+// collider
+#include "capsule_collison_component.h"
+#include "collider_message_receiver_component.h"
+#include "collider_message_sender_component.h"
+#include "collision_component.h"
+#include "raycast_component.h"
 #include "sphere_collision_component.h"
+// damage
+#include "damageable_component.h"
+// effekseer
+#include "effekseer_component.h"
+// light
+#include "directiona_light_component.h"
+#include "light_component.h"
+#include "point_light_component.h"
 #include "spot_light_component.h"
+// model
+#include "model_component.h"
+// physics
+#include "physic_material_component.h"
+#include "rigid_body_component.h"
+// sprite
+#include "billboard_component.h"
 #include "sprite_component.h"
+// transform
 #include "transform_component.h"
-// components(game)
+//-- components(game) --//
+// enemy
 #include "enemy_base_component.h"
-#include "enemy_soldier_component.h"
 #include "enemy_boss_component.h"
+#include "enemy_soldier_component.h"
+// player
 #include "player_component.h"
+// weapon
 #include "player_sword_component.h"
 #include "soldier_sword_component.h"
 
@@ -233,41 +249,45 @@ namespace cumulonimbus::ecs
 	void Registry::RegisterComponentName()
 	{
 		//-- engine --//
-		// transform
-		RegistryComponent<component::TransformComponent>();
 		// actor
 		RegistryComponent<component::Actor3DComponent>();
 		RegistryComponent<component::HierarchyComponent>();
-		// model
-		RegistryComponent<component::ModelComponent>();
-		// sprite
-		RegistryComponent<component::SpriteComponent>();
-		RegistryComponent<component::BillboardComponent>();
-		// physics
-		RegistryComponent<component::SphereCollisionComponent>();
-		RegistryComponent<component::CollisionComponent>();
-		RegistryComponent<component::RayCastComponent>();
-		RegistryComponent<component::CapsuleCollisionComponent>();
-		RegistryComponent<component::PhysicMaterialComponent>();
-		RegistryComponent<component::RigidBodyComponent>();
-		// lights
-		RegistryComponent<component::LightComponent>();
-		RegistryComponent<component::DirectionalLightComponent>();
-		RegistryComponent<component::PointLightComponent>();
-		RegistryComponent<component::SpotLightComponent>();
 		// camera
 		RegistryComponent<component::CameraComponent>();
+		// collider
+		RegistryComponent<component::CapsuleCollisionComponent>();
+		RegistryComponent<component::ColliderMessageReceiverComponent>();
+		RegistryComponent<component::ColliderMessageSenderComponent>();
+		RegistryComponent<component::CollisionComponent>();
+		RegistryComponent<component::RayCastComponent>();
+		RegistryComponent<component::SphereCollisionComponent>();
 		// damage
 		RegistryComponent<component::DamageableComponent>();
 		// effekseer
 		RegistryComponent<component::EffekseerComponent>();
+		// lights
+		RegistryComponent<component::DirectionalLightComponent>();
+		RegistryComponent<component::LightComponent>();
+		RegistryComponent<component::PointLightComponent>();
+		RegistryComponent<component::SpotLightComponent>();
+		// model
+		RegistryComponent<component::ModelComponent>();
+		// physics
+		RegistryComponent<component::PhysicMaterialComponent>();
+		RegistryComponent<component::RigidBodyComponent>();
+		// sprite
+		RegistryComponent<component::BillboardComponent>();
+		RegistryComponent<component::SpriteComponent>();
+		// transform
+		RegistryComponent<component::TransformComponent>();
+
 		//-- game --//
-		// player
-		RegistryComponent<component::PlayerComponent>();
 		// enemy
 		RegistryComponent<component::EnemyBaseComponent>();
-		RegistryComponent<component::EnemySoldierComponent>();
 		RegistryComponent<component::EnemyBossComponent>();
+		RegistryComponent<component::EnemySoldierComponent>();
+		// player
+		RegistryComponent<component::PlayerComponent>();
 		// weapon
 		RegistryComponent<component::PlayerSwordComponent>();
 		RegistryComponent<component::SoldierSwordComponent>();

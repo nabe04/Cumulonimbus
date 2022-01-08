@@ -499,8 +499,6 @@ namespace cumulonimbus::renderer
 		g_buffer->BindGBuffLightingShader();
 		fullscreen_quad->Blit(immediate_context);
 
-		//BindCBufferLight(immediate_context);
-
 		light_manager->UnbindCBuffers(immediate_context);
 
 		g_buffer->UnbindDepthTexture();
@@ -692,60 +690,6 @@ namespace cumulonimbus::renderer
 			}
 			light_manager->SetNumSpotLights(num_spot_lights);
 		}
-	}
-
-	void RenderPath::BindCBufferLight(ID3D11DeviceContext* immediate_context)
-	{
-		//for(bool main_directional_light = false;
-		//	auto& scene : scenes | std::views::values)
-		//{
-		//	// ディレクショナルライト
-		//	for(auto& directional_light : scene->GetRegistry()->GetArray<component::DirectionalLightComponent>().GetComponents())
-		//	{
-		//		if (main_directional_light)
-		//			break;
-
-		//		if(directional_light.GetIsMainLight())
-		//		{
-		//			main_directional_light = true;
-		//			light_manager->SetDirectionalLight(directional_light.GetDirectionalLight());
-		//			break;
-		//		}
-		//	}
-
-		//	// ポイントライト
-		//	uint num_point_lights = 0;
-		//	for (auto& point_light : scene->GetRegistry()->GetArray<component::PointLightComponent>().GetComponents())
-		//	{
-		//		// ポイントライトの最大数を超えた場合処理を抜ける
-		//		if (num_point_lights >= MAX_POINT_LIGHT)
-		//			break;
-
-		//		light_manager->SetPointLight(point_light.GetPointLight(), num_point_lights);
-		//		++num_point_lights;
-		//	}
-		//	light_manager->SetNumPointLights(num_point_lights);
-
-		//	// スポットライト
-		//	uint num_spot_lights = 0;
-		//	for(auto& spot_light : scene->GetRegistry()->GetArray<component::SpotLightComponent>().GetComponents())
-		//	{
-		//		// スポットライトの最大数を超えた場合処理を抜ける
-		//		if (num_spot_lights >= MAX_SPOT_LIGHT)
-		//			break;
-
-		//		light_manager->SetSpotLight(spot_light.GetSpotLight(), num_spot_lights);
-		//		++num_spot_lights;
-		//	}
-		//	light_manager->SetNumSpotLights(num_spot_lights);
-		//}
-
-		light_manager->BindCBuffers(immediate_context);
-	}
-
-	void RenderPath::UnbindCBufferLight(ID3D11DeviceContext* immediate_context)
-	{
-		light_manager->UnbindCBuffers(immediate_context);
 	}
 
 	void RenderPath::RenderModel(

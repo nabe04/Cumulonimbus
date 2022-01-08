@@ -94,6 +94,13 @@ namespace cumulonimbus::component
 		SetEntity(ent);
 	}
 
+	void ModelComponent::Load(ecs::Registry* registry)
+	{
+		SetRegistry(registry);
+		// StateMachineÇÃçƒìoò^
+		InitializeAnimState(registry, GetEntity());
+	}
+
 	void ModelComponent::CommonUpdate(const float dt)
 	{
 		UpdateAnimState(dt);
@@ -235,13 +242,6 @@ namespace cumulonimbus::component
 
 			graphics_state.RenderImGui();
 		}
-	}
-
-	void ModelComponent::Load(ecs::Registry* registry)
-	{
-		SetRegistry(registry);
-		// StateMachineÇÃçƒìoò^
-		InitializeAnimState(registry, GetEntity());
 	}
 
 	void ModelComponent::OnDeserialize(ecs::Registry* registry, const std::map<mapping::rename_type::Entity, mapping::rename_type::Entity>& connector)

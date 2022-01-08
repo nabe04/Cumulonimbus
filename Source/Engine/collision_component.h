@@ -41,6 +41,9 @@ namespace cumulonimbus::collision
 		Player_Weapon,
 		Enemy_Weapon,
 
+		Attack_Melee,
+		Attack_Long_Range,
+
 		End
 	};
 

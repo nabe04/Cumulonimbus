@@ -10,6 +10,7 @@ namespace cumulonimbus::mapping::component_tag
 		Physics,
 		Light,
 		Camera,
+		Collider,
 		Game,
 
 		End
