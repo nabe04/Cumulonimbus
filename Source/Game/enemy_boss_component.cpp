@@ -183,7 +183,8 @@ namespace cumulonimbus::component
 			}
 
 			// プレイヤーの攻撃範囲外なので行動Stateに移行する
-			boss_behavior.SetState(BossBehavior::Move);
+			//boss_behavior.SetState(BossBehavior::Move);
+			boss_behavior.SetState(BossBehavior::Attack);
 
 			//auto* sphere_collision_comp = GetRegistry()->TryGetComponent<SphereCollisionComponent>(GetEntity());
 			//if (!sphere_collision_comp)

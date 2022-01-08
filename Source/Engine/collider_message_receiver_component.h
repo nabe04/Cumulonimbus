@@ -29,6 +29,8 @@ namespace cumulonimbus::component
 
 		void GameUpdate(float dt) override;
 
+		void RenderImGui() override;
+		
 		void RegisterReceivedMessage(mapping::rename_type::Entity ent, std::function<void(ColliderMessageSenderComponent&)> callback);
 
 		void Receive(ColliderMessageSenderComponent& sender);

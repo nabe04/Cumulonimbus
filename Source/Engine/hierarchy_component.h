@@ -60,6 +60,12 @@ namespace cumulonimbus::component
 		const ParentNodeData& GetParentNodeData() const { return parent_node_data; }
 
 		/**
+		 * @brief : 親階層の全てのエンティティ取得
+		 */
+		[[nodiscard]]
+		std::vector<mapping::rename_type::Entity> GetParents() const;
+		
+		/**
 		 * @brief : 子階層の全てのエンティティの取得
 		 */
 		[[nodiscard]]

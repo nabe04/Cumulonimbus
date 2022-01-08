@@ -23,6 +23,8 @@ namespace cumulonimbus::component
 
 		void GameUpdate(float dt) override;
 
+		void RenderImGui() override;
+
 		[[nodiscard]]
 		collision::CollisionTag GetCollisionTag() const
 		{

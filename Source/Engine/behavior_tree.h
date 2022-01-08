@@ -62,7 +62,7 @@ namespace cumulonimbus::system
 			if (is_switched)
 			{
 				// ‰Šúƒtƒ‰ƒO‚ğtrue‚É‚·‚é
-				is_start    = true;
+				is_start = true;
 				is_switched = false;
 			}
 
@@ -78,6 +78,7 @@ namespace cumulonimbus::system
 		{
 			++index;
 			is_switched = true;
+			is_start	= true;
 
 			if (index <= behaviors.at(current_behavior).size())
 			{
@@ -95,6 +96,7 @@ namespace cumulonimbus::system
 			current_behavior	= behavior;
 			index				= 0;
 			is_switched			= true;
+			is_start			= true;
 			is_completed		= false;
 
 		}

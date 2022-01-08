@@ -44,6 +44,14 @@ namespace cumulonimbus::component
 	{
 	}
 
+	void ColliderMessageReceiverComponent::RenderImGui()
+	{
+		if (GetRegistry()->CollapsingHeader<ColliderMessageReceiverComponent>(GetEntity(), "Collider Message Receiver"))
+		{
+
+		}
+	}
+
 	void ColliderMessageReceiverComponent::RegisterReceivedMessage(
 		const mapping::rename_type::Entity ent,
 		const std::function<void(ColliderMessageSenderComponent&)> callback)
