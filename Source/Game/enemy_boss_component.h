@@ -72,12 +72,20 @@ namespace cumulonimbus::component
 		 */
 		enum class AttackBehavior
 		{
-			Atk_Normal_01,
-			Atk_Normal_02,
-			Atk_Normal_03,
-			Atk_Normal_04,
-			Atk_Energy_01,
-			Atk_Energy_02,
+			Atk_N1,
+			Atk_N2,
+			Atk_N3,
+			Atk_N4,
+			Atk_E1,
+			Atk_E2,
+			Atk_N1_N2,
+			Atk_N1_N3,
+			Atk_N1_N4,
+			Atk_N2_N1,
+			Atk_N2_N3,
+			Atk_N2_N4,
+			Atk_E1_E2,
+			Atk_E2_E1,
 
 			End
 		};
@@ -155,7 +163,7 @@ namespace cumulonimbus::component
 
 		// 次ビヘイビアでの攻撃種
 		AttackType next_attack_type{};
-		
+
 		void Initialize(ecs::Registry* registry, mapping::rename_type::Entity ent) override;
 
 		void OnAttack(const collision::HitResult& hit_result) override;

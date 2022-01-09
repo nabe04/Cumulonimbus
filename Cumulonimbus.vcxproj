@@ -68,7 +68,9 @@
     <ClInclude Include="Source\Engine\easing.h" />
     <ClInclude Include="Source\Engine\ecs.h" />
     <ClInclude Include="Source\Engine\editor_manager.h" />
+    <ClInclude Include="Source\Engine\effect.h" />
     <ClInclude Include="Source\Engine\effekseer_component.h" />
+    <ClInclude Include="Source\Engine\effekseer_loader.h" />
     <ClInclude Include="Source\Engine\effekseer_manager.h" />
     <ClInclude Include="Source\Engine\behavior_tree.h" />
     <ClInclude Include="Source\Engine\enum_state_map.h" />
@@ -245,7 +247,9 @@
     <ClCompile Include="Source\Engine\easing.cpp" />
     <ClCompile Include="Source\Engine\ecs.cpp" />
     <ClCompile Include="Source\Engine\editor_manager.cpp" />
+    <ClCompile Include="Source\Engine\effect.cpp" />
     <ClCompile Include="Source\Engine\effekseer_component.cpp" />
+    <ClCompile Include="Source\Engine\effekseer_loader.cpp" />
     <ClCompile Include="Source\Engine\effekseer_manager.cpp" />
     <ClCompile Include="Source\Engine\fbx_model_component.cpp" />
     <ClCompile Include="Source\Engine\fbx_model_resource.cpp" />

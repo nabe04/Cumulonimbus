@@ -8,6 +8,7 @@
 #include "texture.h"
 // Loaders
 #include "loader.h"
+#include "effekseer_loader.h"
 #include "material_loader.h"
 #include "model_loader.h"
 #include "prefab_loader.h"
@@ -29,6 +30,7 @@ namespace cumulonimbus::asset
 		RegisterLoader<Texture	 , TextureLoader>();
 		RegisterLoader<Prefab	 , PrefabLoader>();
 		RegisterLoader<SceneAsset, SceneLoader>();
+		RegisterLoader<Effect	 , EffekseerLoader>();
 
 		// デフォルトパスからのロード
 		Load();

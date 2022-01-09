@@ -63,7 +63,6 @@ namespace cumulonimbus::asset
 		u_int		width{};
 		u_int		height{};
 
-
 		void CreateTexture(ID3D11Device* device, const char* tex_filename);
 		void CreateDummyTexture(ID3D11Device* device, const DirectX::XMFLOAT4& color);
 	};

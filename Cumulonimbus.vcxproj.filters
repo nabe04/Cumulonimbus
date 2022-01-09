@@ -327,9 +327,6 @@
     <ClCompile Include="Source\Engine\sprite_renderer.cpp">
       <Filter>Source\Engine\System</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\texture.cpp">
-      <Filter>Source\Engine\System</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Engine\window.cpp">
       <Filter>Source\Engine\System</Filter>
     </ClCompile>
@@ -462,12 +459,6 @@
     <ClCompile Include="Source\Engine\asset_manager.cpp">
       <Filter>Source\Engine\Loader</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\material.cpp">
-      <Filter>Source\Engine\System</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\model.cpp">
-      <Filter>Source\Engine\System</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Engine\model_component.cpp">
       <Filter>Source\Engine\Components</Filter>
     </ClCompile>
@@ -512,9 +503,6 @@
     </ClCompile>
     <ClCompile Include="Source\Engine\prefab_loader.cpp">
       <Filter>Source\Engine\Loader</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\prefab.cpp">
-      <Filter>Source\Engine\System</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\scene_loader.cpp">
       <Filter>Source\Engine\Loader</Filter>
@@ -611,6 +599,24 @@
     </ClCompile>
     <ClCompile Include="Source\Engine\collider_message_receiver_component.cpp">
       <Filter>Source\Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\effekseer_loader.cpp">
+      <Filter>Source\Engine\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\model.cpp">
+      <Filter>Source\Engine\Asset</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\material.cpp">
+      <Filter>Source\Engine\Asset</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\prefab.cpp">
+      <Filter>Source\Engine\Asset</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\texture.cpp">
+      <Filter>Source\Engine\Asset</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\effect.cpp">
+      <Filter>Source\Engine\Asset</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -789,9 +795,6 @@
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\state_machine.h">
-      <Filter>Header\Engine\System</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\texture.h">
       <Filter>Header\Engine\System</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\vertex_buffer.h">
@@ -1016,12 +1019,6 @@
     <ClInclude Include="Source\Engine\asset_manager.h">
       <Filter>Header\Engine\Loader</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\material.h">
-      <Filter>Header\Engine\System</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\model.h">
-      <Filter>Header\Engine\System</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Engine\model_component.h">
       <Filter>Header\Engine\Components</Filter>
     </ClInclude>
@@ -1066,9 +1063,6 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\prefab_loader.h">
       <Filter>Header\Engine\Loader</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\prefab.h">
-      <Filter>Header\Engine\System</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\scene_loader.h">
       <Filter>Header\Engine\Loader</Filter>
@@ -1156,6 +1150,24 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\collider_message_receiver_component.h">
       <Filter>Header\Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\effekseer_loader.h">
+      <Filter>Header\Engine\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\material.h">
+      <Filter>Header\Engine\Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\texture.h">
+      <Filter>Header\Engine\Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\model.h">
+      <Filter>Header\Engine\Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\prefab.h">
+      <Filter>Header\Engine\Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\effect.h">
+      <Filter>Header\Engine\Asset</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1342,6 +1354,12 @@
     </Filter>
     <Filter Include="Source\Game\System">
       <UniqueIdentifier>{0ee8cb65-a758-4342-a4ba-dd4ebf85d686}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Engine\Asset">
+      <UniqueIdentifier>{6d734331-47af-47df-bb8a-4c80a05d04f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Asset">
+      <UniqueIdentifier>{5b0c6508-1460-4fd0-9323-5a697d8a328f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

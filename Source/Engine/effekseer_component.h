@@ -12,7 +12,6 @@ namespace cumulonimbus::component
 		explicit EffekseerComponent()  = default; // for cereal
 		~EffekseerComponent() override;
 
-		
 		void RenderImGui() override;
 
 		void Load(ecs::Registry* registry) override;

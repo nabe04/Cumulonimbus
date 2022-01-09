@@ -74,19 +74,43 @@ namespace cumulonimbus::component
 
 		attack_behavior.ClearAll();
 		//-- UŒ‚BehaviorTree‚Ì’Ç‰Á --//
-		// ’ÊíUŒ‚ 1 + 2
-		attack_behavior.AddSequence(AttackBehavior::Atk_Normal_01, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal01>());
-		attack_behavior.AddSequence(AttackBehavior::Atk_Normal_01, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal02>());
+		// ’ÊíUŒ‚ 1
+		attack_behavior.AddSequence(AttackBehavior::Atk_N1, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal01>());
 		// ’ÊíUŒ‚ 2
-		attack_behavior.AddSequence(AttackBehavior::Atk_Normal_02, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal02>());
+		attack_behavior.AddSequence(AttackBehavior::Atk_N2, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal02>());
 		// ’ÊíUŒ‚ 3
-		attack_behavior.AddSequence(AttackBehavior::Atk_Normal_03, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal03>());
+		attack_behavior.AddSequence(AttackBehavior::Atk_N3, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal03>());
 		// ’ÊíUŒ‚ 4
-		attack_behavior.AddSequence(AttackBehavior::Atk_Normal_04, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal04>());
+		attack_behavior.AddSequence(AttackBehavior::Atk_N4, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal04>());
 		// ‰“‹——£UŒ‚ 1
-		attack_behavior.AddSequence(AttackBehavior::Atk_Energy_01, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackEnergy01>());
+		attack_behavior.AddSequence(AttackBehavior::Atk_E1, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackEnergy01>());
 		// ‰“‹——£UŒ‚ 2
-		attack_behavior.AddSequence(AttackBehavior::Atk_Energy_02, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackEnergy02>());
+		attack_behavior.AddSequence(AttackBehavior::Atk_E2, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackEnergy02>());
+		// ’ÊíUŒ‚(1 + 2)
+		attack_behavior.AddSequence(AttackBehavior::Atk_N1_N2, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal01>());
+		attack_behavior.AddSequence(AttackBehavior::Atk_N1_N2, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal02>());
+		// ’ÊíUŒ‚(1 + 3)
+		attack_behavior.AddSequence(AttackBehavior::Atk_N1_N3, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal01>());
+		attack_behavior.AddSequence(AttackBehavior::Atk_N1_N3, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal03>());
+		// ’ÊíUŒ‚(1 + 4)
+		attack_behavior.AddSequence(AttackBehavior::Atk_N1_N4, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal01>());
+		attack_behavior.AddSequence(AttackBehavior::Atk_N1_N4, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal04>());
+		// ’ÊíUŒ‚(2 + 1)
+		attack_behavior.AddSequence(AttackBehavior::Atk_N2_N1, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal02>());
+		attack_behavior.AddSequence(AttackBehavior::Atk_N2_N1, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal01>());
+		// ’ÊíUŒ‚(2 + 3)
+		attack_behavior.AddSequence(AttackBehavior::Atk_N2_N3, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal02>());
+		attack_behavior.AddSequence(AttackBehavior::Atk_N2_N3, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal03>());
+		// ’ÊíUŒ‚(2 + 4)
+		attack_behavior.AddSequence(AttackBehavior::Atk_N2_N4, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal02>());
+		attack_behavior.AddSequence(AttackBehavior::Atk_N2_N4, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal04>());
+		// ‰“‹——£UŒ‚(1 + 2)
+		attack_behavior.AddSequence(AttackBehavior::Atk_E1_E2, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackEnergy01>());
+		attack_behavior.AddSequence(AttackBehavior::Atk_E1_E2, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackEnergy02>());
+		// ‰“‹——£UŒ‚(2 + 1)
+		attack_behavior.AddSequence(AttackBehavior::Atk_E2_E1, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal02>());
+		attack_behavior.AddSequence(AttackBehavior::Atk_E2_E1, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal01>());
+
 	}
 
 	void EnemyBossComponent::CommonUpdate(const float dt)
@@ -212,18 +236,17 @@ namespace cumulonimbus::component
 				if(next_attack_type == AttackType::Atk_Melee)
 				{// ‹ß‹——£UŒ‚
 					uint atk_index = arithmetic::RandomIntInRange(0, 3);
-					//attack_behavior.SetBehavior(static_cast<AttackBehavior>(atk_index));
-					attack_behavior.SetBehavior(static_cast<AttackBehavior>(0));
+					attack_behavior.SetBehavior(static_cast<AttackBehavior>(atk_index));
 				}
 				if (next_attack_type == AttackType::Atk_Long_Range)
 				{// ‰“‹——£UŒ‚
 					if (arithmetic::RandomIntInRange(0, 1) == 0)
 					{
-						attack_behavior.SetBehavior(AttackBehavior::Atk_Energy_01);
+						attack_behavior.SetBehavior(AttackBehavior::Atk_E1);
 					}
 					else
 					{
-						attack_behavior.SetBehavior(AttackBehavior::Atk_Energy_02);
+						attack_behavior.SetBehavior(AttackBehavior::Atk_E2);
 					}
 				}
 			}

@@ -1,29 +1,30 @@
 #include "project_view.h"
 
-#include <vector>
 #include <filesystem>
+#include <vector>
 
-#include <Windows.h>
 #include <portable-file-dialogs.h>
+#include <Windows.h>
 
 #include "imgui_stdlib.h"
 
 #include "asset_manager.h"
+#include "filename_helper.h"
 #include "file_path_helper.h"
 #include "generic.h"
 #include "locator.h"
 #include "material.h"
-#include "material_loader.h"
 #include "model.h"
-#include "texture.h"
-#include "texture_loader.h"
 #include "prefab.h"
-#include "prefab_loader.h"
-#include "scene_loader.h"
-#include "filename_helper.h"
 #include "scene.h"
 #include "scene_manager.h"
-
+#include "texture.h"
+// loaders
+#include "effekseer_loader.h"
+#include "material_loader.h"
+#include "prefab_loader.h"
+#include "scene_loader.h"
+#include "texture_loader.h"
 
 namespace
 {
@@ -132,6 +133,23 @@ namespace cumulonimbus::editor
 			if(ImGui::MenuItem("Material"))
 			{
 
+			}
+			ImGui::Separator();
+			if(ImGui::MenuItem("Effect"))
+			{
+				const auto selection = pfd::open_file{
+					"Import",
+					"",
+					{"Effect","*.efk *.efkfc"} }.result();
+
+				if (selection.empty())
+				{
+					ImGui::End();
+					return;
+				}
+				// アセット(エフェクト)
+				asset_manager.AddAsset(selection.at(0));
+				ImGui::EndPopup();
 			}
 			ImGui::Separator();
 			if(ImGui::MenuItem("Texture"))

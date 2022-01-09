@@ -70,6 +70,7 @@ namespace cumulonimbus::asset
 		 * @return	: true -> サポートしている
 		 * @return  : false -> サポートしていない
 		 */
+		[[nodiscard]]
 		bool Supported(std::filesystem::path extension) override;
 
 		/**

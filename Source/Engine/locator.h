@@ -6,6 +6,7 @@
 
 #include "asset_manager.h"
 #include "dx11_configurator.h"
+#include "effekseer_manager.h"
 #include "input_system.h"
 #include "resource_manager.h"
 #include "system.h"
@@ -41,6 +42,7 @@ namespace cumulonimbus::locator
 		static InputSystem*		GetInput()				{ return input.get(); }
 		static system::System*  GetSystem()				{ return system.get();	 }
 		static asset::AssetManager* GetAssetManager()	{ return asset_manager.get(); }
+		static system::EffekseerManager* GetEffeckseerManager() { return effekseer_manager.get(); }
 		static manager::texture::TextureResourceManager* GetTextureResourceManager() { return texture_resource_manager.get(); }
 
 		template<class T>
@@ -71,6 +73,11 @@ namespace cumulonimbus::locator
 				asset_manager = s;
 				return;
 			}
+			else if constexpr (std::is_same<T,system::EffekseerManager>::value)
+			{
+				effekseer_manager = s;
+				return;
+			}
 			else if constexpr (std::is_same<T,manager::texture::TextureResourceManager>::value)
 			{
 				texture_resource_manager = s;
@@ -90,6 +97,7 @@ namespace cumulonimbus::locator
 		inline static std::shared_ptr<InputSystem>			input{};
 		inline static std::shared_ptr<system::System>		system{};
 		inline static std::shared_ptr<asset::AssetManager>	asset_manager{};
+		inline static std::shared_ptr<system::EffekseerManager> effekseer_manager{};
 		inline static std::shared_ptr<manager::texture::TextureResourceManager> texture_resource_manager{ nullptr };
 	};
 } // cumulonimbus::locator

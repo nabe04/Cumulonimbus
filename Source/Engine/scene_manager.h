@@ -154,12 +154,12 @@ namespace cumulonimbus::scene
 		//-- Manager's --//
 		// アセットシート管理用マネジャー
 		std::shared_ptr<asset::AssetManager>	asset_manager{};
+		// エフェクシア
+		std::shared_ptr<system::EffekseerManager> effekseer_manager{};
 		// エディター(GUI)管理用マネジャー
 		std::unique_ptr<editor::EditorManager>	editor_manager{};
 		// 当たり判定管理用マネジャー
 		std::unique_ptr<collision::CollisionManager> collision_manager{};
-		// エフェクシア
-		std::unique_ptr<system::EffekseerManager> effekseer_manager{ nullptr };
 
 		void Execute();
 		void Initialize();

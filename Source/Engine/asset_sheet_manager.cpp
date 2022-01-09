@@ -1,10 +1,11 @@
 #include "asset_sheet_manager.h"
 
+#include "effect.h"
 #include "material.h"
 #include "model.h"
-#include "texture.h"
 #include "prefab.h"
 #include "scene_loader.h"
+#include "texture.h"
 
 namespace cumulonimbus::asset
 {
@@ -15,6 +16,7 @@ namespace cumulonimbus::asset
 		Register<Texture>();
 		Register<Prefab>();
 		Register<SceneAsset>();
+		Register<Effect>();
 	}
 
 	std::string AssetSheetManager::GetAssetFilename(const mapping::rename_type::UUID& id) const
