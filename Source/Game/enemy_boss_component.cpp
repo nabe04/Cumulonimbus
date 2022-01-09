@@ -74,8 +74,9 @@ namespace cumulonimbus::component
 
 		attack_behavior.ClearAll();
 		//-- 攻撃BehaviorTreeの追加 --//
-		// 通常攻撃 1
+		// 通常攻撃 1 + 2
 		attack_behavior.AddSequence(AttackBehavior::Atk_Normal_01, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal01>());
+		attack_behavior.AddSequence(AttackBehavior::Atk_Normal_01, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal02>());
 		// 通常攻撃 2
 		attack_behavior.AddSequence(AttackBehavior::Atk_Normal_02, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal02>());
 		// 通常攻撃 3
@@ -185,17 +186,6 @@ namespace cumulonimbus::component
 			// プレイヤーの攻撃範囲外なので行動Stateに移行する
 			//boss_behavior.SetState(BossBehavior::Move);
 			boss_behavior.SetState(BossBehavior::Attack);
-
-			//auto* sphere_collision_comp = GetRegistry()->TryGetComponent<SphereCollisionComponent>(GetEntity());
-			//if (!sphere_collision_comp)
-			//{
-			//	// プレイヤーの攻撃範囲外なので行動Stateに移行する
-			//	boss_behavior.SetState(BossBehavior::Move);
-			//	return;
-			//}
-
-			//// プレイヤーの攻撃範囲外なので行動Stateに移行する
-			//boss_behavior.SetState(BossBehavior::Move);
 		}
 	}
 
@@ -222,7 +212,8 @@ namespace cumulonimbus::component
 				if(next_attack_type == AttackType::Atk_Melee)
 				{// 近距離攻撃
 					uint atk_index = arithmetic::RandomIntInRange(0, 3);
-					attack_behavior.SetBehavior(static_cast<AttackBehavior>(atk_index));
+					//attack_behavior.SetBehavior(static_cast<AttackBehavior>(atk_index));
+					attack_behavior.SetBehavior(static_cast<AttackBehavior>(0));
 				}
 				if (next_attack_type == AttackType::Atk_Long_Range)
 				{// 遠距離攻撃

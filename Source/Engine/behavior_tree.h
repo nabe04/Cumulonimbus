@@ -80,7 +80,7 @@ namespace cumulonimbus::system
 			is_switched = true;
 			is_start	= true;
 
-			if (index <= behaviors.at(current_behavior).size())
+			if (index >= behaviors.at(current_behavior).size())
 			{
 				index = 0;
 				is_completed = true;
