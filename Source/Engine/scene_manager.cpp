@@ -62,9 +62,12 @@ namespace cumulonimbus::scene
 		editor_manager		= std::make_unique<editor::EditorManager>();
 		wave_system			= std::make_unique<system::WaveSystem>();
 		render_path			= std::make_unique<renderer::RenderPath>(locator::Locator::GetDx11Device()->device.Get());
-		system				= std::make_shared<system::System>();
-		asset_manager		= std::make_shared<asset::AssetManager>();
 		effekseer_manager	= std::make_shared<system::EffekseerManager>(locator::Locator::GetDx11Device()->device.Get(), locator::Locator::GetDx11Device()->immediate_context.Get());
+		locator::Locator::Provide<system::EffekseerManager>(effekseer_manager);
+		system				= std::make_shared<system::System>();
+		locator::Locator::Provide<system::System>(system);
+		asset_manager		= std::make_shared<asset::AssetManager>();
+		locator::Locator::Provide<asset::AssetManager>(asset_manager);
 		// システムのロード
 		system->Load();
 		// ウェーブシステムのロード
@@ -72,10 +75,7 @@ namespace cumulonimbus::scene
 		// システムへの関数登録
 		const auto& wave_hash = utility::GetHash<system::WaveSystem>();
 		system->RegisterRenderFunction(wave_hash, [&](ecs::Registry* registry) {wave_system->RenderImGui(registry); });
-		// ロケータへの登録
-		locator::Locator::Provide<system::System>(system);
-		locator::Locator::Provide<asset::AssetManager>(asset_manager);
-		locator::Locator::Provide<system::EffekseerManager>(effekseer_manager);
+
 
 		collision_manager = std::make_unique<collision::CollisionManager>(*system.get());
 

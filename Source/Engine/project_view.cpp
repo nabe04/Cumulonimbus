@@ -55,6 +55,7 @@ namespace cumulonimbus::editor
 		Register<asset::Model>(		"All Models");
 		Register<asset::Texture>(	"All Textures");
 		Register<asset::Prefab>(	"All Prefabs");
+		Register<asset::Effect>(	"All Effects");
 	}
 
 	void ProjectView::Render(const ecs::Registry* registry)
@@ -149,7 +150,6 @@ namespace cumulonimbus::editor
 				}
 				// アセット(エフェクト)
 				asset_manager.AddAsset(selection.at(0));
-				ImGui::EndPopup();
 			}
 			ImGui::Separator();
 			if(ImGui::MenuItem("Texture"))

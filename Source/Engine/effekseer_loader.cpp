@@ -104,6 +104,7 @@ namespace cumulonimbus::asset
 		const std::filesystem::path& to)
 	{
 		const auto filename = std::filesystem::path{ from }.filename().replace_extension().string();
+		std::filesystem::create_directory(to.string());
 		std::filesystem::create_directory(to.string() + "/" + filename);
 		const auto to_path = to.string() + "/" + filename;
 		if (!equivalent(from.parent_path(), to_path))
