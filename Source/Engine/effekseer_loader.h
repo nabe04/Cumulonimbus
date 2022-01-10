@@ -65,6 +65,43 @@ namespace cumulonimbus::asset
 		[[nodiscard]]
 		bool Supported(std::filesystem::path extension) override;
 
+		/**
+		 * @brief : エフェクトアセットを保持しているのかを
+		 *			エフェクトIDから判別
+		 * @param efk_id : エフェクトID
+		 */
+		[[nodiscard]]
+		bool HasEffect(const mapping::rename_type::UUID& efk_id) const;
+
+		/**
+		 * @brief : 取得したいエフェクトのID(UUID)を元にエフェクトを取得
+		 * @param id : 取得したいエフェクトのID(UUID)
+		 * @return : 取得したエフェクトの参照
+		 */
+		[[nodiscard]]
+		Effect& GetEffect(const mapping::rename_type::UUID& id);
+
+		/**
+		 * @brief : EffekseerLoaderが持つエフェクト全ての取得
+		 */
+		[[nodiscard]]
+		const std::map<mapping::rename_type::UUID, std::unique_ptr<Effect>>& GetEffects() const;
+
+		/**
+		 * @brief : EffekseerLoaderが持つエフェクト全ての取得
+		 */
+		[[nodiscard]]
+		std::map<mapping::rename_type::UUID, std::unique_ptr<Effect>>& GetEffects();
+
+		/**
+		 * @brief : ImGui上でのエフェクト選択関数
+		 * @remark : ※caution(1) : ImGuiを使用する関数内で使用すること
+		 * @remark : ※caution(2) : ImGui::Begin()の中でこの関数を呼ぶこと
+		 * @param asset_manager :
+		 * @param efk_id : 格納されるエフェクトID(UUID)
+		 */
+		bool ImSelectableEffect(AssetManager& asset_manager, mapping::rename_type::UUID& efk_id);
+
 	private:
 		std::map<mapping::rename_type::UUID, std::unique_ptr<Effect>> effects{};
 

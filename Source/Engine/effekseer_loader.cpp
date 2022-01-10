@@ -100,8 +100,77 @@ namespace cumulonimbus::asset
 		return extensions.contains(extension);
 	}
 
+	bool EffekseerLoader::HasEffect(const mapping::rename_type::UUID& efk_id) const
+	{
+		if (effects.contains(efk_id))
+			return true;
+
+		return false;
+	}
+
+	Effect& EffekseerLoader::GetEffect(const mapping::rename_type::UUID& id)
+	{
+		if (!effects.contains(id))
+			assert(!"Not found effect id(EffekseerLoader::GetEffect)");
+
+		return *effects.at(id).get();
+	}
+
+	const std::map<mapping::rename_type::UUID, std::unique_ptr<Effect>>& EffekseerLoader::GetEffects() const
+	{
+		return effects;
+	}
+
+	std::map<mapping::rename_type::UUID, std::unique_ptr<Effect>>& EffekseerLoader::GetEffects()
+	{
+		return effects;
+	}
+
+	bool EffekseerLoader::ImSelectableEffect(AssetManager& asset_manager, mapping::rename_type::UUID& efk_id)
+	{
+		std::filesystem::path effect_filename{};
+		const asset::AssetSheet& effect_sheet = asset_manager.GetAssetSheetManager().GetSheet<asset::Effect>();
+
+		if (effect_sheet.sheet.contains(efk_id))
+		{
+			effect_filename = effect_sheet.sheet.at(efk_id);
+			effect_filename = effect_filename.filename();
+			effect_filename.filename().replace_extension();
+		}
+		else
+		{
+			effect_filename = "None";
+		}
+
+		// エフェクトが選択された場合Trueに
+		bool result{ false };
+
+		if (ImGui::BeginCombo("Effects", effect_filename.string().c_str()))
+		{
+			for (const auto& [id, tex_filepath] : effect_sheet.sheet)
+			{
+				ImGui::SameLine();
+				const bool is_selected = (efk_id == id);
+				std::filesystem::path tex_filename = tex_filepath;
+				if (ImGui::Selectable(tex_filename.filename().replace_extension().string().c_str(),
+					is_selected, 0))
+				{
+					result = true;
+					efk_id = id;
+				}
+				if (is_selected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
+
+		return result;
+	}
+
 	mapping::rename_type::UUID EffekseerLoader::Convert(AssetManager& asset_manager, const std::filesystem::path& from,
-		const std::filesystem::path& to)
+	                                                    const std::filesystem::path& to)
 	{
 		const auto filename = std::filesystem::path{ from }.filename().replace_extension().string();
 		std::filesystem::create_directory(to.string());

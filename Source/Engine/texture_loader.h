@@ -96,16 +96,19 @@ namespace cumulonimbus::asset
 		 * @param id : 取得したいテクスチャのID(UUID)
 		 * @return : 取得したテクスチャの参照
 		 */
+		[[nodiscard]]
 		Texture& GetTexture(const mapping::rename_type::UUID& id);
 
 		/**
 		 * @brief : TextureLoaderが持つテクスチャ全ての取得
 		 */
+		[[nodiscard]]
 		const std::map<mapping::rename_type::UUID, std::unique_ptr<Texture>>& GetTextures() const;
 
 		/**
 		 * @brief : TextureLoaderが持つテクスチャ全ての取得
 		 */
+		[[nodiscard]]
 		std::map<mapping::rename_type::UUID, std::unique_ptr<Texture>>& GetTextures();
 
 		/**

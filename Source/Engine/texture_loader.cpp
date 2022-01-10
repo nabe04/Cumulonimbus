@@ -186,7 +186,8 @@ namespace cumulonimbus::asset
 		asset_manager.Save();
 	}
 
-	Texture& TextureLoader::GetTexture(const mapping::rename_type::UUID& id)
+	Texture& TextureLoader::
+	GetTexture(const mapping::rename_type::UUID& id)
 	{
 		if (!textures.contains(id))
 			return *dummy_texture.get();

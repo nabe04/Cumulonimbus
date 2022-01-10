@@ -23,8 +23,10 @@ namespace cumulonimbus::component
 		void save(Archive&& archive, uint32_t version) const;
 
 		void Play();
+		void ChangeEffect();
 
 	private:
+		mapping::rename_type::UUID effect_id{};
 		Effekseer::Effect* effect{ nullptr };
 		Effekseer::Handle handle{ -1 };
 	};

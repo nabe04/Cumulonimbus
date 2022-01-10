@@ -3,6 +3,8 @@
 #include "scene.h"
 #include "scene_manager.h"
 #include "effekseer_manager.h"
+#include "effekseer_loader.h"
+#include "locator.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::EffekseerComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::EffekseerComponent)
@@ -66,6 +68,12 @@ namespace cumulonimbus::component
 	{
 		if (GetRegistry()->CollapsingHeader<EffekseerComponent>(GetEntity(), "Effekseer"))
 		{
+			auto& asset_manager = *locator::Locator::GetAssetManager();
+			auto& asset_sheet_manager = asset_manager.GetAssetSheetManager();
+			auto* effekseer_loader = asset_manager.GetLoader<asset::EffekseerLoader>();
+
+			effekseer_loader->ImSelectableEffect(asset_manager, effect_id);
+
 			if(ImGui::Button("Play"))
 			{
 				Play();
