@@ -107,22 +107,22 @@ namespace cumulonimbus::renderer
 			// GBuffer‚Ö‚Ì•`‰æˆ—
 			Render3DToGBuffer(immediate_context, &registry, &camera, scene->GetLight(), false);
 
-			// Effekseer‚Ì•`‰æ
-			system::EffekseerManager& effekseer_manager = *scene->GetSceneManager()->GetEffekseerManager();
-			RenderEffekseerBegin(&effekseer_manager, &camera);
-			RenderEffekseer(&effekseer_manager);
-			RenderEffekseerEnd(&effekseer_manager, &camera);
+			//// Effekseer‚Ì•`‰æ
+			//system::EffekseerManager& effekseer_manager = *scene->GetSceneManager()->GetEffekseerManager();
+			//RenderEffekseerBegin(immediate_context, &effekseer_manager, &camera);
+			//RenderEffekseer(&effekseer_manager);
+			//RenderEffekseerEnd(&effekseer_manager, &camera);
 		}
 
 		Render3DToGBuffer_End(immediate_context, &camera);
 
 		for (auto& scene : scenes | std::views::values)
 		{
-			//// Effekseer‚Ì•`‰æ
-			//system::EffekseerManager& effekseer_manager = *scene->GetSceneManager()->GetEffekseerManager();
-			//RenderEffekseerBegin(&effekseer_manager, &camera);
-			//RenderEffekseer(&effekseer_manager);
-			//RenderEffekseerEnd(&effekseer_manager, &camera);
+			// Effekseer‚Ì•`‰æ
+			system::EffekseerManager& effekseer_manager = *scene->GetSceneManager()->GetEffekseerManager();
+			RenderEffekseerBegin(immediate_context,&effekseer_manager, &camera);
+			RenderEffekseer(&effekseer_manager);
+			RenderEffekseerEnd(immediate_context,&effekseer_manager, &camera);
 		}
 
 		for (auto& scene : scenes | std::views::values)
@@ -240,9 +240,9 @@ namespace cumulonimbus::renderer
 
 				// Effekseer‚Ì•`‰æ
 				system::EffekseerManager& effekseer_manager = *scene->GetSceneManager()->GetEffekseerManager();
-				RenderEffekseerBegin(&effekseer_manager, camera_comp.GetCamera());
+				RenderEffekseerBegin(immediate_context,&effekseer_manager, camera_comp.GetCamera());
 				RenderEffekseer(&effekseer_manager);
-				RenderEffekseerEnd(&effekseer_manager, camera_comp.GetCamera());
+				RenderEffekseerEnd(immediate_context, &effekseer_manager, camera_comp.GetCamera());
 
 				// 2DƒXƒvƒ‰ƒCƒg‚Ì•`‰æ
 				Render2D(immediate_context, &registry, camera_comp.GetCamera(), false);
@@ -444,11 +444,15 @@ namespace cumulonimbus::renderer
 	}
 
 	void RenderPath::RenderEffekseerBegin(
+		ID3D11DeviceContext* immediate_context,
 		const system::EffekseerManager* effekseer_manager,
 		const camera::Camera* camera)
 	{
+		camera->BindFrameBuffer(g_buffer->GetDepthStencilView());
 		camera->BindCBuffer();
-		effekseer_manager->Begin(camera);
+
+		effekseer_manager->Begin(immediate_context, camera, g_buffer->GetDepthStencilView());
+		camera->UnbindCBuffer();
 	}
 
 	void RenderPath::RenderEffekseer(const system::EffekseerManager* effekseer_manager)
@@ -456,10 +460,13 @@ namespace cumulonimbus::renderer
 		effekseer_manager->Render();
 	}
 
-	void RenderPath::RenderEffekseerEnd(const system::EffekseerManager* effekseer_manager, const camera::Camera* camera)
+	void RenderPath::RenderEffekseerEnd(ID3D11DeviceContext* immediate_context, const system::EffekseerManager* effekseer_manager, const camera::Camera* camera)
 	{
-		effekseer_manager->End();
-		camera->BindCBuffer();
+		effekseer_manager->End(immediate_context);
+
+		//camera->BindFrameBuffer();
+		fullscreen_quad->Blit(immediate_context);
+		camera->UnbindFrameBuffer();
 	}
 
 	void RenderPath::Render3DToGBuffer_Begin(ID3D11DeviceContext* immediate_context) const

@@ -15,9 +15,9 @@ namespace cumulonimbus::system
 		explicit EffekseerManager(ID3D11Device* device, ID3D11DeviceContext* device_context);
 		~EffekseerManager();
 
-		void Begin(const camera::Camera* camera) const;
+		void Begin(ID3D11DeviceContext* immediate_context, const camera::Camera* camera,ID3D11DepthStencilView* dsv = nullptr) const;
 		void Render() const;
-		void End() const;
+		void End(ID3D11DeviceContext* immediate_context) const;
 
 		void Update(float dt) const;
 

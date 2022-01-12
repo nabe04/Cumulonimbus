@@ -63,7 +63,6 @@ namespace cumulonimbus::editor
 		scene_view_camera->Update(dt);
 	}
 
-
 	void SceneView::Render(ecs::Registry* const registry, const ProjectView* project_view, const Hierarchy* hierarchy)
 	{
 		ImVec2 mouse_pos{};

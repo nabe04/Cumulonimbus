@@ -227,9 +227,9 @@ namespace cumulonimbus::camera
 			clear_color.x, clear_color.y, clear_color.z, clear_color.z);
 	}
 
-	void Camera::BindFrameBuffer() const
+	void Camera::BindFrameBuffer(ID3D11DepthStencilView* dsv) const
 	{
-		off_screen->Activate(locator::Locator::GetDx11Device()->immediate_context.Get());
+		off_screen->Activate(locator::Locator::GetDx11Device()->immediate_context.Get(), dsv);
 	}
 
 	void Camera::UnbindFrameBuffer() const

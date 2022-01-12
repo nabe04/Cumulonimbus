@@ -161,6 +161,9 @@ namespace cumulonimbus::component
 		// ビヘイビアツリーの一連の処理が完了したか
 		bool is_behavior_completed{ false };
 
+		// エネルギーショットのプレハブ
+		mapping::rename_type::UUID shot_prefab_id{};
+
 		// 次ビヘイビアでの攻撃種
 		AttackType next_attack_type{};
 

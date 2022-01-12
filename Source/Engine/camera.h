@@ -65,7 +65,7 @@ namespace cumulonimbus::camera
 
 		void ClearFrameBuffer(
 			const DirectX::SimpleMath::Vector4& clear_color = { 0.0f,0.0f,0.0f,1.0f }) const;
-		void BindFrameBuffer() const;
+		void BindFrameBuffer(ID3D11DepthStencilView* dsv = nullptr) const;
 		void UnbindFrameBuffer() const;
 
 		void BindCBuffer(bool set_in_vs = true, bool set_in_ps = true) const;

@@ -314,6 +314,56 @@ namespace cumulonimbus::asset
 		return prefabs.at(prefab_id)->Instantiate(registry);
 	}
 
+	void PrefabLoader::ImSelectablePrefab(AssetManager& asset_manager, mapping::rename_type::UUID& prefab_id)
+	{
+		std::filesystem::path prefab_filename{};
+		bool is_dummy = false;
+		const asset::AssetSheet& prefab_sheet = asset_manager.GetAssetSheetManager().GetSheet<asset::Prefab>();
+		if (prefab_sheet.sheet.contains(prefab_id))
+		{
+			prefab_filename = prefab_sheet.sheet.at(prefab_id);
+			prefab_filename.filename().replace_extension();
+			is_dummy = true;
+		}
+		else
+		{
+			prefab_filename = "None";
+		}
+
+		if (ImGui::BeginCombo("Prefabs", prefab_filename.string().c_str()))
+		{
+			{// ダミーテクスチャ用
+				ImGui::SameLine();
+				if (ImGui::Selectable(prefab_filename.string().c_str(),
+					is_dummy, 0))
+				{
+					prefab_id = { "" };
+				}
+				if (is_dummy)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+
+			for (const auto& [id, tex_filepath] : prefab_sheet.sheet)
+			{
+				const bool is_selected = (prefab_id == id);
+
+				if (std::filesystem::path asset_filename = tex_filepath;
+					ImGui::Selectable(asset_filename.filename().replace_extension().string().c_str(),
+									  is_selected, 0))
+				{
+					prefab_id = id;
+				}
+				if (is_selected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
+	}
+
 	void PrefabLoader::DeletePrefab(const mapping::rename_type::UUID& prefab_id, const std::filesystem::path& delete_path)
 	{
 		/*

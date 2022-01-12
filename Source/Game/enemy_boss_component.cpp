@@ -2,12 +2,14 @@
 
 #include "arithmetic.h"
 
+#include "locator.h"
 #include "model_component.h"
 #include "player_component.h"
 #include "sphere_collision_component.h"
 #include "transform_component.h"
 #include "collider_message_receiver_component.h"
 #include "collider_message_sender_component.h"
+#include "prefab_loader.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::EnemyBossComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::EnemyBaseComponent, cumulonimbus::component::EnemyBossComponent)
@@ -129,8 +131,13 @@ namespace cumulonimbus::component
 	{
 		if(GetRegistry()->CollapsingHeader<EnemyBossComponent>(GetEntity(),"E Boss"))
 		{
+			auto& asset_manager = *locator::Locator::GetAssetManager();
+			auto& prefab_loader = *asset_manager.GetLoader<asset::PrefabLoader>();
 
+			ImGui::Text("Shot Prefab");
+			prefab_loader.ImSelectablePrefab(asset_manager, shot_prefab_id);
 		}
+
 	}
 
 	void EnemyBossComponent::Initialize(ecs::Registry* registry, const mapping::rename_type::Entity ent)

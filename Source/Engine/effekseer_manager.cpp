@@ -39,8 +39,9 @@ namespace cumulonimbus::system
 		effekseer_renderer->Destroy();
 	}
 
-	void EffekseerManager::Begin(const camera::Camera* camera) const
+	void EffekseerManager::Begin(ID3D11DeviceContext* immediate_context, const camera::Camera* camera, ID3D11DepthStencilView* dsv) const
 	{
+		//frame_buffer->Activate(immediate_context,dsv);
 		// ビュー＆プロジェクション行列をEffekseerレンダラに設定
 		effekseer_renderer->SetCameraMatrix(*reinterpret_cast<const Effekseer::Matrix44*>(&camera->GetViewMat()));
 		effekseer_renderer->SetProjectionMatrix(*reinterpret_cast<const Effekseer::Matrix44*>(&camera->GetProjectionMat()));
@@ -55,10 +56,11 @@ namespace cumulonimbus::system
 		effekseer_manager->Draw();
 	}
 
-	void EffekseerManager::End() const
+	void EffekseerManager::End(ID3D11DeviceContext* immediate_context) const
 	{
 		// Effekseer描画終了
 		effekseer_renderer->EndRendering();
+		//frame_buffer->Deactivate(immediate_context);
 	}
 
 	void EffekseerManager::Update(const float dt) const

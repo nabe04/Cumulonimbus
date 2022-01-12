@@ -172,9 +172,9 @@ namespace cumulonimbus::renderer
 		/**
 		 * @brief : Effekseer‚Ì•`‰æ
 		 */
-		void RenderEffekseerBegin(const system::EffekseerManager* effekseer_manager,const camera::Camera* camera);
+		void RenderEffekseerBegin(ID3D11DeviceContext* immediate_context, const system::EffekseerManager* effekseer_manager,const camera::Camera* camera);
 		void RenderEffekseer(const system::EffekseerManager* effekseer_manager);
-		void RenderEffekseerEnd(const system::EffekseerManager* effekseer_manager, const camera::Camera* camera);
+		void RenderEffekseerEnd(ID3D11DeviceContext* immediate_context, const system::EffekseerManager* effekseer_manager, const camera::Camera* camera);
 
 		/**
 		 * @brief     : 3Dƒ‚ƒfƒ‹‚ÌGBuffer‚Ö‚Ì•`‰æ

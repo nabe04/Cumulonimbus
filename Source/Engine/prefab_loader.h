@@ -47,7 +47,7 @@ namespace cumulonimbus::asset
 		 * @param changed_name : 変更後のファイル名(※ファイルパスや拡張子は含まない)
 		 */
 		void Rename(AssetManager& asset_manager, const mapping::rename_type::UUID& asset_id, const std::string& changed_name) override;
-		
+
 		/**
 		 * @brief : 削除したいファイルパスからアセットを削除
 		 * @param asset_manager :
@@ -117,6 +117,15 @@ namespace cumulonimbus::asset
 		mapping::rename_type::Entity Instantiate(
 			ecs::Registry* registry,
 			const mapping::rename_type::UUID& prefab_id);
+
+		/**
+		 * @brief : ImGui上でのプレハブ選択関数
+		 * @remark : ※caution(1) : ImGuiを使用する関数内で使用すること
+		 * @remark : ※caution(2) : ImGui::Begin()の中でこの関数を呼ぶこと
+		 * @param asset_manager :
+		 * @param prefab_id : 格納されるプレハブID(UUID)
+		 */
+		void ImSelectablePrefab(AssetManager& asset_manager, mapping::rename_type::UUID& prefab_id);
 	private:
 		std::map<mapping::rename_type::UUID, std::unique_ptr<Prefab>> prefabs{};
 
