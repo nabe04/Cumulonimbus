@@ -135,6 +135,7 @@ namespace cumulonimbus::asset
 		{
 			effect_filename = effect_sheet.sheet.at(efk_id);
 			effect_filename = effect_filename.filename();
+
 			effect_filename.filename().replace_extension();
 		}
 		else

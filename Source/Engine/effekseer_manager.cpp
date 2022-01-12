@@ -1,6 +1,7 @@
 #include "effekseer_manager.h"
 
 #include "camera.h"
+#include "locator.h"
 
 namespace cumulonimbus::system
 {
@@ -25,6 +26,11 @@ namespace cumulonimbus::system
 
 		// Effekseer‚ð¶ŽèÀ•WŒn‚ÅŒvŽZ‚·‚é
 		effekseer_manager->SetCoordinateSystem(Effekseer::CoordinateSystem::LH);
+
+		// Effekseer—p‚Ìframe bufferì¬
+		const u_int width  = locator::Locator::GetWindow()->Width();
+		const u_int height = locator::Locator::GetWindow()->Height();
+		frame_buffer = std::make_unique<FrameBuffer>(device, width, height, false, 1, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R24G8_TYPELESS, true, false);
 	}
 
 	EffekseerManager::~EffekseerManager()

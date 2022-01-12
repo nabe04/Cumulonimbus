@@ -91,7 +91,7 @@ public:
 	}
 
 	// activate only "depth_stencil_view"
-	void ActivateDepthStencilView(ID3D11DeviceContext* const immediate_context)
+	void ActivateDepthStencilView(ID3D11DeviceContext* const immediate_context, ID3D11DepthStencilView* dsv = nullptr)
 	{
 		number_of_stored_viewports = D3D11_VIEWPORT_AND_SCISSORRECT_OBJECT_COUNT_PER_PIPELINE;
 		immediate_context->RSGetViewports(&number_of_stored_viewports, default_viewports);
@@ -99,7 +99,15 @@ public:
 
 		immediate_context->OMGetRenderTargets(1, default_render_target_view.ReleaseAndGetAddressOf(), default_depth_stencil_view.ReleaseAndGetAddressOf());
 		ID3D11RenderTargetView* null_render_target_view = nullptr;
-		immediate_context->OMSetRenderTargets(1, &null_render_target_view, depth_stencil_view.Get());
+		if(dsv)
+		{
+			immediate_context->OMSetRenderTargets(1, &null_render_target_view, dsv);
+		}
+		else
+		{
+			immediate_context->OMSetRenderTargets(1, &null_render_target_view, depth_stencil_view.Get());
+		}
+
 	}
 
 	void Deactivate(ID3D11DeviceContext* const immediate_context)

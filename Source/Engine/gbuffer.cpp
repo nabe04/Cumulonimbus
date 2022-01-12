@@ -174,6 +174,11 @@ namespace cumulonimbus::graphics::buffer
 		return normal_buffer->GetRenderTargetSRV();
 	}
 
+	ID3D11DepthStencilView* GBuffer::GetDepthStencilView() const
+	{
+		return dsv_for_g_buffer.Get();
+	}
+
 	void GBuffer::BindRTV()
 	{
 		ID3D11DeviceContext* immediate_context = locator::Locator::GetDx11Device()->immediate_context.Get();

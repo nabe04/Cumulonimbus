@@ -1,5 +1,7 @@
 #pragma once
 
+class FrameBuffer;
+
 namespace cumulonimbus::camera
 {
 	class Camera;
@@ -34,5 +36,7 @@ namespace cumulonimbus::system
 	private:
 		Effekseer::Manager* effekseer_manager{ nullptr };
 		EffekseerRenderer::Renderer* effekseer_renderer{ nullptr };
+
+		std::unique_ptr<FrameBuffer> frame_buffer{ nullptr };
 	};
 } // cumulonimbus::system

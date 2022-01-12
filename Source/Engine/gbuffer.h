@@ -116,12 +116,19 @@ namespace cumulonimbus::graphics::buffer
 		 */
 		void UnbindDepthTexture();
 
-		/*
+		/**
 		 * brief : GBufferテクスチャのSRVのゲット
 		 */
-		[[nodiscard]] ID3D11ShaderResourceView** GetColorBufferSRV_Address()		const;
-		[[nodiscard]] ID3D11ShaderResourceView** GetPositionBufferSRV_Address()		const;
-		[[nodiscard]] ID3D11ShaderResourceView** GetNormalBufferSRV_Address()		const;
+		[[nodiscard]]
+		ID3D11ShaderResourceView** GetColorBufferSRV_Address() const;
+		[[nodiscard]]
+		ID3D11ShaderResourceView** GetPositionBufferSRV_Address() const;
+		[[nodiscard]]
+		ID3D11ShaderResourceView** GetNormalBufferSRV_Address()	const;
+
+		// Depth Stencil Viewのゲット
+		[[nodiscard]]
+		ID3D11DepthStencilView* GetDepthStencilView() const;
 
 	private:
 		/*

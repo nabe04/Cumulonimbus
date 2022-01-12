@@ -118,6 +118,15 @@ namespace cumulonimbus::renderer
 
 		for (auto& scene : scenes | std::views::values)
 		{
+			//// Effekseerの描画
+			//system::EffekseerManager& effekseer_manager = *scene->GetSceneManager()->GetEffekseerManager();
+			//RenderEffekseerBegin(&effekseer_manager, &camera);
+			//RenderEffekseer(&effekseer_manager);
+			//RenderEffekseerEnd(&effekseer_manager, &camera);
+		}
+
+		for (auto& scene : scenes | std::views::values)
+		{
 			// シーンがアクティブで無いのなら描画しない
 			if (!scene->GetIsVisible())
 				continue;
