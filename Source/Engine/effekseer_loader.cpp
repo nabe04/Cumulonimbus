@@ -130,13 +130,14 @@ namespace cumulonimbus::asset
 	{
 		std::filesystem::path effect_filename{};
 		const asset::AssetSheet& effect_sheet = asset_manager.GetAssetSheetManager().GetSheet<asset::Effect>();
+		bool is_dummy = false;
 
 		if (effect_sheet.sheet.contains(efk_id))
 		{
 			effect_filename = effect_sheet.sheet.at(efk_id);
 			effect_filename = effect_filename.filename();
-
 			effect_filename.filename().replace_extension();
+			is_dummy = true;
 		}
 		else
 		{
@@ -148,9 +149,21 @@ namespace cumulonimbus::asset
 
 		if (ImGui::BeginCombo("Effects", effect_filename.string().c_str()))
 		{
+			{// ダミーエフェクト用
+				ImGui::SameLine();
+				if (ImGui::Selectable(effect_filename.string().c_str(),
+					is_dummy, 0))
+				{
+					efk_id = { "" };
+				}
+				if (is_dummy)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+
 			for (const auto& [id, tex_filepath] : effect_sheet.sheet)
 			{
-				ImGui::SameLine();
 				const bool is_selected = (efk_id == id);
 				std::filesystem::path tex_filename = tex_filepath;
 				if (ImGui::Selectable(tex_filename.filename().replace_extension().string().c_str(),

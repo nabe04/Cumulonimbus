@@ -197,6 +197,7 @@
     <ClInclude Include="Source\Game\enemy_forest_demon_component.h" />
     <ClInclude Include="Source\Game\enemy_slime_component.h" />
     <ClInclude Include="Source\Game\enemy_soldier_component.h" />
+    <ClInclude Include="Source\Game\energy_shot_component.h" />
     <ClInclude Include="Source\Game\player_component.h" />
     <ClInclude Include="Source\Game\player_sword_component.h" />
     <ClInclude Include="Source\Game\soldier_sword_component.h" />
@@ -361,6 +362,7 @@
     <ClCompile Include="Source\Game\enemy_forest_demon_component.cpp" />
     <ClCompile Include="Source\Game\enemy_slime_component.cpp" />
     <ClCompile Include="Source\Game\enemy_soldier_component.cpp" />
+    <ClCompile Include="Source\Game\energy_shot_component.cpp" />
     <ClCompile Include="Source\Game\player_component.cpp" />
     <ClCompile Include="Source\Game\player_sword_component.cpp" />
     <ClCompile Include="Source\Game\soldier_sword_component.cpp" />

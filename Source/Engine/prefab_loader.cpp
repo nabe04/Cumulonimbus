@@ -154,6 +154,13 @@ namespace cumulonimbus::asset
 		return extensions.contains(extension);
 	}
 
+	bool PrefabLoader::HasPrefab(const mapping::rename_type::UUID& prefab_id) const
+	{
+		if (prefabs.contains(prefab_id))
+			return true;
+		return false;
+	}
+
 	mapping::rename_type::UUID PrefabLoader::CreatePrefab(
 		AssetManager& asset_manager, ecs::Registry* registry,
 		const mapping::rename_type::Entity& ent,
@@ -332,7 +339,7 @@ namespace cumulonimbus::asset
 
 		if (ImGui::BeginCombo("Prefabs", prefab_filename.string().c_str()))
 		{
-			{// ダミーテクスチャ用
+			{// ダミープレハブ用
 				ImGui::SameLine();
 				if (ImGui::Selectable(prefab_filename.string().c_str(),
 					is_dummy, 0))

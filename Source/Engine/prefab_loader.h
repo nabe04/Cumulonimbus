@@ -71,6 +71,14 @@ namespace cumulonimbus::asset
 		bool Supported(std::filesystem::path extension) override;
 
 		/**
+		 * @brief : プレハブアセットを保持しているかを
+		 *			プレハブIDから判別
+		 * @param prefab_id : プレハブID
+		 */
+		[[nodiscard]]
+		bool HasPrefab(const mapping::rename_type::UUID& prefab_id) const;
+
+		/**
 		 * @brief : プレファブの作成
 		 * @ramark : is_once(第4引数)をfalseにした場合アセットシート
 		 *			 に登録されているパスと保存したいパスが同じ場合

@@ -53,7 +53,11 @@ namespace cumulonimbus::scene
 		/**
 		 * @brief : ゲーム開始時処理
 		 */
-		void StartGame();
+		void StartGame() const;
+		/**
+		 * @brief : ゲーム終了時処理
+		 */
+		void EndGame() const;
 		/**
 		 * @brief : 共通の更新処理
 		 */

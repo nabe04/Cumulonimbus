@@ -8,24 +8,38 @@
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::EffekseerComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::EffekseerComponent)
-CEREAL_CLASS_VERSION(cumulonimbus::component::EffekseerComponent, 0)
+CEREAL_CLASS_VERSION(cumulonimbus::component::EffekseerComponent, 1)
 
 namespace cumulonimbus::component
 {
 	template <class Archive>
-	void EffekseerComponent::load(Archive&& archive, uint32_t version)
+	void EffekseerComponent::load(Archive&& archive, const uint32_t version)
 	{
 		archive(
 			cereal::base_class<ComponentBase>(this)
 		);
+
+		if(version == 1)
+		{
+			archive(
+				CEREAL_NVP(effect_id)
+			);
+		}
 	}
 
 	template <class Archive>
-	void EffekseerComponent::save(Archive&& archive, uint32_t version) const
+	void EffekseerComponent::save(Archive&& archive, const uint32_t version) const
 	{
 		archive(
 			cereal::base_class<ComponentBase>(this)
 		);
+
+		if (version == 1)
+		{
+			archive(
+				CEREAL_NVP(effect_id)
+			);
+		}
 	}
 
 	EffekseerComponent::EffekseerComponent(ecs::Registry* registry, const mapping::rename_type::Entity ent)
@@ -36,7 +50,7 @@ namespace cumulonimbus::component
 		char16_t utf16_filename[256];
 		Effekseer::ConvertUtf8ToUtf16(utf16_filename, 256, "./Data/Assets/Effekseer/Homing_Laser01/Homing_Laser01.efk");
 
-		effect = Effekseer::Effect::Create(const_cast<Effekseer::Manager*>(effekseer_manager->GetManager()), static_cast<EFK_CHAR*>(utf16_filename));
+		//effect_ = Effekseer::Effect::Create(const_cast<Effekseer::Manager*>(effekseer_manager->GetManager()), static_cast<EFK_CHAR*>(utf16_filename));
 	}
 
 	EffekseerComponent::EffekseerComponent(
@@ -45,12 +59,10 @@ namespace cumulonimbus::component
 		const EffekseerComponent& copy_comp)
 		: ComponentBase{ registry,ent }
 	{
-		auto* effekseer_manager = GetRegistry()->GetScene()->GetSceneManager()->GetEffekseerManager();
-
-		char16_t utf16_filename[256];
-		Effekseer::ConvertUtf8ToUtf16(utf16_filename, 256, "./Data/Assets/Effekseer/Homing_Laser01/Homing_Laser01.efk");
-
-		effect = Effekseer::Effect::Create(const_cast<Effekseer::Manager*>(effekseer_manager->GetManager()), static_cast<EFK_CHAR*>(utf16_filename));
+		*this = copy_comp;
+		SetRegistry(registry);
+		SetEntity(ent);
+		ChangeEffect(effect_id);
 	}
 
 	EffekseerComponent::EffekseerComponent(const mapping::component_tag::ComponentTag tag)
@@ -61,7 +73,18 @@ namespace cumulonimbus::component
 
 	EffekseerComponent::~EffekseerComponent()
 	{
-		ES_SAFE_RELEASE(effect);
+		//ES_SAFE_RELEASE(effect_);
+	}
+
+	void EffekseerComponent::End()
+	{
+		if (!effect)
+			return;
+
+		auto* effekseer_manager = GetRegistry()->GetScene()->GetSceneManager()->GetEffekseerManager();
+		const Effekseer::Manager* manager = effekseer_manager->GetManager();
+
+		const_cast<Effekseer::Manager*>(manager)->StopEffect(handle);
 	}
 
 	void EffekseerComponent::RenderImGui()
@@ -70,9 +93,12 @@ namespace cumulonimbus::component
 		{
 			auto& asset_manager = *locator::Locator::GetAssetManager();
 			auto& asset_sheet_manager = asset_manager.GetAssetSheetManager();
-			auto* effekseer_loader = asset_manager.GetLoader<asset::EffekseerLoader>();
 
-			effekseer_loader->ImSelectableEffect(asset_manager, effect_id);
+			if(auto* effekseer_loader = asset_manager.GetLoader<asset::EffekseerLoader>();
+			   effekseer_loader->ImSelectableEffect(asset_manager, effect_id))
+			{
+				effect = &effekseer_loader->GetEffect(effect_id);
+			}
 
 			if(ImGui::Button("Play"))
 			{
@@ -83,20 +109,35 @@ namespace cumulonimbus::component
 
 	void EffekseerComponent::Load(ecs::Registry* registry)
 	{
+		SetRegistry(registry);
+		ChangeEffect(effect_id);
 	}
 
 	void EffekseerComponent::Play()
 	{
 		auto* effekseer_manager = GetRegistry()->GetScene()->GetSceneManager()->GetEffekseerManager();
 		const Effekseer::Manager* manager = effekseer_manager->GetManager();
-		if(!effect)
-		{
-			char16_t utf16_filename[256];
-			Effekseer::ConvertUtf8ToUtf16(utf16_filename, 256, "./Data/Assets/Effekseer/magic_circle/magic_circle3.efk");
-			effect = Effekseer::Effect::Create(const_cast<Effekseer::Manager*>(manager), static_cast<EFK_CHAR*>(utf16_filename));
-		}
+		//if(!effect_)
+		//{
+		//	char16_t utf16_filename[256];
+		//	Effekseer::ConvertUtf8ToUtf16(utf16_filename, 256, "./Data/Assets/Effekseer/magic_circle/magic_circle3.efk");
+		//	effect_ = Effekseer::Effect::Create(const_cast<Effekseer::Manager*>(manager), static_cast<EFK_CHAR*>(utf16_filename));
+		//}
 
-		handle = const_cast<Effekseer::Manager*>(manager)->Play(effect, { 0, 0.01f, 0 });
+		if (!effect)
+			return;
 
+		handle = const_cast<Effekseer::Manager*>(manager)->Play(effect->GetEffect(), { 0, 0.01f, 0 });
 	}
+
+	void EffekseerComponent::ChangeEffect(const mapping::rename_type::UUID& efk_id)
+	{
+		if (efk_id.empty())
+			return;
+
+		auto& asset_manager = *locator::Locator::GetAssetManager();
+		auto* effekseer_loader = asset_manager.GetLoader<asset::EffekseerLoader>();
+		effect = &effekseer_loader->GetEffect(effect_id);
+	}
+
 } // cumulonimbus::component

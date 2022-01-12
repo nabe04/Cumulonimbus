@@ -56,6 +56,7 @@ namespace cumulonimbus::component
 
 
 		virtual void Start() {}
+		virtual void End() {}
 		virtual void PreCommonUpdate(float dt) {}
 		virtual void CommonUpdate(float dt) {}
 		virtual void PostCommonUpdate(float dt) {}

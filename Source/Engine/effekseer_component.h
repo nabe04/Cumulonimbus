@@ -1,5 +1,6 @@
 #pragma once
 #include "component_base.h"
+#include "effect.h"
 
 namespace cumulonimbus::component
 {
@@ -12,6 +13,8 @@ namespace cumulonimbus::component
 		explicit EffekseerComponent()  = default; // for cereal
 		~EffekseerComponent() override;
 
+		void End() override;
+		
 		void RenderImGui() override;
 
 		void Load(ecs::Registry* registry) override;
@@ -23,11 +26,13 @@ namespace cumulonimbus::component
 		void save(Archive&& archive, uint32_t version) const;
 
 		void Play();
-		void ChangeEffect();
+		void ChangeEffect(const mapping::rename_type::UUID& efk_id);
 
 	private:
 		mapping::rename_type::UUID effect_id{};
-		Effekseer::Effect* effect{ nullptr };
+		asset::Effect* effect{};
+
+		//Effekseer::Effect* effect_{ nullptr };
 		Effekseer::Handle handle{ -1 };
 	};
 } // cumulonimbus::component

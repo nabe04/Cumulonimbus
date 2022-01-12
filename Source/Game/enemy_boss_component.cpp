@@ -243,7 +243,8 @@ namespace cumulonimbus::component
 				if(next_attack_type == AttackType::Atk_Melee)
 				{// ‹ß‹——£UŒ‚
 					uint atk_index = arithmetic::RandomIntInRange(0, 3);
-					attack_behavior.SetBehavior(static_cast<AttackBehavior>(atk_index));
+					//attack_behavior.SetBehavior(static_cast<AttackBehavior>(atk_index));
+					attack_behavior.SetBehavior(AttackBehavior::Atk_N3);
 				}
 				if (next_attack_type == AttackType::Atk_Long_Range)
 				{// ‰“‹——£UŒ‚
@@ -383,6 +384,12 @@ namespace cumulonimbus::component
 		if (is_start)
 		{
 			model_comp->SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Normal_03));
+
+			auto* prefab_loader = locator::Locator::GetAssetManager()->GetLoader<asset::PrefabLoader>();
+			if(prefab_loader->HasPrefab(shot_prefab_id))
+			{
+				prefab_loader->Instantiate(GetRegistry(), shot_prefab_id);
+			}
 		}
 
 		if (model_comp->IsPlayAnimation())

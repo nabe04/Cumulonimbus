@@ -70,6 +70,8 @@ namespace cumulonimbus::ecs
 
 		//  ゲーム時更新処理の初めの1フレーム時の処理
 		virtual void StartGame()				= 0;
+		// ゲーム終了時処理
+		virtual void EndGame()					= 0;
 		// 共通の更新処理
 		virtual void PreCommonUpdate(float dt)	= 0;
 		virtual void CommonUpdate(float dt)		= 0;
@@ -119,9 +121,19 @@ namespace cumulonimbus::ecs
 		//--  ゲーム時更新処理の初めの1フレーム時の処理 --//
 		void StartGame() override
 		{
+			start_ent.clear();
 			for(auto& component : components)
 			{
 				component.Start();
+			}
+		}
+
+		//-- ゲーム終了時処理 --//
+		void EndGame() override
+		{
+			for(auto& component : components)
+			{
+				component.End();
 			}
 		}
 
@@ -172,6 +184,15 @@ namespace cumulonimbus::ecs
 		//-- ゲーム更新処理 --//
 		void PreGameUpdate(const float dt) override
 		{
+			for(auto& ent : start_ent)
+			{
+				const int index = GetEntityID(ent);
+				if(index >= 0)
+					components.at(index).Start();
+			}
+
+			start_ent.clear();
+
 			for(auto& component : components)
 			{
 				component.PreGameUpdate(dt);
@@ -215,7 +236,7 @@ namespace cumulonimbus::ecs
 			}
 
 			components.emplace_back(T{ registry, entity ,args... });
-
+			start_ent.emplace_back(entity);
 			const size_t index = static_cast<size_t>(entity_id.emplace(entity, components.size() - 1).first->second);
 
 			return  components.at(index);
@@ -230,7 +251,7 @@ namespace cumulonimbus::ecs
 			}
 
 			components.emplace_back(T{});
-
+			start_ent.emplace_back(entity);
 			const size_t index = static_cast<size_t>(entity_id.emplace(entity, components.size() - 1).first->second);
 
 			return  &components.at(index);
@@ -246,7 +267,7 @@ namespace cumulonimbus::ecs
 			}
 
 			components.emplace_back(T{ registry, entity ,replace_comp });
-
+			start_ent.emplace_back(entity);
 			const size_t index = static_cast<size_t>(entity_id.emplace(entity, components.size() - 1).first->second);
 
 			return  components.at(index);
@@ -354,12 +375,12 @@ namespace cumulonimbus::ecs
 		 * @brief : EntityのEntityID(componentsのインデックス番号)を返す \n
 		 *			EntityがComponentを持ってない場合は"-1"を返す
 		 */
-		mapping::rename_type::EntityId GetEntityID(mapping::rename_type::Entity entity)
+		int GetEntityID(const mapping::rename_type::Entity entity)
 		{
 			if (!Content(entity))
 				return -1;
 
-			return entity_id.at(entity);
+			return static_cast<int>(entity_id.at(entity));
 		}
 
 		/**
@@ -430,6 +451,7 @@ namespace cumulonimbus::ecs
 	private:
 		std::vector<T> components;
 		std::unordered_map<mapping::rename_type::Entity, mapping::rename_type::EntityId> entity_id;
+		std::vector<mapping::rename_type::Entity> start_ent{}; // Start関数を呼ぶエンティティ
 	};
 
 	class Registry final
@@ -440,8 +462,10 @@ namespace cumulonimbus::ecs
 			RegisterComponentName();
 		}
 
-		//  ゲーム時更新処理の初めの1フレーム時の処理
+		// ゲーム時更新処理の初めの1フレーム時の処理
 		void Start();
+		// ゲーム終了時処理
+		void End();
 		// 共通の更新処理
 		void PreCommonUpdate(float dt);
 		void CommonUpdate(float dt);

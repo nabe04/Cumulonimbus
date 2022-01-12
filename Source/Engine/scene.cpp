@@ -65,7 +65,6 @@ namespace cumulonimbus::scene
 		CreateScene();
 	}
 
-
 	void Scene::Execute(Framework* framework)
 	{
 		//this->framework = framework;
@@ -87,9 +86,14 @@ namespace cumulonimbus::scene
 		//UnInitialize();
 	}
 
-	void Scene::StartGame()
+	void Scene::StartGame() const
 	{
 		registry->Start();
+	}
+
+	void Scene::EndGame() const
+	{
+		registry->End();
 	}
 
 	void Scene::CommonUpdate(const float dt)

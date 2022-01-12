@@ -46,6 +46,7 @@
 // player
 #include "player_component.h"
 // weapon
+#include "energy_shot_component.h"
 #include "player_sword_component.h"
 #include "soldier_sword_component.h"
 
@@ -155,6 +156,13 @@ namespace cumulonimbus::ecs
 		}
 	}
 
+	void Registry::End()
+	{
+		for (auto& component : component_arrays)
+		{
+			component.second->EndGame();
+		}
+	}
 
 	void Registry::PreCommonUpdate(const float dt)
 	{
@@ -289,6 +297,7 @@ namespace cumulonimbus::ecs
 		// player
 		RegistryComponent<component::PlayerComponent>();
 		// weapon
+		RegistryComponent<component::EnergyShotComponent>();
 		RegistryComponent<component::PlayerSwordComponent>();
 		RegistryComponent<component::SoldierSwordComponent>();
 	}

@@ -36,6 +36,7 @@
 // player
 #include "player_component.h"
 // weapon
+#include "energy_shot_component.h"
 #include "player_sword_component.h"
 #include "soldier_sword_component.h"
 
@@ -60,6 +61,7 @@ namespace cumulonimbus::editor
 		RegisterComponent<component::CameraComponent>(					"Camera"			 , mapping::component_tag::ComponentTag::Camera);
 		RegisterComponent<component::EnemySoldierComponent>(			"E_Soldier"			 , mapping::component_tag::ComponentTag::Game);
 		RegisterComponent<component::EnemyBossComponent>(				"E_Boss"			 , mapping::component_tag::ComponentTag::Game);
+		RegisterComponent<component::EnergyShotComponent>(				"Energy Shot"		 , mapping::component_tag::ComponentTag::Game);
 		RegisterComponent<component::PlayerSwordComponent>(				"Player Sword"		 , mapping::component_tag::ComponentTag::Game);
 		RegisterComponent<component::SoldierSwordComponent>(			"Solider Sword"		 , mapping::component_tag::ComponentTag::Game);
 	}

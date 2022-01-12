@@ -48,6 +48,7 @@
 // player
 #include "player_component.h"
 // weapon
+#include "energy_shot_component.h"
 #include "player_sword_component.h"
 #include "soldier_sword_component.h"
 
@@ -98,6 +99,7 @@ namespace cumulonimbus::asset
 		// player
 		RegistryComponent<component::PlayerComponent>();
 		// weapon
+		RegistryComponent<component::EnergyShotComponent>();
 		RegistryComponent<component::PlayerSwordComponent>();
 		RegistryComponent<component::SoldierSwordComponent>();
 	}

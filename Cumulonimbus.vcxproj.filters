@@ -618,6 +618,9 @@
     <ClCompile Include="Source\Engine\effect.cpp">
       <Filter>Source\Engine\Asset</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Game\energy_shot_component.cpp">
+      <Filter>Source\Game\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -1168,6 +1171,9 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\effect.h">
       <Filter>Header\Engine\Asset</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\energy_shot_component.h">
+      <Filter>Header\Game\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -11,6 +11,18 @@ namespace cumulonimbus::asset
 		explicit Effect(const std::string& file_path);
 		~Effect();
 
+		[[nodiscard]]
+		Effekseer::Effect* GetEffect() const
+		{
+			return effect;
+		}
+
+		[[nodiscard]]
+		const std::filesystem::path& GetFilePath() const
+		{
+			return file_path;
+		}
+
 	private:
 		Effekseer::Effect* effect{ nullptr };
 		std::filesystem::path file_path{};

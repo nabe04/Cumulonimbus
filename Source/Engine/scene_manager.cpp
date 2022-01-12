@@ -259,6 +259,8 @@ namespace cumulonimbus::scene
 	{
 		for(auto& scene : active_scenes | std::views::values)
 		{
+			scene->EndGame();
+
 			std::string scene_name = scene->GetSceneName();
 			if (scene_name.empty())
 				scene_name = filename_helper::GetNoTitled();
