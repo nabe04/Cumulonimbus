@@ -177,6 +177,7 @@ namespace cumulonimbus::component
 		player_state.AddState(PlayerState::Walk_Front					, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).WalkFront(dt); });
 		player_state.AddState(PlayerState::Walk_Back					, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).WalkBack(dt); });
 		player_state.AddState(PlayerState::Dash							, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).Dash(dt); });
+		player_state.AddState(PlayerState::Dodge						, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).Dodge(dt); });
 		player_state.AddState(PlayerState::Avoid_Dash_Begin				, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AvoidDashBegin(dt); });
 		player_state.AddState(PlayerState::Avoid_Dash_End				, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AvoidDashEnd(dt); });
 		player_state.AddState(PlayerState::Damage_Small					, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).DamageSmall(dt); });
@@ -232,6 +233,8 @@ namespace cumulonimbus::component
 		RegistryKeyframeEvent(AnimationData::Attack_Strong_02, keyframe_event::event_1);
 		RegistryKeyframeEvent(AnimationData::Attack_Strong_03, keyframe_event::event_1);
 		RegistryKeyframeEvent(AnimationData::Attack_Strong_04, keyframe_event::event_1);
+		// バックステップ
+		RegistryKeyframeEvent(AnimationData::Dodge, keyframe_event::event_1);
 
 		//-- キーフレームイベントの範囲指定 --//
 		// 弱攻撃
@@ -243,6 +246,8 @@ namespace cumulonimbus::component
 		GetKeyframeEvent(AnimationData::Attack_Strong_02).SetKeyEvent(keyframe_event::event_1,  8, 17);
 		GetKeyframeEvent(AnimationData::Attack_Strong_03).SetKeyEvent(keyframe_event::event_1, 10, 20);
 		GetKeyframeEvent(AnimationData::Attack_Strong_04).SetKeyEvent(keyframe_event::event_1,  2, 18);
+		// バックステップ
+		GetKeyframeEvent(AnimationData::Dodge).SetKeyEvent(keyframe_event::event_1, 1, 15);
 	}
 
 	void PlayerComponent::Start()
@@ -615,6 +620,8 @@ namespace cumulonimbus::component
 			//AdjustVelocity(dt, { .0f,.0f,.0f});
 		}
 
+		const float	trigger_right = Locator::GetInput()->GamePad().RightTrigger(0);
+
 		if (!IsDeadZone())
 		{// 状態遷移(PlayerState::Walk)
 			player_state.SetState(PlayerState::Walk_Front);
@@ -630,6 +637,10 @@ namespace cumulonimbus::component
 		else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::A))
 		{// 状態遷移(PlayerState::Jump_Begin)
 			player_state.SetState(PlayerState::Jump_Begin);
+		}
+		else if(trigger_right > threshold)
+		{
+			player_state.SetState(PlayerState::Dodge);
 		}
 	}
 
@@ -1720,6 +1731,36 @@ namespace cumulonimbus::component
 
 		// 状態遷移(PlayerState::Idle)
 		player_state.SetState(PlayerState::Idle);
+	}
+
+	void PlayerComponent::Dodge(float dt)
+	{
+		if(player_state.GetInitialize())
+		{
+			InitializeAnimationVariable();
+			// アニメーションセット(AnimationData::Dodge)
+			GetRegistry()->GetComponent<ModelComponent>(GetEntity()).SwitchAnimation(GetAnimDataIndex(AnimationData::Dodge), false);
+		}
+
+		GetKeyframeEvent(AnimationData::Dodge).Update(GetRegistry(), GetEntity(), keyframe_event::event_1);
+		if(GetKeyframeEvent(AnimationData::Dodge).GetKeyEvent(keyframe_event::event_1).key_state
+			== system::KeyframeEvent::KeyState::OnKeyRangeStay)
+		{
+			{// 移動速度の設定
+				auto& movement_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
+				movement_comp.AddForce({ -dodge_speed,0.0f,-dodge_speed });
+			}
+		}
+
+		using namespace locator;
+
+		{// アニメーション遷移
+			// アニメーション再生中なら処理を中断
+			if (GetRegistry()->GetComponent<ModelComponent>(GetEntity()).IsPlayAnimation())
+				return;
+
+			player_state.SetState(PlayerState::Idle);
+		}
 	}
 
 	void PlayerComponent::AvoidDashBegin(float dt)

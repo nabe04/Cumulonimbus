@@ -186,19 +186,19 @@ namespace cumulonimbus::collision
 				}
 			}
 
-			//-- 地形とモデルとの判定(レイキャスト) --//
-			for (auto& ray_cast_array = registry->GetArray<component::RayCastComponent>();
-				auto & ray_comp : ray_cast_array.GetComponents())
-			{
-				mapping::rename_type::Entity ent = ray_comp.GetEntity();
+			////-- 地形とモデルとの判定(レイキャスト) --//
+			//for (auto& ray_cast_array = registry->GetArray<component::RayCastComponent>();
+			//	auto & ray_comp : ray_cast_array.GetComponents())
+			//{
+			//	mapping::rename_type::Entity ent = ray_comp.GetEntity();
 
-				// ent_terrainsとRayCastComponentを持つモデルでレイキャストの判定を行う
-				for (const auto& ent_terrain : ent_terrains)
-				{
-					const auto& model = registry->GetComponent<component::ModelComponent>(ent_terrain);
-					IntersectRayVsModel(dt, registry, model, ray_comp);
-				}
-			}
+			//	// ent_terrainsとRayCastComponentを持つモデルでレイキャストの判定を行う
+			//	for (const auto& ent_terrain : ent_terrains)
+			//	{
+			//		const auto& model = registry->GetComponent<component::ModelComponent>(ent_terrain);
+			//		IntersectRayVsModel(dt, registry, model, ray_comp);
+			//	}
+			//}
 		}
 
 		//-- 別シーンでの判定処理 --//

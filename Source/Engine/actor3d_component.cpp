@@ -23,7 +23,7 @@ namespace cumulonimbus::component
 	}
 
 	Actor3DComponent::Actor3DComponent(const mapping::component_tag::ComponentTag tag)
-		:ComponentBase{ tag }
+		: ComponentBase{ tag }
 	{
 
 	}

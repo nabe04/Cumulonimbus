@@ -140,4 +140,12 @@ namespace cumulonimbus::component
 		effect = &effekseer_loader->GetEffect(effect_id);
 	}
 
+	void EffekseerComponent::SetPos(const DirectX::SimpleMath::Vector3& pos) const
+	{
+		auto* effekseer_manager = GetRegistry()->GetScene()->GetSceneManager()->GetEffekseerManager();
+		const Effekseer::Manager* manager = effekseer_manager->GetManager();
+
+		const_cast<Effekseer::Manager*>(manager)->SetLocation(handle, pos.x, pos.y, pos.z);
+	}
+
 } // cumulonimbus::component

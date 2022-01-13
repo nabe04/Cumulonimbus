@@ -59,6 +59,7 @@ namespace cumulonimbus::component
 			Attack_Jumping_Strong_Begin,	// ジャンプ攻撃(強)
 			Attacking_Jump_Strong,
 			Attack_Jump_Strong_End,
+			Dodge,
 			Avoid_Dash_Begin,				// ダッシュ回避
 			Avoid_Dash_End,
 			Dash,
@@ -129,6 +130,7 @@ namespace cumulonimbus::component
 			Knock_Down_On_Stand,
 			Attack_Normal_01_End,
 			Jump_Begin_2,
+			Dodge,
 
 			End
 		};
@@ -182,15 +184,16 @@ namespace cumulonimbus::component
 
 		//-- 状態に応じてのスピード設定 --//
 		// 歩きの速度
-		float walk_speed{ 300.0f };
+		float walk_speed{ 100.f };
 		// 走りの速度
-		float dash_speed{ 700.0f };
+		float dash_speed{ 300.f };
 		// 通常攻撃04(ジャンプ攻撃)時の速度
 		float attack_04_speed{ 700.0f };
 		// ダッシュ攻撃の速度
 		float dash_attack_speed{ 300.0f };
 		// 回避ダッシュ速度
-		float avoid_dash_speed{ 900.0f };
+		float dodge_speed{ 350.f };
+		float avoid_dash_speed{ 350.f };
 		float jump_movement_speed{ 300.0f };
 		//-- 状態の応じての攻撃力設定 --//
 		// 現在の攻撃力
@@ -362,6 +365,7 @@ namespace cumulonimbus::component
 		void Idle(float dt);					// 待機
 		void WalkFront(float dt);				// 歩き
 		void WalkBack(float dt);
+		void Dodge(float dt);					// バックステップ
 		void AvoidDashBegin(float dt);			// ダッシュ回避
 		void AvoidDashEnd(float dt);
 		void Dash(float dt);					// ダッシュ

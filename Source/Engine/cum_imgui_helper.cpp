@@ -128,6 +128,7 @@ namespace cumulonimbus::helper::imgui
 	{
 		bool changed = false;
 
+		ImGui::PushID(label.c_str());
 		if (ImGui::BeginCombo(label.c_str(), current_item.c_str()))
 		{
 			for (int n = 0; n < items.size(); ++n)
@@ -145,6 +146,7 @@ namespace cumulonimbus::helper::imgui
 			}
 			ImGui::EndCombo();
 		}
+		ImGui::PopID();
 		return changed;
 	}
 

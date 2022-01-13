@@ -112,6 +112,10 @@ namespace cumulonimbus::component
 		[[nodiscard]]
 		const DirectX::SimpleMath::Matrix& GetNodeParentMatrix(const char* node_name);
 		[[nodiscard]]
+		DirectX::SimpleMath::Vector3 GetNodeWorldPos(const char* node_name);
+
+		bool HasNode(const char* node_name) const;
+		[[nodiscard]]
 		const std::vector<Node>& GetNodes()	const { return nodes; }
 		[[nodiscard]]
 		std::vector<Node>& GetNodes() { return nodes; }
@@ -126,6 +130,13 @@ namespace cumulonimbus::component
 		const graphics::GraphicsState& GetGraphicsState() const { return graphics_state; }
 
 		void SetIsVisible(const bool result) { is_visible = result; }
+
+		/**
+		 * @brief : ImGui上でのノード名選択関数
+		 * @param node_name : 取得するノード名
+		 * @return : true -> ノード名が変更された
+		 */
+		bool ImSelectableNode(std::string& node_name);
 	private:
 		mapping::rename_type::UUID				model_id{};
 		std::vector<mapping::rename_type::UUID> material_ids{};	// マテリアルコピー用

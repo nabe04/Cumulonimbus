@@ -14,7 +14,7 @@ namespace cumulonimbus::component
 		~EffekseerComponent() override;
 
 		void End() override;
-		
+
 		void RenderImGui() override;
 
 		void Load(ecs::Registry* registry) override;
@@ -28,6 +28,7 @@ namespace cumulonimbus::component
 		void Play();
 		void ChangeEffect(const mapping::rename_type::UUID& efk_id);
 
+		void SetPos(const DirectX::SimpleMath::Vector3& pos) const;
 	private:
 		mapping::rename_type::UUID effect_id{};
 		asset::Effect* effect{};

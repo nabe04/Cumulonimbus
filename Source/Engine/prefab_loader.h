@@ -121,7 +121,6 @@ namespace cumulonimbus::asset
 		 * @param prefab_id : プレファブのアセットID(UUID)
 		 * @return : 作成された
 		 */
-		[[nodiscard]]
 		mapping::rename_type::Entity Instantiate(
 			ecs::Registry* registry,
 			const mapping::rename_type::UUID& prefab_id);

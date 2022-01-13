@@ -153,6 +153,7 @@ namespace cumulonimbus::component
 				items.emplace_back(items_path.back().filename().string());
 			}
 
+			ImGui::PushID(model_id.c_str());
 			if (helper::imgui::Combo("Model", current_item, items))
 			{// ImGui::Combo内でアイテム選択時
 				for (const auto& [key, value] : asset_sheet_manager.GetSheet<asset::Model>().sheet)
@@ -169,6 +170,7 @@ namespace cumulonimbus::component
 					}
 				}
 			}
+			ImGui::PopID();
 
 			// モデルがなければ処理を抜ける
 			if (!model_loader->HasModel(model_id))
@@ -254,6 +256,8 @@ namespace cumulonimbus::component
 
 	bool ModelComponent::IsPlayAnimation() const
 	{
+		auto anims = locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>()->GetModel(model_id).GetModelData().GetAnimations();
+
 		const asset::ModelData::Animation& animation
 			= locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>()->GetModel(model_id).GetModelData().GetAnimations().at(current_animation_index);
 
@@ -345,6 +349,84 @@ namespace cumulonimbus::component
 		assert(!"Not found node name");
 
 		return DirectX::SimpleMath::Matrix::Identity;
+	}
+
+	DirectX::SimpleMath::Vector3 ModelComponent::GetNodeWorldPos(const char* node_name)
+	{
+		for (const auto& node : nodes)
+		{
+			if (node_name == node.name)
+			{
+				const auto w_pos = DirectX::SimpleMath::Vector3{ node.world_transform._41,node.world_transform._42,node.world_transform._43 };
+				return w_pos;
+			}
+		}
+
+		assert(!"Not found node name");
+		return DirectX::SimpleMath::Vector3{};
+	}
+
+	bool ModelComponent::HasNode(const char* node_name) const
+	{
+		for(const auto& node : nodes)
+		{
+			if (node.name == node_name)
+				return true;
+		}
+
+		return false;
+	}
+
+	bool ModelComponent::ImSelectableNode(std::string& node_name)
+	{
+		ImGui::PushID(model_id.c_str());
+		std::string name{};
+		bool is_dummy{ false };
+		// ノードが選択された場合Trueに
+		bool result{ false };
+
+		for(const auto& node : nodes)
+		{
+			if(node.name == node_name.c_str())
+			{
+				is_dummy = false;
+				break;
+			}
+			is_dummy = true;
+		}
+
+		if (ImGui::BeginCombo("Prefabs", node_name.c_str()))
+		{
+			{// None用
+				if (ImGui::Selectable("None", is_dummy, 0))
+				{
+					node_name = { "None" };
+					result = true;
+				}
+				if (is_dummy)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+
+			for (const auto& node : nodes)
+			{
+				const bool is_selected = (node.name == node_name.c_str());
+
+				if (ImGui::Selectable(node.name.c_str(), is_selected))
+				{
+					node_name = node.name;
+					result = true;
+				}
+				if (is_selected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
+		ImGui::PopID();
+		return result;
 	}
 
 	void ModelComponent::UpdateAnimState(const float delta_time)

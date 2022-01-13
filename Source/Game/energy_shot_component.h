@@ -25,6 +25,8 @@ namespace cumulonimbus::component
 		template<class Archive>
 		void save(Archive&& archive, uint32_t version) const;
 	private:
+		float shot_speed{ 1.0f };
 
+		void Move();
 	};
 } // cumulonimbus::component

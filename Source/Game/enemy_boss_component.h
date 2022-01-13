@@ -144,7 +144,8 @@ namespace cumulonimbus::component
 		StateMachine<BossBehavior, void, const float> boss_behavior{};
 		//
 		system::BehaviorTree<AttackBehavior, void, const float, const bool> attack_behavior{};
-
+		// キーフレーム中のイベント管理
+		std::map<AnimationData, system::KeyframeEvent> keyframe_events{};
 		//-- パラメータ --//
 		// 歩行の速さ
 		float walk_speed{ 100.f };
@@ -163,6 +164,8 @@ namespace cumulonimbus::component
 
 		// エネルギーショットのプレハブ
 		mapping::rename_type::UUID shot_prefab_id{};
+		// エネルギーショット生成時の位置
+		std::string spawn_shot_node_name{};
 
 		// 次ビヘイビアでの攻撃種
 		AttackType next_attack_type{};
@@ -173,6 +176,10 @@ namespace cumulonimbus::component
 
 		[[nodiscard]]
 		int GetAnimDataIndex(AnimationData anim_data) const;
+		[[nodiscard]]
+		system::KeyframeEvent& GetKeyframeEvent(AnimationData anim_data);
+
+		void RegistryKeyframeEvent(AnimationData anim_data, const std::string& key_name);
 
 		//-- ビヘイビア更新処理 --//
 		/**

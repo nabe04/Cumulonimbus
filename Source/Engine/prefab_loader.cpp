@@ -323,6 +323,7 @@ namespace cumulonimbus::asset
 
 	void PrefabLoader::ImSelectablePrefab(AssetManager& asset_manager, mapping::rename_type::UUID& prefab_id)
 	{
+		ImGui::PushID(prefab_id.c_str());
 		std::filesystem::path prefab_filename{};
 		bool is_dummy = false;
 		const asset::AssetSheet& prefab_sheet = asset_manager.GetAssetSheetManager().GetSheet<asset::Prefab>();
@@ -340,7 +341,6 @@ namespace cumulonimbus::asset
 		if (ImGui::BeginCombo("Prefabs", prefab_filename.string().c_str()))
 		{
 			{// ダミープレハブ用
-				ImGui::SameLine();
 				if (ImGui::Selectable(prefab_filename.string().c_str(),
 					is_dummy, 0))
 				{
@@ -369,6 +369,7 @@ namespace cumulonimbus::asset
 			}
 			ImGui::EndCombo();
 		}
+		ImGui::PopID();
 	}
 
 	void PrefabLoader::DeletePrefab(const mapping::rename_type::UUID& prefab_id, const std::filesystem::path& delete_path)

@@ -15,6 +15,11 @@ CEREAL_REGISTER_TYPE(cumulonimbus::component::EnemyBossComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::EnemyBaseComponent, cumulonimbus::component::EnemyBossComponent)
 CEREAL_CLASS_VERSION(cumulonimbus::component::EnemyBossComponent, 0)
 
+namespace keyframe_event
+{
+	const std::string event_1{ "Event_1" };
+} // keyframe_event
+
 namespace cumulonimbus::component
 {
 	template <class Archive>
@@ -61,6 +66,14 @@ namespace cumulonimbus::component
 	void EnemyBossComponent::Start()
 	{
 		EnemyBossComponent& e_boss_comp = GetRegistry()->GetComponent<EnemyBossComponent>(GetEntity());
+
+		//-- キーフレームイベント登録 --//
+		// Atk03
+		RegistryKeyframeEvent(AnimationData::Attack_Normal_03, keyframe_event::event_1);
+
+		//-- キーフレームイベントの範囲指定 --//
+		// Atk03
+		GetKeyframeEvent(AnimationData::Attack_Normal_03).SetKeyEvent(keyframe_event::event_1, 15, 20);
 
 		//
 		if (auto* collider_receiver = GetRegistry()->TryGetComponent<ColliderMessageReceiverComponent>(GetEntity());
@@ -136,6 +149,13 @@ namespace cumulonimbus::component
 
 			ImGui::Text("Shot Prefab");
 			prefab_loader.ImSelectablePrefab(asset_manager, shot_prefab_id);
+
+			if(auto* model_comp = GetRegistry()->TryGetComponent<ModelComponent>(GetEntity());
+			   model_comp)
+			{
+				ImGui::Text("Spawn Shot Pos");
+				model_comp->ImSelectableNode(spawn_shot_node_name);
+			}
 		}
 
 	}
@@ -175,6 +195,26 @@ namespace cumulonimbus::component
 	int EnemyBossComponent::GetAnimDataIndex(const AnimationData anim_data) const
 	{
 		return static_cast<int>(anim_data);
+	}
+
+	system::KeyframeEvent& EnemyBossComponent::GetKeyframeEvent(AnimationData anim_data)
+	{
+		if (!keyframe_events.contains(anim_data))
+			assert(!"Don't have KeyframeEvent(EnemyBossComponent::GetKeyframeEvent)");
+
+		return keyframe_events.at(anim_data);
+	}
+
+	void EnemyBossComponent::RegistryKeyframeEvent(AnimationData anim_data, const std::string& key_name)
+	{
+		if (keyframe_events.contains(anim_data))
+		{
+			keyframe_events.at(anim_data).RegistryEvent(key_name);
+			return;
+		}
+
+		keyframe_events.emplace(anim_data, system::KeyframeEvent{});
+		keyframe_events.at(anim_data).RegistryEvent(key_name);
 	}
 
 	///////////////////////////////////////////////////////////////////
@@ -384,11 +424,22 @@ namespace cumulonimbus::component
 		if (is_start)
 		{
 			model_comp->SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Normal_03));
+		}
 
+		GetKeyframeEvent(AnimationData::Attack_Normal_03).Update(GetRegistry(), GetEntity(), keyframe_event::event_1);
+		if (GetKeyframeEvent(AnimationData::Attack_Normal_03).GetKeyEvent(keyframe_event::event_1).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeEnter)
+		{
 			auto* prefab_loader = locator::Locator::GetAssetManager()->GetLoader<asset::PrefabLoader>();
-			if(prefab_loader->HasPrefab(shot_prefab_id))
+			mapping::rename_type::Entity spawn_shot_ent{};
+			if (prefab_loader->HasPrefab(shot_prefab_id))
 			{
-				prefab_loader->Instantiate(GetRegistry(), shot_prefab_id);
+				spawn_shot_ent = prefab_loader->Instantiate(GetRegistry(), shot_prefab_id);
+			}
+
+			if (model_comp->HasNode(spawn_shot_node_name.c_str()))
+			{
+				GetRegistry()->GetComponent<TransformComponent>(spawn_shot_ent).SetPosition(model_comp->GetNodeWorldPos(spawn_shot_node_name.c_str()));
 			}
 		}
 

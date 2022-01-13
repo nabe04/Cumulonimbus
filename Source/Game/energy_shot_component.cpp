@@ -54,20 +54,28 @@ namespace cumulonimbus::component
 
 	void EnergyShotComponent::GameUpdate(float dt)
 	{
-		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
-		if (auto* efk_comp = GetRegistry()->TryGetComponent<EffekseerComponent>(GetEntity());
-			efk_comp)
-		{
-
-			//efk_comp->Get();
-		}
+		Move();
 	}
 
 	void EnergyShotComponent::RenderImGui()
 	{
-		if (GetRegistry()->CollapsingHeader<EnergyShotComponent>(GetEntity(), "Model"))
+		if (GetRegistry()->CollapsingHeader<EnergyShotComponent>(GetEntity(), "Energy Shot"))
 		{
 
+		}
+	}
+
+	void EnergyShotComponent::Move()
+	{
+		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
+
+		const auto pos = (transform_comp.GetModelFront() * shot_speed) + transform_comp.GetPosition();
+		transform_comp.SetPosition(pos);
+
+		if (auto* efk_comp = GetRegistry()->TryGetComponent<EffekseerComponent>(GetEntity());
+			efk_comp)
+		{
+			efk_comp->SetPos(transform_comp.GetPosition());
 		}
 	}
 } // cumulonimbus::component
