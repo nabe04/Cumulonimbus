@@ -227,7 +227,7 @@ namespace cumulonimbus::asset
 		// エフェクトアセットの削除
 		effects.erase(efk_id);
 		// ファイルの削除
-		std::filesystem::remove(delete_path.parent_path());
+		std::filesystem::remove_all(delete_path.parent_path());
 	}
 
 } // cumulonimbus::asset

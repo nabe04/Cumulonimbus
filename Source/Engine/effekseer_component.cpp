@@ -5,6 +5,7 @@
 #include "effekseer_manager.h"
 #include "effekseer_loader.h"
 #include "locator.h"
+#include "transform_component.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::EffekseerComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::EffekseerComponent)
@@ -74,6 +75,19 @@ namespace cumulonimbus::component
 	EffekseerComponent::~EffekseerComponent()
 	{
 		//ES_SAFE_RELEASE(effect_);
+	}
+
+	void EffekseerComponent::SceneUpdate(float dt)
+	{
+		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
+
+		SetPos(transform_comp.GetPosition());
+		SetScale(transform_comp.GetScale());
+	}
+
+	void EffekseerComponent::GameUpdate(float dt)
+	{
+
 	}
 
 	void EffekseerComponent::End()
@@ -148,4 +162,11 @@ namespace cumulonimbus::component
 		const_cast<Effekseer::Manager*>(manager)->SetLocation(handle, pos.x, pos.y, pos.z);
 	}
 
+	void EffekseerComponent::SetScale(const DirectX::SimpleMath::Vector3& scale) const
+	{
+		auto* effekseer_manager = GetRegistry()->GetScene()->GetSceneManager()->GetEffekseerManager();
+		const Effekseer::Manager* manager = effekseer_manager->GetManager();
+
+		const_cast<Effekseer::Manager*>(manager)->SetScale(handle, scale.x, scale.y, scale.z);
+	}
 } // cumulonimbus::component

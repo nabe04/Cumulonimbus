@@ -13,6 +13,9 @@ namespace cumulonimbus::component
 		explicit EffekseerComponent()  = default; // for cereal
 		~EffekseerComponent() override;
 
+		void SceneUpdate(float dt) override;
+		void GameUpdate(float dt) override;
+
 		void End() override;
 
 		void RenderImGui() override;
@@ -29,6 +32,7 @@ namespace cumulonimbus::component
 		void ChangeEffect(const mapping::rename_type::UUID& efk_id);
 
 		void SetPos(const DirectX::SimpleMath::Vector3& pos) const;
+		void SetScale(const DirectX::SimpleMath::Vector3& scale) const;
 	private:
 		mapping::rename_type::UUID effect_id{};
 		asset::Effect* effect{};

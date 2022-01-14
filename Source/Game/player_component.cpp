@@ -919,7 +919,7 @@ namespace cumulonimbus::component
 			}
 			else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
 			{// 先行入力セット(PlayerState::Attacking_Strong_02)
-				precede_input = PlayerState::Attack_Strong_02;
+				precede_input = PlayerState::Attack_Strong_01;
 			}
 
 			if (ButtonState::Held == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
@@ -998,7 +998,7 @@ namespace cumulonimbus::component
 			}
 			else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
 			{// 先行入力セット(PlayerState::Attacking_Strong_03)
-				precede_input = PlayerState::Attack_Strong_03;
+				precede_input = PlayerState::Attack_Strong_01;
 			}
 
 			if (ButtonState::Held == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
@@ -1077,7 +1077,7 @@ namespace cumulonimbus::component
 			}
 			else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
 			{// 先行入力セット(PlayerState::Attacking_Strong_04)
-				precede_input = PlayerState::Attack_Strong_04;
+				precede_input = PlayerState::Attack_Strong_01;
 			}
 
 			if (ButtonState::Held == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
@@ -1235,8 +1235,8 @@ namespace cumulonimbus::component
 
 		using namespace locator;
 		if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-		{// 先行入力セット(PlayerState::Attacking_Normal_02)
-			precede_input = PlayerState::Attack_Normal_02;
+		{// 先行入力セット(PlayerState::Attack_Normal_01)
+			precede_input = PlayerState::Attack_Normal_01;
 		}
 		else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
 		{// 先行入力セット(PlayerState::Attacking_Strong_02)
@@ -1322,6 +1322,7 @@ namespace cumulonimbus::component
 		}
 	}
 
+	// 使用しない
 	void PlayerComponent::AtkStrong03(float dt)
 	{
 		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
