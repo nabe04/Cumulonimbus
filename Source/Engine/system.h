@@ -27,6 +27,11 @@ namespace cumulonimbus
 		class SkyBox;
 	} // graphics
 
+	namespace system
+	{
+		class TimeScale;
+	} // system
+
 } // cumulonimbus
 
 namespace cumulonimbus::system
@@ -81,10 +86,12 @@ namespace cumulonimbus::system
 
 		[[nodiscard]]
 		camera::CameraTexture& GetCameraTexture() const;
-		[[nodiscard]]
-		collision::CollisionPrimitiveAsset& GetCollisionPrimitive() const;
  		[[nodiscard]]
 		graphics::SkyBox& GetSkyBox() const;
+		[[nodiscard]]
+		system::TimeScale& GetTimeScale() const;
+		[[nodiscard]]
+		collision::CollisionPrimitiveAsset& GetCollisionPrimitive() const;
 		[[nodiscard]]
 		const std::string& GetCurrentScenePath() const { return current_scene_path; }
 		[[nodiscard]]
@@ -101,8 +108,9 @@ namespace cumulonimbus::system
 		std::map<mapping::rename_type::Hash, std::function<void(ecs::Registry* registry)>> render_functions{};
 
 		std::unique_ptr<camera::CameraTexture> camera_texture{};
-		std::unique_ptr<collision::CollisionPrimitiveAsset> collision_primitive{};
 		std::unique_ptr<graphics::SkyBox>	   sky_box{};
+		std::unique_ptr<system::TimeScale>	   time_scale{};
+		std::unique_ptr<collision::CollisionPrimitiveAsset> collision_primitive{};
 
 		std::string current_scene_path{}; // 現在開かれているシーン(cerealがstd::filesystem未対応のためstd::stringにしている)
 		std::string default_scene_path{}; // ウィンドウ作成時に開くシーン(cerealがstd::filesystem未対応のためstd::stringにしている)

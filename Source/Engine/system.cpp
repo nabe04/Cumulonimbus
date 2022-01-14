@@ -4,9 +4,10 @@
 #include <functional>
 
 #include "camera_component.h"
+#include "collision_manager.h"
 #include "file_path_helper.h"
 #include "sky_box.h"
-#include "collision_manager.h"
+#include "time_scale.h"
 
 CEREAL_CLASS_VERSION(cumulonimbus::system::System, 2)
 
@@ -63,8 +64,9 @@ namespace cumulonimbus::system
 	System::System()
 	{
 		camera_texture		= std::make_unique<camera::CameraTexture>(*this);
-		collision_primitive = std::make_unique<collision::CollisionPrimitiveAsset>(*this);
 		sky_box				= std::make_unique<graphics::SkyBox>(*this, locator::Locator::GetDx11Device()->device.Get(),".Data/Assets/cubemap/Table_Mountain/table_mountain.dds");
+		time_scale			= std::make_unique<system::TimeScale>();
+		collision_primitive = std::make_unique<collision::CollisionPrimitiveAsset>(*this);
 	}
 
 	void System::Load(const std::filesystem::path& load_path)
@@ -83,15 +85,21 @@ namespace cumulonimbus::system
 				camera_texture = std::make_unique<camera::CameraTexture>(*this);
 			if(!sky_box.get())
 				sky_box = std::make_unique<graphics::SkyBox>(*this, locator::Locator::GetDx11Device()->device.Get());
+			if(!time_scale.get())
+				time_scale = std::make_unique<system::TimeScale>();
 			if(!collision_primitive.get())
 				collision_primitive = std::make_unique<collision::CollisionPrimitiveAsset>(*this);
 
 			// System::Renderì‡ä÷êîÇÃçƒìoò^(çƒì«çûÇ≥ÇÍÇΩÇ‡ÇÃÇÃÇ›)
+			// CameraTexture
 			RegisterRenderFunction(utility::GetHash<camera::CameraTexture>(),
 								   [&](ecs::Registry* registry) {camera_texture->RenderImGui(registry); });
+			// CollisionPrimitiveAsset
 			RegisterRenderFunction(utility::GetHash<collision::CollisionPrimitiveAsset>(),
 				[&](ecs::Registry* registry) {collision_primitive->RenderImGui(registry); });
-
+			// TimeScale
+			RegisterRenderFunction(utility::GetHash<system::TimeScale>(),
+								   [&](ecs::Registry* registry) {time_scale->RenderImGui(registry); });
 			sky_box->Load(*this);
 		};
 
@@ -194,13 +202,19 @@ namespace cumulonimbus::system
 		return *(camera_texture.get());
 	}
 
+	graphics::SkyBox& System::GetSkyBox() const
+	{
+		return *(sky_box.get());
+	}
+
+	system::TimeScale& System::GetTimeScale() const
+	{
+		return *(time_scale.get());
+	}
+
 	collision::CollisionPrimitiveAsset& System::GetCollisionPrimitive() const
 	{
 		return *(collision_primitive.get());
 	}
 
-	graphics::SkyBox& System::GetSkyBox() const
-	{
-		return *(sky_box.get());
-	}
 } // cumulonimbus::system

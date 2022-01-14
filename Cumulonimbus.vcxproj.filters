@@ -621,6 +621,9 @@
     <ClCompile Include="Source\Game\energy_shot_component.cpp">
       <Filter>Source\Game\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\time_scale.cpp">
+      <Filter>Source\Engine\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -1174,6 +1177,9 @@
     </ClInclude>
     <ClInclude Include="Source\Game\energy_shot_component.h">
       <Filter>Header\Game\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\time_scale.h">
+      <Filter>Header\Engine\System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

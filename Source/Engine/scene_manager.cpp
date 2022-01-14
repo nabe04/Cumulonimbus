@@ -11,16 +11,19 @@
 #include "render_path.h"
 #include "sky_box.h"
 #include "wave_system.h"
+#include "time_scale.h"
 // components
 #include "player_component.h"
 #include "player_sword_component.h"
 #include "enemy_soldier_component.h"
 
-namespace cumulonimbus {
-	namespace asset {
+namespace cumulonimbus
+{
+	namespace asset
+	{
 		struct SceneAsset;
-	}
-}
+	} // asset
+} // cumulonimbus
 
 CEREAL_CLASS_VERSION(cumulonimbus::scene::SceneManager, 0)
 

@@ -19,6 +19,7 @@
 
 #include "ecs.h"
 #include "light.h"
+#include "time_scale.h"
 #include "camera_component.h"
 #include "sky_box.h"
 

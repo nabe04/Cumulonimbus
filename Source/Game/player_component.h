@@ -25,10 +25,6 @@ namespace cumulonimbus::component
 			Walk_Back,
 			Damage_Small,					// ダメージ
 			Damage_Big,
-			Jump_Begin,						// ジャンプ
-			Jump_Loop,
-			Jump_Landing,
-			Jump_End,
 			Knock_Down_Front_Loop,			// ノックバック
 			Knock_Down_Front_Stand_Up,
 			Die,							// 死亡
@@ -48,18 +44,7 @@ namespace cumulonimbus::component
 			Attacking_Round_Up,
 			Attack_Round_Up_Fall,
 			Attack_Round_Up_End,
-			Attacking_Jump_01,				// ジャンプ攻撃(弱)
-			Attacking_Jump_02,
-			Attacking_Jump_03,
-			Attacking_Jump_04,
-			Attack_Jump_01_End,
-			Attack_Jump_02_End,
-			Attack_Jump_03_End,
-			Attack_Jump_04_End,
-			Attack_Jumping_Strong_Begin,	// ジャンプ攻撃(強)
-			Attacking_Jump_Strong,
-			Attack_Jump_Strong_End,
-			Dodge,
+			Dodge,							// バックステップ
 			Avoid_Dash_Begin,				// ダッシュ回避
 			Avoid_Dash_End,
 			Dash,
@@ -191,6 +176,8 @@ namespace cumulonimbus::component
 		float attack_04_speed{ 700.0f };
 		// ダッシュ攻撃の速度
 		float dash_attack_speed{ 300.0f };
+		// 強攻撃 04時の速度
+		float attack_strong_04_speed{ 300.f };
 		// 回避ダッシュ速度
 		float dodge_speed{ 350.f };
 		float avoid_dash_speed{ 350.f };
@@ -310,11 +297,17 @@ namespace cumulonimbus::component
 		bool IsNextAnimationLongPressAttack() const;
 
 		/**
-		 * @brief  : 入力がデッドゾーン内にあるかどうか判定
-		 * @return : true : デッドゾーン内にある
+		 * @brief  : Left Stick入力がデッドゾーン内にあるかどうか判定
+		 * @return : true -> デッドゾーン内にある
 		 */
 		[[nodiscard]]
-		bool IsDeadZone() const;
+		bool IsDeadZoneStickLeft() const;
+		/**
+		 * @brief : Right Trigger入力がデッドゾーン内にあるかどうか判定
+		 * @return : true -> デッドゾーン内にある
+		 */
+		[[nodiscard]]
+		bool IsDeadZoneTriggerRight() const;
 
 		/**
 		 * @brief			: 現アニメーションキーフレームが"animation_break_frame"で設定したフレームを超えているか
@@ -373,38 +366,38 @@ namespace cumulonimbus::component
 		void DamageBig(float dt);
 		void KnockDownFrontLoop(float dt);		// ノックダウン
 		void KnockDownFrontStandUp(float dt);
-		void JumpBegin(float dt);				// ジャンプ
-		void JumpLoop(float dt);
-		void JumpLanding(float dt);
-		void JumpEnd(float dt);
+		//void JumpBegin(float dt);				// ジャンプ
+		//void JumpLoop(float dt);
+		//void JumpLanding(float dt);
+		//void JumpEnd(float dt);
 		void Die(float dt);						// 死亡
-		void AttackingNormal01(float dt);		// 通常攻撃(弱)
-		void AttackingNormal02(float dt);
-		void AttackingNormal03(float dt);
-		void AttackingNormal04(float dt);
-		void AttackNormal04Begin(float dt);
-		void AttackNormal04End(float dt);
+		void AtkNormal01(float dt);		// 通常攻撃(弱)
+		void AtkNormal02(float dt);
+		void AtkNormal03(float dt);
+		void AtkNormal04(float dt);
+		void AtkNormal04Begin(float dt);
+		void AtkNormal04End(float dt);
 		void AttackingNormalLongPress(float dt); // 通常攻撃(弱長押し)
 		void AttackNormalLongPressEnd(float dt);
-		void AttackingStrong01(float dt);		 // 通常攻撃(強)
-		void AttackingStrong02(float dt);
-		void AttackingStrong03(float dt);
+		void AtkStrong01(float dt);		 // 通常攻撃(強)
+		void AtkStrong02(float dt);
+		void AtkStrong03(float dt);
+		void AtkStrong04(float dt);
 		void AttackRoundUpBegin(float dt);		 // 切り上げ攻撃
-		void AttackingStrong04(float dt);
 		void AttackingRoundUp(float dt);
 		void AttackRoundUpFall(float dt);
 		void AttackRoundUpEnd(float dt);
-		void AttackingJump01(float dt);			 // ジャンプ攻撃(弱)
-		void AttackingJump02(float dt);
-		void AttackingJump03(float dt);
-		void AttackingJump04(float dt);
-		void AttackJump01End(float dt);
-		void AttackJump02End(float dt);
-		void AttackJump03End(float dt);
-		void AttackJump04End(float dt);
-		void AttackJumpStrongBegin(float dt);	// ジャンプ攻撃(強)
-		void AttackingJumpStrong(float dt);
-		void AttackJumpStrongEnd(float dt);
+		//void AttackingJump01(float dt);			 // ジャンプ攻撃(弱)
+		//void AttackingJump02(float dt);
+		//void AttackingJump03(float dt);
+		//void AttackingJump04(float dt);
+		//void AttackJump01End(float dt);
+		//void AttackJump02End(float dt);
+		//void AttackJump03End(float dt);
+		//void AttackJump04End(float dt);
+		//void AttackJumpStrongBegin(float dt);	// ジャンプ攻撃(強)
+		//void AttackingJumpStrong(float dt);
+		//void AttackJumpStrongEnd(float dt);
 		void DashAttack(float dt);				// ダッシュ攻撃
 	};
 } // cumulonimbus::component

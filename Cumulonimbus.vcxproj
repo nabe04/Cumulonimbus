@@ -182,6 +182,7 @@
     <ClInclude Include="Source\Engine\string_helper.h" />
     <ClInclude Include="Source\Engine\texture.h" />
     <ClInclude Include="Source\Engine\texture2d_shader.h" />
+    <ClInclude Include="Source\Engine\time_scale.h" />
     <ClInclude Include="Source\Engine\tool_bar.h" />
     <ClInclude Include="Source\Engine\toon.h" />
     <ClInclude Include="Source\Engine\transform_component.h" />
@@ -350,6 +351,7 @@
     <ClCompile Include="Source\Engine\texture2d_shader.cpp" />
     <ClCompile Include="Source\Engine\texture_loader.cpp" />
     <ClCompile Include="Source\Engine\texture_resource_manager.cpp" />
+    <ClCompile Include="Source\Engine\time_scale.cpp" />
     <ClCompile Include="Source\Engine\tool_bar.cpp" />
     <ClCompile Include="Source\Engine\transform_component.cpp" />
     <ClCompile Include="Source\Engine\vertex_shader.cpp" />
