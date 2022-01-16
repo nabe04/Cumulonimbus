@@ -80,8 +80,16 @@ namespace cumulonimbus::component
 	void EffekseerComponent::CommonUpdate(float dt)
 	{
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
+		//const DirectX::SimpleMath::Vector3 l_pos = transform_comp.GetPosition();
+		//const DirectX::SimpleMath::Vector4 local_pos = DirectX::SimpleMath::Vector4{ l_pos.x,l_pos.y,l_pos.z,1.0f };
 
-		SetPos(transform_comp.GetPosition());
+		const DirectX::SimpleMath::Matrix lm = transform_comp.GetLocalMatrix();
+		const DirectX::SimpleMath::Matrix wm = transform_comp.GetWorldMatrix();
+		//wm.
+		const DirectX::SimpleMath::Vector3 local_pos = DirectX::SimpleMath::Matrix{ wm }.Translation();
+
+		//SetPos(transform_comp.GetPosition());
+		SetPos(local_pos);
 		SetScale(transform_comp.GetScale());
 	}
 

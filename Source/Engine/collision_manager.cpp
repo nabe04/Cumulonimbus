@@ -1038,7 +1038,8 @@ namespace cumulonimbus::collision
 			{
 				// コリジョンプリセットが判定なし(CollisionType::NoCollision)の場合次の処理に移る
 				if (s1.collision_preset == CollisionType::NoCollision ||
-					s2.collision_preset == CollisionType::NoCollision)
+					s2.collision_preset == CollisionType::NoCollision ||
+					!s1.is_enable || !s2.is_enable)
 				{
 					if (auto* hit_result_1 = s1.TryGetHitResult(s2.id);
 						hit_result_1)
@@ -1110,7 +1111,8 @@ namespace cumulonimbus::collision
 			{
 				// コリジョンプリセットが判定なし(CollisionType::NoCollision)の場合次の処理に移る
 				if (s1.collision_preset == CollisionType::NoCollision ||
-					s2.collision_preset == CollisionType::NoCollision)
+					s2.collision_preset == CollisionType::NoCollision ||
+					!s1.is_enable || !s2.is_enable)
 				{
 					if (auto* hit_result_1 = s1.TryGetHitResult(s2.id);
 						hit_result_1)
@@ -1345,7 +1347,8 @@ namespace cumulonimbus::collision
 			{
 				// コリジョンプリセットが判定なし(CollisionType::NoCollision)の場合次の処理に移る
 				if (s.collision_preset == CollisionType::NoCollision ||
-					c.collision_type == CollisionType::NoCollision)
+					c.collision_type == CollisionType::NoCollision ||
+					!s.is_enable || !c.is_enable)
 				{
 					if (auto* hit_result_1 = s.TryGetHitResult(c.id);
 						hit_result_1)
@@ -1420,7 +1423,8 @@ namespace cumulonimbus::collision
 			{
 				// コリジョンプリセットが判定なし(CollisionType::NoCollision)の場合次の処理に移る
 				if (s.collision_preset == CollisionType::NoCollision ||
-					c.collision_type == CollisionType::NoCollision)
+					c.collision_type == CollisionType::NoCollision ||
+					!s.is_enable || !c.is_enable)
 				{
 					if (auto* hit_result_1 = s.TryGetHitResult(c.id);
 						hit_result_1)

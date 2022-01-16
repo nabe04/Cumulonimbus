@@ -1,7 +1,9 @@
 #include "energy_shot_component.h"
 
+#include "damageable_component.h"
 #include "effekseer_component.h"
 #include "transform_component.h"
+#include "sphere_collision_component.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::EnergyShotComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::EnergyShotComponent)
@@ -45,11 +47,18 @@ namespace cumulonimbus::component
 
 	void EnergyShotComponent::Start()
 	{
-		if(auto* efk_comp = GetRegistry()->TryGetComponent<EffekseerComponent>(GetEntity());
-		   efk_comp)
-		{
-			efk_comp->Play();
-		}
+		//if(auto* efk_comp = GetRegistry()->TryGetComponent<EffekseerComponent>(GetEntity());
+		//   efk_comp)
+		//{
+		//	efk_comp->Play();
+		//}
+
+		//if(auto* sphere_collision_comp = GetRegistry()->TryGetComponent<SphereCollisionComponent>(GetEntity());
+		//   sphere_collision_comp)
+		//{
+		//	sphere_collision_comp->RegisterEventEnter(GetEntity(), [ent = GetEntity(), registry = GetRegistry()](const collision::HitResult& hit_result){registry->GetComponent<EnergyShotComponent>(ent).OnHit(hit_result); });
+		//	sphere_collision_comp->SetAllCollisionEnable(true);
+		//}
 	}
 
 	void EnergyShotComponent::GameUpdate(float dt)
@@ -62,6 +71,22 @@ namespace cumulonimbus::component
 		if (GetRegistry()->CollapsingHeader<EnergyShotComponent>(GetEntity(), "Energy Shot"))
 		{
 
+		}
+	}
+
+	void EnergyShotComponent::OnHit(const collision::HitResult& hit_result)
+	{
+		// 判定先のコリジョンタグがPlayer以外の場合処理を抜ける
+		if (hit_result.collision_tag != collision::CollisionTag::Player)
+			return;
+
+		if (auto* damageable_comp = hit_result.registry->TryGetComponent<DamageableComponent>(hit_result.entity);
+			damageable_comp)
+		{
+			DamageData damage_data{};
+			damage_data.damage_amount = damage_amount;
+
+			damageable_comp->OnDamaged(hit_result.entity, damage_data, hit_result);
 		}
 	}
 

@@ -167,6 +167,13 @@ namespace cumulonimbus::component
 		// アニメーション遷移時間
 		float anim_switch_time{ 0.1f };
 
+		//----------------------------------//
+		//			パラメータ				//
+		//----------------------------------//
+
+		// ヒットポイント
+		int hp{ 5 };
+
 		//-- 状態に応じてのスピード設定 --//
 		// 歩きの速度
 		float walk_speed{ 100.f };
@@ -203,7 +210,15 @@ namespace cumulonimbus::component
 		// 空中強攻撃時のダメージ
 		u_int damage_jump_strong{ 2 };
 
-		//-- 各状態からの遷移時間 --//
+		// 経過時間(使用用途は自由)
+		float elapsed_time{ 0.0f };
+		// 回避無敵時間
+		float avoid_invincible_time{ 2.0f };
+		// 回避無敵中のタイムスケール(時間が経つ速さ)
+		float avoid_time_scale{ 0.5f };
+
+		//-- 各状態(アニメーション)からの遷移時間 --//
+		// ダッシュから待機
 		float switch_dash_attack_to_idle{ 0.3f };
 
 		//-- 状態フラグ --//

@@ -13,7 +13,7 @@
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::EnemyBossComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::EnemyBaseComponent, cumulonimbus::component::EnemyBossComponent)
-CEREAL_CLASS_VERSION(cumulonimbus::component::EnemyBossComponent, 0)
+CEREAL_CLASS_VERSION(cumulonimbus::component::EnemyBossComponent, 1)
 
 namespace keyframe_event
 {
@@ -28,6 +28,17 @@ namespace cumulonimbus::component
 		archive(
 			cereal::base_class<EnemyBaseComponent>(this)
 		);
+
+		if(version == 1)
+		{
+			archive(
+				CEREAL_NVP(walk_speed),
+				CEREAL_NVP(dash_speed),
+				CEREAL_NVP(atk_melee_distance),
+				CEREAL_NVP(shot_prefab_id),
+				CEREAL_NVP(spawn_shot_node_name)
+			);
+		}
 	}
 
 	template <class Archive>
@@ -36,6 +47,17 @@ namespace cumulonimbus::component
 		archive(
 			cereal::base_class<EnemyBaseComponent>(this)
 		);
+
+		if(version >= 0)
+		{
+			archive(
+				CEREAL_NVP(walk_speed),
+				CEREAL_NVP(dash_speed),
+				CEREAL_NVP(atk_melee_distance),
+				CEREAL_NVP(shot_prefab_id),
+				CEREAL_NVP(spawn_shot_node_name)
+			);
+		}
 	}
 
 	EnemyBossComponent::EnemyBossComponent(ecs::Registry* registry, mapping::rename_type::Entity ent)
@@ -430,6 +452,8 @@ namespace cumulonimbus::component
 		if (GetKeyframeEvent(AnimationData::Attack_Normal_03).GetKeyEvent(keyframe_event::event_1).key_state ==
 			system::KeyframeEvent::KeyState::OnKeyRangeEnter)
 		{
+			const auto& sphere_arr = GetRegistry()->GetArray<SphereCollisionComponent>();
+
 			auto* prefab_loader = locator::Locator::GetAssetManager()->GetLoader<asset::PrefabLoader>();
 			mapping::rename_type::Entity spawn_shot_ent{};
 			if (prefab_loader->HasPrefab(shot_prefab_id))
@@ -441,6 +465,9 @@ namespace cumulonimbus::component
 			{
 				GetRegistry()->GetComponent<TransformComponent>(spawn_shot_ent).SetPosition(model_comp->GetNodeWorldPos(spawn_shot_node_name.c_str()));
 			}
+
+			int a;
+			a = 0;
 		}
 
 		if (model_comp->IsPlayAnimation())

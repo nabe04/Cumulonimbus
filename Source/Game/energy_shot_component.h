@@ -1,6 +1,14 @@
 #pragma once
 #include "component_base.h"
 
+namespace cumulonimbus
+{
+	namespace collision
+	{
+		struct HitResult;
+	} // collision
+} // cumulonimbus
+
 namespace cumulonimbus::component
 {
 	class EnergyShotComponent final : public ComponentBase
@@ -24,8 +32,11 @@ namespace cumulonimbus::component
 
 		template<class Archive>
 		void save(Archive&& archive, uint32_t version) const;
+
+		void OnHit(const collision::HitResult& hit_result);
 	private:
 		float shot_speed{ 1.0f };
+		u_int damage_amount{ 1 };
 
 		void Move();
 	};

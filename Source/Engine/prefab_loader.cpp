@@ -330,7 +330,8 @@ namespace cumulonimbus::asset
 		if (prefab_sheet.sheet.contains(prefab_id))
 		{
 			prefab_filename = prefab_sheet.sheet.at(prefab_id);
-			prefab_filename.filename().replace_extension();
+			prefab_filename = prefab_filename.filename().replace_extension();
+			prefab_filename.replace_extension();
 			is_dummy = true;
 		}
 		else

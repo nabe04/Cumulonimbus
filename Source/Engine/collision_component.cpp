@@ -44,7 +44,8 @@ namespace cumulonimbus::component
 		cbuffer = std::make_unique<buffer::ConstantBuffer<DebugCollisionCB>>(locator::Locator::GetDx11Device()->device.Get());
 	}
 
-	CollisionComponent::CollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const CollisionComponent& copy_comp)
+	CollisionComponent::CollisionComponent(ecs::Registry* registry, const mapping::rename_type::Entity ent, const CollisionComponent& copy_comp)
+		: ComponentBase{ registry,ent }
 	{
 		*this = copy_comp;
 		SetRegistry(registry);
@@ -53,11 +54,21 @@ namespace cumulonimbus::component
 		if (cbuffer)
 			cbuffer.reset();
 		cbuffer = std::make_unique<buffer::ConstantBuffer<DebugCollisionCB>>(locator::Locator::GetDx11Device()->device.Get());
+		tag = copy_comp.tag;
+		on_collision_enter_event = copy_comp.on_collision_enter_event;
+		on_collision_stay_event = copy_comp.on_collision_stay_event;
+		on_collision_exit_event = copy_comp.on_collision_exit_event;
+		on_collision_none = copy_comp.on_collision_none;
 	}
 
 	CollisionComponent::CollisionComponent(const CollisionComponent& other)
 		:ComponentBase{other},
-	     selected_collision_name{other.selected_collision_name}
+	     selected_collision_name{other.selected_collision_name},
+		 tag{other.tag},
+		 on_collision_enter_event{other.on_collision_enter_event},
+		 on_collision_stay_event{other.on_collision_stay_event},
+		 on_collision_exit_event{other.on_collision_exit_event},
+		 on_collision_none{other.on_collision_none}
 	{
 		if (cbuffer)
 			cbuffer.reset();

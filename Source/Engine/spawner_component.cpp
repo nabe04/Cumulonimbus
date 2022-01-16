@@ -80,13 +80,13 @@ namespace cumulonimbus::component
 	{
 		if(is_first)
 		{
-			elapsed_time = 0;
-			current_count = 0;
+			elapsed_time	= 0;
+			current_count	= 0;
+			root_pos		= pos;
 		}
 
 		// ¶¬ƒtƒ‰ƒO‚ðOn
 		is_spawn = true;
-		root_pos = pos;
 		this->direction = direction;
 	}
 

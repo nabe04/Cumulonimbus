@@ -20,6 +20,8 @@ namespace
 {
 	// ImGui描画時にCollisionPreset(enum class)から文字列一覧を取得する為に使用
 	EnumStateMap<cumulonimbus::collision::CollisionType> collision_preset{};
+	// ImGui描画時にCollisionTag(enum class)から文字列一覧を取得する為に使用
+	EnumStateMap<cumulonimbus::collision::CollisionTag> collision_tag{};
 }
 
 namespace cumulonimbus::collision
@@ -49,10 +51,28 @@ namespace cumulonimbus::collision
 				CEREAL_NVP(offset),
 				CEREAL_NVP(bone_name),
 				CEREAL_NVP(radius),
+				//CEREAL_NVP(hit_result),
 				CEREAL_NVP(collision_preset),
 				CEREAL_NVP(base_color),
 				CEREAL_NVP(hit_color),
 				CEREAL_NVP(collision_tag)
+			);
+		}
+
+		if(version == 2)
+		{
+			archive(
+				CEREAL_NVP(world_transform_matrix),
+				CEREAL_NVP(offset),
+				CEREAL_NVP(bone_name),
+				CEREAL_NVP(radius),
+				CEREAL_NVP(collision_preset),
+				CEREAL_NVP(base_color),
+				CEREAL_NVP(hit_color),
+				CEREAL_NVP(collision_tag),
+				CEREAL_NVP(is_enable),
+				CEREAL_NVP(is_visible),
+				CEREAL_NVP(hidden_in_game)
 			);
 		}
 	}
@@ -60,7 +80,7 @@ namespace cumulonimbus::collision
 	template <class Archive>
 	void Sphere::save(Archive&& archive, const uint32_t version) const
 	{
-		if(version == 0)
+		if (version == 0)
 		{
 			archive(
 				CEREAL_NVP(world_transform_matrix),
@@ -75,7 +95,22 @@ namespace cumulonimbus::collision
 			);
 		}
 
-		if(version == 1)
+		if (version == 1)
+		{
+			archive(
+				CEREAL_NVP(world_transform_matrix),
+				CEREAL_NVP(offset),
+				CEREAL_NVP(bone_name),
+				CEREAL_NVP(radius),
+				//CEREAL_NVP(hit_result),
+				CEREAL_NVP(collision_preset),
+				CEREAL_NVP(base_color),
+				CEREAL_NVP(hit_color),
+				CEREAL_NVP(collision_tag)
+			);
+		}
+
+		if (version == 2)
 		{
 			archive(
 				CEREAL_NVP(world_transform_matrix),
@@ -85,7 +120,10 @@ namespace cumulonimbus::collision
 				CEREAL_NVP(collision_preset),
 				CEREAL_NVP(base_color),
 				CEREAL_NVP(hit_color),
-				CEREAL_NVP(collision_tag)
+				CEREAL_NVP(collision_tag),
+				CEREAL_NVP(is_enable),
+				CEREAL_NVP(is_visible),
+				CEREAL_NVP(hidden_in_game)
 			);
 		}
 	}
@@ -141,6 +179,7 @@ namespace cumulonimbus::component
 	}
 
 	SphereCollisionComponent::SphereCollisionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const SphereCollisionComponent& copy_comp)
+		: CollisionComponent{ registry,ent }
 	{
 		*this = copy_comp;
 		SetRegistry(registry);
@@ -232,6 +271,27 @@ namespace cumulonimbus::component
 			std::vector<mapping::rename_type::Entity> delete_hit_entities{};
 			for (auto& [hit_ent, hit_result] : sphere.hit_results)
 			{
+				if(hit_result.collision_tag == collision::CollisionTag::Player)
+				{
+					auto ent = GetEntity();
+					int a;
+					a = 0;
+				}
+
+				if (hit_result.collision_tag == collision::CollisionTag::Camera)
+				{
+					auto ent = GetEntity();
+					int a;
+					a = 0;
+				}
+
+				if (hit_result.collision_tag == collision::CollisionTag::Enemy_Weapon)
+				{
+					int a;
+					a = 0;
+				}
+
+
 				if (hit_result.is_hit)
 				{
 					if (hit_result.is_old_hit)
@@ -375,10 +435,21 @@ namespace cumulonimbus::component
 					}
 				};
 
+				// カプセルタグ変更関数
+				auto CollisionTagCombo = [&]()
+				{
+					if (std::string current_name = nameof::nameof_enum(sphere.collision_tag).data();
+						helper::imgui::Combo("Tag", current_name, collision_tag.GetStateNames()))
+					{// コリジョンタグの変更
+						sphere.collision_tag = collision_tag.GetStateMap().at(current_name);
+					}
+				};
+
 				ImGui::PushID("Sphere Collider");
 				AttachSocket(sphere.bone_name);
 				IMGUI_LEFT_LABEL(ImGui::Checkbox, "Is Visible", &sphere.is_visible);
 				CollisionPresetCombo();
+				CollisionTagCombo();
 				IMGUI_LEFT_LABEL(ImGui::DragFloat3, "Position", &sphere.offset.x, 0.01f, -FLT_MAX, FLT_MAX);
 				IMGUI_LEFT_LABEL(ImGui::DragFloat , "Radius"  , &sphere.radius  , 0.1f , 0.1f	 , FLT_MAX);
 				IMGUI_LEFT_LABEL(ImGui::ColorEdit4, "Base Color", &sphere.base_color.x);
@@ -461,6 +532,14 @@ namespace cumulonimbus::component
 		}
 
 		return nullptr;
+	}
+
+	void SphereCollisionComponent::SetAllCollisionEnable(const bool is_enable)
+	{
+		for(auto& sphere : spheres | std::views::values)
+		{
+			sphere.is_enable = is_enable;
+		}
 	}
 
 	void SphereCollisionComponent::SetOffset(const std::string& sphere_name, const DirectX::SimpleMath::Vector3& offset)

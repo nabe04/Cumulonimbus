@@ -23,6 +23,7 @@
 // components(game)
 #include "capsule_collison_component.h"
 #include "player_sword_component.h"
+#include "time_scale.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::PlayerComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::Actor3DComponent, cumulonimbus::component::PlayerComponent)
@@ -270,7 +271,13 @@ namespace cumulonimbus::component
 		if (auto* sphere_collision_comp = GetRegistry()->TryGetComponent<SphereCollisionComponent>(GetEntity());
 			sphere_collision_comp)
 		{
-			sphere_collision_comp->RegisterEventEnter(GetEntity(), [=](const collision::HitResult& hit_result) {registry->GetComponent<PlayerComponent>(entity).OnHitAvoidRange(hit_result); });
+			auto ent = GetEntity();
+			sphere_collision_comp->RegisterEventEnter(GetEntity(), [=](const collision::HitResult& hit_result) {registry->GetComponent<PlayerComponent>(GetEntity()).OnHitAvoidRange(hit_result); });
+		}
+		if(auto* capsule_collision_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(GetEntity());
+		   capsule_collision_comp)
+		{
+			//capsule_collision_comp->RegisterEventEnter(GetEntity(),[=](const collision::HitResult& hit_result){registry})
 		}
 		// 子階層からPlayerSwordComponentを持つエンティティの取得
 		if (auto* hierarchy_comp = GetRegistry()->TryGetComponent<HierarchyComponent>(GetEntity());
@@ -296,6 +303,13 @@ namespace cumulonimbus::component
 
 	void PlayerComponent::GameUpdate(const float dt)
 	{
+		// ジャスト回避イベントの登録
+		if (auto* sphere_collision_comp = GetRegistry()->TryGetComponent<SphereCollisionComponent>(GetEntity());
+			sphere_collision_comp)
+		{
+			sphere_collision_comp->SetAllCollisionEnable(true);
+		}
+
 		Collision();
 
 		// 現プレイヤーのstate処理を実行
@@ -372,7 +386,7 @@ namespace cumulonimbus::component
 		}
 	}
 
-	void PlayerComponent::Movement(float dt)
+	void PlayerComponent::Movement(const float dt)
 	{
 		if(auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 		   transform_comp.GetPosition().y < 0)
@@ -385,6 +399,24 @@ namespace cumulonimbus::component
 			{
 				rigid_body_comp.SetCurrentGravity(0);
 			}
+		}
+
+		if(is_avoid)
+		{
+			elapsed_time += dt;
+			locator::Locator::GetSystem()->GetTimeScale().SetScale(avoid_time_scale);
+
+			if(elapsed_time > avoid_invincible_time)
+			{
+				elapsed_time = 0;
+				is_avoid	 = false;
+				locator::Locator::GetSystem()->GetTimeScale().SetScale(1.0f);
+			}
+		}
+		else
+		{
+			elapsed_time = 0;
+			locator::Locator::GetSystem()->GetTimeScale().SetScale(1.0f);
 		}
 	}
 
@@ -561,8 +593,18 @@ namespace cumulonimbus::component
 
 	void PlayerComponent::OnHit(const DamageData& damage_data, const collision::HitResult& hit_result)
 	{
-		//is_avoid = false;
 
+		hp -= damage_data.damage_amount;
+
+		if(hp <= 0)
+		{
+			player_state.SetState(PlayerState::Die);
+			return;
+		}
+
+		player_state.SetState(PlayerState::Damage_Small);
+
+		//is_avoid = false;
 
 		//if(player_state.GetState() == PlayerState::Avoid_Dash_Begin)
 		//{
@@ -578,12 +620,13 @@ namespace cumulonimbus::component
 	void PlayerComponent::OnHitAvoidRange(const collision::HitResult& hit_result)
 	{
 		// 回避状態以外の状態の場合処理を抜ける
-		if (player_state.GetState() != PlayerState::Avoid_Dash_Begin)
+		if (player_state.GetState() == PlayerState::Avoid_Dash_Begin ||
+			player_state.GetState() == PlayerState::Dodge)
 			return;
 
 		// ヒット先のタグがEnemy_Weapon以外の場合処理を抜ける
-		if (hit_result.collision_tag != collision::CollisionTag::Enemy_Weapon)
-			return;
+		//if (hit_result.collision_tag != collision::CollisionTag::Enemy_Weapon)
+		//	return;
 
 		// ヒット先のWeaponが持つ親エンティティの取得
 		mapping::rename_type::Entity parent_ent{};
@@ -591,7 +634,7 @@ namespace cumulonimbus::component
 		if (parent_ent.empty())
 			return;
 
-		this->hit_result = hit_result;
+		this->hit_result		= hit_result;
 		this->hit_result.entity = parent_ent;
 
 		is_avoid = true;
@@ -706,10 +749,19 @@ namespace cumulonimbus::component
 
 	void PlayerComponent::DamageSmall(float dt)
 	{
+
+		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
+
 		if(player_state.GetInitialize())
 		{
-
+			// アニメーションセット(AnimationData::Walk)
+			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Damage_Small), false);
 		}
+
+		if (model_comp.IsPlayAnimation())
+			return;
+
+		player_state.SetState(PlayerState::Idle);
 	}
 
 	void PlayerComponent::DamageBig(float dt)
@@ -1815,6 +1867,12 @@ namespace cumulonimbus::component
 			InitializeAnimationVariable();
 			// アニメーションセット(AnimationData::Avoid_Dash_Begin)
 			GetRegistry()->GetComponent<ModelComponent>(GetEntity()).SwitchAnimation(GetAnimDataIndex(AnimationData::Avoid_Dash_Begin), false);
+
+			if(auto * sphere_collision_comp = GetRegistry()->TryGetComponent<SphereCollisionComponent>(GetEntity());
+			   sphere_collision_comp)
+			{
+				sphere_collision_comp->SetAllCollisionEnable(true);
+			}
 		}
 
 		{// 移動速度の設定
@@ -1831,6 +1889,12 @@ namespace cumulonimbus::component
 			{
 				player_state.SetState(PlayerState::Attack_Normal_04_Begin);
 				is_avoid = false;
+				if (auto* sphere_collision_comp = GetRegistry()->TryGetComponent<SphereCollisionComponent>(GetEntity());
+					sphere_collision_comp)
+				{
+					sphere_collision_comp->SetAllCollisionEnable(false);
+				}
+
 				return;
 			}
 		}
@@ -1847,7 +1911,13 @@ namespace cumulonimbus::component
 			if (GetRegistry()->GetComponent<ModelComponent>(GetEntity()).IsPlayAnimation())
 				return;
 
-			is_avoid = false;
+			//is_avoid = false;
+
+			if (auto* sphere_collision_comp = GetRegistry()->TryGetComponent<SphereCollisionComponent>(GetEntity());
+				sphere_collision_comp)
+			{
+				sphere_collision_comp->SetAllCollisionEnable(false);
+			}
 
 			// ゲームパッド入力値取得(スティック、トリガー)
 			const DirectX::XMFLOAT2 stick_left = Locator::GetInput()->GamePad().LeftThumbStick(0);

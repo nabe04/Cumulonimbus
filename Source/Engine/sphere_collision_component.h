@@ -14,8 +14,9 @@ namespace cumulonimbus
 	{
 		struct Sphere
 		{
-			bool						 is_visible{ true };
-			bool						 hidden_in_game{ true };
+			bool						 is_enable{ true }; // 判定処理を行うか
+			bool						 is_visible{ true }; // 表示するか
+			bool						 hidden_in_game{ true }; // ゲーム中に表示するか
 			float						 radius{ 1.f };	// 半径
 			mapping::rename_type::UUID   id{}; // 球判別用ID(ユニークなもの)
 			std::string					 bone_name{};	// FBXモデルのボーンの位置名
@@ -98,6 +99,11 @@ namespace cumulonimbus
 			 * @param sphere_id : 取得したい球コリジョン情報
 			 */
 			collision::Sphere* TryGetSphere(const mapping::rename_type::UUID& sphere_id);
+
+			/**
+			 * @brief : 全ての球の当たり判定を行うかの設定
+			 */
+			void SetAllCollisionEnable(bool is_enable);
 
 			/**
 			 * @brief				: 個々のsphereの"offset"のセット

@@ -177,7 +177,7 @@ namespace cumulonimbus::scene
 			const float delta_time = std::min(0.03f, static_cast<float>(framework->GetHighResolutionTimer().GetDeltaTime()));
 
 			// Update process
-			Update(delta_time);
+			Update(delta_time * system->GetTimeScale().GetScale());
 
 			framework->DrawBegin();
 			Render();

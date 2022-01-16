@@ -75,6 +75,10 @@ namespace cumulonimbus::component
 			auto& asset_manager = *locator::Locator::GetAssetManager();
 			auto& effect_loader = *asset_manager.GetLoader<asset::EffekseerLoader>();
 
+			const std::string im_id = "effect_spawner" + GetEntity();
+
+			ImGui::PushID(im_id.c_str());
+
 			if(GetRegistry()->GetScene()->GetSceneManager()->IsInGame())
 			{
 				ImSpawnButton();
@@ -84,6 +88,8 @@ namespace cumulonimbus::component
 			ImGui::SameLine();
 			effect_loader.ImSelectableEffect(asset_manager, asset_id);
 			SpawnerComponent::RenderImGui();
+
+			ImGui::PopID();
 		}
 	}
 

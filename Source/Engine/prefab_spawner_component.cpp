@@ -80,6 +80,10 @@ namespace cumulonimbus::component
 			auto& asset_manager = *locator::Locator::GetAssetManager();
 			auto& prefab_loader = *asset_manager.GetLoader<asset::PrefabLoader>();
 
+			const std::string im_id = "prefab_spawner" + GetEntity();
+
+			ImGui::PushID(im_id.c_str());
+
 			if (GetRegistry()->GetScene()->GetSceneManager()->IsInGame())
 			{
 				ImSpawnButton();
@@ -89,6 +93,8 @@ namespace cumulonimbus::component
 			ImGui::SameLine();
 			prefab_loader.ImSelectablePrefab(asset_manager, asset_id);
 			SpawnerComponent::RenderImGui();
+
+			ImGui::PopID();
 		}
 	}
 
@@ -109,9 +115,7 @@ namespace cumulonimbus::component
 
 		// ƒvƒŒƒnƒu‚Ì¶¬
 		const mapping::rename_type::Entity spawn_ent = prefab_loader.Instantiate(GetRegistry(), asset_id);
-		const auto p = pos;
-		GetRegistry()->GetComponent<TransformComponent>(spawn_ent).SetPosition(p);
-		//GetRegistry()->GetComponent<TransformComponent>(spawn_ent).SetPosition(DirectX::SimpleMath::Vector3{ 50,0,50 });
+		GetRegistry()->GetComponent<TransformComponent>(spawn_ent).SetPosition(pos);
 
 		++current_count;
 	}

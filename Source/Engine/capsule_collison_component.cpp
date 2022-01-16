@@ -186,6 +186,7 @@ namespace cumulonimbus::component
 		ecs::Registry* registry,
 		const mapping::rename_type::Entity ent,
 		const CapsuleCollisionComponent& copy_comp)
+		: CollisionComponent{ registry,ent }
 	{
 		*this = copy_comp;
 		SetRegistry(registry);
