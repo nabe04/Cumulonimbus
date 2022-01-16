@@ -28,6 +28,9 @@
 // sprite
 #include "billboard_component.h"
 #include "sprite_component.h"
+// spawner
+#include "effect_spawner_component.h"
+#include "prefab_spawner_component.h"
 
 //-- components(game) --//
 // enemy
@@ -39,31 +42,38 @@
 #include "energy_shot_component.h"
 #include "player_sword_component.h"
 #include "soldier_sword_component.h"
+// spawner
+#include "flame_spawner_component.h"
+#include "magic_circle_spawner_component.h"
 
 namespace cumulonimbus::editor
 {
 	Inspector::Inspector()
 	{
-		RegisterComponent<component::ModelComponent>(					"Model"				 , mapping::component_tag::ComponentTag::Mesh);
-		RegisterComponent<component::SpriteComponent>(					"Sprite"			 , mapping::component_tag::ComponentTag::Sprite);
-		RegisterComponent<component::BillboardComponent>(				"Billboard"			 , mapping::component_tag::ComponentTag::Sprite);
-		RegisterComponent<component::EffekseerComponent>(				"Effekseer"			 , mapping::component_tag::ComponentTag::Sprite);
-		RegisterComponent<component::PhysicMaterialComponent>(			"Physic Material"	 , mapping::component_tag::ComponentTag::Physics);
-		RegisterComponent<component::RigidBodyComponent>(				"RigidBody"			 , mapping::component_tag::ComponentTag::Physics);
-		RegisterComponent<component::RayCastComponent>(					"RayCast Collider"	 , mapping::component_tag::ComponentTag::Collider);
-		RegisterComponent<component::CapsuleCollisionComponent>(		"Capsule Collider"	 , mapping::component_tag::ComponentTag::Collider);
-		RegisterComponent<component::SphereCollisionComponent>(			"Sphere Collider"	 , mapping::component_tag::ComponentTag::Collider);
-		RegisterComponent<component::ColliderMessageReceiverComponent>(	"Message Receiver"	 , mapping::component_tag::ComponentTag::Collider);
-		RegisterComponent<component::ColliderMessageSenderComponent>(	"Message Sender"	 , mapping::component_tag::ComponentTag::Collider);
-		RegisterComponent<component::DirectionalLightComponent>(		"Directional Light"	 , mapping::component_tag::ComponentTag::Light);
-		RegisterComponent<component::PointLightComponent>(				"Point Light"		 , mapping::component_tag::ComponentTag::Light);
-		RegisterComponent<component::SpotLightComponent>(				"Spot Light"		 , mapping::component_tag::ComponentTag::Light);
-		RegisterComponent<component::CameraComponent>(					"Camera"			 , mapping::component_tag::ComponentTag::Camera);
-		RegisterComponent<component::EnemySoldierComponent>(			"E_Soldier"			 , mapping::component_tag::ComponentTag::Game);
-		RegisterComponent<component::EnemyBossComponent>(				"E_Boss"			 , mapping::component_tag::ComponentTag::Game);
-		RegisterComponent<component::EnergyShotComponent>(				"Energy Shot"		 , mapping::component_tag::ComponentTag::Game);
-		RegisterComponent<component::PlayerSwordComponent>(				"Player Sword"		 , mapping::component_tag::ComponentTag::Game);
-		RegisterComponent<component::SoldierSwordComponent>(			"Solider Sword"		 , mapping::component_tag::ComponentTag::Game);
+		RegisterComponent<component::ModelComponent>(					"Model"					, mapping::component_tag::ComponentTag::Mesh);
+		RegisterComponent<component::SpriteComponent>(					"Sprite"				, mapping::component_tag::ComponentTag::Sprite);
+		RegisterComponent<component::BillboardComponent>(				"Billboard"				, mapping::component_tag::ComponentTag::Sprite);
+		RegisterComponent<component::EffekseerComponent>(				"Effekseer"				, mapping::component_tag::ComponentTag::Sprite);
+		RegisterComponent<component::PhysicMaterialComponent>(			"Physic Material"		, mapping::component_tag::ComponentTag::Physics);
+		RegisterComponent<component::RigidBodyComponent>(				"RigidBody"				, mapping::component_tag::ComponentTag::Physics);
+		RegisterComponent<component::RayCastComponent>(					"RayCast Collider"		, mapping::component_tag::ComponentTag::Collider);
+		RegisterComponent<component::CapsuleCollisionComponent>(		"Capsule Collider"		, mapping::component_tag::ComponentTag::Collider);
+		RegisterComponent<component::SphereCollisionComponent>(			"Sphere Collider"		, mapping::component_tag::ComponentTag::Collider);
+		RegisterComponent<component::ColliderMessageReceiverComponent>(	"Message Receiver"		, mapping::component_tag::ComponentTag::Collider);
+		RegisterComponent<component::ColliderMessageSenderComponent>(	"Message Sender"		, mapping::component_tag::ComponentTag::Collider);
+		RegisterComponent<component::DirectionalLightComponent>(		"Directional Light"		, mapping::component_tag::ComponentTag::Light);
+		RegisterComponent<component::PointLightComponent>(				"Point Light"			, mapping::component_tag::ComponentTag::Light);
+		RegisterComponent<component::SpotLightComponent>(				"Spot Light"			, mapping::component_tag::ComponentTag::Light);
+		RegisterComponent<component::CameraComponent>(					"Camera"				, mapping::component_tag::ComponentTag::Camera);
+		RegisterComponent<component::EffectSpawnerComponent>(			"Effect Spawner"		, mapping::component_tag::ComponentTag::Spawner);
+		RegisterComponent<component::PrefabSpawnerComponent>(			"Prefab Spawner"		, mapping::component_tag::ComponentTag::Spawner);
+		RegisterComponent<component::MagicCircleSpawnerComponent>(		"Magic Circle Spawner"	, mapping::component_tag::ComponentTag::Spawner);
+		RegisterComponent<component::FlameSpownerComponent>(			"Flame Spawner"			, mapping::component_tag::ComponentTag::Spawner);
+		RegisterComponent<component::EnemySoldierComponent>(			"E_Soldier"				, mapping::component_tag::ComponentTag::Game);
+		RegisterComponent<component::EnemyBossComponent>(				"E_Boss"				, mapping::component_tag::ComponentTag::Game);
+		RegisterComponent<component::EnergyShotComponent>(				"Energy Shot"			, mapping::component_tag::ComponentTag::Game);
+		RegisterComponent<component::PlayerSwordComponent>(				"Player Sword"			, mapping::component_tag::ComponentTag::Game);
+		RegisterComponent<component::SoldierSwordComponent>(			"Solider Sword"			, mapping::component_tag::ComponentTag::Game);
 	}
 
 	void Inspector::Render(ecs::Registry* registry, const mapping::rename_type::Entity ent)
@@ -120,6 +130,7 @@ namespace cumulonimbus::editor
 		ComponentMenu(registry, ent, "Collider" , mapping::component_tag::ComponentTag::Collider);
 		ComponentMenu(registry, ent, "Light"	, mapping::component_tag::ComponentTag::Light);
 		ComponentMenu(registry, ent, "Camera"	, mapping::component_tag::ComponentTag::Camera);
+		ComponentMenu(registry, ent, "Spawner"  , mapping::component_tag::ComponentTag::Spawner);
 		ComponentMenu(registry, ent, "Game"		, mapping::component_tag::ComponentTag::Game);
 
 		ImGui::EndPopup(); // "my_file_popup"

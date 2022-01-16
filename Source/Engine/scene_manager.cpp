@@ -165,6 +165,11 @@ namespace cumulonimbus::scene
 		active_scenes.clear();
 	}
 
+	bool SceneManager::IsInGame() const
+	{
+		return editor_manager->GetToolBar().IsPlayGame();
+	}
+
 	void SceneManager::Execute()
 	{
 		while(framework->ProcessLoop())

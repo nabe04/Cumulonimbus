@@ -69,6 +69,7 @@
     <ClInclude Include="Source\Engine\ecs.h" />
     <ClInclude Include="Source\Engine\editor_manager.h" />
     <ClInclude Include="Source\Engine\effect.h" />
+    <ClInclude Include="Source\Engine\effect_spawner_component.h" />
     <ClInclude Include="Source\Engine\effekseer_component.h" />
     <ClInclude Include="Source\Engine\effekseer_loader.h" />
     <ClInclude Include="Source\Engine\effekseer_manager.h" />
@@ -120,6 +121,7 @@
     <ClInclude Include="Source\Engine\point_light_component.h" />
     <ClInclude Include="Source\Engine\prefab.h" />
     <ClInclude Include="Source\Engine\prefab_loader.h" />
+    <ClInclude Include="Source\Engine\prefab_spawner_component.h" />
     <ClInclude Include="Source\Engine\primitive_data.h" />
     <ClInclude Include="Source\Engine\project_view.h" />
     <ClInclude Include="Source\Engine\rigid_body_component.h" />
@@ -153,6 +155,7 @@
     <ClInclude Include="Source\Engine\shader_filename_mapping.h" />
     <ClInclude Include="Source\Engine\shader_interop.h" />
     <ClInclude Include="Source\Engine\shader_interop_renderer.h" />
+    <ClInclude Include="Source\Engine\spawner_component.h" />
     <ClInclude Include="Source\Engine\spot_light_component.h" />
     <ClInclude Include="Source\Engine\sprite_component.h" />
     <ClInclude Include="Source\Engine\system.h" />
@@ -199,6 +202,8 @@
     <ClInclude Include="Source\Game\enemy_slime_component.h" />
     <ClInclude Include="Source\Game\enemy_soldier_component.h" />
     <ClInclude Include="Source\Game\energy_shot_component.h" />
+    <ClInclude Include="Source\Game\flame_spawner_component.h" />
+    <ClInclude Include="Source\Game\magic_circle_spawner_component.h" />
     <ClInclude Include="Source\Game\player_component.h" />
     <ClInclude Include="Source\Game\player_sword_component.h" />
     <ClInclude Include="Source\Game\soldier_sword_component.h" />
@@ -250,6 +255,7 @@
     <ClCompile Include="Source\Engine\ecs.cpp" />
     <ClCompile Include="Source\Engine\editor_manager.cpp" />
     <ClCompile Include="Source\Engine\effect.cpp" />
+    <ClCompile Include="Source\Engine\effect_spawner_component.cpp" />
     <ClCompile Include="Source\Engine\effekseer_component.cpp" />
     <ClCompile Include="Source\Engine\effekseer_loader.cpp" />
     <ClCompile Include="Source\Engine\effekseer_manager.cpp" />
@@ -294,6 +300,7 @@
     <ClCompile Include="Source\Engine\point_light_component.cpp" />
     <ClCompile Include="Source\Engine\prefab.cpp" />
     <ClCompile Include="Source\Engine\prefab_loader.cpp" />
+    <ClCompile Include="Source\Engine\prefab_spawner_component.cpp" />
     <ClCompile Include="Source\Engine\primitive_data.cpp" />
     <ClCompile Include="Source\Engine\project_view.cpp" />
     <ClCompile Include="Source\Engine\rigid_body_component..cpp" />
@@ -337,6 +344,7 @@
     <ClCompile Include="Source\Engine\sky_box.cpp" />
     <ClCompile Include="Source\Engine\sobel_filter.cpp" />
     <ClCompile Include="Source\Engine\Sound.cpp" />
+    <ClCompile Include="Source\Engine\spawner_component.cpp" />
     <ClCompile Include="Source\Engine\sphere_collision_component.cpp" />
     <ClCompile Include="Source\Engine\spot_light.cpp" />
     <ClCompile Include="Source\Engine\spot_light_component.cpp" />
@@ -365,6 +373,8 @@
     <ClCompile Include="Source\Game\enemy_slime_component.cpp" />
     <ClCompile Include="Source\Game\enemy_soldier_component.cpp" />
     <ClCompile Include="Source\Game\energy_shot_component.cpp" />
+    <ClCompile Include="Source\Game\flame_spawner_component.cpp" />
+    <ClCompile Include="Source\Game\magic_circle_spawner_component.cpp" />
     <ClCompile Include="Source\Game\player_component.cpp" />
     <ClCompile Include="Source\Game\player_sword_component.cpp" />
     <ClCompile Include="Source\Game\soldier_sword_component.cpp" />

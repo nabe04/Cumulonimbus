@@ -138,6 +138,8 @@ namespace cumulonimbus::scene
 		{
 			return effekseer_manager.get();
 		}
+		[[nodiscard]]
+		bool IsInGame() const;
 
 	private:
 		// Œ»İŠJ‚©‚ê‚Ä‚¢‚éƒV[ƒ“

@@ -253,7 +253,6 @@ namespace cumulonimbus::component
 		InitializeAnimState(registry, GetEntity());
 	}
 
-
 	bool ModelComponent::IsPlayAnimation() const
 	{
 		auto anims = locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>()->GetModel(model_id).GetModelData().GetAnimations();

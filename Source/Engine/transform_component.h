@@ -75,12 +75,12 @@ namespace cumulonimbus::component
 		void AdjustPosition_Z(float z);
 
 		[[nodiscard]]
-		const DirectX::SimpleMath::Vector3& GetPosition()   const
+		DirectX::SimpleMath::Vector3 GetPosition() const
 		{
 			return local_position;
 		}
 		[[nodiscard]]
-		const DirectX::SimpleMath::Vector3& GetOldPosition() const
+		DirectX::SimpleMath::Vector3 GetOldPosition() const
 		{
 			return local_prev_position;
 		}

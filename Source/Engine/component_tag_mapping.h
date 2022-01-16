@@ -11,6 +11,7 @@ namespace cumulonimbus::mapping::component_tag
 		Light,
 		Camera,
 		Collider,
+		Spawner,
 		Game,
 
 		End

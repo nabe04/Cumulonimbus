@@ -77,7 +77,7 @@ namespace cumulonimbus::component
 		//ES_SAFE_RELEASE(effect_);
 	}
 
-	void EffekseerComponent::SceneUpdate(float dt)
+	void EffekseerComponent::CommonUpdate(float dt)
 	{
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 
@@ -149,6 +149,7 @@ namespace cumulonimbus::component
 		if (efk_id.empty())
 			return;
 
+		effect_id = efk_id;
 		auto& asset_manager = *locator::Locator::GetAssetManager();
 		auto* effekseer_loader = asset_manager.GetLoader<asset::EffekseerLoader>();
 		effect = &effekseer_loader->GetEffect(effect_id);
@@ -160,6 +161,7 @@ namespace cumulonimbus::component
 		const Effekseer::Manager* manager = effekseer_manager->GetManager();
 
 		const_cast<Effekseer::Manager*>(manager)->SetLocation(handle, pos.x, pos.y, pos.z);
+
 	}
 
 	void EffekseerComponent::SetScale(const DirectX::SimpleMath::Vector3& scale) const
@@ -169,4 +171,12 @@ namespace cumulonimbus::component
 
 		const_cast<Effekseer::Manager*>(manager)->SetScale(handle, scale.x, scale.y, scale.z);
 	}
+
+	bool EffekseerComponent::IsPlaying() const
+	{
+		auto* effekseer_manager = GetRegistry()->GetScene()->GetSceneManager()->GetEffekseerManager();
+		const Effekseer::Manager* manager = effekseer_manager->GetManager();
+		return const_cast<Effekseer::Manager*>(manager)->GetShown(handle);
+	}
+
 } // cumulonimbus::component

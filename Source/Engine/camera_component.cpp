@@ -309,7 +309,7 @@ namespace cumulonimbus::component
 	void CameraComponent::UpdateObjectCamera(float dt)
 	{
 		// camera_length‚Æfront_vec‚©‚çƒJƒƒ‰‚ÌˆÊ’u‚ðŽZo
-		auto& position = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetPosition();
+		const auto& position = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetPosition();
 
 		camera->SetFocusPosition(position + camera->GetFocusOffset());
 		camera->SetEyePosition(camera->GetFocusPosition() + (camera->GetCameraFront() * -1) * camera_length);

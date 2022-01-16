@@ -37,6 +37,10 @@
 // sprite
 #include "billboard_component.h"
 #include "sprite_component.h"
+// spawner
+#include "spawner_component.h"
+#include "effect_spawner_component.h"
+#include "prefab_spawner_component.h"
 // transform
 #include "transform_component.h"
 
@@ -51,6 +55,9 @@
 #include "energy_shot_component.h"
 #include "player_sword_component.h"
 #include "soldier_sword_component.h"
+// spawner
+#include "magic_circle_spawner_component.h"
+#include "flame_spawner_component.h"
 
 
 
@@ -88,6 +95,10 @@ namespace cumulonimbus::asset
 		// sprite
 		RegistryComponent<component::BillboardComponent>();
 		RegistryComponent<component::SpriteComponent>();
+		// spawner
+		RegistryComponent<component::SpawnerComponent>();
+		RegistryComponent<component::EffectSpawnerComponent>();
+		RegistryComponent<component::PrefabSpawnerComponent>();
 		// transform
 		RegistryComponent<component::TransformComponent>();
 
@@ -102,6 +113,9 @@ namespace cumulonimbus::asset
 		RegistryComponent<component::EnergyShotComponent>();
 		RegistryComponent<component::PlayerSwordComponent>();
 		RegistryComponent<component::SoldierSwordComponent>();
+		// spawner
+		RegistryComponent<component::MagicCircleSpawnerComponent>();
+		RegistryComponent<component::FlameSpownerComponent>();
 	}
 
 	template <class T>

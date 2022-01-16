@@ -624,6 +624,21 @@
     <ClCompile Include="Source\Engine\time_scale.cpp">
       <Filter>Source\Engine\System</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\spawner_component.cpp">
+      <Filter>Source\Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\prefab_spawner_component.cpp">
+      <Filter>Source\Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\effect_spawner_component.cpp">
+      <Filter>Source\Engine\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\flame_spawner_component.cpp">
+      <Filter>Source\Game\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\magic_circle_spawner_component.cpp">
+      <Filter>Source\Game\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -1180,6 +1195,21 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\time_scale.h">
       <Filter>Header\Engine\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\spawner_component.h">
+      <Filter>Header\Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\prefab_spawner_component.h">
+      <Filter>Header\Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\effect_spawner_component.h">
+      <Filter>Header\Engine\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\flame_spawner_component.h">
+      <Filter>Header\Game\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\magic_circle_spawner_component.h">
+      <Filter>Header\Game\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

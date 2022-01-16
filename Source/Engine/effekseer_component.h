@@ -13,7 +13,7 @@ namespace cumulonimbus::component
 		explicit EffekseerComponent()  = default; // for cereal
 		~EffekseerComponent() override;
 
-		void SceneUpdate(float dt) override;
+		void CommonUpdate(float dt) override;
 		void GameUpdate(float dt) override;
 
 		void End() override;
@@ -33,6 +33,9 @@ namespace cumulonimbus::component
 
 		void SetPos(const DirectX::SimpleMath::Vector3& pos) const;
 		void SetScale(const DirectX::SimpleMath::Vector3& scale) const;
+
+		[[nodiscard]]
+		bool IsPlaying() const;
 	private:
 		mapping::rename_type::UUID effect_id{};
 		asset::Effect* effect{};
