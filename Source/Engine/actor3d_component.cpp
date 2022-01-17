@@ -30,7 +30,10 @@ namespace cumulonimbus::component
 
 	void Actor3DComponent::Rotate(ecs::Registry* registry, const mapping::rename_type::Entity& ent)
 	{
-		auto name = registry->GetName(ent);
+		const std::string name = registry->GetName(ent);
+
+		if (name.empty())
+			return;
 
 		const DirectX::SimpleMath::Vector3 ent_pos = registry->GetComponent<TransformComponent>(ent).GetPosition();
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());

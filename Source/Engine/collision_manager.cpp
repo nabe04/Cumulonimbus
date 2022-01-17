@@ -317,7 +317,7 @@ namespace cumulonimbus::collision
 			{// 判定されたカプセル情報が一致した場合判定(is_hit)をtrueに
 				if (!registry->HasComponent<component::CapsuleCollisionComponent>(hit_data.self_entity))
 					continue;
-				auto* capsule = registry->GetComponent<component::CapsuleCollisionComponent>(hit_data.self_entity).TryGetCapsule(capsule_id);
+				auto* capsule = registry->GetComponent<component::CapsuleCollisionComponent>(hit_data.self_entity).TryGetCapsuleFromId(capsule_id);
 				if (!capsule)
 					continue;
 				// カプセルのエンティティ別の判定をTrueに

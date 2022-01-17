@@ -19,6 +19,7 @@ namespace cumulonimbus
 			bool						 hidden_in_game{ true }; // ゲーム中に表示するか
 			float						 length{ 2 };		 // カプセルの端点間の長さ
 			float						 radius{ 1 };		 // カプセルの半径
+			std::string					 name{};
 			std::string					 bone_name{};		 // FBXモデルのボーンの位置名
 			mapping::rename_type::UUID   id{};				 // カプセルID(ゲーム開始毎に変わる)
 			CollisionType				 collision_type{ CollisionType::OverlapAll }; // コリジョンのプロファイル
@@ -105,8 +106,13 @@ namespace cumulonimbus
 			 * @remark : capsule_idが一致しない場合nullptrを返す
 			 * @param capsule_id : 取得したいカプセルコリジョンを情報
 			 */
-			collision::Capsule* TryGetCapsule(const mapping::rename_type::UUID& capsule_id);
-
+			collision::Capsule* TryGetCapsuleFromId(const mapping::rename_type::UUID& capsule_id);
+			/**
+			 * @brief : カプセル名から個々のカプセル情報取得
+			 * @remark : 存在しない場合はnullptrを返す
+			 */
+			[[nodiscard]]
+			collision::Capsule* TryGetCapsuleFromName(const std::string& c_name);
 			/**
 			 * @brief : 全てのカプセルの当たり判定の行うかの設定
 			 */
@@ -160,7 +166,8 @@ namespace cumulonimbus
 			/**
 			* @brief : mapに登録されているcollision::Capsuleの取得
 			*/
-			[[nodiscard]] std::unordered_map<std::string, collision::Capsule>& GetCapsules();
+			[[nodiscard]]
+			std::unordered_map<std::string, collision::Capsule>& GetCapsules();
 		private:
 			// 判定用データ群
 			std::unordered_map<std::string, collision::Capsule> capsules{};

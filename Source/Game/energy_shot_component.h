@@ -35,9 +35,9 @@ namespace cumulonimbus::component
 
 		void OnHit(const collision::HitResult& hit_result);
 	private:
-		float shot_speed{ 1.0f };
+		float shot_speed{ 100.f };
 		u_int damage_amount{ 1 };
 
-		void Move();
+		void Move(float dt);
 	};
 } // cumulonimbus::component

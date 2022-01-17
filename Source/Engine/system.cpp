@@ -65,7 +65,7 @@ namespace cumulonimbus::system
 	{
 		camera_texture		= std::make_unique<camera::CameraTexture>(*this);
 		sky_box				= std::make_unique<graphics::SkyBox>(*this, locator::Locator::GetDx11Device()->device.Get(),".Data/Assets/cubemap/Table_Mountain/table_mountain.dds");
-		time_scale			= std::make_unique<system::TimeScale>();
+		time				= std::make_unique<system::Time>();
 		collision_primitive = std::make_unique<collision::CollisionPrimitiveAsset>(*this);
 	}
 
@@ -85,8 +85,8 @@ namespace cumulonimbus::system
 				camera_texture = std::make_unique<camera::CameraTexture>(*this);
 			if(!sky_box.get())
 				sky_box = std::make_unique<graphics::SkyBox>(*this, locator::Locator::GetDx11Device()->device.Get());
-			if(!time_scale.get())
-				time_scale = std::make_unique<system::TimeScale>();
+			if(!time.get())
+				time = std::make_unique<system::Time>();
 			if(!collision_primitive.get())
 				collision_primitive = std::make_unique<collision::CollisionPrimitiveAsset>(*this);
 
@@ -97,9 +97,9 @@ namespace cumulonimbus::system
 			// CollisionPrimitiveAsset
 			RegisterRenderFunction(utility::GetHash<collision::CollisionPrimitiveAsset>(),
 				[&](ecs::Registry* registry) {collision_primitive->RenderImGui(registry); });
-			// TimeScale
-			RegisterRenderFunction(utility::GetHash<system::TimeScale>(),
-								   [&](ecs::Registry* registry) {time_scale->RenderImGui(registry); });
+			// Time
+			RegisterRenderFunction(utility::GetHash<system::Time>(),
+								   [&](ecs::Registry* registry) {time->RenderImGui(registry); });
 			sky_box->Load(*this);
 		};
 
@@ -207,9 +207,9 @@ namespace cumulonimbus::system
 		return *(sky_box.get());
 	}
 
-	system::TimeScale& System::GetTimeScale() const
+	system::Time& System::GetTime() const
 	{
-		return *(time_scale.get());
+		return *(time.get());
 	}
 
 	collision::CollisionPrimitiveAsset& System::GetCollisionPrimitive() const

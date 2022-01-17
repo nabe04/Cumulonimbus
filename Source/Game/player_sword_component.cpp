@@ -110,7 +110,7 @@ namespace cumulonimbus::component
 			damage_data.damage_amount = player_comp->GetCurrentDamageAmount();
 		}
 
-		if(auto* damageable_comp = hit_result.registry->TryGetComponent<DamageableComponent>(hit_result.entity);
+		if (auto* damageable_comp = hit_result.registry->TryGetComponent<DamageableComponent>(hit_result.entity);
 		   damageable_comp)
 		{
 			damageable_comp->OnDamaged(hit_result.entity, damage_data, hit_result);

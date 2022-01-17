@@ -9,6 +9,7 @@
 #include "transform_component.h"
 #include "collider_message_receiver_component.h"
 #include "collider_message_sender_component.h"
+#include "capsule_collison_component.h"
 #include "prefab_loader.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::EnemyBossComponent)
@@ -20,6 +21,11 @@ namespace keyframe_event
 	const std::string event_1{ "Event_1" };
 } // keyframe_event
 
+namespace collision_name
+{
+	const std::string for_attack{ "atk_collider" };
+	const std::string for_damage{ "damage_collider" };
+} // collision_name
 namespace cumulonimbus::component
 {
 	template <class Archive>
@@ -90,11 +96,15 @@ namespace cumulonimbus::component
 		EnemyBossComponent& e_boss_comp = GetRegistry()->GetComponent<EnemyBossComponent>(GetEntity());
 
 		//-- キーフレームイベント登録 --//
-		// Atk03
+		// Atk_N_01
+		RegistryKeyframeEvent(AnimationData::Attack_Normal_01, keyframe_event::event_1);
+		// Atk_N_03
 		RegistryKeyframeEvent(AnimationData::Attack_Normal_03, keyframe_event::event_1);
 
 		//-- キーフレームイベントの範囲指定 --//
-		// Atk03
+		// Atk_N_01
+		GetKeyframeEvent(AnimationData::Attack_Normal_01).SetKeyEvent(keyframe_event::event_1, 16, 22);
+		// Atk_N_03
 		GetKeyframeEvent(AnimationData::Attack_Normal_03).SetKeyEvent(keyframe_event::event_1, 15, 20);
 
 		//
@@ -102,6 +112,16 @@ namespace cumulonimbus::component
 			collider_receiver)
 		{
 			collider_receiver->RegisterReceivedMessage(GetEntity(), [&e_boss_comp](ColliderMessageSenderComponent& sender) {e_boss_comp.AttackTypeSelection(sender); });
+		}
+
+		if (auto* capsule_collider = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(GetEntity());
+			capsule_collider)
+		{
+			if (auto* capsule = capsule_collider->TryGetCapsuleFromName(collision_name::for_attack);
+				capsule)
+			{
+				capsule->is_enable = false;
+			}
 		}
 
 		//-- 行動(ビヘイビア)の更新StateMachineの追加 --//
@@ -306,7 +326,7 @@ namespace cumulonimbus::component
 				{// 近距離攻撃
 					uint atk_index = arithmetic::RandomIntInRange(0, 3);
 					//attack_behavior.SetBehavior(static_cast<AttackBehavior>(atk_index));
-					attack_behavior.SetBehavior(AttackBehavior::Atk_N3);
+					attack_behavior.SetBehavior(AttackBehavior::Atk_N1);
 				}
 				if (next_attack_type == AttackType::Atk_Long_Range)
 				{// 遠距離攻撃
@@ -404,11 +424,50 @@ namespace cumulonimbus::component
 			model_comp->SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Normal_01));
 		}
 
+		GetKeyframeEvent(AnimationData::Attack_Normal_01).Update(GetRegistry(), GetEntity(), keyframe_event::event_1);
+		if (GetKeyframeEvent(AnimationData::Attack_Normal_01).GetKeyEvent(keyframe_event::event_1).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeEnter)
+		{
+			if (auto* capsule_collider = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(GetEntity());
+				capsule_collider)
+			{
+				if (auto* capsule = capsule_collider->TryGetCapsuleFromName(collision_name::for_attack);
+					capsule)
+				{
+					capsule->is_enable = true;
+				}
+			}
+		}
+
+		if(GetKeyframeEvent(AnimationData::Attack_Normal_01).GetKeyEvent(keyframe_event::event_1).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeExit)
+		{
+			if (auto* capsule_collider = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(GetEntity());
+				capsule_collider)
+			{
+				if (auto* capsule = capsule_collider->TryGetCapsuleFromName(collision_name::for_attack);
+					capsule)
+				{
+					capsule->is_enable = false;
+				}
+			}
+		}
+
 		if (model_comp->IsPlayAnimation())
 			return;
 
 		// ビヘイビアが完了したので次のビヘイビアに移行する
 		is_next_sequence = true;
+
+		if (auto* capsule_collider = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(GetEntity());
+			capsule_collider)
+		{
+			if (auto* capsule = capsule_collider->TryGetCapsuleFromName(collision_name::for_attack);
+				capsule)
+			{
+				capsule->is_enable = false;
+			}
+		}
 	}
 
 	void EnemyBossComponent::AttackNormal02(const float dt, const bool is_start)
@@ -452,8 +511,6 @@ namespace cumulonimbus::component
 		if (GetKeyframeEvent(AnimationData::Attack_Normal_03).GetKeyEvent(keyframe_event::event_1).key_state ==
 			system::KeyframeEvent::KeyState::OnKeyRangeEnter)
 		{
-			const auto& sphere_arr = GetRegistry()->GetArray<SphereCollisionComponent>();
-
 			auto* prefab_loader = locator::Locator::GetAssetManager()->GetLoader<asset::PrefabLoader>();
 			mapping::rename_type::Entity spawn_shot_ent{};
 			if (prefab_loader->HasPrefab(shot_prefab_id))
@@ -465,9 +522,6 @@ namespace cumulonimbus::component
 			{
 				GetRegistry()->GetComponent<TransformComponent>(spawn_shot_ent).SetPosition(model_comp->GetNodeWorldPos(spawn_shot_node_name.c_str()));
 			}
-
-			int a;
-			a = 0;
 		}
 
 		if (model_comp->IsPlayAnimation())

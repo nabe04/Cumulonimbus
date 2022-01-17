@@ -10,7 +10,7 @@ namespace cumulonimbus
 
 namespace cumulonimbus::system
 {
-	class TimeScale final
+	class Time final
 	{
 	public:
 
@@ -28,14 +28,26 @@ namespace cumulonimbus::system
 			return scale;
 		}
 
+		[[nodiscard]]
+		float GetUnscaledDeltaTime() const
+		{
+			return unscaled_delta_time;
+		}
+
 		void SetScale(const float s)
 		{
 			scale = s;
 		}
 
+		void SetUnscaledDeltaTime(const float dt)
+		{
+			unscaled_delta_time = dt;
+		}
+
 	private:
 		float scale{ 1.0f };
+		float unscaled_delta_time{};
 	};
 } // cumulonimbus::system
 
-CEREAL_CLASS_VERSION(cumulonimbus::system::TimeScale, 0)
+CEREAL_CLASS_VERSION(cumulonimbus::system::Time, 0)

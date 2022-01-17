@@ -271,27 +271,6 @@ namespace cumulonimbus::component
 			std::vector<mapping::rename_type::Entity> delete_hit_entities{};
 			for (auto& [hit_ent, hit_result] : sphere.hit_results)
 			{
-				if(hit_result.collision_tag == collision::CollisionTag::Player)
-				{
-					auto ent = GetEntity();
-					int a;
-					a = 0;
-				}
-
-				if (hit_result.collision_tag == collision::CollisionTag::Camera)
-				{
-					auto ent = GetEntity();
-					int a;
-					a = 0;
-				}
-
-				if (hit_result.collision_tag == collision::CollisionTag::Enemy_Weapon)
-				{
-					int a;
-					a = 0;
-				}
-
-
 				if (hit_result.is_hit)
 				{
 					if (hit_result.is_old_hit)
@@ -448,6 +427,7 @@ namespace cumulonimbus::component
 				ImGui::PushID("Sphere Collider");
 				AttachSocket(sphere.bone_name);
 				IMGUI_LEFT_LABEL(ImGui::Checkbox, "Is Visible", &sphere.is_visible);
+				IMGUI_LEFT_LABEL(ImGui::Checkbox, "Hidden In Game", &sphere.hidden_in_game);
 				CollisionPresetCombo();
 				CollisionTagCombo();
 				IMGUI_LEFT_LABEL(ImGui::DragFloat3, "Position", &sphere.offset.x, 0.01f, -FLT_MAX, FLT_MAX);

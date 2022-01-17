@@ -13,7 +13,7 @@
 CEREAL_REGISTER_TYPE(cumulonimbus::component::CapsuleCollisionComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::CollisionComponent, cumulonimbus::component::CapsuleCollisionComponent)
 CEREAL_CLASS_VERSION(cumulonimbus::component::CapsuleCollisionComponent, 1)
-CEREAL_CLASS_VERSION(cumulonimbus::collision::Capsule, 2)
+CEREAL_CLASS_VERSION(cumulonimbus::collision::Capsule, 3)
 
 namespace
 {
@@ -81,10 +81,25 @@ namespace cumulonimbus::collision
 				CEREAL_NVP(hit_color),
 				CEREAL_NVP(collision_tag)
 			);
+		}
 
-			//archive(
-			//	CEREAL_NVP(collision_tag)
-			//);
+		if(version == 3)
+		{
+			archive(
+				CEREAL_NVP(world_transform_matrix),
+				CEREAL_NVP(offset),
+				CEREAL_NVP(rotation),
+				CEREAL_NVP(start),
+				CEREAL_NVP(end),
+				CEREAL_NVP(name),
+				CEREAL_NVP(bone_name),
+				CEREAL_NVP(length),
+				CEREAL_NVP(radius),
+				CEREAL_NVP(collision_type),
+				CEREAL_NVP(base_color),
+				CEREAL_NVP(hit_color),
+				CEREAL_NVP(collision_tag)
+			);
 		}
 	}
 
@@ -117,6 +132,24 @@ namespace cumulonimbus::collision
 				CEREAL_NVP(rotation),
 				CEREAL_NVP(start),
 				CEREAL_NVP(end),
+				CEREAL_NVP(bone_name),
+				CEREAL_NVP(length),
+				CEREAL_NVP(radius),
+				CEREAL_NVP(collision_type),
+				CEREAL_NVP(base_color),
+				CEREAL_NVP(hit_color),
+				CEREAL_NVP(collision_tag)
+			);
+		}
+		if(version == 3)
+		{
+			archive(
+				CEREAL_NVP(world_transform_matrix),
+				CEREAL_NVP(offset),
+				CEREAL_NVP(rotation),
+				CEREAL_NVP(start),
+				CEREAL_NVP(end),
+				CEREAL_NVP(name),
 				CEREAL_NVP(bone_name),
 				CEREAL_NVP(length),
 				CEREAL_NVP(radius),
@@ -511,7 +544,17 @@ namespace cumulonimbus::component
 					}
 				};
 
+				std::string name = capsules.at(selected_collision_name).name;
+				const size_t arr_size = name.length();
+				char buf[256];
+				strcpy_s(buf, arr_size + 1, name.c_str());
+
 				ImGui::PushID("Capsule Collider");
+				if (ImGui::InputText("Name", buf, 64, ImGuiInputTextFlags_CharsNoBlank))
+				{
+					capsules.at(selected_collision_name).name = buf;
+				}
+
 				ImGui::Checkbox("Is Visible", &capsule.is_visible);
 				ImGui::Checkbox("Hidden In Game", &capsule.hidden_in_game);
 				AttachSocket(capsule.bone_name);
@@ -568,6 +611,7 @@ namespace cumulonimbus::component
 				{
 					capsules.emplace(new_name, capsule);
 					capsules.at(new_name).id = utility::GenerateUUID();
+					capsules.at(new_name).name = new_name;
 					return new_name;
 				}
 			}
@@ -579,6 +623,7 @@ namespace cumulonimbus::component
 
 			capsules.emplace(name, capsule);
 			capsules.at(name).id = utility::GenerateUUID();
+			capsules.at(name).name = name;
 			return name;
 		}
 	}
@@ -593,11 +638,22 @@ namespace cumulonimbus::component
 		return name;
 	}
 
-	collision::Capsule* CapsuleCollisionComponent::TryGetCapsule(const mapping::rename_type::UUID& capsule_id)
+	collision::Capsule* CapsuleCollisionComponent::TryGetCapsuleFromId(const mapping::rename_type::UUID& capsule_id)
 	{
 		for(auto& capsule : capsules | std::views::values)
 		{
 			if (capsule.id == capsule_id)
+				return &capsule;
+		}
+
+		return nullptr;
+	}
+
+	collision::Capsule* CapsuleCollisionComponent::TryGetCapsuleFromName(const std::string& c_name)
+	{
+		for (auto& capsule : capsules | std::views::values)
+		{
+			if (capsule.name == c_name)
 				return &capsule;
 		}
 
@@ -668,7 +724,7 @@ namespace cumulonimbus::component
 
 	void CapsuleCollisionComponent::SetAllCollisionType(collision::CollisionType preset)
 	{
-		for(auto& capsule : capsules)
+		for (auto& capsule : capsules)
 		{
 			capsule.second.collision_type = preset;
 		}

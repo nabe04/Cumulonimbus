@@ -213,7 +213,7 @@ namespace cumulonimbus::component
 		// 経過時間(使用用途は自由)
 		float elapsed_time{ 0.0f };
 		// 回避無敵時間
-		float avoid_invincible_time{ 2.0f };
+		float avoid_invincible_time{ 0.5f };
 		// 回避無敵中のタイムスケール(時間が経つ速さ)
 		float avoid_time_scale{ 0.5f };
 

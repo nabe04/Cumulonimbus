@@ -162,6 +162,8 @@ namespace cumulonimbus::component
 		// ビヘイビアツリーの一連の処理が完了したか
 		bool is_behavior_completed{ false };
 
+		// 当たり判定用プレハブ
+		mapping::rename_type::UUID atk_collider_prefab_id{};
 		// エネルギーショットのプレハブ
 		mapping::rename_type::UUID shot_prefab_id{};
 		// エネルギーショット生成時の位置

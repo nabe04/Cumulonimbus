@@ -47,23 +47,23 @@ namespace cumulonimbus::component
 
 	void EnergyShotComponent::Start()
 	{
-		//if(auto* efk_comp = GetRegistry()->TryGetComponent<EffekseerComponent>(GetEntity());
-		//   efk_comp)
-		//{
-		//	efk_comp->Play();
-		//}
+		if(auto* efk_comp = GetRegistry()->TryGetComponent<EffekseerComponent>(GetEntity());
+		   efk_comp)
+		{
+			efk_comp->Play();
+		}
 
-		//if(auto* sphere_collision_comp = GetRegistry()->TryGetComponent<SphereCollisionComponent>(GetEntity());
-		//   sphere_collision_comp)
-		//{
-		//	sphere_collision_comp->RegisterEventEnter(GetEntity(), [ent = GetEntity(), registry = GetRegistry()](const collision::HitResult& hit_result){registry->GetComponent<EnergyShotComponent>(ent).OnHit(hit_result); });
-		//	sphere_collision_comp->SetAllCollisionEnable(true);
-		//}
+		if(auto* sphere_collision_comp = GetRegistry()->TryGetComponent<SphereCollisionComponent>(GetEntity());
+		   sphere_collision_comp)
+		{
+			sphere_collision_comp->RegisterEventEnter(GetEntity(), [ent = GetEntity(), registry = GetRegistry()](const collision::HitResult& hit_result){registry->GetComponent<EnergyShotComponent>(ent).OnHit(hit_result); });
+			sphere_collision_comp->SetAllCollisionEnable(true);
+		}
 	}
 
-	void EnergyShotComponent::GameUpdate(float dt)
+	void EnergyShotComponent::GameUpdate(const float dt)
 	{
-		Move();
+		Move(dt);
 	}
 
 	void EnergyShotComponent::RenderImGui()
@@ -90,17 +90,17 @@ namespace cumulonimbus::component
 		}
 	}
 
-	void EnergyShotComponent::Move()
+	void EnergyShotComponent::Move(const float dt)
 	{
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 
-		const auto pos = (transform_comp.GetModelFront() * shot_speed) + transform_comp.GetPosition();
+		const auto pos = (transform_comp.GetModelFront() * shot_speed * dt) + transform_comp.GetPosition();
 		transform_comp.SetPosition(pos);
 
 		if (auto* efk_comp = GetRegistry()->TryGetComponent<EffekseerComponent>(GetEntity());
 			efk_comp)
 		{
-			efk_comp->SetPos(transform_comp.GetPosition());
+			efk_comp->SetPos(pos);
 		}
 	}
 } // cumulonimbus::component

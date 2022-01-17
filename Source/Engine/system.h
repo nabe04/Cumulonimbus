@@ -29,7 +29,7 @@ namespace cumulonimbus
 
 	namespace system
 	{
-		class TimeScale;
+		class Time;
 	} // system
 
 } // cumulonimbus
@@ -89,7 +89,7 @@ namespace cumulonimbus::system
  		[[nodiscard]]
 		graphics::SkyBox& GetSkyBox() const;
 		[[nodiscard]]
-		system::TimeScale& GetTimeScale() const;
+		system::Time& GetTime() const;
 		[[nodiscard]]
 		collision::CollisionPrimitiveAsset& GetCollisionPrimitive() const;
 		[[nodiscard]]
@@ -109,7 +109,7 @@ namespace cumulonimbus::system
 
 		std::unique_ptr<camera::CameraTexture> camera_texture{};
 		std::unique_ptr<graphics::SkyBox>	   sky_box{};
-		std::unique_ptr<system::TimeScale>	   time_scale{};
+		std::unique_ptr<system::Time>	   time{};
 		std::unique_ptr<collision::CollisionPrimitiveAsset> collision_primitive{};
 
 		std::string current_scene_path{}; // Œ»İŠJ‚©‚ê‚Ä‚¢‚éƒV[ƒ“(cereal‚ªstd::filesystem–¢‘Î‰‚Ì‚½‚ßstd::string‚É‚µ‚Ä‚¢‚é)
