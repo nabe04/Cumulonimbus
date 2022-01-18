@@ -593,7 +593,6 @@ namespace cumulonimbus::component
 		SetRegistry(registry);
 	}
 
-
 	std::string CapsuleCollisionComponent::AddCapsule(const std::string& name, const collision::Capsule& capsule)
 	{
 		if (name == "")

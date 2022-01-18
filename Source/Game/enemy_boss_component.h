@@ -63,8 +63,33 @@ namespace cumulonimbus::component
 		 */
 		enum class AttackType
 		{
-			Atk_Melee,
-			Atk_Long_Range
+			Atk_Melee = 0,
+			Atk_Long_Range,
+
+			End
+		};
+
+		/**
+		 * @brief : 移動の行動(ビヘイビア)表
+		 */
+		enum class MovementBehavior
+		{
+			Idle,
+			Tracking,
+			Wandering,
+
+			End
+		};
+
+		/**
+		 * @brief : ダメージの行動(ビヘイビア)表
+		 */
+		enum class DamageBehavior
+		{
+			Damage,
+			Death,
+
+			End
 		};
 
 		/**
@@ -142,7 +167,11 @@ namespace cumulonimbus::component
 	private:
 		// 行動(ビヘイビア)の更新StateMachine
 		StateMachine<BossBehavior, void, const float> boss_behavior{};
-		//
+		// 動き系ビヘイビア
+		system::BehaviorTree<MovementBehavior, void, const float, const bool> movement_behavior{};
+		// ダメージ系ビヘイビア
+		system::BehaviorTree<DamageBehavior, void, const float, const bool> damage_behavior{};
+		// 攻撃系ビヘイビア
 		system::BehaviorTree<AttackBehavior, void, const float, const bool> attack_behavior{};
 		// キーフレーム中のイベント管理
 		std::map<AnimationData, system::KeyframeEvent> keyframe_events{};
@@ -161,6 +190,8 @@ namespace cumulonimbus::component
 		bool is_next_sequence{ false };
 		// ビヘイビアツリーの一連の処理が完了したか
 		bool is_behavior_completed{ false };
+		//
+
 
 		// 当たり判定用プレハブ
 		mapping::rename_type::UUID atk_collider_prefab_id{};
@@ -171,17 +202,51 @@ namespace cumulonimbus::component
 
 		// 次ビヘイビアでの攻撃種
 		AttackType next_attack_type{};
+		// 攻撃範囲内に存在するかのフラグ
+		std::bitset<static_cast<int>(AttackType::End)> bit_in_atk_range{};
+		// 最大履歴数(初期値 : 10)
+		u_int max_attack_history_count{ 10 };
+		// 攻撃種類の履歴(このリストを元に徘徊時の次の攻撃を決める)
+		std::vector<AttackType> attack_history{};
 
+		//-- 初期化 --//
 		void Initialize(ecs::Registry* registry, mapping::rename_type::Entity ent) override;
+		/**
+		 * @brief : 攻撃履歴の初期化
+		 */
+		void InitializeAttackHistory();
+
 
 		void OnAttack(const collision::HitResult& hit_result) override;
+		void OnDamaged(const DamageData& damage_data, const collision::HitResult& hit_result) override;
 
+		/**
+		 * @brief : キーフレームイベントの登録
+		 */
+		void RegistryKeyframeEvent(AnimationData anim_data, const std::string& key_name);
+		/**
+		 * @brief : 攻撃種類の履歴(attack_history)に履歴の追加
+		 */
+		void AddAttackHistory(AttackType type);
+
+		template <auto F>
+		[[nodiscard]]
+		std::function<void(float)> GetBehaviorUpdateFunc();
+		template<auto F>
+		[[nodiscard]]
+		std::function<void(float, bool)> GetBehaviorActFunc();
 		[[nodiscard]]
 		int GetAnimDataIndex(AnimationData anim_data) const;
 		[[nodiscard]]
 		system::KeyframeEvent& GetKeyframeEvent(AnimationData anim_data);
+		/**
+		 * @brief : 次の攻撃種類の取得
+		 */
+		[[nodiscard]]
+		AttackType GetNextAttackType() const;
 
-		void RegistryKeyframeEvent(AnimationData anim_data, const std::string& key_name);
+		void OnEnterAttackRange(ColliderMessageSenderComponent & sender);
+		void OnExitAttackRange(ColliderMessageSenderComponent& sender);
 
 		//-- ビヘイビア更新処理 --//
 		/**
@@ -189,21 +254,8 @@ namespace cumulonimbus::component
 		 */
 		void BehaviorUpdate(float dt);
 		void BehaviorMoveUpdate(float dt);
+		void BehaviorDamageUpdate(float dt);
 		void BehaviorAttackUpdate(float dt);
-
-		void AttackTypeSelection(ColliderMessageSenderComponent& sender);
-
-		template <auto F>
-		std::function<void(float)> GetBehaviorUpdateFunc()
-		{
-			return std::bind(F, this, std::placeholders::_1);
-		}
-
-		template<auto F>
-		std::function<void(float, bool)> GetBehaviorActFunc()
-		{
-			return std::bind(F, this, std::placeholders::_1, std::placeholders::_2);
-		}
 
 		//-- 敵(ボス)の挙動 --//
 		/**
@@ -213,6 +265,10 @@ namespace cumulonimbus::component
 		void Idle(float dt, bool is_start);
 		// 歩き系
 		void Tracking(float dt, bool is_start);
+		void Wandering(float dt, bool is_start);
+		// ダメージ系
+		void Damage(float dt, bool is_start);
+		void Death(float dt, bool is_start);
 		// 通常攻撃(単撃)
 		void AttackNormal01(float dt, bool is_start);
 		void AttackNormal02(float dt, bool is_start);

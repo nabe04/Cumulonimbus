@@ -61,40 +61,46 @@ namespace cumulonimbus::component
 
 	void ColliderMessageSenderComponent::GameUpdate(float dt)
 	{
-		auto* sphere_collider  = GetRegistry()->TryGetComponent<SphereCollisionComponent>(GetEntity());
-
-		if(!sphere_collider)
-			return;
-
-		for(const auto& sphere : sphere_collider->GetSpheres() | std::views::values)
+		if(auto* sphere_collider = GetRegistry()->TryGetComponent<SphereCollisionComponent>(GetEntity());
+		   sphere_collider)
 		{
-			for (const auto& hit_result : sphere.hit_results | std::views::values)
+			for (const auto& sphere : sphere_collider->GetSpheres() | std::views::values)
 			{
-				if (!hit_result.is_hit)
-					continue;
+				for (const auto& hit_result : sphere.hit_results | std::views::values)
+				{
+					collision_tag = sphere.collision_tag;
+					this->hit_result = hit_result;
 
-				Send();
-				return;
+					if(hit_result.hit_event == collision::HitEvent::OnCollisionExit)
+					{
+						int a;
+						a = 0;
+					}
+
+					if(hit_result.hit_event == collision::HitEvent::OnCollisionEnter)
+					{
+						int a;
+						a = 0;
+					}
+
+					Send(hit_result.hit_event);
+				}
 			}
 		}
 
-		auto* capsule_collider = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(GetEntity());
-
-		if (!capsule_collider)
-			return;
-
-		for(const auto& capsule : capsule_collider->GetCapsules() | std::views::values)
+		if (auto* capsule_collider = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(GetEntity());
+			capsule_collider)
 		{
-			for(const auto& hit_result : capsule.hit_results | std::views::values)
+			for (const auto& capsule : capsule_collider->GetCapsules() | std::views::values)
 			{
-				if(!hit_result.is_hit)
-					continue;;
-
-				Send();
-				return;
+				for (const auto& hit_result : capsule.hit_results | std::views::values)
+				{
+					collision_tag = capsule.collision_tag;
+					this->hit_result = hit_result;
+					Send(hit_result.hit_event);
+				}
 			}
 		}
-
 	}
 
 	void ColliderMessageSenderComponent::RenderImGui()
@@ -120,7 +126,7 @@ namespace cumulonimbus::component
 		}
 	}
 
-	void ColliderMessageSenderComponent::Send()
+	void ColliderMessageSenderComponent::Send(const collision::HitEvent hit_event)
 	{
 		// 受け取り先のエンティティが存在しない場合処理を抜ける
 		if (!GetRegistry()->GetEntities().contains(receiver_ent))
@@ -129,7 +135,7 @@ namespace cumulonimbus::component
 		if (auto* receiver = GetRegistry()->TryGetComponent<ColliderMessageReceiverComponent>(receiver_ent);
 			receiver)
 		{
-			receiver->Receive(*this);
+			receiver->Receive(hit_event, *this);
 		}
 	}
 } // cumulonimbus::component

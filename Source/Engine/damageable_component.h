@@ -11,16 +11,28 @@ namespace cumulonimbus::collision
 
 namespace cumulonimbus::component
 {
+	/**
+	 * @brief : ‹¯‚ÝƒŒƒxƒ‹
+	 */
+	enum class FrightenedLevel
+	{
+		None = 0,
+		Small,
+		Medium,
+		Large
+	};
+
 	struct DamageData
 	{
-		u_int damage_amount{};
+		u_int			damage_amount{};
+		FrightenedLevel frightened_level{ FrightenedLevel::None };
 	};
 
 	class DamageableComponent final : public ComponentBase
 	{
 	public:
 		explicit DamageableComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
-		explicit DamageableComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const DamageableComponent& damageable_comp);
+		explicit DamageableComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const DamageableComponent& copy_comp);
 		explicit DamageableComponent()  = default; // for cereal
 		~DamageableComponent() override = default;
 
@@ -28,7 +40,7 @@ namespace cumulonimbus::component
 
 		void RegistryDamageEvent(const mapping::rename_type::UUID& id, const std::function<void(const DamageData&, const collision::HitResult&)>& func);
 		void OnDamaged(const mapping::rename_type::UUID& id, const DamageData& damage_data, const collision::HitResult& hit_result);
-	
+
 	private:
 		system::Event<void, const DamageData&, const collision::HitResult&> damage_event{};
 	};

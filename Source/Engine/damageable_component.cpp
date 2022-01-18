@@ -20,7 +20,7 @@ namespace cumulonimbus::component
 
 	void DamageableComponent::Load(ecs::Registry* registry)
 	{
-
+		SetRegistry(registry);
 	}
 
 	void DamageableComponent::RegistryDamageEvent(const mapping::rename_type::UUID& ent, const std::function<void(const DamageData&, const collision::HitResult&)>& func)

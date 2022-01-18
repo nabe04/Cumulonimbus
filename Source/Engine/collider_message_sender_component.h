@@ -30,16 +30,23 @@ namespace cumulonimbus::component
 		{
 			return collision_tag;
 		}
+
+		[[nodiscard]]
+		const collision::HitResult& GetHitResult() const
+		{
+			return hit_result;
+		}
 	private:
 		// 受け取る先のエンティティ
 		mapping::rename_type::Entity receiver_ent{};
 		//
 		collision::CollisionTag collision_tag{};
+		collision::HitResult hit_result{};
 
 		/**
 		 * @brief : receiver_entへのメッセージ送信
 		 */
-		void Send();
+		void Send(collision::HitEvent hit_event);
 	};
 
 } // cumulonimbus::component

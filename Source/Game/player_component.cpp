@@ -587,6 +587,10 @@ namespace cumulonimbus::component
 	void PlayerComponent::OnHit(const DamageData& damage_data, const collision::HitResult& hit_result)
 	{
 
+		if (player_state.GetState() == PlayerState::Avoid_Dash_Begin ||
+			player_state.GetState() == PlayerState::Dodge)
+			return;
+
 		//hp -= damage_data.damage_amount;
 
 		if(hp <= 0)
@@ -596,10 +600,6 @@ namespace cumulonimbus::component
 		}
 
 		player_state.SetState(PlayerState::Damage_Small);
-
-
-
-
 
 		//is_avoid = false;
 
