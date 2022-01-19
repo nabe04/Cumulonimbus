@@ -70,19 +70,6 @@ namespace cumulonimbus::component
 				{
 					collision_tag = sphere.collision_tag;
 					this->hit_result = hit_result;
-
-					if(hit_result.hit_event == collision::HitEvent::OnCollisionExit)
-					{
-						int a;
-						a = 0;
-					}
-
-					if(hit_result.hit_event == collision::HitEvent::OnCollisionEnter)
-					{
-						int a;
-						a = 0;
-					}
-
 					Send(hit_result.hit_event);
 				}
 			}

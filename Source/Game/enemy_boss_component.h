@@ -183,6 +183,10 @@ namespace cumulonimbus::component
 		//-- 行動制御 --//
 		// 近距離攻撃の境界距離
 		float atk_melee_distance{ 100.f };
+		// 追跡時間
+		float tracing_time{};
+		// 最大追跡時間
+		float max_tracking_time{ 10.f };
 
 		// 攻撃範囲内か
 		bool is_in_attack_range{ false };
@@ -190,8 +194,6 @@ namespace cumulonimbus::component
 		bool is_next_sequence{ false };
 		// ビヘイビアツリーの一連の処理が完了したか
 		bool is_behavior_completed{ false };
-		//
-
 
 		// 当たり判定用プレハブ
 		mapping::rename_type::UUID atk_collider_prefab_id{};
@@ -205,16 +207,19 @@ namespace cumulonimbus::component
 		// 攻撃範囲内に存在するかのフラグ
 		std::bitset<static_cast<int>(AttackType::End)> bit_in_atk_range{};
 		// 最大履歴数(初期値 : 10)
-		u_int max_attack_history_count{ 10 };
+		u_int max_history_count{ 10 };
 		// 攻撃種類の履歴(このリストを元に徘徊時の次の攻撃を決める)
 		std::vector<AttackType> attack_history{};
+		// ビヘイビア(Move,Attack)の履歴
+		std::vector<BossBehavior> behavior_history{};
 
 		//-- 初期化 --//
 		void Initialize(ecs::Registry* registry, mapping::rename_type::Entity ent) override;
 		/**
-		 * @brief : 攻撃履歴の初期化
+		 * @brief : 履歴の初期化
+		 * @remark : 攻撃、ビヘイビア
 		 */
-		void InitializeAttackHistory();
+		void InitializeHistory();
 
 
 		void OnAttack(const collision::HitResult& hit_result) override;
@@ -225,9 +230,13 @@ namespace cumulonimbus::component
 		 */
 		void RegistryKeyframeEvent(AnimationData anim_data, const std::string& key_name);
 		/**
-		 * @brief : 攻撃種類の履歴(attack_history)に履歴の追加
+		 * @brief : 攻撃種類(attack_history)に履歴の追加
 		 */
 		void AddAttackHistory(AttackType type);
+		/**
+		 * @brief : ビヘイビア(behavior_history)に履歴の追加
+		 */
+		void AddBehaviorHistory(BossBehavior type);
 
 		template <auto F>
 		[[nodiscard]]
@@ -244,6 +253,11 @@ namespace cumulonimbus::component
 		 */
 		[[nodiscard]]
 		AttackType GetNextAttackType() const;
+		/**
+		 * @brief : 次のビヘイビア種類の取得
+		 */
+		[[nodiscard]]
+		BossBehavior GetNextBehaviorType() const;
 
 		void OnEnterAttackRange(ColliderMessageSenderComponent & sender);
 		void OnExitAttackRange(ColliderMessageSenderComponent& sender);

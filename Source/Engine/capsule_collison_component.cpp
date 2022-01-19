@@ -337,7 +337,6 @@ namespace cumulonimbus::component
 							hit_result.hit_event = collision::HitEvent::OnCollisionExit;
 							// イベントの発行
 							on_collision_exit_event.Invoke(GetEntity(), hit_result);
-							delete_hit_entities.emplace_back(hit_ent);
 						}
 						else
 						{// 他のどのCollisionにも触れていない間
@@ -345,6 +344,7 @@ namespace cumulonimbus::component
 							hit_result.hit_event = collision::HitEvent::None;
 							// イベント処理の発行
 							on_collision_none.Invoke(GetEntity(), hit_result);
+							delete_hit_entities.emplace_back(hit_ent);
 						}
 					}
 					hit_result.is_old_hit = hit_result.is_hit;

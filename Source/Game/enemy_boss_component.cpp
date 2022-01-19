@@ -92,8 +92,8 @@ namespace cumulonimbus::component
 
 	void EnemyBossComponent::Start()
 	{
-		// 攻撃履歴の初期化
-		InitializeAttackHistory();
+		// 履歴の初期化
+		InitializeHistory();
 
 		EnemyBossComponent& e_boss_comp = GetRegistry()->GetComponent<EnemyBossComponent>(GetEntity());
 
@@ -135,7 +135,7 @@ namespace cumulonimbus::component
 		boss_behavior.AddState(BossBehavior::Move  , e_boss_comp.GetBehaviorUpdateFunc<&EnemyBossComponent::BehaviorMoveUpdate>());
 		boss_behavior.AddState(BossBehavior::Damage, e_boss_comp.GetBehaviorUpdateFunc<&EnemyBossComponent::BehaviorDamageUpdate>());
 		boss_behavior.AddState(BossBehavior::Attack, e_boss_comp.GetBehaviorUpdateFunc<&EnemyBossComponent::BehaviorAttackUpdate>());
-		boss_behavior.SetState(BossBehavior::Attack);
+		boss_behavior.SetState(BossBehavior::Move);
 
 		movement_behavior.ClearAll();
 		movement_behavior.AddSequence(MovementBehavior::Idle	 , e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::Idle>());
@@ -241,16 +241,24 @@ namespace cumulonimbus::component
 		//attack_behavior.AddSequence(AttackBehavior::Atk_Energy_02, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackEnergy02>());
 	}
 
-	void EnemyBossComponent::InitializeAttackHistory()
+	void EnemyBossComponent::InitializeHistory()
 	{
+		const u_int half_count = max_history_count / 2;
+
+		// 攻撃履歴の初期化
 		attack_history.clear();
-
-		const u_int half_count = max_attack_history_count / 2;
-
 		for (u_int i = 0; i < half_count; ++i)
 		{
 			AddAttackHistory(AttackType::Atk_Melee);
 			AddAttackHistory(AttackType::Atk_Long_Range);
+		}
+
+		// ビヘイビア履歴の初期化
+		behavior_history.clear();
+		for (u_int i = 0; i < half_count; ++i)
+		{
+			AddBehaviorHistory(BossBehavior::Move);
+			AddBehaviorHistory(BossBehavior::Attack);
 		}
 	}
 
@@ -312,7 +320,7 @@ namespace cumulonimbus::component
 		attack_history.emplace_back(type);
 
 		// 最大格納数を超えたら一番古い履歴を削除
-		if (attack_history.size() > max_attack_history_count)
+		if (attack_history.size() > max_history_count)
 		{
 		    // 一つあとの値を格納し最初の値を削除
 			for (int i = 0; i < attack_history.size() - 1; ++i)
@@ -321,6 +329,23 @@ namespace cumulonimbus::component
 			}
 
 			attack_history.pop_back();
+		}
+	}
+
+	void EnemyBossComponent::AddBehaviorHistory(BossBehavior type)
+	{
+		behavior_history.emplace_back(type);
+
+		// 最大格納数を超えたら一番古い履歴を削除
+		if (behavior_history.size() > max_history_count)
+		{
+			// 一つあとの値を格納し最初の値を削除
+			for (int i = 0; i < behavior_history.size() - 1; ++i)
+			{
+				behavior_history.at(i) = behavior_history.at(i + 1);
+			}
+
+			behavior_history.pop_back();
 		}
 	}
 
@@ -359,7 +384,6 @@ namespace cumulonimbus::component
 		}
 
 		const int index = arithmetic::RandomIntInRange(0, static_cast<int>(attack_history.size() - 1));
-
 		const AttackType type = attack_history.at(index);
 
 		// 同じ攻撃を避けるため選択された履歴を逆の履歴を返す
@@ -373,20 +397,40 @@ namespace cumulonimbus::component
 		return static_cast<AttackType>(arithmetic::RandomIntInRange(0, 1));
 	}
 
+	EnemyBossComponent::BossBehavior EnemyBossComponent::GetNextBehaviorType() const
+	{
+		// 空の場合ランダムの選択する
+		if(behavior_history.empty())
+		{
+			return static_cast<BossBehavior>(arithmetic::RandomIntInRange(0, 1));
+		}
+
+		const int index = arithmetic::RandomIntInRange(0, static_cast<int>(behavior_history.size() - 1));
+		const BossBehavior type = behavior_history.at(index);
+
+		// 同じビヘイビアを避けるため選択された履歴の逆の履歴を返す
+		if (type == BossBehavior::Move)
+			return BossBehavior::Attack;
+
+		if (type == BossBehavior::Attack)
+			return BossBehavior::Move;
+
+		// 基本このパターンには入らない(年の為に用意)
+		return static_cast<BossBehavior>(arithmetic::RandomIntInRange(0, 1));
+	}
+
 	void EnemyBossComponent::OnEnterAttackRange(ColliderMessageSenderComponent& sender)
 	{
-
 		if (sender.GetHitResult().collision_tag != collision::CollisionTag::Player)
 			return;
 
 		is_in_attack_range = true;
 
-
 		// 近距離攻撃の選択
 		if (sender.GetCollisionTag() == collision::CollisionTag::Attack_Melee)
 		{
 			bit_in_atk_range.set(static_cast<int>(AttackType::Atk_Melee));
-			next_attack_type = AttackType::Atk_Melee;
+			//next_attack_type = AttackType::Atk_Melee;
 			return;
 		}
 
@@ -394,7 +438,7 @@ namespace cumulonimbus::component
 		if (sender.GetCollisionTag() == collision::CollisionTag::Attack_Long_Range)
 		{
 			bit_in_atk_range.set(static_cast<int>(AttackType::Atk_Long_Range));
-			next_attack_type = AttackType::Atk_Long_Range;
+			//next_attack_type = AttackType::Atk_Long_Range;
 		}
 	}
 
@@ -403,14 +447,11 @@ namespace cumulonimbus::component
 		if (sender.GetHitResult().collision_tag != collision::CollisionTag::Player)
 			return;
 
-		int a;
-		a = 0;
-
 		// 近距離攻撃の選択
 		if (sender.GetCollisionTag() == collision::CollisionTag::Attack_Melee)
 		{
 			bit_in_atk_range.reset(static_cast<int>(AttackType::Atk_Melee));
-			next_attack_type = AttackType::Atk_Melee;
+			//next_attack_type = AttackType::Atk_Melee;
 			return;
 		}
 
@@ -418,7 +459,7 @@ namespace cumulonimbus::component
 		if (sender.GetCollisionTag() == collision::CollisionTag::Attack_Long_Range)
 		{
 			bit_in_atk_range.reset(static_cast<int>(AttackType::Atk_Long_Range));
-			next_attack_type = AttackType::Atk_Long_Range;
+			//next_attack_type = AttackType::Atk_Long_Range;
 		}
 	}
 
@@ -433,16 +474,38 @@ namespace cumulonimbus::component
 		{
 			is_behavior_completed = false;
 
-			if(is_in_attack_range)
+
 			{
-				// ヒット先がプレイヤーの場合攻撃Stateに移行する
-				boss_behavior.SetState(BossBehavior::Attack);
+				boss_behavior.SetState(BossBehavior::Move);
 				return;
 			}
 
-			// プレイヤーの攻撃範囲外なので行動Stateに移行する
-			boss_behavior.SetState(BossBehavior::Move);
-			//boss_behavior.SetState(BossBehavior::Attack);
+			if (bit_in_atk_range.test(static_cast<size_t>(AttackType::Atk_Melee)))
+			{// 近距離攻撃範囲内に
+				next_attack_type = AttackType::Atk_Melee;
+				boss_behavior.SetState(BossBehavior::Attack);
+			}
+			else if(bit_in_atk_range.test(static_cast<size_t>(AttackType::Atk_Long_Range)))
+			{
+				// 攻撃が行動かの選択
+				const BossBehavior type = GetNextBehaviorType();
+				boss_behavior.SetState(type);
+			}
+			else
+			{
+				boss_behavior.SetState(BossBehavior::Move);
+			}
+
+			//if(is_in_attack_range)
+			//{
+			//	// ヒット先がプレイヤーの場合攻撃Stateに移行する
+			//	boss_behavior.SetState(BossBehavior::Attack);
+			//	return;
+			//}
+
+			//// プレイヤーの攻撃範囲外なので行動Stateに移行する
+			//boss_behavior.SetState(BossBehavior::Move);
+			////boss_behavior.SetState(BossBehavior::Attack);
 		}
 	}
 
@@ -450,12 +513,33 @@ namespace cumulonimbus::component
 	{
 		if(boss_behavior.GetInitialize())
 		{
+			// 履歴の追加
+			AddBehaviorHistory(BossBehavior::Move);
+
 			// 攻撃行動の決定
 			if (auto* player = GetPlayer();
 				player)
 			{// シーン内にプレイヤーが存在する場合
-
+				movement_behavior.SetBehavior(MovementBehavior::Tracking);
 			}
+			else
+			{
+				movement_behavior.SetBehavior(MovementBehavior::Idle);
+			}
+		}
+
+		movement_behavior.Update(dt, movement_behavior.GetIsStart());
+
+
+		// 実装中の関数が完了した時
+		if (is_next_sequence)
+		{
+			is_next_sequence = false;
+			movement_behavior.NextSequence();
+
+			// 最後まで行動が完了した時
+			if (movement_behavior.GetIsCompleted())
+				is_behavior_completed = true;
 		}
 	}
 
@@ -491,14 +575,13 @@ namespace cumulonimbus::component
 	{
 		if (boss_behavior.GetInitialize())
 		{
+			// 履歴の追加
+			AddBehaviorHistory(BossBehavior::Attack);
+
 			// 攻撃行動の決定
 			if (auto* player = GetPlayer();
 				player)
 			{// シーン内にプレイヤーが存在する場合
-				//const DirectX::SimpleMath::Vector3 self_pos   = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetPosition();
-				//const DirectX::SimpleMath::Vector3 player_pos = player->GetRegistry()->GetComponent<TransformComponent>(player->GetEntity()).GetPosition();
-				//const float distance_to_player = DirectX::SimpleMath::Vector3{ self_pos - player_pos }.Length();
-
 				if(next_attack_type == AttackType::Atk_Melee)
 				{// 近距離攻撃
 					AddAttackHistory(AttackType::Atk_Melee);
@@ -579,9 +662,11 @@ namespace cumulonimbus::component
 
 		if (is_start)
 		{
+			tracing_time = 0;
 			model_comp->SwitchAnimation(GetAnimDataIndex(AnimationData::Run), true);
 
-
+			// 追跡後の攻撃を決定
+			next_attack_type = GetNextAttackType();
 		}
 
 		{// 追跡処理
@@ -593,12 +678,28 @@ namespace cumulonimbus::component
 			EnemyBaseComponent::Tracking(player_comp->GetRegistry()->GetComponent<TransformComponent>(ent_player).GetPosition(),
 										 { dash_speed,.0f,dash_speed },
 										distance_to_player);
-
-
 		}
 
-		if (model_comp->IsPlayAnimation())
+		tracing_time += dt;
+
+		if(next_attack_type == AttackType::Atk_Melee &&
+		   bit_in_atk_range.test(static_cast<int>(AttackType::Atk_Melee)))
+		{
+			boss_behavior.SetState(BossBehavior::Attack);
+		}
+		else if(next_attack_type == AttackType::Atk_Long_Range &&
+				bit_in_atk_range.test(static_cast<int>(AttackType::Atk_Long_Range)))
+		{
+			boss_behavior.SetState(BossBehavior::Attack);
+		}
+
+		if (tracing_time < max_tracking_time)
 			return;
+
+		//if (model_comp->IsPlayAnimation())
+		//	return;
+
+		//if(max_tracking_time )
 
 		// ビヘイビアが完了したので次のビヘイビアに移行する
 		is_next_sequence = true;
