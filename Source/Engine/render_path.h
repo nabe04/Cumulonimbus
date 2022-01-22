@@ -207,7 +207,7 @@ namespace cumulonimbus::renderer
 		 *		   (Bloom)
 		 */
 		void RenderPostProcess_Begin(ID3D11DeviceContext* immediate_context);
-		void RenderPostProcess(ID3D11DeviceContext* immediate_context, ecs::Registry* registry);
+		void RenderPostProcess(ID3D11DeviceContext* immediate_context, const camera::Camera* camera);
 		void RenderPostProcess_End(ID3D11DeviceContext* immediate_context);
 
 		/**

@@ -7,16 +7,16 @@
 #include "../Source/Engine/shader_asset_mapping.h"
 #include "../Source/Engine/cbuffer_lights.h"
 
-SamplerState defaultSampler : register(s0);
+SamplerState default_sampler : register(s0);
 float4 main(const PS_Input pin) : SV_TARGET
 {
 	// GBufferで書き出したテクスチャの色算出
-    float4 albedo      = texture_base_color.Sample(defaultSampler, pin.texcoord0);
-    const float4 normal_map  = texture_normal.Sample(defaultSampler, pin.texcoord0);
-    const float metalness    = texture_mro.Sample(defaultSampler, pin.texcoord0).r;
-    const float roughness    = texture_mro.Sample(defaultSampler, pin.texcoord0).g;
-    const float occlusion    = texture_mro.Sample(defaultSampler, pin.texcoord0).b;
-    const float depth        = texture_depth.Sample(defaultSampler, pin.texcoord0).r;
+    float4 albedo            = texture_base_color.Sample(default_sampler, pin.texcoord0);
+    const float4 normal_map  = texture_normal.Sample(default_sampler, pin.texcoord0);
+    const float metalness    = texture_mro.Sample(default_sampler, pin.texcoord0).r;
+    const float roughness    = texture_mro.Sample(default_sampler, pin.texcoord0).g;
+    const float occlusion    = texture_mro.Sample(default_sampler, pin.texcoord0).b;
+    const float depth        = texture_depth.Sample(default_sampler, pin.texcoord0).r;
 
     BRDFData brdf_data = (BRDFData) 0;
     float alpha = albedo.a;

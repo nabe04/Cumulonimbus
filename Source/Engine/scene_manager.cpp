@@ -12,6 +12,7 @@
 #include "sky_box.h"
 #include "wave_system.h"
 #include "time_scale.h"
+#include "post_effect_manager.h"
 // components
 #include "player_component.h"
 #include "player_sword_component.h"

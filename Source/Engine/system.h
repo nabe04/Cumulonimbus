@@ -30,6 +30,7 @@ namespace cumulonimbus
 	namespace system
 	{
 		class Time;
+		class PostEffectManager;
 	} // system
 
 } // cumulonimbus
@@ -91,6 +92,8 @@ namespace cumulonimbus::system
 		[[nodiscard]]
 		system::Time& GetTime() const;
 		[[nodiscard]]
+		system::PostEffectManager& GetPostEffectManager() const;
+ 		[[nodiscard]]
 		collision::CollisionPrimitiveAsset& GetCollisionPrimitive() const;
 		[[nodiscard]]
 		const std::string& GetCurrentScenePath() const { return current_scene_path; }
@@ -107,9 +110,10 @@ namespace cumulonimbus::system
 		// “o˜^‚³‚ê‚½Œ^‚ÌRenderŠÖ”‚Ì•Û
 		std::map<mapping::rename_type::Hash, std::function<void(ecs::Registry* registry)>> render_functions{};
 
-		std::unique_ptr<camera::CameraTexture> camera_texture{};
-		std::unique_ptr<graphics::SkyBox>	   sky_box{};
-		std::unique_ptr<system::Time>	   time{};
+		std::unique_ptr<camera::CameraTexture>				camera_texture{};
+		std::unique_ptr<graphics::SkyBox>					sky_box{};
+		std::unique_ptr<system::Time>						time{};
+		std::unique_ptr<system::PostEffectManager>			post_effect_manager{};
 		std::unique_ptr<collision::CollisionPrimitiveAsset> collision_primitive{};
 
 		std::string current_scene_path{}; // Œ»İŠJ‚©‚ê‚Ä‚¢‚éƒV[ƒ“(cereal‚ªstd::filesystem–¢‘Î‰‚Ì‚½‚ßstd::string‚É‚µ‚Ä‚¢‚é)

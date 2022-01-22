@@ -42,6 +42,7 @@
     <ClInclude Include="Source\Engine\capsule_collison_component.h" />
     <ClInclude Include="Source\Engine\cbuffer_lights.h" />
     <ClInclude Include="Source\Engine\cbuffer_manager.h" />
+    <ClInclude Include="Source\Engine\cbuffer_post_effect.h" />
     <ClInclude Include="Source\Engine\cereal_helper.h" />
     <ClInclude Include="Source\Engine\child_actor_component.h" />
     <ClInclude Include="Source\Engine\collider_message_receiver_component.h" />
@@ -64,6 +65,7 @@
     <ClInclude Include="Source\Engine\depth_stencil.h" />
     <ClInclude Include="Source\Engine\diffuse.h" />
     <ClInclude Include="Source\Engine\directiona_light_component.h" />
+    <ClInclude Include="Source\Engine\distort.h" />
     <ClInclude Include="Source\Engine\dx11_configurator.h" />
     <ClInclude Include="Source\Engine\easing.h" />
     <ClInclude Include="Source\Engine\ecs.h" />
@@ -101,6 +103,7 @@
     <ClInclude Include="Source\Engine\input_system.h" />
     <ClInclude Include="Source\Engine\inspector.h" />
     <ClInclude Include="Source\Engine\keyframe_event.h" />
+    <ClInclude Include="Source\Engine\lens_distortion.h" />
     <ClInclude Include="Source\Engine\light.h" />
     <ClInclude Include="Source\Engine\light_component.h" />
     <ClInclude Include="Source\Engine\light_manager.h" />
@@ -119,6 +122,8 @@
     <ClInclude Include="Source\Engine\model_loader.h" />
     <ClInclude Include="Source\Engine\physic_material_component.h" />
     <ClInclude Include="Source\Engine\point_light_component.h" />
+    <ClInclude Include="Source\Engine\post_effect.h" />
+    <ClInclude Include="Source\Engine\post_effect_manager.h" />
     <ClInclude Include="Source\Engine\prefab.h" />
     <ClInclude Include="Source\Engine\prefab_loader.h" />
     <ClInclude Include="Source\Engine\prefab_spawner_component.h" />
@@ -148,6 +153,7 @@
     <ClInclude Include="Source\Engine\scene_manager.h" />
     <ClInclude Include="Source\Engine\scene_view.h" />
     <ClInclude Include="Source\Engine\scene_view_camera.h" />
+    <ClInclude Include="Source\Engine\screen_filter.h" />
     <ClInclude Include="Source\Engine\shader_asset.h" />
     <ClInclude Include="Source\Engine\material3d_manager.h" />
     <ClInclude Include="Source\Engine\shader_asset_manager.h" />
@@ -213,7 +219,9 @@
   <ItemGroup>
     <ClCompile Include="debug_primitive_shader.cpp" />
     <ClCompile Include="Libraries\imgui\imgui.cpp" />
-    <ClCompile Include="Libraries\imgui\ImGuizmo\ImGuizmo.cpp" />
+    <ClCompile Include="Libraries\imgui\ImGuizmo\ImGuizmo.cpp">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Level2</WarningLevel>
+    </ClCompile>
     <ClCompile Include="Libraries\imgui\imgui_demo.cpp" />
     <ClCompile Include="Libraries\imgui\imgui_draw.cpp" />
     <ClCompile Include="Libraries\imgui\imgui_impl_dx11.cpp" />
@@ -250,6 +258,7 @@
     <ClCompile Include="Source\Engine\depth_stencil.cpp" />
     <ClCompile Include="Source\Engine\diffuse.cpp" />
     <ClCompile Include="Source\Engine\directional_light_component.cpp" />
+    <ClCompile Include="Source\Engine\distort.cpp" />
     <ClCompile Include="Source\Engine\dx11_configurator.cpp" />
     <ClCompile Include="Source\Engine\easing.cpp" />
     <ClCompile Include="Source\Engine\ecs.cpp" />
@@ -281,6 +290,7 @@
     <ClCompile Include="Source\Engine\input_system.cpp" />
     <ClCompile Include="Source\Engine\inspector.cpp" />
     <ClCompile Include="Source\Engine\keyframe_event.cpp" />
+    <ClCompile Include="Source\Engine\lens_distortion.cpp" />
     <ClCompile Include="Source\Engine\light.cpp" />
     <ClCompile Include="Source\Engine\light_component.cpp" />
     <ClCompile Include="Source\Engine\light_manager.cpp" />
@@ -298,6 +308,8 @@
     <ClCompile Include="Source\Engine\model_loader.cpp" />
     <ClCompile Include="Source\Engine\physic_material_component.cpp" />
     <ClCompile Include="Source\Engine\point_light_component.cpp" />
+    <ClCompile Include="Source\Engine\post_effect.cpp" />
+    <ClCompile Include="Source\Engine\post_effect_manager.cpp" />
     <ClCompile Include="Source\Engine\prefab.cpp" />
     <ClCompile Include="Source\Engine\prefab_loader.cpp" />
     <ClCompile Include="Source\Engine\prefab_spawner_component.cpp" />
@@ -333,6 +345,7 @@
     <ClCompile Include="Source\Engine\scene_manager.cpp" />
     <ClCompile Include="Source\Engine\scene_view.cpp" />
     <ClCompile Include="Source\Engine\scene_view_camera.cpp" />
+    <ClCompile Include="Source\Engine\screen_filter.cpp" />
     <ClCompile Include="Source\Engine\shader.cpp" />
     <ClCompile Include="Source\Engine\shader_asset.cpp" />
     <ClCompile Include="Source\Engine\material3d_manager.cpp" />
@@ -484,6 +497,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
+    <FxCompile Include="Shader\distort.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="Shader\gbuffer_lighting_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -507,6 +526,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\lens_distortion.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Shader\metal_mtr_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -630,6 +655,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Shader\sample_shader_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\screen_filter.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>

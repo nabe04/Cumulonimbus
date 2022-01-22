@@ -97,20 +97,27 @@ namespace cumulonimbus::component
 		 */
 		enum class AttackBehavior
 		{
+			// ‹ß‹——£UŒ‚
+			Begin_Atk_Melee,
 			Atk_N1,
 			Atk_N2,
 			Atk_N3,
 			Atk_N4,
-			Atk_E1,
-			Atk_E2,
 			Atk_N1_N2,
 			Atk_N1_N3,
 			Atk_N1_N4,
 			Atk_N2_N1,
 			Atk_N2_N3,
 			Atk_N2_N4,
+			End_Atk_Melee,
+
+			// ‰“‹——£UŒ‚
+			Begin_Atk_Long,
+			Atk_E1,
+			Atk_E2,
 			Atk_E1_E2,
 			Atk_E2_E1,
+			End_Atk_Long,
 
 			End
 		};

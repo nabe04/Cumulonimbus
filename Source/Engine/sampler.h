@@ -27,6 +27,7 @@ enum class SamplerState
 	Linear_Border,
 	Point_Wrap,
 	Linear_Wrap,
+	Mirror,
 	Anistropic,
 
 	End,

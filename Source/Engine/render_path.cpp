@@ -23,6 +23,7 @@
 #include "fbx_model_component.h"
 #include "model_component.h"
 #include "point_light_component.h"
+#include "post_effect_manager.h"
 #include "scene_manager.h"
 #include "sky_box.h"
 #include "sphere_collision_component.h"
@@ -116,27 +117,31 @@ namespace cumulonimbus::renderer
 
 		Render3DToGBuffer_End(immediate_context, &camera);
 
-		for (auto& scene : scenes | std::views::values)
-		{
-			// Effekseerの描画
-			system::EffekseerManager& effekseer_manager = *scene->GetSceneManager()->GetEffekseerManager();
-			RenderEffekseerBegin(immediate_context,&effekseer_manager, &camera);
-			RenderEffekseer(&effekseer_manager);
-			RenderEffekseerEnd(immediate_context,&effekseer_manager, &camera);
-		}
+		//for (auto& scene : scenes | std::views::values)
+		//{
+		//	// Effekseerの描画
+		//	system::EffekseerManager& effekseer_manager = *scene->GetSceneManager()->GetEffekseerManager();
+		//	RenderEffekseerBegin(immediate_context,&effekseer_manager, &camera);
+		//	RenderEffekseer(&effekseer_manager);
+		//	RenderEffekseerEnd(immediate_context,&effekseer_manager, &camera);
+		//}
 
-		for (auto& scene : scenes | std::views::values)
-		{
-			// シーンがアクティブで無いのなら描画しない
-			if (!scene->GetIsVisible())
-				continue;
+		//for (auto& scene : scenes | std::views::values)
+		//{
+		//	// シーンがアクティブで無いのなら描画しない
+		//	if (!scene->GetIsVisible())
+		//		continue;
 
-			if (ecs::Registry& registry = *scene->GetRegistry();
-				registry.GetArray<component::ModelComponent>().GetComponents().size() > 0)
-			{// 2Dスプライトの描画
-				Render2D(immediate_context, &registry, &camera, true);
-			}
-		}
+		//	if (ecs::Registry& registry = *scene->GetRegistry();
+		//		registry.GetArray<component::ModelComponent>().GetComponents().size() > 0)
+		//	{// 2Dスプライトの描画
+		//		Render2D(immediate_context, &registry, &camera, true);
+		//	}
+		//}
+
+		RenderPostProcess_Begin(immediate_context);
+		RenderPostProcess(immediate_context, &camera);
+		RenderPostProcess_End(immediate_context);
 
 		RenderEnd(immediate_context);
 	}
@@ -536,20 +541,30 @@ namespace cumulonimbus::renderer
 
 	}
 
-	void RenderPath::RenderPostProcess(ID3D11DeviceContext* immediate_context, ecs::Registry* registry)
+	void RenderPath::RenderPostProcess(ID3D11DeviceContext* immediate_context, const camera::Camera* camera)
 	{
-		for(auto& camera_comp : registry->GetArray<component::CameraComponent>().GetComponents())
-		{
-			if(!camera_comp.GetIsMainCamera())
-				continue;
+		ID3D11ShaderResourceView** srv_address = locator::Locator::GetSystem()->GetPostEffectManager().Generate(immediate_context, camera->GetFrameBufferSrvAddress());
+		camera->BindFrameBuffer();
+		locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, srv_address, TexSlot_ForFullScreenQuad);
+		fullscreen_quad->Blit(immediate_context, true, true, true);
+		locator::Locator::GetDx11Device()->UnbindShaderResource(mapping::graphics::ShaderStage::PS, TexSlot_ForFullScreenQuad);
+		camera->UnbindFrameBuffer();
 
-			locator::Locator::GetDx11Device()->BindShaderResource(
-				mapping::graphics::ShaderStage::PS,
-				camera_comp.GetCamera()->GetFrameBufferSrvAddress(),
-				TexSlot_BaseColorMap);
-			fullscreen_quad->Blit(immediate_context, true, true, true);
-			ID3D11ShaderResourceView* const pSRV[1] = { nullptr };
-		}
+		// 使わない可能性有り
+		//for(auto& camera_comp : registry->GetArray<component::CameraComponent>().GetComponents())
+		//{
+		//	if(!camera_comp.GetIsMainCamera())
+		//		continue;
+
+		//	locator::Locator::GetDx11Device()->BindShaderResource(
+		//		mapping::graphics::ShaderStage::PS,
+		//		camera_comp.GetCamera()->GetFrameBufferSrvAddress(),
+		//		TexSlot_BaseColorMap);
+		//	fullscreen_quad->Blit(immediate_context, true, true, true);
+		//	ID3D11ShaderResourceView* const pSRV[1] = { nullptr };
+		//}
+
+
 	}
 
 	void RenderPath::RenderPostProcess_End(ID3D11DeviceContext* immediate_context)

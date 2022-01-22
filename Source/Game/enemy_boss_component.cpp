@@ -156,10 +156,6 @@ namespace cumulonimbus::component
 		attack_behavior.AddSequence(AttackBehavior::Atk_N3, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal03>());
 		// 通常攻撃 4
 		attack_behavior.AddSequence(AttackBehavior::Atk_N4, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal04>());
-		// 遠距離攻撃 1
-		attack_behavior.AddSequence(AttackBehavior::Atk_E1, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackEnergy01>());
-		// 遠距離攻撃 2
-		attack_behavior.AddSequence(AttackBehavior::Atk_E2, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackEnergy02>());
 		// 通常攻撃(1 + 2)
 		attack_behavior.AddSequence(AttackBehavior::Atk_N1_N2, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal01>());
 		attack_behavior.AddSequence(AttackBehavior::Atk_N1_N2, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal02>());
@@ -178,6 +174,10 @@ namespace cumulonimbus::component
 		// 通常攻撃(2 + 4)
 		attack_behavior.AddSequence(AttackBehavior::Atk_N2_N4, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal02>());
 		attack_behavior.AddSequence(AttackBehavior::Atk_N2_N4, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal04>());
+		// 遠距離攻撃 1
+		attack_behavior.AddSequence(AttackBehavior::Atk_E1, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackEnergy01>());
+		// 遠距離攻撃 2
+		attack_behavior.AddSequence(AttackBehavior::Atk_E2, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackEnergy02>());
 		// 遠距離攻撃(1 + 2)
 		attack_behavior.AddSequence(AttackBehavior::Atk_E1_E2, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackEnergy01>());
 		attack_behavior.AddSequence(AttackBehavior::Atk_E1_E2, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackEnergy02>());
@@ -475,10 +475,10 @@ namespace cumulonimbus::component
 			is_behavior_completed = false;
 
 
-			{
-				boss_behavior.SetState(BossBehavior::Move);
-				return;
-			}
+			//{
+			//	boss_behavior.SetState(BossBehavior::Move);
+			//	return;
+			//}
 
 			if (bit_in_atk_range.test(static_cast<size_t>(AttackType::Atk_Melee)))
 			{// 近距離攻撃範囲内に
@@ -529,7 +529,6 @@ namespace cumulonimbus::component
 		}
 
 		movement_behavior.Update(dt, movement_behavior.GetIsStart());
-
 
 		// 実装中の関数が完了した時
 		if (is_next_sequence)
@@ -582,25 +581,39 @@ namespace cumulonimbus::component
 			if (auto* player = GetPlayer();
 				player)
 			{// シーン内にプレイヤーが存在する場合
+
+				// ランダムな攻撃タイプ(近距離)のインデックス番号を取得
+				auto GetRandomAtkMeleeBehavior = []()
+				{
+					return static_cast<AttackBehavior>(arithmetic::RandomIntInRange(static_cast<int>(AttackBehavior::Begin_Atk_Melee) + 1, static_cast<int>(AttackBehavior::End_Atk_Melee) - 1));
+				};
+
+				// ランダムな攻撃タイプ(遠距離)のインデックス番号を取得
+				auto GetRandomAtkLongBehavior = []()
+				{
+					return static_cast<AttackBehavior>(arithmetic::RandomIntInRange(static_cast<int>(AttackBehavior::Begin_Atk_Long) + 1, static_cast<int>(AttackBehavior::End_Atk_Long) - 1));
+				};
+
 				if(next_attack_type == AttackType::Atk_Melee)
 				{// 近距離攻撃
 					AddAttackHistory(AttackType::Atk_Melee);
-					uint atk_index = arithmetic::RandomIntInRange(0, 3);
+					//uint atk_index = GetRandomAtkIndex(AttackBehavior::Begin_Atk_Melee, AttackBehavior::End_Atk_Melee);
 					//attack_behavior.SetBehavior(static_cast<AttackBehavior>(atk_index));
 					//attack_behavior.SetBehavior(AttackBehavior::Atk_N1);
-					attack_behavior.SetBehavior(AttackBehavior::Atk_N3);
+					attack_behavior.SetBehavior(GetRandomAtkMeleeBehavior());
 				}
 				if (next_attack_type == AttackType::Atk_Long_Range)
 				{// 遠距離攻撃
 					AddAttackHistory(AttackType::Atk_Long_Range);
-					if (arithmetic::RandomIntInRange(0, 1) == 0)
-					{
-						attack_behavior.SetBehavior(AttackBehavior::Atk_E1);
-					}
-					else
-					{
-						attack_behavior.SetBehavior(AttackBehavior::Atk_E2);
-					}
+					//if (arithmetic::RandomIntInRange(0, 1) == 0)
+					//{
+					//	attack_behavior.SetBehavior(AttackBehavior::Atk_E1);
+					//}
+					//else
+					//{
+					//	attack_behavior.SetBehavior(AttackBehavior::Atk_E2);
+					//}
+					attack_behavior.SetBehavior(GetRandomAtkLongBehavior());
 				}
 			}
 			else
@@ -628,6 +641,9 @@ namespace cumulonimbus::component
 	//							行動								 //
 	///////////////////////////////////////////////////////////////////
 
+	///////////////////////////////////////////////////////////////////
+	//						  Movement								 //
+	///////////////////////////////////////////////////////////////////
 	void EnemyBossComponent::Idle(const float dt, const bool is_start)
 	{
 		auto* model_comp = GetRegistry()->TryGetComponent<ModelComponent>(GetEntity());
@@ -710,6 +726,9 @@ namespace cumulonimbus::component
 
 	}
 
+	///////////////////////////////////////////////////////////////////
+	//						  Damage								 //
+	///////////////////////////////////////////////////////////////////
 	void EnemyBossComponent::Damage(float dt, const bool is_start)
 	{
 		auto* model_comp = GetRegistry()->TryGetComponent<ModelComponent>(GetEntity());
@@ -749,6 +768,9 @@ namespace cumulonimbus::component
 		}
 	}
 
+	///////////////////////////////////////////////////////////////////
+	//						  Attack								 //
+	///////////////////////////////////////////////////////////////////
 	void EnemyBossComponent::AttackNormal01(const float dt, const bool is_start)
 	{
 		auto* model_comp = GetRegistry()->TryGetComponent<ModelComponent>(GetEntity());

@@ -6,6 +6,7 @@
 #include "camera_component.h"
 #include "collision_manager.h"
 #include "file_path_helper.h"
+#include "post_effect_manager.h"
 #include "sky_box.h"
 #include "time_scale.h"
 
@@ -66,6 +67,7 @@ namespace cumulonimbus::system
 		camera_texture		= std::make_unique<camera::CameraTexture>(*this);
 		sky_box				= std::make_unique<graphics::SkyBox>(*this, locator::Locator::GetDx11Device()->device.Get(),".Data/Assets/cubemap/Table_Mountain/table_mountain.dds");
 		time				= std::make_unique<system::Time>();
+		post_effect_manager = std::make_unique<system::PostEffectManager>(*this, locator::Locator::GetDx11Device()->device.Get());
 		collision_primitive = std::make_unique<collision::CollisionPrimitiveAsset>(*this);
 	}
 
@@ -210,6 +212,11 @@ namespace cumulonimbus::system
 	system::Time& System::GetTime() const
 	{
 		return *(time.get());
+	}
+
+	system::PostEffectManager& System::GetPostEffectManager() const
+	{
+		return *(post_effect_manager.get());
 	}
 
 	collision::CollisionPrimitiveAsset& System::GetCollisionPrimitive() const

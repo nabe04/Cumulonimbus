@@ -39,20 +39,22 @@
 #define TexSlot_OnDemand20		 40
 #define TexSlot_OnDemand_Count	 (TexSlot_OnDemand20 - TexSlot_OnDemand0 + 1)
 
-#define TexSlot_BaseColorMap    TexSlot_OnDemand0
-#define TexSlot_NormalMap       TexSlot_OnDemand1
-#define TexSlot_SurfaceMap	    TexSlot_OnDemand2
-#define TexSlot_EmissiveMap     TexSlot_OnDemand3
-#define TexSlot_DisplacementMap TexSlot_OnDemand4
-#define TexSlot_OcclusionMap    TexSlot_OnDemand5
-#define TexSlot_TransmissionMap TexSlot_OnDemand6
-#define TexSlot_RoughnessMap    TexSlot_OnDemand7
-#define TexSlot_SpecularMap		TexSlot_OnDemand8
-#define TexSlot_SkyMap			TexSlot_OnDemand9
-#define TexSlot_MROMap			TexSlot_OnDemand10
-#define TexSlot_ShaderSlot		TexSlot_OnDemand11
-#define TexSlot_PBRMap			TexSlot_OnDemand12
-#define TexSlot_AOMap			TexSlot_OnDemand13
-#define TexSlot_MetalnessMap	TexSlot_OnDemand14
+#define TexSlot_BaseColorMap		TexSlot_OnDemand0
+#define TexSlot_ForFullScreenQuad	TexSlot_OnDemand0
+#define TexSlot_NormalMap			TexSlot_OnDemand1
+#define TexSlot_SurfaceMap			TexSlot_OnDemand2
+#define TexSlot_EmissiveMap			TexSlot_OnDemand3
+#define TexSlot_DisplacementMap		TexSlot_OnDemand4
+#define TexSlot_OcclusionMap		TexSlot_OnDemand5
+#define TexSlot_TransmissionMap		TexSlot_OnDemand6
+#define TexSlot_RoughnessMap		TexSlot_OnDemand7
+#define TexSlot_SpecularMap			TexSlot_OnDemand8
+#define TexSlot_SkyMap				TexSlot_OnDemand9
+#define TexSlot_MROMap				TexSlot_OnDemand10
+#define TexSlot_ShaderSlot			TexSlot_OnDemand11
+#define TexSlot_PBRMap				TexSlot_OnDemand12
+#define TexSlot_AOMap				TexSlot_OnDemand13
+#define TexSlot_MetalnessMap		TexSlot_OnDemand14
+#define TexSlot_PostProcess			TexSlot_OnDemand15
 
 #endif //TEXTURE_RESOURCE_MAPPING_H

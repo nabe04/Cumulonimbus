@@ -148,6 +148,15 @@
     <FxCompile Include="Shader\debug_collision_vs.hlsl">
       <Filter>Shader%28HLSL%29\VS</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\lens_distortion.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\distort.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
+    <FxCompile Include="Shader\screen_filter.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\scene.cpp">
@@ -638,6 +647,21 @@
     </ClCompile>
     <ClCompile Include="Source\Game\magic_circle_spawner_component.cpp">
       <Filter>Source\Game\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\post_effect_manager.cpp">
+      <Filter>Source\Engine\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\lens_distortion.cpp">
+      <Filter>Source\Engine\Shader%28.cpp%29\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\distort.cpp">
+      <Filter>Source\Engine\Shader%28.cpp%29\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\post_effect.cpp">
+      <Filter>Source\Engine\Shader%28.cpp%29\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\screen_filter.cpp">
+      <Filter>Source\Engine\Shader%28.cpp%29\PostProcess</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1211,6 +1235,24 @@
     <ClInclude Include="Source\Game\magic_circle_spawner_component.h">
       <Filter>Header\Game\Components</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\post_effect_manager.h">
+      <Filter>Header\Engine\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\lens_distortion.h">
+      <Filter>Header\Engine\Shader%28.h%29\PostProcess</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\distort.h">
+      <Filter>Header\Engine\Shader%28.h%29\PostProcess</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\cbuffer_post_effect.h">
+      <Filter>Header\Engine\System\Mapping</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\post_effect.h">
+      <Filter>Header\Engine\Shader%28.h%29\PostProcess</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\screen_filter.h">
+      <Filter>Header\Engine\Shader%28.h%29\PostProcess</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Cumulonimbus.rc" />
@@ -1402,6 +1444,12 @@
     </Filter>
     <Filter Include="Source\Engine\Asset">
       <UniqueIdentifier>{5b0c6508-1460-4fd0-9323-5a697d8a328f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Engine\Shader%28.h%29\PostProcess">
+      <UniqueIdentifier>{214463d2-877a-44bf-9600-88cad62daa42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\Shader%28.cpp%29\PostProcess">
+      <UniqueIdentifier>{04829f38-a986-4ae1-af6e-7771901c571f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

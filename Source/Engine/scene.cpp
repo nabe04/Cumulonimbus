@@ -14,6 +14,7 @@
 #include "window.h"
 #include "file_path_helper.h"
 #include "filename_helper.h"
+#include "post_effect_manager.h"
 
 #include "scene_game.h"
 

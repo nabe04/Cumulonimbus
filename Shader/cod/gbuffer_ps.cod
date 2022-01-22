@@ -131,49 +131,49 @@ nop
 nop 
 nop 
 
-#line 92 "D:\Desktop\Cumulonimbus\Shader\functions_utility.hlsli"
+#line 129 "D:\Desktop\Cumulonimbus\Shader\functions_utility.hlsli"
 sample_indexable(texture2d)(float,float,float,float) r2.xyzw, v5.xyxx, t34.wxyz, s0  // r2.y <- col.x; r2.z <- col.y; r2.w <- col.z; r2.x <- col.w
 
-#line 96
+#line 133
 ge r3.x, cb3[1].x, l(1.000000)
 if_nz r3.x
 
-#line 97
+#line 134
   mov r2.x, r2.y  // r2.x <- ret_col
 else   // Prior locations: r2.x <- col.w
 
-#line 98
+#line 135
   ge r3.x, cb3[1].y, l(1.000000)
   if_nz r3.x
 
-#line 99
+#line 136
     mov r2.x, r2.z  // r2.x <- ret_col
   else   // Prior locations: r2.x <- col.w
 
-#line 100
+#line 137
     ge r3.x, cb3[1].z, l(1.000000)
     if_nz r3.x
 
-#line 101
+#line 138
       mov r2.x, r2.w  // r2.x <- ret_col
     else   // Prior locations: r2.x <- col.w
 
-#line 102
+#line 139
       ge r3.x, cb3[1].w, l(1.000000)
       if_nz r3.x
 
-#line 103
+#line 140
         mov r2.x, r2.x  // r2.x <- ret_col
       else 
 
-#line 105
+#line 142
         mov r2.x, cb3[3].y  // r2.x <- ret_col
       endif 
     endif 
   endif 
 endif 
 
-#line 107
+#line 144
 mov r2.x, r2.x  // r2.x <- <GetSingleTextureChannel return value>
 
 #line 37 "D:\Desktop\Cumulonimbus\Shader\gbuffer_ps.hlsl"
@@ -184,49 +184,49 @@ nop
 nop 
 nop 
 
-#line 92 "D:\Desktop\Cumulonimbus\Shader\functions_utility.hlsli"
+#line 129 "D:\Desktop\Cumulonimbus\Shader\functions_utility.hlsli"
 sample_indexable(texture2d)(float,float,float,float) r3.xyzw, v5.xyxx, t27.xyzw, s0  // r3.x <- col.x; r3.y <- col.y; r3.z <- col.z; r3.w <- col.w
 
-#line 96
+#line 133
 ge r4.x, cb3[0].x, l(1.000000)
 if_nz r4.x
 
-#line 97
+#line 134
   mov r2.y, r3.x  // r2.y <- ret_col
 else 
 
-#line 98
+#line 135
   ge r3.x, cb3[0].y, l(1.000000)
   if_nz r3.x
 
-#line 99
+#line 136
     mov r2.y, r3.y  // r2.y <- ret_col
   else 
 
-#line 100
+#line 137
     ge r3.x, cb3[0].z, l(1.000000)
     if_nz r3.x
 
-#line 101
+#line 138
       mov r2.y, r3.z  // r2.y <- ret_col
     else 
 
-#line 102
+#line 139
       ge r3.x, cb3[0].w, l(1.000000)
       if_nz r3.x
 
-#line 103
+#line 140
         mov r2.y, r3.w  // r2.y <- ret_col
       else 
 
-#line 105
+#line 142
         mov r2.y, cb3[3].x  // r2.y <- ret_col
       endif 
     endif 
   endif 
 endif 
 
-#line 107
+#line 144
 mov r2.y, r2.y  // r2.y <- <GetSingleTextureChannel return value>
 
 #line 39 "D:\Desktop\Cumulonimbus\Shader\gbuffer_ps.hlsl"
@@ -237,49 +237,49 @@ nop
 nop 
 nop 
 
-#line 92 "D:\Desktop\Cumulonimbus\Shader\functions_utility.hlsli"
+#line 129 "D:\Desktop\Cumulonimbus\Shader\functions_utility.hlsli"
 sample_indexable(texture2d)(float,float,float,float) r3.xyzw, v5.xyxx, t33.xyzw, s0  // r3.x <- col.x; r3.y <- col.y; r3.z <- col.z; r3.w <- col.w
 
-#line 96
+#line 133
 ge r4.x, cb3[2].x, l(1.000000)
 if_nz r4.x
 
-#line 97
+#line 134
   mov r2.z, r3.x  // r2.z <- ret_col
 else 
 
-#line 98
+#line 135
   ge r3.x, cb3[2].y, l(1.000000)
   if_nz r3.x
 
-#line 99
+#line 136
     mov r2.z, r3.y  // r2.z <- ret_col
   else 
 
-#line 100
+#line 137
     ge r3.x, cb3[2].z, l(1.000000)
     if_nz r3.x
 
-#line 101
+#line 138
       mov r2.z, r3.z  // r2.z <- ret_col
     else 
 
-#line 102
+#line 139
       ge r3.x, cb3[2].w, l(1.000000)
       if_nz r3.x
 
-#line 103
+#line 140
         mov r2.z, r3.w  // r2.z <- ret_col
       else 
 
-#line 105
+#line 142
         mov r2.z, l(0.500000)  // r2.z <- ret_col
       endif 
     endif 
   endif 
 endif 
 
-#line 107
+#line 144
 mov r2.z, r2.z  // r2.z <- <GetSingleTextureChannel return value>
 
 #line 41 "D:\Desktop\Cumulonimbus\Shader\gbuffer_ps.hlsl"

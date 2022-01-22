@@ -35,4 +35,8 @@
 
 // ポイント & スポットライト情報
 #define CBSlot_LightInfo			CBSlot_OnDemand0
+
+// ポストエフェクト
+#define CBSlot_Distort				CBSlot_OnDemand0
+#define CBSlot_ScreenFilter			CBSlot_OnDemand0
 #endif // CONSTANT_BUFFER_MAPPING_H

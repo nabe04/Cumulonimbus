@@ -36,6 +36,12 @@ Sampler::Sampler(
 		D3D11_TEXTURE_ADDRESS_WRAP,
 		D3D11_COMPARISON_ALWAYS,
 		0.0f, 0.0f, 0.0f, 1.0f);
+	CreateSamplerState(
+		default_sampler_states.at(static_cast<u_int>(SamplerState::Mirror)).GetAddressOf(),
+		device, D3D11_FILTER_MIN_MAG_MIP_LINEAR,
+		D3D11_TEXTURE_ADDRESS_MIRROR,
+		D3D11_COMPARISON_ALWAYS,
+		0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 void Sampler::Activate(ID3D11DeviceContext* immediate_context, unsigned slot, bool set_in_vs)

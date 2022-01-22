@@ -33,6 +33,7 @@ namespace cumulonimbus::mapping::shader_filename
 		inline std::string Metal_PS()							{ return { "./Shader/cso/cook_torrance_ps.cso" }; }
 		inline std::string SkyBox_PS()							{ return "./Shader/cso/sky_box_ps.cso"; }
 		inline std::string Diffuse_PS()							{ return { "./Shader/cso/diffuse_ps.cso" }; }
+		inline std::string Distort_PS()							{ return { "./Shader/cso/distort.cso" }; }
 		inline std::string GBuffer_PS()							{ return { "./Shader/cso/gbuffer_ps.cso" }; }
 		inline std::string ToonMTR_PS()							{ return {"./Shader/cso/toon_mtr_ps.cso"}; }
 		inline std::string MetalMTR_PS()						{ return { "./Shader/cso/metal_mtr_ps.cso" }; }
@@ -44,9 +45,11 @@ namespace cumulonimbus::mapping::shader_filename
 		inline std::string Standard3D_PS()						{ return { "./Shader/cso/3d_standard_ps.cso" }; }
 		inline std::string SingleColor_PS()						{ return { "./Shader/cso/single_color_ps.cso" }; }
 		inline std::string SampleShader_PS()					{ return { "./Shader/cso/sample_shader_ps.cso" }; }
+		inline std::string ScreenFilter_PS()					{ return { "./Shader/cso/screen_filter.cso" }; }
 		inline std::string DebugCollision_PS()					{ return { "./Shader/cso/debug_collision_ps.cso" }; }
 		inline std::string DebugPrimitive_PS()					{ return { "./Shader/cso/debug_primitive_ps.cso" }; }
 		inline std::string GlowExtraction_PS()					{ return { "./Shader/cso/glow_extraction_ps.cso" }; }
+		inline std::string LensDistortion_PS()					{ return { "./Shader/cso/lens_distortion.cso" }; }
 		inline std::string StandardSprite_PS()					{ return { "./Shader/cso/standard_sprite_ps.cso" }; }
 		inline std::string SingleColorMTR_PS()					{ return { "./Shader/cso/single_color_mtr_ps.cso" }; }
 		inline std::string SampleShaderMTR_PS()					{ return { "./Shader/cso/sample_shader_mtr_ps.cso" }; }

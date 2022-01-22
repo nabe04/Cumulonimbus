@@ -73,6 +73,6 @@ public:
 
 	void Clear(ID3D11DeviceContext* immediate_context);
 
-	void Genarate(ID3D11DeviceContext* immmediate_context, ID3D11ShaderResourceView* hdr_texture);
+	void Genarate(ID3D11DeviceContext* immediate_context, ID3D11ShaderResourceView* hdr_texture);
 	void Blit(ID3D11DeviceContext* immediate_context);
 };

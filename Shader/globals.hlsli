@@ -85,15 +85,16 @@ struct PS_Output
     float4 mro      : SV_TARGET2;   // r: メタリック(metallic)、g : ラフネス(roughness)、b : オクリュージョン(occlusion)テクスチャ
 };
 
-TEXTURE2D(texture_base_color , float4, TexSlot_BaseColorMap);
-TEXTURE2D(texture_metalness  , float4, TexSlot_MetalnessMap);
-TEXTURE2D(texture_roughness  , float4, TexSlot_RoughnessMap);
-TEXTURE2D(texture_occlusion  , float4, TexSlot_AOMap);
-TEXTURE2D(texture_normal     , float4, TexSlot_NormalMap);
-TEXTURE2D(texture_depth      , float4, TexSlot_Depth);
-TEXTURE2D(texture_mro        , float4, TexSlot_MROMap);
-TEXTURE2D(texture_shader_slot, float , TexSlot_ShaderSlot);
-TEXTURECUBE(texture_cube     , float4, TexSlot_SkyMap);
+TEXTURE2D(texture_base_color  , float4, TexSlot_BaseColorMap);
+TEXTURE2D(texture_metalness   , float4, TexSlot_MetalnessMap);
+TEXTURE2D(texture_roughness   , float4, TexSlot_RoughnessMap);
+TEXTURE2D(texture_occlusion   , float4, TexSlot_AOMap);
+TEXTURE2D(texture_normal      , float4, TexSlot_NormalMap);
+TEXTURE2D(texture_depth       , float4, TexSlot_Depth);
+TEXTURE2D(texture_mro         , float4, TexSlot_MROMap);
+TEXTURE2D(texture_shader_slot , float , TexSlot_ShaderSlot);
+TEXTURE2D(texture_post_process, float4, TexSlot_PostProcess);
+TEXTURECUBE(texture_cube      , float4, TexSlot_SkyMap);
 
 inline float GetScreenWidth()  { return screen_width;  }
 inline float GetScreenHeight() { return screen_height; }

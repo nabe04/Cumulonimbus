@@ -86,7 +86,7 @@
 //
 // Name                                 Type  Format         Dim      HLSL Bind  Count
 // ------------------------------ ---------- ------- ----------- -------------- ------
-// defaultSampler                    sampler      NA          NA             s0      1 
+// default_sampler                   sampler      NA          NA             s0      1 
 // texture_depth                     texture  float4          2d             t0      1 
 // texture_base_color                texture  float4          2d            t20      1 
 // texture_normal                    texture  float4          2d            t21      1 
@@ -218,19 +218,19 @@ nop
 nop 
 mov r5.xy, v1.xyxx
 
-#line 122 "D:\Desktop\Cumulonimbus\Shader\functions_utility.hlsli"
+#line 178 "D:\Desktop\Cumulonimbus\Shader\functions_utility.hlsli"
 mov r5.z, -r5.y  // r5.z <- texcoord.y
 
-#line 123
+#line 179
 mul r5.xy, r5.xzxx, l(2.000000, 2.000000, 0.000000, 0.000000)
 mov r5.zw, l(-0.000000,-0.000000,-1.000000,1.000000)
 add r3.xy, r5.zwzz, r5.xyxx  // r3.x <- pos_xy.x; r3.y <- pos_xy.y
 
-#line 124
+#line 180
 mov r3.w, l(1.000000)
 mov r3.xyzw, r3.xyzw  // r3.x <- projected_position.x; r3.y <- projected_position.y; r3.z <- projected_position.z; r3.w <- projected_position.w
 
-#line 126
+#line 182
 mul r5.xyzw, r3.xxxx, cb1[20].xyzw
 mul r6.xyzw, r3.yyyy, cb1[21].xyzw
 add r5.xyzw, r5.xyzw, r6.xyzw
@@ -239,7 +239,7 @@ add r5.xyzw, r5.xyzw, r6.xyzw
 mul r3.xyzw, r3.wwww, cb1[23].xyzw
 add r3.xyzw, r3.xyzw, r5.xyzw  // r3.x <- position.x; r3.y <- position.y; r3.z <- position.z; r3.w <- position.w
 
-#line 128
+#line 184
 div r3.xyz, r3.xyzx, r3.wwww  // r3.x <- <DepthToWPosition return value>.x; r3.y <- <DepthToWPosition return value>.y; r3.z <- <DepthToWPosition return value>.z
 
 #line 32 "D:\Desktop\Cumulonimbus\Shader\gbuffer_lighting_ps.hlsl"
@@ -284,11 +284,11 @@ nop
 nop 
 add r7.xyz, r5.xyzx, cb4[0].xyzx
 
-#line 55 "D:\Desktop\Cumulonimbus\Shader\functions_utility.hlsli"
+#line 89 "D:\Desktop\Cumulonimbus\Shader\functions_utility.hlsli"
 dp3 r3.w, r7.xyzx, r7.xyzx
 max r3.w, r3.w, l(0.000000)  // r3.w <- dp3
 
-#line 56
+#line 90
 rsq r3.w, r3.w
 mul r7.xyz, r3.wwww, r7.xyzx  // r7.x <- <SafeNormalize return value>.x; r7.y <- <SafeNormalize return value>.y; r7.z <- <SafeNormalize return value>.z
 
@@ -426,11 +426,11 @@ loop
   nop 
   add r11.xyz, r5.xyzx, r9.xyzx
 
-#line 55 "D:\Desktop\Cumulonimbus\Shader\functions_utility.hlsli"
+#line 89 "D:\Desktop\Cumulonimbus\Shader\functions_utility.hlsli"
   dp3 r5.w, r11.xyzx, r11.xyzx
   max r5.w, r5.w, l(0.000000)  // r5.w <- dp3
 
-#line 56
+#line 90
   rsq r5.w, r5.w
   mul r11.xyz, r5.wwww, r11.xyzx  // r11.x <- <SafeNormalize return value>.x; r11.y <- <SafeNormalize return value>.y; r11.z <- <SafeNormalize return value>.z
 
@@ -609,11 +609,11 @@ loop
   nop 
   add r11.xyz, r5.xyzx, r9.xyzx
 
-#line 55 "D:\Desktop\Cumulonimbus\Shader\functions_utility.hlsli"
+#line 89 "D:\Desktop\Cumulonimbus\Shader\functions_utility.hlsli"
   dp3 r4.w, r11.xyzx, r11.xyzx
   max r4.w, r4.w, l(0.000000)  // r4.w <- dp3
 
-#line 56
+#line 90
   rsq r4.w, r4.w
   mul r11.xyz, r4.wwww, r11.xyzx  // r11.x <- <SafeNormalize return value>.x; r11.y <- <SafeNormalize return value>.y; r11.z <- <SafeNormalize return value>.z
 

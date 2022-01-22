@@ -256,22 +256,22 @@ mov r2.xyz, r2.xyzx  // r2.x <- normal_map.x; r2.y <- normal_map.y; r2.z <- norm
 nop 
 mov r2.xyz, r2.xyzx
 
-#line 66 "D:\Desktop\Cumulonimbus\Shader\functions_utility.hlsli"
+#line 103 "D:\Desktop\Cumulonimbus\Shader\functions_utility.hlsli"
 dp3 r0.z, v4.xyzx, v4.xyzx
 rsq r0.z, r0.z
 mul r3.xyz, r0.zzzz, v4.xyzx  // r3.x <- vx.x; r3.y <- vx.y; r3.z <- vx.z
 
-#line 67
+#line 104
 dp3 r0.z, v5.xyzx, v5.xyzx
 rsq r0.z, r0.z
 mul r4.xyz, r0.zzzz, v5.xyzx  // r4.x <- vy.x; r4.y <- vy.y; r4.z <- vy.z
 
-#line 68
+#line 105
 dp3 r0.z, v3.xyzx, v3.xyzx
 rsq r0.z, r0.z
 mul r5.xyz, r0.zzzz, v3.xyzx  // r5.x <- vz.x; r5.y <- vz.y; r5.z <- vz.z
 
-#line 71
+#line 108
 mov r6.x, r3.x  // r6.x <- mat._m00
 mov r6.y, r4.x  // r6.y <- mat._m10
 mov r6.z, r5.x  // r6.z <- mat._m20
@@ -282,12 +282,12 @@ mov r5.x, r3.z  // r5.x <- mat._m02
 mov r5.y, r4.z  // r5.y <- mat._m12
 mov r5.z, r5.z  // r5.z <- mat._m22
 
-#line 72
+#line 109
 mul r2.xyz, r2.xyzx, l(2.000000, 2.000000, 2.000000, 0.000000)
 mov r3.xyz, l(-1.000000,-1.000000,-1.000000,-0.000000)
 add r2.xyz, r2.xyzx, r3.xyzx
 
-#line 75
+#line 112
 dp3 r3.x, r2.xyzx, r6.xyzx
 dp3 r3.y, r2.xyzx, r7.xyzx
 dp3 r3.z, r2.xyzx, r5.xyzx
