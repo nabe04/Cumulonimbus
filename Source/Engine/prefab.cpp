@@ -51,6 +51,7 @@
 #include "enemy_soldier_component.h"
 // player
 #include "player_component.h"
+#include "player_avoid_effect_component.h"
 // weapon
 #include "energy_shot_component.h"
 #include "player_sword_component.h"
@@ -109,6 +110,7 @@ namespace cumulonimbus::asset
 		RegistryComponent<component::EnemySoldierComponent>();
 		// player
 		RegistryComponent<component::PlayerComponent>();
+		RegistryComponent<component::PlayerAvoidEffectComponent>();
 		// weapon
 		RegistryComponent<component::EnergyShotComponent>();
 		RegistryComponent<component::PlayerSwordComponent>();

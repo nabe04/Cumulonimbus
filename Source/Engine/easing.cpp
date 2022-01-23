@@ -34,18 +34,22 @@ EasingSheet* easingSheet[] =
 
 EasingSheet* eSheet;
 
-float Easing::GetEasingVal(float t, float b, float c, float d, e_EasingName eName,e_EasingType eType)
+float Easing::GetEasingVal(
+	const float t, const float b,
+	const float c, const float d,
+	const e_EasingName e_name,
+	const e_EasingType e_type)
 {
-	switch (eType)
+	switch (e_type)
 	{
 	case ESIN:
-		return easingSheet[eName]->EaseIn(t, b, c, d);
+		return easingSheet[e_name]->EaseIn(t, b, c, d);
 		break;
 	case ESOUT:
-		return easingSheet[eName]->EaseOut(t, b, c, d);
+		return easingSheet[e_name]->EaseOut(t, b, c, d);
 		break;
 	case ESINOUT:
-		return easingSheet[eName]->EaseInOut(t, b, c, d);
+		return easingSheet[e_name]->EaseInOut(t, b, c, d);
 		break;
 	}
 

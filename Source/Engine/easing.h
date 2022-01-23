@@ -34,8 +34,16 @@ enum e_EasingType
 class Easing
 {
 public:
-	//easing関数の値取得 (t : 時間(進行度), b : 開始の値(開始時の座標やスケールなど), c : 開始と終了の値の差分 , d : Tween(トゥイーン)の合計時間 , イージング名,種類)
-	static float GetEasingVal(float t, float b, float c, float d, e_EasingName eName,e_EasingType eType);
+	/**
+	 * @brief : easing関数の値取得
+	 * @param t : 時間(進行度)
+	 * @param b : 開始の値(開始時の座標やスケールなど)
+	 * @param c : 開始と終了の値の差分
+	 * @param d : Tween(トゥイーン)の合計時間
+	 * @param e_name : イージング名
+	 * @param e_type : 種類
+	 */
+	static float GetEasingVal(float t, float b, float c, float d, e_EasingName e_name,e_EasingType e_type);
 };
 
 class EasingSheet

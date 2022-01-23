@@ -38,6 +38,7 @@
 #include "enemy_soldier_component.h"
 // player
 #include "player_component.h"
+#include "player_avoid_effect_component.h"
 // weapon
 #include "energy_shot_component.h"
 #include "player_sword_component.h"
@@ -69,6 +70,7 @@ namespace cumulonimbus::editor
 		RegisterComponent<component::PrefabSpawnerComponent>(			"Prefab Spawner"		, mapping::component_tag::ComponentTag::Spawner);
 		RegisterComponent<component::MagicCircleSpawnerComponent>(		"Magic Circle Spawner"	, mapping::component_tag::ComponentTag::Spawner);
 		RegisterComponent<component::FlameSpownerComponent>(			"Flame Spawner"			, mapping::component_tag::ComponentTag::Spawner);
+		RegisterComponent<component::PlayerAvoidEffectComponent>(		"Player Avoid Effect"	, mapping::component_tag::ComponentTag::Game);
 		RegisterComponent<component::EnemySoldierComponent>(			"E_Soldier"				, mapping::component_tag::ComponentTag::Game);
 		RegisterComponent<component::EnemyBossComponent>(				"E_Boss"				, mapping::component_tag::ComponentTag::Game);
 		RegisterComponent<component::EnergyShotComponent>(				"Energy Shot"			, mapping::component_tag::ComponentTag::Game);

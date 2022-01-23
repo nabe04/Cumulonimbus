@@ -36,7 +36,6 @@ float4 main(float4 position : SV_POSITION, float2 texcoord : TEXCOORD) : SV_TARG
        // const float2 noise_uv = float2(PerlinNoise(uv_scroll_val, distort_noise_scale) * distort_noise_attenuation, 0) + texcoord;
 
         final_color = texture_post_process.Sample(default_sampler, noise_uv + uv_scroll_val);
-
 	}
 
     return final_color;

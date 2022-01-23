@@ -210,6 +210,7 @@
     <ClInclude Include="Source\Game\energy_shot_component.h" />
     <ClInclude Include="Source\Game\flame_spawner_component.h" />
     <ClInclude Include="Source\Game\magic_circle_spawner_component.h" />
+    <ClInclude Include="Source\Game\player_avoid_effect_component.h" />
     <ClInclude Include="Source\Game\player_component.h" />
     <ClInclude Include="Source\Game\player_sword_component.h" />
     <ClInclude Include="Source\Game\soldier_sword_component.h" />
@@ -388,6 +389,7 @@
     <ClCompile Include="Source\Game\energy_shot_component.cpp" />
     <ClCompile Include="Source\Game\flame_spawner_component.cpp" />
     <ClCompile Include="Source\Game\magic_circle_spawner_component.cpp" />
+    <ClCompile Include="Source\Game\player_avoid_effect_component.cpp" />
     <ClCompile Include="Source\Game\player_component.cpp" />
     <ClCompile Include="Source\Game\player_sword_component.cpp" />
     <ClCompile Include="Source\Game\soldier_sword_component.cpp" />

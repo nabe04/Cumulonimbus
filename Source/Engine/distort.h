@@ -12,6 +12,12 @@ namespace cumulonimbus::post_effect
 		~Distort() override = default;
 
 		void RenderImGui(ecs::Registry* registry) override;
+
+		[[nodiscard]]
+		buffer::ConstantBuffer<DistortCB>& GetCBuffer() const
+		{
+			return *(cb_distort.get());
+		}
 	private:
 		std::unique_ptr<buffer::ConstantBuffer<DistortCB>> cb_distort{};
 

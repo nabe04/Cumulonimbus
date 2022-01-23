@@ -14,7 +14,7 @@ namespace cumulonimbus::component
 	/**
 	 * @brief : ‹¯‚ÝƒŒƒxƒ‹
 	 */
-	enum class FrightenedLevel
+	enum class KnockBackLevel
 	{
 		None = 0,
 		Small,
@@ -25,7 +25,7 @@ namespace cumulonimbus::component
 	struct DamageData
 	{
 		u_int			damage_amount{};
-		FrightenedLevel frightened_level{ FrightenedLevel::None };
+		KnockBackLevel	knock_back_level{ KnockBackLevel::None };
 	};
 
 	class DamageableComponent final : public ComponentBase

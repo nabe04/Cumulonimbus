@@ -19,7 +19,6 @@ namespace cumulonimbus::component
 			archive(
 				cereal::base_class<WeaponComponent>(this)
 			);
-
 		}
 	}
 
@@ -107,7 +106,8 @@ namespace cumulonimbus::component
 		if (auto* player_comp = GetRegistry()->TryGetComponent<PlayerComponent>(parent_ent);
 			player_comp)
 		{
-			damage_data.damage_amount = player_comp->GetCurrentDamageAmount();
+			damage_data.knock_back_level = player_comp->GetAtkKnockBackLevel();
+			damage_data.damage_amount	 = player_comp->GetCurrentDamageAmount();
 		}
 
 		if(auto* damageable_comp = hit_result.registry->TryGetComponent<DamageableComponent>(hit_result.entity);

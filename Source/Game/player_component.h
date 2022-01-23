@@ -147,6 +147,12 @@ namespace cumulonimbus::component
 		{
 			return current_damage_amount;
 		}
+
+		[[nodiscard]]
+		KnockBackLevel GetAtkKnockBackLevel() const
+		{
+			return atk_knock_back;
+		}
 	private:
 		// プレイヤーの状態管理変数
 		StateMachine<PlayerState, void, const float> player_state{};
@@ -160,6 +166,9 @@ namespace cumulonimbus::component
 		std::map<AnimationData, system::KeyframeEvent> keyframe_events{};
 		// ヒットリザルト
 		collision::HitResult hit_result{};
+
+		KnockBackLevel atk_knock_back{ KnockBackLevel::None };
+		KnockBackLevel damage_knock_back{};
 
 		// プレイヤーの持つ剣のエンティティ
 		mapping::rename_type::Entity sword_ent{};

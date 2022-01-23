@@ -283,10 +283,10 @@ else
   add r1.xy, r1.xyxx, r1.zwzz
   sample_indexable(texture2d)(float,float,float,float) r0.xyzw, r1.xyxx, t35.xyzw, s0  // r0.x <- final_color.x; r0.y <- final_color.y; r0.z <- final_color.z; r0.w <- final_color.w
 
-#line 40
+#line 39
 endif 
 
-#line 42
+#line 41
 mov o0.xyzw, r0.xyzw
 ret 
 // Approximately 136 instruction slots used

@@ -1,15 +1,16 @@
 #include "enemy_boss_component.h"
 
 #include "arithmetic.h"
+#include "capsule_collison_component.h"
+#include "collider_message_receiver_component.h"
+#include "collider_message_sender_component.h"
 #include "locator.h"
 #include "model_component.h"
 #include "player_component.h"
+#include "prefab_loader.h"
+#include "rigid_body_component.h"
 #include "sphere_collision_component.h"
 #include "transform_component.h"
-#include "collider_message_receiver_component.h"
-#include "collider_message_sender_component.h"
-#include "capsule_collison_component.h"
-#include "prefab_loader.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::EnemyBossComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::EnemyBaseComponent, cumulonimbus::component::EnemyBossComponent)
@@ -28,7 +29,7 @@ namespace collision_name
 namespace cumulonimbus::component
 {
 	template <class Archive>
-	void EnemyBossComponent::load(Archive&& archive, uint32_t version)
+	void EnemyBossComponent::load(Archive&& archive, const uint32_t version)
 	{
 		archive(
 			cereal::base_class<EnemyBaseComponent>(this)
@@ -47,7 +48,7 @@ namespace cumulonimbus::component
 	}
 
 	template <class Archive>
-	void EnemyBossComponent::save(Archive&& archive, uint32_t version) const
+	void EnemyBossComponent::save(Archive&& archive, const uint32_t version) const
 	{
 		archive(
 			cereal::base_class<EnemyBaseComponent>(this)
@@ -214,6 +215,8 @@ namespace cumulonimbus::component
 				ImGui::Text("Spawn Shot Pos");
 				model_comp->ImSelectableNode(spawn_shot_node_name);
 			}
+
+			ImGui::DragFloat("Damage Knock Down Speed", &knock_back_speed, 0.5f, 0.f, 200.f);
 		}
 
 	}
@@ -299,6 +302,7 @@ namespace cumulonimbus::component
 	void EnemyBossComponent::OnDamaged(const DamageData& damage_data, const collision::HitResult& hit_result)
 	{
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
+		knock_back_level = damage_data.knock_back_level;
 
 		boss_behavior.SetState(BossBehavior::Damage);
 	}
@@ -742,6 +746,14 @@ namespace cumulonimbus::component
 		if (is_start)
 		{
 			model_comp->SwitchAnimation(GetAnimDataIndex(AnimationData::Damage));
+		}
+
+		if (auto* rigid_body_comp = GetRegistry()->TryGetComponent<RigidBodyComponent>(GetEntity());
+			rigid_body_comp)
+		{
+			const auto speed = knock_back_speed * static_cast<float>(knock_back_level);
+
+			rigid_body_comp->AddForce({ -speed,0,-speed });
 		}
 
 		if (model_comp->IsPlayAnimation())

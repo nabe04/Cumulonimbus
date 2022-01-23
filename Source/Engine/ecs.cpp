@@ -49,6 +49,7 @@
 #include "enemy_soldier_component.h"
 // player
 #include "player_component.h"
+#include "player_avoid_effect_component.h"
 // weapon
 #include "energy_shot_component.h"
 #include "player_sword_component.h"
@@ -56,6 +57,8 @@
 // spawner
 #include "magic_circle_spawner_component.h"
 #include "flame_spawner_component.h"
+// other
+
 
 namespace cumulonimbus::ecs
 {
@@ -307,6 +310,7 @@ namespace cumulonimbus::ecs
 		RegistryComponent<component::EnemySoldierComponent>();
 		// player
 		RegistryComponent<component::PlayerComponent>();
+		RegistryComponent<component::PlayerAvoidEffectComponent>();
 		// weapon
 		RegistryComponent<component::EnergyShotComponent>();
 		RegistryComponent<component::PlayerSwordComponent>();

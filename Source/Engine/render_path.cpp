@@ -117,27 +117,27 @@ namespace cumulonimbus::renderer
 
 		Render3DToGBuffer_End(immediate_context, &camera);
 
-		//for (auto& scene : scenes | std::views::values)
-		//{
-		//	// Effekseerの描画
-		//	system::EffekseerManager& effekseer_manager = *scene->GetSceneManager()->GetEffekseerManager();
-		//	RenderEffekseerBegin(immediate_context,&effekseer_manager, &camera);
-		//	RenderEffekseer(&effekseer_manager);
-		//	RenderEffekseerEnd(immediate_context,&effekseer_manager, &camera);
-		//}
+		for (auto& scene : scenes | std::views::values)
+		{
+			// Effekseerの描画
+			system::EffekseerManager& effekseer_manager = *scene->GetSceneManager()->GetEffekseerManager();
+			RenderEffekseerBegin(immediate_context,&effekseer_manager, &camera);
+			RenderEffekseer(&effekseer_manager);
+			RenderEffekseerEnd(immediate_context,&effekseer_manager, &camera);
+		}
 
-		//for (auto& scene : scenes | std::views::values)
-		//{
-		//	// シーンがアクティブで無いのなら描画しない
-		//	if (!scene->GetIsVisible())
-		//		continue;
+		for (auto& scene : scenes | std::views::values)
+		{
+			// シーンがアクティブで無いのなら描画しない
+			if (!scene->GetIsVisible())
+				continue;
 
-		//	if (ecs::Registry& registry = *scene->GetRegistry();
-		//		registry.GetArray<component::ModelComponent>().GetComponents().size() > 0)
-		//	{// 2Dスプライトの描画
-		//		Render2D(immediate_context, &registry, &camera, true);
-		//	}
-		//}
+			if (ecs::Registry& registry = *scene->GetRegistry();
+				registry.GetArray<component::ModelComponent>().GetComponents().size() > 0)
+			{// 2Dスプライトの描画
+				Render2D(immediate_context, &registry, &camera, true);
+			}
+		}
 
 		RenderPostProcess_Begin(immediate_context);
 		RenderPostProcess(immediate_context, &camera);
@@ -252,6 +252,13 @@ namespace cumulonimbus::renderer
 				// 2Dスプライトの描画
 				Render2D(immediate_context, &registry, camera_comp.GetCamera(), false);
 			}
+		}
+
+		if(main_camera)
+		{
+			RenderPostProcess_Begin(immediate_context);
+			RenderPostProcess(immediate_context, main_camera);
+			RenderPostProcess_End(immediate_context);
 		}
 
 		RenderEnd(immediate_context);
@@ -544,6 +551,7 @@ namespace cumulonimbus::renderer
 	void RenderPath::RenderPostProcess(ID3D11DeviceContext* immediate_context, const camera::Camera* camera)
 	{
 		ID3D11ShaderResourceView** srv_address = locator::Locator::GetSystem()->GetPostEffectManager().Generate(immediate_context, camera->GetFrameBufferSrvAddress());
+
 		camera->BindFrameBuffer();
 		locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, srv_address, TexSlot_ForFullScreenQuad);
 		fullscreen_quad->Blit(immediate_context, true, true, true);

@@ -663,6 +663,9 @@
     <ClCompile Include="Source\Engine\screen_filter.cpp">
       <Filter>Source\Engine\Shader%28.cpp%29\PostProcess</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Game\player_avoid_effect_component.cpp">
+      <Filter>Source\Game\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -1252,6 +1255,9 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\screen_filter.h">
       <Filter>Header\Engine\Shader%28.h%29\PostProcess</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\player_avoid_effect_component.h">
+      <Filter>Header\Game\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

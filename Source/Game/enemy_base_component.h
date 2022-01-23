@@ -71,7 +71,7 @@ namespace cumulonimbus::component
 			}
 		};
 
-		int hp{};
+		int hp{10};
 		std::unordered_map<std::string, RandomFloat> transition_timer{};
 		// モデルのyaw回転(度数法)のランダム値
 		RandomFloat random_rotation_angle{};

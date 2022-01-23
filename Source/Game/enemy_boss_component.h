@@ -5,6 +5,8 @@
 #include "state_machine.h"
 #include "keyframe_event.h"
 
+#include "damageable_component.h"
+
 namespace cumulonimbus::component
 {
 	class ColliderMessageSenderComponent;
@@ -187,6 +189,10 @@ namespace cumulonimbus::component
 		float walk_speed{ 100.f };
 		// 走りの速さ
 		float dash_speed{ 150.f };
+		// ノックバックレベル
+		KnockBackLevel knock_back_level{};
+		// ノックバックの速さ
+		float knock_back_speed{ 10.f };
 		//-- 行動制御 --//
 		// 近距離攻撃の境界距離
 		float atk_melee_distance{ 100.f };

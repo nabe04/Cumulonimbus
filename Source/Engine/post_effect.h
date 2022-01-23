@@ -21,6 +21,11 @@ namespace cumulonimbus::post_effect
 
 		virtual ID3D11ShaderResourceView** Generate(ID3D11DeviceContext* immediate_context, ID3D11ShaderResourceView** scene_srv_address);
 
+		void SetIsActive(const bool arg)
+		{
+			is_active = arg;
+		}
+
 		[[nodiscard]]
 		FrameBuffer* GetFrameBuffer() const
 		{
