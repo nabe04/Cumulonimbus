@@ -31,22 +31,23 @@ namespace cumulonimbus::component
 	{
 		//PlayerAvoidEffectComponent& avoid_comp = GetRegistry()->GetComponent<PlayerAvoidEffectComponent>(GetEntity());
 		//// Stateの追加
-		//playback_state.AddState(PlaybackMethod::Expansion, [&avoid_comp](const float dt) { avoid_comp.GetPlaybackFunc<&PlayerAvoidEffectComponent::Expansion>(); });
-		//playback_state.AddState(PlaybackMethod::Contraction, [&avoid_comp](const float dt) { avoid_comp.GetPlaybackFunc<&PlayerAvoidEffectComponent::Contraction>(); });
-		//playback_state.AddState(PlaybackMethod::Stop, [&avoid_comp](const float dt) { avoid_comp.GetPlaybackFunc<&PlayerAvoidEffectComponent::Stop>(); });
+		//effect_state.AddState(PlaybackMethod::Expansion, [&avoid_comp](const float dt) { avoid_comp.GetPlaybackFunc<&PlayerAvoidEffectComponent::Expansion>(); });
+		//effect_state.AddState(PlaybackMethod::Contraction, [&avoid_comp](const float dt) { avoid_comp.GetPlaybackFunc<&PlayerAvoidEffectComponent::Contraction>(); });
+		//effect_state.AddState(PlaybackMethod::Stop, [&avoid_comp](const float dt) { avoid_comp.GetPlaybackFunc<&PlayerAvoidEffectComponent::Stop>(); });
 
-		//playback_state.SetState(PlaybackMethod::Stop);
+		//effect_state.SetState(PlaybackMethod::Stop);
 	}
 
 	void PlayerAvoidEffectComponent::Start()
 	{
 		PlayerAvoidEffectComponent& avoid_comp = GetRegistry()->GetComponent<PlayerAvoidEffectComponent>(GetEntity());
 		// Stateの追加
-		playback_state.AddState(EffectState::Begin_Avoid, avoid_comp.GetPlaybackFunc<&PlayerAvoidEffectComponent::BeginAvoid>());
-		playback_state.AddState(EffectState::End_Avoid	, avoid_comp.GetPlaybackFunc<&PlayerAvoidEffectComponent::EndAvoid>());
-		playback_state.AddState(EffectState::Stop		, avoid_comp.GetPlaybackFunc<&PlayerAvoidEffectComponent::Stop>());
+		effect_state.AddState(EffectState::Begin_Avoid, avoid_comp.GetPlaybackFunc<&PlayerAvoidEffectComponent::BeginAvoid>());
+		effect_state.AddState(EffectState::Avoiding   , avoid_comp.GetPlaybackFunc<&PlayerAvoidEffectComponent::Avoiding>());
+		effect_state.AddState(EffectState::End_Avoid  , avoid_comp.GetPlaybackFunc<&PlayerAvoidEffectComponent::EndAvoid>());
+		effect_state.AddState(EffectState::Stop		  , avoid_comp.GetPlaybackFunc<&PlayerAvoidEffectComponent::Stop>());
 
-		playback_state.SetState(EffectState::Stop);
+		effect_state.SetState(EffectState::Stop);
 	}
 
 	void PlayerAvoidEffectComponent::CommonUpdate(float dt)
@@ -56,7 +57,7 @@ namespace cumulonimbus::component
 
 	void PlayerAvoidEffectComponent::GameUpdate(float dt)
 	{
-		playback_state.Update(dt);
+		effect_state.Update(dt);
 	}
 
 	void PlayerAvoidEffectComponent::RenderImGui()
@@ -65,11 +66,11 @@ namespace cumulonimbus::component
 		{
 			if(ImGui::Button("Expansion"))
 			{
-				playback_state.SetState(EffectState::Begin_Avoid);
+				effect_state.SetState(EffectState::Begin_Avoid);
 			}
 			if(ImGui::Button("Contraction"))
 			{
-				playback_state.SetState(EffectState::End_Avoid);
+				effect_state.SetState(EffectState::End_Avoid);
 			}
 
 			ImGui::DragFloat("Distort Start Radius", &distort_avoid_end_radius, 0.1f, 0.f, 5.f);
@@ -106,7 +107,7 @@ namespace cumulonimbus::component
 
 	void PlayerAvoidEffectComponent::BeginAvoid(float dt)
 	{
-		if(playback_state.GetInitialize())
+		if(effect_state.GetInitialize())
 		{
 			//-- パラメータの初期化 --//
 			// 経過時間
@@ -150,18 +151,34 @@ namespace cumulonimbus::component
 		post_effect_manager.GetDistort().SetIsActive(true);
 		distort_cbuff_data.distort_radius			 = distort_current_radius;
 		distort_cbuff_data.distort_time_scale		 = time_scale;
-		distort_cbuff_data.distort_noise_scale		 = noise_scale;
-		distort_cbuff_data.distort_noise_attenuation = noise_attenuation;
+		distort_cbuff_data.distort_noise_scale		 = distort_max_noise_scale;
+		distort_cbuff_data.distort_noise_attenuation = distort_max_noise_attenuation;
 
 		if(elapsed_time > easing_end_time)
 		{
-			playback_state.SetState(EffectState::Stop);
+			effect_state.SetState(EffectState::Avoiding);
+		}
+	}
+
+	void PlayerAvoidEffectComponent::Avoiding(float dt)
+	{
+		if(effect_state.GetInitialize())
+		{
+			current_avoiding_time = 0;
+		}
+
+		const auto& time = locator::Locator::GetSystem()->GetTime();
+		current_avoiding_time += time.GetUnscaledDeltaTime();
+
+		if(current_avoiding_time > avoiding_time)
+		{
+			effect_state.SetState(EffectState::End_Avoid);
 		}
 	}
 
 	void PlayerAvoidEffectComponent::EndAvoid(float dt)
 	{
-		if(playback_state.GetInitialize())
+		if(effect_state.GetInitialize())
 		{
 			//-- パラメータの初期化 --//
 			// 経過時間
@@ -208,13 +225,13 @@ namespace cumulonimbus::component
 
 		if (elapsed_time > easing_end_time)
 		{
-			playback_state.SetState(EffectState::Stop);
+			effect_state.SetState(EffectState::Stop);
 		}
 	}
 
 	void PlayerAvoidEffectComponent::Stop(float dt)
 	{
-		if (playback_state.GetInitialize())
+		if (effect_state.GetInitialize())
 		{
 			auto& post_effect_manager = locator::Locator::GetSystem()->GetPostEffectManager();
 			//post_effect_manager.GetDistort().SetIsActive(false);

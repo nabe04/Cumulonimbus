@@ -11,6 +11,7 @@ namespace cumulonimbus::component
 		{
 			Stop,
 			Begin_Avoid,
+			Avoiding,
 			End_Avoid,
 		};
 
@@ -37,15 +38,28 @@ namespace cumulonimbus::component
 
 		template<class Archive>
 		void save(Archive&& archive, uint32_t version) const;
+
+		void SetEffectState(const EffectState state)
+		{
+			effect_state.SetState(state);
+		}
+
+		void SetAvoidingTime(const float time)
+		{
+			avoiding_time = time;
+		}
 	private:
 		// エフェクト再生State
-		StateMachine<EffectState, void, float> playback_state{};
+		StateMachine<EffectState, void, float> effect_state{};
 
 		EffectState playback_method{ EffectState::Stop };
 		// 経過時間
 		float elapsed_time{};
+		// 回避継続時間
+		float avoiding_time{ 3.f };
+		float current_avoiding_time{};
 		// イージング終了時間
-		float easing_end_time{ 1.f };
+		float easing_end_time{ 0.5f };
 		//-- 半径 --//
 		// Distortエフェクトの現在の半径
 		float distort_current_radius{};
@@ -65,11 +79,15 @@ namespace cumulonimbus::component
 		std::function<void(float)> GetPlaybackFunc();
 
 		/**
-		 * @brief : エフェクト拡大
+		 * @brief : 回避開始
 		 */
 		void BeginAvoid(float dt);
 		/**
-		 * @brief : エフェクト縮小
+		 * @brief : 回避中
+		 */
+		void Avoiding(float dt);
+		/**
+		 * @brief : 回避終了
 		 */
 		void EndAvoid(float dt);
 		/**

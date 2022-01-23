@@ -1,5 +1,8 @@
 #include "energy_shot_component.h"
 
+#include "easing.h"
+#include "locator.h"
+// components
 #include "damageable_component.h"
 #include "effekseer_component.h"
 #include "transform_component.h"
@@ -7,23 +10,43 @@
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::EnergyShotComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::EnergyShotComponent)
-CEREAL_CLASS_VERSION(cumulonimbus::component::EnergyShotComponent, 0)
+CEREAL_CLASS_VERSION(cumulonimbus::component::EnergyShotComponent, 1)
 
 namespace cumulonimbus::component
 {
 	template <class Archive>
-	void EnergyShotComponent::load(Archive&& archive, uint32_t version)
+	void EnergyShotComponent::load(Archive&& archive, const uint32_t version)
 	{
 		archive(
 			cereal::base_class<ComponentBase>(this)
 		);
+
+		if(version == 1)
+		{
+			archive(
+				CEREAL_NVP(shot_speed),
+				CEREAL_NVP(current_speed),
+				CEREAL_NVP(initial_speed),
+				CEREAL_NVP(max_speed),
+				CEREAL_NVP(elapsed_time),
+				CEREAL_NVP(max_survival_time),
+				CEREAL_NVP(damage_amount)
+			);
+		}
 	}
 
 	template <class Archive>
 	void EnergyShotComponent::save(Archive&& archive, uint32_t version) const
 	{
 		archive(
-			cereal::base_class<ComponentBase>(this)
+			cereal::base_class<ComponentBase>(this),
+			CEREAL_NVP(shot_speed),
+			CEREAL_NVP(current_speed),
+			CEREAL_NVP(initial_speed),
+			CEREAL_NVP(max_speed),
+			CEREAL_NVP(elapsed_time),
+			CEREAL_NVP(max_survival_time),
+			CEREAL_NVP(damage_amount)
 		);
 	}
 
@@ -63,14 +86,24 @@ namespace cumulonimbus::component
 
 	void EnergyShotComponent::GameUpdate(const float dt)
 	{
+		current_survive_time += dt;
+		if(current_survive_time > max_survival_time)
+		{
+			GetRegistry()->AddDestroyEntity(GetEntity());
+		}
+
 		Move(dt);
 	}
+
 
 	void EnergyShotComponent::RenderImGui()
 	{
 		if (GetRegistry()->CollapsingHeader<EnergyShotComponent>(GetEntity(), "Energy Shot"))
 		{
-
+			ImGui::DragFloat("Survival Time"  , &max_survival_time, .5f, 0.0f, 20.f);
+			ImGui::DragFloat("Initial Speed"  , &initial_speed	 , .5f, 0.0f, 1000.f);
+			ImGui::DragFloat("Max Speed"	  , &max_speed		 , .5f, 0.0f, 1000.f);
+			ImGui::DragFloat("Max Easing Time", &easing_max_time , .5f, 0.0f, 1000.f);
 		}
 	}
 
@@ -94,7 +127,10 @@ namespace cumulonimbus::component
 	{
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 
-		const auto pos = (transform_comp.GetModelFront() * shot_speed * dt) + transform_comp.GetPosition();
+		elapsed_time += dt;
+		const float speed = Easing::GetEasingVal(elapsed_time, initial_speed, max_speed - initial_speed, easing_max_time, CUBIC, ESOUT);
+
+		const auto pos = (direction * speed * dt) + transform_comp.GetPosition();
 		transform_comp.SetPosition(pos);
 
 		if (auto* efk_comp = GetRegistry()->TryGetComponent<EffekseerComponent>(GetEntity());

@@ -34,9 +34,22 @@ namespace cumulonimbus::component
 		void save(Archive&& archive, uint32_t version) const;
 
 		void OnHit(const collision::HitResult& hit_result);
+
+		void SetDirection(const DirectX::SimpleMath::Vector3& dir)
+		{
+			direction = dir;
+		}
 	private:
 		float shot_speed{ 100.f };
+		float current_speed{};
+		float initial_speed{ 100.f };
+		float max_speed{ 300.f };
+		float elapsed_time{};
+		float easing_max_time{ 2.f };
+		float current_survive_time{};
+		float max_survival_time{ 5.f };
 		u_int damage_amount{ 1 };
+		DirectX::SimpleMath::Vector3 direction{};
 
 		void Move(float dt);
 	};

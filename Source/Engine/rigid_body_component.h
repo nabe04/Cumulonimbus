@@ -93,9 +93,21 @@ namespace cumulonimbus::component
 			return is_gravity;
 		}
 
-		void SetCurrentGravity(const float gravity)	{ current_gravity = gravity; }
+		void SetCurrentGravity(const float gravity)
+		{
+			current_gravity = gravity;
+		}
 
-		void SetMass(const float mass) { this->mass = mass; }
+		void SetMass(const float mass)
+		{
+			this->mass = mass;
+		}
+
+		void SetIsActiveTimeScale(const float arg)
+		{
+			is_active_time_scale = arg;
+		}
+	
 	private:
 		DirectX::SimpleMath::Vector3 velocity{};
 		DirectX::SimpleMath::Vector3 acceleration{};
@@ -108,5 +120,6 @@ namespace cumulonimbus::component
 		bool is_gravity{ true };	// 重力フラグ
 		bool is_landing{ false };	// 地面フラグ
 		bool is_jumping{ false };	// ジャンプフラグ
+		bool is_active_time_scale{ true }; // デルタタイムにスケールを実行するか
 	};
 } // cumulonimbus::component

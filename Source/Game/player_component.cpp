@@ -24,6 +24,7 @@
 #include "capsule_collison_component.h"
 #include "player_sword_component.h"
 #include "time_scale.h"
+#include "player_avoid_effect_component.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::PlayerComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::Actor3DComponent, cumulonimbus::component::PlayerComponent)
@@ -146,6 +147,7 @@ namespace cumulonimbus::component
 		registry->GetOrEmplaceComponent<DamageableComponent>(ent).RegistryDamageEvent(ent, [ent, registry](const DamageData& damage_data, const collision::HitResult& hit_result) {registry->GetComponent<PlayerComponent>(ent).OnHit(damage_data, hit_result); });
 
 		registry->GetOrEmplaceComponent<RigidBodyComponent>(ent);
+		registry->GetComponent<RigidBodyComponent>(ent).SetIsActiveTimeScale(false);
 		// レイキャストに関する設定
 		if (!registry->TryGetComponent<RayCastComponent>(ent))
 		{
@@ -274,6 +276,13 @@ namespace cumulonimbus::component
 			auto ent = GetEntity();
 			sphere_collision_comp->RegisterEventEnter(GetEntity(), [=](const collision::HitResult& hit_result) {registry->GetComponent<PlayerComponent>(GetEntity()).OnHitAvoidRange(hit_result); });
 		}
+		// モデルコンポーネント
+		if (auto* model_comp = GetRegistry()->TryGetComponent<ModelComponent>(GetEntity());
+			model_comp)
+		{
+			model_comp->SetIsUseTimeScale(false);
+		}
+
 		if(auto* capsule_collision_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(GetEntity());
 		   capsule_collision_comp)
 		{
@@ -330,6 +339,7 @@ namespace cumulonimbus::component
 			ImGui::Separator();
 			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Attack_04_Jump_Strength", &attack_04_jump_strength, 0.5f, 0.1f, FLT_MAX);
 			ImGui::Separator();
+			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Avoid Stop Time", &avoid_stop_time, 0.5f, 0.1f, 10.f);
 			ImGui::Text("Is Avoid %d", is_avoid);
 		}
 	}
@@ -399,11 +409,17 @@ namespace cumulonimbus::component
 			elapsed_time += locator::Locator::GetSystem()->GetTime().GetUnscaledDeltaTime();
 			locator::Locator::GetSystem()->GetTime().SetScale(0.3f);
 
-			if(elapsed_time > avoid_invincible_time)
+			if(elapsed_time > avoid_stop_time)
 			{
 				elapsed_time = 0;
 				is_avoid	 = false;
 				locator::Locator::GetSystem()->GetTime().SetScale(1.0f);
+
+				if (auto* player_avoid_comp = GetRegistry()->TryGetComponent<PlayerAvoidEffectComponent>(GetEntity());
+					player_avoid_comp)
+				{
+					player_avoid_comp->SetEffectState(PlayerAvoidEffectComponent::EffectState::End_Avoid);
+				}
 			}
 		}
 		else
@@ -635,6 +651,14 @@ namespace cumulonimbus::component
 		this->hit_result.entity = parent_ent;
 
 		is_avoid = true;
+
+
+		if (auto* player_avoid_comp = GetRegistry()->TryGetComponent<PlayerAvoidEffectComponent>(GetEntity());
+			player_avoid_comp)
+		{
+			player_avoid_comp->SetEffectState(PlayerAvoidEffectComponent::EffectState::Begin_Avoid);
+			player_avoid_comp->SetAvoidingTime(avoid_stop_time);
+		}
 	}
 
 	float PlayerComponent::GetAndResetAnimSwitchTime(const float reset_time)

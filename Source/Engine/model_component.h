@@ -130,6 +130,7 @@ namespace cumulonimbus::component
 		const graphics::GraphicsState& GetGraphicsState() const { return graphics_state; }
 
 		void SetIsVisible(const bool result) { is_visible = result; }
+		void SetIsUseTimeScale(const bool arg) { is_use_time_scale = arg; }
 
 		/**
 		 * @brief : ImGui上でのノード名選択関数
@@ -156,6 +157,7 @@ namespace cumulonimbus::component
 		bool is_visible		{ true };	// 描画するか
 		bool end_animation	{ false };
 		bool loop_animation	{ false };  // アニメーションのループ再生
+		bool is_use_time_scale{ true }; // アニメーション計算時にタイムスケールを使用するか
 
 		StateMachine<AnimationState, void, const float>	anim_states{};
 		asset::ModelData::Animation prev_animation{};

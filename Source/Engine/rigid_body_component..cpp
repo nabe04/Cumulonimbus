@@ -4,30 +4,55 @@
 #include "transform_component.h"
 #include "locator.h"
 #include "cum_imgui_helper.h"
+#include "time_scale.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::RigidBodyComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::RigidBodyComponent)
-CEREAL_CLASS_VERSION(cumulonimbus::component::RigidBodyComponent, 0)
+CEREAL_CLASS_VERSION(cumulonimbus::component::RigidBodyComponent, 1)
 
 namespace cumulonimbus::component
 {
 	template<class Archive>
-	void RigidBodyComponent::load(Archive&& archive, uint32_t version)
+	void RigidBodyComponent::load(Archive&& archive, const uint32_t version)
 	{
 		archive(
-			cereal::base_class<ComponentBase>(this),
-			CEREAL_NVP(velocity),
-			CEREAL_NVP(acceleration),
-
-			CEREAL_NVP(mass),
-			CEREAL_NVP(jump_strength),
-			CEREAL_NVP(gravity),
-			CEREAL_NVP(current_gravity),
-
-			CEREAL_NVP(is_gravity),
-			CEREAL_NVP(is_landing),
-			CEREAL_NVP(is_jumping)
+			cereal::base_class<ComponentBase>(this)
 		);
+
+		if(version == 0)
+		{
+			archive(
+				CEREAL_NVP(velocity),
+				CEREAL_NVP(acceleration),
+
+				CEREAL_NVP(mass),
+				CEREAL_NVP(jump_strength),
+				CEREAL_NVP(gravity),
+				CEREAL_NVP(current_gravity),
+
+				CEREAL_NVP(is_gravity),
+				CEREAL_NVP(is_landing),
+				CEREAL_NVP(is_jumping)
+			);
+		}
+
+		if(version == 1)
+		{
+			archive(
+				CEREAL_NVP(velocity),
+				CEREAL_NVP(acceleration),
+
+				CEREAL_NVP(mass),
+				CEREAL_NVP(jump_strength),
+				CEREAL_NVP(gravity),
+				CEREAL_NVP(current_gravity),
+
+				CEREAL_NVP(is_gravity),
+				CEREAL_NVP(is_landing),
+				CEREAL_NVP(is_jumping),
+				CEREAL_NVP(is_active_time_scale)
+			);
+		}
 	}
 
 	template<class Archive>
@@ -45,7 +70,8 @@ namespace cumulonimbus::component
 
 			CEREAL_NVP(is_gravity),
 			CEREAL_NVP(is_landing),
-			CEREAL_NVP(is_jumping)
+			CEREAL_NVP(is_jumping),
+			CEREAL_NVP(is_active_time_scale)
 		);
 	}
 
@@ -94,6 +120,7 @@ namespace cumulonimbus::component
 		if(GetRegistry()->CollapsingHeader<RigidBodyComponent>(GetEntity(),"Rigid Body"))
 		{
 			ImGui::Checkbox("Use Gravity", &is_gravity);
+			ImGui::Checkbox("Is Use Time Scale", &is_active_time_scale);
 			ImGui::Text("Current Gravity : %f", current_gravity);
 			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Gravity", &gravity, .5f);
 			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Jump Strength", &jump_strength, .5f);
@@ -148,8 +175,16 @@ namespace cumulonimbus::component
 
 	void RigidBodyComponent::Integrate(const float dt)
 	{
+		const auto& time = locator::Locator::GetSystem()->GetTime();
+		float delta_time = time.GetUnscaledDeltaTime();
+
+		if(is_active_time_scale)
+		{
+			delta_time = dt;
+		}
+
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
-		transform_comp.AdjustPosition(velocity * dt);
+		transform_comp.AdjustPosition(velocity * delta_time);
 		velocity = DirectX::SimpleMath::Vector3{ 0,0,0 };
 	}
 } // cumulonimbus::component

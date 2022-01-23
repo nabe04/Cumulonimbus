@@ -9,42 +9,76 @@
 #include "material_loader.h"
 #include "model_loader.h"
 // components
+#include "time_scale.h"
 #include "transform_component.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::ModelComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::ModelComponent)
-CEREAL_CLASS_VERSION(cumulonimbus::component::ModelComponent, 0)
+CEREAL_CLASS_VERSION(cumulonimbus::component::ModelComponent, 1)
 
 namespace cumulonimbus::component
 {
 	template <class Archive>
-	void ModelComponent::load(Archive&& archive, uint32_t version)
+	void ModelComponent::load(Archive&& archive, const uint32_t version)
 	{
 		archive(
-			cereal::base_class<ComponentBase>(this),
-
-			CEREAL_NVP(model_id),
-			CEREAL_NVP(material_ids),
-			CEREAL_NVP(nodes),
-			CEREAL_NVP(graphics_state),
-
-			CEREAL_NVP(prev_key_index),
-			CEREAL_NVP(current_keyframe),
-			CEREAL_NVP(prev_animation_index),
-			CEREAL_NVP(current_animation_index),
-
-			CEREAL_NVP(prev_seconds),
-			CEREAL_NVP(changer_timer),
-			CEREAL_NVP(current_seconds),
-			CEREAL_NVP(animation_switch_time),
-
-			CEREAL_NVP(is_visible),
-			CEREAL_NVP(loop_animation),
-			CEREAL_NVP(end_animation),
-
-			CEREAL_NVP(prev_animation),
-			CEREAL_NVP(anim_states)
+			cereal::base_class<ComponentBase>(this)
 		);
+
+		if(version == 0)
+		{
+			archive(
+				CEREAL_NVP(model_id),
+				CEREAL_NVP(material_ids),
+				CEREAL_NVP(nodes),
+				CEREAL_NVP(graphics_state),
+
+				CEREAL_NVP(prev_key_index),
+				CEREAL_NVP(current_keyframe),
+				CEREAL_NVP(prev_animation_index),
+				CEREAL_NVP(current_animation_index),
+
+				CEREAL_NVP(prev_seconds),
+				CEREAL_NVP(changer_timer),
+				CEREAL_NVP(current_seconds),
+				CEREAL_NVP(animation_switch_time),
+
+				CEREAL_NVP(is_visible),
+				CEREAL_NVP(loop_animation),
+				CEREAL_NVP(end_animation),
+
+				CEREAL_NVP(prev_animation),
+				CEREAL_NVP(anim_states)
+			);
+		}
+
+		if(version == 1)
+		{
+			archive(
+				CEREAL_NVP(model_id),
+				CEREAL_NVP(material_ids),
+				CEREAL_NVP(nodes),
+				CEREAL_NVP(graphics_state),
+
+				CEREAL_NVP(prev_key_index),
+				CEREAL_NVP(current_keyframe),
+				CEREAL_NVP(prev_animation_index),
+				CEREAL_NVP(current_animation_index),
+
+				CEREAL_NVP(prev_seconds),
+				CEREAL_NVP(changer_timer),
+				CEREAL_NVP(current_seconds),
+				CEREAL_NVP(animation_switch_time),
+
+				CEREAL_NVP(is_visible),
+				CEREAL_NVP(loop_animation),
+				CEREAL_NVP(end_animation),
+				CEREAL_NVP(is_use_time_scale),
+
+				CEREAL_NVP(prev_animation),
+				CEREAL_NVP(anim_states)
+			);
+		}
 	}
 
 	template <class Archive>
@@ -71,6 +105,7 @@ namespace cumulonimbus::component
 			CEREAL_NVP(is_visible),
 			CEREAL_NVP(loop_animation),
 			CEREAL_NVP(end_animation),
+			CEREAL_NVP(is_use_time_scale),
 
 			CEREAL_NVP(prev_animation),
 			CEREAL_NVP(anim_states)
@@ -615,7 +650,14 @@ namespace cumulonimbus::component
 			DirectX::XMStoreFloat3(&node.translate, t);
 		}
 
-		changer_timer += dt;
+		const float unscaled_dt = locator::Locator::GetSystem()->GetTime().GetUnscaledDeltaTime();
+		float delta_time = unscaled_dt;
+		if(is_use_time_scale)
+		{
+			delta_time = dt;
+		}
+
+		changer_timer += delta_time;
 		GetRegistry()->GetComponent<TransformComponent>(GetEntity()).SetDirtyFlg(TransformComponent::Animation_Changed);
 		if (animation_switch_time <= changer_timer)
 		{
@@ -694,7 +736,14 @@ namespace cumulonimbus::component
 		}
 
 		// ŽžŠÔŒo‰ß
-		current_seconds += dt * animation.playback_speed;
+		const float unscaled_dt = locator::Locator::GetSystem()->GetTime().GetUnscaledDeltaTime();
+		float delta_time = unscaled_dt;
+		if (is_use_time_scale)
+		{
+			delta_time = dt;
+		}
+
+		current_seconds += delta_time * animation.playback_speed;
 		if (current_seconds >= animation.seconds_length)
 		{
 			if (loop_animation)

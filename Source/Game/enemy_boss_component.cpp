@@ -9,6 +9,7 @@
 #include "player_component.h"
 #include "prefab_loader.h"
 #include "rigid_body_component.h"
+#include "energy_shot_component.h"
 #include "sphere_collision_component.h"
 #include "transform_component.h"
 
@@ -605,6 +606,7 @@ namespace cumulonimbus::component
 					//attack_behavior.SetBehavior(static_cast<AttackBehavior>(atk_index));
 					//attack_behavior.SetBehavior(AttackBehavior::Atk_N1);
 					attack_behavior.SetBehavior(GetRandomAtkMeleeBehavior());
+					attack_behavior.SetBehavior(AttackBehavior::Atk_N1);
 				}
 				if (next_attack_type == AttackType::Atk_Long_Range)
 				{// ‰“‹——£UŒ‚
@@ -900,6 +902,7 @@ namespace cumulonimbus::component
 
 				//GetRegistry()->GetComponent<TransformComponent>(spawn_shot_ent).SetPosition(model_comp->GetNodeWorldPos(spawn_shot_node_name.c_str()));
 				GetRegistry()->GetComponent<TransformComponent>(spawn_shot_ent).SetPosition(pos);
+				GetRegistry()->GetComponent<EnergyShotComponent>(spawn_shot_ent).SetDirection(direction);
 			}
 		}
 
