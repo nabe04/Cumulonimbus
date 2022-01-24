@@ -144,15 +144,25 @@ namespace cumulonimbus::component
 															 easing_end_time,
 															 CIRC, ESOUT);
 
+		// ディゾルブ
+		const float dissolve_threshold = Easing::GetEasingVal(elapsed_time, 1.0f,
+													-1.0f,
+													easing_end_time,
+													QUINT, ESIN);
 
-		auto& post_effect_manager = locator::Locator::GetSystem()->GetPostEffectManager();
-		auto& distort_cbuff_data  = post_effect_manager.GetDistort().GetCBuffer().GetData();
+
+		auto& post_effect_manager		= locator::Locator::GetSystem()->GetPostEffectManager();
+		auto& distort_cbuff_data		= post_effect_manager.GetDistort().GetCBuffer().GetData();
+		auto& screen_filter_cbuff_data	= post_effect_manager.GetScreenFilter().GetCBuffer().GetData();
 		// パラメータの代入
 		post_effect_manager.GetDistort().SetIsActive(true);
-		distort_cbuff_data.distort_radius			 = distort_current_radius;
-		distort_cbuff_data.distort_time_scale		 = time_scale;
-		distort_cbuff_data.distort_noise_scale		 = distort_max_noise_scale;
-		distort_cbuff_data.distort_noise_attenuation = distort_max_noise_attenuation;
+		post_effect_manager.GetScreenFilter().SetIsActive(true);
+		post_effect_manager.GetScreenFilter().SetIsGrayScale(true);
+		distort_cbuff_data.distort_radius					= distort_current_radius;
+		distort_cbuff_data.distort_time_scale				= time_scale;
+		distort_cbuff_data.distort_noise_scale				= distort_max_noise_scale;
+		distort_cbuff_data.distort_noise_attenuation		= distort_max_noise_attenuation;
+		screen_filter_cbuff_data.sfilter_dissolve_threshold = 0;
 
 		if(elapsed_time > easing_end_time)
 		{
@@ -169,6 +179,13 @@ namespace cumulonimbus::component
 
 		const auto& time = locator::Locator::GetSystem()->GetTime();
 		current_avoiding_time += time.GetUnscaledDeltaTime();
+
+		auto& post_effect_manager   = locator::Locator::GetSystem()->GetPostEffectManager();
+		auto& screen_filter			= post_effect_manager.GetScreenFilter();
+
+		const float dissolve_threshold = current_avoiding_time / avoiding_time;
+		//screen_filter.AddDissolveThreshold(dissolve_threshold);
+		screen_filter.GetCBuffer().GetData().sfilter_dissolve_threshold = dissolve_threshold;
 
 		if(current_avoiding_time > avoiding_time)
 		{
@@ -214,10 +231,13 @@ namespace cumulonimbus::component
 															 easing_end_time,
 															 CIRC, ESOUT);
 
-		auto& post_effect_manager = locator::Locator::GetSystem()->GetPostEffectManager();
-		auto& distort_cbuff_data = post_effect_manager.GetDistort().GetCBuffer().GetData();
+		auto& post_effect_manager		= locator::Locator::GetSystem()->GetPostEffectManager();
+		auto& distort_cbuff_data		= post_effect_manager.GetDistort().GetCBuffer().GetData();
+		auto& screen_filter_cbuff_data	= post_effect_manager.GetScreenFilter().GetCBuffer();
 		// パラメータの代入
 		post_effect_manager.GetDistort().SetIsActive(true);
+		post_effect_manager.GetScreenFilter().SetIsActive(false);
+		post_effect_manager.GetScreenFilter().SetIsGrayScale(false);
 		distort_cbuff_data.distort_radius			 = distort_current_radius;
 		distort_cbuff_data.distort_time_scale		 = time_scale;
 		distort_cbuff_data.distort_noise_scale		 = noise_scale;

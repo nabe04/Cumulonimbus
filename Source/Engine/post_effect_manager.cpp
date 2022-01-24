@@ -15,7 +15,6 @@ namespace cumulonimbus::system
 	//
 	//}
 
-
 	PostEffectManager::PostEffectManager(system::System& system, ID3D11Device* device)
 	{
 		const auto& window = locator::Locator::GetWindow();

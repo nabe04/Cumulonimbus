@@ -54,16 +54,12 @@ namespace cumulonimbus::post_effect
 		auto& texture_loader = *asset_manager.GetLoader<asset::TextureLoader>();
 		texture_loader.SelectableTexture(asset_manager, dissolve_tex_id);
 
-		if(is_gray_scale)
-		{
-			cbuff_data.sfilter_is_grey_scale = 1;
-		}
-		else
-		{
-			cbuff_data.sfilter_is_grey_scale = 0;
-		}
-
 		ImGui::PopID();
+	}
+
+	void ScreenFilter::AddDissolveThreshold(const float arg) const
+	{
+		cb_screen_filter->GetData().sfilter_dissolve_threshold += arg;
 	}
 
 	void ScreenFilter::Begin(ID3D11DeviceContext* immediate_context) const
@@ -72,6 +68,16 @@ namespace cumulonimbus::post_effect
 		cb_screen_filter->Activate(immediate_context, CBSlot_ScreenFilter);
 		auto* dissolve_tex = &locator::Locator::GetAssetManager()->GetLoader<asset::TextureLoader>()->GetTexture(dissolve_tex_id);
 		locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS, dissolve_tex, TexSlot_Dissolve);
+
+		auto& cbuff_data = cb_screen_filter->GetData();
+		if (is_gray_scale)
+		{
+			cbuff_data.sfilter_is_grey_scale = 1;
+		}
+		else
+		{
+			cbuff_data.sfilter_is_grey_scale = 0;
+		}
 	}
 
 	void ScreenFilter::End(ID3D11DeviceContext* immediate_context) const

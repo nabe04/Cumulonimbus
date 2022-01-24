@@ -35,6 +35,19 @@ namespace cumulonimbus::post_effect
 				CEREAL_NVP(dissolve_tex_id)
 			);
 		}
+
+		void AddDissolveThreshold(float arg) const;
+
+		[[nodiscard]]
+		buffer::ConstantBuffer<ScreenFilterCB>& GetCBuffer() const
+		{
+			return *(cb_screen_filter.get());
+		}
+
+		void SetIsGrayScale(const float arg)
+		{
+			is_gray_scale = arg;
+		}
 	private:
 		std::unique_ptr<buffer::ConstantBuffer<ScreenFilterCB>> cb_screen_filter{};
 		bool is_gray_scale{ false };

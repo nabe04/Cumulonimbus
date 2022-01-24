@@ -74,9 +74,10 @@ namespace cumulonimbus::component
 			return;
 
 		// 火柱プレハブの生成
-		const auto spawn_ent = prefab_loader.Instantiate(GetRegistry(), flame_prefab_id);
-		const auto self_pos = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetPosition();
-		GetRegistry()->GetComponent<TransformComponent>(spawn_ent).SetPosition(self_pos);
+		//const auto spawn_ent = prefab_loader.Instantiate(GetRegistry(), flame_prefab_id);
+		//const auto self_pos  = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetPosition();
+		//GetRegistry()->GetComponent<TransformComponent>(spawn_ent).SetPosition(self_pos);
+		Spawn();
 		// マジックサークルエフェクトオブジェクトの削除
 		GetRegistry()->AddDestroyEntity(GetEntity());
 	}
@@ -90,6 +91,21 @@ namespace cumulonimbus::component
 
 			ImGui::Text("Flame Prefab");
 			prefab_loader.ImSelectablePrefab(asset_manager, flame_prefab_id);
+
+			if(ImGui::Button("Spawn"))
+			{
+				Spawn();
+			}
 		}
 	}
+
+	void MagicCircleSpawnerComponent::Spawn()
+	{
+		auto& asset_manager  = *locator::Locator::GetAssetManager();
+		auto& prefab_loader  = *asset_manager.GetLoader<asset::PrefabLoader>();
+		const auto spawn_ent = prefab_loader.Instantiate(GetRegistry(), flame_prefab_id);
+		const auto self_pos  = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetPosition();
+		GetRegistry()->GetComponent<TransformComponent>(spawn_ent).SetPosition(self_pos);
+	}
+
 } // cumulonimbus::component

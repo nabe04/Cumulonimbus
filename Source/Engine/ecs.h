@@ -202,6 +202,8 @@ namespace cumulonimbus::ecs
 		{
 			for (auto& component : components)
 			{
+				if (HasStartEnt(component.GetEntity()))
+					continue;
 				component.GameUpdate(dt);
 			}
 		}
@@ -209,6 +211,8 @@ namespace cumulonimbus::ecs
 		{
 			for (auto& component : components)
 			{
+				if (HasStartEnt(component.GetEntity()))
+					continue;
 				component.PostGameUpdate(dt);
 			}
 		}
@@ -356,6 +360,18 @@ namespace cumulonimbus::ecs
 
 			return false;
 		}
+
+		[[nodiscard]]
+		bool HasStartEnt(const mapping::rename_type::Entity& compare_ent) const
+		{
+			for(const auto& ent : start_ent)
+			{
+				if (ent == compare_ent)
+					return true;
+			}
+			return false;
+		}
+
 
 		/**
 		 * @brief : コンポーネントの要素数

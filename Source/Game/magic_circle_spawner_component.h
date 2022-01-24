@@ -27,5 +27,7 @@ namespace cumulonimbus::component
 	private:
 		// ‰Î’ŒƒvƒŒƒnƒuID
 		mapping::rename_type::UUID flame_prefab_id{};
+
+		void Spawn();
 	};
 } // cumulonimbus::component
