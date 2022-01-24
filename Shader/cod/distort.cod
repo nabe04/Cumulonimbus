@@ -63,15 +63,15 @@ sample_indexable(texture2d)(float,float,float,float) r0.xyzw, v1.xyxx, t35.xyzw,
 nop 
 mov r1.xy, v1.xyxx
 
-#line 160 "D:\Desktop\Cumulonimbus\Shader\functions_utility.hlsli"
+#line 168 "D:\Desktop\Cumulonimbus\Shader\functions_utility.hlsli"
 mov r1.z, -r1.y  // r1.z <- uv.y
 
-#line 161
+#line 169
 mul r1.xy, r1.xzxx, l(2.000000, 2.000000, 0.000000, 0.000000)
 mov r1.zw, l(-0.000000,-0.000000,-1.000000,1.000000)
 add r1.xy, r1.zwzz, r1.xyxx  // r1.x <- pos_xy.x; r1.y <- pos_xy.y
 
-#line 163
+#line 171
 mov r1.xy, r1.xyxx  // r1.x <- <UvToNDC return value>.x; r1.y <- <UvToNDC return value>.y
 
 #line 10 "D:\Desktop\Cumulonimbus\Shader\distort.hlsl"

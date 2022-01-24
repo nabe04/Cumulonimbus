@@ -22,6 +22,7 @@ namespace cumulonimbus::system
 	class PostEffectManager final
 	{
 	public:
+		explicit PostEffectManager()							= default;
 		explicit PostEffectManager(system::System& system, ID3D11Device* device);
 		~PostEffectManager()									= default;
 		PostEffectManager(const PostEffectManager&)				= delete;
@@ -33,6 +34,27 @@ namespace cumulonimbus::system
 		PostEffectManager operator=(const PostEffectManager&&)  = delete;
 		PostEffectManager operator=(PostEffectManager&&)		= delete;
 
+
+		template<class Archive>
+		void load(Archive&& archive, uint32_t version)
+		{
+			archive(
+				CEREAL_NVP(distort),
+				CEREAL_NVP(screen_filter)
+			);
+		}
+
+		template<class Archive>
+		void save(Archive&& archive, uint32_t version) const
+		{
+			archive(
+				CEREAL_NVP(distort),
+				CEREAL_NVP(screen_filter)
+			);
+		}
+
+		void Load(system::System& system);
+
 		void RenderImGui(ecs::Registry* registry) const;
 
 		ID3D11ShaderResourceView** Generate(ID3D11DeviceContext* immediate_context, ID3D11ShaderResourceView** scene_srv_address) const;
@@ -43,11 +65,6 @@ namespace cumulonimbus::system
 			return *(distort.get());
 		}
 
-		[[nodiscard]]
-		post_effect::LensDistortion& GetLensDistortion() const
-		{
-			return *(lens_distortion.get());
-		}
 
 		[[nodiscard]]
 		post_effect::ScreenFilter& GetScreenFilter() const
@@ -57,9 +74,10 @@ namespace cumulonimbus::system
 	private:
 		std::unique_ptr<FullscreenQuad>				fullscreen_quad{};
 		std::unique_ptr<FrameBuffer>				frame_buffer{};
-		
+
 		std::unique_ptr<post_effect::Distort>		 distort{};
-		std::unique_ptr<post_effect::LensDistortion> lens_distortion{};
 		std::unique_ptr<post_effect::ScreenFilter>	 screen_filter{};
 	};
 } // cumulonimbus::system
+
+CEREAL_CLASS_VERSION(cumulonimbus::system::PostEffectManager, 0)

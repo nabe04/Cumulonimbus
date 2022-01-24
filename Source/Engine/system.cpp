@@ -10,7 +10,7 @@
 #include "sky_box.h"
 #include "time_scale.h"
 
-CEREAL_CLASS_VERSION(cumulonimbus::system::System, 2)
+CEREAL_CLASS_VERSION(cumulonimbus::system::System, 3)
 
 namespace
 {
@@ -41,6 +41,16 @@ namespace cumulonimbus::system
 				CEREAL_NVP(collision_primitive)
 			);
 		}
+		if(version == 3)
+		{
+			archive(
+				CEREAL_NVP(sky_box),
+				CEREAL_NVP(current_scene_path),
+				CEREAL_NVP(default_scene_path),
+				CEREAL_NVP(collision_primitive),
+				CEREAL_NVP(post_effect_manager)
+			);
+		}
 	}
 
 
@@ -57,7 +67,8 @@ namespace cumulonimbus::system
 				CEREAL_NVP(sky_box),
 				CEREAL_NVP(current_scene_path),
 				CEREAL_NVP(default_scene_path),
-				CEREAL_NVP(collision_primitive)
+				CEREAL_NVP(collision_primitive),
+				CEREAL_NVP(post_effect_manager)
 			);
 		}
 	}
@@ -91,7 +102,8 @@ namespace cumulonimbus::system
 				time = std::make_unique<system::Time>();
 			if(!collision_primitive.get())
 				collision_primitive = std::make_unique<collision::CollisionPrimitiveAsset>(*this);
-
+			if(!post_effect_manager.get())
+				post_effect_manager = std::make_unique<system::PostEffectManager>(*this, locator::Locator::GetDx11Device()->device.Get());
 			// System::Render内関数の再登録(再読込されたもののみ)
 			// CameraTexture
 			RegisterRenderFunction(utility::GetHash<camera::CameraTexture>(),
@@ -103,6 +115,7 @@ namespace cumulonimbus::system
 			RegisterRenderFunction(utility::GetHash<system::Time>(),
 								   [&](ecs::Registry* registry) {time->RenderImGui(registry); });
 			sky_box->Load(*this);
+			post_effect_manager->Load(*this);
 		};
 
 		// デフォルトのフォルダにある「.sys」の読み込み

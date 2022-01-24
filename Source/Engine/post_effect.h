@@ -14,12 +14,21 @@ namespace cumulonimbus::post_effect
 	class PostEffect
 	{
 	public:
+		explicit PostEffect() = default;
 		explicit PostEffect(ID3D11Device* device);
 		virtual ~PostEffect() = default;
+
+		virtual void Initialize(ID3D11Device* device);
 
 		virtual void RenderImGui(ecs::Registry* registry) {}
 
 		virtual ID3D11ShaderResourceView** Generate(ID3D11DeviceContext* immediate_context, ID3D11ShaderResourceView** scene_srv_address);
+
+		template<class Archive>
+		void load(Archive&& archive, uint32_t version) {}
+
+		template<class Archive>
+		void save(Archive&& archive, uint32_t version) const {}
 
 		void SetIsActive(const bool arg)
 		{

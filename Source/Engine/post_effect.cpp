@@ -4,17 +4,37 @@
 #include "shader_filename_mapping.h"
 #include "texture_resource_mapping.h"
 
+CEREAL_CLASS_VERSION(cumulonimbus::post_effect::PostEffect, 0)
+
 namespace cumulonimbus::post_effect
 {
+	//template <class Archive>
+	//void PostEffect::load(Archive&& archive, uint32_t version)
+	//{
+
+	//}
+
+	//template <class Archive>
+	//void PostEffect::save(Archive&& archive, uint32_t version) const
+	//{
+
+	//}
+
+
 	PostEffect::PostEffect(ID3D11Device* device)
+	{
+		Initialize(device);
+
+		// Pixel Shaderは派生クラスで生成すること
+	}
+
+	void PostEffect::Initialize(ID3D11Device* device)
 	{
 		const auto& window = locator::Locator::GetWindow();
 
 		fullscreen_quad = std::make_unique<FullscreenQuad>(device);
-		frame_buffer	= std::make_unique<FrameBuffer>(device, window->Width(), window->Height());
+		frame_buffer    = std::make_unique<FrameBuffer>(device, window->Width(), window->Height());
 		sampler_state   = std::make_unique<Sampler>(device);
-
-		// Pixel Shaderは派生クラスで生成すること
 	}
 
 	ID3D11ShaderResourceView** PostEffect::Generate(ID3D11DeviceContext* immediate_context,

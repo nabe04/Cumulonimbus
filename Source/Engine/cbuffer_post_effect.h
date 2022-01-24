@@ -57,15 +57,28 @@ CBUFFER(ScreenFilterCB, CBSlot_ScreenFilter)
 {
 	float3 sfilter_filter_color;
 	int sfilter_is_grey_scale;
+	float sfilter_dissolve_threshold;
 
 #ifdef __cplusplus
 	template<class Archive>
 	void load(Archive && archive, const uint32_t version)
 	{
-		archive(
-			CEREAL_NVP(sfilter_filter_color),
-			CEREAL_NVP(sfilter_is_grey_scale)
-		);
+		if(version == 0)
+		{
+			archive(
+				CEREAL_NVP(sfilter_filter_color),
+				CEREAL_NVP(sfilter_is_grey_scale),
+				CEREAL_NVP(sfilter_dissolve_threshold)
+			);
+		}
+		if(version == 1)
+		{
+			archive(
+				CEREAL_NVP(sfilter_filter_color),
+				CEREAL_NVP(sfilter_is_grey_scale),
+				CEREAL_NVP(sfilter_dissolve_threshold)
+			);
+		}
 	}
 
 	template<class Archive>
@@ -73,14 +86,43 @@ CBUFFER(ScreenFilterCB, CBSlot_ScreenFilter)
 	{
 		archive(
 			CEREAL_NVP(sfilter_filter_color),
-			CEREAL_NVP(sfilter_is_grey_scale)
+			CEREAL_NVP(sfilter_is_grey_scale),
+			CEREAL_NVP(sfilter_dissolve_threshold)
 		);
 	}
 #endif // __cplusplus
 };
 
 #ifdef __cplusplus
-CEREAL_CLASS_VERSION(ScreenFilterCB, 0)
+CEREAL_CLASS_VERSION(ScreenFilterCB, 1)
+#endif // __cplusplus
+
+CBUFFER(DissolveScreenCB, CBSlot_DissolveScreen)
+{
+	float dissolve_amount;
+	float3 dissolve_padding;
+
+#ifdef __cplusplus
+	template<class Archive>
+	void load(Archive && archive, const uint32_t version)
+	{
+		archive(
+			CEREAL_NVP(dissolve_amount)
+		);
+	}
+
+	template<class Archive>
+	void save(Archive && archive, const uint32_t version) const
+	{
+		archive(
+			CEREAL_NVP(dissolve_amount)
+		);
+	}
+#endif // __cplusplus
+};
+
+#ifdef __cplusplus
+CEREAL_CLASS_VERSION(DissolveScreenCB, 0)
 #endif // __cplusplus
 
 #endif // CBUFFER_POST_EFFECT

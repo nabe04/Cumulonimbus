@@ -94,6 +94,7 @@ TEXTURE2D(texture_depth       , float4, TexSlot_Depth);
 TEXTURE2D(texture_mro         , float4, TexSlot_MROMap);
 TEXTURE2D(texture_shader_slot , float , TexSlot_ShaderSlot);
 TEXTURE2D(texture_post_process, float4, TexSlot_PostProcess);
+TEXTURE2D(texture_dissolve    , float4, TexSlot_Dissolve);
 TEXTURECUBE(texture_cube      , float4, TexSlot_SkyMap);
 
 inline float GetScreenWidth()  { return screen_width;  }

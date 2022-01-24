@@ -41,6 +41,7 @@
 
 #define TexSlot_BaseColorMap		TexSlot_OnDemand0
 #define TexSlot_ForFullScreenQuad	TexSlot_OnDemand0
+#define TexSlot_Dissolve			TexSlot_OnDemand0
 #define TexSlot_NormalMap			TexSlot_OnDemand1
 #define TexSlot_SurfaceMap			TexSlot_OnDemand2
 #define TexSlot_EmissiveMap			TexSlot_OnDemand3

@@ -48,9 +48,9 @@ namespace cumulonimbus::component
 
 	void PrefabSpawnerComponent::Start()
 	{
-		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
-		auto pos = transform_comp.GetPosition();
-		Spawn(true, transform_comp.GetPosition(), transform_comp.GetModelFront());
+		//auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
+		//auto pos = transform_comp.GetPosition();
+		//Spawn(true, transform_comp.GetPosition(), transform_comp.GetModelFront());
 	}
 
 	void PrefabSpawnerComponent::GameUpdate(const float dt)

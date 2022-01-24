@@ -9,6 +9,7 @@
 //
 //   float3 sfilter_filter_color;       // Offset:    0 Size:    12
 //   int sfilter_is_grey_scale;         // Offset:   12 Size:     4
+//   float sfilter_dissolve_threshold;  // Offset:   16 Size:     4
 //
 // }
 //
@@ -18,6 +19,7 @@
 // Name                                 Type  Format         Dim      HLSL Bind  Count
 // ------------------------------ ---------- ------- ----------- -------------- ------
 // default_sampler                   sampler      NA          NA             s0      1 
+// texture_dissolve                  texture  float4          2d            t20      1 
 // texture_post_process              texture  float4          2d            t35      1 
 // ScreenFilterCB                    cbuffer      NA          NA           cb10      1 
 //
@@ -39,8 +41,9 @@
 //
 ps_5_0
 dcl_globalFlags refactoringAllowed | skipOptimization
-dcl_constantbuffer CB10[1], immediateIndexed
+dcl_constantbuffer CB10[2], immediateIndexed
 dcl_sampler s0, mode_default
+dcl_resource_texture2d (float,float,float,float) t20
 dcl_resource_texture2d (float,float,float,float) t35
 dcl_input_ps linear v1.xy
 dcl_output o0.xyzw
@@ -55,33 +58,59 @@ dcl_temps 2
 sample_indexable(texture2d)(float,float,float,float) r0.xyz, v1.xyxx, t35.xyzw, s0  // r0.x <- screen_color.x; r0.y <- screen_color.y; r0.z <- screen_color.z
 
 #line 10
+sample_indexable(texture2d)(float,float,float,float) r1.xyz, v1.xyxx, t20.xyzw, s0  // r1.x <- dissolve_color.x; r1.y <- dissolve_color.y; r1.z <- dissolve_color.z
+
+#line 11
+nop 
+
+#line 160 "D:\Desktop\Cumulonimbus\Shader\functions_utility.hlsli"
+dp3 r0.w, r1.xyzx, l(0.300000, 0.590000, 0.110000, 0.000000)  // r0.w <- <ToGrayColor return value>
+
+#line 11 "D:\Desktop\Cumulonimbus\Shader\screen_filter.hlsl"
+mov r0.w, r0.w  // r0.w <- threshold
+
+#line 13
 mov r0.xyz, r0.xyzx  // r0.x <- final_color.x; r0.y <- final_color.y; r0.z <- final_color.z
 
-#line 12
-ige r0.w, cb10[0].w, l(1)
-if_nz r0.w
-
-#line 14
-  nop 
+#line 15
+nop 
 
 #line 152 "D:\Desktop\Cumulonimbus\Shader\functions_utility.hlsli"
-  dp3 r1.z, r0.xyzx, l(0.300000, 0.590000, 0.110000, 0.000000)  // r1.z <- <ToGrayColor return value>
-  mov r1.xyz, r1.zzzz
+mov r1.x, -cb10[1].x
+add r1.x, r1.x, l(1.000000)  // r1.x <- <OneMinus return value>
 
-#line 14 "D:\Desktop\Cumulonimbus\Shader\screen_filter.hlsl"
-  mov r1.xyz, r1.xyzx  // r1.x <- final_color.x; r1.y <- final_color.y; r1.z <- final_color.z
+#line 15 "D:\Desktop\Cumulonimbus\Shader\screen_filter.hlsl"
+lt r0.w, r0.w, r1.x
+if_nz r0.w
 
-#line 15
-else   // Prior locations: r0.x <- final_color.x; r0.y <- final_color.y; r0.z <- final_color.z
-
-#line 18
-  add r1.xyz, r0.xyzx, cb10[0].xyzx  // r1.x <- final_color.x; r1.y <- final_color.y; r1.z <- final_color.z
+#line 17
+  ige r0.w, cb10[0].w, l(1)
+  if_nz r0.w
 
 #line 19
+    nop 
+
+#line 160 "D:\Desktop\Cumulonimbus\Shader\functions_utility.hlsli"
+    dp3 r0.z, r0.xyzx, l(0.300000, 0.590000, 0.110000, 0.000000)  // r0.z <- <ToGrayColor return value>
+    mov r0.xyz, r0.zzzz
+
+#line 19 "D:\Desktop\Cumulonimbus\Shader\screen_filter.hlsl"
+    mov r0.xyz, r0.xyzx  // r0.x <- final_color.x; r0.y <- final_color.y; r0.z <- final_color.z
+
+#line 20
+  else   // Prior locations: r0.x <- screen_color.x; r0.y <- screen_color.y; r0.z <- screen_color.z
+
+#line 23
+    add r0.xyz, r0.xyzx, cb10[0].xyzx
+
+#line 24
+  endif 
+
+#line 25
 endif 
 
-#line 21
-mov o0.xyz, r1.xyzx
+#line 28
+mov o0.xyz, r0.xyzx
 mov o0.w, l(1.000000)
 ret 
-// Approximately 14 instruction slots used
+// Approximately 24 instruction slots used

@@ -1,16 +1,17 @@
 #include "enemy_boss_component.h"
 
 #include "arithmetic.h"
+#include "locator.h"
+#include "prefab_loader.h"
+// components
 #include "capsule_collison_component.h"
 #include "collider_message_receiver_component.h"
 #include "collider_message_sender_component.h"
-#include "locator.h"
 #include "model_component.h"
 #include "player_component.h"
-#include "prefab_loader.h"
 #include "rigid_body_component.h"
 #include "energy_shot_component.h"
-#include "sphere_collision_component.h"
+#include "prefab_spawner_component.h"
 #include "transform_component.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::EnemyBossComponent)
@@ -620,6 +621,7 @@ namespace cumulonimbus::component
 					//	attack_behavior.SetBehavior(AttackBehavior::Atk_E2);
 					//}
 					attack_behavior.SetBehavior(GetRandomAtkLongBehavior());
+					attack_behavior.SetBehavior(AttackBehavior::Atk_E2);
 				}
 			}
 			else
@@ -1058,7 +1060,16 @@ namespace cumulonimbus::component
 		if (is_start)
 		{
 			model_comp->SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Energy_02));
+
+			if (auto* prefab_spawner = GetRegistry()->TryGetComponent<PrefabSpawnerComponent>(GetEntity());
+				prefab_spawner)
+			{
+				const auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
+
+				prefab_spawner->Spawn(true, transform_comp.GetPosition() + transform_comp.GetModelFront() * 50.f, transform_comp.GetModelFront());
+			}
 		}
+
 
 		if (model_comp->IsPlayAnimation())
 			return;

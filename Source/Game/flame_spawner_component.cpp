@@ -61,6 +61,8 @@ namespace cumulonimbus::component
 
 		if (effect_comp->IsPlaying())
 			return;
+
+		GetRegistry()->AddDestroyEntity(GetEntity());
 	}
 
 	void FlameSpownerComponent::RenderImGui()

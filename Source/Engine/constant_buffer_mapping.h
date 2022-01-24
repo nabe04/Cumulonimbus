@@ -39,4 +39,5 @@
 // ポストエフェクト
 #define CBSlot_Distort				CBSlot_OnDemand0
 #define CBSlot_ScreenFilter			CBSlot_OnDemand0
+#define CBSlot_DissolveScreen		CBSlot_OnDemand0
 #endif // CONSTANT_BUFFER_MAPPING_H

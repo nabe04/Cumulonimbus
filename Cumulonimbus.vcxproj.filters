@@ -157,6 +157,9 @@
     <FxCompile Include="Shader\screen_filter.hlsl">
       <Filter>Shader%28HLSL%29\PS</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\dissolve_screen.hlsl">
+      <Filter>Shader%28HLSL%29\PS</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\scene.cpp">
@@ -665,6 +668,9 @@
     </ClCompile>
     <ClCompile Include="Source\Game\player_avoid_effect_component.cpp">
       <Filter>Source\Game\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\dissolve_screen.cpp">
+      <Filter>Source\Engine\Shader%28.cpp%29\PostProcess</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1258,6 +1264,9 @@
     </ClInclude>
     <ClInclude Include="Source\Game\player_avoid_effect_component.h">
       <Filter>Header\Game\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\dissolve_screen.h">
+      <Filter>Header\Engine\Shader%28.h%29\PostProcess</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

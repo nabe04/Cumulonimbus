@@ -5,19 +5,37 @@
 #include "cum_imgui_helper.h"
 #include "time_scale.h"
 
+
 namespace cumulonimbus::post_effect
 {
+	//template <class Archive>
+	//void Distort::load(Archive&& archive, uint32_t version)
+
+
+	//template <class Archive>
+	//void Distort::save(Archive&& archive, uint32_t version) const
+	//
+
+
 	Distort::Distort(ID3D11Device* device)
 		:PostEffect(device)
 	{
+		Initialize(device);
+	}
+
+	void Distort::Initialize(ID3D11Device* device)
+	{
+		PostEffect::Initialize(device);
+
 		pixel_shader = std::make_unique<shader_system::PixelShader>(mapping::shader_filename::ps::Distort_PS().c_str());
-		cb_distort	 = std::make_unique<buffer::ConstantBuffer<DistortCB>>(device);
+		cb_distort = std::make_unique<buffer::ConstantBuffer<DistortCB>>(device);
 
 		cb_distort->GetData().distort_scroll_direction = float2{ 1.f,.0f };
 		cb_distort->GetData().distort_noise_attenuation = 0.1f;
 		cb_distort->GetData().distort_noise_scale = 1;
 		cb_distort->GetData().distort_time_scale = 1;
 	}
+
 
 	void Distort::RenderImGui(ecs::Registry* registry)
 	{

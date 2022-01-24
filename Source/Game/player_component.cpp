@@ -454,21 +454,28 @@ namespace cumulonimbus::component
 		camera_xz_front_vec.y = 0;
 		camera_xz_front_vec.Normalize();
 
-		// モデルの前方ベクトルとfront_vecとの角度(ラジアン)を算出
-		DirectX::SimpleMath::Vector3 model_xz_front = transform_comp.GetModelFront();
-		model_xz_front.y = 0;
-		model_xz_front.Normalize();
-		if (arithmetic::IsEqual(model_xz_front.x, camera_xz_front_vec.x) &&
-			arithmetic::IsEqual(model_xz_front.y, camera_xz_front_vec.y) &&
-			arithmetic::IsEqual(model_xz_front.z, camera_xz_front_vec.z))
-			return;
 
-		rad = arithmetic::CalcAngleFromTwoVec(camera_xz_front_vec, model_xz_front);
-		const DirectX::SimpleMath::Vector3 cross_vec = model_xz_front.Cross(camera_xz_front_vec);
-		if (cross_vec.y < 0)
-			rad *= -1;
+		if (const PlayerState state = player_state.GetState();
+			state == PlayerState::Walk_Front ||
+			state == PlayerState::Dash ||
+			state == PlayerState::Avoid_Dash_Begin)
+		{
+			// モデルの前方ベクトルとfront_vecとの角度(ラジアン)を算出
+			DirectX::SimpleMath::Vector3 model_xz_front = transform_comp.GetModelFront();
+			model_xz_front.y = 0;
+			model_xz_front.Normalize();
+			if (arithmetic::IsEqual(model_xz_front.x, camera_xz_front_vec.x) &&
+				arithmetic::IsEqual(model_xz_front.y, camera_xz_front_vec.y) &&
+				arithmetic::IsEqual(model_xz_front.z, camera_xz_front_vec.z))
+				return;
 
-		transform_comp.AdjustRotationFromAxis({ 0,1,0 }, rad);
+			rad = arithmetic::CalcAngleFromTwoVec(camera_xz_front_vec, model_xz_front);
+			const DirectX::SimpleMath::Vector3 cross_vec = model_xz_front.Cross(camera_xz_front_vec);
+			if (cross_vec.y < 0)
+				rad *= -1;
+			// モデルの回転
+			transform_comp.AdjustRotationFromAxis({ 0,1,0 }, rad);
+		}
 	}
 
 	void PlayerComponent::Collision() const

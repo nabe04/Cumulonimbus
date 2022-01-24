@@ -5,6 +5,17 @@
 
 namespace cumulonimbus::system
 {
+	//template <class Archive>
+	//void PostEffectManager::load(Archive&& archive, uint32_t version)
+	//
+
+	//template <class Archive>
+	//void PostEffectManager::save(Archive&& archive, uint32_t version) const
+	//{
+	//
+	//}
+
+
 	PostEffectManager::PostEffectManager(system::System& system, ID3D11Device* device)
 	{
 		const auto& window = locator::Locator::GetWindow();
@@ -12,25 +23,43 @@ namespace cumulonimbus::system
 		fullscreen_quad = std::make_unique<FullscreenQuad>(device);
 
 		distort			= std::make_unique<post_effect::Distort>(device);
-		//lens_distortion = std::make_unique<post_effect::LensDistortion>(device);
 		screen_filter	= std::make_unique<post_effect::ScreenFilter>(device);
 
 		system.RegisterRenderFunction(utility::GetHash<PostEffectManager>(), [&](ecs::Registry* registry) {RenderImGui(registry); });
 	}
+
+	void PostEffectManager::Load(system::System& system)
+	{
+		ID3D11Device* device = locator::Locator::GetDx11Device()->device.Get();
+		const auto& window = locator::Locator::GetWindow();
+		frame_buffer	= std::make_unique<FrameBuffer>(device, window->Width(), window->Height());
+		fullscreen_quad = std::make_unique<FullscreenQuad>(device);
+
+		if (distort.get())
+			distort->Initialize(device);
+		else
+			distort = std::make_unique<post_effect::Distort>(device);
+
+		if (screen_filter.get())
+			screen_filter->Initialize(device);
+		else
+			screen_filter	= std::make_unique<post_effect::ScreenFilter>(device);
+
+		system.RegisterRenderFunction(utility::GetHash<PostEffectManager>(), [&](ecs::Registry* registry) {RenderImGui(registry); });
+	}
+
 
 	void PostEffectManager::RenderImGui(ecs::Registry* registry) const
 	{
 		if(ImGui::CollapsingHeader(ICON_FA_FILM"Post Effects"))
 		{
 			distort->RenderImGui(registry);
-			//lens_distortion->RenderImGui(registry);
 			screen_filter->RenderImGui(registry);
 		}
 	}
 
 	ID3D11ShaderResourceView** PostEffectManager::Generate(ID3D11DeviceContext* immediate_context, ID3D11ShaderResourceView** scene_srv_address) const
 	{
-		//lens_distortion->Generate(immediate_context, scene_srv_address);
 		ID3D11ShaderResourceView** srv = nullptr;
 		srv = distort->Generate(immediate_context, scene_srv_address);
 		srv = screen_filter->Generate(immediate_context, srv);

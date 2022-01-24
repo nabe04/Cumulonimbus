@@ -6,6 +6,11 @@
 
 class TextureResource;
 
+namespace cumulonimbus::asset
+{
+	class Texture;
+} // cumulonimbus::asset
+
 class Dx11Device final
 {
 public:
@@ -60,8 +65,9 @@ public:
 
 	void SetViewPort(int width, int height) const;
 	void BindPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology) const;
-	void BindShaderResource(	cumulonimbus::mapping::graphics::ShaderStage state, ID3D11ShaderResourceView** srv, uint32_t slot) const;
-	void BindShaderResource(	cumulonimbus::mapping::graphics::ShaderStage state, TextureResource* resource, uint32_t slot) const;
+	void BindShaderResource(cumulonimbus::mapping::graphics::ShaderStage state, ID3D11ShaderResourceView** srv, uint32_t slot) const;
+	void BindShaderResource(cumulonimbus::mapping::graphics::ShaderStage state, TextureResource* resource, uint32_t slot) const;
+	void BindShaderResource(cumulonimbus::mapping::graphics::ShaderStage state, cumulonimbus::asset::Texture* texture, uint32_t slot) const;
 	void UnbindShaderResource(cumulonimbus::mapping::graphics::ShaderStage state, uint32_t slot) const;
 	void BindPrimitiveTopology(cumulonimbus::mapping::graphics::PrimitiveTopology topology) const;
 

@@ -145,6 +145,14 @@ inline float GetSingleTextureChannel(
 }
 
 /**
+ * @return : 1 - 引数値
+ */
+inline float OneMinus(const float val)
+{
+    return 1.0f - val;
+}
+
+/**
  * @brief : RGBカラーをグレースケールに変換
  */
 inline float ToGrayColor(const float3 color)

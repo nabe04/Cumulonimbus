@@ -77,7 +77,7 @@ namespace cumulonimbus::component
 		const auto spawn_ent = prefab_loader.Instantiate(GetRegistry(), flame_prefab_id);
 		const auto self_pos = GetRegistry()->GetComponent<TransformComponent>(GetEntity()).GetPosition();
 		GetRegistry()->GetComponent<TransformComponent>(spawn_ent).SetPosition(self_pos);
-
+		// マジックサークルエフェクトオブジェクトの削除
 		GetRegistry()->AddDestroyEntity(GetEntity());
 	}
 

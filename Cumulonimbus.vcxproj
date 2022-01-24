@@ -65,6 +65,7 @@
     <ClInclude Include="Source\Engine\depth_stencil.h" />
     <ClInclude Include="Source\Engine\diffuse.h" />
     <ClInclude Include="Source\Engine\directiona_light_component.h" />
+    <ClInclude Include="Source\Engine\dissolve_screen.h" />
     <ClInclude Include="Source\Engine\distort.h" />
     <ClInclude Include="Source\Engine\dx11_configurator.h" />
     <ClInclude Include="Source\Engine\easing.h" />
@@ -259,6 +260,7 @@
     <ClCompile Include="Source\Engine\depth_stencil.cpp" />
     <ClCompile Include="Source\Engine\diffuse.cpp" />
     <ClCompile Include="Source\Engine\directional_light_component.cpp" />
+    <ClCompile Include="Source\Engine\dissolve_screen.cpp" />
     <ClCompile Include="Source\Engine\distort.cpp" />
     <ClCompile Include="Source\Engine\dx11_configurator.cpp" />
     <ClCompile Include="Source\Engine\easing.cpp" />
@@ -494,6 +496,12 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Shader\diffuse_mrt_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\dissolve_screen.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>

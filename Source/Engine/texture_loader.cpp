@@ -140,7 +140,7 @@ namespace cumulonimbus::asset
 		static const std::set<std::filesystem::path> extensions
 		{
 			".png" , ".PNG",
-			".jpeg", ".JPEG",
+			".jpg", ".JPG",
 			".tga" , ".TGA",
 			".dds" , ".DDS"
 		};

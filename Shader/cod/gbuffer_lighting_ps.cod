@@ -218,19 +218,19 @@ nop
 nop 
 mov r5.xy, v1.xyxx
 
-#line 178 "D:\Desktop\Cumulonimbus\Shader\functions_utility.hlsli"
+#line 186 "D:\Desktop\Cumulonimbus\Shader\functions_utility.hlsli"
 mov r5.z, -r5.y  // r5.z <- texcoord.y
 
-#line 179
+#line 187
 mul r5.xy, r5.xzxx, l(2.000000, 2.000000, 0.000000, 0.000000)
 mov r5.zw, l(-0.000000,-0.000000,-1.000000,1.000000)
 add r3.xy, r5.zwzz, r5.xyxx  // r3.x <- pos_xy.x; r3.y <- pos_xy.y
 
-#line 180
+#line 188
 mov r3.w, l(1.000000)
 mov r3.xyzw, r3.xyzw  // r3.x <- projected_position.x; r3.y <- projected_position.y; r3.z <- projected_position.z; r3.w <- projected_position.w
 
-#line 182
+#line 190
 mul r5.xyzw, r3.xxxx, cb1[20].xyzw
 mul r6.xyzw, r3.yyyy, cb1[21].xyzw
 add r5.xyzw, r5.xyzw, r6.xyzw
@@ -239,7 +239,7 @@ add r5.xyzw, r5.xyzw, r6.xyzw
 mul r3.xyzw, r3.wwww, cb1[23].xyzw
 add r3.xyzw, r3.xyzw, r5.xyzw  // r3.x <- position.x; r3.y <- position.y; r3.z <- position.z; r3.w <- position.w
 
-#line 184
+#line 192
 div r3.xyz, r3.xyzx, r3.wwww  // r3.x <- <DepthToWPosition return value>.x; r3.y <- <DepthToWPosition return value>.y; r3.z <- <DepthToWPosition return value>.z
 
 #line 32 "D:\Desktop\Cumulonimbus\Shader\gbuffer_lighting_ps.hlsl"

@@ -419,6 +419,43 @@ void Dx11Device::BindShaderResource(cumulonimbus::mapping::graphics::ShaderStage
 	}
 }
 
+void Dx11Device::BindShaderResource(const cumulonimbus::mapping::graphics::ShaderStage state, cumulonimbus::asset::Texture* texture, const uint32_t slot) const
+{
+	ID3D11ShaderResourceView* srv = texture->GetShaderResourceView();
+
+	using namespace cumulonimbus::mapping::graphics;
+	switch (state)
+	{
+	case ShaderStage::VS:
+		immediate_context->VSSetShaderResources(slot, 1, &srv);
+		break;
+
+	case ShaderStage::HS:
+		immediate_context->HSSetShaderResources(slot, 1, &srv);
+		break;
+
+	case ShaderStage::DS:
+		immediate_context->DSSetShaderResources(slot, 1, &srv);
+		break;
+
+	case ShaderStage::GS:
+		immediate_context->GSSetShaderResources(slot, 1, &srv);
+		break;
+
+	case ShaderStage::PS:
+		immediate_context->PSSetShaderResources(slot, 1, &srv);
+		break;
+
+	case ShaderStage::CS:
+		immediate_context->CSSetShaderResources(slot, 1, &srv);
+		break;
+
+	default:
+		assert(0);
+		break;
+	}
+}
+
 void Dx11Device::UnbindShaderResource(cumulonimbus::mapping::graphics::ShaderStage state, uint32_t slot) const
 {
 	using namespace cumulonimbus::mapping::graphics;
