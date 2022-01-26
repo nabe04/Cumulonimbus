@@ -159,15 +159,30 @@ namespace cumulonimbus::system
 	{
 		if (save_path.compare({ "" }) == 0)
 		{// デフォルトのパスに保存
-			std::ofstream ofs(default_path_and_name + file_path_helper::GetSystemExtension(), std::ios_base::binary);
-			cereal::BinaryOutputArchive output_archive(ofs);
-			output_archive(*this);
+			{// Binary
+				std::ofstream ofs(default_path_and_name + file_path_helper::GetSystemExtension(), std::ios_base::binary);
+				cereal::BinaryOutputArchive output_archive(ofs);
+				output_archive(*this);
+			}
+			{// Json
+				std::ofstream ofs(default_path_and_name + file_path_helper::GetJsonExtension());
+				cereal::JSONOutputArchive output_archive(ofs);
+				output_archive(*this);
+			}
+
 		}
 		else
 		{
-			std::ofstream ofs(save_path, std::ios_base::binary);
-			cereal::BinaryOutputArchive output_archive(ofs);
-			output_archive(*this);
+			{// Binary
+				std::ofstream ofs(save_path, std::ios_base::binary);
+				cereal::BinaryOutputArchive output_archive(ofs);
+				output_archive(*this);
+			}
+			{// Json
+				std::ofstream ofs(save_path);
+				cereal::JSONOutputArchive output_archive(ofs);
+				output_archive(*this);
+			}
 		}
 	}
 

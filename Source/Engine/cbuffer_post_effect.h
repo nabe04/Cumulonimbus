@@ -108,7 +108,7 @@ CBUFFER(ScreenFilterCB, CBSlot_ScreenFilter)
 };
 
 #ifdef __cplusplus
-CEREAL_CLASS_VERSION(ScreenFilterCB, 1)
+CEREAL_CLASS_VERSION(ScreenFilterCB, 0)
 #endif // __cplusplus
 
 CBUFFER(DissolveScreenCB, CBSlot_DissolveScreen)

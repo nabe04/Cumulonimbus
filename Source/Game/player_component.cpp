@@ -804,7 +804,7 @@ namespace cumulonimbus::component
 		{
 			if (locator::Locator::GetInput()->GamePad().GetState(GamePadButton::X) == ButtonState::Press)
 			{
-				player_state.SetState(PlayerState::Attack_Strong_04);
+				player_state.SetState(PlayerState::Dash_Attack);
 				is_avoid = false;
 				if (auto* sphere_collision_comp = GetRegistry()->TryGetComponent<SphereCollisionComponent>(GetEntity());
 					sphere_collision_comp)

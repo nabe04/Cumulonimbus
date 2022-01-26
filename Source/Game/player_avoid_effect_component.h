@@ -66,12 +66,6 @@ namespace cumulonimbus::component
 		// イージング終了時間
 		float easing_end_time{ 0.5f };
 		//-- 半径 --//
-		// Distortエフェクトの現在の半径
-		float distort_current_radius{};
-		// Distortエフェクトの回避時半径(開始時)
-		float distort_start_radius{};
-		// Distortエフェクト最大半径
-		float distort_start_max_radius{ 1.f };
 		// Distortエフェクトの現在の半径(内側)
 		float distort_current_inner_circle{};
 		// Distortエフェクトの半径(内側)

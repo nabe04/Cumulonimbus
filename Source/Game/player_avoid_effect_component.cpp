@@ -100,19 +100,16 @@ namespace cumulonimbus::component
 			// Œo‰ßŠÔ
 			elapsed_time = 0;
 			// ”¼Œa
-			distort_start_radius   = 0;
-			distort_current_radius = 0;
+			distort_current_inner_circle = 0.0f;
+			distort_start_inner_circle	 = 0.0f;
+			distort_current_outer_circle = 0.0f;
+			distort_start_outer_circle   = 0.0f;
 		}
 
 		const auto& time = locator::Locator::GetSystem()->GetTime();
 		elapsed_time += time.GetUnscaledDeltaTime();
 
 		//-- ƒC[ƒWƒ“ƒOˆ— --//
-		// ”¼Œa
-		distort_current_radius = Easing::GetEasingVal(elapsed_time, distort_start_radius,
-													  distort_start_max_radius - distort_start_radius,
-													  easing_end_time, CIRC, ESOUT);
-
 		// ”¼Œa(“à‘¤)
 		distort_current_inner_circle = Easing::GetEasingVal(elapsed_time, distort_start_inner_circle,
 															distort_max_inner_circle - distort_start_inner_circle,
@@ -154,7 +151,6 @@ namespace cumulonimbus::component
 		post_effect_manager.GetDistort().SetIsActive(true);
 		post_effect_manager.GetScreenFilter().SetIsActive(true);
 		post_effect_manager.GetScreenFilter().SetIsGrayScale(true);
-		//distort_cbuff_data.distort_radius					= distort_current_radius;
 		distort_cbuff_data.distort_inner_circle				= distort_current_inner_circle;
 		distort_cbuff_data.distort_outer_circle				= distort_current_outer_circle;
 		distort_cbuff_data.distort_time_scale				= time_scale;
@@ -198,8 +194,6 @@ namespace cumulonimbus::component
 			//-- ƒpƒ‰ƒ[ƒ^‚Ì‰Šú‰» --//
 			// Œo‰ßŠÔ
 			elapsed_time = 0;
-			// ”¼Œa
-			distort_start_radius = distort_current_radius;
 			// ”¼Œa(“à‘¤)
 			distort_start_inner_circle = distort_current_inner_circle;
 			// ”¼Œa(ŠO‘¤)
@@ -210,11 +204,6 @@ namespace cumulonimbus::component
 		elapsed_time += time.GetUnscaledDeltaTime();
 
 		//-- ƒC[ƒWƒ“ƒOˆ— --//
-		// ”¼Œa
-		distort_current_radius = Easing::GetEasingVal(elapsed_time, distort_start_radius,
-													  distort_avoid_end_radius - distort_start_radius,
-													  easing_end_time, CIRC, ESOUT);
-
 		// ”¼Œa(“à‘¤)
 		distort_current_inner_circle = Easing::GetEasingVal(elapsed_time, distort_start_inner_circle,
 															distort_avoid_end_radius - distort_start_inner_circle,
@@ -250,7 +239,6 @@ namespace cumulonimbus::component
 		post_effect_manager.GetDistort().SetIsActive(true);
 		post_effect_manager.GetScreenFilter().SetIsActive(false);
 		post_effect_manager.GetScreenFilter().SetIsGrayScale(false);
-		//distort_cbuff_data.distort_radius			 = distort_current_radius;
 		distort_cbuff_data.distort_inner_circle		 = distort_current_inner_circle;
 		distort_cbuff_data.distort_outer_circle		 = distort_current_outer_circle;
 		distort_cbuff_data.distort_time_scale		 = time_scale;
