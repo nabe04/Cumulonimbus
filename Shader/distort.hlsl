@@ -14,7 +14,9 @@ float4 main(float4 position : SV_POSITION, float2 texcoord : TEXCOORD) : SV_TARG
 
     float4 final_color = (float4) 0;
 
-    if (len < distort_radius)
+    const float strength = max(0.0f, min(1.0f, (len - distort_outer_circle) / (distort_outer_circle - distort_inner_circle)));
+
+    if (strength <= 0.0f)
     {
         final_color = screen_color;
     }
@@ -29,14 +31,13 @@ float4 main(float4 position : SV_POSITION, float2 texcoord : TEXCOORD) : SV_TARG
 			scroll_direction = normalize(distort_scroll_direction);
         }
 
-        //const float2 uv_scroll_val = texcoord + (scroll_time + scroll_direction) * distort_time_scale;
-        const float2 uv_scroll_val =(scroll_time + scroll_direction) * distort_time_scale;
+        const float2 uv_scroll_val  = (scroll_time + scroll_direction) * distort_time_scale;
+        const float2 noise_uv       = float2(PerlinNoise(uv_scroll_val, texcoord * distort_noise_scale) * distort_noise_attenuation, 0) + texcoord;
 
-        const float2 noise_uv = float2(PerlinNoise(uv_scroll_val, texcoord * distort_noise_scale) * distort_noise_attenuation, 0) + texcoord;
-       // const float2 noise_uv = float2(PerlinNoise(uv_scroll_val, distort_noise_scale) * distort_noise_attenuation, 0) + texcoord;
+        const float4 distort_color = texture_post_process.Sample(default_sampler, noise_uv + uv_scroll_val);
 
-        final_color = texture_post_process.Sample(default_sampler, noise_uv + uv_scroll_val);
-	}
+        final_color = distort_color * strength + screen_color * (1.0f - strength);
+    }
 
     return final_color;
 }

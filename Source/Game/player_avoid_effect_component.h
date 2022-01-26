@@ -19,7 +19,6 @@ namespace cumulonimbus::component
 		using ComponentBase::ComponentBase;
 		explicit PlayerAvoidEffectComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
 		explicit PlayerAvoidEffectComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const PlayerAvoidEffectComponent& copy_comp);
-		explicit PlayerAvoidEffectComponent(mapping::component_tag::ComponentTag tag);
 		explicit PlayerAvoidEffectComponent() = default;
 		~PlayerAvoidEffectComponent() override = default;
 
@@ -38,6 +37,12 @@ namespace cumulonimbus::component
 
 		template<class Archive>
 		void save(Archive&& archive, uint32_t version) const;
+
+		[[nodiscard]]
+		EffectState GetEffectState() const
+		{
+			return effect_state.GetState();
+		}
 
 		void SetEffectState(const EffectState state)
 		{
@@ -67,6 +72,18 @@ namespace cumulonimbus::component
 		float distort_start_radius{};
 		// Distortエフェクト最大半径
 		float distort_start_max_radius{ 1.f };
+		// Distortエフェクトの現在の半径(内側)
+		float distort_current_inner_circle{};
+		// Distortエフェクトの半径(内側)
+		float distort_start_inner_circle{};
+		// Distortエフェクトの最大半径(内側)
+		float distort_max_inner_circle{ 0.05f };
+		// Distortエフェクトの現在の半径(外側)
+		float distort_current_outer_circle{};
+		// Distortエフェクトの半径(外側)
+		float distort_start_outer_circle{};
+		// Distortエフェクトの最大半径(外側)
+		float distort_max_outer_circle{ 0.65f };
 		// Distortエフェクトの回避時半径(最大)
 		float distort_avoid_end_radius{ 1.5f };
 		//-- タイムスケール --//

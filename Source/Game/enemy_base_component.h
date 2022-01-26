@@ -71,7 +71,8 @@ namespace cumulonimbus::component
 			}
 		};
 
-		int hp{10};
+		int max_hp{ 10 };
+		int hp{ 10 };
 		std::unordered_map<std::string, RandomFloat> transition_timer{};
 		// モデルのyaw回転(度数法)のランダム値
 		RandomFloat random_rotation_angle{};
@@ -84,7 +85,11 @@ namespace cumulonimbus::component
 		/**
 		 * @brief : 攻撃開始処理
 		 */
-		virtual void OnAttack(const collision::HitResult& hit_result) {};
+		virtual void OnAttack(const collision::HitResult& hit_result) {}
+		void SpawnHitEffect(
+			const mapping::rename_type::UUID& effect_id,
+			const DirectX::SimpleMath::Vector3& pos,
+			const DirectX::SimpleMath::Vector3& scale = { 1.f,1.f,1.f }) const;
 
 		/**
 		 * @brief : ダメージ処理

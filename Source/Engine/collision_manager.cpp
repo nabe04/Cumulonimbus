@@ -533,7 +533,8 @@ namespace cumulonimbus::collision
 		ecs::Registry* registry_1, ecs::Registry* registry_2,
 		Sphere&		   sphere_1  , Sphere&		  sphere_2,
 		const mapping::rename_type::UUID& ent_1,
-		const mapping::rename_type::UUID& ent_2)
+		const mapping::rename_type::UUID& ent_2,
+		const DirectX::SimpleMath::Vector3& hit_pos)
 	{
 		//// 判定先のレジストリ
 		//result_1.registry = registry_2;
@@ -553,6 +554,7 @@ namespace cumulonimbus::collision
 		result_1_.collision_tag = sphere_2.collision_tag;
 		result_1_.collision_id	= sphere_2.id;
 		result_1_.entity		= ent_2;
+		result_1_.position		= hit_pos;
 		sphere_1.RegisterHitEntity(sphere_2.id, result_1_);
 
 		HitResult result_2_{};
@@ -560,6 +562,7 @@ namespace cumulonimbus::collision
 		result_2_.collision_tag = sphere_1.collision_tag;
 		result_2_.collision_id	= sphere_1.id;
 		result_2_.entity		= ent_1;
+		result_2_.position		= hit_pos;
 		sphere_2.RegisterHitEntity(sphere_1.id, result_2_);
 	}
 
@@ -567,7 +570,8 @@ namespace cumulonimbus::collision
 		ecs::Registry* registry_1, ecs::Registry* registry_2,
 		Capsule&	   capsule_1 , Capsule&       capsule_2,
 		const mapping::rename_type::UUID& ent_1,
-		const mapping::rename_type::UUID& ent_2)
+		const mapping::rename_type::UUID& ent_2,
+		const DirectX::SimpleMath::Vector3& hit_pos)
 	{
 		//// 判定先のレジストリ
 		//result_1.registry = registry_2;
@@ -587,6 +591,7 @@ namespace cumulonimbus::collision
 		result_1_.collision_tag = capsule_2.collision_tag;
 		result_1_.collision_id	= capsule_2.id;
 		result_1_.entity		= ent_2;
+		result_1_.position		= hit_pos;
 		capsule_1.RegisterHitEntity(capsule_2.id, result_1_);
 
 		HitResult result_2_{};
@@ -594,6 +599,7 @@ namespace cumulonimbus::collision
 		result_2_.collision_tag = capsule_1.collision_tag;
 		result_2_.collision_id	= capsule_1.id;
 		result_2_.entity		= ent_1;
+		result_2_.position		= hit_pos;
 		capsule_2.RegisterHitEntity(capsule_1.id, result_2_);
 	}
 
@@ -601,7 +607,8 @@ namespace cumulonimbus::collision
 		ecs::Registry* registry_1, ecs::Registry* registry_2,
 		Sphere&		   sphere	 , Capsule&		  capsule,
 		const mapping::rename_type::UUID& s_ent,
-		const mapping::rename_type::UUID& c_ent)
+		const mapping::rename_type::UUID& c_ent,
+		const DirectX::SimpleMath::Vector3& hit_pos)
 	{
 		//// 判定先のレジストリ
 		//s_result.registry = registry_2;
@@ -621,6 +628,7 @@ namespace cumulonimbus::collision
 		result_1_.collision_tag = capsule.collision_tag;
 		result_1_.collision_id	= capsule.id;
 		result_1_.entity		= c_ent;
+		result_1_.position		= hit_pos;
 		sphere.RegisterHitEntity(capsule.id, result_1_);
 
 		HitResult result_2_{};
@@ -628,6 +636,7 @@ namespace cumulonimbus::collision
 		result_2_.collision_tag = sphere.collision_tag;
 		result_2_.collision_id	= sphere.id;
 		result_2_.entity		= s_ent;
+		result_2_.position		= hit_pos;
 		capsule.RegisterHitEntity(sphere.id, result_2_);
 	}
 
@@ -1057,18 +1066,24 @@ namespace cumulonimbus::collision
 				const DirectX::SimpleMath::Vector3 s1_translation = s1.world_transform_matrix.Translation();
 				const DirectX::SimpleMath::Vector3 s2_translation = s2.world_transform_matrix.Translation();
 
+				// s2からs1へのベクトル
 				const DirectX::SimpleMath::Vector3 v = { s1_translation - s2_translation };
 				const float len = v.Length();
 
 				if (len <= s1.radius + s2.radius)
 				{
+					DirectX::SimpleMath::Vector3 n_v{};
+					v.Normalize(n_v);
+
+					DirectX::SimpleMath::Vector3 hit_pos{ s2_translation + (n_v * s2.radius) };
+
 					hit = true;
 					AddHitSphere(s1.id, s2.id, sphere_1.GetEntity(), sphere_2.GetEntity());
 					AddHitSphere(s2.id, s1.id, sphere_2.GetEntity(), sphere_1.GetEntity());
 					// ヒット情報の更新
 					UpdateHitResult(sphere_1.GetRegistry(),sphere_2.GetRegistry(),
-								 s1, s2,
-									sphere_1.GetEntity(), sphere_2.GetEntity());
+									s1, s2,
+									sphere_1.GetEntity(), sphere_2.GetEntity(), hit_pos);
 
 					// 押出し処理
 					Extrude(
@@ -1135,13 +1150,18 @@ namespace cumulonimbus::collision
 				if (const float len = v.Length();
 					len <= s1.radius + s2.radius)
 				{
+					DirectX::SimpleMath::Vector3 n_v{};
+					v.Normalize(n_v);
+
+					DirectX::SimpleMath::Vector3 hit_pos{ s2_translation + (n_v * s2.radius) };
+
 					hit = true;
 					AddHitSphere(s1.id, s2.id, sphere_1.GetEntity(), sphere_2.GetEntity());
 					AddHitSphere(s2.id, s1.id, sphere_2.GetEntity(), sphere_1.GetEntity());
 					// ヒット情報の更新
 					UpdateHitResult(sphere_1.GetRegistry(),sphere_2.GetRegistry(),
 								 s1, s2,
-									sphere_1.GetEntity(), sphere_2.GetEntity());
+									sphere_1.GetEntity(), sphere_2.GetEntity(), hit_pos);
 
 					// 押出し処理
 					Extrude(
@@ -1217,9 +1237,9 @@ namespace cumulonimbus::collision
 					AddHitCapsule(c1.id, c2.id, capsule_1.GetEntity(), capsule_2.GetEntity());
 					AddHitCapsule(c2.id, c1.id, capsule_2.GetEntity(), capsule_1.GetEntity());
 					// ヒット情報の更新
-					UpdateHitResult(capsule_1.GetRegistry(),capsule_2.GetRegistry(),
-								 c1, c2,
-									capsule_1.GetEntity(), capsule_2.GetEntity());
+					UpdateHitResult(capsule_1.GetRegistry(), capsule_2.GetRegistry(),
+									c1, c2,
+									capsule_1.GetEntity(), capsule_2.GetEntity(), c1_p);
 					hit = true;
 
 					// 押出し処理
@@ -1298,7 +1318,7 @@ namespace cumulonimbus::collision
 					// ヒット情報の更新
 					UpdateHitResult(capsule_1.GetRegistry(), capsule_2.GetRegistry(),
 								 c1, c2,
-									capsule_1.GetEntity(), capsule_2.GetEntity());
+									capsule_1.GetEntity(), capsule_2.GetEntity(), c1_p);
 					hit = true;
 
 					// 押出し処理
@@ -1370,14 +1390,16 @@ namespace cumulonimbus::collision
 				{
 					AddHitSphere(s.id, c.id, sphere.GetEntity(), capsule.GetEntity());
 					AddHitCapsule(c.id, s.id, capsule.GetEntity(), sphere.GetEntity());
-					// ヒット情報の更新
-					UpdateHitResult(sphere.GetRegistry(),capsule.GetRegistry(),
-								 s, c,
-									sphere.GetEntity(), capsule.GetEntity());
+
 					hit = true;
 					float t = 0; //	最近接点までの距離(線分の割合)
 					DirectX::SimpleMath::Vector3 p{}; // カプセルの最近接点
 					arithmetic::ClosestPtPointSegment(c.start, c.end, s.world_transform_matrix.Translation(), p, t);
+					// ヒット情報の更新
+					UpdateHitResult(sphere.GetRegistry(),capsule.GetRegistry(),
+								 s, c,
+									sphere.GetEntity(), capsule.GetEntity(), p);
+
 					// 押出し処理
 					Extrude(
 						dt,
@@ -1447,14 +1469,16 @@ namespace cumulonimbus::collision
 				{
 					AddHitSphere(s.id, c.id, sphere.GetEntity(), capsule.GetEntity());
 					AddHitCapsule(c.id, s.id, capsule.GetEntity(), sphere.GetEntity());
-					// ヒット情報の更新
-					UpdateHitResult(sphere.GetRegistry(),capsule.GetRegistry(),
-								 s, c,
-									sphere.GetEntity(), capsule.GetEntity());
+
 					hit = true;
 					float t = 0; //	最近接点までの距離(線分の割合)
 					DirectX::SimpleMath::Vector3 p{}; // カプセルの最近接点
 					arithmetic::ClosestPtPointSegment(c.start, c.end, s.world_transform_matrix.Translation(), p, t);
+					// ヒット情報の更新
+					UpdateHitResult(sphere.GetRegistry(), capsule.GetRegistry(),
+									s, c,
+									sphere.GetEntity(), capsule.GetEntity(), p);
+
 					// 押出し処理
 					Extrude(
 						dt,

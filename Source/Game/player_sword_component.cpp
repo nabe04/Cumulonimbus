@@ -2,8 +2,10 @@
 // components
 #include "capsule_collison_component.h"
 #include "damageable_component.h"
+#include "effekseer_component.h"
 #include "hierarchy_component.h"
 #include "player_component.h"
+#include "transform_component.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::PlayerSwordComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::WeaponComponent, cumulonimbus::component::PlayerSwordComponent)
@@ -108,6 +110,18 @@ namespace cumulonimbus::component
 		{
 			damage_data.knock_back_level = player_comp->GetAtkKnockBackLevel();
 			damage_data.damage_amount	 = player_comp->GetCurrentDamageAmount();
+
+			const auto effect_ent	= GetRegistry()->CreateEntity();
+			auto& transform_comp	= GetRegistry()->GetComponent<TransformComponent>(effect_ent);
+			auto& effect_comp		= GetRegistry()->AddComponent<EffekseerComponent>(effect_ent);
+
+			transform_comp.SetPosition(hit_result.position);
+			transform_comp.SetScale({ 5,5,5 });
+
+			effect_comp.ChangeEffect(player_comp->GetCurrentHitEffectId());
+			effect_comp.SetIsDeleteAtEndOfSpawnTime(true);
+			effect_comp.SetIsDeleteEntity(true);
+			effect_comp.Play();
 		}
 
 		if(auto* damageable_comp = hit_result.registry->TryGetComponent<DamageableComponent>(hit_result.entity);

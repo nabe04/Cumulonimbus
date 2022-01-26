@@ -671,6 +671,9 @@ namespace cumulonimbus::component
 		if (current_animation_index < 0)
 			return;
 
+		if (is_stop_animation)
+			return;
+
 		const asset::ModelData& model_data =
 			locator::Locator::GetAssetManager()->GetLoader<asset::ModelLoader>()->GetModel(model_id).GetModelData();
 

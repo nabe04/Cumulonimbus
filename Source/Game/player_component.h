@@ -22,7 +22,6 @@ namespace cumulonimbus::component
 			T_Pose,
 			Idle,							// 待機
 			Walk_Front,						// 歩き
-			Walk_Back,
 			Damage_Small,					// ダメージ
 			Damage_Big,
 			Knock_Down_Front_Loop,			// ノックバック
@@ -31,19 +30,12 @@ namespace cumulonimbus::component
 			Attack_Normal_01,				// 通常攻撃(弱)
 			Attack_Normal_02,
 			Attack_Normal_03,
-			Attack_Normal_04_Begin,
-			Attacking_Normal_04,
-			Attack_Normal_04_End,
 			Attacking_Normal_Long_Press,	// 通常攻撃(弱長押し)
 			Attack_Normal_Long_Press_End,
 			Attack_Strong_01,				// 通常攻撃(強)
 			Attack_Strong_02,
 			Attack_Strong_03,
 			Attack_Strong_04,
-			Attack_Round_Up_Begin,			// 切り上げ攻撃
-			Attacking_Round_Up,
-			Attack_Round_Up_Fall,
-			Attack_Round_Up_End,
 			Dodge,							// バックステップ
 			Avoid_Dash_Begin,				// ダッシュ回避
 			Avoid_Dash_End,
@@ -57,64 +49,32 @@ namespace cumulonimbus::component
 		enum class AnimationData
 		{
 			T_Pose,
-			Attacking_Normal_01,
-			Attacking_Normal_02,
-			Attacking_Normal_03,
-			Attack_Normal_04_Begin,
-			Attacking_Normal_04,
-			Attack_Normal_04_End,
-			Attacking_Normal_Long_Press,
-			Attacking_Strong_02,
-			Attacking_Strong_03,
-			Attacking_Strong_04,
-			Attack_Round_Up_Begin,
-			Attacking_Round_Up,
-			Attack_Round_Up_Fall,
-			Attack_Round_Up_End,
-			Attacking_Jump_01,
-			Attacking_Jump_02,
-			Attacking_Jump_03,
-			Attacking_Jump_04,
-			Attack_Jumping_Strong_Begin,
-			Attacking_Jump_Strong,
-			Attack_Jump_Strong_End,
-			Jump_Landing,
-			Attacking_Strong_01,
+			Atk_N4_Begin,
+			Atk_N4_End,
+			Atk_Long_Press,
 			Avoid_Dash_Begin,
 			Avoid_Dash_End,
 			Dash,
 			Dash_Attack,
-			Walk_Back,
 			Walk_Front,
 			Idle,
-			Attack_Normal_02_End,
-			Attack_Normal_Long_Press_End,
-			Attack_Jump_01_End,
-			Attack_Jump_02_End,
-			Attack_Jump_03_End,
-			Attack_Jump_04_End,
-			Attack_Normal_01,
-			Attack_Normal_02,
-			Attack_Normal_03,
-			Attack_Normal_All,
-			Attack_Strong_01,
-			Attack_Strong_02,
-			Attack_Strong_03,
-			Attack_Strong_04,
-			Attack_Strong_All,
-			Jump_Loop,
-			Jump_End,
-			Attack_Jump_Strong_All,
-			Attack_Normal_04_All,
+			Atk_Long_Press_End,
+			Atk_N1,
+			Atk_N2,
+			Atk_N3,
+			Atk_N_All,
+			Atk_S1,
+			Atk_S2,
+			Atk_S3,
+			Atk_S4,
+			Atk_S_All,
+			Atk_N4_All,
 			Die,
 			Die_Loop,
-			Jump_Begin,
 			Damage_Small,
 			Knock_Down_On_Damage,
 			Knock_Down_Loop,
 			Knock_Down_On_Stand,
-			Attack_Normal_01_End,
-			Jump_Begin_2,
 			Dodge,
 
 			End
@@ -153,6 +113,12 @@ namespace cumulonimbus::component
 		{
 			return atk_knock_back;
 		}
+
+		[[nodiscard]]
+		mapping::rename_type::UUID GetCurrentHitEffectId() const
+		{
+			return current_hit_effect_id;
+		}
 	private:
 		// プレイヤーの状態管理変数
 		StateMachine<PlayerState, void, const float> player_state{};
@@ -172,6 +138,14 @@ namespace cumulonimbus::component
 
 		// プレイヤーの持つ剣のエンティティ
 		mapping::rename_type::Entity sword_ent{};
+		// 現在のヒットエフェクト ID
+		mapping::rename_type::UUID current_hit_effect_id{};
+		// ヒットエフェクト(S) ID
+		mapping::rename_type::UUID hit_effect_s{};
+		// ヒットエフェクト(M) ID
+		mapping::rename_type::UUID hit_effect_m{};
+		// ヒットエフェクト(L) ID
+		mapping::rename_type::UUID hit_effect_l{};
 
 		// アニメーション遷移時間
 		float anim_switch_time{ 0.1f };
@@ -191,7 +165,7 @@ namespace cumulonimbus::component
 		// 通常攻撃04(ジャンプ攻撃)時の速度
 		float attack_04_speed{ 700.0f };
 		// ダッシュ攻撃の速度
-		float dash_attack_speed{ 300.0f };
+		float dash_attack_speed{ 200.0f };
 		// 強攻撃 04時の速度
 		float attack_strong_04_speed{ 300.f };
 		// 回避ダッシュ速度
@@ -228,6 +202,11 @@ namespace cumulonimbus::component
 		// 回避無敵中のタイムスケール(時間が経つ速さ)
 		float avoid_time_scale{ 0.5f };
 
+		// 経過時間(使用は自由)
+		float anim_stop_timer{};
+		// ダッシュ攻撃終わりの待機時間
+		float anim_stop_dash_atk{ 0.5f };
+
 		//-- 各状態(アニメーション)からの遷移時間 --//
 		// ダッシュから待機
 		float switch_dash_attack_to_idle{ 0.3f };
@@ -237,6 +216,8 @@ namespace cumulonimbus::component
 		bool is_jumping{ false };
 		// 回避フラグ
 		bool is_avoid{ false };
+		// 入力フラグ
+		bool is_input{ true };
 
 		// パッド入力のデッドゾーン値
 		float threshold{ 0.05f };
@@ -328,6 +309,7 @@ namespace cumulonimbus::component
 		 */
 		[[nodiscard]]
 		bool IsDeadZoneStickLeft() const;
+
 		/**
 		 * @brief : Right Trigger入力がデッドゾーン内にあるかどうか判定
 		 * @return : true -> デッドゾーン内にある
@@ -383,7 +365,6 @@ namespace cumulonimbus::component
 		void TPose(float dt);					// T-ポーズ
 		void Idle(float dt);					// 待機
 		void WalkFront(float dt);				// 歩き
-		void WalkBack(float dt);
 		void Dodge(float dt);					// バックステップ
 		void AvoidDashBegin(float dt);			// ダッシュ回避
 		void AvoidDashEnd(float dt);
@@ -392,38 +373,16 @@ namespace cumulonimbus::component
 		void DamageBig(float dt);
 		void KnockDownFrontLoop(float dt);		// ノックダウン
 		void KnockDownFrontStandUp(float dt);
-		//void JumpBegin(float dt);				// ジャンプ
-		//void JumpLoop(float dt);
-		//void JumpLanding(float dt);
-		//void JumpEnd(float dt);
 		void Die(float dt);						// 死亡
 		void AtkNormal01(float dt);		// 通常攻撃(弱)
 		void AtkNormal02(float dt);
 		void AtkNormal03(float dt);
-		void AtkNormal04(float dt);
-		void AtkNormal04Begin(float dt);
-		void AtkNormal04End(float dt);
 		void AttackingNormalLongPress(float dt); // 通常攻撃(弱長押し)
 		void AttackNormalLongPressEnd(float dt);
 		void AtkStrong01(float dt);		 // 通常攻撃(強)
 		void AtkStrong02(float dt);
 		void AtkStrong03(float dt);
 		void AtkStrong04(float dt);
-		void AttackRoundUpBegin(float dt);		 // 切り上げ攻撃
-		void AttackingRoundUp(float dt);
-		void AttackRoundUpFall(float dt);
-		void AttackRoundUpEnd(float dt);
-		//void AttackingJump01(float dt);			 // ジャンプ攻撃(弱)
-		//void AttackingJump02(float dt);
-		//void AttackingJump03(float dt);
-		//void AttackingJump04(float dt);
-		//void AttackJump01End(float dt);
-		//void AttackJump02End(float dt);
-		//void AttackJump03End(float dt);
-		//void AttackJump04End(float dt);
-		//void AttackJumpStrongBegin(float dt);	// ジャンプ攻撃(強)
-		//void AttackingJumpStrong(float dt);
-		//void AttackJumpStrongEnd(float dt);
 		void DashAttack(float dt);				// ダッシュ攻撃
 	};
 } // cumulonimbus::component

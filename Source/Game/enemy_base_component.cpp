@@ -3,6 +3,8 @@
 #include "arithmetic.h"
 #include "ecs.h"
 #include "rename_type_mapping.h"
+#include "locator.h"
+#include "effekseer_loader.h"
 // components
 #include "player_component.h"
 #include "player_sword_component.h"
@@ -10,10 +12,11 @@
 #include "scene.h"
 #include "scene_manager.h"
 #include "transform_component.h"
+#include "effekseer_component.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::EnemyBaseComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::Actor3DComponent, cumulonimbus::component::EnemyBaseComponent)
-CEREAL_CLASS_VERSION(cumulonimbus::component::EnemyBaseComponent, 0)
+CEREAL_CLASS_VERSION(cumulonimbus::component::EnemyBaseComponent, 1)
 
 namespace cumulonimbus::component
 {
@@ -25,6 +28,14 @@ namespace cumulonimbus::component
 			CEREAL_NVP(transition_timer),
 			CEREAL_NVP(random_rotation_angle)
 		);
+
+		if(version == 1)
+		{
+			archive(
+				CEREAL_NVP(max_hp),
+				CEREAL_NVP(hp)
+			);
+		}
 	}
 
 	template <class Archive>
@@ -33,7 +44,9 @@ namespace cumulonimbus::component
 		archive(
 			cereal::base_class<Actor3DComponent>(this),
 			CEREAL_NVP(transition_timer),
-			CEREAL_NVP(random_rotation_angle)
+			CEREAL_NVP(random_rotation_angle),
+			CEREAL_NVP(max_hp),
+			CEREAL_NVP(hp)
 		);
 	}
 
@@ -64,6 +77,23 @@ namespace cumulonimbus::component
 	void EnemyBaseComponent::Load(ecs::Registry* registry)
 	{
 		SetRegistry(registry);
+	}
+
+	void EnemyBaseComponent::SpawnHitEffect(
+		const mapping::rename_type::UUID& effect_id,
+		const DirectX::SimpleMath::Vector3& pos,
+		const DirectX::SimpleMath::Vector3& scale) const
+	{
+		const auto spawn_ent = GetRegistry()->CreateEntity();
+		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(spawn_ent);
+		auto& effekseer_comp = GetRegistry()->AddComponent<EffekseerComponent>(spawn_ent);
+
+		transform_comp.SetPosition(pos);
+		transform_comp.SetScale(scale);
+		effekseer_comp.ChangeEffect(effect_id);
+		effekseer_comp.SetIsDeleteAtEndOfSpawnTime(true);
+		effekseer_comp.SetIsDeleteEntity(true);
+		effekseer_comp.Play();
 	}
 
 	void EnemyBaseComponent::RegisterTransitionTimer(

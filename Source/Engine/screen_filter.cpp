@@ -48,7 +48,7 @@ namespace cumulonimbus::post_effect
 		ImGui::Checkbox("Is Active", &is_active);
 		ImGui::Checkbox("Is Gray Scale", &is_gray_scale);
 		ImGui::ColorEdit3("Color", &cbuff_data.sfilter_filter_color.x);
-		ImGui::DragFloat("Threshold", &cbuff_data.sfilter_dissolve_threshold, 0.01f, 0.0f, 1.0f);
+		ImGui::DragFloat("Dissolve Threshold", &cbuff_data.sfilter_dissolve_threshold, 0.01f, 0.0f, 1.0f);
 
 		auto& asset_manager = *locator::Locator::GetAssetManager();
 		auto& texture_loader = *asset_manager.GetLoader<asset::TextureLoader>();

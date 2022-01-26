@@ -10,6 +10,7 @@
 //   float3 sfilter_filter_color;       // Offset:    0 Size:    12
 //   int sfilter_is_grey_scale;         // Offset:   12 Size:     4
 //   float sfilter_dissolve_threshold;  // Offset:   16 Size:     4
+//   float2 sfilter_padding;            // Offset:   20 Size:     8 [unused]
 //
 // }
 //

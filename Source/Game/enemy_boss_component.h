@@ -72,6 +72,19 @@ namespace cumulonimbus::component
 		};
 
 		/**
+		 * @brief : HPに応じての行動パターン
+		 */
+		enum class AttackPattern
+		{
+			Pattern_1 = 0,
+			Pattern_2,
+			Pattern_3,
+			Pattern_4,
+
+			End
+		};
+
+		/**
 		 * @brief : 移動の行動(ビヘイビア)表
 		 */
 		enum class MovementBehavior
@@ -100,26 +113,51 @@ namespace cumulonimbus::component
 		enum class AttackBehavior
 		{
 			// 近距離攻撃
-			Begin_Atk_Melee,
+			// HP 75 ～ 100(%)での行動
+			Begin_Atk_Melee_1,
 			Atk_N1,
 			Atk_N2,
-			Atk_N3,
 			Atk_N4,
+			End_Atk_Melee_1,
+
+			// HP 50 ～ 74(%)での行動
+			Begin_Atk_Melee_2,
 			Atk_N1_N2,
 			Atk_N1_N3,
 			Atk_N1_N4,
 			Atk_N2_N1,
 			Atk_N2_N3,
 			Atk_N2_N4,
-			End_Atk_Melee,
+			End_Atk_Melee_2,
+
+			// HP 25 ～ 49(%)での行動
+			Begin_Atk_Melee_3,
+			End_Atk_Melee_3,
+
+			// HP 1 ~ 24(%)での行動
+			Begin_Atk_Melee_4,
+			End_Atk_Melee_4,
 
 			// 遠距離攻撃
-			Begin_Atk_Long,
-			Atk_E1,
+			// HP 75 ～ 100(%)での行動
+			Begin_Atk_Long_1,
+			Atk_N3,
 			Atk_E2,
-			Atk_E1_E2,
-			Atk_E2_E1,
-			End_Atk_Long,
+			End_Atk_Long_1,
+
+			// HP 50 ～ 74(%)での行動
+			Begin_Atk_Long_2,
+			Atk_N3_E2,
+			Atk_E2_N3,
+			End_Atk_Long_2,
+
+			// HP 25 ～ 49(%)での行動
+			Begin_Atk_Long_3,
+			End_Atk_Long_3,
+
+			// HP 1 ~ 24(%)での行動
+			Begin_Atk_Long_4,
+			End_Atk_Long_4,
 
 			End
 		};
@@ -226,6 +264,16 @@ namespace cumulonimbus::component
 		// ビヘイビア(Move,Attack)の履歴
 		std::vector<BossBehavior> behavior_history{};
 
+		//-- ヒットエフェクト系 --//
+		// 現在のヒットエフェクトID
+		mapping::rename_type::UUID current_hit_effect_id{};
+		// ヒットエフェクト(S) ID
+		mapping::rename_type::UUID hit_effect_s{};
+		// ヒットエフェクト(M) ID
+		mapping::rename_type::UUID hit_effect_m{};
+		// ヒットエフェクト(L) ID
+		mapping::rename_type::UUID hit_effect_l{};
+
 		//-- 初期化 --//
 		void Initialize(ecs::Registry* registry, mapping::rename_type::Entity ent) override;
 		/**
@@ -271,6 +319,12 @@ namespace cumulonimbus::component
 		 */
 		[[nodiscard]]
 		BossBehavior GetNextBehaviorType() const;
+
+		/**
+		 * @brief : HPに応じての行動パターンを取得
+		 */
+		[[nodiscard]]
+		AttackPattern GetAttackPattern() const;
 
 		void OnEnterAttackRange(ColliderMessageSenderComponent & sender);
 		void OnExitAttackRange(ColliderMessageSenderComponent& sender);

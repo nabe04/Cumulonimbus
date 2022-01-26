@@ -52,9 +52,9 @@ public:
 	[[nodiscard]]
 	size_t GetNumState() const { return states.size(); }
 	[[nodiscard]]
-	Key GetState()		{ return current_state; }
+	Key GetState() const { return current_state; }
 	[[nodiscard]]
-	Key GetOldState()	{ return old_state; }
+	Key GetOldState() const { return old_state; }
 
 	/**
 	 * @brief : State‚ªØ‚è‘Ö‚í‚Á‚½‚Ì‰‚ß‚ÌƒtƒŒ[ƒ€‚Ì‚İ“ü‚éˆ—

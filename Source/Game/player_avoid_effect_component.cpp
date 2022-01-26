@@ -6,12 +6,27 @@
 #include "time_scale.h"
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::PlayerAvoidEffectComponent)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::PlayerAvoidEffectComponent, cumulonimbus::component::ComponentBase)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::PlayerAvoidEffectComponent)
 CEREAL_CLASS_VERSION(cumulonimbus::component::PlayerAvoidEffectComponent, 0)
-
 
 namespace cumulonimbus::component
 {
+	template <class Archive>
+	void PlayerAvoidEffectComponent::load(Archive&& archive, uint32_t version)
+	{
+		archive(
+			cereal::base_class<ComponentBase>(this)
+		);
+	}
+
+	template <class Archive>
+	void PlayerAvoidEffectComponent::save(Archive&& archive, uint32_t version) const
+	{
+		archive(
+			cereal::base_class<ComponentBase>(this)
+		);
+	}
+
 	PlayerAvoidEffectComponent::PlayerAvoidEffectComponent(ecs::Registry* registry, const mapping::rename_type::Entity ent)
 		:ComponentBase{ registry,ent }
 	{
@@ -24,18 +39,6 @@ namespace cumulonimbus::component
 		*this = copy_comp;
 		SetRegistry(registry);
 		SetEntity(ent);
-	}
-
-	PlayerAvoidEffectComponent::PlayerAvoidEffectComponent(mapping::component_tag::ComponentTag tag)
-		:ComponentBase{ tag }
-	{
-		//PlayerAvoidEffectComponent& avoid_comp = GetRegistry()->GetComponent<PlayerAvoidEffectComponent>(GetEntity());
-		//// StateÇÃí«â¡
-		//effect_state.AddState(PlaybackMethod::Expansion, [&avoid_comp](const float dt) { avoid_comp.GetPlaybackFunc<&PlayerAvoidEffectComponent::Expansion>(); });
-		//effect_state.AddState(PlaybackMethod::Contraction, [&avoid_comp](const float dt) { avoid_comp.GetPlaybackFunc<&PlayerAvoidEffectComponent::Contraction>(); });
-		//effect_state.AddState(PlaybackMethod::Stop, [&avoid_comp](const float dt) { avoid_comp.GetPlaybackFunc<&PlayerAvoidEffectComponent::Stop>(); });
-
-		//effect_state.SetState(PlaybackMethod::Stop);
 	}
 
 	void PlayerAvoidEffectComponent::Start()
@@ -55,7 +58,7 @@ namespace cumulonimbus::component
 
 	}
 
-	void PlayerAvoidEffectComponent::GameUpdate(float dt)
+	void PlayerAvoidEffectComponent::GameUpdate(const float dt)
 	{
 		effect_state.Update(dt);
 	}
@@ -81,22 +84,6 @@ namespace cumulonimbus::component
 	void PlayerAvoidEffectComponent::Load(ecs::Registry* registry)
 	{
 		SetRegistry(registry);
-	}
-
-	template <class Archive>
-	void PlayerAvoidEffectComponent::load(Archive&& archive, uint32_t version)
-	{
-		archive(
-			cereal::base_class<ComponentBase>(this)
-		);
-	}
-
-	template <class Archive>
-	void PlayerAvoidEffectComponent::save(Archive&& archive, uint32_t version) const
-	{
-		archive(
-			cereal::base_class<ComponentBase>(this)
-		);
 	}
 
 	template <auto F>
@@ -126,6 +113,15 @@ namespace cumulonimbus::component
 													  distort_start_max_radius - distort_start_radius,
 													  easing_end_time, CIRC, ESOUT);
 
+		// îºåa(ì‡ë§)
+		distort_current_inner_circle = Easing::GetEasingVal(elapsed_time, distort_start_inner_circle,
+															distort_max_inner_circle - distort_start_inner_circle,
+															easing_end_time, CIRC, ESOUT);
+
+		// îºåa(ì‡ë§)
+		distort_current_outer_circle = Easing::GetEasingVal(elapsed_time, distort_start_outer_circle,
+															distort_max_outer_circle - distort_start_outer_circle,
+															easing_end_time, CIRC, ESOUT);
 		// É^ÉCÉÄÉXÉPÅ[Éã
 		const float time_scale = Easing::GetEasingVal(elapsed_time, 0.0f,
 													  distort_max_time_scale,
@@ -158,7 +154,9 @@ namespace cumulonimbus::component
 		post_effect_manager.GetDistort().SetIsActive(true);
 		post_effect_manager.GetScreenFilter().SetIsActive(true);
 		post_effect_manager.GetScreenFilter().SetIsGrayScale(true);
-		distort_cbuff_data.distort_radius					= distort_current_radius;
+		//distort_cbuff_data.distort_radius					= distort_current_radius;
+		distort_cbuff_data.distort_inner_circle				= distort_current_inner_circle;
+		distort_cbuff_data.distort_outer_circle				= distort_current_outer_circle;
 		distort_cbuff_data.distort_time_scale				= time_scale;
 		distort_cbuff_data.distort_noise_scale				= distort_max_noise_scale;
 		distort_cbuff_data.distort_noise_attenuation		= distort_max_noise_attenuation;
@@ -202,6 +200,10 @@ namespace cumulonimbus::component
 			elapsed_time = 0;
 			// îºåa
 			distort_start_radius = distort_current_radius;
+			// îºåa(ì‡ë§)
+			distort_start_inner_circle = distort_current_inner_circle;
+			// îºåa(äOë§)
+			distort_start_outer_circle = distort_current_outer_circle;
 		}
 
 		const auto& time = locator::Locator::GetSystem()->GetTime();
@@ -212,6 +214,16 @@ namespace cumulonimbus::component
 		distort_current_radius = Easing::GetEasingVal(elapsed_time, distort_start_radius,
 													  distort_avoid_end_radius - distort_start_radius,
 													  easing_end_time, CIRC, ESOUT);
+
+		// îºåa(ì‡ë§)
+		distort_current_inner_circle = Easing::GetEasingVal(elapsed_time, distort_start_inner_circle,
+															distort_avoid_end_radius - distort_start_inner_circle,
+															easing_end_time, CIRC, ESOUT);
+
+		// îºåa(äOë§)
+		distort_current_outer_circle = Easing::GetEasingVal(elapsed_time, distort_start_outer_circle,
+															distort_avoid_end_radius - distort_start_outer_circle,
+															easing_end_time, CIRC, ESOUT);
 
 		// É^ÉCÉÄÉXÉPÅ[Éã
 		const float time_scale = Easing::GetEasingVal(elapsed_time, distort_max_time_scale,
@@ -238,7 +250,9 @@ namespace cumulonimbus::component
 		post_effect_manager.GetDistort().SetIsActive(true);
 		post_effect_manager.GetScreenFilter().SetIsActive(false);
 		post_effect_manager.GetScreenFilter().SetIsGrayScale(false);
-		distort_cbuff_data.distort_radius			 = distort_current_radius;
+		//distort_cbuff_data.distort_radius			 = distort_current_radius;
+		distort_cbuff_data.distort_inner_circle		 = distort_current_inner_circle;
+		distort_cbuff_data.distort_outer_circle		 = distort_current_outer_circle;
 		distort_cbuff_data.distort_time_scale		 = time_scale;
 		distort_cbuff_data.distort_noise_scale		 = noise_scale;
 		distort_cbuff_data.distort_noise_attenuation = noise_attenuation;

@@ -9,7 +9,7 @@
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::EffekseerComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::EffekseerComponent)
-CEREAL_CLASS_VERSION(cumulonimbus::component::EffekseerComponent, 1)
+CEREAL_CLASS_VERSION(cumulonimbus::component::EffekseerComponent, 2)
 
 namespace cumulonimbus::component
 {
@@ -26,6 +26,15 @@ namespace cumulonimbus::component
 				CEREAL_NVP(effect_id)
 			);
 		}
+
+		if(version == 2)
+		{
+			archive(
+				CEREAL_NVP(effect_id),
+				CEREAL_NVP(is_delete_at_end_of_spawn_time),
+				CEREAL_NVP(is_delete_all_entity)
+			);
+		}
 	}
 
 	template <class Archive>
@@ -35,10 +44,12 @@ namespace cumulonimbus::component
 			cereal::base_class<ComponentBase>(this)
 		);
 
-		if (version == 1)
+		if (version >= 1)
 		{
 			archive(
-				CEREAL_NVP(effect_id)
+				CEREAL_NVP(effect_id),
+				CEREAL_NVP(is_delete_at_end_of_spawn_time),
+				CEREAL_NVP(is_delete_all_entity)
 			);
 		}
 	}
@@ -46,12 +57,7 @@ namespace cumulonimbus::component
 	EffekseerComponent::EffekseerComponent(ecs::Registry* registry, const mapping::rename_type::Entity ent)
 		:ComponentBase{ registry,ent }
 	{
-		auto* effekseer_manager = GetRegistry()->GetScene()->GetSceneManager()->GetEffekseerManager();
 
-		char16_t utf16_filename[256];
-		Effekseer::ConvertUtf8ToUtf16(utf16_filename, 256, "./Data/Assets/Effekseer/Homing_Laser01/Homing_Laser01.efk");
-
-		//effect_ = Effekseer::Effect::Create(const_cast<Effekseer::Manager*>(effekseer_manager->GetManager()), static_cast<EFK_CHAR*>(utf16_filename));
 	}
 
 	EffekseerComponent::EffekseerComponent(
@@ -77,6 +83,11 @@ namespace cumulonimbus::component
 		//ES_SAFE_RELEASE(effect_);
 	}
 
+	void EffekseerComponent::Start()
+	{
+		//is_spawn = false;
+	}
+
 	void EffekseerComponent::CommonUpdate(float dt)
 	{
 		auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
@@ -93,9 +104,27 @@ namespace cumulonimbus::component
 		SetScale(transform_comp.GetScale());
 	}
 
-	void EffekseerComponent::GameUpdate(float dt)
+	void EffekseerComponent::GameUpdate(const float dt)
 	{
+		// 再生削除時の削除フラグがfalseの場合処理を抜ける
+		if (!is_delete_at_end_of_spawn_time)
+			return;
 
+		// エフェクトが存在しない場合処理を抜ける
+		if (!is_spawn)
+			return;
+
+		if(!IsPlaying())
+		{
+			if(is_delete_all_entity)
+			{
+				GetRegistry()->AddDestroyEntity(GetEntity());
+			}
+			else
+			{
+				GetRegistry()->RemoveComponent<EffekseerComponent>(GetEntity());
+			}
+		}
 	}
 
 	void EffekseerComponent::End()
@@ -126,6 +155,8 @@ namespace cumulonimbus::component
 			{
 				Play();
 			}
+			ImGui::Checkbox("Is Delete at End of Spawn Time", &is_delete_at_end_of_spawn_time);
+			ImGui::Checkbox("Is Delete Entity", &is_delete_all_entity);
 		}
 	}
 
@@ -139,17 +170,12 @@ namespace cumulonimbus::component
 	{
 		auto* effekseer_manager = GetRegistry()->GetScene()->GetSceneManager()->GetEffekseerManager();
 		const Effekseer::Manager* manager = effekseer_manager->GetManager();
-		//if(!effect_)
-		//{
-		//	char16_t utf16_filename[256];
-		//	Effekseer::ConvertUtf8ToUtf16(utf16_filename, 256, "./Data/Assets/Effekseer/magic_circle/magic_circle3.efk");
-		//	effect_ = Effekseer::Effect::Create(const_cast<Effekseer::Manager*>(manager), static_cast<EFK_CHAR*>(utf16_filename));
-		//}
 
 		if (!effect)
 			return;
 
-		handle = const_cast<Effekseer::Manager*>(manager)->Play(effect->GetEffect(), { 0, 0.01f, 0 });
+		is_spawn = true;
+		handle   = const_cast<Effekseer::Manager*>(manager)->Play(effect->GetEffect(), { 0, 0.01f, 0 });
 	}
 
 	void EffekseerComponent::ChangeEffect(const mapping::rename_type::UUID& efk_id)

@@ -13,6 +13,8 @@ namespace cumulonimbus::component
 		explicit EffekseerComponent()  = default; // for cereal
 		~EffekseerComponent() override;
 
+		void Start() override;
+
 		void CommonUpdate(float dt) override;
 		void GameUpdate(float dt) override;
 
@@ -34,13 +36,36 @@ namespace cumulonimbus::component
 		void SetPos(const DirectX::SimpleMath::Vector3& pos) const;
 		void SetScale(const DirectX::SimpleMath::Vector3& scale) const;
 
+		/**
+		 * @brief : 生成時間が終わり次第にオブジェクトを削除するか
+		 * @remark : true -> 再生時間が終わり次第削除
+		 */
+		void SetIsDeleteAtEndOfSpawnTime(const bool arg)
+		{
+			is_delete_at_end_of_spawn_time = arg;
+		}
+
+		/**
+		 * @brief : オブジェクト削除時にエンティティも同時に削除するか
+		 * @remark : true -> エンティティも同時に削除する
+		 */
+		void SetIsDeleteEntity(const bool arg)
+		{
+			is_delete_all_entity = arg;
+		}
+
 		[[nodiscard]]
 		bool IsPlaying() const;
 	private:
 		mapping::rename_type::UUID effect_id{};
 		asset::Effect* effect{};
 
-		//Effekseer::Effect* effect_{ nullptr };
 		Effekseer::Handle handle{ -1 };
+		// エフェクトが1回以上生成されたか
+		bool is_spawn{ false };
+		// 生成時間が終わり次第にオブジェクトを削除するか
+		bool is_delete_at_end_of_spawn_time{ false };
+		// オブジェクト削除時にエンティティも同時に削除するか
+		bool is_delete_all_entity{ false };
 	};
 } // cumulonimbus::component

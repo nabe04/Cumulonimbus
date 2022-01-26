@@ -24,8 +24,12 @@ namespace cumulonimbus::component
 
 	struct DamageData
 	{
-		u_int			damage_amount{};
-		KnockBackLevel	knock_back_level{ KnockBackLevel::None };
+		// ダメージ量
+		u_int						damage_amount{};
+		// ノックバック状態
+		KnockBackLevel				knock_back_level{ KnockBackLevel::None };
+		// ダメージ時のエフェクトアセットID
+		mapping::rename_type::UUID	damage_effect_id{};
 	};
 
 	class DamageableComponent final : public ComponentBase

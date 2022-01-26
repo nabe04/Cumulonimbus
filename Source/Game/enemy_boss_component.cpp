@@ -3,6 +3,7 @@
 #include "arithmetic.h"
 #include "locator.h"
 #include "prefab_loader.h"
+#include "effekseer_loader.h"
 // components
 #include "capsule_collison_component.h"
 #include "collider_message_receiver_component.h"
@@ -16,7 +17,7 @@
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::EnemyBossComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::EnemyBaseComponent, cumulonimbus::component::EnemyBossComponent)
-CEREAL_CLASS_VERSION(cumulonimbus::component::EnemyBossComponent, 1)
+CEREAL_CLASS_VERSION(cumulonimbus::component::EnemyBossComponent, 2)
 
 namespace keyframe_event
 {
@@ -47,6 +48,20 @@ namespace cumulonimbus::component
 				CEREAL_NVP(spawn_shot_node_name)
 			);
 		}
+
+		if(version == 2)
+		{
+			archive(
+				CEREAL_NVP(walk_speed),
+				CEREAL_NVP(dash_speed),
+				CEREAL_NVP(atk_melee_distance),
+				CEREAL_NVP(shot_prefab_id),
+				CEREAL_NVP(spawn_shot_node_name),
+				CEREAL_NVP(hit_effect_s),
+				CEREAL_NVP(hit_effect_m),
+				CEREAL_NVP(hit_effect_l)
+			);
+		}
 	}
 
 	template <class Archive>
@@ -63,7 +78,10 @@ namespace cumulonimbus::component
 				CEREAL_NVP(dash_speed),
 				CEREAL_NVP(atk_melee_distance),
 				CEREAL_NVP(shot_prefab_id),
-				CEREAL_NVP(spawn_shot_node_name)
+				CEREAL_NVP(spawn_shot_node_name),
+				CEREAL_NVP(hit_effect_s),
+				CEREAL_NVP(hit_effect_m),
+				CEREAL_NVP(hit_effect_l)
 			);
 		}
 	}
@@ -155,8 +173,6 @@ namespace cumulonimbus::component
 		attack_behavior.AddSequence(AttackBehavior::Atk_N1, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal01>());
 		// 通常攻撃 2
 		attack_behavior.AddSequence(AttackBehavior::Atk_N2, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal02>());
-		// 通常攻撃 3
-		attack_behavior.AddSequence(AttackBehavior::Atk_N3, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal03>());
 		// 通常攻撃 4
 		attack_behavior.AddSequence(AttackBehavior::Atk_N4, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal04>());
 		// 通常攻撃(1 + 2)
@@ -177,16 +193,16 @@ namespace cumulonimbus::component
 		// 通常攻撃(2 + 4)
 		attack_behavior.AddSequence(AttackBehavior::Atk_N2_N4, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal02>());
 		attack_behavior.AddSequence(AttackBehavior::Atk_N2_N4, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal04>());
-		// 遠距離攻撃 1
-		attack_behavior.AddSequence(AttackBehavior::Atk_E1, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackEnergy01>());
 		// 遠距離攻撃 2
 		attack_behavior.AddSequence(AttackBehavior::Atk_E2, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackEnergy02>());
+		// 通常攻撃 3(遠距離)
+		attack_behavior.AddSequence(AttackBehavior::Atk_N3, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal03>());
 		// 遠距離攻撃(1 + 2)
-		attack_behavior.AddSequence(AttackBehavior::Atk_E1_E2, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackEnergy01>());
-		attack_behavior.AddSequence(AttackBehavior::Atk_E1_E2, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackEnergy02>());
+		attack_behavior.AddSequence(AttackBehavior::Atk_N3_E2, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal03>());
+		attack_behavior.AddSequence(AttackBehavior::Atk_N3_E2, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackEnergy02>());
 		// 遠距離攻撃(2 + 1)
-		attack_behavior.AddSequence(AttackBehavior::Atk_E2_E1, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal02>());
-		attack_behavior.AddSequence(AttackBehavior::Atk_E2_E1, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal01>());
+		attack_behavior.AddSequence(AttackBehavior::Atk_E2_N3, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal02>());
+		attack_behavior.AddSequence(AttackBehavior::Atk_E2_N3, e_boss_comp.GetBehaviorActFunc<&EnemyBossComponent::AttackNormal03>());
 	}
 
 	void EnemyBossComponent::CommonUpdate(const float dt)
@@ -207,6 +223,7 @@ namespace cumulonimbus::component
 		{
 			auto& asset_manager = *locator::Locator::GetAssetManager();
 			auto& prefab_loader = *asset_manager.GetLoader<asset::PrefabLoader>();
+			auto& effect_loader = *asset_manager.GetLoader<asset::EffekseerLoader>();
 
 			ImGui::Text("Shot Prefab");
 			prefab_loader.ImSelectablePrefab(asset_manager, shot_prefab_id);
@@ -218,6 +235,19 @@ namespace cumulonimbus::component
 				model_comp->ImSelectableNode(spawn_shot_node_name);
 			}
 
+			ImGui::Separator();
+
+			ImGui::Text("Hit Effect S");
+			effect_loader.ImSelectableEffect(asset_manager, hit_effect_s);
+			ImGui::Text("Hit Effect M");
+			effect_loader.ImSelectableEffect(asset_manager, hit_effect_m);
+			ImGui::Text("Hit Effect L");
+			effect_loader.ImSelectableEffect(asset_manager, hit_effect_l);
+
+			ImGui::Separator();
+
+			ImGui::DragInt("Max Hp", &max_hp);
+			ImGui::DragInt("Current Hp", &hp, 1, 0, max_hp);
 			ImGui::DragFloat("Damage Knock Down Speed", &knock_back_speed, 0.5f, 0.f, 200.f);
 		}
 
@@ -292,8 +322,8 @@ namespace cumulonimbus::component
 				{
 					DamageData damage_data{};
 					damage_data.damage_amount = 1;
-
 					damageable_comp->OnDamaged(hit_result.entity, damage_data, hit_result);
+					SpawnHitEffect(hit_effect_s, atk_hit_result.position);
 				}
 
 				break;
@@ -423,6 +453,34 @@ namespace cumulonimbus::component
 
 		// 基本このパターンには入らない(年の為に用意)
 		return static_cast<BossBehavior>(arithmetic::RandomIntInRange(0, 1));
+	}
+
+	EnemyBossComponent::AttackPattern EnemyBossComponent::GetAttackPattern() const
+	{
+		const float hp_ratio = static_cast<float>(hp) / static_cast<float>(max_hp);
+		const float pattern_1 = static_cast<float>(AttackPattern::Pattern_4) / static_cast<float>(AttackPattern::End);
+		const float pattern_2 = static_cast<float>(AttackPattern::Pattern_3) / static_cast<float>(AttackPattern::End);
+		const float pattern_3 = static_cast<float>(AttackPattern::Pattern_2) / static_cast<float>(AttackPattern::End);
+		//const float pattern_4 = static_cast<float>(AttackPattern::Pattern_3) / static_cast<float>(AttackPattern::End);
+
+		if (hp_ratio >= pattern_1)
+		{// HP 75 ~ 100の行動
+			return AttackPattern::Pattern_1;
+		}
+		else if (hp_ratio < pattern_1 &&
+				 hp_ratio >= pattern_2)
+		{// HP 50 ~ 74の行動
+			return AttackPattern::Pattern_2;
+		}
+		else if (hp_ratio < pattern_2 &&
+				 hp_ratio >= pattern_3)
+		{
+			return AttackPattern::Pattern_3;
+		}
+		else
+		{
+			return AttackPattern::Pattern_4;
+		}
 	}
 
 	void EnemyBossComponent::OnEnterAttackRange(ColliderMessageSenderComponent& sender)
@@ -589,15 +647,45 @@ namespace cumulonimbus::component
 			{// シーン内にプレイヤーが存在する場合
 
 				// ランダムな攻撃タイプ(近距離)のインデックス番号を取得
-				auto GetRandomAtkMeleeBehavior = []()
+				auto GetRandomAtkMeleeBehavior = [=]()
 				{
-					return static_cast<AttackBehavior>(arithmetic::RandomIntInRange(static_cast<int>(AttackBehavior::Begin_Atk_Melee) + 1, static_cast<int>(AttackBehavior::End_Atk_Melee) - 1));
+					const AttackPattern atk_pattern = GetAttackPattern();
+
+					if(atk_pattern == AttackPattern::Pattern_1)
+					{
+						return static_cast<AttackBehavior>(arithmetic::RandomIntInRange(static_cast<int>(AttackBehavior::Begin_Atk_Melee_1) + 1, static_cast<int>(AttackBehavior::End_Atk_Melee_1) - 1));
+					}
+					if(atk_pattern == AttackPattern::Pattern_2)
+					{
+						return static_cast<AttackBehavior>(arithmetic::RandomIntInRange(static_cast<int>(AttackBehavior::Begin_Atk_Melee_2) + 1, static_cast<int>(AttackBehavior::End_Atk_Melee_2) - 1));
+					}
+					if(atk_pattern == AttackPattern::Pattern_3)
+					{
+						return static_cast<AttackBehavior>(arithmetic::RandomIntInRange(static_cast<int>(AttackBehavior::Begin_Atk_Melee_3) + 1, static_cast<int>(AttackBehavior::End_Atk_Melee_3) - 1));
+					}
+
+					return static_cast<AttackBehavior>(arithmetic::RandomIntInRange(static_cast<int>(AttackBehavior::Begin_Atk_Melee_4) + 1, static_cast<int>(AttackBehavior::End_Atk_Melee_4) - 1));
 				};
 
 				// ランダムな攻撃タイプ(遠距離)のインデックス番号を取得
-				auto GetRandomAtkLongBehavior = []()
+				auto GetRandomAtkLongBehavior = [=]()
 				{
-					return static_cast<AttackBehavior>(arithmetic::RandomIntInRange(static_cast<int>(AttackBehavior::Begin_Atk_Long) + 1, static_cast<int>(AttackBehavior::End_Atk_Long) - 1));
+					const AttackPattern atk_pattern = GetAttackPattern();
+
+					if (atk_pattern == AttackPattern::Pattern_1)
+					{
+						return static_cast<AttackBehavior>(arithmetic::RandomIntInRange(static_cast<int>(AttackBehavior::Begin_Atk_Long_1) + 1, static_cast<int>(AttackBehavior::End_Atk_Long_1) - 1));
+					}
+					if (atk_pattern == AttackPattern::Pattern_2)
+					{
+						return static_cast<AttackBehavior>(arithmetic::RandomIntInRange(static_cast<int>(AttackBehavior::Begin_Atk_Long_2) + 1, static_cast<int>(AttackBehavior::End_Atk_Long_2) - 1));
+					}
+					if (atk_pattern == AttackPattern::Pattern_3)
+					{
+						return static_cast<AttackBehavior>(arithmetic::RandomIntInRange(static_cast<int>(AttackBehavior::Begin_Atk_Long_3) + 1, static_cast<int>(AttackBehavior::End_Atk_Long_3) - 1));
+					}
+
+					return static_cast<AttackBehavior>(arithmetic::RandomIntInRange(static_cast<int>(AttackBehavior::Begin_Atk_Long_4) + 1, static_cast<int>(AttackBehavior::End_Atk_Long_4) - 1));
 				};
 
 				if(next_attack_type == AttackType::Atk_Melee)
@@ -607,7 +695,7 @@ namespace cumulonimbus::component
 					//attack_behavior.SetBehavior(static_cast<AttackBehavior>(atk_index));
 					//attack_behavior.SetBehavior(AttackBehavior::Atk_N1);
 					attack_behavior.SetBehavior(GetRandomAtkMeleeBehavior());
-					attack_behavior.SetBehavior(AttackBehavior::Atk_N1);
+					//attack_behavior.SetBehavior(AttackBehavior::Atk_N1);
 				}
 				if (next_attack_type == AttackType::Atk_Long_Range)
 				{// 遠距離攻撃
@@ -621,7 +709,7 @@ namespace cumulonimbus::component
 					//	attack_behavior.SetBehavior(AttackBehavior::Atk_E2);
 					//}
 					attack_behavior.SetBehavior(GetRandomAtkLongBehavior());
-					attack_behavior.SetBehavior(AttackBehavior::Atk_E2);
+					//attack_behavior.SetBehavior(AttackBehavior::Atk_E2);
 				}
 			}
 			else

@@ -48,7 +48,9 @@ namespace cumulonimbus::post_effect
 
 		helper::imgui::Image(frame_buffer->render_target_shader_resource_view.Get(), DirectX::SimpleMath::Vector2{ 480,270.f });
 		ImGui::Checkbox("Is Active", &is_active);
-		ImGui::SliderFloat("Radius"				, &cbuff_data.distort_radius			, 0.0f, 1.0f);
+		//ImGui::SliderFloat("Radius"				, &cbuff_data.distort_radius			, 0.0f, 1.0f);
+		ImGui::SliderFloat("Inner Circle"		, &cbuff_data.distort_inner_circle		, 0.0f, 1.0f);
+		ImGui::SliderFloat("Outer Circle"		, &cbuff_data.distort_outer_circle		, 0.0f, 1.0f);
 		ImGui::SliderFloat("Time Scale"			, &cbuff_data.distort_time_scale		, 0.0f, 100.0f);
 		ImGui::SliderFloat("Noise Scale"		, &cbuff_data.distort_noise_scale		, 0.0f, 100.0f);
 		ImGui::SliderFloat("Noise Attenuation"	, &cbuff_data.distort_noise_attenuation	, 0.0f, 10.0f);

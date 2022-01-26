@@ -9,6 +9,7 @@
 #include "ecs.h"
 #include "locator.h"
 #include "model_loader.h"
+#include "effekseer_loader.h"
 // components(engine)
 #include "hierarchy_component.h"
 #include "camera_component.h"
@@ -28,12 +29,13 @@
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::PlayerComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::Actor3DComponent, cumulonimbus::component::PlayerComponent)
-CEREAL_CLASS_VERSION(cumulonimbus::component::PlayerComponent, 0);
+CEREAL_CLASS_VERSION(cumulonimbus::component::PlayerComponent, 1);
 
 namespace keyframe_event
 {
-	const std::string event_collision{ "Event_1" };
-	const std::string event_move{ "Event_2" };
+	const std::string event_collision{ "Event_Collision" };
+	const std::string event_move{ "Event_Move" };
+	const std::string event_animation{ "Event_Animation" };
 } // keyframe_event
 
 // プレイヤーアニメーションのキーフレーム調整値
@@ -83,7 +85,10 @@ namespace cumulonimbus::component
 				CEREAL_NVP(threshold),
 				CEREAL_NVP(long_press_time),
 				CEREAL_NVP(long_press_slot),
-				CEREAL_NVP(attack_04_jump_strength)
+				CEREAL_NVP(attack_04_jump_strength),
+				CEREAL_NVP(hit_effect_s),
+				CEREAL_NVP(hit_effect_m),
+				CEREAL_NVP(hit_effect_l)
 			);
 		}
 	}
@@ -91,7 +96,7 @@ namespace cumulonimbus::component
 	template <class Archive>
 	void PlayerComponent::save(Archive&& archive, const uint32_t version) const
 	{
-		if(version == 0)
+		if(version >= 0)
 		{
 			archive(
 				cereal::base_class<Actor3DComponent>(this),
@@ -107,7 +112,10 @@ namespace cumulonimbus::component
 				CEREAL_NVP(threshold),
 				CEREAL_NVP(long_press_time),
 				CEREAL_NVP(long_press_slot),
-				CEREAL_NVP(attack_04_jump_strength)
+				CEREAL_NVP(attack_04_jump_strength),
+				CEREAL_NVP(hit_effect_s),
+				CEREAL_NVP(hit_effect_m),
+				CEREAL_NVP(hit_effect_l)
 			);
 		}
 	}
@@ -137,12 +145,9 @@ namespace cumulonimbus::component
 		InitializeKeyframeEvent();
 
 		// 先行入力によるアニメーションの中断フレームの設定
-		SetAnimationBreakFrame(AnimationData::Attack_Normal_01, 16);
-		SetAnimationBreakFrame(AnimationData::Attack_Normal_02, 20);
-		SetAnimationBreakFrame(AnimationData::Attack_Normal_03, 37);
-		SetAnimationBreakFrame(AnimationData::Attacking_Jump_01, 15);
-		SetAnimationBreakFrame(AnimationData::Attacking_Jump_02, 14);
-		SetAnimationBreakFrame(AnimationData::Attacking_Jump_03, 16);
+		SetAnimationBreakFrame(AnimationData::Atk_N1, 16);
+		SetAnimationBreakFrame(AnimationData::Atk_N2, 20);
+		SetAnimationBreakFrame(AnimationData::Atk_N3, 37);
 
 		registry->GetOrEmplaceComponent<DamageableComponent>(ent).RegistryDamageEvent(ent, [ent, registry](const DamageData& damage_data, const collision::HitResult& hit_result) {registry->GetComponent<PlayerComponent>(ent).OnHit(damage_data, hit_result); });
 
@@ -177,47 +182,24 @@ namespace cumulonimbus::component
 		player_state.AddState(PlayerState::T_Pose						, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).TPose(dt); });
 		player_state.AddState(PlayerState::Idle							, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).Idle(dt); });
 		player_state.AddState(PlayerState::Walk_Front					, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).WalkFront(dt); });
-		player_state.AddState(PlayerState::Walk_Back					, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).WalkBack(dt); });
 		player_state.AddState(PlayerState::Dash							, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).Dash(dt); });
 		player_state.AddState(PlayerState::Dodge						, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).Dodge(dt); });
 		player_state.AddState(PlayerState::Avoid_Dash_Begin				, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AvoidDashBegin(dt); });
 		player_state.AddState(PlayerState::Avoid_Dash_End				, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AvoidDashEnd(dt); });
 		player_state.AddState(PlayerState::Damage_Small					, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).DamageSmall(dt); });
 		player_state.AddState(PlayerState::Damage_Big					, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).DamageBig(dt); });
-		//player_state.AddState(PlayerState::Jump_Begin					, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).JumpBegin(dt); });
-		//player_state.AddState(PlayerState::Jump_Loop					, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).JumpLoop(dt); });
-		//player_state.AddState(PlayerState::Jump_Landing					, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).JumpLanding(dt); });
-		//player_state.AddState(PlayerState::Jump_End						, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).JumpEnd(dt); });
 		player_state.AddState(PlayerState::Knock_Down_Front_Loop		, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).KnockDownFrontLoop(dt); });
 		player_state.AddState(PlayerState::Knock_Down_Front_Stand_Up	, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).KnockDownFrontStandUp(dt); });
 		player_state.AddState(PlayerState::Die							, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).Die(dt); });
 		player_state.AddState(PlayerState::Attack_Normal_01				, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AtkNormal01(dt); });
 		player_state.AddState(PlayerState::Attack_Normal_02				, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AtkNormal02(dt); });
 		player_state.AddState(PlayerState::Attack_Normal_03				, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AtkNormal03(dt); });
-		player_state.AddState(PlayerState::Attacking_Normal_04			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AtkNormal04(dt); });
-		player_state.AddState(PlayerState::Attack_Normal_04_Begin		, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AtkNormal04Begin(dt); });
-		player_state.AddState(PlayerState::Attack_Normal_04_End			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AtkNormal04End(dt); });
 		player_state.AddState(PlayerState::Attacking_Normal_Long_Press	, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingNormalLongPress(dt); });
 		player_state.AddState(PlayerState::Attack_Normal_Long_Press_End	, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackNormalLongPressEnd(dt); });
 		player_state.AddState(PlayerState::Attack_Strong_01				, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AtkStrong01(dt); });
 		player_state.AddState(PlayerState::Attack_Strong_02				, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AtkStrong02(dt); });
 		player_state.AddState(PlayerState::Attack_Strong_03				, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AtkStrong03(dt); });
 		player_state.AddState(PlayerState::Attack_Strong_04				, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AtkStrong04(dt); });
-		player_state.AddState(PlayerState::Attack_Round_Up_Begin		, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackRoundUpBegin(dt); });
-		player_state.AddState(PlayerState::Attacking_Round_Up			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingRoundUp(dt); });
-		player_state.AddState(PlayerState::Attack_Round_Up_Fall			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackRoundUpFall(dt); });
-		//player_state.AddState(PlayerState::Attack_Round_Up_Fall			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackRoundUpEnd(dt); });
-		//player_state.AddState(PlayerState::Attacking_Jump_01			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingJump01(dt); });
-		//player_state.AddState(PlayerState::Attacking_Jump_02			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingJump02(dt); });
-		//player_state.AddState(PlayerState::Attacking_Jump_03			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingJump03(dt); });
-		//player_state.AddState(PlayerState::Attacking_Jump_04			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingJump04(dt); });
-		//player_state.AddState(PlayerState::Attack_Jump_01_End			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJump01End(dt); });
-		//player_state.AddState(PlayerState::Attack_Jump_02_End			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJump02End(dt); });
-		//player_state.AddState(PlayerState::Attack_Jump_03_End			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJump03End(dt); });
-		//player_state.AddState(PlayerState::Attack_Jump_04_End			, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJump04End(dt); });
-		//player_state.AddState(PlayerState::Attack_Jumping_Strong_Begin	, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJumpStrongBegin(dt); });
-		//player_state.AddState(PlayerState::Attacking_Jump_Strong		, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackingJumpStrong(dt); });
-		//player_state.AddState(PlayerState::Attack_Jump_Strong_End		, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).AttackJumpStrongEnd(dt); });
 		player_state.AddState(PlayerState::Dash_Attack					, [ent, registry](const float dt) {registry->GetComponent<PlayerComponent>(ent).DashAttack(dt); });
 		// 初期stateの設定(PlayerState::Idle)
 		player_state.SetState(PlayerState::Idle);
@@ -227,33 +209,37 @@ namespace cumulonimbus::component
 	{
 		//-- キーフレームイベント登録 --//
 		// 弱攻撃(当たり判定)
-		RegistryKeyframeEvent(AnimationData::Attack_Normal_01, keyframe_event::event_collision);
-		RegistryKeyframeEvent(AnimationData::Attack_Normal_02, keyframe_event::event_collision);
-		RegistryKeyframeEvent(AnimationData::Attack_Normal_03, keyframe_event::event_collision);
+		RegistryKeyframeEvent(AnimationData::Atk_N1, keyframe_event::event_collision);
+		RegistryKeyframeEvent(AnimationData::Atk_N2, keyframe_event::event_collision);
+		RegistryKeyframeEvent(AnimationData::Atk_N3, keyframe_event::event_collision);
 		// 強攻撃(当たり判定)
-		RegistryKeyframeEvent(AnimationData::Attack_Strong_01, keyframe_event::event_collision);
-		RegistryKeyframeEvent(AnimationData::Attack_Strong_02, keyframe_event::event_collision);
-		RegistryKeyframeEvent(AnimationData::Attack_Strong_03, keyframe_event::event_collision);
-		RegistryKeyframeEvent(AnimationData::Attack_Strong_04, keyframe_event::event_collision);
+		RegistryKeyframeEvent(AnimationData::Atk_S1, keyframe_event::event_collision);
+		RegistryKeyframeEvent(AnimationData::Atk_S2, keyframe_event::event_collision);
+		RegistryKeyframeEvent(AnimationData::Atk_S3, keyframe_event::event_collision);
+		RegistryKeyframeEvent(AnimationData::Atk_S4, keyframe_event::event_collision);
 		// 強攻撃(移動距離)
-		RegistryKeyframeEvent(AnimationData::Attack_Strong_04, keyframe_event::event_move);
+		RegistryKeyframeEvent(AnimationData::Atk_S4, keyframe_event::event_move);
 		// バックステップ(移動速度)
 		RegistryKeyframeEvent(AnimationData::Dodge, keyframe_event::event_move);
+		// ダッシュ攻撃(アニメーション)
+		RegistryKeyframeEvent(AnimationData::Dash_Attack, keyframe_event::event_animation);
 
 		//-- キーフレームイベントの範囲指定 --//
 		// 弱攻撃(当たり判定)
-		GetKeyframeEvent(AnimationData::Attack_Normal_01).SetKeyEvent(keyframe_event::event_collision, 10, 16);
-		GetKeyframeEvent(AnimationData::Attack_Normal_02).SetKeyEvent(keyframe_event::event_collision,  0, 16);
-		GetKeyframeEvent(AnimationData::Attack_Normal_03).SetKeyEvent(keyframe_event::event_collision, 20, 30);
+		GetKeyframeEvent(AnimationData::Atk_N1).SetKeyEvent(keyframe_event::event_collision, 10, 16);
+		GetKeyframeEvent(AnimationData::Atk_N2).SetKeyEvent(keyframe_event::event_collision,  0, 16);
+		GetKeyframeEvent(AnimationData::Atk_N3).SetKeyEvent(keyframe_event::event_collision, 20, 30);
 		// 強攻撃(当たり判定)
-		GetKeyframeEvent(AnimationData::Attack_Strong_01).SetKeyEvent(keyframe_event::event_collision, 15, 26);
-		GetKeyframeEvent(AnimationData::Attack_Strong_02).SetKeyEvent(keyframe_event::event_collision,  8, 17);
-		GetKeyframeEvent(AnimationData::Attack_Strong_03).SetKeyEvent(keyframe_event::event_collision, 10, 20);
-		GetKeyframeEvent(AnimationData::Attack_Strong_04).SetKeyEvent(keyframe_event::event_collision,  2, 18);
+		GetKeyframeEvent(AnimationData::Atk_S1).SetKeyEvent(keyframe_event::event_collision, 15, 26);
+		GetKeyframeEvent(AnimationData::Atk_S2).SetKeyEvent(keyframe_event::event_collision,  8, 17);
+		GetKeyframeEvent(AnimationData::Atk_S3).SetKeyEvent(keyframe_event::event_collision, 10, 20);
+		GetKeyframeEvent(AnimationData::Atk_S4).SetKeyEvent(keyframe_event::event_collision,  2, 18);
 		// 強攻撃(移動距離)
-		GetKeyframeEvent(AnimationData::Attack_Strong_04).SetKeyEvent(keyframe_event::event_move,  5, 10);
+		GetKeyframeEvent(AnimationData::Atk_S4).SetKeyEvent(keyframe_event::event_move,  5, 10);
 		// バックステップ(移動距離)
 		GetKeyframeEvent(AnimationData::Dodge).SetKeyEvent(keyframe_event::event_move, 1, 15);
+		// ダッシュ攻撃(アニメーション)
+		GetKeyframeEvent(AnimationData::Dash_Attack).SetKeyEvent(keyframe_event::event_animation, 15, 17);
 	}
 
 	void PlayerComponent::Start()
@@ -276,13 +262,19 @@ namespace cumulonimbus::component
 			auto ent = GetEntity();
 			sphere_collision_comp->RegisterEventEnter(GetEntity(), [=](const collision::HitResult& hit_result) {registry->GetComponent<PlayerComponent>(GetEntity()).OnHitAvoidRange(hit_result); });
 		}
+		// リジッドボディ
+		if (auto* rigid_body_comp = GetRegistry()->TryGetComponent<RigidBodyComponent>(GetEntity());
+			rigid_body_comp)
+		{
+			rigid_body_comp->GravityStop(true);
+		}
 		// モデルコンポーネント
 		if (auto* model_comp = GetRegistry()->TryGetComponent<ModelComponent>(GetEntity());
 			model_comp)
 		{
 			model_comp->SetIsUseTimeScale(false);
 		}
-
+		// カプセルコリジョン
 		if(auto* capsule_collision_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(GetEntity());
 		   capsule_collision_comp)
 		{
@@ -330,17 +322,26 @@ namespace cumulonimbus::component
 	{
 		if (GetRegistry()->CollapsingHeader<PlayerComponent>(GetEntity(), "Player"))
 		{
+			auto& asset_manager = *locator::Locator::GetAssetManager();
+			auto& effect_loader = *asset_manager.GetLoader<asset::EffekseerLoader>();
+
 			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Dead zone value of pad input", &threshold		, 0.01f	, 0.0f, 1.);
 			ImGui::Separator();
 			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Walk Speed		"	, &walk_speed		, 0.5f	, 0.1f, FLT_MAX);
 			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Dash Speed		"	, &dash_speed		, 0.5f	, 0.1f, FLT_MAX);
 			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Avoid Dash Speed"	, &avoid_dash_speed , 0.5f	, 0.1f, FLT_MAX);
+			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Dash Atk Speed"		, &dash_attack_speed, 0.5f	, 0.1f, FLT_MAX);
 			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Counter Speed	"	, &attack_04_speed	, 0.5f	, 0.1f, FLT_MAX);
-			ImGui::Separator();
-			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Attack_04_Jump_Strength", &attack_04_jump_strength, 0.5f, 0.1f, FLT_MAX);
 			ImGui::Separator();
 			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Avoid Stop Time", &avoid_stop_time, 0.5f, 0.1f, 10.f);
 			ImGui::Text("Is Avoid %d", is_avoid);
+			ImGui::Separator();
+			ImGui::Text("Hit Effect S");
+			effect_loader.ImSelectableEffect(asset_manager, hit_effect_s);
+			ImGui::Text("Hit Effect M");
+			effect_loader.ImSelectableEffect(asset_manager, hit_effect_m);
+			ImGui::Text("Hit Effect L");
+			effect_loader.ImSelectableEffect(asset_manager, hit_effect_l);
 		}
 	}
 
@@ -397,17 +398,12 @@ namespace cumulonimbus::component
 			auto& rigid_body_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
 			transform_comp.SetPosition_Y(.0f);
 			is_jumping = false;
-
-			if(player_state.GetState() != PlayerState::Attacking_Normal_04)
-			{
-				rigid_body_comp.SetCurrentGravity(0);
-			}
 		}
 
 		if(is_avoid)
 		{
 			elapsed_time += locator::Locator::GetSystem()->GetTime().GetUnscaledDeltaTime();
-			locator::Locator::GetSystem()->GetTime().SetScale(0.3f);
+			locator::Locator::GetSystem()->GetTime().SetScale(0.1f);
 
 			if(elapsed_time > avoid_stop_time)
 			{
@@ -488,7 +484,7 @@ namespace cumulonimbus::component
 		if (!rigid_body_comp)
 			return;
 
-		if(ray_cast_comp->GetIsBlockHit(mapping::collision_name::ray::ForFloor()))
+		if (ray_cast_comp->GetIsBlockHit(mapping::collision_name::ray::ForFloor()))
 		{
 			rigid_body_comp->SetCurrentGravity(0);
 		}
@@ -663,8 +659,11 @@ namespace cumulonimbus::component
 		if (auto* player_avoid_comp = GetRegistry()->TryGetComponent<PlayerAvoidEffectComponent>(GetEntity());
 			player_avoid_comp)
 		{
-			player_avoid_comp->SetEffectState(PlayerAvoidEffectComponent::EffectState::Begin_Avoid);
-			player_avoid_comp->SetAvoidingTime(avoid_stop_time);
+			if(player_avoid_comp->GetEffectState() == PlayerAvoidEffectComponent::EffectState::Stop)
+			{
+				player_avoid_comp->SetEffectState(PlayerAvoidEffectComponent::EffectState::Begin_Avoid);
+				player_avoid_comp->SetAvoidingTime(avoid_stop_time);
+			}
 		}
 	}
 
@@ -716,7 +715,8 @@ namespace cumulonimbus::component
 		{// 状態遷移(PlayerState::Attack_Strong_01)
 			player_state.SetState(PlayerState::Attack_Strong_01);
 		}
-		else if(trigger_right > threshold)
+		else if(locator::Locator::GetInput()->GamePad().GetState(GamePadButton::RightShoulder) ==
+				ButtonState::Press)
 		{
 			player_state.SetState(PlayerState::Dodge);
 		}
@@ -747,7 +747,9 @@ namespace cumulonimbus::component
 				player_state.SetState(PlayerState::Idle);
 			}
 
-			if (trigger_right > threshold)
+			//if (trigger_right > threshold)
+			if(locator::Locator::GetInput()->GamePad().GetState(GamePadButton::RightShoulder) ==
+			   ButtonState::Press)
 			{// 状態遷移(PlayerState::Avoid_Dash_Begin)
 				player_state.SetState(PlayerState::Avoid_Dash_Begin);
 			}
@@ -763,1094 +765,9 @@ namespace cumulonimbus::component
 		}
 	}
 
-	void PlayerComponent::WalkBack(float dt)
-	{
-	}
-
-	void PlayerComponent::KnockDownFrontLoop(float dt)
-	{
-	}
-
-	void PlayerComponent::KnockDownFrontStandUp(float dt)
-	{
-	}
-
-	void PlayerComponent::DamageSmall(float dt)
-	{
-
-		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-
-		if(player_state.GetInitialize())
-		{
-			// アニメーションセット(AnimationData::Walk)
-			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Damage_Small), false);
-		}
-
-		if (model_comp.IsPlayAnimation())
-			return;
-
-		player_state.SetState(PlayerState::Idle);
-	}
-
-	void PlayerComponent::DamageBig(float dt)
-	{
-	}
-
-	//void PlayerComponent::JumpBegin(float dt)
-	//{
-	//	auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-
-	//	if (player_state.GetInitialize())
-	//	{// アニメーションセット(AnimationData::Jump_Begin)
-	//		model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Jump_Begin_2), false);
-	//	}
-
-	//	if (auto& rigid_body_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
-	//		model_comp.CurrentKeyframe() > 4)
-	//	{
-	//		if(!is_jumping)
-	//		{
-	//			rigid_body_comp.Jump();
-	//			is_jumping = true;
-	//		}
-
-	//		{// 移動速度の設定
-	//			rigid_body_comp.AddForce({ jump_movement_speed,0.0f,jump_movement_speed });
-	//		}
-
-	//		using namespace locator;
-	//		if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-	//		{// 状態遷移(PlayerState::Attacking_Jump_01)
-	//			player_state.SetState(PlayerState::Attacking_Jump_01);
-	//		}
-	//		else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
-	//		{// 状態遷移(PlayerState::Attack_Jumping_Strong_Begin)
-	//			player_state.SetState(PlayerState::Attack_Jumping_Strong_Begin);
-	//		}
-	//	}
-
-	//	// アニメーション再生中なら処理を中断
-	//	if (model_comp.IsPlayAnimation())
-	//		return;
-
-	//	// 状態遷移(PlayerState::Jump_Loop)
-	//	player_state.SetState(PlayerState::Jump_Loop);
-	//	GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity()).GravityStop(false);
-	//}
-
-	//void PlayerComponent::JumpLoop(float dt)
-	//{
-	//	auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-	//	auto& rigid_body_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
-
-	//	if (player_state.GetInitialize())
-	//	{
-	//		// アニメーションセット(AnimationData::Jump_Loop)
-	//		model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Jump_Loop), true);
-	//	}
-
-	//	{// 移動速度の設定
-	//		rigid_body_comp.AddForce({  jump_movement_speed,0.0f,jump_movement_speed });
-	//	}
-
-	//	{// アニメーション遷移
-
-	//		if (rigid_body_comp.GetCurrentGravity() < 0)
-	//		{// アニメーション遷移(PlayerState::Jump_Landing)
-	//			player_state.SetState(PlayerState::Jump_Landing);
-	//		}
-
-	//		using namespace locator;
-	//		if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-	//		{// 状態遷移(PlayerState::Attacking_Jump_01)
-	//			player_state.SetState(PlayerState::Attacking_Jump_01);
-	//		}
-	//		else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
-	//		{// 状態遷移(PlayerState::Attack_Jumping_Strong_Begin)
-	//			player_state.SetState(PlayerState::Attack_Jumping_Strong_Begin);
-	//		}
-	//	}
-	//}
-
-	//void PlayerComponent::JumpLanding(float dt)
-	//{
-	//	if (player_state.GetInitialize())
-	//	{// アニメーションセット(AnimationData::Jump_Landing)
-	//		GetRegistry()->GetComponent<ModelComponent>(GetEntity()).SwitchAnimation(GetAnimDataIndex(AnimationData::Jump_Landing), false);
-	//	}
-
-	//	{// 移動速度の設定
-	//		auto& rigid_body_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
-	//		rigid_body_comp.AddForce({ jump_movement_speed,0.0f,jump_movement_speed });
-	//	}
-
-	//	auto& ray_cast_comp = GetRegistry()->GetComponent<RayCastComponent>(GetEntity());
-
-	//	if (auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
-	//		ray_cast_comp.GetIsBlockHit(mapping::collision_name::ray::ForFloor()) ||
-	//									transform_comp.GetPosition().y <= 0)
-	//	{// 状態遷移(PlayerState::Jump_End)
-	//		player_state.SetState(PlayerState::Jump_End);
-	//	}
-
-	//	using namespace locator;
-	//	if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-	//	{// 状態遷移(PlayerState::Attacking_Jump_01)
-	//		player_state.SetState(PlayerState::Attacking_Jump_01);
-	//	}
-	//	else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
-	//	{// 状態遷移(PlayerState::Attacking_Jump_Strong)
-	//		player_state.SetState(PlayerState::Attacking_Jump_Strong);
-	//	}
-	//}
-
-	//void PlayerComponent::JumpEnd(float dt)
-	//{
-	//	auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-	//	if (player_state.GetInitialize())
-	//	{// アニメーションセット(AnimationData::Jump_End)
-	//		model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Jump_End), false);
-	//	}
-
-	//	// アニメーション再生中なら処理を中断
-	//	if (model_comp.IsPlayAnimation())
-	//		return;
-
-	//	// 状態遷移(PlayerState::Idle)
-	//	player_state.SetState(PlayerState::Idle);
-	//}
-
-	void PlayerComponent::Die(float dt)
-	{
-	}
-
-	void PlayerComponent::DashAttack(float dt)
-	{
-		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-		if(player_state.GetInitialize())
-		{
-			InitializeAnimationVariable();
-			// アニメーションセット(AnimationData::Dash_Attack)
-			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Dash_Attack));
-		}
-
-		auto& rigid_body_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
-		rigid_body_comp.AddForce({ dash_attack_speed,0,dash_attack_speed });
-
-		using namespace locator;
-		const auto& game_pad = Locator::GetInput()->GamePad();
-		if(ButtonState::Press == game_pad.GetState(GamePadButton::X))
-		{
-
-		}
-
-		if (model_comp.IsPlayAnimation())
-			return;
-
-		// 遷移時間の設定
-		anim_switch_time = switch_dash_attack_to_idle;
-		// 状態遷移(PlayerState::Idle)
-		player_state.SetState(PlayerState::Idle);
-	}
-
-	void PlayerComponent::AtkNormal01(const float dt)
-	{
-		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-		if (player_state.GetInitialize())
-		{
-			InitializeAnimationVariable();
-			// アニメーションセット(AnimationData::Attack_Normal_01)
-			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Normal_01), false, 0.01f);
-			// 剣の当たり判定をなくす
-			if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
-				capsule_comp)
-			{
-				capsule_comp->SetAllCollisionEnable(false);
-			}
-		}
-
-		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
-
-		GetKeyframeEvent(AnimationData::Attack_Normal_01).Update(GetRegistry(), GetEntity(), keyframe_event::event_collision);
-		if (GetKeyframeEvent(AnimationData::Attack_Normal_01).GetKeyEvent(keyframe_event::event_collision).key_state ==
-			system::KeyframeEvent::KeyState::OnKeyRangeEnter)
-		{
-			if (capsule_comp)
-			{
-				capsule_comp->SetAllCollisionEnable(true);
-			}
-		}
-
-		if (GetKeyframeEvent(AnimationData::Attack_Normal_01).GetKeyEvent(keyframe_event::event_collision).key_state ==
-			system::KeyframeEvent::KeyState::OnKeyRangeExit)
-		{
-			if (capsule_comp)
-			{
-				capsule_comp->SetAllCollisionEnable(false);
-			}
-		}
-
-		using namespace locator;
-		if (!IsBreakAnimationFrame(AnimationData::Attack_Normal_01))
-		{
-			if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-			{// 先行入力セット(PlayerState::Attacking_Normal_02)
-				precede_input = PlayerState::Attack_Normal_02;
-			}
-			else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
-			{// 先行入力セット(PlayerState::Attacking_Strong_02)
-				precede_input = PlayerState::Attack_Strong_01;
-			}
-
-			if (ButtonState::Held == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-			{// 通常攻撃(弱長押し)用タイマーの計測
-				long_press_time += dt;
-			}
-
-			// アニメーション再生中なら処理を中断
-			return;
-		}
-
-		if ((!model_comp.IsPlayAnimation()))
-		{// 先行入力なし
-			// 状態遷移(PlayerState::Idle)
-			player_state.SetState(PlayerState::Idle);
-		}
-
-		if ((precede_input != PlayerState::End))
-		{
-			if (IsBreakAnimationFrame(AnimationData::Attack_Normal_01))
-			{// 先行入力あり
-				// 状態遷移(先行入力値)
-				player_state.SetState(precede_input);
-			}
-		}
-
-		if (IsNextAnimationLongPressAttack())
-		{// 状態遷移(PlayerState::Attacking_Normal_Long_Press)
-			player_state.SetState(PlayerState::Attacking_Normal_Long_Press);
-		}
-	}
-
-	void PlayerComponent::AtkNormal02(const float dt)
-	{
-		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-		if (player_state.GetInitialize())
-		{
-			InitializeAnimationVariable();
-			// アニメーションセット(AnimationData::Attack_Normal_02)
-			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Normal_02), false);
-			// 剣の当たり判定をなくす
-			if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
-				capsule_comp)
-			{
-				capsule_comp->SetAllCollisionEnable(false);
-			}
-		}
-
-		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
-
-		GetKeyframeEvent(AnimationData::Attack_Normal_02).Update(GetRegistry(), GetEntity(), keyframe_event::event_collision);
-		if (GetKeyframeEvent(AnimationData::Attack_Normal_02).GetKeyEvent(keyframe_event::event_collision).key_state ==
-			system::KeyframeEvent::KeyState::OnKeyRangeEnter)
-		{
-			if (capsule_comp)
-			{
-				capsule_comp->SetAllCollisionEnable(true);
-			}
-		}
-
-		if (GetKeyframeEvent(AnimationData::Attack_Normal_02).GetKeyEvent(keyframe_event::event_collision).key_state ==
-			system::KeyframeEvent::KeyState::OnKeyRangeExit)
-		{
-			if (capsule_comp)
-			{
-				capsule_comp->SetAllCollisionEnable(false);
-			}
-		}
-
-		if (!IsBreakAnimationFrame(AnimationData::Attack_Normal_02))
-		{
-			using namespace locator;
-			if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-			{// 先行入力セット(PlayerState::Attacking_Normal_03)
-				precede_input = PlayerState::Attack_Normal_03;
-			}
-			else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
-			{// 先行入力セット(PlayerState::Attacking_Strong_03)
-				precede_input = PlayerState::Attack_Strong_01;
-			}
-
-			if (ButtonState::Held == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-			{// 通常攻撃(弱長押し)用タイマーの計測
-				long_press_time += dt;
-			}
-
-			// アニメーション再生中なら処理を中断
-			return;
-		}
-
-		if ((!model_comp.IsPlayAnimation()))
-		{// 先行入力なし
-			// 状態遷移(PlayerState::Idle)
-			player_state.SetState(PlayerState::Idle);
-		}
-
-		if (precede_input != PlayerState::End)
-		{
-			if (IsBreakAnimationFrame(AnimationData::Attack_Normal_02))
-			{// 先行入力あり
-				// 状態遷移(先行入力値)
-				player_state.SetState(precede_input);
-			}
-		}
-
-		if (IsNextAnimationLongPressAttack())
-		{// 状態遷移(PlayerState::Attacking_Normal_Long_Press)
-			player_state.SetState(PlayerState::Attacking_Normal_Long_Press);
-		}
-	}
-
-	void PlayerComponent::AtkNormal03(const float dt)
-	{
-		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-		if (player_state.GetInitialize())
-		{
-			InitializeAnimationVariable();
-			// アニメーションセット(AnimationData::Attack_Normal_03)
-			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Normal_03), false);
-			// 剣の当たり判定をなくす
-			if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
-				capsule_comp)
-			{
-				capsule_comp->SetAllCollisionEnable(false);
-			}
-		}
-
-		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
-
-		GetKeyframeEvent(AnimationData::Attack_Normal_03).Update(GetRegistry(), GetEntity(), keyframe_event::event_collision);
-		if (GetKeyframeEvent(AnimationData::Attack_Normal_03).GetKeyEvent(keyframe_event::event_collision).key_state ==
-			system::KeyframeEvent::KeyState::OnKeyRangeEnter)
-		{
-			if (capsule_comp)
-			{
-				capsule_comp->SetAllCollisionEnable(true);
-			}
-		}
-
-		if (GetKeyframeEvent(AnimationData::Attack_Normal_03).GetKeyEvent(keyframe_event::event_collision).key_state ==
-			system::KeyframeEvent::KeyState::OnKeyRangeExit)
-		{
-			if (capsule_comp)
-			{
-				capsule_comp->SetAllCollisionEnable(false);
-			}
-		}
-
-		if (!IsBreakAnimationFrame(AnimationData::Attack_Normal_03))
-		{
-			using namespace locator;
-			if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-			{// 先行入力セット(PlayerState::Attack_Normal_02)
-				precede_input = PlayerState::Attack_Normal_02;
-			}
-			else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
-			{// 先行入力セット(PlayerState::Attacking_Strong_04)
-				precede_input = PlayerState::Attack_Strong_01;
-			}
-
-			if (ButtonState::Held == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-			{// 通常攻撃(弱長押し)用タイマーの計測
-				long_press_time += dt;
-			}
-
-			// アニメーション再生中なら処理を中断
-			return;
-		}
-
-		if ((!model_comp.IsPlayAnimation()))
-		{// 先行入力なし
-			// 状態遷移(PlayerState::Idle)
-			player_state.SetState(PlayerState::Idle);
-		}
-
-		if (precede_input != PlayerState::End)
-		{
-			if (IsBreakAnimationFrame(AnimationData::Attack_Normal_03))
-			{// 先行入力あり
-				// 状態遷移(先行入力値)
-				player_state.SetState(precede_input);
-			}
-		}
-
-		if (IsNextAnimationLongPressAttack())
-		{// 状態遷移(PlayerState::Attacking_Normal_Long_Press)
-			player_state.SetState(PlayerState::Attacking_Normal_Long_Press);
-		}
-	}
-
-	void PlayerComponent::AtkNormal04Begin(float dt)
-	{
-		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-		if (player_state.GetInitialize())
-		{
-			InitializeAnimationVariable();
-			// アニメーションセット(AnimationData::Attack_Normal_04_Begin)
-			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Normal_04_Begin), false);
-		}
-
-		// アニメーション再生中なら処理を中断
-		if (model_comp.IsPlayAnimation())
-			return;
-
-		Rotate(hit_result.registry, hit_result.entity);
-
-		// 状態遷移(PlayerState::Attacking_Normal_04)
-		player_state.SetState(PlayerState::Attacking_Normal_04);
-		auto& rigid_body_component = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
-		// ジャンプ処理
-		rigid_body_component.Jump(attack_04_jump_strength);
-		rigid_body_component.GravityStop(false);
-	}
-
-	void PlayerComponent::AtkNormal04(float dt)
-	{
-		auto& model_comp	  = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-		auto& ray_cast_comp   = GetRegistry()->GetComponent<RayCastComponent>(GetEntity());
-		auto& rigid_body_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
-		auto& transform_comp  = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
-		if (player_state.GetInitialize())
-		{
-			InitializeAnimationVariable();
-			// アニメーションセット(AnimationData::Attacking_Normal_04)
-			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attacking_Normal_04), true);
-			// 剣の当たり判定を付ける
-			if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
-				capsule_comp)
-			{
-				capsule_comp->SetAllCollisionEnable(true);
-			}
-		}
-
-		rigid_body_comp.AddForce({ attack_04_speed,0,attack_04_speed });
-
-		// 地面についていなければ処理を中断
-		if (!ray_cast_comp.GetIsBlockHit(mapping::collision_name::ray::ForFloor()) &&
-			transform_comp.GetPosition().y >= 0)
-			return;
-
-		// 状態遷移(PlayerState::Attack_Normal_04_End)
-		player_state.SetState(PlayerState::Attack_Normal_04_End);
-	}
-
-	void PlayerComponent::AtkNormal04End(float dt)
-	{
-		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-		if (player_state.GetInitialize())
-		{
-			InitializeAnimationVariable();
-			// アニメーションセット(AnimationData::Attack_Normal_04_End)
-			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Normal_04_End), false);
-			// 剣の当たり判定をなくす
-			if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
-				capsule_comp)
-			{
-				capsule_comp->SetAllCollisionEnable(false);
-			}
-		}
-
-		// アニメーション再生中なら処理を中断
-		if (model_comp.IsPlayAnimation())
-			return;
-
-		// 状態遷移(PlayerState::Idle)
-		player_state.SetState(PlayerState::Idle);
-	}
-
-	void PlayerComponent::AttackingNormalLongPress(float dt)
-	{
-	}
-
-	void PlayerComponent::AttackNormalLongPressEnd(float dt)
-	{
-	}
-
-	void PlayerComponent::AtkStrong01(float dt)
-	{
-		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-		if (player_state.GetInitialize())
-		{
-			InitializeAnimationVariable();
-			// アニメーションセット(AnimationData::Attack_Strong_01)
-			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Strong_01), false);
-			// 剣の当たり判定をなくす
-			if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
-				capsule_comp)
-			{
-				capsule_comp->SetAllCollisionEnable(false);
-			}
-		}
-
-		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
-
-		GetKeyframeEvent(AnimationData::Attack_Strong_01).Update(GetRegistry(), GetEntity(), keyframe_event::event_collision);
-		if (GetKeyframeEvent(AnimationData::Attack_Strong_01).GetKeyEvent(keyframe_event::event_collision).key_state ==
-			system::KeyframeEvent::KeyState::OnKeyRangeEnter)
-		{
-			if (capsule_comp)
-			{
-				capsule_comp->SetAllCollisionEnable(true);
-			}
-		}
-
-		if (GetKeyframeEvent(AnimationData::Attack_Strong_01).GetKeyEvent(keyframe_event::event_collision).key_state ==
-			system::KeyframeEvent::KeyState::OnKeyRangeExit)
-		{
-			if (capsule_comp)
-			{
-				capsule_comp->SetAllCollisionEnable(false);
-			}
-		}
-
-		using namespace locator;
-		if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-		{// 先行入力セット(PlayerState::Attack_Normal_01)
-			precede_input = PlayerState::Attack_Normal_01;
-		}
-		else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
-		{// 先行入力セット(PlayerState::Attacking_Strong_02)
-			precede_input = PlayerState::Attack_Strong_02;
-		}
-
-		// アニメーション再生中なら処理を中断
-		if (model_comp.IsPlayAnimation())
-			return;
-
-		if (precede_input == PlayerState::End)
-		{// 先行入力なし
-			// 状態遷移(PlayerState::Idle)
-			player_state.SetState(PlayerState::Idle);
-		}
-		else
-		{// 先行入力あり
-			// 状態遷移(先行入力値)
-			player_state.SetState(precede_input);
-		}
-	}
-
-	void PlayerComponent::AtkStrong02(float dt)
-	{
-		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-		if (player_state.GetInitialize())
-		{
-			InitializeAnimationVariable();
-			// アニメーションセット(AnimationData::Attack_Strong_02)
-			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Strong_02), false);
-			// 剣の当たり判定をなくす
-			if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
-				capsule_comp)
-			{
-				capsule_comp->SetAllCollisionEnable(false);
-			}
-		}
-
-		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
-
-		GetKeyframeEvent(AnimationData::Attack_Strong_02).Update(GetRegistry(), GetEntity(), keyframe_event::event_collision);
-		if (GetKeyframeEvent(AnimationData::Attack_Strong_02).GetKeyEvent(keyframe_event::event_collision).key_state ==
-			system::KeyframeEvent::KeyState::OnKeyRangeEnter)
-		{
-			if (capsule_comp)
-			{
-				capsule_comp->SetAllCollisionEnable(true);
-			}
-		}
-
-		if (GetKeyframeEvent(AnimationData::Attack_Strong_02).GetKeyEvent(keyframe_event::event_collision).key_state ==
-			system::KeyframeEvent::KeyState::OnKeyRangeExit)
-		{
-			if (capsule_comp)
-			{
-				capsule_comp->SetAllCollisionEnable(false);
-			}
-		}
-
-		using namespace locator;
-		if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-		{// 先行入力セット(PlayerState::Attacking_Normal_03)
-			precede_input = PlayerState::Attack_Normal_01;
-		}
-		else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
-		{// 先行入力セット(PlayerState::Attacking_Strong_03)
-			precede_input = PlayerState::Attack_Strong_04;
-		}
-
-		// アニメーション再生中なら処理を中断
-		if (model_comp.IsPlayAnimation())
-			return;
-
-		if (precede_input == PlayerState::End)
-		{// 先行入力なし
-			// 状態遷移(PlayerState::Idle)
-			player_state.SetState(PlayerState::Idle);
-		}
-		else
-		{// 先行入力あり
-			// 状態遷移(先行入力値)
-			player_state.SetState(precede_input);
-		}
-	}
-
-	// 使用しない
-	void PlayerComponent::AtkStrong03(float dt)
-	{
-		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-		if (player_state.GetInitialize())
-		{
-			InitializeAnimationVariable();
-			// アニメーションセット(AnimationData::Attack_Strong_03)
-			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Strong_03), false);
-			// 剣の当たり判定をなくす
-			if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
-				capsule_comp)
-			{
-				capsule_comp->SetAllCollisionEnable(false);
-			}
-		}
-
-		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
-
-		GetKeyframeEvent(AnimationData::Attack_Strong_03).Update(GetRegistry(), GetEntity(), keyframe_event::event_collision);
-		if (GetKeyframeEvent(AnimationData::Attack_Strong_03).GetKeyEvent(keyframe_event::event_collision).key_state ==
-			system::KeyframeEvent::KeyState::OnKeyRangeEnter)
-		{
-			if (capsule_comp)
-			{
-				capsule_comp->SetAllCollisionEnable(true);
-			}
-		}
-
-		if (GetKeyframeEvent(AnimationData::Attack_Strong_03).GetKeyEvent(keyframe_event::event_collision).key_state ==
-			system::KeyframeEvent::KeyState::OnKeyRangeExit)
-		{
-			if (capsule_comp)
-			{
-				capsule_comp->SetAllCollisionEnable(false);
-			}
-		}
-
-		using namespace locator;
-		if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-		{// 先行入力セット(PlayerState::Attack_Normal_04_Begin)
-			precede_input = PlayerState::Attack_Normal_04_Begin;
-		}
-		else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
-		{// 先行入力セット(PlayerState::Attacking_Strong_04)
-			precede_input = PlayerState::Attack_Strong_04;
-		}
-
-		// アニメーション再生中なら処理を中断
-		if (model_comp.IsPlayAnimation())
-			return;
-
-		if (precede_input == PlayerState::End)
-		{// 先行入力なし
-			// 状態遷移(PlayerState::Idle)
-			player_state.SetState(PlayerState::Idle);
-		}
-		else
-		{// 先行入力あり
-			// 状態遷移(先行入力値)
-			player_state.SetState(precede_input);
-		}
-	}
-
-	void PlayerComponent::AtkStrong04(float dt)
-	{
-		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-		if (player_state.GetInitialize())
-		{
-			InitializeAnimationVariable();
-			// アニメーションセット(AnimationData::Attack_Strong_04)
-			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Strong_04), false);
-			// 剣の当たり判定をなくす
-			if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
-				capsule_comp)
-			{
-				capsule_comp->SetAllCollisionEnable(false);
-			}
-		}
-
-		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
-
-		// キーフレームイベントの登録
-		GetKeyframeEvent(AnimationData::Attack_Strong_04).Update(GetRegistry(), GetEntity(), keyframe_event::event_collision);
-		GetKeyframeEvent(AnimationData::Attack_Strong_04).Update(GetRegistry(), GetEntity(), keyframe_event::event_move);
-
-		// 当たり判定をOn
-		if (GetKeyframeEvent(AnimationData::Attack_Strong_04).GetKeyEvent(keyframe_event::event_collision).key_state ==
-			system::KeyframeEvent::KeyState::OnKeyRangeEnter)
-		{
-			if (capsule_comp)
-			{
-				capsule_comp->SetAllCollisionEnable(true);
-			}
-		}
-		// 当たり判定をOff
-		if (GetKeyframeEvent(AnimationData::Attack_Strong_04).GetKeyEvent(keyframe_event::event_collision).key_state ==
-			system::KeyframeEvent::KeyState::OnKeyRangeExit)
-		{
-			if (capsule_comp)
-			{
-				capsule_comp->SetAllCollisionEnable(false);
-			}
-		}
-		// 前方へ移動
-		if(GetKeyframeEvent(AnimationData::Attack_Strong_04).GetKeyEvent(keyframe_event::event_move).key_state ==
-		   system::KeyframeEvent::KeyState::OnKeyRangeStay)
-		{
-			{// 移動速度の設定
-				auto& rigid_body_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
-				rigid_body_comp.AddForce({ attack_strong_04_speed,0.0f,attack_strong_04_speed });
-			}
-		}
-
-		using namespace locator;
-		if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-		{// 先行入力セット(PlayerState::Attack_Normal_01)
-			precede_input = PlayerState::Attack_Normal_01;
-		}
-		else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
-		{// 先行入力セット(PlayerState::Attack_Strong_01)
-			precede_input = PlayerState::Attack_Strong_01;
-		}
-
-		// アニメーション再生中なら処理を中断
-		if (model_comp.IsPlayAnimation())
-			return;
-
-		if (precede_input == PlayerState::End)
-		{// 先行入力なし
-			// 状態遷移(PlayerState::Idle)
-			player_state.SetState(PlayerState::Idle);
-		}
-		else
-		{// 先行入力あり
-			// 状態遷移(先行入力値)
-			player_state.SetState(precede_input);
-		}
-	}
-
-	void PlayerComponent::AttackRoundUpBegin(float dt)
-	{
-	}
-
-	void PlayerComponent::AttackingRoundUp(float dt)
-	{
-	}
-
-	void PlayerComponent::AttackRoundUpFall(float dt)
-	{
-	}
-
-	void PlayerComponent::AttackRoundUpEnd(float dt)
-	{
-	}
-
-	//void PlayerComponent::AttackingJump01(float dt)
-	//{
-	//	auto& model_comp     = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-	//	auto& movement_comp  = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
-	//	if(player_state.GetInitialize())
-	//	{
-	//		InitializeAnimationVariable();
-	//		// アニメーションセット(AnimationData::Attacking_Jump_01)
-	//		model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attacking_Jump_01), false);
-	//		// 重力処理 Off(空中で止める)
-	//		movement_comp.GravityStop(true);
-	//	}
-
-	//	using namespace locator;
-	//	if (!IsBreakAnimationFrame(AnimationData::Attacking_Jump_01))
-	//	{
-	//		if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-	//		{// 先行入力セット(PlayerState::Attacking_Jump_02)
-	//			precede_input = PlayerState::Attacking_Jump_02;
-	//		}
-	//		else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
-	//		{// 先行入力セット(PlayerState::Attack_Jumping_Strong_Begin)
-	//			precede_input = PlayerState::Attack_Jumping_Strong_Begin;
-	//		}
-	//		return;
-	//	}
-
-	//	if ((!model_comp.IsPlayAnimation()))
-	//	{// アニメーション再生終了
-	//		// 先行入力なし
-	//		// 状態遷移(PlayerState::Attack_Jump_01_End)
-	//		player_state.SetState(PlayerState::Attack_Jump_01_End);
-	//	}
-
-	//	if (precede_input != PlayerState::End)
-	//	{
-	//		if (IsBreakAnimationFrame(AnimationData::Attacking_Jump_01))
-	//		{// 先行入力あり
-	//			// 状態遷移(先行入力値)
-	//			player_state.SetState(precede_input);
-	//		}
-	//	}
-	//}
-
-	//void PlayerComponent::AttackJump01End(float dt)
-	//{
-	//	auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-	//	if (player_state.GetInitialize())
-	//	{
-	//		InitializeAnimationVariable();
-	//		// アニメーションセット(AnimationData::Attack_Jump_01_End)
-	//		model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Jump_01_End), false);
-	//	}
-
-	//	if(!model_comp.IsPlayAnimation())
-	//	{
-	//		// 重力処理 On
-	//		GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity()).GravityStop(false);
-	//		// 状態遷移(PlayerState::Jump_Landing)
-	//		player_state.SetState(PlayerState::Jump_Landing);
-	//	}
-	//}
-
-	//void PlayerComponent::AttackingJump02(float dt)
-	//{
-	//	auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-	//	if(player_state.GetInitialize())
-	//	{
-	//		InitializeAnimationVariable();
-	//		// アニメーションセット(AnimationData::Attacking_Jump_02)
-	//		model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attacking_Jump_02), false);
-	//	}
-
-	//	using namespace locator;
-	//	if (!IsBreakAnimationFrame(AnimationData::Attacking_Jump_02))
-	//	{
-	//		if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-	//		{// 先行入力セット(PlayerState::Attacking_Jump_03)
-	//			precede_input = PlayerState::Attacking_Jump_03;
-	//		}
-	//		else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
-	//		{// 先行入力セット(PlayerState::Attack_Jumping_Strong_Begin)
-	//			precede_input = PlayerState::Attack_Jumping_Strong_Begin;
-	//		}
-	//		return;
-	//	}
-
-	//	if ((!model_comp.IsPlayAnimation()))
-	//	{// アニメーション再生終了
-	//		// 先行入力なし
-	//		// 状態遷移(PlayerState::Attack_Jump_02_End)
-	//		player_state.SetState(PlayerState::Attack_Jump_02_End);
-	//	}
-
-	//	if (precede_input != PlayerState::End)
-	//	{
-	//		if (IsBreakAnimationFrame(AnimationData::Attacking_Jump_02))
-	//		{// 先行入力あり
-	//			// 状態遷移(先行入力値)
-	//			player_state.SetState(precede_input);
-	//		}
-	//	}
-	//}
-
-	//void PlayerComponent::AttackJump02End(float dt)
-	//{
-	//	auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-	//	if (player_state.GetInitialize())
-	//	{
-	//		InitializeAnimationVariable();
-	//		// アニメーションセット(AnimationData::Attack_Jump_02_End)
-	//		model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Jump_02_End), false);
-	//	}
-
-	//	if (!model_comp.IsPlayAnimation())
-	//	{
-	//		// 重力処理 On
-	//		GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity()).GravityStop(false);
-	//		// 状態遷移(PlayerState::Jump_Landing)
-	//		player_state.SetState(PlayerState::Jump_Landing);
-	//	}
-	//}
-
-	//void PlayerComponent::AttackingJump03(float dt)
-	//{
-	//	auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-	//	if(player_state.GetInitialize())
-	//	{
-	//		InitializeAnimationVariable();
-	//		// アニメーションセット(AnimationData::Attacking_Jump_03)
-	//		model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attacking_Jump_03), false);
-	//	}
-
-	//	using namespace locator;
-	//	if(!IsBreakAnimationFrame(AnimationData::Attacking_Jump_03))
-	//	{
-	//		if(ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-	//		{// 先行入力セット(PlayerState::Attacking_Jump_04)
-	//			precede_input = PlayerState::Attacking_Jump_04;
-	//		}
-	//		else if(ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
-	//		{// 先行入力セット(PlayerState::Attack_Jumping_Strong_Begin)
-	//			precede_input = PlayerState::Attack_Jumping_Strong_Begin;
-	//		}
-	//	}
-
-	//	if ((!model_comp.IsPlayAnimation()))
-	//	{// アニメーション再生終了
-	//		// 先行入力なし
-	//		// 状態遷移(PlayerState::Attack_Jump_03_End)
-	//		player_state.SetState(PlayerState::Attack_Jump_03_End);
-	//	}
-
-	//	if (precede_input != PlayerState::End)
-	//	{
-	//		if (IsBreakAnimationFrame(AnimationData::Attacking_Jump_03))
-	//		{// 先行入力あり
-	//			// 状態遷移(先行入力値)
-	//			player_state.SetState(precede_input);
-	//		}
-	//	}
-	//}
-
-	//void PlayerComponent::AttackJump03End(float dt)
-	//{
-	//	auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-	//	if (player_state.GetInitialize())
-	//	{
-	//		InitializeAnimationVariable();
-	//		// アニメーションセット(AnimationData::Attack_Jump_03_End)
-	//		model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Jump_03_End), false);
-	//	}
-
-	//	if (!model_comp.IsPlayAnimation())
-	//	{
-	//		// 重力処理 On
-	//		GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity()).GravityStop(false);
-	//		// 状態遷移(PlayerState::Jump_Landing)
-	//		player_state.SetState(PlayerState::Jump_Landing);
-	//	}
-	//}
-
-	//void PlayerComponent::AttackingJump04(float dt)
-	//{
-	//	auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-	//	if (player_state.GetInitialize())
-	//	{
-	//		InitializeAnimationVariable();
-	//		// アニメーションセット(AnimationData::Attacking_Jump_04)
-	//		model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attacking_Jump_04), false);
-	//		// 剣の当たり判定をなくす
-	//		if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
-	//			capsule_comp)
-	//		{
-	//			capsule_comp->SetAllCollisionEnable(true);
-	//		}
-	//	}
-
-	//	if ((!model_comp.IsPlayAnimation()))
-	//	{// アニメーション再生終了
-	//		// 先行入力なし
-	//		// 状態遷移(PlayerState::Attack_Jump_04_End)
-	//		player_state.SetState(PlayerState::Attack_Jump_04_End);
-	//	}
-	//}
-
-	//void PlayerComponent::AttackJump04End(float dt)
-	//{
-	//	auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-	//	if (player_state.GetInitialize())
-	//	{
-	//		InitializeAnimationVariable();
-	//		// アニメーションセット(AnimationData::Attack_Jump_04_End)
-	//		model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Jump_04_End), false);
-	//		// 剣の当たり判定をなくす
-	//		if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
-	//			capsule_comp)
-	//		{
-	//			capsule_comp->SetAllCollisionEnable(false);
-	//		}
-	//	}
-
-	//	if (!model_comp.IsPlayAnimation())
-	//	{
-	//		// 重力処理 On
-	//		GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity()).GravityStop(false);
-	//		// 状態遷移(PlayerState::Jump_Landing)
-	//		player_state.SetState(PlayerState::Jump_Landing);
-	//	}
-	//}
-
-	//void PlayerComponent::AttackJumpStrongBegin(const float dt)
-	//{
-	//	auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-	//	if(player_state.GetInitialize())
-	//	{
-	//		InitializeAnimationVariable();
-	//		// アニメーションセット(AnimationData::Attack_Jumping_Strong_Begin)
-	//		model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Jumping_Strong_Begin), false);
-	//	}
-
-	//	// アニメーション再生中は処理を中断
-	//	if (model_comp.IsPlayAnimation())
-	//		return;
-
-	//	// 状態遷移(PlayerState::Attacking_Jump_Strong)
-	//	player_state.SetState(PlayerState::Attacking_Jump_Strong);
-	//	// 重力処理On
-	//	GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity()).GravityStop(false);
-	//}
-
-	//void PlayerComponent::AttackingJumpStrong(const float dt)
-	//{
-	//	auto& model_comp	 = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-	//	auto& ray_cast_comp  = GetRegistry()->GetComponent<RayCastComponent>(GetEntity());
-	//	auto& transform_comp = GetRegistry()->GetComponent<TransformComponent>(GetEntity());
-	//	if (player_state.GetInitialize())
-	//	{
-	//		InitializeAnimationVariable();
-	//		// アニメーションセット(AnimationData::Attacking_Jump_Strong)
-	//		model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attacking_Jump_Strong), false);
-	//	}
-
-	//	// 地面についていなければ処理を中断
-	//	if (!ray_cast_comp.GetIsBlockHit(mapping::collision_name::ray::ForFloor()) &&
-	//		transform_comp.GetPosition().y >= 0)
-	//		return;
-
-	//	// 状態遷移(PlayerState::Attack_Jump_Strong_End)
-	//	player_state.SetState(PlayerState::Attack_Jump_Strong_End);
-	//}
-
-	//void PlayerComponent::AttackJumpStrongEnd(const float dt)
-	//{
-	//	auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
-	//	if (player_state.GetInitialize())
-	//	{
-	//		InitializeAnimationVariable();
-	//		// アニメーションセット(AnimationData::Attack_Jump_Strong_End)
-	//		model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Attack_Jump_Strong_End), false);
-	//	}
-
-	//	// アニメーション再生中は処理を中断
-	//	if (model_comp.IsPlayAnimation())
-	//		return;
-
-	//	// 状態遷移(PlayerState::Idle)
-	//	player_state.SetState(PlayerState::Idle);
-	//}
-
 	void PlayerComponent::Dodge(float dt)
 	{
-		if(player_state.GetInitialize())
+		if (player_state.GetInitialize())
 		{
 			InitializeAnimationVariable();
 			// アニメーションセット(AnimationData::Dodge)
@@ -1865,7 +782,7 @@ namespace cumulonimbus::component
 
 
 		GetKeyframeEvent(AnimationData::Dodge).Update(GetRegistry(), GetEntity(), keyframe_event::event_move);
-		if(GetKeyframeEvent(AnimationData::Dodge).GetKeyEvent(keyframe_event::event_move).key_state
+		if (GetKeyframeEvent(AnimationData::Dodge).GetKeyEvent(keyframe_event::event_move).key_state
 			== system::KeyframeEvent::KeyState::OnKeyRangeStay)
 		{// 移動中(バックステップ中)
 			{// 移動速度の設定
@@ -1876,8 +793,8 @@ namespace cumulonimbus::component
 		else
 		{// 移動中でない(バックステップ中でない)
 			// 左スティックの入力があれば
-			if(!IsDeadZoneStickLeft() &&
-			   !IsDeadZoneTriggerRight())
+			if (!IsDeadZoneStickLeft() &&
+				!IsDeadZoneTriggerRight())
 			{
 				player_state.SetState(PlayerState::Avoid_Dash_Begin);
 			}
@@ -1924,8 +841,8 @@ namespace cumulonimbus::component
 			// アニメーションセット(AnimationData::Avoid_Dash_Begin)
 			GetRegistry()->GetComponent<ModelComponent>(GetEntity()).SwitchAnimation(GetAnimDataIndex(AnimationData::Avoid_Dash_Begin), false);
 
-			if(auto * sphere_collision_comp = GetRegistry()->TryGetComponent<SphereCollisionComponent>(GetEntity());
-			   sphere_collision_comp)
+			if (auto* sphere_collision_comp = GetRegistry()->TryGetComponent<SphereCollisionComponent>(GetEntity());
+				sphere_collision_comp)
 			{
 				sphere_collision_comp->SetAllCollisionEnable(true);
 			}
@@ -1943,7 +860,6 @@ namespace cumulonimbus::component
 		{
 			if (Locator::GetInput()->GamePad().GetState(GamePadButton::X) == ButtonState::Press)
 			{
-				player_state.SetState(PlayerState::Attack_Normal_04_Begin);
 				is_avoid = false;
 				if (auto* sphere_collision_comp = GetRegistry()->TryGetComponent<SphereCollisionComponent>(GetEntity());
 					sphere_collision_comp)
@@ -1954,13 +870,6 @@ namespace cumulonimbus::component
 				return;
 			}
 		}
-
-		//if (Locator::GetInput()->GamePad().GetState(GamePadButton::X) == ButtonState::Press)
-		//{
-		//	player_state.SetState(PlayerState::Attack_Normal_04_Begin);
-		//	//is_avoid = false;
-		//	return;
-		//}
 
 		{// アニメーション遷移
 			// アニメーション再生中なら処理を中断
@@ -1979,8 +888,9 @@ namespace cumulonimbus::component
 			const DirectX::XMFLOAT2 stick_left = Locator::GetInput()->GamePad().LeftThumbStick(0);
 			const float				trigger_right = Locator::GetInput()->GamePad().RightTrigger(0);
 
-
-			if (trigger_right < threshold)
+			if (const auto right_shoulder_state = locator::Locator::GetInput()->GamePad().GetState(GamePadButton::RightShoulder);
+				right_shoulder_state == ButtonState::Release ||
+				right_shoulder_state == ButtonState::None)
 			{//	状態遷移(PlayerState::Avoid_Dash_End)
 				player_state.SetState(PlayerState::Avoid_Dash_End);
 			}
@@ -2000,6 +910,50 @@ namespace cumulonimbus::component
 			}
 		}
 	}
+
+	void PlayerComponent::Dash(float dt)
+	{
+		if (player_state.GetInitialize())
+		{// アニメーションセット(AnimationData::Dash)
+			GetRegistry()->GetComponent<ModelComponent>(GetEntity()).SwitchAnimation(GetAnimDataIndex(AnimationData::Dash), true);
+		}
+
+		{// 移動速度の設定
+			auto& movement_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
+			movement_comp.AddForce({ dash_speed,0.0f,dash_speed });
+		}
+
+		{// アニメーション遷移
+			// ゲームパッド入力値取得(スティック、トリガー)
+			using namespace locator;
+			const DirectX::XMFLOAT2 stick_left = Locator::GetInput()->GamePad().LeftThumbStick(0);
+			const float				trigger_right = Locator::GetInput()->GamePad().RightTrigger(0);
+			if (locator::Locator::GetInput()->GamePad().GetState(GamePadButton::RightShoulder) ==
+				ButtonState::Release)
+			{
+				player_state.SetState(PlayerState::Avoid_Dash_End);
+
+				//if (stick_left.x > threshold || stick_left.y > threshold)
+				//{// 状態遷移(PlayerState::Walk)
+				//	//player_state.SetState(PlayerState::Walk_Front);
+				//	player_state.SetState(PlayerState::Avoid_Dash_End);
+				//}
+				//else
+				//{// 状態遷移(PlayerState::Idle)
+				//	//player_state.SetState(PlayerState::Idle);
+				//	player_state.SetState(PlayerState::Avoid_Dash_End);
+				//}
+			}
+			else
+			{
+				if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
+				{// 状態遷移(PlayerState::Dash_Attack)
+					player_state.SetState(PlayerState::Dash_Attack);
+				}
+			}
+		}
+	}
+
 
 	void PlayerComponent::AvoidDashEnd(float dt)
 	{
@@ -2032,43 +986,604 @@ namespace cumulonimbus::component
 		}
 	}
 
-	void PlayerComponent::Dash(float dt)
+	void PlayerComponent::KnockDownFrontLoop(float dt)
 	{
+	}
+
+	void PlayerComponent::KnockDownFrontStandUp(float dt)
+	{
+	}
+
+	void PlayerComponent::DamageSmall(float dt)
+	{
+
+		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
+
+		if(player_state.GetInitialize())
+		{
+			// アニメーションセット(AnimationData::Walk)
+			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Damage_Small), false);
+		}
+
+		if (model_comp.IsPlayAnimation())
+			return;
+
+		player_state.SetState(PlayerState::Idle);
+	}
+
+	void PlayerComponent::DamageBig(float dt)
+	{
+	}
+
+	void PlayerComponent::Die(float dt)
+	{
+	}
+
+	void PlayerComponent::DashAttack(const float dt)
+	{
+		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
+		if(player_state.GetInitialize())
+		{
+			InitializeAnimationVariable();
+			// アニメーションセット(AnimationData::Dash_Attack)
+			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Dash_Attack));
+
+			anim_stop_timer = 0;
+		}
+
+		//if(anim_stop_timer < anim_stop_dash_atk)
+		//{
+		//	auto& keyframe_event = GetKeyframeEvent(AnimationData::Dash_Attack);
+		//	keyframe_event.Update(GetRegistry(), GetEntity(), keyframe_event::event_animation);
+		//	if(keyframe_event.GetKeyEvent(keyframe_event::event_animation).key_state ==
+		//	   system::KeyframeEvent::KeyState::OnKeyRangeEnter)
+		//	{
+		//		model_comp.SetIsStopAnimation(true);
+		//	}
+		//}
+		//else
+		//{
+		//	model_comp.SetIsStopAnimation(false);
+		//}
+
+		if(model_comp.GetIsStopAnimation())
+		{
+			anim_stop_timer += dt;
+		}
+		else
+		{
+			auto& rigid_body_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
+			rigid_body_comp.AddForce({ dash_attack_speed,0,dash_attack_speed });
+		}
+
+		//model_comp.Get
+
+		using namespace locator;
+		const auto& game_pad = Locator::GetInput()->GamePad();
+		if(ButtonState::Press == game_pad.GetState(GamePadButton::X))
+		{
+
+		}
+
+		if (model_comp.IsPlayAnimation())
+			return;
+
+		// 遷移時間の設定
+		anim_switch_time = switch_dash_attack_to_idle;
+		// 状態遷移(PlayerState::Idle)
+		player_state.SetState(PlayerState::Idle);
+	}
+
+	void PlayerComponent::AtkNormal01(const float dt)
+	{
+		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
 		if (player_state.GetInitialize())
-		{// アニメーションセット(AnimationData::Dash)
-			GetRegistry()->GetComponent<ModelComponent>(GetEntity()).SwitchAnimation(GetAnimDataIndex(AnimationData::Dash), true);
+		{
+			InitializeAnimationVariable();
+			// アニメーションセット(AnimationData::Attack_Normal_01)
+			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Atk_N1), false, 0.01f);
+			// 剣の当たり判定をなくす
+			if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+				capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
+
+			current_hit_effect_id = hit_effect_s;
 		}
 
-		{// 移動速度の設定
-			auto& movement_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
-			movement_comp.AddForce({ dash_speed,0.0f,dash_speed });
+		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+
+		GetKeyframeEvent(AnimationData::Atk_N1).Update(GetRegistry(), GetEntity(), keyframe_event::event_collision);
+		if (GetKeyframeEvent(AnimationData::Atk_N1).GetKeyEvent(keyframe_event::event_collision).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeEnter)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(true);
+			}
 		}
 
-		{// アニメーション遷移
-			// ゲームパッド入力値取得(スティック、トリガー)
+		if (GetKeyframeEvent(AnimationData::Atk_N1).GetKeyEvent(keyframe_event::event_collision).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeExit)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
+		}
+
+		using namespace locator;
+		if (!IsBreakAnimationFrame(AnimationData::Atk_N1))
+		{
+			if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
+			{// 先行入力セット(PlayerState::Attacking_Normal_02)
+				precede_input = PlayerState::Attack_Normal_02;
+			}
+			else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
+			{// 先行入力セット(PlayerState::Attacking_Strong_02)
+				precede_input = PlayerState::Attack_Strong_01;
+			}
+
+			if (ButtonState::Held == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
+			{// 通常攻撃(弱長押し)用タイマーの計測
+				long_press_time += dt;
+			}
+
+			// アニメーション再生中なら処理を中断
+			return;
+		}
+
+		if ((!model_comp.IsPlayAnimation()))
+		{// 先行入力なし
+			// 状態遷移(PlayerState::Idle)
+			player_state.SetState(PlayerState::Idle);
+		}
+
+		if ((precede_input != PlayerState::End))
+		{
+			if (IsBreakAnimationFrame(AnimationData::Atk_N1))
+			{// 先行入力あり
+				// 状態遷移(先行入力値)
+				player_state.SetState(precede_input);
+			}
+		}
+
+		if (IsNextAnimationLongPressAttack())
+		{// 状態遷移(PlayerState::Attacking_Normal_Long_Press)
+			player_state.SetState(PlayerState::Attacking_Normal_Long_Press);
+		}
+	}
+
+	void PlayerComponent::AtkNormal02(const float dt)
+	{
+		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
+		if (player_state.GetInitialize())
+		{
+			InitializeAnimationVariable();
+			// アニメーションセット(AnimationData::Attack_Normal_02)
+			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Atk_N2), false);
+			// 剣の当たり判定をなくす
+			if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+				capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
+		}
+
+		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+
+		GetKeyframeEvent(AnimationData::Atk_N2).Update(GetRegistry(), GetEntity(), keyframe_event::event_collision);
+		if (GetKeyframeEvent(AnimationData::Atk_N2).GetKeyEvent(keyframe_event::event_collision).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeEnter)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(true);
+			}
+		}
+
+		if (GetKeyframeEvent(AnimationData::Atk_N2).GetKeyEvent(keyframe_event::event_collision).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeExit)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
+		}
+
+		if (!IsBreakAnimationFrame(AnimationData::Atk_N2))
+		{
 			using namespace locator;
-			const DirectX::XMFLOAT2 stick_left = Locator::GetInput()->GamePad().LeftThumbStick(0);
-			const float				trigger_right = Locator::GetInput()->GamePad().RightTrigger(0);
-			if (trigger_right < threshold)
-			{
-				if (stick_left.x > threshold || stick_left.y > threshold)
-				{// 状態遷移(PlayerState::Walk)
-					//player_state.SetState(PlayerState::Walk_Front);
-					player_state.SetState(PlayerState::Avoid_Dash_End);
-				}
-				else
-				{// 状態遷移(PlayerState::Idle)
-					//player_state.SetState(PlayerState::Idle);
-					player_state.SetState(PlayerState::Avoid_Dash_End);
-				}
+			if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
+			{// 先行入力セット(PlayerState::Attacking_Normal_03)
+				precede_input = PlayerState::Attack_Normal_03;
 			}
-			else
-			{
-				if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
-				{// 状態遷移(PlayerState::Dash_Attack)
-					player_state.SetState(PlayerState::Dash_Attack);
-				}
+			else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
+			{// 先行入力セット(PlayerState::Attacking_Strong_03)
+				precede_input = PlayerState::Attack_Strong_01;
 			}
+
+			if (ButtonState::Held == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
+			{// 通常攻撃(弱長押し)用タイマーの計測
+				long_press_time += dt;
+			}
+
+			// アニメーション再生中なら処理を中断
+			return;
+		}
+
+		if ((!model_comp.IsPlayAnimation()))
+		{// 先行入力なし
+			// 状態遷移(PlayerState::Idle)
+			player_state.SetState(PlayerState::Idle);
+		}
+
+		if (precede_input != PlayerState::End)
+		{
+			if (IsBreakAnimationFrame(AnimationData::Atk_N2))
+			{// 先行入力あり
+				// 状態遷移(先行入力値)
+				player_state.SetState(precede_input);
+			}
+		}
+
+		if (IsNextAnimationLongPressAttack())
+		{// 状態遷移(PlayerState::Attacking_Normal_Long_Press)
+			player_state.SetState(PlayerState::Attacking_Normal_Long_Press);
+		}
+	}
+
+	void PlayerComponent::AtkNormal03(const float dt)
+	{
+		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
+		if (player_state.GetInitialize())
+		{
+			InitializeAnimationVariable();
+			// アニメーションセット(AnimationData::Attack_Normal_03)
+			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Atk_N3), false);
+			// 剣の当たり判定をなくす
+			if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+				capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
+		}
+
+		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+
+		GetKeyframeEvent(AnimationData::Atk_N3).Update(GetRegistry(), GetEntity(), keyframe_event::event_collision);
+		if (GetKeyframeEvent(AnimationData::Atk_N3).GetKeyEvent(keyframe_event::event_collision).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeEnter)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(true);
+			}
+		}
+
+		if (GetKeyframeEvent(AnimationData::Atk_N3).GetKeyEvent(keyframe_event::event_collision).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeExit)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
+		}
+
+		if (!IsBreakAnimationFrame(AnimationData::Atk_N3))
+		{
+			using namespace locator;
+			if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
+			{// 先行入力セット(PlayerState::Attack_Normal_02)
+				precede_input = PlayerState::Attack_Normal_02;
+			}
+			else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
+			{// 先行入力セット(PlayerState::Attacking_Strong_04)
+				precede_input = PlayerState::Attack_Strong_01;
+			}
+
+			if (ButtonState::Held == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
+			{// 通常攻撃(弱長押し)用タイマーの計測
+				long_press_time += dt;
+			}
+
+			// アニメーション再生中なら処理を中断
+			return;
+		}
+
+		if ((!model_comp.IsPlayAnimation()))
+		{// 先行入力なし
+			// 状態遷移(PlayerState::Idle)
+			player_state.SetState(PlayerState::Idle);
+		}
+
+		if (precede_input != PlayerState::End)
+		{
+			if (IsBreakAnimationFrame(AnimationData::Atk_N3))
+			{// 先行入力あり
+				// 状態遷移(先行入力値)
+				player_state.SetState(precede_input);
+			}
+		}
+
+		if (IsNextAnimationLongPressAttack())
+		{// 状態遷移(PlayerState::Attacking_Normal_Long_Press)
+			player_state.SetState(PlayerState::Attacking_Normal_Long_Press);
+		}
+	}
+
+	void PlayerComponent::AttackingNormalLongPress(float dt)
+	{
+	}
+
+	void PlayerComponent::AttackNormalLongPressEnd(float dt)
+	{
+	}
+
+	void PlayerComponent::AtkStrong01(float dt)
+	{
+		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
+		if (player_state.GetInitialize())
+		{
+			InitializeAnimationVariable();
+			// アニメーションセット(AnimationData::Attack_Strong_01)
+			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Atk_S1), false);
+			// 剣の当たり判定をなくす
+			if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+				capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
+		}
+
+		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+
+		GetKeyframeEvent(AnimationData::Atk_S1).Update(GetRegistry(), GetEntity(), keyframe_event::event_collision);
+		if (GetKeyframeEvent(AnimationData::Atk_S1).GetKeyEvent(keyframe_event::event_collision).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeEnter)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(true);
+			}
+		}
+
+		if (GetKeyframeEvent(AnimationData::Atk_S1).GetKeyEvent(keyframe_event::event_collision).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeExit)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
+		}
+
+		using namespace locator;
+		if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
+		{// 先行入力セット(PlayerState::Attack_Normal_01)
+			precede_input = PlayerState::Attack_Normal_01;
+		}
+		else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
+		{// 先行入力セット(PlayerState::Attacking_Strong_02)
+			precede_input = PlayerState::Attack_Strong_02;
+		}
+
+		// アニメーション再生中なら処理を中断
+		if (model_comp.IsPlayAnimation())
+			return;
+
+		if (precede_input == PlayerState::End)
+		{// 先行入力なし
+			// 状態遷移(PlayerState::Idle)
+			player_state.SetState(PlayerState::Idle);
+		}
+		else
+		{// 先行入力あり
+			// 状態遷移(先行入力値)
+			player_state.SetState(precede_input);
+		}
+	}
+
+	void PlayerComponent::AtkStrong02(float dt)
+	{
+		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
+		if (player_state.GetInitialize())
+		{
+			InitializeAnimationVariable();
+			// アニメーションセット(AnimationData::Attack_Strong_02)
+			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Atk_S2), false);
+			// 剣の当たり判定をなくす
+			if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+				capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
+		}
+
+		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+
+		GetKeyframeEvent(AnimationData::Atk_S2).Update(GetRegistry(), GetEntity(), keyframe_event::event_collision);
+		if (GetKeyframeEvent(AnimationData::Atk_S2).GetKeyEvent(keyframe_event::event_collision).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeEnter)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(true);
+			}
+		}
+
+		if (GetKeyframeEvent(AnimationData::Atk_S2).GetKeyEvent(keyframe_event::event_collision).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeExit)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
+		}
+
+		using namespace locator;
+		if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
+		{// 先行入力セット(PlayerState::Attacking_Normal_03)
+			precede_input = PlayerState::Attack_Normal_01;
+		}
+		else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
+		{// 先行入力セット(PlayerState::Attacking_Strong_03)
+			precede_input = PlayerState::Attack_Strong_04;
+		}
+
+		// アニメーション再生中なら処理を中断
+		if (model_comp.IsPlayAnimation())
+			return;
+
+		if (precede_input == PlayerState::End)
+		{// 先行入力なし
+			// 状態遷移(PlayerState::Idle)
+			player_state.SetState(PlayerState::Idle);
+		}
+		else
+		{// 先行入力あり
+			// 状態遷移(先行入力値)
+			player_state.SetState(precede_input);
+		}
+	}
+
+	// 使用しない
+	void PlayerComponent::AtkStrong03(float dt)
+	{
+		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
+		if (player_state.GetInitialize())
+		{
+			InitializeAnimationVariable();
+			// アニメーションセット(AnimationData::Attack_Strong_03)
+			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Atk_S3), false);
+			// 剣の当たり判定をなくす
+			if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+				capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
+		}
+
+		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+
+		GetKeyframeEvent(AnimationData::Atk_S3).Update(GetRegistry(), GetEntity(), keyframe_event::event_collision);
+		if (GetKeyframeEvent(AnimationData::Atk_S3).GetKeyEvent(keyframe_event::event_collision).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeEnter)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(true);
+			}
+		}
+
+		if (GetKeyframeEvent(AnimationData::Atk_S3).GetKeyEvent(keyframe_event::event_collision).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeExit)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
+		}
+
+		using namespace locator;
+		if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
+		{// 先行入力セット(PlayerState::Attack_Normal_01)
+			precede_input = PlayerState::Attack_Normal_01;
+		}
+		else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
+		{// 先行入力セット(PlayerState::Attacking_Strong_04)
+			precede_input = PlayerState::Attack_Strong_04;
+		}
+
+		// アニメーション再生中なら処理を中断
+		if (model_comp.IsPlayAnimation())
+			return;
+
+		if (precede_input == PlayerState::End)
+		{// 先行入力なし
+			// 状態遷移(PlayerState::Idle)
+			player_state.SetState(PlayerState::Idle);
+		}
+		else
+		{// 先行入力あり
+			// 状態遷移(先行入力値)
+			player_state.SetState(precede_input);
+		}
+	}
+
+	void PlayerComponent::AtkStrong04(float dt)
+	{
+		auto& model_comp = GetRegistry()->GetComponent<ModelComponent>(GetEntity());
+		if (player_state.GetInitialize())
+		{
+			InitializeAnimationVariable();
+			// アニメーションセット(AnimationData::Attack_Strong_04)
+			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Atk_S4), false);
+			// 剣の当たり判定をなくす
+			if (auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+				capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
+		}
+
+		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+
+		// キーフレームイベントの登録
+		GetKeyframeEvent(AnimationData::Atk_S4).Update(GetRegistry(), GetEntity(), keyframe_event::event_collision);
+		GetKeyframeEvent(AnimationData::Atk_S4).Update(GetRegistry(), GetEntity(), keyframe_event::event_move);
+
+		// 当たり判定をOn
+		if (GetKeyframeEvent(AnimationData::Atk_S4).GetKeyEvent(keyframe_event::event_collision).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeEnter)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(true);
+			}
+		}
+		// 当たり判定をOff
+		if (GetKeyframeEvent(AnimationData::Atk_S4).GetKeyEvent(keyframe_event::event_collision).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeExit)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
+		}
+		// 前方へ移動
+		if(GetKeyframeEvent(AnimationData::Atk_S4).GetKeyEvent(keyframe_event::event_move).key_state ==
+		   system::KeyframeEvent::KeyState::OnKeyRangeStay)
+		{
+			{// 移動速度の設定
+				auto& rigid_body_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
+				rigid_body_comp.AddForce({ attack_strong_04_speed,0.0f,attack_strong_04_speed });
+			}
+		}
+
+		using namespace locator;
+		if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::X))
+		{// 先行入力セット(PlayerState::Attack_Normal_01)
+			precede_input = PlayerState::Attack_Normal_01;
+		}
+		else if (ButtonState::Press == Locator::GetInput()->GamePad().GetState(GamePadButton::Y))
+		{// 先行入力セット(PlayerState::Attack_Strong_01)
+			precede_input = PlayerState::Attack_Strong_01;
+		}
+
+		// アニメーション再生中なら処理を中断
+		if (model_comp.IsPlayAnimation())
+			return;
+
+		if (precede_input == PlayerState::End)
+		{// 先行入力なし
+			// 状態遷移(PlayerState::Idle)
+			player_state.SetState(PlayerState::Idle);
+		}
+		else
+		{// 先行入力あり
+			// 状態遷移(先行入力値)
+			player_state.SetState(precede_input);
 		}
 	}
 } // cumulonimbus::component

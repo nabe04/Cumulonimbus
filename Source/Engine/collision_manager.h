@@ -211,12 +211,14 @@ namespace cumulonimbus::collision
 		 * @param sphere_2 : Sphere情報(2)
 		 * @param ent_1 : result_1のエンティティ
 		 * @param ent_2 : result_2のエンティティ
+		 * @param hit_pos : 判定位置
 		 */
 		void UpdateHitResult(
 			ecs::Registry* registry_1, ecs::Registry* registry_2,
-			Sphere&		   sphere_1	 , Sphere&		  sphere_2,
+			Sphere& sphere_1, Sphere& sphere_2,
 			const mapping::rename_type::UUID& ent_1,
-			const mapping::rename_type::UUID& ent_2);
+			const mapping::rename_type::UUID& ent_2,
+			const DirectX::SimpleMath::Vector3& hit_pos);
 
 		/**
 		 * @brief : 判定した時のHitResultの更新
@@ -228,12 +230,14 @@ namespace cumulonimbus::collision
 		 * @param capsule_2 : Capsule情報(2)
 		 * @param ent_1 : result_1のエンティティ
 		 * @param ent_2 : result_2のエンティティ
+		 * @param hit_pos : 判定位置
 		 */
 		void UpdateHitResult(
 			ecs::Registry* registry_1, ecs::Registry* registry_2,
 			Capsule&	   capsule_1 , Capsule&       capsule_2,
 			const mapping::rename_type::UUID& ent_1,
-			const mapping::rename_type::UUID& ent_2);
+			const mapping::rename_type::UUID& ent_2,
+			const DirectX::SimpleMath::Vector3& hit_pos);
 
 		/**
 		 * @brief : 判定した時のHitResultの更新
@@ -245,12 +249,14 @@ namespace cumulonimbus::collision
 		 * @param capsule : Capsule情報(2)
 		 * @param s_ent : sphereのエンティティ
 		 * @param c_ent : capsuleのエンティティ
+		 * @param hit_pos : 判定位置
 		 */
 		void UpdateHitResult(
 			ecs::Registry* registry_1, ecs::Registry* registry_2,
 			Sphere&		   sphere	 , Capsule&		  capsule,
 			const mapping::rename_type::UUID& s_ent,
-			const mapping::rename_type::UUID& c_ent);
+			const mapping::rename_type::UUID& c_ent,
+			const DirectX::SimpleMath::Vector3& hit_pos);
 
 		/**
 		 * @brief : 押出し処理
