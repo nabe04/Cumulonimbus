@@ -150,13 +150,14 @@ namespace cumulonimbus::component
 		// パラメータの代入
 		post_effect_manager.GetDistort().SetIsActive(true);
 		post_effect_manager.GetScreenFilter().SetIsActive(true);
-		post_effect_manager.GetScreenFilter().SetIsGrayScale(true);
+		//post_effect_manager.GetScreenFilter().SetIsGrayScale(true);
 		distort_cbuff_data.distort_inner_circle				= distort_current_inner_circle;
 		distort_cbuff_data.distort_outer_circle				= distort_current_outer_circle;
 		distort_cbuff_data.distort_time_scale				= time_scale;
 		distort_cbuff_data.distort_noise_scale				= distort_max_noise_scale;
 		distort_cbuff_data.distort_noise_attenuation		= distort_max_noise_attenuation;
 		screen_filter_cbuff_data.sfilter_dissolve_threshold = 0;
+		screen_filter_cbuff_data.sfilter_filter_color		= { 100.f / 255.f,.0f,180.f / 255.f };
 
 		if(elapsed_time > easing_end_time)
 		{
@@ -234,7 +235,7 @@ namespace cumulonimbus::component
 
 		auto& post_effect_manager		= locator::Locator::GetSystem()->GetPostEffectManager();
 		auto& distort_cbuff_data		= post_effect_manager.GetDistort().GetCBuffer().GetData();
-		auto& screen_filter_cbuff_data	= post_effect_manager.GetScreenFilter().GetCBuffer();
+		auto& screen_filter_cbuff_data	= post_effect_manager.GetScreenFilter().GetCBuffer().GetData();
 		// パラメータの代入
 		post_effect_manager.GetDistort().SetIsActive(true);
 		post_effect_manager.GetScreenFilter().SetIsActive(false);
@@ -244,6 +245,7 @@ namespace cumulonimbus::component
 		distort_cbuff_data.distort_time_scale		 = time_scale;
 		distort_cbuff_data.distort_noise_scale		 = noise_scale;
 		distort_cbuff_data.distort_noise_attenuation = noise_attenuation;
+		screen_filter_cbuff_data.sfilter_filter_color = { 0.f,.0f,.0f };
 
 		if (elapsed_time > easing_end_time)
 		{

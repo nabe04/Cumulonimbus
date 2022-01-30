@@ -63,6 +63,12 @@ namespace cumulonimbus::asset
 		bool Supported(std::filesystem::path extension) override;
 
 		/**
+		 * @brief : 指定されたidのマテリアルを保持しているか
+		 */
+		[[nodiscard]]
+		bool HasMaterial(const mapping::rename_type::UUID& mat_id) const;
+
+		/**
 		 * @brief : 新規マテリアルの作成
 		 * @remark : material_nameを記述しない場合名前を「New Material」にする
 		 * @param asset_manager : AssetManagerクラスの参照

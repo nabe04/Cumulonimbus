@@ -39,7 +39,7 @@ CBUFFER(MaterialCB, CBSlot_Material)
 	}
 
 	template<class Archive>
-	void save(Archive&& archive,const uint32_t version)
+	void save(Archive&& archive,const uint32_t version) const
 	{
 		archive(
 			CEREAL_NVP(mat_roughness),
@@ -56,7 +56,10 @@ CBUFFER(MaterialCB, CBSlot_Material)
 
 namespace cumulonimbus::asset
 {
+	class AssetManager;
 	class Texture;
+	class MaterialLoader;
+
 } // cumulonimbus::asset
 
 CEREAL_CLASS_VERSION(MaterialCB, 0)
@@ -106,12 +109,19 @@ namespace cumulonimbus::asset
 		explicit Material() = default; // for cereal
 		explicit Material(const mapping::rename_type::UUID& mat_id);
 		explicit Material(const mapping::rename_type::UUID& mat_id, const MaterialData& data);
-		Material(const Material& other);
-		Material& operator=(const Material& other);
+		explicit Material(const mapping::rename_type::UUID& mat_id, AssetManager& asset_manager, MaterialLoader& material_loader);
+		//Material(Material& other);
+		//Material& operator=(Material& other);
 		~Material() = default;
 
+		//template<class Archive>
+		//void serialize(Archive&& archive);
+
 		template<class Archive>
-		void serialize(Archive&& archive);
+		void load(Archive&& archive, uint32_t version);
+
+		template<class Archive>
+		void save(Archive&& archive, uint32_t version) const;
 
 		/**
 		 * @brief : 「.mat」形式での保存(シリアライズ)
@@ -200,6 +210,9 @@ namespace cumulonimbus::asset
 
 		EnumStateMap<ColorChannel> roughness_channel{};
 		EnumStateMap<ColorChannel> metalness_channel{};
+
+		float roughness{};
+		float metalness{};
 
 		/**
 		 * @brief : マテリアルのテクスチャ選択

@@ -469,7 +469,7 @@ namespace cumulonimbus::component
 		if (model_comp.IsPlayAnimation())
 			return;
 
-		GetRegistry()->AddDestroyEntity(GetEntity());
+		//GetRegistry()->AddDestroyEntity(GetEntity());
 	}
 
 	void EnemySoldierComponent::Attack01(float dt)

@@ -10,8 +10,11 @@
 #include "texture_loader.h"
 #include "locator.h"
 #include "texture_resource_mapping.h"
+#include "material_loader.h"
 
-CEREAL_CLASS_VERSION(cumulonimbus::asset::MaterialData, 0);
+//CEREAL_CLASS_VERSION(cumulonimbus::asset::MaterialData, 0);
+CEREAL_CLASS_VERSION(cumulonimbus::asset::Material, 1);
+
 
 namespace cumulonimbus::asset
 {
@@ -55,11 +58,56 @@ namespace cumulonimbus::asset
 	//	);
 	//}
 
+	//template <class Archive>
+	//void Material::serialize(Archive&& archive)
+	//{
+	//	archive(
+	//		CEREAL_NVP(material_data)
+	//	);
+	//}
+
 	template <class Archive>
-	void Material::serialize(Archive&& archive)
+	void Material::load(Archive&& archive, uint32_t version)
+	{
+		if(version == 0)
+		{
+			archive(
+				CEREAL_NVP(material_data)
+			);
+		}
+		if(version == 1)
+		{
+			archive(
+				CEREAL_NVP(material_data),
+				CEREAL_NVP(mat_id),
+				CEREAL_NVP(cb_material),
+				CEREAL_NVP(roughness_channel),
+				CEREAL_NVP(metalness_channel)
+			);
+		}
+		if(version == 2)
+		{
+			archive(
+				CEREAL_NVP(material_data),
+				CEREAL_NVP(mat_id),
+				CEREAL_NVP(cb_material),
+				CEREAL_NVP(roughness_channel),
+				CEREAL_NVP(metalness_channel),
+				CEREAL_NVP(roughness),
+				CEREAL_NVP(metalness)
+			);
+		}
+	}
+
+	template <class Archive>
+	void Material::save(Archive&& archive, uint32_t version) const
 	{
 		archive(
-			CEREAL_NVP(material_data)
+			CEREAL_NVP(material_data),
+			CEREAL_NVP(mat_id),
+			CEREAL_NVP(cb_material),
+			CEREAL_NVP(roughness_channel),
+			CEREAL_NVP(metalness_channel)
 		);
 	}
 
@@ -76,26 +124,18 @@ namespace cumulonimbus::asset
 		cb_material   = std::make_unique<buffer::ConstantBuffer<MaterialCB>>(locator::Locator::GetDx11Device()->device.Get());
 	}
 
-	Material::Material(const Material& other)
-		:material_data{ other.material_data },
-		mat_id{ other.mat_id }
+	Material::Material(const mapping::rename_type::UUID& mat_id, AssetManager& asset_manager, MaterialLoader& material_loader)
 	{
-		cb_material = std::make_unique<buffer::ConstantBuffer<MaterialCB>>(locator::Locator::GetDx11Device()->device.Get());
-	}
-
-	Material& Material::operator=(const Material& other)
-	{
-		if(this == &other)
+		if (asset_manager.GetAssetSheetManager().GetSheet<Material>().sheet.contains(mat_id))
 		{
-			return *this;
+			Load(asset_manager.GetAssetSheetManager().GetAssetFilename<Material>(mat_id));
+			cb_material->CreateCBuffer(locator::Locator::GetDx11Device()->device.Get());
 		}
-
-		material_data = other.material_data;
-		mat_id		  = other.mat_id;
-
-		cb_material = std::make_unique<buffer::ConstantBuffer<MaterialCB>>(locator::Locator::GetDx11Device()->device.Get());
-
-		return *this;
+		else
+		{
+			this->mat_id = mat_id;
+			cb_material = std::make_unique<buffer::ConstantBuffer<MaterialCB>>(locator::Locator::GetDx11Device()->device.Get());
+		}
 	}
 
 	void Material::Save(const std::filesystem::path& path)
@@ -108,22 +148,35 @@ namespace cumulonimbus::asset
 			cereal::BinaryOutputArchive output_archive(ofs);
 			output_archive(*this);
 		}
-		//{ // json形式での保存を現在は切っておく
-		//	std::filesystem::path json_path = path;
+		{ // json形式での保存を現在は切っておく
+			std::filesystem::path json_path = path;
 
-		//	std::ofstream ofs(json_path.replace_extension().string() + file_path_helper::GetJsonExtension());
-		//	cereal::JSONOutputArchive output_archive(ofs);
-		//	output_archive(*this);
-		//}
+			std::ofstream ofs(json_path.replace_extension().string() + file_path_helper::GetJsonExtension());
+			cereal::JSONOutputArchive output_archive(ofs);
+			output_archive(*this);
+		}
 	}
 
 	void Material::Load(const std::filesystem::path& path)
 	{
-		std::ifstream ifs(path.string(),std::ios_base::binary);
-		if (!ifs)
-			assert(!"Not open file(Material::Load)");
-		cereal::BinaryInputArchive input_archive(ifs);
-		input_archive(*this);
+		//// Binaryデータのロード
+		//{
+		//	std::ifstream ifs(path.string(), std::ios_base::binary);
+		//	if (!ifs)
+		//		assert(!"Not open file(Material::Load)");
+		//	cereal::BinaryInputArchive input_archive(ifs);
+		//	input_archive(*this);
+		//}
+
+		{
+			std::filesystem::path json_path = path;
+
+			std::ifstream ifs(json_path.replace_extension().string() + file_path_helper::GetJsonExtension());
+			if (!ifs)
+				assert(!"Not open file(Material::Load)");
+			cereal::JSONInputArchive input_archive(ifs);
+			input_archive(*this);
+		}
 	}
 
 	void Material::RenderImGui()

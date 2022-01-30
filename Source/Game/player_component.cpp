@@ -91,12 +91,39 @@ namespace cumulonimbus::component
 				CEREAL_NVP(hit_effect_l)
 			);
 		}
+
+		if (version == 2)
+		{
+
+			archive(
+				cereal::base_class<Actor3DComponent>(this),
+				CEREAL_NVP(precede_input),
+				CEREAL_NVP(adjust_keyframe_map),
+				CEREAL_NVP(animation_break_frame),
+				CEREAL_NVP(walk_speed),
+				CEREAL_NVP(dash_speed),
+				CEREAL_NVP(attack_04_speed),
+				CEREAL_NVP(avoid_dash_speed),
+				CEREAL_NVP(jump_movement_speed),
+				CEREAL_NVP(threshold),
+				CEREAL_NVP(long_press_time),
+				CEREAL_NVP(long_press_slot),
+				CEREAL_NVP(attack_04_jump_strength),
+				CEREAL_NVP(hit_effect_s),
+				CEREAL_NVP(hit_effect_m),
+				CEREAL_NVP(hit_effect_l),
+				CEREAL_NVP(hit_effect_s),
+				CEREAL_NVP(hit_effect_m),
+				CEREAL_NVP(hit_effect_l)
+			);
+		}
 	}
 
 	template <class Archive>
 	void PlayerComponent::save(Archive&& archive, const uint32_t version) const
 	{
-		if(version >= 0)
+		if(version == 0 ||
+		   version == 1)
 		{
 			archive(
 				cereal::base_class<Actor3DComponent>(this),
@@ -113,6 +140,31 @@ namespace cumulonimbus::component
 				CEREAL_NVP(long_press_time),
 				CEREAL_NVP(long_press_slot),
 				CEREAL_NVP(attack_04_jump_strength),
+				CEREAL_NVP(hit_effect_s),
+				CEREAL_NVP(hit_effect_m),
+				CEREAL_NVP(hit_effect_l)
+			);
+		}
+
+		if(version == 2)
+		{
+			archive(
+				cereal::base_class<Actor3DComponent>(this),
+				CEREAL_NVP(precede_input),
+				CEREAL_NVP(adjust_keyframe_map),
+				CEREAL_NVP(animation_break_frame),
+				CEREAL_NVP(walk_speed),
+				CEREAL_NVP(dash_speed),
+				CEREAL_NVP(attack_04_speed),
+				CEREAL_NVP(avoid_dash_speed),
+				CEREAL_NVP(jump_movement_speed),
+				CEREAL_NVP(threshold),
+				CEREAL_NVP(long_press_time),
+				CEREAL_NVP(long_press_slot),
+				CEREAL_NVP(attack_04_jump_strength),
+				CEREAL_NVP(hit_effect_s),
+				CEREAL_NVP(hit_effect_m),
+				CEREAL_NVP(hit_effect_l),
 				CEREAL_NVP(hit_effect_s),
 				CEREAL_NVP(hit_effect_m),
 				CEREAL_NVP(hit_effect_l)
@@ -221,6 +273,8 @@ namespace cumulonimbus::component
 		RegistryKeyframeEvent(AnimationData::Atk_S4, keyframe_event::event_move);
 		// バックステップ(移動速度)
 		RegistryKeyframeEvent(AnimationData::Dodge, keyframe_event::event_move);
+		// ダッシュ攻撃(当たり判定)
+		RegistryKeyframeEvent(AnimationData::Dash_Attack, keyframe_event::event_collision);
 		// ダッシュ攻撃(アニメーション)
 		RegistryKeyframeEvent(AnimationData::Dash_Attack, keyframe_event::event_animation);
 
@@ -238,6 +292,8 @@ namespace cumulonimbus::component
 		GetKeyframeEvent(AnimationData::Atk_S4).SetKeyEvent(keyframe_event::event_move,  5, 10);
 		// バックステップ(移動距離)
 		GetKeyframeEvent(AnimationData::Dodge).SetKeyEvent(keyframe_event::event_move, 1, 15);
+		// ダッシュ攻撃(当たり判定)
+		GetKeyframeEvent(AnimationData::Dash_Attack).SetKeyEvent(keyframe_event::event_collision, 11, 18);
 		// ダッシュ攻撃(アニメーション)
 		GetKeyframeEvent(AnimationData::Dash_Attack).SetKeyEvent(keyframe_event::event_animation, 15, 17);
 	}
@@ -337,11 +393,17 @@ namespace cumulonimbus::component
 			ImGui::Text("Is Avoid %d", is_avoid);
 			ImGui::Separator();
 			ImGui::Text("Hit Effect S");
+			ImGui::PushID("Hit Effect S");
 			effect_loader.ImSelectableEffect(asset_manager, hit_effect_s);
+			ImGui::PopID();
 			ImGui::Text("Hit Effect M");
+			ImGui::PushID("Hit Effect M");
 			effect_loader.ImSelectableEffect(asset_manager, hit_effect_m);
+			ImGui::PopID();
 			ImGui::Text("Hit Effect L");
+			ImGui::PushID("Hit Effect L");
 			effect_loader.ImSelectableEffect(asset_manager, hit_effect_l);
+			ImGui::PopID();
 		}
 	}
 
@@ -780,7 +842,6 @@ namespace cumulonimbus::component
 			}
 		}
 
-
 		GetKeyframeEvent(AnimationData::Dodge).Update(GetRegistry(), GetEntity(), keyframe_event::event_move);
 		if (GetKeyframeEvent(AnimationData::Dodge).GetKeyEvent(keyframe_event::event_move).key_state
 			== system::KeyframeEvent::KeyState::OnKeyRangeStay)
@@ -1029,6 +1090,8 @@ namespace cumulonimbus::component
 			model_comp.SwitchAnimation(GetAnimDataIndex(AnimationData::Dash_Attack));
 
 			anim_stop_timer = 0;
+
+			current_hit_effect_id = hit_effect_l;
 		}
 
 		//if(anim_stop_timer < anim_stop_dash_atk)
@@ -1045,6 +1108,28 @@ namespace cumulonimbus::component
 		//{
 		//	model_comp.SetIsStopAnimation(false);
 		//}
+
+
+		// 当たり判定処理
+		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
+		GetKeyframeEvent(AnimationData::Dash_Attack).Update(GetRegistry(), GetEntity(), keyframe_event::event_collision);
+		if (GetKeyframeEvent(AnimationData::Dash_Attack).GetKeyEvent(keyframe_event::event_collision).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeEnter)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(true);
+			}
+		}
+
+		if (GetKeyframeEvent(AnimationData::Dash_Attack).GetKeyEvent(keyframe_event::event_collision).key_state ==
+			system::KeyframeEvent::KeyState::OnKeyRangeExit)
+		{
+			if (capsule_comp)
+			{
+				capsule_comp->SetAllCollisionEnable(false);
+			}
+		}
 
 		if(model_comp.GetIsStopAnimation())
 		{
@@ -1169,6 +1254,8 @@ namespace cumulonimbus::component
 			{
 				capsule_comp->SetAllCollisionEnable(false);
 			}
+
+			current_hit_effect_id = hit_effect_m;
 		}
 
 		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
@@ -1248,6 +1335,8 @@ namespace cumulonimbus::component
 			{
 				capsule_comp->SetAllCollisionEnable(false);
 			}
+
+			current_hit_effect_id = hit_effect_l;
 		}
 
 		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
@@ -1335,6 +1424,8 @@ namespace cumulonimbus::component
 			{
 				capsule_comp->SetAllCollisionEnable(false);
 			}
+
+			current_hit_effect_id = hit_effect_s;
 		}
 
 		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
@@ -1398,6 +1489,8 @@ namespace cumulonimbus::component
 			{
 				capsule_comp->SetAllCollisionEnable(false);
 			}
+
+			current_hit_effect_id = hit_effect_m;
 		}
 
 		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
@@ -1462,6 +1555,8 @@ namespace cumulonimbus::component
 			{
 				capsule_comp->SetAllCollisionEnable(false);
 			}
+
+			current_hit_effect_id = hit_effect_l;
 		}
 
 		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);
@@ -1525,6 +1620,8 @@ namespace cumulonimbus::component
 			{
 				capsule_comp->SetAllCollisionEnable(false);
 			}
+
+			current_hit_effect_id = hit_effect_l;
 		}
 
 		auto* capsule_comp = GetRegistry()->TryGetComponent<CapsuleCollisionComponent>(sword_ent);

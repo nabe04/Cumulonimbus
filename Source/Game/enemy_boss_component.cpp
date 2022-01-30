@@ -709,7 +709,6 @@ namespace cumulonimbus::component
 					//	attack_behavior.SetBehavior(AttackBehavior::Atk_E2);
 					//}
 					attack_behavior.SetBehavior(GetRandomAtkLongBehavior());
-					//attack_behavior.SetBehavior(AttackBehavior::Atk_E2);
 				}
 			}
 			else

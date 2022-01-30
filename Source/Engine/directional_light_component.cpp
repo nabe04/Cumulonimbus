@@ -55,6 +55,7 @@ namespace cumulonimbus::component
 	{
 		// コンスタントバッファの作成
 		cb_directional_light.CreateCBuffer(locator::Locator::GetDx11Device()->device.Get());
+		light_color = DirectX::SimpleMath::Vector4{ 1.f,1.f,1.f,1.f };
 		// メインのライトにする
 		SwitchMainLight();
 	}

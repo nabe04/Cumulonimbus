@@ -31,7 +31,7 @@ namespace cumulonimbus::camera
 		cb_camera->GetData().camera_view_projection_matrix = { 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
 
 		SetViewInfo(cb_camera->GetData().camera_position, cb_camera->GetData().camera_at, cb_camera->GetData().camera_up);
-		SetProjection(DirectX::XM_PI / 8.0f, static_cast<float>(locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
+		SetProjection(DirectX::XM_PI / 8.0f, static_cast<float>(locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 5000.0f);
 	}
 
 	Camera::Camera(const Camera& other)
@@ -83,7 +83,7 @@ namespace cumulonimbus::camera
 
 
 		SetViewInfo(cb_camera->GetData().camera_position, cb_camera->GetData().camera_at, cb_camera->GetData().camera_up);
-		SetProjection(DirectX::XM_PI / 8.0f, static_cast<float>(locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
+		SetProjection(DirectX::XM_PI / 8.0f, static_cast<float>(locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 5000.0f);
 	}
 
 	Camera& Camera::operator=(const Camera& other)
@@ -141,7 +141,7 @@ namespace cumulonimbus::camera
 		cb_camera->GetData().camera_inv_view_projection_matrix	= view_projection_mat.Invert();
 
 		SetViewInfo(cb_camera->GetData().camera_position, cb_camera->GetData().camera_at, cb_camera->GetData().camera_up);
-		SetProjection(DirectX::XM_PI / 8.0f, static_cast<float>(locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 2000.0f);
+		SetProjection(DirectX::XM_PI / 8.0f, static_cast<float>(locator::Locator::GetDx11Device()->GetScreenWidth()) / static_cast<float>(locator::Locator::GetDx11Device()->GetScreenHeight()), 0.1f, 5000.0f);
 
 		return *this;
 	}
@@ -192,6 +192,9 @@ namespace cumulonimbus::camera
 	{
 		auto& camera = cb_camera->GetData();
 		helper::imgui::Image(*off_screen->GetRenderTargetSRV(), { 160,100 });
+		ImGui::Separator();
+		ImGui::DragFloat("Near Z", &near_z, 0.5f, 0.0f, FLT_MAX);
+		ImGui::DragFloat("Far Z" , &far_z , 0.5f, 0.0f, FLT_MAX);
 		//ImGui::Text("-----------------------");
 		//ImGui::Text("Camera Pos X %f", camera.camera_position.x);
 		//ImGui::Text("Camera Pos Y %f", camera.camera_position.y);

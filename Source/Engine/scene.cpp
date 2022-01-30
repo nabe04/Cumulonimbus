@@ -2,37 +2,35 @@
 
 #include "asset_manager.h"
 #include "asset_sheet_manager.h"
-#include "loader.h"
 #include "camera_component.h"
+#include "camera_component.h"
+#include "ecs.h"
+#include "filename_helper.h"
+#include "file_path_helper.h"
+#include "gaussian_blur.h"
 #include "geometric_primitive_resource.h"
 #include "input_manager.h"
 #include "input_manager.h"
-#include "locator.h"
-#include "render_path.h"
-#include "gaussian_blur.h"
-#include "resource_manager.h"
-#include "window.h"
-#include "file_path_helper.h"
-#include "filename_helper.h"
-#include "post_effect_manager.h"
-
-#include "scene_game.h"
-
-#include "ecs.h"
 #include "light.h"
-#include "time_scale.h"
-#include "camera_component.h"
-#include "sky_box.h"
-
+#include "loader.h"
+#include "locator.h"
+#include "post_effect_manager.h"
 #include "prefab_loader.h"
+#include "render_path.h"
+#include "resource_manager.h"
+#include "scene_game.h"
+#include "sky_box.h"
+#include "time_scale.h"
+#include "window.h"
 
 // Components
 #include "anim_sprite.h"
 #include "collision_component.h"
-#include "transform_component.h"
+#include "directiona_light_component.h"
 #include "hierarchy_component.h"
 #include "player_component.h"
 #include "sphere_collision_component.h"
+#include "transform_component.h"
 
 namespace cumulonimbus::scene
 {
@@ -138,8 +136,10 @@ namespace cumulonimbus::scene
 		const mapping::rename_type::Entity ent_main_camera = registry->CreateEntity();
 		registry->AddComponent<component::CameraComponent>(ent_main_camera, true);
 		registry->Rename(ent_main_camera, filename_helper::GetMainCamera());
-		// Todo : ライトコンポーネントを作成すれば...
 		// ライト
+		const mapping::rename_type::Entity ent_directional_light = registry->CreateEntity();
+		registry->AddComponent < component::DirectionalLightComponent>(ent_directional_light);
+		registry->Rename(ent_directional_light, "Directional_Light");
 
 		// シーン名が決まって無いので"NoTitled"をセットする
 		locator::Locator::GetSystem()->SetCurrentScenePath(filename_helper::GetNoTitled());

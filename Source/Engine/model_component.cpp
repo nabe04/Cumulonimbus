@@ -110,6 +110,17 @@ namespace cumulonimbus::component
 			CEREAL_NVP(prev_animation),
 			CEREAL_NVP(anim_states)
 		);
+
+		auto& asset_manager = *locator::Locator::GetAssetManager();
+		auto& material_loader = *asset_manager.GetLoader<asset::MaterialLoader>();
+		auto& material_sheet = asset_manager.GetAssetSheetManager().GetSheet<asset::Material>();
+		//material.
+
+		for(const auto& mat_id : material_ids)
+		{
+			const auto path = material_sheet.sheet.at(mat_id);
+			material_loader.GetMaterial(mat_id).Save(material_sheet.sheet.at(mat_id));
+		}
 	}
 
 	ModelComponent::ModelComponent(
@@ -123,6 +134,7 @@ namespace cumulonimbus::component
 	ModelComponent::ModelComponent(
 		ecs::Registry* registry, const mapping::rename_type::Entity ent,
 		const ModelComponent& copy_comp)
+		: ComponentBase{ registry,ent }
 	{
 		*this = copy_comp;
 		SetRegistry(registry);

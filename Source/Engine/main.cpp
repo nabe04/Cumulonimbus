@@ -34,15 +34,11 @@ INT WINAPI wWinMain(HINSTANCE instance, HINSTANCE prev_instance, LPWSTR cmd_line
 	Microsoft::WRL::ComPtr<ID3D11Debug> debugInterface;
 	INT ret{};
 	{
-		//Framework f(window);
-		//SetWindowLongPtr(window->GetHWND(), GWLP_USERDATA, reinterpret_cast<LONG_PTR>(&f));
-		//ret = f.Run();
 		cumulonimbus::locator::Locator::GetDx11Device()->device.As(&debugInterface);
 		assert(debugInterface);
 	}
 
 	cumulonimbus::locator::Locator::UnInitialize();
-	debugInterface->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL | D3D11_RLDO_IGNORE_INTERNAL);
 
 	return ret;
 }

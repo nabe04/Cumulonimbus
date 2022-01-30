@@ -186,6 +186,11 @@ namespace cumulonimbus::component
 		effect_id = efk_id;
 		auto& asset_manager = *locator::Locator::GetAssetManager();
 		auto* effekseer_loader = asset_manager.GetLoader<asset::EffekseerLoader>();
+
+		// エフェクトを持っていない場合処理を抜ける
+		if (!effekseer_loader->HasEffect(efk_id))
+			return;
+
 		effect = &effekseer_loader->GetEffect(effect_id);
 	}
 

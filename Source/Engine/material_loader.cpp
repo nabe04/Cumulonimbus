@@ -99,6 +99,15 @@ namespace cumulonimbus::asset
 		return extensions.contains(extension);
 	}
 
+	bool MaterialLoader::HasMaterial(const mapping::rename_type::UUID& mat_id) const
+	{
+		if (materials.contains(mat_id))
+			return true;
+
+		return false;
+	}
+
+
 	mapping::rename_type::UUID MaterialLoader::CreateMaterial(
 		AssetManager& asset_manager, const std::filesystem::path& parent_path,
 		const MaterialData& material_data, std::string material_name)
@@ -143,15 +152,14 @@ namespace cumulonimbus::asset
 
 	void MaterialLoader::Load(AssetManager& asset_manager, const mapping::rename_type::UUID& id)
 	{
-		// すでにテクスチャが存在する場合は処理を抜ける
+		// すでにマテリアルが存在する場合は処理を抜ける
 		if (materials.contains(id))
 			return;
-		Material m{ id };
-		m.Load(asset_manager.GetAssetSheetManager().GetAssetFilename<Material>(id));
+
 		// マテリアルの作成
 		materials.insert(std::make_pair(
 			id,
-			std::make_unique<Material>(m))
+			std::make_unique<Material>(id, asset_manager, *this))
 		);
 		// アセットシート(更新後)の保存
 		asset_manager.Save();
