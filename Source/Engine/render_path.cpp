@@ -132,11 +132,13 @@ namespace cumulonimbus::renderer
 			if (!scene->GetIsVisible())
 				continue;
 
-			if (ecs::Registry& registry = *scene->GetRegistry();
-				registry.GetArray<component::ModelComponent>().GetComponents().size() > 0)
-			{// 2Dスプライトの描画
-				Render2D(immediate_context, &registry, &camera, true);
-			}
+			Render2D(immediate_context, scene->GetRegistry(), &camera, true);
+
+			//if (ecs::Registry& registry = *scene->GetRegistry();
+			//	registry.GetArray<component::ModelComponent>().GetComponents().size() > 0)
+			//{// 2Dスプライトの描画
+			//	Render2D(immediate_context, &registry, &camera, true);
+			//}
 		}
 
 		RenderPostProcess_Begin(immediate_context);
@@ -629,23 +631,28 @@ namespace cumulonimbus::renderer
 		const camera::Camera* camera,
 		const bool is_scene)
 	{
+
+
 		camera->BindFrameBuffer();
 		/*
 		 * SpriteComponent、AnimSpriteComponentはGameViewでのみ描画する
 		 */
-		if(!is_scene)
-		{
+		//if(!is_scene)
+		//{
+			camera->BindCBuffer();
 			for (auto& sprite_comp : registry->GetArray<component::SpriteComponent>().GetComponents())
 			{
-				camera->BindCBuffer();
+
 				BindGraphicsState(immediate_context, sprite_comp.GetGraphicsState());
 				const mapping::shader_assets::ShaderAsset2D asset = shader_manager->GetAsset2DFromConnector(sprite_comp.GetShaderAssetManager()->GetHash());
 				shader_manager->BindShader2D(asset);
 				RenderSprite(immediate_context, registry, sprite_comp.GetEntity(), &sprite_comp);
 				shader_manager->UnbindShader2D(asset);
-				camera->UnbindCBuffer();
+
 			}
-		}
+			camera->UnbindCBuffer();
+		//}
+
 
 		auto& comp = registry->GetArray<component::BillboardComponent>().GetComponents();
 		for(auto& billboard_comp : registry->GetArray<component::BillboardComponent>().GetComponents())
@@ -783,7 +790,6 @@ namespace cumulonimbus::renderer
 				immediate_context->DrawIndexed(subset.index_count, subset.start_index, 0);
 				// マテリアルのアンバインド
 				locator::Locator::GetAssetManager()->GetLoader<asset::MaterialLoader>()->GetMaterial(material_id).UnbindMaterial(mapping::graphics::ShaderStage::PS);
-
 			}
 		}
 	}
@@ -1052,126 +1058,140 @@ namespace cumulonimbus::renderer
 		const mapping::rename_type::Entity entity,
 		component::SpriteComponent* sprite_comp)
 	{
-		TransformCB transform{};
-		transform.transform_matrix = registry->GetComponent<component::TransformComponent>(entity).GetWorldMatrix();
-		//auto m = DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&transform.transform_matrix));
-		//DirectX::XMStoreFloat4x4(&transform.transform_matrix, m);
+		//TransformCB transform{};
+		//transform.transform_matrix = registry->GetComponent<component::TransformComponent>(entity).GetWorldMatrix();
+		////auto m = DirectX::XMMatrixTranspose(DirectX::XMLoadFloat4x4(&transform.transform_matrix));
+		////DirectX::XMStoreFloat4x4(&transform.transform_matrix, m);
 
-		registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
+		//registry->GetComponent<component::TransformComponent>(entity).SetAndBindCBuffer(transform);
 
-		UINT stride = sizeof(shader::VertexSprite);
-		UINT offset = 0;
-		immediate_context->IASetVertexBuffers(0, 1, sprite_comp->GetVertexBufferAddress(), &stride, &offset);
-		locator::Locator::GetDx11Device()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleStrip);
-		auto& texture = locator::Locator::GetAssetManager()->GetLoader<asset::TextureLoader>()->GetTexture(sprite_comp->GetTextureId());
-		texture.BindTexture(mapping::graphics::ShaderStage::PS, TexSlot_BaseColorMap);
-		immediate_context->Draw(4, 0);
-		texture.UnbindTexture(mapping::graphics::ShaderStage::PS, TexSlot_BaseColorMap);
-		registry->GetComponent<component::TransformComponent>(entity).UnbindCBuffer();
+		//UINT stride = sizeof(shader::VertexSprite);
+		//UINT offset = 0;
+		//immediate_context->IASetVertexBuffers(0, 1, sprite_comp->GetVertexBufferAddress(), &stride, &offset);
+		//locator::Locator::GetDx11Device()->BindPrimitiveTopology(mapping::graphics::PrimitiveTopology::TriangleStrip);
+		//auto& texture = locator::Locator::GetAssetManager()->GetLoader<asset::TextureLoader>()->GetTexture(sprite_comp->GetTextureId());
+		//texture.BindTexture(mapping::graphics::ShaderStage::PS, TexSlot_BaseColorMap);
+		//immediate_context->Draw(4, 0);
+		//texture.UnbindTexture(mapping::graphics::ShaderStage::PS, TexSlot_BaseColorMap);
+		//registry->GetComponent<component::TransformComponent>(entity).UnbindCBuffer();
+
+
 
 		// Todo : 新SpriteSystemでの描画が完了次第消す
-		//component::OldSpriteComponent&	sprite		= registry->GetComponent<component::OldSpriteComponent>(entity);
-		//component::TransformComponent&	transform	= registry->GetComponent<component::TransformComponent>(entity);
+		component::SpriteComponent&	   sprite	 = registry->GetComponent<component::SpriteComponent>(entity);
+		component::TransformComponent& transform = registry->GetComponent<component::TransformComponent>(entity);
+
+		auto& texture = locator::Locator::GetAssetManager()->GetLoader<asset::TextureLoader>()->GetTexture(sprite_comp->GetTextureId());
+		texture.BindTexture(mapping::graphics::ShaderStage::PS, TexSlot_BaseColorMap);
 
 		//locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
 		//													  sprite.GetTexture(),
 		//													  TexSlot_BaseColorMap);
 
-		//// 2Dに必要ない値のリセット
-		//transform.SetPositionZ(0.0f);
-		//transform.SetScaleZ(1.f);
-		//transform.SetWorldRotation_X(.0f);
-		//transform.SetWorldRotation_Y(.0f);
+		// 2Dに必要ない値のリセット
+		transform.SetPosition_Z(0.0f);
+		transform.SetScale_Z(1.f);
+		transform.SetEulerAngle_X(.0f);
+		transform.SetEulerAngle_Y(.0f);
 
-		//std::array<XMFLOAT2, 4> pos{};
-		//// Left top
-		//pos[0].x = 0.0f;
-		//pos[0].y = 0.0f;
-		//// Right top
+		std::array<DirectX::XMFLOAT2, 4> pos{};
+		// Left top
+		pos[0].x = 0.0f;
+		pos[0].y = 0.0f;
+		// Right top
 		//pos[1].x = static_cast<float>(sprite.VariableWidth());
-		//pos[1].y = 0.0f;
-		//// Left bottom
-		//pos[2].x = 0.0f;
+		pos[1].x = 256.f;
+		pos[1].y = 0.0f;
+		// Left bottom
+		pos[2].x = 0.0f;
 		//pos[2].y = static_cast<float>(sprite.VariableHeight());
-		//// Right bottom
+		pos[2].y = 256.f;
+		// Right bottom
 		//pos[3].x = static_cast<float>(sprite.VariableWidth());
 		//pos[3].y = static_cast<float>(sprite.VariableHeight());
+		pos[3].x = 256.f;
+		pos[3].y = 256.f;
 
-		//// Rotation
-		//{
-		//	const float sin_val = sinf(DirectX::XMConvertToRadians(transform.GetWorldRotation().z));
-		//	const float cos_val = cosf(DirectX::XMConvertToRadians(transform.GetWorldRotation().z));
+		// Rotation
+		{
+			const float sin_val = sinf(DirectX::XMConvertToRadians(transform.GetEulerAngles().z));
+			const float cos_val = cosf(DirectX::XMConvertToRadians(transform.GetEulerAngles().z));
 
-		//	for (auto& p : pos)
-		//	{// Rotate with the pivot as the origin
+			for (auto& p : pos)
+			{// Rotate with the pivot as the origin
 
-		//		// Pivot adjustment
-		//		p.x -= sprite.GetSrcPivot().x;
-		//		p.y -= sprite.GetSrcPivot().y;
+				// Pivot adjustment
+				//p.x -= sprite.GetSrcPivot().x;
+				//p.y -= sprite.GetSrcPivot().y;
 
-		//		// Scale ajustment
-		//		p.x *= (transform.GetScale().x);
-		//		p.y *= (transform.GetScale().y);
+				// Scale ajustment
+				p.x *= (transform.GetScale().x);
+				p.y *= (transform.GetScale().y);
 
-		//		// Rotate
-		//		const float oldX = p.x;
-		//		p.x = p.x * cos_val - p.y * sin_val;
-		//		p.y = oldX * sin_val + p.y * cos_val;
+				// Rotate
+				const float oldX = p.x;
+				p.x = p.x * cos_val - p.y * sin_val;
+				p.y = oldX * sin_val + p.y * cos_val;
 
-		//		// Move back in position
-		//		p.x += transform.GetPosition().x;
-		//		p.y += transform.GetPosition().y;
-		//	}
-		//}
+				// Move back in position
+				p.x += transform.GetPosition().x;
+				p.y += transform.GetPosition().y;
+			}
+		}
 
-		//{
-		//	RECT rec{};
-		//	const HWND desc_wnd_handle = registry->GetScene()->GetFramework()->GetWindow()->GetHWND();
+		{
+			RECT rec{};
 
-		//	GetClientRect(desc_wnd_handle, &rec);
+			const HWND desc_wnd_handle = locator::Locator::GetWindow()->GetHWND();
 
-		//	// No off-screen sprites are drawn
-		//	for (int i = 0; i < 4; ++i)
-		//	{
-		//		if ((pos[i].x >= 0 && pos[i].x <= rec.right) && (pos[i].y >= 0 && pos[i].y <= rec.bottom))
-		//		{
-		//			break;
-		//		}
-		//		if (i == 4)
-		//		{
-		//			return;
-		//		}
-		//	}
+			GetClientRect(desc_wnd_handle, &rec);
 
-		//	// NDC transform
-		//	{
-		//		for (auto& p : pos)
-		//		{
-		//			p.x = p.x * 2.0f / rec.right - 1.0f;
-		//			p.y = -p.y * 2.0f / rec.bottom + 1.0f;
-		//		}
-		//	}
-		//}
+			// No off-screen sprites are drawn
+			for (int i = 0; i < 4; ++i)
+			{
+				if ((pos[i].x >= 0 && pos[i].x <= rec.right) && (pos[i].y >= 0 && pos[i].y <= rec.bottom))
+				{
+					break;
+				}
+				if (i == 4)
+				{
+					return;
+				}
+			}
 
-		//// Update vertex buffer
-		//std::array<shader::VertexSprite, 4> vertex{};
-		//vertex.at(0).position = DirectX::XMFLOAT4{ pos[0].x,pos[0].y,.0f,1.f };
-		//vertex.at(1).position = DirectX::XMFLOAT4{ pos[1].x,pos[1].y,.0f,1.f };
-		//vertex.at(2).position = DirectX::XMFLOAT4{ pos[2].x,pos[2].y,.0f,1.f };
-		//vertex.at(3).position = DirectX::XMFLOAT4{ pos[3].x,pos[3].y,.0f,1.f };
+			// NDC transform
+			{
+				for (auto& p : pos)
+				{
+					p.x = p.x * 2.0f / rec.right - 1.0f;
+					p.y = -p.y * 2.0f / rec.bottom + 1.0f;
+				}
+			}
+		}
+
+		// Update vertex buffer
+		std::array<shader::VertexSprite, 4> vertex{};
+		vertex.at(0).position = DirectX::XMFLOAT4{ pos[0].x,pos[0].y,.0f,1.f };
+		vertex.at(1).position = DirectX::XMFLOAT4{ pos[1].x,pos[1].y,.0f,1.f };
+		vertex.at(2).position = DirectX::XMFLOAT4{ pos[2].x,pos[2].y,.0f,1.f };
+		vertex.at(3).position = DirectX::XMFLOAT4{ pos[3].x,pos[3].y,.0f,1.f };
 		//vertex.at(0).texcoord = sprite.GetVariableTexcoords().at(0);
 		//vertex.at(1).texcoord = sprite.GetVariableTexcoords().at(1);
 		//vertex.at(2).texcoord = sprite.GetVariableTexcoords().at(2);
 		//vertex.at(3).texcoord = sprite.GetVariableTexcoords().at(3);
+		vertex.at(0).texcoord = {0,0};
+		vertex.at(1).texcoord = {1,0};
+		vertex.at(2).texcoord = {0,1};
+		vertex.at(3).texcoord = {1,1};
 
-		//immediate_context->UpdateSubresource(sprite.GetVertexBuffer(), 0, NULL, vertex.data(), 0, 0);
+		immediate_context->UpdateSubresource(sprite.GetVertexBuffer(), 0, NULL, vertex.data(), 0, 0);
 
-		//// Set of Vertex Buffers
-		//UINT stride = sizeof(shader::VertexSprite);
-		//UINT offset = 0;
-		//immediate_context->IASetVertexBuffers(0, 1, sprite.GetVertexBufferAddress(), &stride, &offset);
+		// Set of Vertex Buffers
+		UINT stride = sizeof(shader::VertexSprite);
+		UINT offset = 0;
+		immediate_context->IASetVertexBuffers(0, 1, sprite.GetVertexBufferAddress(), &stride, &offset);
 
-		//immediate_context->Draw(4, 0);
+		immediate_context->Draw(4, 0);
 	}
 
 	void RenderPath::RenderAnimSprite(ID3D11DeviceContext* immediate_context,

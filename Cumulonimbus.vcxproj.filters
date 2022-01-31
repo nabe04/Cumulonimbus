@@ -1268,6 +1268,9 @@
     <ClInclude Include="Source\Engine\dissolve_screen.h">
       <Filter>Header\Engine\Shader%28.h%29\PostProcess</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\cbuffer_sprite.h">
+      <Filter>Header\Engine\System\Mapping</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Cumulonimbus.rc" />

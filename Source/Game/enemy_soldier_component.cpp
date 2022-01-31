@@ -177,7 +177,8 @@ namespace cumulonimbus::component
 		soldier_state.AddState(SoldierState::Attack_03	, [ent, registry](const float dt) {registry->GetComponent<EnemySoldierComponent>(ent).Attack03(dt); });
 
 		// ‰Šústate‚Ìİ’è(SoldierState::Wave_Start)
-		soldier_state.SetState(SoldierState::Wave_Start);
+		//soldier_state.SetState(SoldierState::Wave_Start);
+		soldier_state.SetState(SoldierState::Idle);
 
 		//// Todo : “G‚Ì‰ñ”ğƒeƒXƒg
 		//soldier_state.SetState(SoldierState::Attack_01);

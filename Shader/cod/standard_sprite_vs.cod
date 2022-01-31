@@ -4,22 +4,11 @@
 //
 // Buffer Definitions: 
 //
-// cbuffer TransformCB
+// cbuffer OldSpriteCB
 // {
 //
-//   float4x4 bone_transforms[128];     // Offset:    0 Size:  8192 [unused]
-//   float4x4 transform_matrix;         // Offset: 8192 Size:    64
-//   float4x4 scaling_matrix;           // Offset: 8256 Size:    64 [unused]
-//   float4x4 rotation_matrix;          // Offset: 8320 Size:    64 [unused]
-//   float4x4 translation_matrix;       // Offset: 8384 Size:    64 [unused]
-//
-// }
-//
-// cbuffer SpriteCB
-// {
-//
-//   float2 sprite_offset;              // Offset:    0 Size:     8
-//   float2 sprite_padding;             // Offset:    8 Size:     8 [unused]
+//   float2 old_sprite_offset;          // Offset:    0 Size:     8
+//   float2 old_sprite_padding;         // Offset:    8 Size:     8 [unused]
 //
 // }
 //
@@ -28,8 +17,7 @@
 //
 // Name                                 Type  Format         Dim      HLSL Bind  Count
 // ------------------------------ ---------- ------- ----------- -------------- ------
-// TransformCB                       cbuffer      NA          NA            cb2      1 
-// SpriteCB                          cbuffer      NA          NA           cb10      1 
+// OldSpriteCB                       cbuffer      NA          NA           cb10      1 
 //
 //
 //
@@ -37,7 +25,7 @@
 //
 // Name                 Index   Mask Register SysValue  Format   Used
 // -------------------- ----- ------ -------- -------- ------- ------
-// POSITION                 0   xyzw        0     NONE   float   xyzw
+// POSITION                 0   xyzw        0     NONE   float   xy  
 // TEXCOORD                 0   xy          1     NONE   float   xy  
 //
 //
@@ -50,9 +38,8 @@
 //
 vs_5_0
 dcl_globalFlags refactoringAllowed | skipOptimization
-dcl_constantbuffer CB2[516], immediateIndexed
 dcl_constantbuffer CB10[1], immediateIndexed
-dcl_input v0.xyzw
+dcl_input v0.xy
 dcl_input v1.xy
 dcl_output_siv o0.xyzw, position
 dcl_output o1.xy
@@ -67,18 +54,9 @@ dcl_temps 2
 #line 11 "D:\Desktop\Cumulonimbus\Shader\standard_sprite_vs.hlsl"
 add r0.xy, v0.xyxx, cb10[0].xyxx  // r0.x <- vin.position.x; r0.y <- vin.position.y
 
-#line 12
-mul r0.xzw, r0.xxxx, cb2[512].xxyz
-mul r1.xyz, r0.yyyy, cb2[513].xyzx
-add r0.xyz, r0.xzwx, r1.xyzx
-mul r1.xyz, v0.zzzz, cb2[514].xyzx
-add r0.xyz, r0.xyzx, r1.xyzx
-mul r1.xyz, v0.wwww, cb2[515].xyzx
-add r0.xyz, r0.xyzx, r1.xyzx  // r0.x <- ndc_pos.x; r0.y <- ndc_pos.y; r0.z <- ndc_pos.z
-
 #line 17
-mov r0.xyz, r0.xyzx  // r0.x <- vout.position.x; r0.y <- vout.position.y; r0.z <- vout.position.z
-mov r0.w, l(1.000000)  // r0.w <- vout.position.w
+mov r0.zw, l(0,0,0,1.000000)
+mov r0.xyzw, r0.xyzw  // r0.x <- vout.position.x; r0.y <- vout.position.y; r0.z <- vout.position.z; r0.w <- vout.position.w
 
 #line 18
 mov r1.xy, v1.xyxx  // r1.x <- vout.texcoord0.x; r1.y <- vout.texcoord0.y
@@ -87,4 +65,4 @@ mov r1.xy, v1.xyxx  // r1.x <- vout.texcoord0.x; r1.y <- vout.texcoord0.y
 mov o0.xyzw, r0.xyzw
 mov o1.xy, r1.xyxx
 ret 
-// Approximately 14 instruction slots used
+// Approximately 7 instruction slots used

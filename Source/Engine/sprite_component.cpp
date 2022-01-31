@@ -11,7 +11,7 @@
 
 CEREAL_REGISTER_TYPE(cumulonimbus::component::SpriteComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::SpriteComponent)
-CEREAL_CLASS_VERSION(cumulonimbus::component::SpriteComponent, 0)
+CEREAL_CLASS_VERSION(cumulonimbus::component::SpriteComponent, 1)
 
 namespace cumulonimbus::component
 {
@@ -26,6 +26,13 @@ namespace cumulonimbus::component
 			CEREAL_NVP(pivot_type),
 			CEREAL_NVP(vertices)
 		);
+
+		if(version == 1)
+		{
+			archive(
+				CEREAL_NVP(cb_sprite)
+			);
+		}
 	}
 
 	template <class Archive>
@@ -40,6 +47,12 @@ namespace cumulonimbus::component
 			CEREAL_NVP(vertices)
 		);
 
+		if(version == 1)
+		{
+			archive(
+				CEREAL_NVP(cb_sprite)
+			);
+		}
 	}
 
 
@@ -55,6 +68,10 @@ namespace cumulonimbus::component
 		const mapping::rename_type::Entity ent)
 		: ComponentBase{ registry,ent }
 	{
+		if (!cb_sprite.get())
+			cb_sprite = std::make_unique<buffer::ConstantBuffer<SpriteCB>>(locator::Locator::GetDx11Device()->device.Get());
+		cb_sprite->CreateCBuffer(locator::Locator::GetDx11Device()->device.Get());
+
 		// 初期テクスチャのセット(ダミーテクスチャ)
 		asset::TextureLoader* texture_loader = locator::Locator::GetAssetManager()->GetLoader<asset::TextureLoader>();
 		const auto& texture = texture_loader->GetTexture({});
@@ -84,6 +101,10 @@ namespace cumulonimbus::component
 		 pivot_type{other.pivot_type},
 		 vertices{other.vertices}
 	{
+		if (!cb_sprite.get())
+			cb_sprite = std::make_unique<buffer::ConstantBuffer<SpriteCB>>(locator::Locator::GetDx11Device()->device.Get());
+		cb_sprite->CreateCBuffer(locator::Locator::GetDx11Device()->device.Get());
+
 		asset::TextureLoader* texture_loader = locator::Locator::GetAssetManager()->GetLoader<asset::TextureLoader>();
 		const auto& texture = texture_loader->GetTexture(texture_id);
 		Initialize(static_cast<float>(texture.GetWidth()), static_cast<float>(texture.GetHeight()));
@@ -100,6 +121,11 @@ namespace cumulonimbus::component
 		graphics_state	= other.graphics_state;
 		pivot_type		= other.pivot_type;
 		vertices		= other.vertices;
+
+		if (!cb_sprite.get())
+			cb_sprite = std::make_unique<buffer::ConstantBuffer<SpriteCB>>(locator::Locator::GetDx11Device()->device.Get());
+		cb_sprite->CreateCBuffer(locator::Locator::GetDx11Device()->device.Get());
+
 
 		asset::TextureLoader* texture_loader = locator::Locator::GetAssetManager()->GetLoader<asset::TextureLoader>();
 		const auto& texture = texture_loader->GetTexture(texture_id);
@@ -172,48 +198,48 @@ namespace cumulonimbus::component
 
 	void SpriteComponent::SetPivotType(const render::PivotType pivot)
 	{
-		asset::TextureLoader* texture_loader = locator::Locator::GetAssetManager()->GetLoader<asset::TextureLoader>();
-		const auto& texture = texture_loader->GetTexture(texture_id);
-		const Window* window = locator::Locator::GetWindow();
-		const float win_half_width  = window->Width() / 2.f;
-		const float win_half_height = window->Height() / 2.f;
-		const DirectX::SimpleMath::Vector2 tex_size = arithmetic::ConvertScreenToNDC({win_half_width + static_cast<float>(texture.GetWidth()),
-																					  win_half_height + static_cast<float>(texture.GetHeight()) },
-																					  static_cast<float>(window->Width()),
-																					  static_cast<float>(window->Height()));
-		auto& cb_data = shader_asset_manager.GetShaderAsset<shader_asset::StandardSpriteAsset>()->GetCBuffer()->GetData();
-		pivot_type = pivot;
+		//asset::TextureLoader* texture_loader = locator::Locator::GetAssetManager()->GetLoader<asset::TextureLoader>();
+		//const auto& texture = texture_loader->GetTexture(texture_id);
+		//const Window* window = locator::Locator::GetWindow();
+		//const float win_half_width  = window->Width() / 2.f;
+		//const float win_half_height = window->Height() / 2.f;
+		//const DirectX::SimpleMath::Vector2 tex_size = arithmetic::ConvertScreenToNDC({win_half_width + static_cast<float>(texture.GetWidth()),
+		//																			  win_half_height + static_cast<float>(texture.GetHeight()) },
+		//																			  static_cast<float>(window->Width()),
+		//																			  static_cast<float>(window->Height()));
+		//auto& cb_data = shader_asset_manager.GetShaderAsset<shader_asset::StandardSpriteAsset>()->GetCBuffer()->GetData();
+		//pivot_type = pivot;
 
-		switch(pivot_type)
-		{
-		case render::PivotType::Center:
-			cb_data.sprite_offset = { .0f,.0f };
-			break;
-		case render::PivotType::BottomCenter:
-			cb_data.sprite_offset = { .0f,tex_size.y };
-			break;
-		case render::PivotType::TopCenter:
-			cb_data.sprite_offset = { .0f, -tex_size.y };
-			break;
-		case render::PivotType::LeftTop:
-			cb_data.sprite_offset = { -tex_size.x,-tex_size.y };
-			break;
-		case render::PivotType::LeftBottom:
-			cb_data.sprite_offset = { -tex_size.x , tex_size.y };
-			break;
-		case render::PivotType::RightTop:
-			cb_data.sprite_offset = { tex_size.x ,-tex_size.y };
-			break;
-		case render::PivotType::RightBottom:
-			cb_data.sprite_offset = { tex_size.x, tex_size.y };
-			break;
-		case render::PivotType::End:
-			assert(!"Type does not exist(SpriteComponent::SetPivotType)");
-			break;
-		default:
-			assert(!"Type does not exist(SpriteComponent::SetPivotType)");
-			break;
-		}
+		//switch(pivot_type)
+		//{
+		//case render::PivotType::Center:
+		//	cb_data.sprite_offset = { .0f,.0f };
+		//	break;
+		//case render::PivotType::BottomCenter:
+		//	cb_data.sprite_offset = { .0f,tex_size.y };
+		//	break;
+		//case render::PivotType::TopCenter:
+		//	cb_data.sprite_offset = { .0f, -tex_size.y };
+		//	break;
+		//case render::PivotType::LeftTop:
+		//	cb_data.sprite_offset = { -tex_size.x,-tex_size.y };
+		//	break;
+		//case render::PivotType::LeftBottom:
+		//	cb_data.sprite_offset = { -tex_size.x , tex_size.y };
+		//	break;
+		//case render::PivotType::RightTop:
+		//	cb_data.sprite_offset = { tex_size.x ,-tex_size.y };
+		//	break;
+		//case render::PivotType::RightBottom:
+		//	cb_data.sprite_offset = { tex_size.x, tex_size.y };
+		//	break;
+		//case render::PivotType::End:
+		//	assert(!"Type does not exist(SpriteComponent::SetPivotType)");
+		//	break;
+		//default:
+		//	assert(!"Type does not exist(SpriteComponent::SetPivotType)");
+		//	break;
+		//}
 	}
 
 	void SpriteComponent::CreateVertexBuffer()

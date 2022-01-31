@@ -12,17 +12,17 @@
 
 #include "shader_interop_renderer.h"
 
-CBUFFER(SpriteCB, CBSlot_Sprite)
+CBUFFER(OldSpriteCB, CBSlot_Sprite)
 {
-	float2 sprite_offset;
-	float2 sprite_padding;
+	float2 old_sprite_offset;
+	float2 old_sprite_padding;
 
 #ifdef __cplusplus
 	template <typename Archive>
 	void serialize(Archive && archive)
 	{
 		archive(
-			CEREAL_NVP(sprite_offset)
+			CEREAL_NVP(old_sprite_offset)
 		);
 	}
 #endif // __cplusplus
@@ -55,7 +55,7 @@ namespace cumulonimbus
 			void RenderImGui()   override;
 
 			[[nodiscard]]
-			buffer::ConstantBuffer<SpriteCB>* GetCBuffer() const { return cb_sprite.get(); }
+			buffer::ConstantBuffer<OldSpriteCB>* GetCBuffer() const { return cb_sprite.get(); }
 
 			template<class Archive>
 			void serialize(Archive&& archive)
@@ -66,7 +66,7 @@ namespace cumulonimbus
 				);
 			}
 		private:
-			std::unique_ptr<buffer::ConstantBuffer<SpriteCB>> cb_sprite{ nullptr };
+			std::unique_ptr<buffer::ConstantBuffer<OldSpriteCB>> cb_sprite{ nullptr };
 		};
 	} // shader_asset
 

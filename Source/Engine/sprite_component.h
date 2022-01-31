@@ -5,10 +5,12 @@
 #include <wrl.h>
 
 #include "component_base.h"
+#include "constant_buffer.h"
 #include "graphics_state.h"
 #include "rename_type_mapping.h"
 #include "shader.h"
 #include "shader_asset_manager.h"
+#include "cbuffer_sprite.h"
 
 namespace cumulonimbus::render
 {
@@ -46,9 +48,6 @@ namespace cumulonimbus::component
 		void Load(ecs::Registry* registry) override;
 		void RenderImGui() override;
 
-		//template<class Archive>
-		//void serialize(Archive&& archive);
-
 		template<class Archive>
 		void load(Archive&& archive, uint32_t version);
 
@@ -64,13 +63,35 @@ namespace cumulonimbus::component
 		void ResizeTexture(const DirectX::SimpleMath::Vector2& size);
 
 		[[nodiscard]]
-		const mapping::rename_type::UUID& GetTextureId() const { return texture_id; }
+		const mapping::rename_type::UUID& GetTextureId() const
+		{
+			return texture_id;
+		}
 		[[nodiscard]]
-		const graphics::GraphicsState& GetGraphicsState() const { return graphics_state; }
+		const graphics::GraphicsState& GetGraphicsState() const
+		{
+			return graphics_state;
+		}
 		[[nodiscard]]
-		ID3D11Buffer** GetVertexBufferAddress() { return vertex_buffer.GetAddressOf(); }
+		ID3D11Buffer* GetVertexBuffer() const
+		{
+			return vertex_buffer.Get();
+		}
 		[[nodiscard]]
-		shader_asset::ShaderAsset2DManager* GetShaderAssetManager() { return &shader_asset_manager; }
+		ID3D11Buffer** GetVertexBufferAddress()
+		{
+			return vertex_buffer.GetAddressOf();
+		}
+		[[nodiscard]]
+		shader_asset::ShaderAsset2DManager* GetShaderAssetManager()
+		{
+			return &shader_asset_manager;
+		}
+		[[nodiscard]]
+		SpriteCB& GetSpriteCBuffer() const
+		{
+			return cb_sprite->GetData();
+		}
 
 		void SetTextureId(const mapping::rename_type::UUID tex_id) { texture_id = tex_id; }
 		void SetPivotType(render::PivotType pivot);
@@ -79,6 +100,7 @@ namespace cumulonimbus::component
 		mapping::rename_type::UUID			texture_id{}; // テクスチャID(UUID)
 		graphics::GraphicsState				graphics_state{};
 		shader_asset::ShaderAsset2DManager	shader_asset_manager{};
+		std::unique_ptr<buffer::ConstantBuffer<SpriteCB>> cb_sprite{};
 
 		Microsoft::WRL::ComPtr<ID3D11Buffer> vertex_buffer{};
 		render::PivotType					 pivot_type{ render::PivotType::Center };

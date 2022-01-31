@@ -43,6 +43,7 @@
     <ClInclude Include="Source\Engine\cbuffer_lights.h" />
     <ClInclude Include="Source\Engine\cbuffer_manager.h" />
     <ClInclude Include="Source\Engine\cbuffer_post_effect.h" />
+    <ClInclude Include="Source\Engine\cbuffer_sprite.h" />
     <ClInclude Include="Source\Engine\cereal_helper.h" />
     <ClInclude Include="Source\Engine\child_actor_component.h" />
     <ClInclude Include="Source\Engine\collider_message_receiver_component.h" />
