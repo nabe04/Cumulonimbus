@@ -12,6 +12,7 @@ namespace cumulonimbus::mapping::component_tag
 		Camera,
 		Collider,
 		Spawner,
+		Transition,
 		Game,
 
 		End

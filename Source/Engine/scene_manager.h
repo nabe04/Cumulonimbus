@@ -35,6 +35,17 @@ namespace cumulonimbus::scene
 	class SceneManager final
 	{
 	public:
+		struct BeginSceneData
+		{
+			// シーンID
+			mapping::rename_type::UUID scene_id{};
+			// 「Play」ボタンを押した時のシーンファイルパス(.scene拡張子なし)
+			std::string	save_scene_path{};
+			// 「Play」ボタンを押した時のシーン名
+			std::string	save_scene_name{};
+		};
+		
+	public:
 		explicit SceneManager(const std::shared_ptr<Window>& window);
 		~SceneManager() = default;
 
@@ -60,6 +71,15 @@ namespace cumulonimbus::scene
 		 * @param scene_file_path : 読み込むシーン(拡張子「.scene」)までのファイルパス
 		 */
 		void OpenScene(const mapping::rename_type::UUID & scene_id, const std::filesystem::path& scene_file_path);
+
+		/**
+		 * @brief : 既存シーンを読み込む候補を保存
+		 * @remark : 実際の読み込み(OpenScene関数)はアップデート
+		 *			 が全て終わったあとに行う
+		 * @param scene_id : 読み込みたいシーンID
+		 * @param scene_file_path : 読み込むシーン(拡張子「.scene」)までのファイルパス
+		 */
+		void SwitchScene(const mapping::rename_type::UUID& scene_id, const std::filesystem::path& scene_file_path);
 
 		/**
 		 * @brief : シーンの追加読み込み
@@ -162,6 +182,14 @@ namespace cumulonimbus::scene
 		std::unique_ptr<editor::EditorManager>	editor_manager{};
 		// 当たり判定管理用マネジャー
 		std::unique_ptr<collision::CollisionManager> collision_manager{};
+
+		// 「Playボタンを押した時のシーンデータ
+		std::vector<BeginSceneData> begin_scene_datum{};
+
+		// シーン切替時の新規シーン読み込み用ID
+		mapping::rename_type::UUID	next_scene_id{};
+		// シーン切替時の新規シーン読み込み用ID
+		std::filesystem::path		next_scene_file_path{};
 
 		void Execute();
 		void Initialize();

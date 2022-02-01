@@ -19,8 +19,6 @@ namespace
 {
 	// ImGui描画時にPivotType(enum class)から文字列一覧を取得する為に使用
 	EnumStateMap<cumulonimbus::render::PivotType> pivot_preset{};
-	// ImGui描画時にCollisionTag(enum class)から文字列一覧を取得する為に使用
-	//EnumStateMap<cumulonimbus::collision::CollisionTag> collision_tag{};
 }
 
 

@@ -217,7 +217,8 @@ namespace cumulonimbus::asset
 		const mapping::rename_type::UUID scene_id = locator::Locator::GetAssetManager()->GetAssetSheetManager().Search<SceneAsset>(path);
 		if (scene_id.empty())
 			assert(!"Don't have scene id(SceneLoader::OpenScene)");
-		scene_manager.OpenScene(scene_id, path);
+		//scene_manager.OpenScene(scene_id, path);
+		scene_manager.SwitchScene(scene_id, path);
 	}
 
 	void SceneLoader::OpenScene(
@@ -282,7 +283,7 @@ namespace cumulonimbus::asset
 			for (const auto& [id, tex_filepath] : scene_sheet.sheet)
 			{
 				ImGui::PushID(id.c_str());
-				
+
 				const bool is_selected = (scene_id == id);
 				std::filesystem::path tex_filename = tex_filepath;
 				if (ImGui::Selectable(tex_filename.filename().replace_extension().string().c_str(),

@@ -42,6 +42,8 @@
 #include "spawner_component.h"
 #include "effect_spawner_component.h"
 #include "prefab_spawner_component.h"
+// transition
+#include "scene_transition_component.h"
 //-- components(game) --//
 // enemy
 #include "enemy_base_component.h"
@@ -302,6 +304,8 @@ namespace cumulonimbus::ecs
 		RegistryComponent<component::PrefabSpawnerComponent>();
 		// transform
 		RegistryComponent<component::TransformComponent>();
+		// transition
+		RegistryComponent<component::SceneTransitionComponent>();
 
 		//-- game --//
 		// enemy

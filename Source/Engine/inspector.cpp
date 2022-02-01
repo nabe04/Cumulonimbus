@@ -31,6 +31,8 @@
 // spawner
 #include "effect_spawner_component.h"
 #include "prefab_spawner_component.h"
+// transition
+#include "scene_transition_component.h"
 
 //-- components(game) --//
 // enemy
@@ -70,6 +72,7 @@ namespace cumulonimbus::editor
 		RegisterComponent<component::PrefabSpawnerComponent>(			"Prefab Spawner"		, mapping::component_tag::ComponentTag::Spawner);
 		RegisterComponent<component::MagicCircleSpawnerComponent>(		"Magic Circle Spawner"	, mapping::component_tag::ComponentTag::Spawner);
 		RegisterComponent<component::FlameSpownerComponent>(			"Flame Spawner"			, mapping::component_tag::ComponentTag::Spawner);
+		RegisterComponent<component::SceneTransitionComponent>(			"Scene Transition"		, mapping::component_tag::ComponentTag::Transition);
 		RegisterComponent<component::PlayerAvoidEffectComponent>(		"Player Avoid Effect"	, mapping::component_tag::ComponentTag::Game);
 		RegisterComponent<component::EnemySoldierComponent>(			"E_Soldier"				, mapping::component_tag::ComponentTag::Game);
 		RegisterComponent<component::EnemyBossComponent>(				"E_Boss"				, mapping::component_tag::ComponentTag::Game);
@@ -126,14 +129,15 @@ namespace cumulonimbus::editor
 
 		ImGui::MenuItem("Component", nullptr, false, false);
 
-		ComponentMenu(registry, ent, "Mesh"		, mapping::component_tag::ComponentTag::Mesh);
-		ComponentMenu(registry, ent, "Sprite"	, mapping::component_tag::ComponentTag::Sprite);
-		ComponentMenu(registry, ent, "Physics"	, mapping::component_tag::ComponentTag::Physics);
-		ComponentMenu(registry, ent, "Collider" , mapping::component_tag::ComponentTag::Collider);
-		ComponentMenu(registry, ent, "Light"	, mapping::component_tag::ComponentTag::Light);
-		ComponentMenu(registry, ent, "Camera"	, mapping::component_tag::ComponentTag::Camera);
-		ComponentMenu(registry, ent, "Spawner"  , mapping::component_tag::ComponentTag::Spawner);
-		ComponentMenu(registry, ent, "Game"		, mapping::component_tag::ComponentTag::Game);
+		ComponentMenu(registry, ent, "Mesh"		 , mapping::component_tag::ComponentTag::Mesh);
+		ComponentMenu(registry, ent, "Sprite"	 , mapping::component_tag::ComponentTag::Sprite);
+		ComponentMenu(registry, ent, "Physics"	 , mapping::component_tag::ComponentTag::Physics);
+		ComponentMenu(registry, ent, "Collider"  , mapping::component_tag::ComponentTag::Collider);
+		ComponentMenu(registry, ent, "Light"	 , mapping::component_tag::ComponentTag::Light);
+		ComponentMenu(registry, ent, "Camera"	 , mapping::component_tag::ComponentTag::Camera);
+		ComponentMenu(registry, ent, "Spawner"   , mapping::component_tag::ComponentTag::Spawner);
+		ComponentMenu(registry, ent, "Transition", mapping::component_tag::ComponentTag::Transition);
+		ComponentMenu(registry, ent, "Game"		 , mapping::component_tag::ComponentTag::Game);
 
 		ImGui::EndPopup(); // "my_file_popup"
 	}

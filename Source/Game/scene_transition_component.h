@@ -16,10 +16,13 @@ namespace cumulonimbus::component
 		};
 
 	public:
+		using ComponentBase::ComponentBase;
 		explicit SceneTransitionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
 		explicit SceneTransitionComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const SceneTransitionComponent& copy_comp);
 		explicit SceneTransitionComponent()  = default;
 		~SceneTransitionComponent() override = default;
+
+		void Initialize(ecs::Registry* registry, mapping::rename_type::Entity ent) override;
 
 		void Start() override;
 		void GameUpdate(float dt) override;

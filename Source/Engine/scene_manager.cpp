@@ -131,6 +131,12 @@ namespace cumulonimbus::scene
 		editor_manager->SetSelectedSceneId(scene_id);
 	}
 
+	void SceneManager::SwitchScene(const mapping::rename_type::UUID& scene_id, const std::filesystem::path& scene_file_path)
+	{
+		next_scene_id		 = scene_id;
+		next_scene_file_path = scene_file_path;
+	}
+
 	void SceneManager::AddScene()
 	{
 		// シーンの追加
@@ -240,6 +246,17 @@ namespace cumulonimbus::scene
 		{
 			scene->GetRegistry()->DestroyEntity();
 		}
+
+		// 新規シーンの読み込み
+		if (!next_scene_id.empty() &&
+			!next_scene_file_path.empty())
+		{
+			OpenScene(next_scene_id, next_scene_file_path);
+			active_scenes.at(next_scene_id)->StartGame();
+
+			next_scene_id.clear();
+			next_scene_file_path.clear();
+		}
 	}
 
 	void SceneManager::Render()
@@ -255,12 +272,19 @@ namespace cumulonimbus::scene
 
 	void SceneManager::BeginGame()
 	{
-		for(auto& scene : active_scenes | std::views::values)
+		// 「Play」ボタンを押した時のファイルパス & 名前のクリア
+		begin_scene_datum.clear();
+
+		for(auto&[scene_id, scene]: active_scenes)
 		{
 			std::string scene_name = scene->GetSceneName();
 			if (scene_name.empty())
 				scene_name = filename_helper::GetNoTitled();
-			scene->SaveScene(save_path + "/" + scene_name, scene->GetSceneName());
+			begin_scene_datum.emplace_back();
+			begin_scene_datum.back().scene_id		 = scene_id;
+			begin_scene_datum.back().save_scene_path = save_path + "/" + scene_name;
+			begin_scene_datum.back().save_scene_name = scene->GetSceneName();
+			scene->SaveScene(begin_scene_datum.back().save_scene_path, begin_scene_datum.back().save_scene_name);
 			scene->StartGame();
 		}
 	}
@@ -271,10 +295,23 @@ namespace cumulonimbus::scene
 		{
 			scene->EndGame();
 
-			std::string scene_name = scene->GetSceneName();
-			if (scene_name.empty())
-				scene_name = filename_helper::GetNoTitled();
-			scene->LoadScene(save_path + "/" + scene_name, scene->GetSceneName() + file_path_helper::GetSceneExtension());
+			//std::string scene_name = scene->GetSceneName();
+			//if (scene_name.empty())
+			//	scene_name = filename_helper::GetNoTitled();
+			//scene->LoadScene(save_path + "/" + scene_name, scene->GetSceneName() + file_path_helper::GetSceneExtension());
+		}
+
+		DeleteAllScene();
+
+		for (const auto& begin_scene_data : begin_scene_datum)
+		{
+			active_scenes.emplace(begin_scene_data.scene_id, std::make_unique<scene::Scene>(this));
+			// シーン読み込み処理
+			active_scenes.begin()->second->LoadScene(begin_scene_data.save_scene_path, begin_scene_data.save_scene_name + file_path_helper::GetSceneExtension());
+			// エディターマネージャ側の選択されているシーンIDも再設定
+			editor_manager->SetSelectedSceneId(begin_scene_data.scene_id);
+			//
+			//scene->LoadScene(begin_save_scene_paths.at(i), begin_save_scene_names.at(i) + file_path_helper::GetSceneExtension());
 		}
 	}
 

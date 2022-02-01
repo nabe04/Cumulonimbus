@@ -43,6 +43,8 @@
 #include "prefab_spawner_component.h"
 // transform
 #include "transform_component.h"
+// transition
+#include "scene_transition_component.h"
 
 //-- components(game) --//
 // enemy
@@ -102,6 +104,8 @@ namespace cumulonimbus::asset
 		RegistryComponent<component::PrefabSpawnerComponent>();
 		// transform
 		RegistryComponent<component::TransformComponent>();
+		// transition
+		RegistryComponent<component::SceneTransitionComponent>();
 
 		//-- game --//
 		// enemy
