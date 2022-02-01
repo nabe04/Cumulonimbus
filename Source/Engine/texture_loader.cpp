@@ -244,6 +244,8 @@ namespace cumulonimbus::asset
 
 			for (const auto& [id, tex_filepath] : texture_sheet.sheet)
 			{
+				ImGui::PushID(id.c_str());
+
 				helper::imgui::Image(id, { selectable_image_size.x,
 										   selectable_image_size.y });
 				ImGui::SameLine();
@@ -260,6 +262,8 @@ namespace cumulonimbus::asset
 				{
 					ImGui::SetItemDefaultFocus();
 				}
+
+				ImGui::PopID();
 			}
 			ImGui::EndCombo();
 		}

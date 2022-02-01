@@ -672,6 +672,9 @@
     <ClCompile Include="Source\Engine\dissolve_screen.cpp">
       <Filter>Source\Engine\Shader%28.cpp%29\PostProcess</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Game\scene_transition_component.cpp">
+      <Filter>Source\Game\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\scene.h">
@@ -1270,6 +1273,9 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\cbuffer_sprite.h">
       <Filter>Header\Engine\System\Mapping</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\scene_transition_component.h">
+      <Filter>Header\Game\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

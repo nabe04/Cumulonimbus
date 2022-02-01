@@ -160,6 +160,15 @@ namespace cumulonimbus::asset
 		[[nodiscard]]
 		std::string Name(const mapping::rename_type::UUID& scene_id) const;
 
+		/**
+		 * @brief : ImGui上でのシーン選択関数
+		 * @remark : ※caution(1) : ImGuiを使用する関数内で使用すること
+		 * @remark : ※caution(2) : ImGui::Begin()の中でこの関数を呼ぶこと
+		 * @param asset_manager :
+		 * @param scene_id : 格納されるシーンID(UUID)
+		 */
+		bool ImSelectableScene(AssetManager& asset_manager, mapping::rename_type::UUID& scene_id);
+
 	private:
 		std::map<mapping::rename_type::UUID, SceneAsset> scenes{};
 

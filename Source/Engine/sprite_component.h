@@ -26,12 +26,39 @@ namespace cumulonimbus::render
 
 		End
 	};
+
+	enum class TexcoordType
+	{
+		LeftTop,
+		LeftBottom,
+		RightTop,
+		RightBottom,
+
+		End
+	};
 } // cumulonimbus::render
 
 namespace cumulonimbus::component
 {
 	class SpriteComponent : public ComponentBase
 	{
+	public:
+		/**
+		 * @brief : テクスチャーポジション
+		 */
+		struct Texcoord
+		{
+			DirectX::SimpleMath::Vector2 left_top		{ .0f,.0f };
+			DirectX::SimpleMath::Vector2 left_bottom	{ .0f,1.f };
+			DirectX::SimpleMath::Vector2 right_top		{ 1.f,.0f };
+			DirectX::SimpleMath::Vector2 right_bottom	{ 1.f,1.f };
+
+			template<class Archive>
+			void load(Archive&& archive, uint32_t version);
+
+			template<class Archive>
+			void save(Archive&& archive, uint32_t version) const;
+		};
 	public:
 		using ComponentBase::ComponentBase;
 		explicit SpriteComponent(); // for cereal & Inspector View上でのAddComponent用
@@ -92,9 +119,20 @@ namespace cumulonimbus::component
 		{
 			return cb_sprite->GetData();
 		}
+		[[nodiscard]]
+		const DirectX::SimpleMath::Vector2& GetPivot() const
+		{
+			return pivot;
+		}
+		[[nodiscard]]
+		const Texcoord& GetTexcoord() const
+		{
+			return texcoord;
+		}
 
 		void SetTextureId(const mapping::rename_type::UUID tex_id) { texture_id = tex_id; }
-		void SetPivotType(render::PivotType pivot);
+		void SetPivotType(render::PivotType type);
+		void SetTexcoord(render::TexcoordType type, const DirectX::SimpleMath::Vector2& tex_pos);
 
 	protected:
 		mapping::rename_type::UUID			texture_id{}; // テクスチャID(UUID)
@@ -106,6 +144,8 @@ namespace cumulonimbus::component
 		render::PivotType					 pivot_type{ render::PivotType::Center };
 
 		std::array<shader::VertexSprite, 4> vertices;
+		Texcoord texcoord{};
+		DirectX::SimpleMath::Vector2 pivot{};
 
 		/**
 		 * @brief : 初期化処理

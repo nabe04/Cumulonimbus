@@ -110,7 +110,7 @@ namespace cumulonimbus::asset
 		asset_manager.Save();
 	}
 
-	bool SceneLoader::HasScene(const mapping::rename_type::UUID& scene_id) const 
+	bool SceneLoader::HasScene(const mapping::rename_type::UUID& scene_id) const
 	{
 		if (scenes.contains(scene_id))
 			return true;
@@ -241,6 +241,67 @@ namespace cumulonimbus::asset
 			return filename_helper::GetNoTitled();
 
 		return std::filesystem::path{ scenes.at(scene_id).scene_file_path }.filename().replace_extension().string();
+	}
+
+	bool SceneLoader::ImSelectableScene(AssetManager& asset_manager, mapping::rename_type::UUID& scene_id)
+	{
+		std::filesystem::path scene_filename{};
+		const asset::AssetSheet& scene_sheet = asset_manager.GetAssetSheetManager().GetSheet<asset::SceneAsset>();
+		bool is_dummy = false;
+
+		if (scene_sheet.sheet.contains(scene_id))
+		{
+			scene_filename = scene_sheet.sheet.at(scene_id);
+			scene_filename = scene_filename.filename();
+			scene_filename.filename().replace_extension();
+			is_dummy = true;
+		}
+		else
+		{
+			scene_filename = "None";
+		}
+
+		// シーンが選択された場合Trueに
+		bool result{ false };
+
+		if (ImGui::BeginCombo("Scenes", scene_filename.string().c_str()))
+		{
+			{// ダミーエフェクト用
+				ImGui::SameLine();
+				if (ImGui::Selectable(scene_filename.string().c_str(),
+					is_dummy, 0))
+				{
+					scene_id = { "" };
+				}
+				if (is_dummy)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+
+			for (const auto& [id, tex_filepath] : scene_sheet.sheet)
+			{
+				ImGui::PushID(id.c_str());
+				
+				const bool is_selected = (scene_id == id);
+				std::filesystem::path tex_filename = tex_filepath;
+				if (ImGui::Selectable(tex_filename.filename().replace_extension().string().c_str(),
+					is_selected, 0))
+				{
+					result = true;
+					scene_id = id;
+				}
+				if (is_selected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+
+				ImGui::PopID();
+			}
+			ImGui::EndCombo();
+		}
+
+		return result;
 	}
 
 	mapping::rename_type::UUID SceneLoader::Convert(

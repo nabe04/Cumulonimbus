@@ -639,18 +639,16 @@ namespace cumulonimbus::renderer
 		 */
 		//if(!is_scene)
 		//{
-			camera->BindCBuffer();
-			for (auto& sprite_comp : registry->GetArray<component::SpriteComponent>().GetComponents())
-			{
-
-				BindGraphicsState(immediate_context, sprite_comp.GetGraphicsState());
-				const mapping::shader_assets::ShaderAsset2D asset = shader_manager->GetAsset2DFromConnector(sprite_comp.GetShaderAssetManager()->GetHash());
-				shader_manager->BindShader2D(asset);
-				RenderSprite(immediate_context, registry, sprite_comp.GetEntity(), &sprite_comp);
-				shader_manager->UnbindShader2D(asset);
-
-			}
-			camera->UnbindCBuffer();
+		camera->BindCBuffer();
+		for (auto& sprite_comp : registry->GetArray<component::SpriteComponent>().GetComponents())
+		{
+			BindGraphicsState(immediate_context, sprite_comp.GetGraphicsState());
+			const mapping::shader_assets::ShaderAsset2D asset = shader_manager->GetAsset2DFromConnector(sprite_comp.GetShaderAssetManager()->GetHash());
+			shader_manager->BindShader2D(asset);
+			RenderSprite(immediate_context, registry, sprite_comp.GetEntity(), &sprite_comp);
+			shader_manager->UnbindShader2D(asset);
+		}
+		camera->UnbindCBuffer();
 		//}
 
 
@@ -1084,10 +1082,6 @@ namespace cumulonimbus::renderer
 		auto& texture = locator::Locator::GetAssetManager()->GetLoader<asset::TextureLoader>()->GetTexture(sprite_comp->GetTextureId());
 		texture.BindTexture(mapping::graphics::ShaderStage::PS, TexSlot_BaseColorMap);
 
-		//locator::Locator::GetDx11Device()->BindShaderResource(mapping::graphics::ShaderStage::PS,
-		//													  sprite.GetTexture(),
-		//													  TexSlot_BaseColorMap);
-
 		// 2Dに必要ない値のリセット
 		transform.SetPosition_Z(0.0f);
 		transform.SetScale_Z(1.f);
@@ -1099,18 +1093,14 @@ namespace cumulonimbus::renderer
 		pos[0].x = 0.0f;
 		pos[0].y = 0.0f;
 		// Right top
-		//pos[1].x = static_cast<float>(sprite.VariableWidth());
-		pos[1].x = 256.f;
+		pos[1].x = static_cast<float>(texture.GetWidth());
 		pos[1].y = 0.0f;
 		// Left bottom
 		pos[2].x = 0.0f;
-		//pos[2].y = static_cast<float>(sprite.VariableHeight());
-		pos[2].y = 256.f;
+		pos[2].y = static_cast<float>(texture.GetHeight());
 		// Right bottom
-		//pos[3].x = static_cast<float>(sprite.VariableWidth());
-		//pos[3].y = static_cast<float>(sprite.VariableHeight());
-		pos[3].x = 256.f;
-		pos[3].y = 256.f;
+		pos[3].x = static_cast<float>(texture.GetWidth());
+		pos[3].y = static_cast<float>(texture.GetHeight());
 
 		// Rotation
 		{
@@ -1121,8 +1111,8 @@ namespace cumulonimbus::renderer
 			{// Rotate with the pivot as the origin
 
 				// Pivot adjustment
-				//p.x -= sprite.GetSrcPivot().x;
-				//p.y -= sprite.GetSrcPivot().y;
+				p.x -= sprite.GetPivot().x;
+				p.y -= sprite.GetPivot().y;
 
 				// Scale ajustment
 				p.x *= (transform.GetScale().x);
@@ -1171,18 +1161,17 @@ namespace cumulonimbus::renderer
 
 		// Update vertex buffer
 		std::array<shader::VertexSprite, 4> vertex{};
-		vertex.at(0).position = DirectX::XMFLOAT4{ pos[0].x,pos[0].y,.0f,1.f };
-		vertex.at(1).position = DirectX::XMFLOAT4{ pos[1].x,pos[1].y,.0f,1.f };
-		vertex.at(2).position = DirectX::XMFLOAT4{ pos[2].x,pos[2].y,.0f,1.f };
-		vertex.at(3).position = DirectX::XMFLOAT4{ pos[3].x,pos[3].y,.0f,1.f };
-		//vertex.at(0).texcoord = sprite.GetVariableTexcoords().at(0);
-		//vertex.at(1).texcoord = sprite.GetVariableTexcoords().at(1);
-		//vertex.at(2).texcoord = sprite.GetVariableTexcoords().at(2);
-		//vertex.at(3).texcoord = sprite.GetVariableTexcoords().at(3);
-		vertex.at(0).texcoord = {0,0};
-		vertex.at(1).texcoord = {1,0};
-		vertex.at(2).texcoord = {0,1};
-		vertex.at(3).texcoord = {1,1};
+		const auto tex_left_top = sprite.GetTexcoord().left_top;
+		const auto tex_right_top = sprite.GetTexcoord().right_top;
+		const auto tex_right_bottom = sprite.GetTexcoord().right_bottom;
+		vertex.at(0).position = DirectX::XMFLOAT4{ pos[0].x ,pos[0].y,.0f,1.f };
+		vertex.at(1).position = DirectX::XMFLOAT4{ pos[1].x ,pos[1].y,.0f,1.f };
+		vertex.at(2).position = DirectX::XMFLOAT4{ pos[2].x ,pos[2].y,.0f,1.f };
+		vertex.at(3).position = DirectX::XMFLOAT4{ pos[3].x ,pos[3].y,.0f,1.f };
+		vertex.at(0).texcoord = sprite.GetTexcoord().left_top;
+		vertex.at(1).texcoord = sprite.GetTexcoord().right_top;
+		vertex.at(2).texcoord = sprite.GetTexcoord().left_bottom;
+		vertex.at(3).texcoord = sprite.GetTexcoord().right_bottom;
 
 		immediate_context->UpdateSubresource(sprite.GetVertexBuffer(), 0, NULL, vertex.data(), 0, 0);
 

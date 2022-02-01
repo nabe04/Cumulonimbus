@@ -3,6 +3,7 @@
 #include <cereal/types/array.hpp>
 
 #include "arithmetic.h"
+#include "cum_imgui_helper.h"
 #include "ecs.h"
 #include "locator.h"
 #include "texture_loader.h"
@@ -12,11 +13,43 @@
 CEREAL_REGISTER_TYPE(cumulonimbus::component::SpriteComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::ComponentBase, cumulonimbus::component::SpriteComponent)
 CEREAL_CLASS_VERSION(cumulonimbus::component::SpriteComponent, 1)
+CEREAL_CLASS_VERSION(cumulonimbus::component::SpriteComponent::Texcoord, 0)
+
+namespace
+{
+	// ImGui描画時にPivotType(enum class)から文字列一覧を取得する為に使用
+	EnumStateMap<cumulonimbus::render::PivotType> pivot_preset{};
+	// ImGui描画時にCollisionTag(enum class)から文字列一覧を取得する為に使用
+	//EnumStateMap<cumulonimbus::collision::CollisionTag> collision_tag{};
+}
+
 
 namespace cumulonimbus::component
 {
 	template <class Archive>
-	void SpriteComponent::load(Archive&& archive, uint32_t version)
+	void SpriteComponent::Texcoord::load(Archive&& archive, const uint32_t version)
+	{
+		archive(
+			CEREAL_NVP(left_top),
+			CEREAL_NVP(left_bottom),
+			CEREAL_NVP(right_top),
+			CEREAL_NVP(right_bottom)
+		);
+	}
+
+	template <class Archive>
+	void SpriteComponent::Texcoord::save(Archive&& archive, const uint32_t version) const
+	{
+		archive(
+			CEREAL_NVP(left_top),
+			CEREAL_NVP(left_bottom),
+			CEREAL_NVP(right_top),
+			CEREAL_NVP(right_bottom)
+		);
+	}
+
+	template <class Archive>
+	void SpriteComponent::load(Archive&& archive, const uint32_t version)
 	{
 		archive(
 			cereal::base_class<ComponentBase>(this),
@@ -36,7 +69,7 @@ namespace cumulonimbus::component
 	}
 
 	template <class Archive>
-	void SpriteComponent::save(Archive&& archive, uint32_t version) const
+	void SpriteComponent::save(Archive&& archive, const uint32_t version) const
 	{
 		archive(
 			cereal::base_class<ComponentBase>(this),
@@ -134,7 +167,6 @@ namespace cumulonimbus::component
 		return *this;
 	}
 
-
 	void SpriteComponent::Initialize(const float width, const float height)
 	{
 		vertices.at(0).texcoord = { .0f,.0f };
@@ -162,7 +194,6 @@ namespace cumulonimbus::component
 		asset::TextureLoader* texture_loader = locator::Locator::GetAssetManager()->GetLoader<asset::TextureLoader>();
 		const auto& texture = texture_loader->GetTexture(texture_id);
 		Initialize(static_cast<float>(texture.GetWidth()), static_cast<float>(texture.GetHeight()));
-
 	}
 
 	void SpriteComponent::RenderImGui()
@@ -170,7 +201,26 @@ namespace cumulonimbus::component
 		if (ImGui::CollapsingHeader("Sprite Component", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			asset::AssetManager& asset_manager = *locator::Locator::GetAssetManager();
+			// テクスチャの選択
 			asset_manager.GetLoader<asset::TextureLoader>()->SelectableTexture(asset_manager, texture_id);
+			// ピボットの設定
+			if (std::string current_name = nameof::nameof_enum(pivot_type).data();
+				helper::imgui::Combo("Pivot", current_name, pivot_preset.GetStateNames()))
+			{
+				pivot_type = pivot_preset.GetStateMap().at(current_name);
+				SetPivotType(pivot_type);
+			}
+			auto& cbuff_data = cb_sprite->GetData();
+			// Tilingの設定
+			ImGui::DragFloat2("Tiling", &cbuff_data.sprite_tiling.x, 0.1f, FLT_MIN, FLT_MAX);
+			// Offsetの設定
+			ImGui::DragFloat2("Offset", &cbuff_data.sprite_offset.x, 0.1f, FLT_MIN, FLT_MAX);
+			// Texcoordの変更
+			ImGui::Text("Texcoord");
+			ImGui::DragFloat2("Left Top"    , &texcoord.left_top.x    , 0.01f, .0f, 1.f);
+			ImGui::DragFloat2("Left Bottom" , &texcoord.left_bottom.x , 0.01f, .0f, 1.f);
+			ImGui::DragFloat2("Right Top"   , &texcoord.right_top.x   , 0.01f, .0f, 1.f);
+			ImGui::DragFloat2("Right Bottom", &texcoord.right_bottom.x, 0.01f, .0f, 1.f);
 		}
 	}
 
@@ -196,50 +246,75 @@ namespace cumulonimbus::component
 		locator::Locator::GetDx11Device()->immediate_context->UpdateSubresource(vertex_buffer.Get(), 0, nullptr, vertices.data(), 0, 0);
 	}
 
-	void SpriteComponent::SetPivotType(const render::PivotType pivot)
+	void SpriteComponent::SetPivotType(const render::PivotType type)
 	{
-		//asset::TextureLoader* texture_loader = locator::Locator::GetAssetManager()->GetLoader<asset::TextureLoader>();
-		//const auto& texture = texture_loader->GetTexture(texture_id);
-		//const Window* window = locator::Locator::GetWindow();
-		//const float win_half_width  = window->Width() / 2.f;
-		//const float win_half_height = window->Height() / 2.f;
-		//const DirectX::SimpleMath::Vector2 tex_size = arithmetic::ConvertScreenToNDC({win_half_width + static_cast<float>(texture.GetWidth()),
-		//																			  win_half_height + static_cast<float>(texture.GetHeight()) },
-		//																			  static_cast<float>(window->Width()),
-		//																			  static_cast<float>(window->Height()));
-		//auto& cb_data = shader_asset_manager.GetShaderAsset<shader_asset::StandardSpriteAsset>()->GetCBuffer()->GetData();
-		//pivot_type = pivot;
+		asset::TextureLoader* texture_loader = locator::Locator::GetAssetManager()->GetLoader<asset::TextureLoader>();
+		const auto& texture = texture_loader->GetTexture(texture_id);
+		const DirectX::SimpleMath::Vector2 texture_size = DirectX::SimpleMath::Vector2{ static_cast<float>(texture.GetWidth()),static_cast<float>(texture.GetHeight()) };
+		const Window* window = locator::Locator::GetWindow();
+		const float win_half_width  = window->Width() / 2.f;
+		const float win_half_height = window->Height() / 2.f;
+		const DirectX::SimpleMath::Vector2 tex_size = arithmetic::ConvertScreenToNDC({win_half_width + static_cast<float>(texture.GetWidth()),
+																					  win_half_height + static_cast<float>(texture.GetHeight()) },
+																					  static_cast<float>(window->Width()),
+																					  static_cast<float>(window->Height()));
+		auto& cb_data = shader_asset_manager.GetShaderAsset<shader_asset::StandardSpriteAsset>()->GetCBuffer()->GetData();
+		pivot_type = type;
 
-		//switch(pivot_type)
-		//{
-		//case render::PivotType::Center:
-		//	cb_data.sprite_offset = { .0f,.0f };
-		//	break;
-		//case render::PivotType::BottomCenter:
-		//	cb_data.sprite_offset = { .0f,tex_size.y };
-		//	break;
-		//case render::PivotType::TopCenter:
-		//	cb_data.sprite_offset = { .0f, -tex_size.y };
-		//	break;
-		//case render::PivotType::LeftTop:
-		//	cb_data.sprite_offset = { -tex_size.x,-tex_size.y };
-		//	break;
-		//case render::PivotType::LeftBottom:
-		//	cb_data.sprite_offset = { -tex_size.x , tex_size.y };
-		//	break;
-		//case render::PivotType::RightTop:
-		//	cb_data.sprite_offset = { tex_size.x ,-tex_size.y };
-		//	break;
-		//case render::PivotType::RightBottom:
-		//	cb_data.sprite_offset = { tex_size.x, tex_size.y };
-		//	break;
-		//case render::PivotType::End:
-		//	assert(!"Type does not exist(SpriteComponent::SetPivotType)");
-		//	break;
-		//default:
-		//	assert(!"Type does not exist(SpriteComponent::SetPivotType)");
-		//	break;
-		//}
+		switch(pivot_type)
+		{
+		case render::PivotType::Center:
+			pivot = DirectX::SimpleMath::Vector2{ texture_size.x / 2.f,texture_size.y / 2.f };
+			break;
+		case render::PivotType::BottomCenter:
+			pivot = DirectX::SimpleMath::Vector2{ texture_size.x / 2.f,texture_size.y };
+			break;
+		case render::PivotType::TopCenter:
+			pivot = DirectX::SimpleMath::Vector2{ texture_size.x / 2.f,.0f };
+			break;
+		case render::PivotType::LeftTop:
+			pivot = DirectX::SimpleMath::Vector2{ .0f,.0f };
+			break;
+		case render::PivotType::LeftBottom:
+			pivot = DirectX::SimpleMath::Vector2{ .0f , texture_size.y };
+			break;
+		case render::PivotType::RightTop:
+			pivot = DirectX::SimpleMath::Vector2{ texture_size.x ,.0f };
+			break;
+		case render::PivotType::RightBottom:
+			pivot = DirectX::SimpleMath::Vector2{ texture_size.x, texture_size.y };
+			break;
+		case render::PivotType::End:
+			assert(!"Type does not exist(SpriteComponent::SetPivotType)");
+			break;
+		default:
+			assert(!"Type does not exist(SpriteComponent::SetPivotType)");
+			break;
+		}
+	}
+
+	void SpriteComponent::SetTexcoord(const render::TexcoordType type, const DirectX::SimpleMath::Vector2& tex_pos)
+	{
+		DirectX::SimpleMath::Vector2 pos{};
+		pos.x = arithmetic::Clamp(tex_pos.x, .0f, 1.f);
+		pos.y = arithmetic::Clamp(tex_pos.y, .0f, 1.f);
+
+		if(type == render::TexcoordType::LeftTop)
+		{
+			texcoord.left_top = pos;
+		}
+		else if(type == render::TexcoordType::LeftBottom)
+		{
+			texcoord.left_bottom = pos;
+		}
+		else if(type == render::TexcoordType::RightTop)
+		{
+			texcoord.right_top = pos;
+		}
+		else
+		{
+			texcoord.right_bottom = pos;
+		}
 	}
 
 	void SpriteComponent::CreateVertexBuffer()

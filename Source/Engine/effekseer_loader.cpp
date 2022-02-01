@@ -164,6 +164,8 @@ namespace cumulonimbus::asset
 
 			for (const auto& [id, tex_filepath] : effect_sheet.sheet)
 			{
+				ImGui::PushID(id.c_str());
+
 				const bool is_selected = (efk_id == id);
 				std::filesystem::path tex_filename = tex_filepath;
 				if (ImGui::Selectable(tex_filename.filename().replace_extension().string().c_str(),
@@ -176,6 +178,8 @@ namespace cumulonimbus::asset
 				{
 					ImGui::SetItemDefaultFocus();
 				}
+
+				ImGui::PopID();
 			}
 			ImGui::EndCombo();
 		}

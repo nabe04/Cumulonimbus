@@ -215,6 +215,7 @@
     <ClInclude Include="Source\Game\player_avoid_effect_component.h" />
     <ClInclude Include="Source\Game\player_component.h" />
     <ClInclude Include="Source\Game\player_sword_component.h" />
+    <ClInclude Include="Source\Game\scene_transition_component.h" />
     <ClInclude Include="Source\Game\soldier_sword_component.h" />
     <ClInclude Include="Source\Game\sound_resource.h" />
     <ClInclude Include="Source\Game\weapon_component.h" />
@@ -395,6 +396,7 @@
     <ClCompile Include="Source\Game\player_avoid_effect_component.cpp" />
     <ClCompile Include="Source\Game\player_component.cpp" />
     <ClCompile Include="Source\Game\player_sword_component.cpp" />
+    <ClCompile Include="Source\Game\scene_transition_component.cpp" />
     <ClCompile Include="Source\Game\soldier_sword_component.cpp" />
     <ClCompile Include="Source\Game\sound_resource.cpp" />
     <ClCompile Include="Source\Game\weapon_component.cpp" />
