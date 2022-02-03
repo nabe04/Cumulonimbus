@@ -145,6 +145,10 @@ namespace cumulonimbus::component
 		bool GetIsActive() const { return is_active; }
 		[[nodiscard]]
 		bool GetIsMainCamera() const { return is_main_camera; }
+		[[nodiscard]]
+		float GetCameraLength() const { return camera_length; }
+
+		void SetCameraLength(const float len) { camera_length = len; }
 	private:
 		std::unique_ptr<camera::Camera> camera{};
 

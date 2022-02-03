@@ -6,6 +6,7 @@
 #include "arithmetic.h"
 #include "collision_name_mapping.h"
 #include "cum_imgui_helper.h"
+#include "easing.h"
 #include "ecs.h"
 #include "locator.h"
 #include "model_loader.h"
@@ -30,6 +31,12 @@
 CEREAL_REGISTER_TYPE(cumulonimbus::component::PlayerComponent)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(cumulonimbus::component::Actor3DComponent, cumulonimbus::component::PlayerComponent)
 CEREAL_CLASS_VERSION(cumulonimbus::component::PlayerComponent, 1);
+
+namespace
+{
+	int easing_name = 0;
+	int easing_type = 0;
+}
 
 namespace keyframe_event
 {
@@ -194,6 +201,7 @@ namespace cumulonimbus::component
 	void PlayerComponent::Initialize(ecs::Registry* registry, const mapping::rename_type::Entity ent)
 	{
 		InitializeMoveState(registry, ent);
+		InitializeAdjustCameraLengthState(registry, ent);
 		InitializeKeyframeEvent();
 
 		// 先行入力によるアニメーションの中断フレームの設定
@@ -298,6 +306,18 @@ namespace cumulonimbus::component
 		GetKeyframeEvent(AnimationData::Dash_Attack).SetKeyEvent(keyframe_event::event_animation, 15, 17);
 	}
 
+	void PlayerComponent::InitializeAdjustCameraLengthState(ecs::Registry* registry, const mapping::rename_type::Entity& ent)
+	{
+		adjust_camera_state.ClearState();
+
+		adjust_camera_state.AddState(AdjustCameraState::To_Idle		 , [ent, registry](const float dt) { registry->GetComponent<PlayerComponent>(ent).CameraLenToIdle(dt); });
+		adjust_camera_state.AddState(AdjustCameraState::To_Back		 , [ent, registry](const float dt) { registry->GetComponent<PlayerComponent>(ent).CameraLenToBack(dt); });
+		adjust_camera_state.AddState(AdjustCameraState::To_Walk_Front, [ent, registry](const float dt) { registry->GetComponent<PlayerComponent>(ent).CameraLenToWalkFront(dt); });
+		adjust_camera_state.AddState(AdjustCameraState::To_Dash_Front, [ent, registry](const float dt) { registry->GetComponent<PlayerComponent>(ent).CameraLenToDashFront(dt); });
+
+		adjust_camera_state.SetState(AdjustCameraState::To_Idle);
+	}
+
 	void PlayerComponent::Start()
 	{
 		// 初期stateの設定(PlayerState::Idle)
@@ -364,6 +384,7 @@ namespace cumulonimbus::component
 
 		// 現プレイヤーのstate処理を実行
 		player_state.Update(dt);
+		adjust_camera_state.Update(dt);
 
 		// レイキャストに使用するパラメータの設定
 		//SetRayCastParameter(dt);
@@ -404,6 +425,12 @@ namespace cumulonimbus::component
 			ImGui::PushID("Hit Effect L");
 			effect_loader.ImSelectableEffect(asset_manager, hit_effect_l);
 			ImGui::PopID();
+			ImGui::Separator();
+			ImGui::DragFloat("Camera Length", &default_camera_length);
+			ImGui::DragFloat("transition_time_to_walk", &transition_time_to_walk);
+			ImGui::Separator();
+			ImGui::SliderInt("E Name", &easing_name, 0, 10);
+			ImGui::SliderInt("E Type", &easing_type, 0, 3);
 		}
 	}
 
@@ -559,6 +586,12 @@ namespace cumulonimbus::component
 		const float rad_y		= Locator::GetInput()->GamePad().RightThumbStick(0).y;
 		auto& transform_comp	= GetRegistry()->GetComponent<TransformComponent>(GetEntity());
 		auto& camera_comp		= GetRegistry()->GetComponent<CameraComponent>(GetEntity());
+		auto& rigid_body_comp	= GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
+
+		// カメラ距離設定
+		const float v_len = rigid_body_comp.GetVelocity().Length();
+
+		//camera_comp.SetCameraLength(default_camera_length + v_len * camera_magnification);
 		camera_comp.GetCamera()->RotationTPSYaw(rad_x * camera_comp.GetCamera()->GetCameraSpeed().x);
 		camera_comp.GetCamera()->RotationTPSPitch(rad_y * camera_comp.GetCamera()->GetCameraSpeed().y);
 		camera_comp.GetCamera()->SetFocusPosition(transform_comp.GetPosition());
@@ -736,6 +769,110 @@ namespace cumulonimbus::component
 		return ret_val;
 	}
 
+	/////////////////////////////////////////////////////////////////////
+	//							カメラ距離							   //
+	/////////////////////////////////////////////////////////////////////
+	void PlayerComponent::CameraLenToIdle(float dt)
+	{
+		auto& camera_comp= GetRegistry()->GetComponent<CameraComponent>(GetEntity());
+
+		if (adjust_camera_state.GetInitialize())
+		{
+			start_camera_length = camera_comp.GetCameraLength();
+			current_transition_time = 0;
+		}
+
+		// カメラ距離設定
+		current_transition_time += locator::Locator::GetSystem()->GetTime().GetUnscaledDeltaTime();
+
+		if (current_transition_time >= transition_time_to_walk)
+			current_transition_time = transition_time_to_walk;
+
+		const float add_len = Easing::GetEasingVal(current_transition_time,
+			.0f,
+			default_camera_length - start_camera_length,
+			transition_time_to_walk,
+			BACK, ESOUT);
+
+		camera_comp.SetCameraLength(default_camera_length + add_len);
+	}
+
+	void PlayerComponent::CameraLenToBack(float dt)
+	{
+		if (adjust_camera_state.GetInitialize())
+		{
+			auto& camera = GetRegistry()->GetComponent<CameraComponent>(GetEntity());
+			start_camera_length = camera.GetCameraLength();
+			current_transition_time = 0;
+		}
+
+		auto& camera_comp = GetRegistry()->GetComponent<CameraComponent>(GetEntity());
+
+		// カメラ距離設定
+		current_transition_time += locator::Locator::GetSystem()->GetTime().GetUnscaledDeltaTime();
+
+		if (current_transition_time >= transition_time_to_walk)
+			current_transition_time = transition_time_to_walk;
+
+		const float add_len = Easing::GetEasingVal(current_transition_time,
+			.0f,
+			default_camera_length - start_camera_length,
+			transition_time_to_walk,
+			BACK, ESOUT);
+
+		camera_comp.SetCameraLength(default_camera_length + add_len);
+	}
+
+	void PlayerComponent::CameraLenToWalkFront(float dt)
+	{
+		if(adjust_camera_state.GetInitialize())
+		{
+			auto& camera = GetRegistry()->GetComponent<CameraComponent>(GetEntity());
+			start_camera_length = camera.GetCameraLength();
+			current_transition_time = 0;
+		}
+
+		auto& camera_comp = GetRegistry()->GetComponent<CameraComponent>(GetEntity());
+
+		// カメラ距離設定
+		current_transition_time += locator::Locator::GetSystem()->GetTime().GetUnscaledDeltaTime();
+
+		const DirectX::SimpleMath::Vector2 stick_left = locator::Locator::GetInput()->GamePad().LeftThumbStick(0);
+		// -1 ～ 1 を 0 ～ 2に変換し2で割ることで割合を算出している
+		const float weight = (1 + stick_left.y) / 2.f;
+
+		float add_len{};
+
+		if(current_transition_time >= transition_time_to_walk)
+		{
+			current_transition_time = transition_time_to_walk;
+			add_len = (max_walk_camera_length - default_camera_length) * weight;
+		}
+		else
+		{
+			add_len = Easing::GetEasingVal(current_transition_time,
+										   .0f,
+										   max_walk_camera_length - start_camera_length,
+										   transition_time_to_walk,
+										   BACK, ESOUT);
+
+			if (add_len >= (max_walk_camera_length - default_camera_length) * weight)
+				add_len = (max_walk_camera_length - default_camera_length) * weight;
+		}
+
+
+
+		camera_comp.SetCameraLength(default_camera_length + add_len);
+	}
+
+	void PlayerComponent::CameraLenToDashFront(float dt)
+	{
+
+	}
+
+	/////////////////////////////////////////////////////////////////////
+	//							プレイヤー行動						   //
+	/////////////////////////////////////////////////////////////////////
 	void PlayerComponent::TPose(const float dt)
 	{
 		if (player_state.GetInitialize())
@@ -754,6 +891,7 @@ namespace cumulonimbus::component
 		if (player_state.GetInitialize())
 		{// アニメーションセット(AnimationData::Idle)
 			GetRegistry()->GetComponent<ModelComponent>(GetEntity()).SwitchAnimation(GetAnimDataIndex(AnimationData::Idle), true, GetAndResetAnimSwitchTime());
+			//adjust_camera_state.SetState(AdjustCameraState::To_Idle);
 		}
 
 		using namespace locator;
@@ -762,6 +900,9 @@ namespace cumulonimbus::component
 		{// 移動速度の設定
 			//AdjustVelocity(dt, { .0f,.0f,.0f});
 		}
+
+		auto& camera_comp = GetRegistry()->GetComponent<CameraComponent>(GetEntity());
+		camera_comp.SetCameraLength(default_camera_length);
 
 		const float	trigger_right = Locator::GetInput()->GamePad().RightTrigger(0);
 
@@ -789,6 +930,7 @@ namespace cumulonimbus::component
 		if (player_state.GetInitialize())
 		{// アニメーションセット(AnimationData::Walk)
 			GetRegistry()->GetComponent<ModelComponent>(GetEntity()).SwitchAnimation(GetAnimDataIndex(AnimationData::Walk_Front), true);
+			adjust_camera_state.SetState(AdjustCameraState::To_Walk_Front);
 		}
 
 		using namespace locator;
@@ -801,6 +943,21 @@ namespace cumulonimbus::component
 			auto& rigid_body_comp = GetRegistry()->GetComponent<RigidBodyComponent>(GetEntity());
 			rigid_body_comp.AddForce({ walk_speed,0.0f,walk_speed });
 			//AdjustVelocity(dt, { walk_speed,0.0f,walk_speed });
+		}
+
+		{// カメラ距離設定
+			//adjust_camera_state.SetState(AdjustCameraState::To_Walk_Front);
+			//
+			//if (stick_left.y > 0 &&
+			//	adjust_camera_state.GetState() != AdjustCameraState::To_Walk_Front)
+			//{
+			//	adjust_camera_state.SetState(AdjustCameraState::To_Walk_Front);
+			//}
+			//else if (stick_left.y < 0 &&
+			//		 adjust_camera_state.GetState() != AdjustCameraState::To_Back)
+			//{
+			//	adjust_camera_state.SetState(AdjustCameraState::To_Back);
+			//}
 		}
 
 		{// アニメーション遷移

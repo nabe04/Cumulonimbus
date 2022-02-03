@@ -41,6 +41,12 @@ namespace cumulonimbus::component
 		SetEntity(ent);
 	}
 
+	PlayerAvoidEffectComponent::PlayerAvoidEffectComponent(mapping::component_tag::ComponentTag tag)
+		:ComponentBase{ tag }
+	{
+
+	}
+
 	void PlayerAvoidEffectComponent::Start()
 	{
 		PlayerAvoidEffectComponent& avoid_comp = GetRegistry()->GetComponent<PlayerAvoidEffectComponent>(GetEntity());

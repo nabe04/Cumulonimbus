@@ -79,6 +79,16 @@ namespace cumulonimbus::component
 
 			End
 		};
+
+		enum class AdjustCameraState
+		{
+			To_Idle,
+			To_Back,
+			To_Walk_Front,
+			To_Dash_Front,
+
+			End
+		};
 	public:
 		explicit PlayerComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
 		explicit PlayerComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const PlayerComponent& copy_comp); // for prefab
@@ -122,6 +132,8 @@ namespace cumulonimbus::component
 	private:
 		// プレイヤーの状態管理変数
 		StateMachine<PlayerState, void, const float> player_state{};
+		// カメラ調整の状態
+		StateMachine<AdjustCameraState, void, const float> adjust_camera_state;
 		// 先行入力(入力なし(リセット) == PlayerState::End)
 		PlayerState precede_input{ PlayerState::End };
 		// アニメーションキーフレームの調整用(終端フレームの調整)
@@ -172,6 +184,7 @@ namespace cumulonimbus::component
 		float dodge_speed{ 350.f };
 		float avoid_dash_speed{ 350.f };
 		float jump_movement_speed{ 300.0f };
+
 		//-- 状態の応じての攻撃力設定 --//
 		// 現在の攻撃力
 		u_int current_damage_amount{ 1 };
@@ -210,6 +223,21 @@ namespace cumulonimbus::component
 		//-- 各状態(アニメーション)からの遷移時間 --//
 		// ダッシュから待機
 		float switch_dash_attack_to_idle{ 0.3f };
+
+		//-- カメラ --//
+		// 操作をしていない時のカメラ距離
+		float default_camera_length{ 300.f };
+		float camera_magnification{ 1.f };
+		float max_walk_camera_length{ 400.f };
+		float max_dash_camera_length{ 500.f };
+		// イージング開始時のカメラ距離
+		float start_camera_length{};
+		// カメラ距離変更時間(現在時間)
+		float current_transition_time{};
+		// 歩き時のカメラ距離変更時間
+		float transition_time_to_walk{ 0.5f };
+		// ダッシュ時のカメラ距離変更時間
+		float transition_time_to_dash{ 0.7f };
 
 		//-- 状態フラグ --//
 		// ジャンプフラグ
@@ -338,6 +366,11 @@ namespace cumulonimbus::component
 		void InitializeKeyframeEvent();
 
 		/**
+		 * @brief :	カメラ距離調整StateMachineの初期化
+		 */
+		void InitializeAdjustCameraLengthState(ecs::Registry* registry, const mapping::rename_type::Entity& ent);
+
+		/**
 		 * @brief : ダメージ処理
 		 */
 		void OnDamaged(const DamageData& damage_data);
@@ -358,6 +391,18 @@ namespace cumulonimbus::component
 		 * @return : リセットされる前の遷移時間
 		 */
 		float GetAndResetAnimSwitchTime(float reset_time = 0.1f);
+
+		/**
+		 * @brief : カメラ距離調整用関数(adjust_camera_stateでの管理関数)
+		 */
+		// 待機状態時でのカメラ距離
+		void CameraLenToIdle(float dt);
+		// 左スティック下入力時でのカメラ距離
+		void CameraLenToBack(float dt);
+		// 歩き(前)時のカメラ距離
+		void CameraLenToWalkFront(float dt);
+		// ダッシュ(前)時のカメラ距離
+		void CameraLenToDashFront(float dt);
 
 		/**
 		 * @brief : StateMachineクラスで管理するプレイヤーの状態関数

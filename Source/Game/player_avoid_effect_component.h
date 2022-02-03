@@ -16,9 +16,9 @@ namespace cumulonimbus::component
 		};
 
 	public:
-		using ComponentBase::ComponentBase;
 		explicit PlayerAvoidEffectComponent(ecs::Registry* registry, mapping::rename_type::Entity ent);
 		explicit PlayerAvoidEffectComponent(ecs::Registry* registry, mapping::rename_type::Entity ent, const PlayerAvoidEffectComponent& copy_comp);
+		explicit PlayerAvoidEffectComponent(mapping::component_tag::ComponentTag tag);
 		explicit PlayerAvoidEffectComponent() = default;
 		~PlayerAvoidEffectComponent() override = default;
 

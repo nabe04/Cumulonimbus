@@ -229,7 +229,7 @@ namespace cumulonimbus::asset
 
 
 		{// プレファブの読み込み
-			std::ifstream ifs(path);
+			std::ifstream ifs(path, std::ios_base::binary);
 			if (!ifs)
 				assert(!"Not open file(Prefab::Load)");
 			cereal::BinaryInputArchive input_archive(ifs);
