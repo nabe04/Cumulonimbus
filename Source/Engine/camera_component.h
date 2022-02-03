@@ -4,6 +4,7 @@
 #include "cereal_helper.h"
 #include "rename_type_mapping.h"
 #include "locator.h"
+#include "easing.h"
 
 namespace cumulonimbus
 {
@@ -147,8 +148,50 @@ namespace cumulonimbus::component
 		bool GetIsMainCamera() const { return is_main_camera; }
 		[[nodiscard]]
 		float GetCameraLength() const { return camera_length; }
+		[[nodiscard]]
+		const DirectX::SimpleMath::Vector3& GetCameraOffset() const { return camera_offset; }
 
 		void SetCameraLength(const float len) { camera_length = len; }
+		void SetCameraOffset(const DirectX::SimpleMath::Vector3& offset, const bool is_reset = true)
+		{
+			if (is_reset)
+			{
+				transition_time_counter = 0;
+				camera_old_offset = camera_offset;
+			}
+
+			camera_offset = offset;
+		}
+		void SetCameraOffset_X(const float x, const bool is_reset = true)
+		{
+			if (is_reset)
+			{
+				transition_time_counter = 0;
+				camera_old_offset.x = camera_offset.x;
+			}
+
+			camera_offset.x = x;
+		}
+		void SetCameraOffset_Y(const float y, const bool is_reset = true)
+		{
+			if (is_reset)
+			{
+				transition_time_counter = 0;
+				camera_old_offset.y = camera_offset.y;
+			}
+
+			camera_offset.y = y;
+		}
+		void SetCameraOffset_Z(const float z, const bool is_reset = true)
+		{
+			if (is_reset)
+			{
+				transition_time_counter = 0;
+				camera_old_offset.z = camera_offset.z;
+			}
+
+			camera_offset.z = z;
+		}
 	private:
 		std::unique_ptr<camera::Camera> camera{};
 
@@ -159,6 +202,13 @@ namespace cumulonimbus::component
 		float camera_length{100};
 		// カメラのオフセット値
 		DirectX::SimpleMath::Vector3 camera_offset{};
+		DirectX::SimpleMath::Vector3 camera_old_offset{};
+		float transition_time_counter{};
+		float transition_time{ 0.5f };
+		e_EasingName easing_name{};
+		e_EasingType easing_type{};
+
+
 
 		// カメラを描画対象に加えるか(RenderPath::Render関数内でtrueの場合のみ描画する)
 		bool  is_active				  = true;

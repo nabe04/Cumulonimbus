@@ -90,6 +90,8 @@ namespace cumulonimbus::component
 				CEREAL_NVP(camera_offset)
 			);
 		}
+
+		SetCameraOffset(camera_offset);
 	}
 
 	template <class Archive>
@@ -313,6 +315,36 @@ namespace cumulonimbus::component
 
 		camera->SetFocusPosition(position + camera->GetFocusOffset());
 		camera->SetEyePosition(camera->GetFocusPosition() + (camera->GetCameraFront() * -1) * camera_length);
-		camera->SetEyeOffset(camera_offset);
+		//camera->SetFocusOffset(camera_offset);
+
+		if(transition_time_counter <= transition_time)
+		{
+			transition_time_counter += dt;
+			const float offset_x = Easing::GetEasingVal(transition_time_counter
+				, camera_old_offset.x,
+				camera_offset.x - camera_old_offset.x,
+				transition_time,
+				easing_name, easing_type);
+
+			const float offset_y = Easing::GetEasingVal(transition_time_counter
+				, camera_old_offset.y,
+				camera_offset.y - camera_old_offset.y,
+				transition_time,
+				easing_name, easing_type);
+
+			const float offset_z = Easing::GetEasingVal(transition_time_counter
+				, camera_old_offset.z,
+				camera_offset.z - camera_old_offset.z,
+				transition_time,
+				easing_name, easing_type);
+
+			camera->SetFocusOffset(DirectX::SimpleMath::Vector3{ offset_x,offset_y,offset_z });
+		}
+		else
+		{
+			camera->SetFocusOffset(camera_offset);
+		}
+
+
 	}
 } // cumulonimbus::component

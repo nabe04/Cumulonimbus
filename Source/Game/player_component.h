@@ -225,15 +225,24 @@ namespace cumulonimbus::component
 		float switch_dash_attack_to_idle{ 0.3f };
 
 		//-- カメラ --//
-		// 操作をしていない時のカメラ距離
+		// 操作をしていない時(デフォルト)のカメラ距離
 		float default_camera_length{ 300.f };
 		float camera_magnification{ 1.f };
 		float max_walk_camera_length{ 400.f };
 		float max_dash_camera_length{ 500.f };
 		// イージング開始時のカメラ距離
 		float start_camera_length{};
+
+		// 操作していない時(デフォルト)のカメラオフセット
+		DirectX::SimpleMath::Vector3 default_camera_offset{ .0f,50.f,.0f };
+		DirectX::SimpleMath::Vector3 start_camera_offset{};
+		float max_walk_camera_offset_x{ 40.f };
+		float max_dash_camera_offset_x{ 70.f };
+
 		// カメラ距離変更時間(現在時間)
 		float current_transition_time{};
+		// 待機時のカメラ距離変更時間
+		float transition_time_to_idle{ 1.5f };
 		// 歩き時のカメラ距離変更時間
 		float transition_time_to_walk{ 0.5f };
 		// ダッシュ時のカメラ距離変更時間

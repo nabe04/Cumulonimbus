@@ -403,6 +403,7 @@ namespace cumulonimbus::component
 			auto& effect_loader = *asset_manager.GetLoader<asset::EffekseerLoader>();
 
 			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Dead zone value of pad input", &threshold		, 0.01f	, 0.0f, 1.);
+			// プレイヤーパラメータ
 			ImGui::Separator();
 			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Walk Speed		"	, &walk_speed		, 0.5f	, 0.1f, FLT_MAX);
 			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Dash Speed		"	, &dash_speed		, 0.5f	, 0.1f, FLT_MAX);
@@ -412,6 +413,7 @@ namespace cumulonimbus::component
 			ImGui::Separator();
 			IMGUI_LEFT_LABEL(ImGui::DragFloat, "Avoid Stop Time", &avoid_stop_time, 0.5f, 0.1f, 10.f);
 			ImGui::Text("Is Avoid %d", is_avoid);
+			// ヒットエフェクト
 			ImGui::Separator();
 			ImGui::Text("Hit Effect S");
 			ImGui::PushID("Hit Effect S");
@@ -425,9 +427,23 @@ namespace cumulonimbus::component
 			ImGui::PushID("Hit Effect L");
 			effect_loader.ImSelectableEffect(asset_manager, hit_effect_l);
 			ImGui::PopID();
+			//-- カメラ関係 --//
 			ImGui::Separator();
+			// デフォルトカメラ距離
 			ImGui::DragFloat("Camera Length", &default_camera_length);
-			ImGui::DragFloat("transition_time_to_walk", &transition_time_to_walk);
+			// カメラ距離(最大値)
+			ImGui::Text("Max Camera Length");
+			ImGui::DragFloat("Walk", &max_walk_camera_length);
+			ImGui::DragFloat("Dash", &max_dash_camera_length);
+			// カメラオフセット(最大値)
+			ImGui::Text("Max Camera Offset");
+			ImGui::DragFloat("Walk", &max_walk_camera_offset_x);
+			ImGui::DragFloat("Dash", &max_dash_camera_offset_x);
+			// 遷移時間
+			ImGui::Text("Transition Time");
+			ImGui::DragFloat("To Idle", &transition_time_to_idle);
+			ImGui::DragFloat("To Walk", &transition_time_to_walk);
+			//-- イージング種類 --//
 			ImGui::Separator();
 			ImGui::SliderInt("E Name", &easing_name, 0, 10);
 			ImGui::SliderInt("E Type", &easing_type, 0, 3);
@@ -776,6 +792,7 @@ namespace cumulonimbus::component
 	{
 		auto& camera_comp= GetRegistry()->GetComponent<CameraComponent>(GetEntity());
 
+		// 初期化
 		if (adjust_camera_state.GetInitialize())
 		{
 			start_camera_length = camera_comp.GetCameraLength();
@@ -789,16 +806,17 @@ namespace cumulonimbus::component
 			current_transition_time = transition_time_to_walk;
 
 		const float add_len = Easing::GetEasingVal(current_transition_time,
-			.0f,
-			default_camera_length - start_camera_length,
-			transition_time_to_walk,
-			BACK, ESOUT);
+												   .0f,
+												   default_camera_length - start_camera_length,
+												   transition_time_to_idle,
+												   QUINT, ESOUT);
 
 		camera_comp.SetCameraLength(default_camera_length + add_len);
 	}
 
 	void PlayerComponent::CameraLenToBack(float dt)
 	{
+		// 初期化
 		if (adjust_camera_state.GetInitialize())
 		{
 			auto& camera = GetRegistry()->GetComponent<CameraComponent>(GetEntity());
@@ -815,20 +833,28 @@ namespace cumulonimbus::component
 			current_transition_time = transition_time_to_walk;
 
 		const float add_len = Easing::GetEasingVal(current_transition_time,
-			.0f,
-			default_camera_length - start_camera_length,
-			transition_time_to_walk,
-			BACK, ESOUT);
+												   .0f,
+												   default_camera_length - start_camera_length,
+												   transition_time_to_walk,
+												   BACK, ESOUT);
 
 		camera_comp.SetCameraLength(default_camera_length + add_len);
 	}
 
 	void PlayerComponent::CameraLenToWalkFront(float dt)
 	{
+		// 初期化
 		if(adjust_camera_state.GetInitialize())
 		{
+			if(adjust_camera_state.GetOldState() == AdjustCameraState::To_Dash_Front)
+			{
+				int a;
+				a = 0;
+			}
+
 			auto& camera = GetRegistry()->GetComponent<CameraComponent>(GetEntity());
 			start_camera_length = camera.GetCameraLength();
+			start_camera_offset = camera.GetCameraOffset();
 			current_transition_time = 0;
 		}
 
@@ -838,36 +864,145 @@ namespace cumulonimbus::component
 		current_transition_time += locator::Locator::GetSystem()->GetTime().GetUnscaledDeltaTime();
 
 		const DirectX::SimpleMath::Vector2 stick_left = locator::Locator::GetInput()->GamePad().LeftThumbStick(0);
-		// -1 ～ 1 を 0 ～ 2に変換し2で割ることで割合を算出している
-		const float weight = (1 + stick_left.y) / 2.f;
 
-		float add_len{};
+		{// カメラ距離の設定
+			// カメラ距離のウェイト
+			// -1 ～ 1 を 0 ～ 2に変換し2で割ることで割合を算出している
+			const float weight_y = (1 + stick_left.y) / 2.f;
+			// 追加距離
+			float add_len{};
 
-		if(current_transition_time >= transition_time_to_walk)
-		{
-			current_transition_time = transition_time_to_walk;
-			add_len = (max_walk_camera_length - default_camera_length) * weight;
+			// イージング処理終了時
+			if (current_transition_time >= transition_time_to_walk)
+			{
+				current_transition_time = transition_time_to_walk;
+				add_len = (max_walk_camera_length - default_camera_length) * weight_y;
+			}
+			// イージング処理中
+			else
+			{
+				add_len = Easing::GetEasingVal(current_transition_time,
+					.0f,
+					max_walk_camera_length - start_camera_length,
+					transition_time_to_walk,
+					BACK, ESOUT);
+
+				if (add_len >= (max_walk_camera_length - default_camera_length) * weight_y)
+					add_len = (max_walk_camera_length - default_camera_length) * weight_y;
+			}
+
+			camera_comp.SetCameraLength(default_camera_length + add_len);
 		}
-		else
-		{
-			add_len = Easing::GetEasingVal(current_transition_time,
-										   .0f,
-										   max_walk_camera_length - start_camera_length,
-										   transition_time_to_walk,
-										   BACK, ESOUT);
 
-			if (add_len >= (max_walk_camera_length - default_camera_length) * weight)
-				add_len = (max_walk_camera_length - default_camera_length) * weight;
+		{// カメラ横方向オフセット値の設定
+			// カメラの横方向オフセット値のウェイト
+			const float weight_x = abs(stick_left.x);
+			// 追加オフセット
+			float add_offset_x{};
+
+			// イージング処理終了時
+			if (current_transition_time >= transition_time_to_walk)
+			{
+				current_transition_time = transition_time_to_walk;
+				add_offset_x = max_walk_camera_offset_x * weight_x;
+			}
+			// イージング処理中
+			else
+			{
+				add_offset_x = Easing::GetEasingVal(current_transition_time,
+													.0f,
+													max_walk_camera_offset_x - abs(start_camera_offset.x),
+													transition_time_to_walk,
+													CUBIC, ESOUT);
+
+				if (abs(add_offset_x) >= abs(max_walk_camera_offset_x * weight_x))
+					add_offset_x = max_walk_camera_offset_x * weight_x;
+			}
+
+			//if (stick_left.x > 0)
+			//	add_offset_x *= -1.f;
+
+			camera_comp.SetCameraOffset_X(add_offset_x);
 		}
-
-
-
-		camera_comp.SetCameraLength(default_camera_length + add_len);
 	}
 
 	void PlayerComponent::CameraLenToDashFront(float dt)
 	{
+		// 初期化
+		if (adjust_camera_state.GetInitialize())
+		{
+			auto& camera = GetRegistry()->GetComponent<CameraComponent>(GetEntity());
+			start_camera_length = camera.GetCameraLength();
+			start_camera_offset = camera.GetCameraOffset();
+			current_transition_time = 0;
+		}
 
+		auto& camera_comp = GetRegistry()->GetComponent<CameraComponent>(GetEntity());
+
+		// カメラ距離設定
+		current_transition_time += locator::Locator::GetSystem()->GetTime().GetUnscaledDeltaTime();
+
+		const DirectX::SimpleMath::Vector2 stick_left = locator::Locator::GetInput()->GamePad().LeftThumbStick(0);
+
+		{// カメラ距離の設定
+			// カメラ距離のウェイト
+			// -1 ～ 1 を 0 ～ 2に変換し2で割ることで割合を算出している
+			const float weight_y = (1 + stick_left.y) / 2.f;
+			// 追加距離
+			float add_len{};
+
+			// イージング処理終了時
+			if (current_transition_time >= transition_time_to_walk)
+			{
+				current_transition_time = transition_time_to_walk;
+				add_len = (max_dash_camera_length - default_camera_length) * weight_y;
+			}
+			// イージング処理中
+			else
+			{
+				add_len = Easing::GetEasingVal(current_transition_time,
+					.0f,
+					max_dash_camera_length - start_camera_length,
+					transition_time_to_walk,
+					BACK, ESOUT);
+
+				if (add_len >= (max_dash_camera_length - default_camera_length) * weight_y)
+					add_len = (max_dash_camera_length - default_camera_length) * weight_y;
+			}
+
+			camera_comp.SetCameraLength(default_camera_length + add_len);
+		}
+
+		{// カメラ横方向オフセット値の設定
+			// カメラの横方向オフセット値のウェイト
+			const float weight_x = abs(stick_left.x);
+			// 追加オフセット
+			float add_offset_x{};
+
+			// イージング処理終了時
+			if (current_transition_time >= transition_time_to_walk)
+			{
+				current_transition_time = transition_time_to_walk;
+				add_offset_x = -stick_left.x * weight_x * max_dash_camera_offset_x;
+			}
+			// イージング処理中
+			else
+			{
+				add_offset_x = Easing::GetEasingVal(current_transition_time,
+					.0f,
+					max_dash_camera_offset_x - abs(start_camera_offset.x),
+					transition_time_to_walk,
+					CUBIC, ESOUT);
+
+				if (add_offset_x >= abs(stick_left.x * max_dash_camera_offset_x * weight_x))
+					add_offset_x = abs(stick_left.x * max_dash_camera_offset_x * weight_x);
+
+				if (stick_left.x > 0)
+					add_offset_x *= -1.f;
+			}
+
+			camera_comp.SetCameraOffset_X(add_offset_x);
+		}
 	}
 
 	/////////////////////////////////////////////////////////////////////
@@ -891,7 +1026,7 @@ namespace cumulonimbus::component
 		if (player_state.GetInitialize())
 		{// アニメーションセット(AnimationData::Idle)
 			GetRegistry()->GetComponent<ModelComponent>(GetEntity()).SwitchAnimation(GetAnimDataIndex(AnimationData::Idle), true, GetAndResetAnimSwitchTime());
-			//adjust_camera_state.SetState(AdjustCameraState::To_Idle);
+			adjust_camera_state.SetState(AdjustCameraState::To_Idle);
 		}
 
 		using namespace locator;
@@ -901,8 +1036,8 @@ namespace cumulonimbus::component
 			//AdjustVelocity(dt, { .0f,.0f,.0f});
 		}
 
-		auto& camera_comp = GetRegistry()->GetComponent<CameraComponent>(GetEntity());
-		camera_comp.SetCameraLength(default_camera_length);
+		//auto& camera_comp = GetRegistry()->GetComponent<CameraComponent>(GetEntity());
+		//camera_comp.SetCameraLength(default_camera_length);
 
 		const float	trigger_right = Locator::GetInput()->GamePad().RightTrigger(0);
 
@@ -1058,6 +1193,8 @@ namespace cumulonimbus::component
 			InitializeAnimationVariable();
 			// アニメーションセット(AnimationData::Avoid_Dash_Begin)
 			GetRegistry()->GetComponent<ModelComponent>(GetEntity()).SwitchAnimation(GetAnimDataIndex(AnimationData::Avoid_Dash_Begin), false);
+
+			adjust_camera_state.SetState(AdjustCameraState::To_Dash_Front);
 
 			if (auto* sphere_collision_comp = GetRegistry()->TryGetComponent<SphereCollisionComponent>(GetEntity());
 				sphere_collision_comp)

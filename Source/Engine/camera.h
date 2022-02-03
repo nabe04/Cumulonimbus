@@ -185,7 +185,7 @@ namespace cumulonimbus::camera
 		/**
 		 * @brief : カメラオフセットの設定
 		 */
-		void SetEyeOffset(const DirectX::SimpleMath::Vector3& offset) { eye_offset = offset; }
+		//void SetEyeOffset(const DirectX::SimpleMath::Vector3& offset) { eye_offset = offset; }
 		/**
 		 * @brief : カメラ注視点の設定
 		 */
@@ -218,8 +218,8 @@ namespace cumulonimbus::camera
 
 		[[nodiscard]]
 		const DirectX::SimpleMath::Vector3& GetEyePosition()   const { return eye_position; }
-		[[nodiscard]]
-		const DirectX::SimpleMath::Vector3& GetEyeOffset()	   const { return eye_offset; }
+		//[[nodiscard]]
+		//const DirectX::SimpleMath::Vector3& GetEyeOffset()	   const { return eye_offset; }
 		[[nodiscard]]
 		const DirectX::SimpleMath::Vector3& GetFocusPosition() const { return focus_position; }
 		[[nodiscard]]
@@ -251,7 +251,7 @@ namespace cumulonimbus::camera
 		DirectX::SimpleMath::Vector3 max_camera_angle{ 85.0f,-1.f,-1.f }; //	カメラの最大角(xyzそれぞれ+-両方の角度を表す。パラメータが0以下の場合はカメラの角度制限なし)
 
 		DirectX::SimpleMath::Vector3 eye_position{ 0.0f,0.0f,0.0f };	// カメラ位置
-		DirectX::SimpleMath::Vector3 eye_offset{ 0.0f,0.0f,0.0f };		// カメラ位置のオフセット値
+		//DirectX::SimpleMath::Vector3 eye_offset{ 0.0f,0.0f,0.0f };		// カメラ位置のオフセット値
 		DirectX::SimpleMath::Vector3 focus_position{ 0.0f,0.0f,1.0f };	// カメラ焦点位置
 		DirectX::SimpleMath::Vector3 focus_offset{ 0.0f,0.0f,0.0f };	// カメラ焦点位置のオフセット値
 
